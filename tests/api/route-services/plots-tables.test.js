@@ -4,7 +4,7 @@ const PlotsTablesService = require('../../../src/api/route-services/plots-tables
 const { convertToDynamoDbRecord } = require('../../../src/utils/dynamoDb');
 
 // Mock dates so snapshots don't drift.
-const constantDate = new Date('2020-01-01T00:00:00.000Z');
+const constantDate = new Date('Wed Jan 01 2020');
 /* eslint no-global-assign:off */
 Date = class extends Date {
   constructor() {

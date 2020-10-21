@@ -26,7 +26,7 @@ exports[`Test Plot Config Service create operation, puts data in database 1`] = 
             "S": "bar",
           },
           "lastUpdated": Object {
-            "S": "2020-01-01T00:00:00.000Z",
+            "S": "Wed Jan 01 2020",
           },
           "plotUuid": Object {
             "S": "plot1",
