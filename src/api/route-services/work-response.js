@@ -12,10 +12,10 @@ class WorkResponseService {
     const specPath = path.resolve(__dirname, '..', '..', 'specs', 'api.yaml');
     const specObj = yaml.safeLoad(fs.readFileSync(specPath), 'utf8');
     const validator = new Validator();
-
     const res = validator.validate(
       workResponse, specObj.components.schemas.WorkResponse, specObj.components.schemas,
     );
+
 
     if (!res.valid) {
       throw new Error(res.errors);

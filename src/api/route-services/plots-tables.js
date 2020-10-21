@@ -12,7 +12,7 @@ class PlotsTablesService {
       ...data,
       experimentId,
       plotUuid,
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: new Date().toDateString(),
     };
 
     const plotConfig = convertToDynamoDbRecord(tableData);
