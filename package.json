@@ -9,8 +9,11 @@
     "test:debug": "node --inspect node_modules/.bin/jest --runInBand --silent",
     "coverage": "jest --coverage --silent",
     "dev": "nodemon src/app.js",
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "lint": "eslint ./src",
+    "detect-secrets": "pip3 install detect-secrets && git diff --staged --name-only | xargs detect-secrets-hook --exclude-files package-lock.json"
   },
+  "pre-commit": ["lint", "detect-secrets"],
   "repository": {
     "type": "git",
     "url": "git+https://gitlab.com/biomage/api.git"
@@ -48,13 +51,14 @@
     "yaml": "^1.10.0"
   },
   "devDependencies": {
-    "ioredis-mock": "^4.21.1",
     "aws-sdk-mock": "^5.1.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-plugin-import": "^2.20.2",
+    "ioredis-mock": "^4.21.1",
     "jest": "^26.0.1",
     "nodemon": "^2.0.3",
+    "pre-commit": "^1.2.2",
     "socket.io-client": "^2.3.0",
     "socket.io-mock": "^1.3.1",
     "supertest": "^4.0.2"

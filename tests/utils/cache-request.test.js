@@ -32,7 +32,7 @@ describe('cache(Get/Set)Request', () => {
 
   beforeAll(() => {
     CacheSingleton.createMock({
-      '7b18513d240c9ad9dfd003a39a6be9fb': { result: 'valueInL1' },
+      '7b18513d240c9ad9dfd003a39a6be9fb': { result: 'valueInL1' }, // pragma: allowlist secret
     });
 
     cache = CacheSingleton.get();
@@ -53,7 +53,7 @@ describe('cache(Get/Set)Request', () => {
       expect(e).toBeInstanceOf(CacheMissError);
     }
 
-    expect(cache.get).toHaveBeenCalledWith('6ae8b54798a716938d34ebea01d40307');
+    expect(cache.get).toHaveBeenCalledWith('6ae8b54798a716938d34ebea01d40307'); // pragma: allowlist secret
     expect(result).toBe(undefined);
   });
 
@@ -62,13 +62,13 @@ describe('cache(Get/Set)Request', () => {
     const result = await cacheGetRequest(newRequest, () => null, socket);
 
     expect(result).toEqual({ result: 'valueInL1' });
-    expect(cache.get).toHaveBeenCalledWith('7b18513d240c9ad9dfd003a39a6be9fb');
+    expect(cache.get).toHaveBeenCalledWith('7b18513d240c9ad9dfd003a39a6be9fb'); // pragma: allowlist secret
   });
 
   it('cacheSetResponse', async () => {
     await cacheSetResponse(response);
 
-    expect(cache.set).toHaveBeenCalledWith('6ae8b54798a716938d34ebea01d40307', {
+    expect(cache.set).toHaveBeenCalledWith('6ae8b54798a716938d34ebea01d40307', { // pragma: allowlist secret
       request,
       result: response.result,
     }, 900);
