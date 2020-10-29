@@ -8,15 +8,15 @@ class WorkSubmitService {
   constructor(workRequest) {
     this.workRequest = workRequest;
 
-    this.workerHash = crypto
-      .createHash('sha1')
-      .update(this.workRequest.experimentId)
-      .digest('hex');
-
     if (config.clusterEnv === 'development') {
       this.workQueueName = 'development-queue.fifo';
     } else {
-      this.workQueueName = `queue-job-${this.workerHash}-${config.clusterEnv}.fifo`;
+      const workerHash = crypto
+        .createHash('sha1')
+        .update(`${this.workRequest.experimentId}-${config.sandboxId}`)
+        .digest('hex');
+
+      this.workQueueName = `queue-job-${workerHash}-${config.clusterEnv}.fifo`;
     }
   }
 

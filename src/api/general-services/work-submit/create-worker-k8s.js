@@ -11,7 +11,7 @@ const logger = require('../../../utils/logging');
 const constructChartValues = async (service) => {
   const { workQueueName } = service;
   const { experimentId } = service.workRequest;
-  const { clusterEnv } = config;
+  const { clusterEnv, sandboxId } = config;
 
   const response = await fetch(
     config.workerInstanceConfigUrl,
@@ -28,6 +28,7 @@ const constructChartValues = async (service) => {
       experimentId,
       clusterEnv,
       workQueueName,
+      sandboxId,
       storageSize: '10Gi',
     };
   });
