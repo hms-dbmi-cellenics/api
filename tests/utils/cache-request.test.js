@@ -71,6 +71,6 @@ describe('cache(Get/Set)Request', () => {
     expect(cache.set).toHaveBeenCalledWith('4b6ecb0d54a075f941edfb40bd7426f7', { // pragma: allowlist secret
       request,
       result: response.result,
-    }, 900);
+    }, 129600);
   });
 });

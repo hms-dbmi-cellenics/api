@@ -23,8 +23,8 @@ const cacheGetRequest = async (
   return payload;
 };
 
-
-const cacheSetResponse = async (data, ttl = 900) => {
+// ttl is set to 36 hours = 60*36*60 s = 129600
+const cacheSetResponse = async (data, ttl = 129600) => {
   const { sandboxId } = config;
 
   const key = createObjectHash({
