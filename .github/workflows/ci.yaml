@@ -101,8 +101,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-docker
     strategy:
+      max-parallel: 1
       matrix:
-        environment: ['production']
+        environment: ['production', 'staging']
     if:
       github.ref == 'refs/heads/master'
     steps:
@@ -156,6 +157,8 @@ jobs:
           access-token: ${{ secrets.API_TOKEN_GITHUB }}
           owner: biomage-ltd
           repo: iac
+          enforce_admins: false
+          retries: 8
       
       - name: Push changes to iac repo
         uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
@@ -176,3 +179,5 @@ jobs:
           access-token: ${{ secrets.API_TOKEN_GITHUB }}
           owner: biomage-ltd
           repo: iac
+          enforce_admins: true
+          retries: 8
