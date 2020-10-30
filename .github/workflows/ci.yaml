@@ -1,5 +1,11 @@
 name: Build and Deploy the API
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 jobs:
   test:
     name: Run tests
@@ -88,7 +94,6 @@ jobs:
           build-args: "READONLY_API_TOKEN_GITHUB=${{ secrets.READONLY_API_TOKEN_GITHUB }}"
 
       - id: push
-        if: github.ref == 'refs/heads/master'
         name: Push docker image to ECR
         run: |-
           echo Pushing image $IMAGE_NAME to ECR.
@@ -104,8 +109,6 @@ jobs:
       max-parallel: 1
       matrix:
         environment: ['production', 'staging']
-    if:
-      github.ref == 'refs/heads/master'
     steps:
       - id: checkout
         name: Check out source code
@@ -159,8 +162,10 @@ jobs:
           repo: iac
           enforce_admins: false
           retries: 8
-      
-      - name: Push changes to iac repo
+
+      - name: Push production deployment to iac for deployment
+        if:
+          github.ref == 'refs/heads/master' && github.event_name == 'push' && matrix.environment == 'production'
         uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
@@ -168,6 +173,28 @@ jobs:
           source_file: '${{ steps.fill-metadata.outputs.deployment-name }}.yaml'
           destination_repo: '${{ github.repository_owner }}/iac'
           destination_folder: 'releases/${{ matrix.environment }}'
+          user_email: 'ci@biomage.net'
+          user_name: 'Biomage CI/CD'
+
+      - name: Change name of deployment file for staging deployment
+        if:
+          github.event_name == 'pull_request' && matrix.environment == 'staging'
+        env:
+          DEPLOYMENT_NAME: ${{ steps.fill-metadata.outputs.deployment-name }}
+          REF_DASHED: ${{ steps.fill-metadata.outputs.ref-dashed }}
+        run: |-
+          mv $DEPLOYMENT_NAME.yaml $REF_DASHED.yaml
+
+      - name: Push staging deployment template to iac
+        if:
+          github.event_name == 'pull_request' && matrix.environment == 'staging'
+        uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source_file: '${{ steps.fill-metadata.outputs.ref-dashed }}.yaml'
+          destination_repo: '${{ github.repository_owner }}/iac'
+          destination_folder: 'releases/staging-candidates/${{ steps.fill-metadata.outputs.deployment-name }}'
           user_email: 'ci@biomage.net'
           user_name: 'Biomage CI/CD'
 
