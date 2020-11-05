@@ -20,7 +20,7 @@ spec:
   chart:
     git: git@github.com:biomage-ltd/iac
     path: charts/nodejs
-    ref: master
+    ref: FILLED_IN_BY_CI
   values:
     service:
       externalPort: 3000
