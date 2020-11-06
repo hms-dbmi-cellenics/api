@@ -5,6 +5,7 @@ const childProcess = require('child_process');
 const fetch = require('node-fetch');
 const YAML = require('yaml');
 const { Downloader } = require('github-download-directory');
+const jq = require('jq-web');
 const config = require('../../../config');
 const logger = require('../../../utils/logging');
 
@@ -20,18 +21,23 @@ const constructChartValues = async (service) => {
     },
   );
 
-  return response.text().then((txt) => {
-    const cfg = YAML.parse(txt);
+  const txt = await response.text();
+  const manifest = YAML.parseAllDocuments(txt);
 
-    return {
-      ...cfg,
-      experimentId,
-      clusterEnv,
-      workQueueName,
-      sandboxId,
-      storageSize: '10Gi',
-    };
-  });
+  const cfg = {
+    images: {
+      python: jq.json(manifest, '..|objects|.python.image//empty'),
+      r: jq.json(manifest, '..|objects|.r.image//empty'),
+    },
+    namespace: `worker-${sandboxId}`,
+    experimentId,
+    clusterEnv,
+    workQueueName,
+    sandboxId,
+    storageSize: '10Gi',
+  };
+
+  return { cfg, sha: jq.json(manifest, '.. | objects | select(.metadata.name == "worker") | .spec.chart.ref') };
 };
 
 const createWorkerResources = async (service) => {
@@ -40,20 +46,24 @@ const createWorkerResources = async (service) => {
   const execFile = util.promisify(childProcess.execFile);
 
   // Download value template from Git repository. Fill in needed things.
-  const instanceConfig = await constructChartValues(service);
+  const { cfg, sha } = await constructChartValues(service);
   const { name } = tmp.fileSync();
-  await fs.writeFile(name, YAML.stringify(instanceConfig));
+  await fs.writeFile(name, YAML.stringify(cfg));
 
   // Download the chart from the worker repository.
   const custom = new Downloader({
     github: { auth: config.githubToken },
   });
-  await custom.download('biomage-ltd', 'worker', 'chart-instance');
+
+  await custom.download(
+    'biomage-ltd', 'worker', 'chart-instance',
+    { sha },
+  );
 
 
   // Attempt to deploy the worker.
   try {
-    const params = `upgrade worker-${workerHash} chart-instance/ --namespace ${instanceConfig.namespace} -f ${name} --install --wait -o json`.split(' ');
+    const params = `upgrade worker-${workerHash} chart-instance/ --namespace ${cfg.namespace} -f ${name} --install --wait -o json`.split(' ');
 
     let { stdout: release } = await execFile(HELM_BINARY, params);
     release = JSON.parse(release);
