@@ -57,9 +57,13 @@ production cluster and as a result you should see an output on the terminal simi
 [2020-12-18T07:20:05.582Z] Cache instance created.
 [2020-12-18T07:20:05.584Z] NODE_ENV: development, cluster env: production
 [2020-12-18T07:20:05.584Z] Server listening on port: 3000
+[2020-12-18T07:20:05.594Z] redis:reader An error occurred: connect ETIMEDOUT
 ```
 
-Note that if you decide to run the API with a ***live*** cluster, you won't be able to receive responses back from the
+Note the last message, which is an error: this is expected and is due to the fact that we cannot connect to the Redis cluster
+directly. This means that caching of data will not work in this case.
+
+Also note that if you decide to run the API with a ***live*** cluster, you won't be able to receive responses back from the
 worker. This is because the live SNS topic cannot push messages to a local development machine, only to an endpoint 
 exposed to the internet. See the system achitecture here for more context: https://github.com/biomage-ltd/developer-docs/wiki/Biomage-Single-Cell-Platform:-Architecture
 
