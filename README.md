@@ -1,12 +1,51 @@
-Local development
+API
+======
+The API of Cellscope (the Biomage single cell analysis platform).
+
+Development
 =================
 The instructions in this section include all information that you need to know in order to run the api locally and
-or connect it to the other parts of the Biomage Single Cell Platform. 
+or connect it to the other parts of the Biomage Single Cell Platform.
 
-### 0. Install packages
-After cloning this repo, run `npm install` to install all required packages.
+### Prerequisites
 
-### 1. Connect with Inframock
+We hihgly recommend using VSCode for local development. Make sure you also have `npm` and `docker` installed.
+
+### Running locally
+
+To run the API, simply do:
+
+        npm install
+        npm start
+
+You should see the following output on your terminal:
+
+```
+[2021-01-03T11:51:36.037Z] We are running on a development cluster, patching AWS to use InfraMock endpoint...
+[2021-01-03T11:51:36.304Z] Generating configuration for cache...
+[2021-01-03T11:51:36.304Z] Attempting to fetch URLs for Redis cluster endpoints...
+[2021-01-03T11:51:36.304Z] Running locally, keeping base configuration.
+[2021-01-03T11:51:36.305Z] Primary: localhost:6379, reader: localhost:6379
+[2021-01-03T11:51:36.305Z] Setting up L1 (in-memory) cache, size: 1000, TTL: 129600000
+[2021-01-03T11:51:36.305Z] Now setting up Redis connections...
+[2021-01-03T11:51:36.305Z] Running in development, patching out TLS connection.
+[2021-01-03T11:51:36.306Z] Running in development, patching out TLS connection.
+[2021-01-03T11:51:36.307Z] Cache instance created.
+[2021-01-03T11:51:36.310Z] NODE_ENV: development, cluster env: development
+[2021-01-03T11:51:36.310Z] Server listening on port: 3000
+[2021-01-03T11:51:36.312Z] redis:reader An error occurred: connect ECONNREFUSED 127.0.0.1:6379
+```
+
+The reason for this is that the API is not connected with the rest of the platform. To get the API running end-to-end
+with a mocked dataset, you will need to set up each of these:
+
+- Inframock: https://github.com/biomage-ltd/inframock
+- worker: https://github.com/biomage-ltd/worker
+- UI: https://github.com/biomage-ltd/ui
+
+The following steps explain in more details on how to get the Cellscope platform running end-to-end.
+
+#### 1. Connect with Inframock
 Inframock is a tool that we have developed in order to run the single cell sequencing platform locally, 
 without the need to access AWS resources. It enables local end-to-end testing and development
 and it is highly recommended that you set it up when developing a new feature.
@@ -15,7 +54,7 @@ In order to connect with Inframock, follow the instructions in here next: https:
 
 After Inframock is started, the next step is to start the API.
 
-### 2. Start the API
+#### 2. Start the API
 Whether the API runs with the local InfraMock instance, which should have Redis as well as all the mocked AWS 
 services ready for use, or with a ***live*** cluster instead, is controlled by an enviornment variable called
 `CLUSTER_ENV`, which is set to `development` by default.
@@ -67,12 +106,12 @@ Also note that if you decide to run the API with a ***live*** cluster, you won't
 worker. This is because the live SNS topic cannot push messages to a local development machine, only to an endpoint 
 exposed to the internet. See the system achitecture here for more context: https://github.com/biomage-ltd/developer-docs/wiki/Biomage-Single-Cell-Platform:-Architecture
 
-### 3. Run the UI locally
+#### 3. Run the UI locally
 Go to the UI repo found in here: https://github.com/biomage-ltd/ui and follow the instructions to set it up.
 On a separate terminal inside the UI project, run `npm start` to start the UI locally. After the UI is launched,
 any request from the UI will be automatically forwarded to the API.
 
-### 4. Run the worker locally
+#### 4. Run the worker locally
 Go to the worker repo found in here: https://github.com/biomage-ltd/worker and clone the repository.
 On a separate terminal inside the worker project, start the worker locally by running `docker-compose up --build`. Note that
 the first time this step will take a while - possibly around 40 mins. Time to go and make yourself a cup of tea and read a book
@@ -82,7 +121,7 @@ After the worker is launched, any request from the API will be automatically for
 (unless you have set `CLUSTER_ENV` in the api to `staging` or `production`) and the reponse from the worker will be sent 
 back to the API.
 
-### 4. Receive responses back from the worker
+#### 4'. Receive responses back from the worker
 This is only possible if you run InfraMock for local development. This is because the live SNS topic cannot push
 messages to a local development machine, only to an endpoint exposed to the internet.
 
