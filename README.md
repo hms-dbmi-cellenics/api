@@ -43,7 +43,7 @@ with a mocked dataset, you will need to set up each of these:
 - worker: https://github.com/biomage-ltd/worker
 - UI: https://github.com/biomage-ltd/ui
 
-The following steps explain in more details on how to get the Cellscope platform running end-to-end.
+The following steps explain in more details on how to get the Cellscope platform running end-to-end locally.
 
 #### 1. Connect with Inframock
 Inframock is a tool that we have developed in order to run the single cell sequencing platform locally, 
@@ -106,16 +106,15 @@ Also note that if you decide to run the API with a ***live*** cluster, you won't
 worker. This is because the live SNS topic cannot push messages to a local development machine, only to an endpoint 
 exposed to the internet. See the system achitecture here for more context: https://github.com/biomage-ltd/developer-docs/wiki/Biomage-Single-Cell-Platform:-Architecture
 
-#### 3. Run the UI locally
-Go to the UI repo found in here: https://github.com/biomage-ltd/ui and follow the instructions to set it up.
-On a separate terminal inside the UI project, run `npm start` to start the UI locally. After the UI is launched,
-any request from the UI will be automatically forwarded to the API.
+#### 3. (Optional) Run the UI locally
+This is required only if you want to run the API with a local version of the UI.
+Go to the UI repo found in here: https://github.com/biomage-ltd/ui and follow the instructions to set it up and start it.
+After the UI is launched on a separate terminal tab, any request from the UI will be automatically forwarded to the API.
 
-#### 4. Run the worker locally
+#### 4. (Optional) Run the worker locally
+This is required only if you want to run the API with a local version of the worker.
 Go to the worker repo found in here: https://github.com/biomage-ltd/worker and clone the repository.
-On a separate terminal inside the worker project, start the worker locally by running `docker-compose up --build`. Note that
-the first time this step will take a while - possibly around 40 mins. Time to go and make yourself a cup of tea and read a book
-or relax :)
+On a separate terminal inside the worker project, start the worker locally by following the instructions in the worker README.
 
 After the worker is launched, any request from the API will be automatically forwarded to the worker by default 
 (unless you have set `CLUSTER_ENV` in the api to `staging` or `production`) and the reponse from the worker will be sent 
