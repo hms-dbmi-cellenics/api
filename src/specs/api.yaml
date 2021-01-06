@@ -565,6 +565,7 @@ components:
         expressionType:
           type: string
           description: The type of the gene expression value
+          default : 'raw'
       required:
         - cells
         - data
