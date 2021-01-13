@@ -582,15 +582,19 @@ components:
         maxExpression:
           type: number
           description: The maximum expression value of that gene
-        expressionType:
-          type: string
-          description: The type of the gene expression value
-          default : 'raw'
+        meanExpression:
+          type: number
+          description: The mean expression value of that gene
+        stdevExpression:
+          type: number
+          description: The standard deviation of the expression value of that gene
       required:
         - cells
         - data
         - minExpression
         - maxExpression
+        - meanExpression
+        - stdevExpression
     WorkSchemaGeneExpression:
       title: WorkSchemaGeneExpression
       type: object
@@ -608,10 +612,6 @@ components:
           type: boolean
           description: Whether to perform feature scaling (normalization to unit variance and zero mean). Defaults to `false` if not specified.
           default: 'false'
-        expressionType:
-          type: string
-          description: Type of gene expression value that is requested. Defaults to `raw` if not specified.
-          default: 'raw'
       required:
         - name
         - genes
