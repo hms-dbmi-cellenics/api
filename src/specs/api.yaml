@@ -576,25 +576,25 @@ components:
             required:
               - geneName
               - expression
-        minExpression:
+        min:
           type: number
           description: The minimum expression value of that gene
-        maxExpression:
+        max:
           type: number
           description: The maximum expression value of that gene
-        meanExpression:
+        mean:
           type: number
           description: The mean expression value of that gene
-        stdevExpression:
+        stdev:
           type: number
           description: The standard deviation of the expression value of that gene
       required:
         - cells
         - data
-        - minExpression
-        - maxExpression
-        - meanExpression
-        - stdevExpression
+        - min
+        - max
+        - mean
+        - stdev
     WorkSchemaGeneExpression:
       title: WorkSchemaGeneExpression
       type: object
@@ -612,9 +612,12 @@ components:
           type: boolean
           description: Whether to perform feature scaling (normalization to unit variance and zero mean). Defaults to `false` if not specified.
           default: 'false'
+        test:
+          type: string
       required:
         - name
         - genes
+        - test
     WorkRequestBodies:
       oneOf:
         - $ref: '#/components/schemas/WorkSchemaGetEmbedding'
