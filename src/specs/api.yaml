@@ -463,7 +463,6 @@ components:
           description: The configuration settings to use for this embedding. This will be used both to configure the embedding and to cache the results.
       required:
         - name
-        - config
     WorkSchemaListGenes:
       title: WorkSchemaListGenes
       type: object

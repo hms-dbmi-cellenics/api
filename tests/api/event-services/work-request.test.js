@@ -29,7 +29,7 @@ describe('handleWorkRequest', () => {
       socketId: '6789',
       experimentId: 'my-experiment',
       timeout: '2001-01-01T00:00:00Z',
-      body: { name: 'GetEmbedding', type: 'tsne' },
+      body: { name: 'GetEmbedding', config: {} },
     };
 
     try {

@@ -24,7 +24,9 @@ describe('tests for the work-response service', () => {
       timeout: '2099-01-01T00:00:00Z',
       body: {
         name: 'GetEmbedding',
-        type: 'pca',
+        config: {
+            type: 'pca',
+        },
       },
     },
     response: {

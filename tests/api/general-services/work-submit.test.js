@@ -11,7 +11,7 @@ describe('tests for the work-submit service', () => {
       socketId: '6789',
       experimentId: 'my-experiment',
       timeout: '2099-01-01T00:00:00Z',
-      body: { name: 'GetEmbedding', type: 'pca' },
+      body: { name: 'GetEmbedding', config: { type: 'pca' } },
     };
 
     AWSMock.setSDKInstance(AWS);
