@@ -36,7 +36,7 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "express-openapi-validator": "^3.12.7",
+    "express-openapi-validator": "^4.10.8",
     "github-download-directory": "^2.0.0",
     "ioredis": "^4.17.3",
     "jq-web": "^0.5.1",

@@ -1,7 +1,7 @@
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
-const { OpenApiValidator } = require('express-openapi-validator');
+const OpenApiValidator = require('express-openapi-validator');
 const http = require('http');
 const io = require('socket.io');
 
@@ -21,12 +21,12 @@ module.exports = async (app) => {
   app.use(bodyParser.text({ extended: false, limit: '1mb', parameterLimit: 300000 }));
   app.use(bodyParser.json({ extended: false, limit: '10mb', parameterLimit: 300000 }));
 
-  await new OpenApiValidator({
+  app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
     validateRequests: true,
     validateResponses: true,
     operationHandlers: path.join(__dirname, '..', 'api'),
-  }).install(app);
+  }));
 
   // Custom error handler.
   // eslint-disable-next-line no-unused-vars
