@@ -458,16 +458,12 @@ components:
           type: string
           example: GetEmbedding
           description: The name of this work -- must be `GetEmbedding`.
-        type:
-          type: string
-          enum:
-            - pca
-            - tsne
-            - umap
-          description: The type of embedding to compute.
+        config:
+          type: object
+          description: The configuration settings to use for this embedding. This will be used both to configure the embedding and to cache the results.
       required:
         - name
-        - type
+        - config
     WorkSchemaListGenes:
       title: WorkSchemaListGenes
       type: object
