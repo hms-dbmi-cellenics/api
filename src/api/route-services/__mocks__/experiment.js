@@ -38,10 +38,47 @@ const mockUpdateCellSets = jest.fn((experimentId, cellSetData) => new Promise((r
   resolve(cellSetData);
 }));
 
+const mockGetProcessingConfig = jest.fn(() => new Promise((resolve) => {
+  resolve({
+    classifier: {
+      filterSettings: {
+        minProbability: 0.5,
+        bandwidth: -1,
+      },
+    },
+  });
+}));
+
+const mockUpdateProcessingConfig = jest.fn(
+  () => new Promise((resolve) => {
+    resolve({
+      cellSizeDistribution: {
+        M: {
+          filterSettings: {
+            M: {
+              minCellSize: {
+                N: '10800',
+              },
+              binStep: {
+                N: '200',
+              },
+            },
+          },
+          enabled: {
+            BOOL: false,
+          },
+        },
+      },
+    });
+  }),
+);
+
 const mock = jest.fn().mockImplementation(() => ({
   getExperimentData: mockExperimentData,
   getCellSets: mockGetCellSets,
   updateCellSets: mockUpdateCellSets,
+  getProcessingConfig: mockGetProcessingConfig,
+  updateProcessingConfig: mockUpdateProcessingConfig,
 }));
 
 module.exports = mock;

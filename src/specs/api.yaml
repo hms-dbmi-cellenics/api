@@ -197,9 +197,24 @@ paths:
                 type: object
                 properties:
                   processingConfig:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ProcessingConfigResponse'
+                    type: object
+                    properties:
+                      cellSizeDistribution:
+                        $ref: '#/components/schemas/ProcessingConfigCellSizeDistribution'
+                      mitochondrialContent:
+                        $ref: '#/components/schemas/ProcessingConfigMitochondrialContent'
+                      readAlignment:
+                        $ref: '#/components/schemas/ProcessingConfigReadAlignment'
+                      classifier:
+                        $ref: '#/components/schemas/ProcessingConfigClassifier'
+                      numGenesVsNumUmis:
+                        $ref: '#/components/schemas/ProcessingConfigNumGenesVsNumUMIs'
+                      doubletScores:
+                        $ref: '#/components/schemas/ProcessingConfigDoubletScores'
+                      dimensionalityReduction:
+                        $ref: '#/components/schemas/ProcessingConfigDimensionalityReduction'
+                      configureEmbedding:
+                        $ref: '#/components/schemas/ProcessingConfigConfigureEmbedding'
         '404':
           description: Experiment not found
       tags:
@@ -222,10 +237,11 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  allOf:
-                    - $ref: '#/components/schemas/CellSets'
+                type: object
+                properties:
+                  '':
+                    $ref: ''
+              examples: {}
       description: Updates the processing configuration in the database.
       requestBody:
         content:
@@ -243,6 +259,7 @@ paths:
                 required:
                   - name
                   - body
+            examples: {}
       tags:
         - processing-config
   '/experiments/{experimentId}/plots-tables/{plotUuid}':
@@ -850,6 +867,7 @@ components:
     ProcessingConfigClassifier:
       title: Processing Config - Classifier
       type: object
+      description: Model for Classifier processing configuration
       properties:
         enabled:
           type: boolean
@@ -858,11 +876,10 @@ components:
           properties:
             minProbabiliy:
               type: number
-            filterThreshold:
+            bandwidth:
               type: number
       required:
         - filterSettings
-      description: Model for Classifier processing configuration
     ProcessingConfigNumGenesVsNumUMIs:
       title: ProcessingConfig - Num Genes Vs Num UMIs
       type: object

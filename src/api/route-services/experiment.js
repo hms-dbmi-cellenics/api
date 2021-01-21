@@ -1,7 +1,9 @@
 const config = require('../../config');
 const mockData = require('./mock-data.json');
 const logger = require('../../utils/logging');
-const { createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord } = require('../../utils/dynamoDb');
+const {
+  createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord, configArrayToUpdateObjs,
+} = require('../../utils/dynamoDb');
 
 
 class ExperimentService {
@@ -75,7 +77,7 @@ class ExperimentService {
     const params = {
       TableName: this.tableName,
       Key: key,
-      ProjectionExpression: 'processing',
+      ProjectionExpression: 'processingConfig',
     };
 
     const data = await dynamodb.getItem(params).promise();
@@ -89,21 +91,19 @@ class ExperimentService {
     let key = { experimentId };
 
     key = convertToDynamoDbRecord(key);
-
-    const data = convertToDynamoDbRecord({ ':x': processingConfig });
-
-    logger.log(data);
+    const { updExpr, attrNames, attrValues } = configArrayToUpdateObjs('processingConfig', processingConfig);
 
     const params = {
       TableName: this.tableName,
       Key: key,
-      UpdateExpression: 'set processing = :x',
-      ExpressionAttributeValues: data,
+      UpdateExpression: updExpr,
+      ExpressionAttributeNames: attrNames,
+      ExpressionAttributeValues: attrValues,
+      ReturnValues: 'UPDATED_NEW',
     };
 
-    await dynamodb.updateItem(params).promise();
-
-    return processingConfig;
+    const result = await dynamodb.updateItem(params).promise();
+    return result;
   }
 }
 

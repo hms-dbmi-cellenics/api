@@ -57,5 +57,100 @@
          "name":"Scratchpad",
          "rootNode":true
       }
-   ]
+   ],
+   "processingConfig": {
+    "cellSizeDistribution": {
+      "enabled": true,
+      "filterSettings": {
+        "minCellSize": 10800,
+        "binStep": 200
+      }
+    },
+    "mitochondrialContent": {
+      "enabled": true,
+      "filterSettings": {
+        "method": "absolute_threshold",
+        "methodSettings" : {
+          "absolute_threshold" : {
+            "maxFraction": 0.1,
+            "binStep": 0.05
+          }
+        }
+      }
+    },
+    "readAlignment": {
+      "enabled": true,
+      "filterSettings": {
+        "method": "absolute_threshold",
+        "methodSettings" : {
+          "absolute_threshold" : {
+            "filterThreshold": 0.5,
+            "bandwidth": -1
+          }
+        }
+      }
+    },
+    "classifier": {
+      "enabled": true,
+      "filterSettings": {
+        "minProbabiliy": 0.8,
+        "filterThreshold": -1
+      }
+    },
+    "numGenesVsNumUmis": {
+      "enabled": true,
+      "filterSettings": {
+        "regressionType": "gam",
+        "smoothing": 13,
+        "upperCutoff": 4.8,
+        "lowerCutoff": 2.1,
+        "stringency": 2.1,
+        "binStep": 0.05
+      }
+    },
+    "doubletScores": {
+      "enabled": true,
+      "filterSettings": {
+        "probabilityThreshold": 0.2,
+        "binStep": 0.05
+      }
+    },
+    "dimensionalityReduction": {
+      "method": "pca",
+      "methodSettings" : {
+        "pca" : {
+          "maxPCs": 10
+        }
+      },
+      "interpolate" : "linear",
+      "excludeGeneCategories": {
+        "ribosomal" : true,
+        "mitochondrial" : true,
+        "cellCycle": true
+      }
+    },
+    "configureEmbedding" : {
+      "embeddingSettings" : {
+        "method": "umap",
+        "methodSettings": {
+          "umap" : {
+            "minimumDistance" : 0.1,
+            "distanceMetric": "euclidean"
+          },
+          "tsne": {
+            "perplexity": 30,
+            "learningRate": 200
+          }
+        }
+      },
+      "clusteringSettings": {
+        "method": "louvain",
+        "methodSettings": {
+          "louvain" : {
+            "resolution": 0.5
+          }
+        }
+      }
+    }
+  }
 }
