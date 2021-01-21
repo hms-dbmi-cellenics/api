@@ -214,7 +214,7 @@ paths:
     put:
       summary: ''
       operationId: updateExperimentProcessingConfigById
-      x-eov-operation-id: experiment#updateCellSets
+      x-eov-operation-id: experiment#updateProcessingConfig
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
@@ -237,8 +237,12 @@ paths:
                 properties:
                   name:
                     type: string
-                  config:
+                    description: Name of the configuration that wants to be changed
+                  body:
                     $ref: '#/components/schemas/ProcessingConfigBodies'
+                required:
+                  - name
+                  - body
       tags:
         - processing-config
   '/experiments/{experimentId}/plots-tables/{plotUuid}':

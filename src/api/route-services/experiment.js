@@ -66,6 +66,45 @@ class ExperimentService {
 
     return cellSetData;
   }
+
+  async getProcessingConfig(experimentId) {
+    const dynamodb = createDynamoDbInstance();
+    let key = { experimentId };
+    key = convertToDynamoDbRecord(key);
+
+    const params = {
+      TableName: this.tableName,
+      Key: key,
+      ProjectionExpression: 'processing',
+    };
+
+    const data = await dynamodb.getItem(params).promise();
+    const prettyData = convertToJsObject(data.Item);
+
+    return prettyData;
+  }
+
+  async updateProcessingConfig(experimentId, processingConfig) {
+    const dynamodb = createDynamoDbInstance();
+    let key = { experimentId };
+
+    key = convertToDynamoDbRecord(key);
+
+    const data = convertToDynamoDbRecord({ ':x': processingConfig });
+
+    logger.log(data);
+
+    const params = {
+      TableName: this.tableName,
+      Key: key,
+      UpdateExpression: 'set processing = :x',
+      ExpressionAttributeValues: data,
+    };
+
+    await dynamodb.updateItem(params).promise();
+
+    return processingConfig;
+  }
 }
 
 module.exports = ExperimentService;

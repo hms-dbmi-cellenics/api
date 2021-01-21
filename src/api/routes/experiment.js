@@ -18,4 +18,14 @@ module.exports = {
       .then((data) => res.json(data))
       .catch(next);
   },
+  'experiment#getProcessingConfig': (req, res, next) => {
+    experimentService.getProcessingConfig(req.params.experimentId)
+      .then((data) => res.json(data))
+      .catch(next);
+  },
+  'experiment#updateProcessingConfig': (req, res, next) => {
+    experimentService.updateProcessingConfig(req.params.experimentId, req.body)
+      .then((data) => res.json(data))
+      .catch(next);
+  },
 };
