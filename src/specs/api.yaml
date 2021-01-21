@@ -18,6 +18,8 @@ tags:
     description: API health checks.
   - name: work
     description: Submitting and receiving work.
+  - name: processing-config
+    description: Structure for configuration of processing steps.
 paths:
   /health:
     get:
@@ -25,7 +27,7 @@ paths:
         - heartbeat
       summary: API health check
       operationId: checkHealth
-      x-eov-operation-id: 'health#check'
+      x-eov-operation-id: health#check
       x-eov-operation-handler: routes/health
       responses:
         '200':
@@ -56,7 +58,7 @@ paths:
   /workResults:
     post:
       operationId: receiveWork
-      x-eov-operation-id: 'work#response'
+      x-eov-operation-id: work#response
       x-eov-operation-handler: routes/work
       requestBody:
         description: The data sent by AWS SNS.
@@ -103,7 +105,7 @@ paths:
       summary: Look up experiment by ID
       description: Returns the main details of the experiment.
       operationId: getExperimentById
-      x-eov-operation-id: 'experiment#findByID'
+      x-eov-operation-id: experiment#findByID
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
@@ -112,8 +114,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Experiment'
-              examples:
-                example-1: {}
         '400':
           description: Invalid ID supplied
         '404':
@@ -132,7 +132,7 @@ paths:
       summary: Retrieve cell sets
       description: Returns a hirearchical view of cell sets in the experiment.
       operationId: getExperimentCellSetsById
-      x-eov-operation-id: 'experiment#getCellSets'
+      x-eov-operation-id: experiment#getCellSets
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
@@ -158,7 +158,7 @@ paths:
     put:
       summary: ''
       operationId: updateExperimentCellSetsById
-      x-eov-operation-id: 'experiment#updateCellSets'
+      x-eov-operation-id: experiment#updateCellSets
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
@@ -179,6 +179,68 @@ paths:
               items:
                 allOf:
                   - $ref: '#/components/schemas/CellSets'
+      tags:
+        - experiments
+  '/experiments/{experimentId}/processingConfig':
+    get:
+      summary: Retrieve processing configuration
+      description: Returns a hirearchical of processing configuration used in the experiment.
+      operationId: getExperimentProcessingConfigById
+      x-eov-operation-id: experiment#getProcessingConfig
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: 'Fetch successful, response below.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  processingConfig:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProcessingConfigResponse'
+        '404':
+          description: Experiment not found
+      tags:
+        - processing-config
+    parameters:
+      - name: experimentId
+        in: path
+        description: ID of experiment to find cell sets of.
+        required: true
+        schema:
+          type: string
+    put:
+      summary: ''
+      operationId: updateExperimentProcessingConfigById
+      x-eov-operation-id: experiment#updateCellSets
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: Update to object in response successful.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/CellSets'
+      description: Updates the processing configuration in the database.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  config:
+                    $ref: '#/components/schemas/ProcessingConfigBodies'
+      tags:
+        - processing-config
   '/experiments/{experimentId}/plots-tables/{plotUuid}':
     parameters:
       - schema:
@@ -194,7 +256,7 @@ paths:
     put:
       summary: ''
       operationId: updatePlotTable
-      x-eov-operation-id: 'plots-tables#update'
+      x-eov-operation-id: plots-tables#update
       x-eov-operation-handler: routes/plots-tables
       responses:
         '200':
@@ -221,7 +283,7 @@ paths:
     get:
       summary: ''
       operationId: getPlotTable
-      x-eov-operation-id: 'plots-tables#read'
+      x-eov-operation-id: plots-tables#read
       x-eov-operation-handler: routes/plots-tables
       responses:
         '200':
@@ -234,7 +296,7 @@ paths:
     delete:
       summary: ''
       operationId: deletePlotTable
-      x-eov-operation-id: 'plots-tables#delete'
+      x-eov-operation-id: plots-tables#delete
       x-eov-operation-handler: routes/plots-tables
       responses:
         '200':
@@ -253,6 +315,7 @@ components:
           type: string
         experimentName:
           type: string
+      description: Schema for Experiment objects
     ApiResponse:
       type: object
       required:
@@ -267,6 +330,7 @@ components:
           type: string
         message:
           type: string
+      description: Schema for API Response
     CellSets:
       type: object
       title: ''
@@ -285,6 +349,7 @@ components:
       required:
         - key
         - name
+      description: Schema for CellSets object
     WorkResponse:
       title: WorkResponse
       type: object
@@ -331,7 +396,7 @@ components:
               description: Whether the result should be cached.
             error:
               type: boolean
-              description: "Whether there's been an error."
+              description: Whether there's been an error.
       required:
         - results
         - response
@@ -346,6 +411,7 @@ components:
       required:
         - message
         - errors
+      description: Schema for API Errors
     WorkRequest:
       title: WorkRequest
       type: object
@@ -488,7 +554,7 @@ components:
           description: What field to order the results by.
         orderDirection:
           type: string
-          pattern: '^(asc)|(desc)|(ASC)|(DESC)$'
+          pattern: ^(asc)|(desc)|(ASC)|(DESC)$
           description: 'The direction of the ordering (ASC, DESC)'
         offset:
           type: integer
@@ -675,3 +741,259 @@ components:
         - cellSetName
         - type
         - cellSetKey
+    ProcessingConfigResponse:
+      description: Response to GET request for ProcessingConfig
+      type: object
+      properties:
+        cellSizeDistribution:
+          $ref: '#/components/schemas/ProcessingConfigCellSizeDistribution'
+        mitochondrialContent:
+          $ref: '#/components/schemas/ProcessingConfigMitochondrialContent'
+        readAlignment:
+          $ref: '#/components/schemas/ProcessingConfigReadAlignment'
+        classifier:
+          $ref: '#/components/schemas/ProcessingConfigClassifier'
+        numGenesVsNumUmis:
+          $ref: '#/components/schemas/ProcessingConfigNumGenesVsNumUMIs'
+        doubletScores:
+          $ref: '#/components/schemas/ProcessingConfigDoubletScores'
+        dimensionalityReduction:
+          $ref: '#/components/schemas/ProcessingConfigDimensionalityReduction'
+        configureEmbedding:
+          $ref: '#/components/schemas/ProcessingConfigConfigureEmbedding'
+      required:
+        - cellSizeDistribution
+        - mitochondrialContent
+        - readAlignment
+        - classifier
+        - numGenesVsNumUmis
+        - doubletScores
+        - dimensionalityReduction
+        - configureEmbedding
+      title: Processing Config Response
+    ProcessingConfigCellSizeDistribution:
+      title: Processing Config - Cell Size Distribution
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        filterSettings:
+          type: object
+          properties:
+            minCellSize:
+              type: number
+            binStep:
+              type: number
+      required:
+        - filterSettings
+      description: Model for Cell Size Distribution processing configuration
+    ProcessingConfigMitochondrialContent:
+      title: ProcessingConfig - MitochondrialContent
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        filterSettings:
+          type: object
+          required:
+            - method
+            - methodSettings
+          properties:
+            method:
+              type: string
+              minLength: 1
+            methodSettings:
+              type: object
+              properties:
+                absolute_threshold:
+                  type: object
+                  properties:
+                    maxFraction:
+                      type: number
+                    binStep:
+                      type: number
+      required:
+        - filterSettings
+      description: Model for Mitochondrial Content processing configuration
+    ProcessingConfigReadAlignment:
+      title: ProcessingConfigReadAlignment
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        filterSettings:
+          type: object
+          required:
+            - method
+            - methodSettings
+          properties:
+            method:
+              type: string
+              minLength: 1
+            methodSettings:
+              type: object
+              properties:
+                absolute_threshold:
+                  type: object
+                  properties:
+                    filterThreshold:
+                      type: number
+                    bandwidth:
+                      type: number
+      required:
+        - filterSettings
+      description: Model for Read Alignment processing configuration
+    ProcessingConfigClassifier:
+      title: Processing Config - Classifier
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        filterSettings:
+          type: object
+          properties:
+            minProbabiliy:
+              type: number
+            filterThreshold:
+              type: number
+      required:
+        - filterSettings
+      description: Model for Classifier processing configuration
+    ProcessingConfigNumGenesVsNumUMIs:
+      title: ProcessingConfig - Num Genes Vs Num UMIs
+      type: object
+      description: Model for Num Genes vs Num UMIS processing configuration
+      properties:
+        enabled:
+          type: boolean
+        filterSettings:
+          type: object
+          properties:
+            regressionType:
+              type: string
+              minLength: 1
+            smoothing:
+              type: number
+            upperCutoff:
+              type: number
+            lowerCutoff:
+              type: number
+            stringency:
+              type: number
+            binStep:
+              type: number
+      required:
+        - filterSettings
+    ProcessingConfigDoubletScores:
+      title: ProcessingConfig - Doublet Scores
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        filterSettings:
+          type: object
+          properties:
+            probabilityThreshold:
+              type: number
+            binStep:
+              type: number
+      required:
+        - filterSettings
+      description: Model for Doublet Scores processing configuration
+    ProcessingConfigDimensionalityReduction:
+      title: Processing Config - Dimensionality Reduction
+      type: object
+      properties:
+        method:
+          type: string
+          minLength: 1
+        methodSettings:
+          type: object
+          properties:
+            pca:
+              type: object
+              properties:
+                maxPCs:
+                  type: number
+        interpolate:
+          type: string
+          minLength: 1
+        excludeGeneCategories:
+          type: object
+          properties:
+            ribosomal:
+              type: boolean
+            mitochondrial:
+              type: boolean
+            cellCycle:
+              type: boolean
+      required:
+        - method
+        - methodSettings
+        - interpolate
+        - excludeGeneCategories
+      description: Model for Dimensionality Reduction processing configuration
+    ProcessingConfigConfigureEmbedding:
+      title: Processing Config - Configure Embedding
+      type: object
+      properties:
+        embeddingSettings:
+          type: object
+          required:
+            - method
+            - methodSettings
+          properties:
+            method:
+              type: string
+              minLength: 1
+            methodSettings:
+              type: object
+              properties:
+                umap:
+                  type: object
+                  properties:
+                    minimumDistance:
+                      type: number
+                    distanceMetric:
+                      type: string
+                      minLength: 1
+                tsne:
+                  type: object
+                  properties:
+                    perplexity:
+                      type: number
+                    learningRate:
+                      type: number
+        clusteringSettings:
+          type: object
+          required:
+            - method
+            - methodSettings
+          properties:
+            method:
+              type: string
+              minLength: 1
+            methodSettings:
+              type: object
+              properties:
+                louvain:
+                  type: object
+                  properties:
+                    resolution:
+                      type: number
+      required:
+        - embeddingSettings
+        - clusteringSettings
+      description: Model for Configure Embedding processing configuration
+    ProcessingConfigBodies:
+      title: Processing Config Definitions
+      anyOf:
+        - $ref: '#/components/schemas/ProcessingConfigCellSizeDistribution'
+        - $ref: '#/components/schemas/ProcessingConfigMitochondrialContent'
+        - $ref: '#/components/schemas/ProcessingConfigReadAlignment'
+        - $ref: '#/components/schemas/ProcessingConfigClassifier'
+        - $ref: '#/components/schemas/ProcessingConfigNumGenesVsNumUMIs'
+        - $ref: '#/components/schemas/ProcessingConfigDoubletScores'
+        - $ref: '#/components/schemas/ProcessingConfigDimensionalityReduction'
+        - $ref: '#/components/schemas/ProcessingConfigConfigureEmbedding'
+      description: Schema describing any of the processing config definitions
