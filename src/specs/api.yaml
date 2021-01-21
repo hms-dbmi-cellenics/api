@@ -463,6 +463,15 @@ components:
           description: The configuration settings to use for calculation of this embedding.
       required:
         - name
+    WorkResponseGetEmbedding:
+      type: array
+      description: 'The response schema for the `GetEmbedding` task.'
+      items:
+        type: array
+        items:
+          type: number
+          minItems: 2
+          maxItems: 2
     WorkSchemaListGenes:
       title: WorkSchemaListGenes
       type: object
