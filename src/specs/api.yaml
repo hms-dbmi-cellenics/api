@@ -461,6 +461,13 @@ components:
         config:
           type: object
           description: The configuration settings to use for calculation of this embedding.
+        type:
+          type: string
+          enum:
+            - pca
+            - tsne
+            - umap
+          description: The type of embedding to compute (deprecated; use config).
       required:
         - name
     WorkResponseGetEmbedding:
