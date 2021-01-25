@@ -457,6 +457,7 @@ components:
         name:
           type: string
           example: GetEmbedding
+          pattern: GetEmbedding
           description: The name of this work -- must be `GetEmbedding`.
         config:
           type: object
