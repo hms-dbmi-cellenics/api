@@ -467,7 +467,8 @@ components:
             - pca
             - tsne
             - umap
-          description: The type of embedding to compute (deprecated; use config).
+          description: The type of embedding to compute.
+          deprecated: true
       required:
         - name
     WorkResponseGetEmbedding:
