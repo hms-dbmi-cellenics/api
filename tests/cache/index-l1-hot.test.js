@@ -44,6 +44,7 @@ describe('cache, always saves to L1', () => {
         ...BASE_CONFIG.l1CacheSettings,
         minLatencyToStore: 0,
       },
+      enabled: true,
     });
   });
 

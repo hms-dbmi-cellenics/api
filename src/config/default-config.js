@@ -59,16 +59,19 @@ const config = {
     prefix: '/',
   },
   workerInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/worker.yaml',
+  cachingEnabled: true,
 };
 
 if (config.clusterEnv === 'staging') {
   config.workerInstanceConfigUrl = `https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/${config.sandboxId}.yaml`;
+  config.cachingEnabled = false;
 }
 
 // We are in the `development` clusterEnv, meaning we run on
 // InfraMock. Set up API accordingly.
 if (config.clusterEnv === 'development') {
   logger.log('We are running on a development cluster, patching AWS to use InfraMock endpoint...');
+  config.cachingEnabled = false;
   config.awsAccountIdPromise = async () => '000000000000';
   AWS.config.update({
     endpoint: 'http://localhost:4566',

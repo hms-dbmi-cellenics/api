@@ -13,8 +13,15 @@ class Cache {
     // If l1CacheSettings is defined, we will set it up.
     this.l1Cache = bypassCache;
 
-    const { l1CacheSettings } = this.conf;
-    if (l1CacheSettings) {
+    const { l1CacheSettings, enabled } = this.conf;
+
+    if (!enabled) {
+      logger.warn('WARNING: Caching is disabled on this run. To enable compatibility with');
+      logger.warn('WARNING: cache-enabled instances, connections will be made, but getting');
+      logger.warn('WARNING: and setting will be inoperative.');
+    }
+
+    if (l1CacheSettings && enabled) {
       const { size, ttl } = l1CacheSettings;
 
       logger.log(`Setting up L1 (in-memory) cache, size: ${size}, TTL: ${ttl}`);
@@ -24,6 +31,7 @@ class Cache {
         logger.log('L1 cache could not be loaded. Bypassing...');
       }
     }
+
 
     logger.log('Now setting up Redis connections...');
 
@@ -58,11 +66,16 @@ class Cache {
   // set value should not be used independently as it might cause cache poisoning
   async set(key, data, ttl) {
     if (ttl <= 0) return;
-    const { cacheDuration } = this.conf;
+    const { cacheDuration, enabled } = this.conf;
     const { client, status, ready } = this.getClientAndStatus('primary');
 
     if (!ready) {
       logger.warn('redis:primary', `Cannot SETEX to ${key} as client is in status ${status}`);
+      return;
+    }
+
+    if (!enabled) {
+      logger.warn('Caching currently disabled, not setting anything.');
       return;
     }
 
@@ -116,6 +129,13 @@ class Cache {
     // downstream without modifying the cache at a given key.
     const now = () => new Date();
     const requestDateTime = now();
+
+    const { enabled } = this.conf;
+    if (!enabled) {
+      logger.warn('Caching currently disabled, not setting anything.');
+      throw new CacheMissError('Caching disabled, automatic cache miss.');
+    }
+
     const l1Result = this.l1Cache.get(key);
 
     if (l1Result) {

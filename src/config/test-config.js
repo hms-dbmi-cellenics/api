@@ -15,4 +15,5 @@ module.exports = {
   api: {
     prefix: '/',
   },
+  cachingEnabled: false,
 };

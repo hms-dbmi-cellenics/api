@@ -10,6 +10,7 @@ const BASE_CONFIG = {
   redisGetTimeout: 3000,
   // ttl has to be in ms. Set to 36 hours = 36*60*60*1000 ms = 129600000
   l1CacheSettings: { ttl: 129600000, size: 1000, minLatencyToStore: 50 },
+  enabled: config.cachingEnabled,
 };
 
 const updateRedisEndpoints = async () => {
