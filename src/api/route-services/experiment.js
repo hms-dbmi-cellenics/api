@@ -1,6 +1,5 @@
 const config = require('../../config');
 const mockData = require('./mock-data.json');
-const logger = require('../../utils/logging');
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord, configArrayToUpdateObjs,
 } = require('../../utils/dynamoDb');
