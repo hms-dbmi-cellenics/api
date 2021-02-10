@@ -31,6 +31,8 @@ module.exports = async (app) => {
   // Custom error handler.
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
+    console.log(err.status);
+
     // format errors
     res.status(err.status || 500).json({
       message: err.message,

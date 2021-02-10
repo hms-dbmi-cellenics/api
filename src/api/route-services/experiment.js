@@ -5,6 +5,7 @@ const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord, configArrayToUpdateObjs,
 } = require('../../utils/dynamoDb');
 
+const NotFoundError = require('../../utils/NotFoundError');
 
 class ExperimentService {
   constructor() {
@@ -24,7 +25,12 @@ class ExperimentService {
       Key: key,
       ProjectionExpression: 'experimentId, experimentName',
     };
+
     const data = await dynamodb.getItem(params).promise();
+
+    if (Object.keys(data).length === 0) {
+      throw new NotFoundError('Experiment does not exist.');
+    }
 
     const prettyData = convertToJsObject(data.Item);
     return prettyData;
@@ -42,6 +48,11 @@ class ExperimentService {
     };
 
     const data = await dynamodb.getItem(params).promise();
+
+    if (Object.keys(data).length === 0) {
+      throw new NotFoundError('Experiment does not exist.');
+    }
+
     const prettyData = convertToJsObject(data.Item);
 
     return prettyData;
@@ -54,8 +65,6 @@ class ExperimentService {
     key = convertToDynamoDbRecord(key);
 
     const data = convertToDynamoDbRecord({ ':x': cellSetData });
-
-    logger.log(data);
 
     const params = {
       TableName: this.tableName,
@@ -81,6 +90,11 @@ class ExperimentService {
     };
 
     const data = await dynamodb.getItem(params).promise();
+
+    if (Object.keys(data).length === 0) {
+      throw new NotFoundError('Experiment does not exist.');
+    }
+
     const prettyData = convertToJsObject(data.Item);
 
     return prettyData;
