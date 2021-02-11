@@ -54,9 +54,6 @@ class ExperimentService {
 
     const prettyData = convertToJsObject(data.Item);
 
-
-    console.log(prettyData);
-
     return prettyData;
   }
 
