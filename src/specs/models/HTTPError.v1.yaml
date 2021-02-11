@@ -1,0 +1,10 @@
+title: HTTP Error
+type: object
+description: Schema for errors in HTTP endpoints
+properties:
+  message:
+    type: string
+  errors:
+    type: object
+required:
+  - message

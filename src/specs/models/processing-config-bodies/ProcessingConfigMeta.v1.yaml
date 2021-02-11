@@ -1,0 +1,13 @@
+title: Metadata
+type: object
+description: Metadata regarding the progress of the data processing steps.
+properties:
+  complete:
+    type: boolean
+  stepsDone:
+    type: array
+    items:
+      type: string
+required:
+  - complete
+  - stepsDone

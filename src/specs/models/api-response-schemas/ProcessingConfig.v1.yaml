@@ -1,0 +1,29 @@
+title: Processing Config schema
+description: Processing Config schema
+type: object
+properties:
+  cellSizeDistribution:
+    $ref: '../processing-config-bodies/ProcessingConfigCellSizeDistribution.v1.yaml'
+  mitochondrialContent:
+    $ref: '../processing-config-bodies/ProcessingConfigMitochondrialContent.v1.yaml'
+  readAlignment:
+    $ref: '../processing-config-bodies/ProcessingConfigReadAlignment.v1.yaml'
+  classifier:
+    $ref: '../processing-config-bodies/ProcessingConfigClassifier.v1.yaml'
+  numGenesVsNumUmis:
+    $ref: '../processing-config-bodies/ProcessingConfigNumGenesVsNumUMIs.v1.yaml'
+  doubletScores:
+    $ref: '../processing-config-bodies/ProcessingConfigDoubletScores.v1.yaml'
+  dimensionalityReduction:
+    $ref: '../processing-config-bodies/ProcessingConfigDimensionalityReduction.v1.yaml'
+  configureEmbedding:
+    $ref: '../processing-config-bodies/ProcessingConfigConfigureEmbedding.v1.yaml'
+required:
+  - cellSizeDistribution
+  - mitochondrialContent
+  - readAlignment
+  - classifier
+  - numGenesVsNumUmis
+  - doubletScores
+  - dimensionalityReduction
+  - configureEmbedding

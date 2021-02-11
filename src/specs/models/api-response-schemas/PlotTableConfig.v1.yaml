@@ -1,0 +1,23 @@
+title: 'Plots & Tables configuration'
+type: object
+description: A file specifying the configuration for a given plot/table.
+properties:
+  experimentId:
+    type: string
+    description: The ID of the experiment.
+  plotUuid:
+    type: string
+    description: The UUID of the plot or table.
+  type:
+    type: string
+    description: The type of the plot to be saved. Can be one of the values specified herein.
+    enum:
+      - embeddingCategorical
+      - embeddingContinuous
+      - volcano
+      - heatmap
+  config:
+    type: object
+required:
+  - type
+  - config

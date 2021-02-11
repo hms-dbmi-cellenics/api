@@ -1,0 +1,22 @@
+title: Get embedding
+type: object
+description: Work request body for the Get Embedding task.
+properties:
+  name:
+    type: string
+    example: GetEmbedding
+    pattern: GetEmbedding
+    description: The name of this work -- must be `GetEmbedding`.
+  config:
+    type: object
+    description: The configuration settings to use for calculation of this embedding.
+  type:
+    type: string
+    enum:
+      - pca
+      - tsne
+      - umap
+    description: The type of embedding to compute.
+    deprecated: true
+required:
+  - name

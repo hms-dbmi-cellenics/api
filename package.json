@@ -49,6 +49,7 @@
     "object-hash": "^2.0.3",
     "sns-validator": "^0.3.4",
     "socket.io": "^2.3.0",
+    "swagger-client": "^3.12.2",
     "swagger-model-validator": "^3.0.18",
     "tmp-promise": "^3.0.2",
     "uuid": "^7.0.3",

@@ -1,0 +1,45 @@
+title: Gene expression
+type: object
+description: The response schema for the Gene expression task.
+properties:
+  cells:
+    type: array
+    description: 'The list of cells that the expression data corresponds to. The cell list order is pre-determined, that is, if cell A comes before cell B in one response, A will always come before B in all responses.'
+    items:
+      type: string
+  data:
+    type: array
+    description: The expression data.
+    items:
+      type: object
+      properties:
+        geneName:
+          type: string
+          description: The name of the gene for which the data was requested.
+        expression:
+          type: array
+          description: 'The array of expression values, raw or scaled, depending on the setting.'
+          items:
+            type: number
+      required:
+        - geneName
+        - expression
+  min:
+    type: number
+    description: The minimum expression value of that gene
+  max:
+    type: number
+    description: The maximum expression value of that gene
+  mean:
+    type: number
+    description: The mean expression value of that gene
+  stdev:
+    type: number
+    description: The standard deviation of the expression value of that gene
+required:
+  - cells
+  - data
+  - min
+  - max
+  - mean
+  - stdev

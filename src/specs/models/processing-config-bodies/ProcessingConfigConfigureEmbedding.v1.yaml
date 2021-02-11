@@ -1,0 +1,51 @@
+title: Configure Embedding
+type: object
+properties:
+  embeddingSettings:
+    type: object
+    required:
+      - method
+      - methodSettings
+    properties:
+      method:
+        type: string
+        minLength: 1
+      methodSettings:
+        type: object
+        properties:
+          umap:
+            type: object
+            properties:
+              minimumDistance:
+                type: number
+              distanceMetric:
+                type: string
+                minLength: 1
+          tsne:
+            type: object
+            properties:
+              perplexity:
+                type: number
+              learningRate:
+                type: number
+  clusteringSettings:
+    type: object
+    required:
+      - method
+      - methodSettings
+    properties:
+      method:
+        type: string
+        minLength: 1
+      methodSettings:
+        type: object
+        properties:
+          louvain:
+            type: object
+            properties:
+              resolution:
+                type: number
+required:
+  - embeddingSettings
+  - clusteringSettings
+description: Processing config body for Configure Embedding filter.

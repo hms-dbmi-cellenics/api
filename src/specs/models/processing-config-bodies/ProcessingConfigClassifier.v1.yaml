@@ -1,0 +1,15 @@
+title: Classifier
+type: object
+description: Processing config body for Classifier filter.
+properties:
+  enabled:
+    type: boolean
+  filterSettings:
+    type: object
+    properties:
+      minProbabiliy:
+        type: number
+      bandwidth:
+        type: number
+required:
+  - filterSettings

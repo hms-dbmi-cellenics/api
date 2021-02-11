@@ -25,7 +25,7 @@ const handleWorkRequest = async (workRequest, socket) => {
     if (e instanceof CacheMissError) {
       logger.log(e.message);
       logger.log(`Cache miss on ${uuid}, sending it to the worker...`);
-      validateRequest(workRequest, 'WorkRequest');
+      await validateRequest(workRequest, 'WorkRequest.v1.yaml');
       const { timeout } = workRequest;
       if (Date.parse(timeout) <= Date.now()) {
         throw new Error(`Work request will not be handled as timeout of ${timeout} is in the past...`);

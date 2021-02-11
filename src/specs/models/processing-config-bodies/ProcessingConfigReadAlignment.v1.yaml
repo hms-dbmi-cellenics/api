@@ -1,0 +1,27 @@
+title: Read Alignment
+type: object
+properties:
+  enabled:
+    type: boolean
+  filterSettings:
+    type: object
+    required:
+      - method
+      - methodSettings
+    properties:
+      method:
+        type: string
+        minLength: 1
+      methodSettings:
+        type: object
+        properties:
+          absolute_threshold:
+            type: object
+            properties:
+              filterThreshold:
+                type: number
+              bandwidth:
+                type: number
+required:
+  - filterSettings
+description: Processing config body for Read Alignment filter.
