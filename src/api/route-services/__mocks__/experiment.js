@@ -53,7 +53,10 @@ const mockUpdateProcessingConfig = jest.fn(
   () => new Promise((resolve) => {
     resolve({
       processingConfig: {
-        cellSizeDistribution: { filterSettings: { minCellSize: 10800, binStep: 200 }, enabled: true },
+        cellSizeDistribution: {
+          filterSettings: { minCellSize: 10800, binStep: 200 },
+          enabled: true,
+        },
         readAlignment: { filterSettings: { method: 'absolute_threshold', methodSettings: { absolute_threshold: { bandwidth: -1, filterThreshold: 0.5 } } }, enabled: true },
         classifier: { filterSettings: { minProbabiliy: 0.8, filterThreshold: -1 }, enabled: true },
         mitochondrialContent: { filterSettings: { method: 'absolute_threshold', methodSettings: { absolute_threshold: { maxFraction: 0.1, binStep: 0.05 } } }, enabled: true },
@@ -65,9 +68,15 @@ const mockUpdateProcessingConfig = jest.fn(
           enabled: true,
         },
         dimensionalityReduction: {
-          interpolate: 'linear', method: 'pca', methodSettings: { pca: { maxPCs: 10 } }, excludeGeneCategories: { ribosomal: true, cellCycle: true, mitochondrial: true },
+          interpolate: 'linear',
+          method: 'pca',
+          methodSettings: { pca: { maxPCs: 10 } },
+          excludeGeneCategories: { ribosomal: true, cellCycle: true, mitochondrial: true },
         },
-        doubletScores: { filterSettings: { probabilityThreshold: 0.2, binStep: 0.05 }, enabled: true },
+        doubletScores: {
+          filterSettings: { probabilityThreshold: 0.2, binStep: 0.05 },
+          enabled: true,
+        },
       },
     });
   }),
