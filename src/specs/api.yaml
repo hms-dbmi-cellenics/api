@@ -315,4 +315,10 @@ paths:
           description: OK
       description: Deletes a plot and table for a given experiment with the data specified.
 components:
-  schemas: {}
+  schemas:
+    dummy:
+      title: dummy
+      type: object
+      properties:
+        id:
+          type: string

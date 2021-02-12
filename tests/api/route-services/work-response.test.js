@@ -25,7 +25,7 @@ describe('tests for the work-response service', () => {
       body: {
         name: 'GetEmbedding',
         config: {
-            type: 'pca',
+          type: 'pca',
         },
       },
     },
@@ -67,10 +67,10 @@ describe('tests for the work-response service', () => {
     io.close();
   });
 
-  it('Throws during validation if invalid data is supplied', (done) => {
+  it('Throws during validation if invalid data is supplied', async (done) => {
     try {
       // eslint-disable-next-line no-new
-      new WorkResponseService(io, {});
+      await new WorkResponseService(io, {});
     } catch (e) {
       expect(e.message).toEqual('Error: Unable to validate an empty value for property: rootModel');
       return done();
@@ -94,7 +94,7 @@ describe('tests for the work-response service', () => {
       throw new Error('Timeout expired, socket should not have had message sent to it.');
     });
 
-    const wr = new WorkResponseService(io, workResponse);
+    const wr = await new WorkResponseService(io, workResponse);
     await wr.handleResponse();
   });
 
@@ -111,7 +111,7 @@ describe('tests for the work-response service', () => {
       ],
     };
 
-    const w = new WorkResponseService(io, workResponse);
+    const w = await new WorkResponseService(io, workResponse);
     const expectedResponse = JSON.parse(JSON.stringify(workResponse));
     delete expectedResponse.results[0].type;
 
@@ -147,7 +147,7 @@ describe('tests for the work-response service', () => {
         }],
     };
 
-    const w = new WorkResponseService(io, workResponse);
+    const w = await new WorkResponseService(io, workResponse);
     const expectedResponse = JSON.parse(JSON.stringify(workResponse));
     expectedResponse.results
       .forEach((res) => delete res.type);
@@ -197,7 +197,7 @@ describe('tests for the work-response service', () => {
       done();
     });
 
-    const w = new WorkResponseService(io, workResponse);
+    const w = await new WorkResponseService(io, workResponse);
     await w.handleResponse();
   });
 
@@ -244,7 +244,7 @@ describe('tests for the work-response service', () => {
       done();
     });
 
-    const w = new WorkResponseService(io, workResponse);
+    const w = await new WorkResponseService(io, workResponse);
     await w.handleResponse();
   });
 
@@ -289,7 +289,7 @@ describe('tests for the work-response service', () => {
       done();
     });
 
-    const w = new WorkResponseService(io, workResponse);
+    const w = await new WorkResponseService(io, workResponse);
     await w.handleResponse();
   });
 
@@ -312,7 +312,7 @@ describe('tests for the work-response service', () => {
       ],
     };
 
-    const w = new WorkResponseService(io, workResponse);
+    const w = await new WorkResponseService(io, workResponse);
     await w.handleResponse();
 
     const cache = CacheSingleton.get();
@@ -334,7 +334,7 @@ describe('tests for the work-response service', () => {
       ],
     };
 
-    const w = new WorkResponseService(io, workResponse);
+    const w = await new WorkResponseService(io, workResponse);
     await w.handleResponse();
 
     const cache = CacheSingleton.get();

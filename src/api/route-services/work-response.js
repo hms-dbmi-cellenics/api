@@ -1,28 +1,17 @@
-const yaml = require('js-yaml');
-const fs = require('fs');
-const path = require('path');
-const Validator = require('swagger-model-validator');
 const AWS = require('aws-sdk');
+const validateRequest = require('../../utils/schema-validator');
 const logger = require('../../utils/logging');
 const { cacheSetResponse } = require('../../utils/cache-request');
 const { handlePagination } = require('../../utils/handlePagination');
 
 class WorkResponseService {
   constructor(io, workResponse) {
-    const specPath = path.resolve(__dirname, '..', '..', 'specs', 'api.yaml');
-    const specObj = yaml.safeLoad(fs.readFileSync(specPath), 'utf8');
-    const validator = new Validator();
-    const res = validator.validate(
-      workResponse, specObj.components.schemas.WorkResponse, specObj.components.schemas,
-    );
-
-
-    if (!res.valid) {
-      throw new Error(res.errors);
-    }
-
-    this.workResponse = workResponse;
-    this.io = io;
+    return (async () => {
+      await validateRequest(workResponse, 'WorkRequest.v1.yaml');
+      this.workResponse = workResponse;
+      this.io = io;
+      return this;
+    })();
   }
 
   // eslint-disable-next-line class-methods-use-this

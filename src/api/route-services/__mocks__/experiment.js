@@ -11,16 +11,16 @@ const mockGetCellSets = jest.fn(() => new Promise((resolve) => {
       {
         color: 'white',
         name: 'Cell types',
-        key: 1,
+        key: 'a',
         children: [
           {
             color: 'blue',
-            key: 7,
+            key: 'b',
             name: 'some cells',
           },
           {
             color: 'red',
-            key: 8,
+            key: 'c',
             name: 'some other cells',
           },
         ],
@@ -28,7 +28,7 @@ const mockGetCellSets = jest.fn(() => new Promise((resolve) => {
       {
         color: 'black',
         name: 'amazing cells',
-        key: 3,
+        key: 'd',
       },
     ],
   });
@@ -52,22 +52,22 @@ const mockGetProcessingConfig = jest.fn(() => new Promise((resolve) => {
 const mockUpdateProcessingConfig = jest.fn(
   () => new Promise((resolve) => {
     resolve({
-      cellSizeDistribution: {
-        M: {
+      processingConfig: {
+        cellSizeDistribution: { filterSettings: { minCellSize: 10800, binStep: 200 }, enabled: true },
+        readAlignment: { filterSettings: { method: 'absolute_threshold', methodSettings: { absolute_threshold: { bandwidth: -1, filterThreshold: 0.5 } } }, enabled: true },
+        classifier: { filterSettings: { minProbabiliy: 0.8, filterThreshold: -1 }, enabled: true },
+        mitochondrialContent: { filterSettings: { method: 'absolute_threshold', methodSettings: { absolute_threshold: { maxFraction: 0.1, binStep: 0.05 } } }, enabled: true },
+        configureEmbedding: { embeddingSettings: { method: 'tsne', methodSettings: { tsne: { perplexity: 30, learningRate: 200 }, umap: { minimumDistance: 0.1, distanceMetric: 'euclidean' } } }, clusteringSettings: { method: 'louvain', methodSettings: { louvain: { resolution: 0.5 } } } },
+        numGenesVsNumUmis: {
           filterSettings: {
-            M: {
-              minCellSize: {
-                N: '10800',
-              },
-              binStep: {
-                N: '200',
-              },
-            },
+            regressionType: 'gam', smoothing: 13, stringency: 2.1, lowerCutoff: 2.1, binStep: 0.05, upperCutoff: 4.8,
           },
-          enabled: {
-            BOOL: false,
-          },
+          enabled: true,
         },
+        dimensionalityReduction: {
+          interpolate: 'linear', method: 'pca', methodSettings: { pca: { maxPCs: 10 } }, excludeGeneCategories: { ribosomal: true, cellCycle: true, mitochondrial: true },
+        },
+        doubletScores: { filterSettings: { probabilityThreshold: 0.2, binStep: 0.05 }, enabled: true },
       },
     });
   }),

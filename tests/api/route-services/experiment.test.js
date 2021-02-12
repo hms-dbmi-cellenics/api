@@ -217,12 +217,11 @@ describe('tests for the experiment service', () => {
     const putItemSpy = jest.fn((x) => x);
     AWSMock.mock('DynamoDB', 'updateItem', (params, callback) => {
       putItemSpy(params);
-      callback(null, []); // We do not care about the return value here, it is not used.
+      callback(null, {}); // We do not care about the return value here, it is not used.
     });
 
     e.updateProcessingConfig('12345', testData)
-      .then((returnValue) => {
-        expect(returnValue).toEqual([]);
+      .then(() => {
         expect(putItemSpy).toHaveBeenCalledWith(
           {
             TableName: 'experiments-test',

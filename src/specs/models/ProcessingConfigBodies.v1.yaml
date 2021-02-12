@@ -1,6 +1,6 @@
 title: Processing config bodies
 description: Valid processing config bodies.
-oneOf:
+anyOf:
   - $ref: ./processing-config-bodies/ProcessingConfigCellSizeDistribution.v1.yaml
   - $ref: ./processing-config-bodies/ProcessingConfigClassifier.v1.yaml
   - $ref: ./processing-config-bodies/ProcessingConfigMitochondrialContent.v1.yaml

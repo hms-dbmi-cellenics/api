@@ -26,7 +26,7 @@ module.exports = {
     logger.log('message parsed', msg);
 
     // Asynchronously validate and process the message.
-    validator.validate(msg, (err, message) => {
+    validator.validate(msg, async (err, message) => {
       if (config.clusterEnv !== 'development') {
         if (err) {
           logger.error(
@@ -56,7 +56,7 @@ module.exports = {
           const workResult = JSON.parse(message.Message);
           logger.log('workresult parsed: ', workResult);
 
-          const responseService = new WorkResponseService(io, workResult);
+          const responseService = await new WorkResponseService(io, workResult);
           responseService.handleResponse();
         } catch (e) {
           logger.error(

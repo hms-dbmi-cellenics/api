@@ -134,30 +134,10 @@ describe('tests for experiment route', () => {
       },
     ];
 
-    const result = {
-      cellSizeDistribution: {
-        M: {
-          filterSettings: {
-            M: {
-              minCellSize: {
-                N: '10800',
-              },
-              binStep: {
-                N: '200',
-              },
-            },
-          },
-          enabled: {
-            BOOL: false,
-          },
-        },
-      },
-    };
-
     request(app)
       .put('/v1/experiments/someId/processingConfig')
       .send(newData)
-      .expect(200, result)
+      .expect(200)
       .end((err) => {
         if (err) {
           return done(err);
