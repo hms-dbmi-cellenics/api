@@ -758,6 +758,10 @@ components:
             - volcano
             - heatmap
             - frequency
+            - embeddingPreviewBySample
+            - embeddingPreviewByCellSets
+            - embeddingPreviewMitochondrialReads
+            - embeddingPreviewDoubletScore
         config:
           type: object
       required:
