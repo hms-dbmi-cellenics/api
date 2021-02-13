@@ -757,6 +757,7 @@ components:
             - embeddingContinuous
             - volcano
             - heatmap
+            - frequency
         config:
           type: object
       required:
