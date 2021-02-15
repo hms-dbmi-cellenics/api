@@ -7,7 +7,7 @@ const { handlePagination } = require('../../utils/handlePagination');
 class WorkResponseService {
   constructor(io, workResponse) {
     return (async () => {
-      await validateRequest(workResponse, 'WorkRequest.v1.yaml');
+      await validateRequest(workResponse, 'WorkResponse.v1.yaml');
       this.workResponse = workResponse;
       this.io = io;
       return this;

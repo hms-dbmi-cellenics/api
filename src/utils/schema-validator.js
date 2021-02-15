@@ -11,10 +11,10 @@ const validateRequest = async (request, schemaPath) => {
   // Create a custom Swagger client and 'HTTP fetcher' mock so we can load in
   // our spec spread across multiple local files. The result is the entire spec
   // fully resolved across all refs and imports.
-  const spec = await SwaggerClient.resolve({
+  const { spec } = await SwaggerClient.resolve({
     url: specPath,
     http: async ({ url, headers }) => {
-      const data = yaml.safeLoad(fs.readFileSync(specPath), 'utf8');
+      const data = yaml.safeLoad(fs.readFileSync(url), 'utf8');
 
       return {
         ok: true,
@@ -29,7 +29,6 @@ const validateRequest = async (request, schemaPath) => {
       };
     },
   });
-
 
   const validator = new Validator();
   const res = validator.validate(
