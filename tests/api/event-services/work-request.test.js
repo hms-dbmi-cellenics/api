@@ -29,7 +29,7 @@ describe('handleWorkRequest', () => {
       socketId: '6789',
       experimentId: 'my-experiment',
       timeout: '2001-01-01T00:00:00Z',
-      body: { name: 'GetEmbedding', config: {} },
+      body: { name: 'GetEmbedding', config: { minimumDistance: 0.3, distanceMetric: 'euclidean' } },
     };
 
     try {
@@ -37,6 +37,72 @@ describe('handleWorkRequest', () => {
     } catch (e) {
       expect(e.message).toMatch(
         /^Work request will not be handled as timeout/,
+      );
+    }
+  });
+
+  it('Throws when an invalid distanceMetric in getEmbedding is encountered.', async () => {
+    // Initialize with an empty cache so a worker hit will be encountered.
+    CacheSingleton.createMock({});
+    expect.assertions(1);
+
+    const workRequest = {
+      uuid: '12345',
+      socketId: '6789',
+      experimentId: 'my-experiment',
+      timeout: '2099-01-01T00:00:00Z',
+      body: { name: 'GetEmbedding', config: { minimumDistance: 0.3, distanceMetric: 'invalidMetric' } },
+    };
+
+    try {
+      await handleWorkRequest(workRequest, socket);
+    } catch (e) {
+      expect(e.message).toMatch(
+        /^Error: distanceMetric is not set to an allowed value/,
+      );
+    }
+  });
+
+  it('Throws when an invalid minimumDistance in getEmbedding is encountered.', async () => {
+    // Initialize with an empty cache so a worker hit will be encountered.
+    CacheSingleton.createMock({});
+    expect.assertions(1);
+
+    const workRequest = {
+      uuid: '12345',
+      socketId: '6789',
+      experimentId: 'my-experiment',
+      timeout: '2099-01-01T00:00:00Z',
+      body: { name: 'GetEmbedding', config: { minimumDistance: -1, distanceMetric: 'euclidean' } },
+    };
+
+    try {
+      await handleWorkRequest(workRequest, socket);
+    } catch (e) {
+      expect(e.message).toMatch(
+        /^Error: minimumDistance must be at least 0/,
+      );
+    }
+  });
+
+  it('Throws when there is a missing config property.', async () => {
+    // Initialize with an empty cache so a worker hit will be encountered.
+    CacheSingleton.createMock({});
+    expect.assertions(1);
+
+    const workRequest = {
+      uuid: '12345',
+      socketId: '6789',
+      experimentId: 'my-experiment',
+      timeout: '2099-01-01T00:00:00Z',
+      body: { name: 'GetEmbedding', config: { distanceMetric: 'euclidean' } },
+    };
+
+    try {
+      await handleWorkRequest(workRequest, socket);
+    } catch (e) {
+      expect(e.message).toMatch(
+        /^Error: minimumDistance is a required field/,
       );
     }
   });

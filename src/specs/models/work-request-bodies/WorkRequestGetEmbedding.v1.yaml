@@ -10,6 +10,20 @@ properties:
   config:
     type: object
     description: The configuration settings to use for calculation of this embedding.
+    properties:
+      minimumDistance:
+        type: number
+        description: Defines how tightly the embedding is allowed to compress points together.
+        minimum: 0
+      distanceMetric:
+        type: string
+        description: The selected method used to measure distance
+        enum:
+          - euclidean
+          - cosine
+    required:
+      - minimumDistance
+      - distanceMetric
   type:
     type: string
     enum:

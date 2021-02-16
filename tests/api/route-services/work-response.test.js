@@ -25,8 +25,10 @@ describe('tests for the work-response service', () => {
       body: {
         name: 'GetEmbedding',
         config: {
-          type: 'pca',
+          minimumDistance: 0.3,
+          distanceMetric: 'euclidean',
         },
+        type: 'pca',
       },
     },
     response: {
