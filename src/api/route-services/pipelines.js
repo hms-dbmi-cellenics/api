@@ -174,20 +174,13 @@ class PipelinesService {
       type: 'STANDARD',
     };
 
-    console.log(params);
     try {
       const { stateMachineArn } = await this.stepFunctions.createStateMachine(params).promise();
       return { stateMachineArn };
     } catch (e) {
-      console.log('other error!');
-
-
       if (e.code !== 'StateMachineAlreadyExists') {
-        console.log('throw!@!');
         throw e;
       }
-
-      console.log('try again');
 
       const stateMachineArn = `arn:aws:states:${config.awsRegion}:${accountId}:stateMachine:${params.name}`;
 

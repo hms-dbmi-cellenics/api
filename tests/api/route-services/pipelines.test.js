@@ -32,7 +32,6 @@ describe('tests for the experiment service', () => {
 
     const createStateMachineSpy = jest.fn((stateMachineObject) => _.omit(stateMachineObject, 'definition'));
     AWSMock.mock('StepFunctions', 'createStateMachine', (params, callback) => {
-      console.log(params);
       createStateMachineSpy(params);
       callback(null, { stateMachineArn: 'test-machine' });
     });
@@ -65,14 +64,12 @@ describe('tests for the experiment service', () => {
 
     const createStateMachineSpy = jest.fn((stateMachineObject) => _.omit(stateMachineObject, 'definition'));
     AWSMock.mock('StepFunctions', 'createStateMachine', (params, callback) => {
-      console.log(params);
       createStateMachineSpy(params);
       callback({ code: 'StateMachineAlreadyExists' }, null);
     });
 
     const updateStateMachineSpy = jest.fn((stateMachineObject) => _.omit(stateMachineObject, 'definition'));
     AWSMock.mock('StepFunctions', 'updateStateMachine', (params, callback) => {
-      console.log(params);
       updateStateMachineSpy(params);
       callback(null, { stateMachineArn: 'test-machine' });
     });
