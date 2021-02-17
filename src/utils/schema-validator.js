@@ -6,6 +6,8 @@ const Validator = require('swagger-model-validator');
 const yaml = require('js-yaml');
 
 const validateRequest = async (request, schemaPath) => {
+  console.log(request, schemaPath);
+
   const specPath = path.resolve(__dirname, '..', 'specs', 'models', schemaPath);
 
   // Create a custom Swagger client and 'HTTP fetcher' mock so we can load in

@@ -314,6 +314,27 @@ paths:
         '200':
           description: OK
       description: Deletes a plot and table for a given experiment with the data specified.
+  '/experiments/{experimentId}/pipelines':
+    parameters:
+      - schema:
+          type: string
+        name: experimentId
+        in: path
+        required: true
+    post:
+      summary: Create a new pipeline for taks execution
+      operationId: createNewPipeline
+      x-eov-operation-id: 'pipelines#create'
+      x-eov-operation-handler: routes/pipelines
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      description: This path will create a new pipeline that can run a state machine with different bioinformatics tasks.
 components:
   schemas:
     dummy:

@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tests for the experiment service Create pipeline works 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "name": "biomage-test",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "name": "biomage-test",
+      },
+    },
+  ],
+}
+`;
+
+exports[`tests for the experiment service Create pipeline works 2`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "loggingConfiguration": Object {
+        "level": "OFF",
+      },
+      "name": "biomage-pipeline-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
+      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
+      "tags": Array [
+        Object {
+          "key": "experimentId",
+          "value": "testExperimentId",
+        },
+        Object {
+          "key": "clusterEnv",
+          "value": "test",
+        },
+        Object {
+          "key": "sandboxId",
+          "value": undefined,
+        },
+      ],
+      "type": "STANDARD",
+    },
+  },
+]
+`;
+
+exports[`tests for the experiment service Pipeline is updated instead of created if an error is thrown. 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "name": "biomage-test",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "name": "biomage-test",
+      },
+    },
+  ],
+}
+`;
+
+exports[`tests for the experiment service Pipeline is updated instead of created if an error is thrown. 2`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "loggingConfiguration": Object {
+        "level": "OFF",
+      },
+      "name": "biomage-pipeline-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
+      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
+      "tags": Array [
+        Object {
+          "key": "experimentId",
+          "value": "testExperimentId",
+        },
+        Object {
+          "key": "clusterEnv",
+          "value": "test",
+        },
+        Object {
+          "key": "sandboxId",
+          "value": undefined,
+        },
+      ],
+      "type": "STANDARD",
+    },
+  },
+]
+`;
+
+exports[`tests for the experiment service Pipeline is updated instead of created if an error is thrown. 3`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
+      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-pipeline-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
+    },
+  },
+]
+`;
