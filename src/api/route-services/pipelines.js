@@ -52,7 +52,6 @@ class PipelinesService {
 
   async generatePipeline(experimentId) {
     const { name, endpoint, certAuthority } = await this.getClusterInformation();
-    const namespace = `worker-${config.sandboxId}`;
     const image = await PipelinesService.getPipelineImage();
 
     return {
@@ -68,7 +67,7 @@ class PipelinesService {
             CertificateAuthority: certAuthority,
             Endpoint: endpoint,
             Method: 'DELETE',
-            Path: `/apis/batch/v1/namespaces/${namespace}/jobs`,
+            Path: `/apis/batch/v1/namespaces/${config.workerNamespace}/jobs`,
             QueryParameters: {
               fieldSelector: [
                 'status.successful=1',
@@ -86,7 +85,7 @@ class PipelinesService {
             CertificateAuthority: certAuthority,
             Endpoint: endpoint,
             Method: 'POST',
-            Path: `/apis/batch/v1/namespaces/${namespace}/jobs`,
+            Path: `/apis/batch/v1/namespaces/${config.workerNamespace}/jobs`,
             RequestBody: {
               apiVersion: 'batch/v1',
               kind: 'Job',

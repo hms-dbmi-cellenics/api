@@ -52,6 +52,7 @@ const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
   clusterEnv: process.env.CLUSTER_ENV || 'development',
   sandboxId: process.env.SANDBOX_ID || 'default',
+  workerNamespace: `worker-${process.env.SANDBOX_ID || 'default'}`,
   awsRegion,
   awsAccountIdPromise: getAwsAccountId,
   githubToken: process.env.READONLY_API_TOKEN_GITHUB,
