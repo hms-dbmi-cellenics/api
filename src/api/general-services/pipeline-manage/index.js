@@ -9,7 +9,7 @@ const AWS = require('../../../utils/requireAWS');
 const config = require('../../../config');
 const logger = require('../../../utils/logging');
 
-const getPipelineImage = async () => {
+const getPipelineImages = async () => {
   const response = await fetch(
     config.pipelineInstanceConfigUrl,
     {
@@ -20,7 +20,7 @@ const getPipelineImage = async () => {
   const txt = await response.text();
   const manifest = YAML.parseAllDocuments(txt);
 
-  return jq.json(manifest, '..|objects|.r//empty');
+  return jq.json(manifest, '..|objects|.images//empty');
 };
 
 const getClusterInfo = async () => {
@@ -130,7 +130,7 @@ const createPipeline = async (experimentId) => {
     accountId,
     roleArn,
     experiemntId: experimentId,
-    pipelineImage: await getPipelineImage(),
+    pipelineImages: await getPipelineImages(),
     clusterInfo: await getClusterInfo(),
   };
 

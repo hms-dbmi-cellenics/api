@@ -2,7 +2,7 @@ const config = require('../../../../config');
 
 const createNewJobIfNotExist = (context, step) => {
   const {
-    clusterInfo, experimentId, pipelineImage, accountId,
+    clusterInfo, experimentId, pipelineImages, accountId,
   } = context;
 
 
@@ -14,7 +14,7 @@ const createNewJobIfNotExist = (context, step) => {
       Parameters: {
         FunctionName: `arn:aws:lambda:eu-west-1:${accountId}:function:local-container-launcher`,
         Payload: {
-          image: pipelineImage,
+          image: pipelineImages['remoter-server'],
           name: 'pipeline-remoter-server',
         },
       },
@@ -48,7 +48,7 @@ const createNewJobIfNotExist = (context, step) => {
               containers: [
                 {
                   name: 'remoter-server',
-                  image: pipelineImage,
+                  image: pipelineImages['remoter-server'],
                 },
               ],
               restartPolicy: 'Never',
