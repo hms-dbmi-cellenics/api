@@ -66,9 +66,7 @@ const config = {
 
 if (config.clusterEnv === 'staging') {
   config.workerInstanceConfigUrl = `https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/${config.sandboxId}.yaml`;
-
-  // TODO: this is development only, must be fixed before merging.
-  config.pipelineInstanceConfigUrl = 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/pipeline.yaml';
+  config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/${config.sandboxId}.yaml`;
   config.cachingEnabled = false;
 }
 
