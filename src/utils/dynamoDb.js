@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+const AWS = require('./requireAWS');
 const config = require('../config');
 
 const createDynamoDbInstance = () => new AWS.DynamoDB({

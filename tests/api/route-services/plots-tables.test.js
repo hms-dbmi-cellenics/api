@@ -1,5 +1,5 @@
 const AWSMock = require('aws-sdk-mock');
-const AWS = require('aws-sdk');
+const AWS = require('../../../src/utils/requireAWS');
 const PlotsTablesService = require('../../../src/api/route-services/plots-tables');
 const { convertToDynamoDbRecord } = require('../../../src/utils/dynamoDb');
 

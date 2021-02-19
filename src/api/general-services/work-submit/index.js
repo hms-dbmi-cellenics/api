@@ -1,5 +1,6 @@
-const AWS = require('aws-sdk');
+
 const crypto = require('crypto');
+const AWS = require('../../../utils/requireAWS');
 const createWorkerResources = require('./create-worker-k8s');
 const config = require('../../../config');
 const logger = require('../../../utils/logging');

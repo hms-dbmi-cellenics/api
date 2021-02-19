@@ -4,7 +4,6 @@ const express = require('express');
 const expressLoader = require('./loaders/express');
 const cacheLoader = require('./loaders/cache');
 const config = require('./config');
-
 const logger = require('./utils/logging');
 
 async function startServer() {

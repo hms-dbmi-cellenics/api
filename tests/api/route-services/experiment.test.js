@@ -1,5 +1,5 @@
-const AWS = require('aws-sdk');
 const AWSMock = require('aws-sdk-mock');
+const AWS = require('../../../src/utils/requireAWS');
 
 const ExperimentService = require('../../../src/api/route-services/experiment');
 

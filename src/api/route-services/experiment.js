@@ -3,7 +3,6 @@ const mockData = require('./mock-data.json');
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord, configArrayToUpdateObjs,
 } = require('../../utils/dynamoDb');
-
 const NotFoundError = require('../../utils/NotFoundError');
 
 class ExperimentService {

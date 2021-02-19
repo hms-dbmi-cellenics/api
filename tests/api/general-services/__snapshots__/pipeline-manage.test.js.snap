@@ -50,6 +50,19 @@ Array [
 ]
 `;
 
+exports[`tests for the experiment service Create pipeline works 3`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "input": "{}",
+      "stateMachineArn": "test-machine",
+      "traceHeader": undefined,
+    },
+  },
+]
+`;
+
 exports[`tests for the experiment service Pipeline is updated instead of created if an error is thrown. 1`] = `
 [MockFunction] {
   "calls": Array [
@@ -107,6 +120,19 @@ Array [
     "value": Object {
       "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
       "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-pipeline-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
+    },
+  },
+]
+`;
+
+exports[`tests for the experiment service Pipeline is updated instead of created if an error is thrown. 4`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "input": "{}",
+      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-pipeline-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
+      "traceHeader": undefined,
     },
   },
 ]

@@ -4,7 +4,8 @@ const path = require('path');
 const OpenApiValidator = require('express-openapi-validator');
 const http = require('http');
 const io = require('socket.io');
-const logger = require('../utils/logging');
+const AWSXRay = require('aws-xray-sdk');
+const config = require('../config');
 
 module.exports = async (app) => {
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
@@ -14,13 +15,17 @@ module.exports = async (app) => {
   // Enable Cross Origin Resource Sharing to all origins by default
   app.use(cors());
 
-  // Middleware that transforms the raw string of req.body into json
-
   // The custom limits are required so that SNS topics can submit work results
   // up to the size of the max SNS topic limit (256k), it defaults to 100kb.
   app.use(bodyParser.urlencoded({ extended: false, limit: '1mb', parameterLimit: 300000 }));
   app.use(bodyParser.text({ extended: false, limit: '1mb', parameterLimit: 300000 }));
   app.use(bodyParser.json({ extended: false, limit: '10mb', parameterLimit: 300000 }));
+
+
+  // Enable AWS XRay
+  // eslint-disable-next-line global-require
+  AWSXRay.captureHTTPsGlobal(require('http'));
+  app.use(AWSXRay.express.openSegment(`API-${config.clusterEnv}-express`));
 
   app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
@@ -29,18 +34,23 @@ module.exports = async (app) => {
     operationHandlers: path.join(__dirname, '..', 'api'),
   }));
 
+  app.use(AWSXRay.express.closeSegment());
+
   // Custom error handler.
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
-    logger.log('Error thrown in HTTP request');
-    logger.log(err);
+    console.error('Error thrown in HTTP request');
+    console.error(err);
 
     // format errors
     res.status(err.status || 500).json({
       message: err.message,
       errors: err.errors,
     });
+
+    next(err);
   });
+
 
   const server = http.createServer(app);
   const socketIo = io.listen(server);

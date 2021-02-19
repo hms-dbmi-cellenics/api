@@ -8,6 +8,7 @@ const expressLoader = require('../../../src/loaders/express');
 const CacheSingleton = require('../../../src/cache');
 
 jest.mock('sns-validator');
+jest.mock('aws-xray-sdk');
 jest.mock('../../../src/utils/logging');
 jest.mock('../../../src/cache');
 
@@ -26,7 +27,7 @@ const basicMsg = JSON.stringify({
   },
 });
 
-describe('tests for experiment route', () => {
+describe('WorkResults route', () => {
   beforeEach(() => {
     CacheSingleton.createMock({});
   });

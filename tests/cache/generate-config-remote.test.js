@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
-const AWS = require('aws-sdk');
 const AWSMock = require('aws-sdk-mock');
+const AWS = require('../../src/utils/requireAWS');
 const mockConfig = require('../../src/config/test-config');
 const { BASE_CONFIG, generateConfig } = require('../../src/cache/generate-config');
 

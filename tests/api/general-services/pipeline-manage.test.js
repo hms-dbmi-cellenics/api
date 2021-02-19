@@ -1,9 +1,8 @@
-const { exportContext } = require('@kubernetes/client-node/dist/config_types');
-const AWS = require('aws-sdk');
 const AWSMock = require('aws-sdk-mock');
 const _ = require('lodash');
+const AWS = require('../../../src/utils/requireAWS');
 
-const PipelinesService = require('../../../src/api/route-services/pipelines');
+const createPipeline = require('../../../src/api/general-services/pipeline-manage');
 
 describe('tests for the experiment service', () => {
   afterEach(() => {
@@ -36,11 +35,19 @@ describe('tests for the experiment service', () => {
       callback(null, { stateMachineArn: 'test-machine' });
     });
 
-    const p = new PipelinesService();
+    const startExecutionSpy = jest.fn((x) => x);
+    AWSMock.mock('StepFunctions', 'startExecution', (params, callback) => {
+      startExecutionSpy(params);
+      callback(null, { executionArn: 'test-machine' });
+    });
 
-    await p.create('testExperimentId');
+
+    await createPipeline('testExperimentId');
     expect(describeClusterSpy).toMatchSnapshot();
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
+
+    expect(startExecutionSpy).toHaveBeenCalled();
+    expect(startExecutionSpy.mock.results).toMatchSnapshot();
   });
 
   it('Pipeline is updated instead of created if an error is thrown.', async () => {
@@ -74,13 +81,20 @@ describe('tests for the experiment service', () => {
       callback(null, { stateMachineArn: 'test-machine' });
     });
 
-    const p = new PipelinesService();
+    const startExecutionSpy = jest.fn((x) => x);
+    AWSMock.mock('StepFunctions', 'startExecution', (params, callback) => {
+      startExecutionSpy(params);
+      callback(null, { executionArn: 'test-execution' });
+    });
 
-    await p.create('testExperimentId');
+    await createPipeline('testExperimentId');
     expect(describeClusterSpy).toMatchSnapshot();
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
 
     expect(updateStateMachineSpy).toHaveBeenCalled();
     expect(updateStateMachineSpy.mock.results).toMatchSnapshot();
+
+    expect(startExecutionSpy).toHaveBeenCalled();
+    expect(startExecutionSpy.mock.results).toMatchSnapshot();
   });
 });
