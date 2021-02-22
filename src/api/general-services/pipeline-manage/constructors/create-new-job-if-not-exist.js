@@ -32,7 +32,7 @@ const createNewJobIfNotExist = (context, step) => {
       CertificateAuthority: clusterInfo.certAuthority,
       Endpoint: clusterInfo.endpoint,
       Method: 'POST',
-      Path: `/apis/batch/v1/namespaces/${config.namespace}/jobs`,
+      Path: `/apis/batch/v1/namespaces/${config.workerNamespace}/jobs`,
       RequestBody: {
         apiVersion: 'batch/v1',
         kind: 'Job',

@@ -18,6 +18,7 @@ const constructDeleteCompletedJobs = (context, step) => {
   }
 
   return {
+    ...step,
     Type: 'Task',
     Comment: 'Deletes all the preivous server jobs that are already completed.',
     Resource: 'arn:aws:states:::eks:call',
@@ -26,7 +27,7 @@ const constructDeleteCompletedJobs = (context, step) => {
       CertificateAuthority: context.clusterInfo.certAuthority,
       Endpoint: context.clusterInfo.endpoint,
       Method: 'DELETE',
-      Path: `/apis/batch/v1/namespaces/${config.namespace}/jobs`,
+      Path: `/apis/batch/v1/namespaces/${config.workerNamespace}/jobs`,
       QueryParameters: {
         fieldSelector: [
           'status.successful=1',

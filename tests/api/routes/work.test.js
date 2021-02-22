@@ -27,16 +27,21 @@ const basicMsg = JSON.stringify({
   },
 });
 
+
 describe('WorkResults route', () => {
-  beforeEach(() => {
+  let app = null;
+
+  beforeEach(async () => {
     CacheSingleton.createMock({});
+
+    const mockApp = await expressLoader(express());
+    app = mockApp.app;
   });
   afterEach(() => {
     logger.log.mockClear();
     logger.error.mockClear();
   });
   it('Can handle notifications', async () => {
-    const { app } = await expressLoader(express());
     let validMsg = _.cloneDeep(JSON.parse(basicMsg));
     validMsg.Type = 'Notification';
     validMsg = JSON.stringify(validMsg);
@@ -54,7 +59,6 @@ describe('WorkResults route', () => {
     expect(mockHandleResponse).toHaveBeenCalledTimes(1);
   });
   it('Validating the response throws an error', async () => {
-    const { app } = await expressLoader(express());
     const invalidMsg = _.cloneDeep(basicMsg);
     https.get = jest.fn();
 
@@ -68,7 +72,6 @@ describe('WorkResults route', () => {
   });
 
   it('Can handle message subscribtion', async () => {
-    const { app } = await expressLoader(express());
     let validMsg = _.cloneDeep(JSON.parse(basicMsg));
     validMsg.Type = 'SubscriptionConfirmation';
     validMsg = JSON.stringify(validMsg);
@@ -84,7 +87,6 @@ describe('WorkResults route', () => {
   });
 
   it('Can handle message unsubscribtion', async () => {
-    const { app } = await expressLoader(express());
     let validMsg = _.cloneDeep(JSON.parse(basicMsg));
     validMsg.Type = 'UnsubscribeConfirmation';
     validMsg = JSON.stringify(validMsg);
@@ -100,8 +102,6 @@ describe('WorkResults route', () => {
   });
 
   it('Get malformatted work results returns an error', async () => {
-    const { app } = await expressLoader(express());
-
     const brokenMsg = JSON.stringify();
 
     await request(app)
@@ -111,8 +111,6 @@ describe('WorkResults route', () => {
       .expect(500);
   });
   it('Returns an error when message in sns is malformed', async () => {
-    const { app } = await expressLoader(express());
-
     let validMsg = _.cloneDeep(JSON.parse(basicMsg));
     validMsg.Type = 'NotificationMalformed';
     validMsg = JSON.stringify(validMsg);

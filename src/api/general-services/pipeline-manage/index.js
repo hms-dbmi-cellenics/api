@@ -31,7 +31,7 @@ const getClusterInfo = async () => {
   });
 
   const { cluster: info } = await eks.describeCluster({ name: `biomage-${config.clusterEnv}` }).promise();
-  const { name, endpoint, certAuthority } = info;
+  const { name, endpoint, certificateAuthority: { data: certAuthority } } = info;
 
   return {
     name,
@@ -129,7 +129,6 @@ const createPipeline = async (experimentId) => {
     experimentId,
     accountId,
     roleArn,
-    experiemntId: experimentId,
     pipelineImages: await getPipelineImages(),
     clusterInfo: await getClusterInfo(),
   };

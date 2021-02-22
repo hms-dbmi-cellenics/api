@@ -5,6 +5,13 @@ const expressLoader = require('../../../src/loaders/express');
 jest.mock('../../../src/api/route-services/experiment');
 
 describe('tests for experiment route', () => {
+  let app = null;
+
+  beforeEach(async () => {
+    const mockApp = await expressLoader(express());
+    app = mockApp.app;
+  });
+
   afterEach(() => {
     /**
      * Most important since b'coz of caching, the mocked implementations sometimes does not reset
@@ -14,8 +21,6 @@ describe('tests for experiment route', () => {
   });
 
   it('Find experiment by id works', async (done) => {
-    const { app } = await expressLoader(express());
-
     request(app)
       .get('/v1/experiments/someId')
       .expect(200)
@@ -30,7 +35,6 @@ describe('tests for experiment route', () => {
   });
 
   it('Find cell sets by experiment id works', async (done) => {
-    const { app } = await expressLoader(express());
     request(app)
       .get('/v1/experiments/someId/cellSets')
       .expect(200)
@@ -45,8 +49,6 @@ describe('tests for experiment route', () => {
   });
 
   it('Updating cell sets with no data results in an 415 error', async (done) => {
-    const { app } = await expressLoader(express());
-
     request(app)
       .put('/v1/experiments/someId/cellSets')
       .expect(415)
@@ -61,8 +63,6 @@ describe('tests for experiment route', () => {
   });
 
   it('Updating cell sets with a valid data set results in a successful response', async (done) => {
-    const { app } = await expressLoader(express());
-
     const newData = [
       {
         name: 'Empty cluster',
@@ -88,7 +88,6 @@ describe('tests for experiment route', () => {
   });
 
   it('Get processing config by id works', async (done) => {
-    const { app } = await expressLoader(express());
     request(app)
       .get('/v1/experiments/someId/processingConfig')
       .expect(200)
@@ -103,8 +102,6 @@ describe('tests for experiment route', () => {
   });
 
   it('Updating processing config with no data results in an 415 error', async (done) => {
-    const { app } = await expressLoader(express());
-
     request(app)
       .put('/v1/experiments/someId/processingConfig')
       .expect(415)
@@ -119,8 +116,6 @@ describe('tests for experiment route', () => {
   });
 
   it('Updating processing config with a valid data set results in a successful response', async (done) => {
-    const { app } = await expressLoader(express());
-
     const newData = [
       {
         name: 'cellSizeDistribution',

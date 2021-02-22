@@ -1,10 +1,11 @@
 const AWSXRay = require('aws-xray-sdk');
 const handleWorkRequest = require('../event-services/work-request');
 const logger = require('../../utils/logging');
+const config = require('../../config');
 
 module.exports = (socket) => {
   socket.on('WorkRequest', (data) => {
-    const segment = new AWSXRay.Segment('API-development-socket.io');
+    const segment = new AWSXRay.Segment(`API-${config.clusterEnv}-socket.io`);
     const ns = AWSXRay.getNamespace();
 
     ns.runPromise(async () => {
