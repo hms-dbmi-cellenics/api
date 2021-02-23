@@ -38,7 +38,7 @@ module.exports = (socket) => {
           results: [],
           response: {
             cacheable: false,
-            error: e.toString(),
+            error: e.message,
           },
         });
       }

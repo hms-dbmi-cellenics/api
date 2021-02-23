@@ -80,7 +80,7 @@ module.exports = {
             ...workResponse,
             response: {
               cacheable: false,
-              error: e.toString(),
+              error: e.message,
             },
           });
         }
