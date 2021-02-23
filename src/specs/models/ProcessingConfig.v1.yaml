@@ -17,8 +17,8 @@ properties:
         $ref: ./processing-config-bodies/ProcessingConfigNumGenesVsNumUMIs.v1.yaml
       doubletScores:
         $ref: ./processing-config-bodies/ProcessingConfigDoubletScores.v1.yaml
-      dimensionalityReduction:
-        $ref: ./processing-config-bodies/ProcessingConfigDimensionalityReduction.v1.yaml
+      dataIntegration:
+        $ref: ./processing-config-bodies/ProcessingConfigDataIntegration.v1.yaml
       configureEmbedding:
         $ref: ./processing-config-bodies/ProcessingConfigConfigureEmbedding.v1.yaml
       meta:

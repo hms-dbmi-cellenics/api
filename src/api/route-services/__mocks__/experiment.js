@@ -67,11 +67,21 @@ const mockUpdateProcessingConfig = jest.fn(
           },
           enabled: true,
         },
-        dimensionalityReduction: {
-          interpolate: 'linear',
-          method: 'pca',
-          methodSettings: { pca: { maxPCs: 10 } },
-          excludeGeneCategories: { ribosomal: true, cellCycle: true, mitochondrial: true },
+        dataIntegration: {
+          dataIntegration: {
+            method: 'seuratv4',
+            methodSettings: {
+              seuratv4: {
+                numGenes: 2000,
+                normalisation: 'logNormalise',
+              },
+            },
+          },
+          dimensionalityReduction: {
+            method: 'rpca',
+            numPCs: 30,
+            excludeGeneCategories: ['ribosomal', 'mitochondrial', 'cellCycle'],
+          },
         },
         doubletScores: {
           filterSettings: { probabilityThreshold: 0.2, binStep: 0.05 },
