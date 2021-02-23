@@ -51,17 +51,38 @@ module.exports = {
       if (message.Type === 'Notification') {
         logger.log('notification type message');
 
+        let responseService = null;
+
         try {
           const io = req.app.get('io');
           const workResult = JSON.parse(message.Message);
           logger.log('workresult parsed: ', workResult);
 
-          const responseService = await new WorkResponseService(io, workResult);
-          responseService.handleResponse();
+          responseService = await new WorkResponseService(io, workResult);
+        } catch (e) {
+          logger.error(
+            'Error initializing work response service: ', e,
+          );
+          return;
+        }
+
+        try {
+          await responseService.handleResponse();
         } catch (e) {
           logger.error(
             'Error processing the work response message: ', e,
           );
+
+          const { io, workResponse } = responseService;
+          const { socketId, uuid } = workResponse.request;
+
+          io.to(socketId).emit(`WorkResponse-${uuid}`, {
+            ...workResponse,
+            response: {
+              cacheable: false,
+              error: e.toString(),
+            },
+          });
         }
       }
     });

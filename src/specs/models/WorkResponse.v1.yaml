@@ -42,8 +42,10 @@ properties:
         type: boolean
         description: Whether the result should be cached.
       error:
-        type: boolean
         description: "Whether there's been an error."
+        oneOf:
+          - type: string
+          - type: boolean
 required:
   - results
   - response

@@ -78,6 +78,9 @@ class WorkResponseService {
       uuid, socketId, timeout, pagination,
     } = responseForClient.request;
 
+    this.socketId = socketId;
+    this.uuid = uuid;
+
     const { cacheable } = responseForClient.response;
 
     try {
@@ -94,7 +97,7 @@ class WorkResponseService {
       }
     } catch (e) {
       logger.error('Error trying to cache or paginate data: ', e);
-      return;
+      throw e;
     }
 
     if (Date.parse(timeout) > Date.now()) {
