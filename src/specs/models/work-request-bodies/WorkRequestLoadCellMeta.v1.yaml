@@ -1,8 +1,0 @@
-title: Load Cell Meta Data
-type: object
-properties:
-  name:
-    type: string
-    enum:
-      - GetMitochondrialContent
-description: A schema to load all values of cell metadata. Requests are limited enum under 'name'.

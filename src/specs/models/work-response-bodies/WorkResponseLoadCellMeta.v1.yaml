@@ -1,7 +1,0 @@
-title: Cell Meta Data
-type: array
-items:
-  type: array
-  items:
-    type: number
-description: Response schema for cell metadata. The return value is a list of the requested values ordered by cellId in ascending order
