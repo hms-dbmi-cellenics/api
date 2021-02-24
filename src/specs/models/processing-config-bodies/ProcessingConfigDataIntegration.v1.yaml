@@ -1,32 +1,61 @@
 title: Data Integration
 type: object
+description: Processing config body for Data Integration filter.
 properties:
-  method:
-    type: string
-    minLength: 1
-  methodSettings:
+  dataIntegration:
     type: object
     properties:
-      pca:
+      method:
+        type: string
+        enum:
+          - seuratv4
+          - seuratv3
+          - harmony
+          - conos
+          - liger
+          - fastmnn
+      methodSettings:
         type: object
         properties:
-          maxPCs:
-            type: number
-  interpolate:
-    type: string
-    minLength: 1
-  excludeGeneCategories:
+          seuratv4:
+            type: object
+            properties:
+              numGenes:
+                type: number
+              normalisation:
+                type: string
+                enum:
+                  - logNormalise
+                  - scTransform
+            required:
+              - numGenes
+              - normalisation
+    required:
+      - method
+      - methodSettings
+  dimensionalityReduction:
     type: object
     properties:
-      ribosomal:
-        type: boolean
-      mitochondrial:
-        type: boolean
-      cellCycle:
-        type: boolean
+      method:
+        type: string
+        enum:
+          - rpca
+          - cca
+      numPCs:
+        type: number
+        minimum: 1
+      excludeGeneCategories:
+        type: array
+        items:
+          type: string
+          enum:
+            - ribosomal
+            - mitochondrial
+            - cellCycle
+    required:
+      - method
+      - numPCs
+      - excludeGeneCategories
 required:
-  - method
-  - methodSettings
-  - interpolate
-  - excludeGeneCategories
-description: Processing config body for Data Integration filter.
+  - dataIntegration
+  - dimensionalityReduction

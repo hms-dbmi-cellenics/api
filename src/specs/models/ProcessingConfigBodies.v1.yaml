@@ -8,5 +8,6 @@ anyOf:
   - $ref: ./processing-config-bodies/ProcessingConfigClassifier.v1.yaml
   - $ref: ./processing-config-bodies/ProcessingConfigNumGenesVsNumUMIs.v1.yaml
   - $ref: ./processing-config-bodies/ProcessingConfigDoubletScores.v1.yaml
+  - $ref: ./processing-config-bodies/ProcessingConfigDataIntegration.v1.yaml
   - $ref: ./processing-config-bodies/ProcessingConfigConfigureEmbedding.v1.yaml
   - $ref: ./processing-config-bodies/ProcessingConfigMeta.v1.yaml
