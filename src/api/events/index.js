@@ -25,12 +25,22 @@ module.exports = (socket) => {
       segment.addAnnotation('uuid', uuid);
       segment.addAnnotation('experimentId', experimentId);
 
+
       try {
         await handleWorkRequest(data, socket);
       } catch (e) {
         logger.error('Error while processing WorkRequest event:');
         logger.trace(e);
         segment.addError(e);
+
+        socket.emit(`WorkResponse-${uuid}`, {
+          request: { ...data },
+          results: [],
+          response: {
+            cacheable: false,
+            error: e.message,
+          },
+        });
       }
 
       segment.close();

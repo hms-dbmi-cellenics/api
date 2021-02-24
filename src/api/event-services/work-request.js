@@ -30,6 +30,7 @@ const handleWorkRequest = async (workRequest, socket) => {
       if (Date.parse(timeout) <= Date.now()) {
         throw new Error(`Work request will not be handled as timeout of ${timeout} is in the past...`);
       }
+
       const workSubmitService = new WorkSubmitService(workRequest);
       await workSubmitService.submitWork();
     } else {

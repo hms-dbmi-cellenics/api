@@ -335,6 +335,19 @@ paths:
                 type: object
                 properties: {}
       description: This path will create a new pipeline that can run a state machine with different bioinformatics tasks.
+    get:
+      summary: ''
+      operationId: get-experiments-experimentId-pipelines
+      x-eov-operation-id: 'pipelines#get'
+      x-eov-operation-handler: routes/pipelines
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
 components:
   schemas:
     dummy:
