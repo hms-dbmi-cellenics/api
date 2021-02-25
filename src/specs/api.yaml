@@ -355,6 +355,13 @@ paths:
         name: experimentId
         in: path
         required: true
+  "/experiments/{experimentId}/doubletScores":
+    parameters:
+      - schema:
+          type: string
+        name: experimentId
+        in: path
+        required: true
 components:
   schemas:
     dummy:

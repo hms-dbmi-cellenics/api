@@ -1,0 +1,7 @@
+title: Doublet Scores
+type: array
+items:
+  type: array
+  items:
+    type: number
+description: Response schema for gettin doublet scores. Return value is sorted by CellID in ascending order.

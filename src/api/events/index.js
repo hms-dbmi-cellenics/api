@@ -25,7 +25,6 @@ module.exports = (socket) => {
       segment.addAnnotation('uuid', uuid);
       segment.addAnnotation('experimentId', experimentId);
 
-
       try {
         await handleWorkRequest(data, socket);
       } catch (e) {
