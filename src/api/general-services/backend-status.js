@@ -20,7 +20,15 @@ const getBackendStatus = async (experimentId) => {
   // Always say the worker is down.
 
   if (config.clusterEnv === 'development') {
-    return response;
+    return {
+      ...response,
+      worker: {
+        ...response.worker,
+        status: 'Running',
+        started: true,
+        ready: true,
+      },
+    };
   }
 
   const workerHash = crypto
