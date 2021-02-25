@@ -17,8 +17,7 @@ const getBackendStatus = async (experimentId) => {
   };
 
   // This will not work in development as we are not in a cluster.
-  // Always say the worker is down.
-
+  // Always show the worker as 'up'.
   if (config.clusterEnv === 'development') {
     return {
       ...response,
