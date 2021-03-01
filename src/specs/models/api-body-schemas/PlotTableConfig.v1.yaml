@@ -16,6 +16,14 @@ properties:
       - embeddingContinuous
       - volcano
       - heatmap
+      - frequency
+      - dataIntegrationEmbedding
+      - dataIntegrationFrequency
+      - dataIntegrationElbow
+      - embeddingPreviewBySample
+      - embeddingPreviewByCellSets
+      - embeddingPreviewMitochondrialContent
+      - embeddingPreviewDoubletScore
   config:
     type: object
 required:

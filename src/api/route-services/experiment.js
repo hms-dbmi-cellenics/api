@@ -110,6 +110,16 @@ class ExperimentService {
       attrValues,
     } = configArrayToUpdateObjs('processingConfig', processingConfig);
 
+    const createEmptyProcessingConfigParams = {
+      TableName: this.tableName,
+      Key: { experimentId: { S: experimentId } },
+      UpdateExpression: 'SET processingConfig = if_not_exists(processingConfig, :updatedObject)',
+      ExpressionAttributeValues: { ':updatedObject': { M: {} } },
+      ReturnValues: 'UPDATED_NEW',
+    };
+
+    await dynamodb.updateItem(createEmptyProcessingConfigParams).promise();
+
     const params = {
       TableName: this.tableName,
       Key: key,
@@ -120,6 +130,7 @@ class ExperimentService {
     };
 
     const result = await dynamodb.updateItem(params).promise();
+
     const prettyData = convertToJsObject(result.Attributes);
 
     return prettyData;

@@ -116,7 +116,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/api-response-schemas/Experiment.v1.yaml
+                $ref: ./models/api-body-schemas/Experiment.v1.yaml
         "404":
           description: Experiment not found
           content:
@@ -150,7 +150,7 @@ paths:
                   cellSets:
                     type: array
                     items:
-                      $ref: ./models/api-response-schemas/CellSets.v1.yaml
+                      $ref: ./models/api-body-schemas/CellSets.v1.yaml
         "404":
           description: Experiment not found.
           content:
@@ -178,7 +178,7 @@ paths:
                 type: array
                 items:
                   allOf:
-                    - $ref: ./models/api-response-schemas/CellSets.v1.yaml
+                    - $ref: ./models/api-body-schemas/CellSets.v1.yaml
       description: Updates the cell set information in the database with a modified tree.
       requestBody:
         content:
@@ -187,7 +187,7 @@ paths:
               type: array
               items:
                 allOf:
-                  - $ref: ./models/api-response-schemas/CellSets.v1.yaml
+                  - $ref: ./models/api-body-schemas/CellSets.v1.yaml
       tags:
         - experiments
   "/experiments/{experimentId}/processingConfig":
@@ -276,13 +276,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/api-response-schemas/CellSets.v1.yaml
+                $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
         "201":
           description: New resource created.
           content:
             application/json:
               schema:
-                $ref: ./models/api-response-schemas/PlotTableConfig.v1.yaml
+                $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
         "404":
           description: Invalid experiment ID specified.
       description: Updates a plot and table for a given experiment with the data specified.
@@ -290,7 +290,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ./models/api-response-schemas/CellSets.v1.yaml
+              $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
         description: The new configuration to update the old one by.
     get:
       summary: ""
@@ -303,7 +303,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/api-response-schemas/CellSets.v1.yaml
+                $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
       description: Reads a plot and table for a given experiment with the data specified.
     delete:
       summary: ""
