@@ -17,13 +17,16 @@ module.exports = {
       .catch(next);
   },
 
-  'pipelines#response': async (req, res, next) => {
+  'pipelines#response': async (req, res) => {
     let result;
 
     try {
       result = await parseSNSMessage(req);
     } catch (e) {
-      next(e);
+      logger.error('Parsing initial SNS message failed:', e);
+
+      res.status(400).send('nok');
+      return;
     }
 
     const { io, parsedMessage } = result;
@@ -31,8 +34,12 @@ module.exports = {
     try {
       await pipelineResponse(io, parsedMessage);
     } catch (e) {
-      logger.error('Error processing the work response message:');
-      logger.error(e);
+      logger.error(
+        'Error initializing work response service: ', e,
+      );
+
+      res.status(500).send('nok');
+      return;
     }
 
     res.status(200).send('ok');
