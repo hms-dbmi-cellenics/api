@@ -11,7 +11,7 @@ const createNewStep = (context, step, args) => {
   const task = JSON.stringify({
     experimentId,
     taskName,
-    config: processingConfig[taskName],
+    config: processingConfig[taskName] || {},
   });
 
   if (config.clusterEnv === 'development') {
