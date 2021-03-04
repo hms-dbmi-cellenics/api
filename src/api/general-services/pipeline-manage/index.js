@@ -81,7 +81,7 @@ const createNewStateMachine = async (context, stateMachine) => {
     .digest('hex');
 
   const params = {
-    name: `biomage-pipeline-${pipelineHash}`,
+    name: `biomage-pipeline-${clusterEnv}-${pipelineHash}`,
     roleArn,
     definition: JSON.stringify(stateMachine),
     loggingConfiguration: { level: 'OFF' },
