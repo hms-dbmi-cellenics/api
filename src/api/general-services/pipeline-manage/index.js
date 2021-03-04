@@ -136,16 +136,13 @@ const createPipeline = async (experimentId) => {
   const res = await experimentService.getProcessingConfig(experimentId);
   const { processingConfig } = res;
 
-  const unwantedKeys = ['meta'];
-  const tasks = Object.keys(processingConfig).filter((key) => !unwantedKeys.includes(key));
-
   const context = {
     experimentId,
     accountId,
     roleArn,
     pipelineImages: await getPipelineImages(),
     clusterInfo: await getClusterInfo(),
-    processingConfig: tasks, // TODO : rename
+    processingConfig,
   };
 
   const skeleton = {
@@ -232,8 +229,6 @@ const createPipeline = async (experimentId) => {
     }
     return undefined;
   });
-
-  logger.debug(stateMachine);
 
   logger.log('Skeleton constructed, now creating state machine from skeleton...');
   const stateMachineArn = await createNewStateMachine(context, stateMachine);

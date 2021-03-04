@@ -25,6 +25,7 @@ const createNewStep = (context, step, args) => {
           image: pipelineImages['remoter-client'],
           name: 'pipeline-remoter-client',
           task,
+          detached: false,
         },
       },
     };

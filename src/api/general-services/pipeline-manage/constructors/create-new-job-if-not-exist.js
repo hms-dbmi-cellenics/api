@@ -16,6 +16,7 @@ const createNewJobIfNotExist = (context, step) => {
         Payload: {
           image: pipelineImages['remoter-server'],
           name: 'pipeline-remoter-server',
+          detached: true,
         },
       },
     };
