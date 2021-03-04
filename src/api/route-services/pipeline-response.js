@@ -1,14 +1,16 @@
 const AWS = require('../../utils/requireAWS');
 const validateRequest = require('../../utils/schema-validator');
+const logger = require('../../utils/logging');
 
 const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');
 
   // Fail hard if there was an error.
-  const { response: { error } } = message;
+  const { response: { error }, input: { experimentId } } = message;
 
   if (error) {
-    throw new Error(error);
+    io.sockets.emit(`ExperimentUpdates-${experimentId}`, message);
+    return;
   }
 
   // Download output from S3.
@@ -32,9 +34,7 @@ const pipelineResponse = async (io, message) => {
     output,
   };
 
-
-  const { input: { experimentId } } = message;
-  console.log('Sending to all clients subscribed to experiment', experimentId);
+  logger.log('Sending to all clients subscribed to experiment', experimentId);
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
 

@@ -35,7 +35,7 @@ module.exports = {
       await pipelineResponse(io, parsedMessage);
     } catch (e) {
       logger.error(
-        'Error initializing work response service: ', e,
+        'Pipeline response handler failed with error: ', e,
       );
 
       res.status(500).send('nok');

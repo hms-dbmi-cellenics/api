@@ -64,7 +64,7 @@ paths:
       x-eov-operation-id: 'work#response'
       x-eov-operation-handler: routes/work
       requestBody:
-        description: The data sent by AWS SNS.
+        description: The results from the execution of a work request, sent via SNS.
         required: true
         content:
           text/plain:
@@ -107,7 +107,7 @@ paths:
       x-eov-operation-id: 'pipelines#response'
       x-eov-operation-handler: routes/pipelines
       requestBody:
-        description: The data sent by AWS SNS.
+        description: The results from the execution of a pipeline step, sent via SNS.
         required: true
         content:
           text/plain:
