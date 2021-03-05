@@ -36,7 +36,7 @@ const createNewStep = (context, step, args) => {
     ...step,
     Type: 'Task',
     Comment: 'Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.',
-    Resource: 'arn:aws:states:::eks:call',
+    Resource: 'arn:aws:states:::eks:runJob.sync',
     Parameters: {
       ClusterName: clusterInfo.name,
       CertificateAuthority: clusterInfo.certAuthority,
