@@ -28,7 +28,7 @@ const basicMsg = JSON.stringify({
 });
 
 
-describe('WorkResults route', () => {
+describe('PipelineResults route', () => {
   let app = null;
 
   beforeEach(async () => {
@@ -37,36 +37,40 @@ describe('WorkResults route', () => {
     const mockApp = await expressLoader(express());
     app = mockApp.app;
   });
+
   afterEach(() => {
     logger.log.mockClear();
     logger.error.mockClear();
   });
+
   it('Can handle notifications', async () => {
     let validMsg = _.cloneDeep(JSON.parse(basicMsg));
     validMsg.Type = 'Notification';
     validMsg = JSON.stringify(validMsg);
 
     const mockHandleResponse = jest.fn(() => { });
-    jest.mock('../../../src/api/route-services/work-response',
-      () => jest.fn().mockImplementation(() => ({ handleResponse: mockHandleResponse })));
+    jest.mock('../../../src/api/route-services/pipeline-response', () => mockHandleResponse);
 
     await request(app)
-      .post('/v1/workResults')
+      .post('/v1/pipelineResults')
       .send(validMsg)
       .set('Content-type', 'text/plain')
       .expect(200);
+
     expect(logger.error).toHaveBeenCalledTimes(0);
     expect(mockHandleResponse).toHaveBeenCalledTimes(1);
   });
+
   it('Validating the response throws an error', async () => {
     const invalidMsg = _.cloneDeep(basicMsg);
     https.get = jest.fn();
 
     await request(app)
-      .post('/v1/workResults')
+      .post('/v1/pipelineResults')
       .send(invalidMsg)
       .set('Content-type', 'text/plain')
       .expect(400);
+
     expect(logger.error).toHaveBeenCalled();
     expect(https.get).toHaveBeenCalledTimes(0);
   });
@@ -75,13 +79,15 @@ describe('WorkResults route', () => {
     let validMsg = _.cloneDeep(JSON.parse(basicMsg));
     validMsg.Type = 'SubscriptionConfirmation';
     validMsg = JSON.stringify(validMsg);
+
     https.get = jest.fn();
 
     await request(app)
-      .post('/v1/workResults')
+      .post('/v1/pipelineResults')
       .send(validMsg)
       .set('Content-type', 'text/plain')
       .expect(200);
+
     expect(logger.error).toHaveBeenCalledTimes(0);
     expect(https.get).toHaveBeenCalledTimes(1);
   });
@@ -90,13 +96,15 @@ describe('WorkResults route', () => {
     let validMsg = _.cloneDeep(JSON.parse(basicMsg));
     validMsg.Type = 'UnsubscribeConfirmation';
     validMsg = JSON.stringify(validMsg);
+
     https.get = jest.fn();
 
     await request(app)
-      .post('/v1/workResults')
+      .post('/v1/pipelineResults')
       .send(validMsg)
       .set('Content-type', 'text/plain')
       .expect(200);
+
     expect(logger.error).toHaveBeenCalledTimes(0);
     expect(https.get).toHaveBeenCalledTimes(1);
   });
@@ -105,22 +113,22 @@ describe('WorkResults route', () => {
     const brokenMsg = JSON.stringify();
 
     await request(app)
-      .post('/v1/workResults')
+      .post('/v1/pipelineResults')
       .send(brokenMsg)
       .set('Content-type', 'text/plain')
       .expect(400);
   });
+
   it('Returns an error when message in sns is malformed', async () => {
     let validMsg = _.cloneDeep(JSON.parse(basicMsg));
     validMsg.Type = 'NotificationMalformed';
     validMsg = JSON.stringify(validMsg);
 
-    const mockHandleResponse = jest.fn();
-    jest.mock('../../../src/api/route-services/work-response',
-      () => jest.fn().mockImplementation(() => ({ handleResponse: mockHandleResponse })));
+    const mockHandleResponse = jest.fn(() => { });
+    jest.mock('../../../src/api/route-services/pipeline-response', () => mockHandleResponse);
 
     await request(app)
-      .post('/v1/workResults')
+      .post('/v1/pipelineResults')
       .send(validMsg)
       .set('Content-type', 'text/plain')
       .expect(400);

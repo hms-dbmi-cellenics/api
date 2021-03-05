@@ -8,7 +8,7 @@ const logger = require('./utils/logging');
 
 async function startServer() {
   const { app, server, socketIo: io } = await expressLoader(express());
-  await cacheLoader();
+  await cacheLoader(io);
 
   app.set('io', io);
 
