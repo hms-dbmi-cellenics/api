@@ -10,6 +10,10 @@ const config = require('../../../config');
 const logger = require('../../../utils/logging');
 const ExperimentService = require('../../route-services/experiment');
 
+const deleteCompletedJobs = require('./constructors/delete-complete-jobs');
+const createNewStep = require('./constructors/create-new-step');
+const createNewJobIfNotExist = require('./constructors/create-new-job-if-not-exist');
+
 const experimentService = new ExperimentService();
 
 const getPipelineImages = async () => {
@@ -49,16 +53,13 @@ const constructPipelineStep = (context, step) => {
   /* eslint-disable global-require */
   switch (stepType) {
     case 'delete-completed-jobs': {
-      const f = require('./constructors/delete-complete-jobs');
-      return f(context, step, args);
+      return deleteCompletedJobs(context, step, args);
     }
     case 'create-new-job-if-not-exist': {
-      const f = require('./constructors/create-new-job-if-not-exist');
-      return f(context, step, args);
+      return createNewJobIfNotExist(context, step, args);
     }
     case 'create-new-step': {
-      const f = require('./constructors/create-new-step');
-      return f(context, step, args);
+      return createNewStep(context, step, args);
     }
     default: {
       throw new Error(`Invalid state type specified: ${stepType}`);
