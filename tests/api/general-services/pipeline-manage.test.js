@@ -3,7 +3,6 @@ const _ = require('lodash');
 const AWS = require('../../../src/utils/requireAWS');
 
 const createPipeline = require('../../../src/api/general-services/pipeline-manage');
-const expectedDefinition = require('./expectedDefinition.json');
 
 describe('test for pipeline services', () => {
   afterEach(() => {
