@@ -95,8 +95,6 @@ const executeStateMachine = async (stateMachineArn) => {
   const stepFunctions = new AWS.StepFunctions({
     region: config.awsRegion,
   });
-  console.log('stateMachineArnDebug');
-  console.log(stateMachineArn);
   const { trace_id: traceId } = AWSXRay.getSegment() || {};
 
 
@@ -222,9 +220,6 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
     }
     return undefined;
   });
-
-  console.log('stateMachineDebug');
-  console.log(JSON.stringify(stateMachine));
 
   logger.log('Skeleton constructed, now creating state machine from skeleton...');
   const stateMachineArn = await createNewStateMachine(context, stateMachine);

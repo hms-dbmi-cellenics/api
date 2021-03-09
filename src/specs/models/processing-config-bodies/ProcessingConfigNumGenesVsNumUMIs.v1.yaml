@@ -19,6 +19,25 @@ properties:
         type: number
       binStep:
         type: number
+additionalProperties:
+  type: object
+  properties:
+    filterSettings:
+      type: object
+      properties:
+        regressionType:
+          type: string
+          minLength: 1
+        smoothing:
+          type: number
+        upperCutoff:
+          type: number
+        lowerCutoff:
+          type: number
+        stringency:
+          type: number
+        binStep:
+          type: number
 required:
   - filterSettings
 description: Processing config body for Number of genes vs UMIs filter.

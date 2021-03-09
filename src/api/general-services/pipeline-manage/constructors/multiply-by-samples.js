@@ -32,6 +32,7 @@ const multiplyBySamples = (context, step, args) => {
 
   const clonedStep = { ...step, XConstructorArgs: undefined, XStepType: undefined };
 
+  // R server in pipeline crashes when we send more than one in the branches
   const onlyOneSample = [sampleKeys[0]];
 
   const sampleBranches = onlyOneSample.map((sampleKey) => {

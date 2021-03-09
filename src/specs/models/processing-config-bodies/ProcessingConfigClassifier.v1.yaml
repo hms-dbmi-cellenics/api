@@ -11,5 +11,15 @@ properties:
         type: number
       bandwidth:
         type: number
+additionalProperties:
+  type: object
+  properties:
+    filterSettings:
+      type: object
+      properties:
+        minProbabiliy:
+          type: number
+        bandwidth:
+          type: number
 required:
   - filterSettings
