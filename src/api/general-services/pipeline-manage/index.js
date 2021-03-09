@@ -115,12 +115,6 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
   const processingRes = await experimentService.getProcessingConfig(experimentId);
   const { processingConfig } = processingRes;
 
-  logger.log(`Fetching sample ids for ${experimentId}`);
-  const { cellSets } = await experimentService.getCellSets(experimentId);
-  const samples = cellSets.find((rootNode) => rootNode.key === 'sample').children;
-
-  const sampleKeys = samples.map((sample) => sample.key);
-
   processingConfigUpdates.forEach(({ name, body }) => {
     processingConfig[name] = body;
   });
@@ -132,7 +126,6 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
     pipelineImages: await getPipelineImages(),
     clusterInfo: await getClusterInfo(),
     processingConfig,
-    sampleKeys,
   };
 
   const skeleton = {
@@ -150,39 +143,38 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
       Filters: {
         Type: 'Parallel',
         Next: 'DataIntegration',
-        XStepType: 'multiply-by-samples',
         Branches: [{
-          StartAt: 'CellSizeDistributionFilter-<sample_id>',
+          StartAt: 'CellSizeDistributionFilter',
           States: {
-            'CellSizeDistributionFilter-<sample_id>': {
+            CellSizeDistributionFilter: {
               XStepType: 'create-new-step',
               XConstructorArgs: {
                 taskName: 'cellSizeDistribution',
               },
-              Next: 'MitochondrialContentFilter-<sample_id>',
+              Next: 'MitochondrialContentFilter',
             },
-            'MitochondrialContentFilter-<sample_id>': {
+            MitochondrialContentFilter: {
               XStepType: 'create-new-step',
               XConstructorArgs: {
                 taskName: 'mitochondrialContent',
               },
-              Next: 'ClassifierFilter-<sample_id>',
+              Next: 'ClassifierFilter',
             },
-            'ClassifierFilter-<sample_id>': {
+            ClassifierFilter: {
               XStepType: 'create-new-step',
               XConstructorArgs: {
                 taskName: 'classifier',
               },
-              Next: 'NumGenesVsNumUmisFilter-<sample_id>',
+              Next: 'NumGenesVsNumUmisFilter',
             },
-            'NumGenesVsNumUmisFilter-<sample_id>': {
+            NumGenesVsNumUmisFilter: {
               XStepType: 'create-new-step',
               XConstructorArgs: {
                 taskName: 'numGenesVsNumUmis',
               },
-              Next: 'DoubletScoresFilter-<sample_id>',
+              Next: 'DoubletScoresFilter',
             },
-            'DoubletScoresFilter-<sample_id>': {
+            DoubletScoresFilter: {
               XStepType: 'create-new-step',
               XConstructorArgs: {
                 taskName: 'doubletScores',
