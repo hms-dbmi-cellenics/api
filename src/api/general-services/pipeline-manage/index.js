@@ -10,9 +10,7 @@ const config = require('../../../config');
 const logger = require('../../../utils/logging');
 const ExperimentService = require('../../route-services/experiment');
 
-const deleteCompletedJobs = require('./constructors/delete-complete-jobs');
-const createNewStep = require('./constructors/create-new-step');
-const createNewJobIfNotExist = require('./constructors/create-new-job-if-not-exist');
+const constructPipelineStep = require('./constructors/construct-pipeline-step');
 
 const experimentService = new ExperimentService();
 
@@ -45,27 +43,6 @@ const getClusterInfo = async () => {
     endpoint,
     certAuthority,
   };
-};
-
-const constructPipelineStep = (context, step) => {
-  const { XStepType: stepType, XConstructorArgs: args } = step;
-
-  /* eslint-disable global-require */
-  switch (stepType) {
-    case 'delete-completed-jobs': {
-      return deleteCompletedJobs(context, step, args);
-    }
-    case 'create-new-job-if-not-exist': {
-      return createNewJobIfNotExist(context, step, args);
-    }
-    case 'create-new-step': {
-      return createNewStep(context, step, args);
-    }
-    default: {
-      throw new Error(`Invalid state type specified: ${stepType}`);
-    }
-  }
-  /* eslint-enable global-require */
 };
 
 const createNewStateMachine = async (context, stateMachine) => {
@@ -118,7 +95,10 @@ const executeStateMachine = async (stateMachineArn) => {
   const stepFunctions = new AWS.StepFunctions({
     region: config.awsRegion,
   });
+  console.log('stateMachineArnDebug');
+  console.log(stateMachineArn);
   const { trace_id: traceId } = AWSXRay.getSegment() || {};
+
 
   const { executionArn } = await stepFunctions.startExecution({
     stateMachineArn,
@@ -129,13 +109,23 @@ const executeStateMachine = async (stateMachineArn) => {
   return executionArn;
 };
 
-const createPipeline = async (experimentId) => {
+const createPipeline = async (experimentId, processingConfigUpdates) => {
   const accountId = await config.awsAccountIdPromise();
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
   logger.log(`Fetching processing settings for ${experimentId}`);
-  const res = await experimentService.getProcessingConfig(experimentId);
-  const { processingConfig } = res;
+  const processingRes = await experimentService.getProcessingConfig(experimentId);
+  const { processingConfig } = processingRes;
+
+  logger.log(`Fetching sample ids for ${experimentId}`);
+  const { cellSets } = await experimentService.getCellSets(experimentId);
+  const samples = cellSets.find((rootNode) => rootNode.key === 'sample').children;
+
+  const sampleKeys = samples.map((sample) => sample.key);
+
+  processingConfigUpdates.forEach(({ name, body }) => {
+    processingConfig[name] = body;
+  });
 
   const context = {
     experimentId,
@@ -144,6 +134,7 @@ const createPipeline = async (experimentId) => {
     pipelineImages: await getPipelineImages(),
     clusterInfo: await getClusterInfo(),
     processingConfig,
+    sampleKeys,
   };
 
   const skeleton = {
@@ -161,38 +152,39 @@ const createPipeline = async (experimentId) => {
       Filters: {
         Type: 'Parallel',
         Next: 'DataIntegration',
+        XStepType: 'multiply-by-samples',
         Branches: [{
-          StartAt: 'CellSizeDistributionFilter',
+          StartAt: 'CellSizeDistributionFilter-<sample_id>',
           States: {
-            CellSizeDistributionFilter: {
+            'CellSizeDistributionFilter-<sample_id>': {
               XStepType: 'create-new-step',
               XConstructorArgs: {
                 taskName: 'cellSizeDistribution',
               },
-              Next: 'MitochondrialContentFilter',
+              Next: 'MitochondrialContentFilter-<sample_id>',
             },
-            MitochondrialContentFilter: {
+            'MitochondrialContentFilter-<sample_id>': {
               XStepType: 'create-new-step',
               XConstructorArgs: {
                 taskName: 'mitochondrialContent',
               },
-              Next: 'ClassifierFilter',
+              Next: 'ClassifierFilter-<sample_id>',
             },
-            ClassifierFilter: {
+            'ClassifierFilter-<sample_id>': {
               XStepType: 'create-new-step',
               XConstructorArgs: {
                 taskName: 'classifier',
               },
-              Next: 'NumGenesVsNumUmisFilter',
+              Next: 'NumGenesVsNumUmisFilter-<sample_id>',
             },
-            NumGenesVsNumUmisFilter: {
+            'NumGenesVsNumUmisFilter-<sample_id>': {
               XStepType: 'create-new-step',
               XConstructorArgs: {
                 taskName: 'numGenesVsNumUmis',
               },
-              Next: 'DoubletScoresFilter',
+              Next: 'DoubletScoresFilter-<sample_id>',
             },
-            DoubletScoresFilter: {
+            'DoubletScoresFilter-<sample_id>': {
               XStepType: 'create-new-step',
               XConstructorArgs: {
                 taskName: 'doubletScores',
@@ -230,6 +222,9 @@ const createPipeline = async (experimentId) => {
     }
     return undefined;
   });
+
+  console.log('stateMachineDebug');
+  console.log(JSON.stringify(stateMachine));
 
   logger.log('Skeleton constructed, now creating state machine from skeleton...');
   const stateMachineArn = await createNewStateMachine(context, stateMachine);

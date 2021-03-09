@@ -7,7 +7,6 @@ const createNewStep = (context, step, args) => {
 
   const { taskName } = args;
 
-
   const task = JSON.stringify({
     experimentId,
     taskName,
