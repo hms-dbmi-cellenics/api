@@ -116,7 +116,13 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
   const { processingConfig } = processingRes;
 
   processingConfigUpdates.forEach(({ name, body }) => {
-    processingConfig[name] = body;
+    if (!processingConfig[name]) {
+      processingConfig[name] = body;
+
+      return;
+    }
+
+    _.merge(processingConfig[name], body);
   });
 
   const context = {

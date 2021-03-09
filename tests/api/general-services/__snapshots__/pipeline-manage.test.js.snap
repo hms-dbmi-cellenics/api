@@ -105,7 +105,7 @@ Array [
                         "args": Array [
                           "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"configureEmbedding\\",\\"config\\":{}}",
                         ],
-                        "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-bb7286f3ce2864b5466a6c51c139135538a92324-remoter-client",
+                        "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-6908d004bc62c439dc8aea26e879c98368ff34ee-remoter-client",
                         "name": "remoter-client",
                       },
                     ],
@@ -163,7 +163,7 @@ Array [
                         "args": Array [
                           "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"dataIntegration\\",\\"config\\":{}}",
                         ],
-                        "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-bb7286f3ce2864b5466a6c51c139135538a92324-remoter-client",
+                        "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-6908d004bc62c439dc8aea26e879c98368ff34ee-remoter-client",
                         "name": "remoter-client",
                       },
                     ],
@@ -244,7 +244,7 @@ Array [
                                 "args": Array [
                                   "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"cellSizeDistribution\\",\\"config\\":{}}",
                                 ],
-                                "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-bb7286f3ce2864b5466a6c51c139135538a92324-remoter-client",
+                                "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-6908d004bc62c439dc8aea26e879c98368ff34ee-remoter-client",
                                 "name": "remoter-client",
                               },
                             ],
@@ -302,7 +302,7 @@ Array [
                                 "args": Array [
                                   "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"classifier\\",\\"config\\":{}}",
                                 ],
-                                "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-bb7286f3ce2864b5466a6c51c139135538a92324-remoter-client",
+                                "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-6908d004bc62c439dc8aea26e879c98368ff34ee-remoter-client",
                                 "name": "remoter-client",
                               },
                             ],
@@ -357,9 +357,9 @@ Array [
                             "containers": Array [
                               Object {
                                 "args": Array [
-                                  "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"doubletScores\\",\\"config\\":{}}",
+                                  "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"doubletScores\\",\\"config\\":{\\"filterSettings\\":{\\"oneSetting\\":1},\\"oneSample\\":{\\"filterSettings\\":{\\"oneSetting\\":7}},\\"otherSample\\":{\\"filterSettings\\":{\\"oneSetting\\":15}}}}",
                                 ],
-                                "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-bb7286f3ce2864b5466a6c51c139135538a92324-remoter-client",
+                                "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-6908d004bc62c439dc8aea26e879c98368ff34ee-remoter-client",
                                 "name": "remoter-client",
                               },
                             ],
@@ -417,7 +417,7 @@ Array [
                                 "args": Array [
                                   "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"mitochondrialContent\\",\\"config\\":{}}",
                                 ],
-                                "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-bb7286f3ce2864b5466a6c51c139135538a92324-remoter-client",
+                                "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-6908d004bc62c439dc8aea26e879c98368ff34ee-remoter-client",
                                 "name": "remoter-client",
                               },
                             ],
@@ -475,7 +475,7 @@ Array [
                                 "args": Array [
                                   "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"numGenesVsNumUmis\\",\\"config\\":{}}",
                                 ],
-                                "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-bb7286f3ce2864b5466a6c51c139135538a92324-remoter-client",
+                                "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-6908d004bc62c439dc8aea26e879c98368ff34ee-remoter-client",
                                 "name": "remoter-client",
                               },
                             ],
@@ -536,7 +536,7 @@ Array [
                   "spec": Object {
                     "containers": Array [
                       Object {
-                        "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-bb7286f3ce2864b5466a6c51c139135538a92324-remoter-server",
+                        "image": "242905224710.dkr.ecr.eu-west-1.amazonaws.com/pipeline:refs-heads-master-6908d004bc62c439dc8aea26e879c98368ff34ee-remoter-server",
                         "name": "remoter-server",
                       },
                     ],
