@@ -2,6 +2,8 @@ const AWS = require('../../utils/requireAWS');
 const validateRequest = require('../../utils/schema-validator');
 const logger = require('../../utils/logging');
 
+const PlotsTablesService = require('./plots-tables');
+
 const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');
 
@@ -26,6 +28,17 @@ const pipelineResponse = async (io, message) => {
 
   if (output.config) {
     await validateRequest(output.config, 'ProcessingConfigBodies.v1.yaml');
+  }
+
+  if (output.plotData) {
+    await PlotsTablesService.create(
+      experimentId,
+      'default',
+      {
+        locationId: `DataProcessing-${output.task_name}`,
+        plotData: output.plotData,
+      },
+    );
   }
 
   // Concatenate into a proper response.
