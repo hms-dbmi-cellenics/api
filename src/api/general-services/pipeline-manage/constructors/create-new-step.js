@@ -2,15 +2,25 @@ const config = require('../../../../config');
 
 const createNewStep = (context, step, args) => {
   const {
-    processingConfig, clusterInfo, experimentId, pipelineImages, accountId,
+    processingConfig, clusterInfo, experimentId, pipelineImages, accountId, sampleKey,
   } = context;
 
   const { taskName } = args;
 
+  const processingConfigForTask = {};
+
+  const taskConfig = processingConfig[taskName];
+
+  if (sampleKey && taskConfig?.[sampleKey]) {
+    processingConfigForTask[sampleKey] = taskConfig?.[sampleKey];
+  }
+
+  processingConfigForTask.filterSettings = taskConfig?.filterSettings;
+
   const task = JSON.stringify({
     experimentId,
     taskName,
-    config: processingConfig[taskName] || {},
+    config: processingConfigForTask || {},
   });
 
   if (config.clusterEnv === 'development') {

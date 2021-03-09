@@ -32,16 +32,19 @@ const multiplyBySamples = (context, step, args) => {
 
   const clonedStep = { ...step, XConstructorArgs: undefined, XStepType: undefined };
 
-  // R server in pipeline crashes when we send more than one in the branches
+  // R server in pipeline crashes due to an error reading args when we send more than one branch
   const onlyOneSample = [sampleKeys[0]];
 
   const sampleBranches = onlyOneSample.map((sampleKey) => {
     const branchesSkeleton = step.Branches[0];
 
+    const sampleContext = _.clone(context);
+    sampleContext.sampleKey = sampleKey;
+
     let clonedBranches = _.cloneDeepWith(branchesSkeleton, (o) => {
       if (_.isObject(o) && o.XStepType) {
         return {
-          ...constructor(context, o),
+          ...constructor(sampleContext, o),
           XStepType: undefined,
           XConstructorArgs: undefined,
         };

@@ -101,9 +101,6 @@ class ExperimentService {
   async updateProcessingConfig(experimentId, processingConfig) {
     const dynamodb = createDynamoDbInstance();
 
-    console.log('processingConfigDebug');
-    console.log(JSON.stringify(processingConfig));
-
     let key = { experimentId };
     key = convertToDynamoDbRecord(key);
 
