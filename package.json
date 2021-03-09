@@ -64,6 +64,7 @@
     "eslint-plugin-import": "^2.20.2",
     "ioredis-mock": "^4.21.1",
     "jest": "^26.0.1",
+    "jest-fetch-mock": "^3.0.3",
     "nodemon": "^2.0.3",
     "pre-commit": "^1.2.2",
     "socket.io-client": "^2.3.0",
