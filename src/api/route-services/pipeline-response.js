@@ -4,11 +4,45 @@ const logger = require('../../utils/logging');
 
 const PlotsTablesService = require('./plots-tables');
 
+const plotsTableService = new PlotsTablesService();
+
+const plots = {
+  cellSizeDistribution: [
+    'umisInCells',
+    'umisCellRank',
+  ],
+  mitochondrialContent: [
+    'mitochondrialContent',
+    'mitochondrialReads',
+  ],
+  classifier: [
+    'classifierContour',
+  ],
+  numGenesVsNumUmis: [
+    'genesVsUmisHistogram',
+    'genesVsUmisScatterplot',
+  ],
+  doubletScores: [
+    'doubletScoreHistogram',
+  ],
+  dataIntegration: [
+    'dataIntegrationEmbedding',
+    'dataIntegrationFrequency',
+    'dataIntegrationElbow',
+  ],
+  configureEmbedding: [
+    'embeddingPreviewBySample',
+    'embeddingPreviewByCellSets',
+    'embeddingPreviewMitochondrialContent',
+    'embeddingPreviewDoubletScores',
+  ],
+};
+
 const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');
 
   // Fail hard if there was an error.
-  const { response: { error }, input: { experimentId } } = message;
+  const { response: { error }, input: { experimentId, taskName } } = message;
 
   if (error) {
     io.sockets.emit(`ExperimentUpdates-${experimentId}`, message);
@@ -30,15 +64,37 @@ const pipelineResponse = async (io, message) => {
     await validateRequest(output.config, 'ProcessingConfigBodies.v1.yaml');
   }
 
+  // testing
+  logger.log('Uploading plot data for task', taskName);
+  output.plotData = [
+    {
+      x: 1,
+      y: 2,
+      values: 3,
+    },
+    {
+      x: 2,
+      y: 3,
+      values: 4,
+    },
+    {
+      x: 3,
+      y: 4,
+      values: 5,
+    },
+  ];
+
+
   if (output.plotData) {
-    await PlotsTablesService.create(
-      experimentId,
-      'default',
-      {
-        locationId: `DataProcessing-${output.task_name}`,
-        plotData: output.plotData,
-      },
-    );
+    const plotConfigUploads = plots[taskName].map((plotUuid) => (
+      plotsTableService.updatePlotData(
+        experimentId,
+        plotUuid,
+        output.plotData,
+      )
+    ));
+
+    Promise.all(plotConfigUploads);
   }
 
   // Concatenate into a proper response.
