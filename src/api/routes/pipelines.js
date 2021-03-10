@@ -1,4 +1,5 @@
 const createPipeline = require('../general-services/pipeline-manage');
+const ExperimentService = require('../route-services/experiment');
 const getBackendStatus = require('../general-services/backend-status');
 const pipelineResponse = require('../route-services/pipeline-response');
 const parseSNSMessage = require('../../utils/parse-sns-message');
@@ -14,8 +15,12 @@ module.exports = {
   'pipelines#create': (req, res, next) => {
     const { processingConfig } = req.body;
 
-    createPipeline(req.params.experimentId, processingConfig)
-      .then((data) => res.json(data))
+    createPipeline(req.params.experimentId, processingConfig || [])
+      .then((data) => {
+        const experimentService = new ExperimentService();
+        experimentService.savePipelineHandle(req.params.experimentId, data)
+          .then(() => res.json(data));
+      })
       .catch(next);
   },
 

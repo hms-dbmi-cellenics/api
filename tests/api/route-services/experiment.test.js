@@ -77,7 +77,7 @@ describe('tests for the experiment service', () => {
   });
 
   it('Update experiment cell sets works', async (done) => {
-    const testData = [
+    const jsTestData = [
       {
         name: 'Empty cluster',
         key: 'empty',
@@ -88,18 +88,17 @@ describe('tests for the experiment service', () => {
     ];
 
     const updateItemSpy = mockDynamoUpdateItem();
+    const dynamoTestData = AWS.DynamoDB.Converter.marshall({ ':x': jsTestData });
 
-    const marshalledTestData = AWS.DynamoDB.Converter.marshall({ ':x': testData });
-
-    (new ExperimentService()).updateCellSets('12345', testData)
+    (new ExperimentService()).updateCellSets('12345', jsTestData)
       .then((returnValue) => {
-        expect(returnValue).toEqual(testData);
+        expect(returnValue).toEqual(jsTestData);
         expect(updateItemSpy).toHaveBeenCalledWith(
           {
             TableName: 'experiments-test',
             Key: { experimentId: { S: '12345' } },
             UpdateExpression: 'set cellSets = :x',
-            ExpressionAttributeValues: marshalledTestData,
+            ExpressionAttributeValues: dynamoTestData,
           },
         );
       })
@@ -190,13 +189,13 @@ describe('tests for the experiment service', () => {
 
   it('Get Pipeline Handle works', async (done) => {
     const handle = {
-      stateMachineId: 'STATE-MACHINE-ID',
-      executionId: '',
+      stateMachineArn: 'STATE-MACHINE-ID',
+      executionArn: '',
     };
 
     const jsData = {
       pipeline: {
-        stateMachineId: handle.stateMachineId,
+        stateMachineArn: handle.stateMachineArn,
       },
       organism: 'mmusculus',
       type: '10x',
@@ -212,6 +211,29 @@ describe('tests for the experiment service', () => {
             TableName: 'experiments-test',
             Key: { experimentId: { S: '12345' } },
             ProjectionExpression: 'meta',
+          },
+        );
+      })
+      .then(() => done());
+  });
+
+  it('Set Pipeline Handle works', async (done) => {
+    const jsTestData = {
+      stateMachineArn: 'STATE-MACHINE-ID',
+      executionArn: 'EXECUTION-ID',
+    };
+
+    const updateItemSpy = mockDynamoUpdateItem();
+    const dynamoTestData = AWS.DynamoDB.Converter.marshall({ ':x': jsTestData });
+
+    (new ExperimentService()).savePipelineHandle('12345', jsTestData)
+      .then(() => {
+        expect(updateItemSpy).toHaveBeenCalledWith(
+          {
+            TableName: 'experiments-test',
+            Key: { experimentId: { S: '12345' } },
+            UpdateExpression: 'set meta.pipeline = :x',
+            ExpressionAttributeValues: dynamoTestData,
           },
         );
       })

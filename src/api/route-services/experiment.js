@@ -115,6 +115,28 @@ class ExperimentService {
 
     return prettyData;
   }
+
+  async savePipelineHandle(experimentId, handle) {
+    const dynamodb = createDynamoDbInstance();
+    let key = { experimentId };
+
+    key = convertToDynamoDbRecord(key);
+
+    const data = convertToDynamoDbRecord({ ':x': handle });
+
+    const params = {
+      TableName: this.tableName,
+      Key: key,
+      UpdateExpression: 'set pipeline = :x',
+      ExpressionAttributeValues: data,
+    };
+
+    const result = await dynamodb.updateItem(params).promise();
+
+    const prettyData = convertToJsObject(result.Attributes);
+
+    return prettyData;
+  }
 }
 
 module.exports = ExperimentService;
