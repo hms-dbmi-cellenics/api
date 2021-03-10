@@ -34,7 +34,7 @@ module.exports = {
   'plots-tables#delete': (req, res, next) => {
     const { experimentId, plotUuid } = req.params;
 
-    plotsTablesService.dekete(experimentId, plotUuid)
+    plotsTablesService.delete(experimentId, plotUuid)
       .then((response) => res.json(response))
       .catch(next);
   },
