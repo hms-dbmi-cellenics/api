@@ -54,7 +54,7 @@ class ExperimentService {
     return {
       stateMachineArn: '',
       executionArn: '',
-      ...data.pipeline,
+      ...data.meta.pipeline,
     };
   }
 

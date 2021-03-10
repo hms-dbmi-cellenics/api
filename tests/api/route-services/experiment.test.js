@@ -194,11 +194,13 @@ describe('tests for the experiment service', () => {
     };
 
     const jsData = {
-      pipeline: {
-        stateMachineArn: handle.stateMachineArn,
+      meta: {
+        pipeline: {
+          stateMachineArn: handle.stateMachineArn,
+        },
+        organism: 'mmusculus',
+        type: '10x',
       },
-      organism: 'mmusculus',
-      type: '10x',
     };
 
     const getItemSpy = mockDynamoGetItem(jsData);
