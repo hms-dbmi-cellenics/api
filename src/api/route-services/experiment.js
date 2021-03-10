@@ -52,8 +52,8 @@ class ExperimentService {
   async getPipelineHandle(experimentId) {
     const data = await getExperimentAttributes(this.tableName, experimentId, ['meta']);
     return {
-      stateMachineId: '',
-      executionId: '',
+      stateMachineArn: '',
+      executionArn: '',
       ...data.pipeline,
     };
   }
@@ -112,7 +112,6 @@ class ExperimentService {
     const result = await dynamodb.updateItem(params).promise();
 
     const prettyData = convertToJsObject(result.Attributes);
-
     return prettyData;
   }
 
@@ -127,14 +126,13 @@ class ExperimentService {
     const params = {
       TableName: this.tableName,
       Key: key,
-      UpdateExpression: 'set pipeline = :x',
+      UpdateExpression: 'set meta.pipeline = :x',
       ExpressionAttributeValues: data,
     };
 
     const result = await dynamodb.updateItem(params).promise();
 
     const prettyData = convertToJsObject(result.Attributes);
-
     return prettyData;
   }
 }
