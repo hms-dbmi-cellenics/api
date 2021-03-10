@@ -1,9 +1,9 @@
 
 const k8s = require('@kubernetes/client-node');
 
-const getBackendStatus = require('../../../src/api/general-services/backend-status');
+const getWorkerStatus = require('../../../src/api/general-services/worker-status');
 
-describe('Get backend status path', () => {
+describe('Get worker status', () => {
   beforeEach(() => jest.resetModules());
 
   it('Returns up when the worker is up.', async () => {
@@ -31,7 +31,7 @@ describe('Get backend status path', () => {
     }));
 
 
-    const result = await getBackendStatus('sample-experiment');
+    const result = await getWorkerStatus('sample-experiment');
 
     expect(result).toEqual({
       worker: {
@@ -65,7 +65,7 @@ describe('Get backend status path', () => {
     }));
 
 
-    const result = await getBackendStatus('sample-experiment');
+    const result = await getWorkerStatus('sample-experiment');
 
     expect(result).toEqual({
       worker: {
@@ -99,7 +99,7 @@ describe('Get backend status path', () => {
     }));
 
 
-    const result = await getBackendStatus('sample-experiment');
+    const result = await getWorkerStatus('sample-experiment');
 
     expect(result).toEqual({
       worker: {
