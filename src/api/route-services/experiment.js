@@ -5,6 +5,27 @@ const {
 } = require('../../utils/dynamoDb');
 const NotFoundError = require('../../utils/NotFoundError');
 
+const getExperimentAttributes = async (tableName, experimentId, attributes) => {
+  const dynamodb = createDynamoDbInstance();
+  const key = convertToDynamoDbRecord({ experimentId });
+  console.log(`getAttributes ${key}`);
+
+  const params = {
+    TableName: tableName,
+    Key: key,
+    ProjectionExpression: attributes.join(),
+  };
+
+  const data = await dynamodb.getItem(params).promise();
+  if (Object.keys(data).length === 0) {
+    throw new NotFoundError('Experiment does not exist.');
+  }
+
+  const prettyData = convertToJsObject(data.Item);
+  return prettyData;
+};
+
+
 class ExperimentService {
   constructor() {
     this.tableName = `experiments-${config.clusterEnv}`;
@@ -14,46 +35,27 @@ class ExperimentService {
   }
 
   async getExperimentData(experimentId) {
-    const dynamodb = createDynamoDbInstance();
-    let key = { experimentId };
-    key = convertToDynamoDbRecord(key);
-
-    const params = {
-      TableName: this.tableName,
-      Key: key,
-      ProjectionExpression: 'experimentId, experimentName',
-    };
-
-    const data = await dynamodb.getItem(params).promise();
-
-    if (Object.keys(data).length === 0) {
-      throw new NotFoundError('Experiment does not exist.');
-    }
-
-    const prettyData = convertToJsObject(data.Item);
-    return prettyData;
+    const data = await getExperimentAttributes(this.tableName, experimentId, ['experimentId', 'experimentName']);
+    return data;
   }
 
   async getCellSets(experimentId) {
-    const dynamodb = createDynamoDbInstance();
-    let key = { experimentId };
-    key = convertToDynamoDbRecord(key);
+    const data = await getExperimentAttributes(this.tableName, experimentId, ['cellSets']);
+    return data;
+  }
 
-    const params = {
-      TableName: this.tableName,
-      Key: key,
-      ProjectionExpression: 'cellSets',
+  async getProcessingConfig(experimentId) {
+    const data = await getExperimentAttributes(this.tableName, experimentId, ['processingConfig']);
+    return data;
+  }
+
+  async getPipelineHandle(experimentId) {
+    const data = await getExperimentAttributes(this.tableName, experimentId, ['meta']);
+    return {
+      stateMachineId: '',
+      executionId: '',
+      ...data.pipeline,
     };
-
-    const data = await dynamodb.getItem(params).promise();
-
-    if (Object.keys(data).length === 0) {
-      throw new NotFoundError('Experiment does not exist.');
-    }
-
-    const prettyData = convertToJsObject(data.Item);
-
-    return prettyData;
   }
 
   async updateCellSets(experimentId, cellSetData) {
@@ -74,28 +76,6 @@ class ExperimentService {
     await dynamodb.updateItem(params).promise();
 
     return cellSetData;
-  }
-
-  async getProcessingConfig(experimentId) {
-    const dynamodb = createDynamoDbInstance();
-    let key = { experimentId };
-    key = convertToDynamoDbRecord(key);
-
-    const params = {
-      TableName: this.tableName,
-      Key: key,
-      ProjectionExpression: 'processingConfig',
-    };
-
-    const data = await dynamodb.getItem(params).promise();
-
-    if (Object.keys(data).length === 0) {
-      throw new NotFoundError('Experiment does not exist.');
-    }
-
-    const prettyData = convertToJsObject(data.Item);
-
-    return prettyData;
   }
 
   async updateProcessingConfig(experimentId, processingConfig) {
