@@ -8,7 +8,6 @@ const NotFoundError = require('../../utils/NotFoundError');
 const getExperimentAttributes = async (tableName, experimentId, attributes) => {
   const dynamodb = createDynamoDbInstance();
   const key = convertToDynamoDbRecord({ experimentId });
-  console.log(`getAttributes ${key}`);
 
   const params = {
     TableName: tableName,
