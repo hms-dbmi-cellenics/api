@@ -11,6 +11,27 @@ properties:
   plotType:
     type: string
     description: The type of the plot to be saved. Can be one of the values specified herein.
+    enum:
+      - umisInCells
+      - umisCellRank
+      - mitochondrialContent
+      - mitochondrialReads
+      - classifierContour
+      - genesVsUmisHistogram
+      - genesVsUmisScatterplot
+      - doubletScoreHistogram
+      - dataIntegrationEmbedding
+      - dataIntegrationFrequency
+      - dataIntegrationElbow
+      - embeddingCategorical
+      - embeddingContinuous
+      - embeddingPreviewBySample
+      - embeddingPreviewByCellSets
+      - embeddingPreviewMitochondrialContent
+      - embeddingPreviewDoubletScore
+      - volcano
+      - heatmap
+      - frequency
   config:
     type: object
 required:
