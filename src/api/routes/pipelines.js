@@ -12,7 +12,9 @@ module.exports = {
   },
 
   'pipelines#create': (req, res, next) => {
-    createPipeline(req.params.experimentId)
+    const { processingConfig } = req.body;
+
+    createPipeline(req.params.experimentId, processingConfig)
       .then((data) => res.json(data))
       .catch(next);
   },

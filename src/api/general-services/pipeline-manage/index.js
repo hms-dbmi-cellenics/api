@@ -10,9 +10,7 @@ const config = require('../../../config');
 const logger = require('../../../utils/logging');
 const ExperimentService = require('../../route-services/experiment');
 
-const deleteCompletedJobs = require('./constructors/delete-complete-jobs');
-const createNewStep = require('./constructors/create-new-step');
-const createNewJobIfNotExist = require('./constructors/create-new-job-if-not-exist');
+const constructPipelineStep = require('./constructors/construct-pipeline-step');
 
 const experimentService = new ExperimentService();
 
@@ -45,27 +43,6 @@ const getClusterInfo = async () => {
     endpoint,
     certAuthority,
   };
-};
-
-const constructPipelineStep = (context, step) => {
-  const { XStepType: stepType, XConstructorArgs: args } = step;
-
-  /* eslint-disable global-require */
-  switch (stepType) {
-    case 'delete-completed-jobs': {
-      return deleteCompletedJobs(context, step, args);
-    }
-    case 'create-new-job-if-not-exist': {
-      return createNewJobIfNotExist(context, step, args);
-    }
-    case 'create-new-step': {
-      return createNewStep(context, step, args);
-    }
-    default: {
-      throw new Error(`Invalid state type specified: ${stepType}`);
-    }
-  }
-  /* eslint-enable global-require */
 };
 
 const createNewStateMachine = async (context, stateMachine) => {
@@ -120,6 +97,7 @@ const executeStateMachine = async (stateMachineArn) => {
   });
   const { trace_id: traceId } = AWSXRay.getSegment() || {};
 
+
   const { executionArn } = await stepFunctions.startExecution({
     stateMachineArn,
     input: '{}',
@@ -129,13 +107,23 @@ const executeStateMachine = async (stateMachineArn) => {
   return executionArn;
 };
 
-const createPipeline = async (experimentId) => {
+const createPipeline = async (experimentId, processingConfigUpdates) => {
   const accountId = await config.awsAccountIdPromise();
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
   logger.log(`Fetching processing settings for ${experimentId}`);
-  const res = await experimentService.getProcessingConfig(experimentId);
-  const { processingConfig } = res;
+  const processingRes = await experimentService.getProcessingConfig(experimentId);
+  const { processingConfig } = processingRes;
+
+  processingConfigUpdates.forEach(({ name, body }) => {
+    if (!processingConfig[name]) {
+      processingConfig[name] = body;
+
+      return;
+    }
+
+    _.merge(processingConfig[name], body);
+  });
 
   const context = {
     experimentId,

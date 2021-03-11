@@ -10,6 +10,16 @@ properties:
         type: number
       binStep:
         type: number
+additionalProperties:
+  type: object
+  properties:
+    filterSettings:
+      type: object
+      properties:
+        probabilityThreshold:
+          type: number
+        binStep:
+          type: number
 required:
   - filterSettings
 description: Processing config body for Doublet Scores filter.

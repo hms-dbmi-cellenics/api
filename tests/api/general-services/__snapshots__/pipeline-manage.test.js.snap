@@ -357,7 +357,7 @@ Array [
                             "containers": Array [
                               Object {
                                 "args": Array [
-                                  "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"doubletScores\\",\\"config\\":{}}",
+                                  "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"doubletScores\\",\\"config\\":{\\"filterSettings\\":{\\"oneSetting\\":1},\\"oneSample\\":{\\"filterSettings\\":{\\"oneSetting\\":7}},\\"otherSample\\":{\\"filterSettings\\":{\\"oneSetting\\":15}}}}",
                                 ],
                                 "image": "MOCK_IMAGE_PATH",
                                 "name": "remoter-client",

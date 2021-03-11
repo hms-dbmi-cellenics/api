@@ -10,6 +10,17 @@ properties:
         type: number
       binStep:
         type: number
+additionalProperties:
+  type: object
+  properties:
+    filterSettings:
+      type: object
+      properties:
+        minCellSize:
+          type: number
+        binStep:
+          type: number
+
 required:
   - filterSettings
 description: Processing config body for Cell Size Distribution filter.

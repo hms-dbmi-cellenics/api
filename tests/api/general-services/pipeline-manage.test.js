@@ -14,7 +14,30 @@ describe('test for pipeline services', () => {
   const MockProcessingConfig = {
     Item: {
       processingConfig: {
-        M: {},
+        M: {
+          doubletScores: {
+            M: {
+              filterSettings: {
+                M: {
+                  oneSetting: {
+                    N: 1,
+                  },
+                },
+              },
+              oneSample: {
+                M: {
+                  filterSettings: {
+                    M: {
+                      oneSetting: {
+                        N: 1,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
   };
@@ -28,6 +51,24 @@ describe('test for pipeline services', () => {
       },
     },
   };
+
+  const processingConfigUpdate = [
+    {
+      name: 'doubletScores',
+      body: {
+        oneSample: {
+          filterSettings: {
+            oneSetting: 7,
+          },
+        },
+        otherSample: {
+          filterSettings: {
+            oneSetting: 15,
+          },
+        },
+      },
+    },
+  ];
 
   it('Create pipeline works', async () => {
     AWSMock.setSDKInstance(AWS);
@@ -59,8 +100,9 @@ describe('test for pipeline services', () => {
       callback(null, MockProcessingConfig);
     });
 
-    await createPipeline('testExperimentId');
+    await createPipeline('testExperimentId', processingConfigUpdate);
     expect(describeClusterSpy).toMatchSnapshot();
+
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
 
     expect(getItemSpy).toHaveBeenCalled();
@@ -104,7 +146,7 @@ describe('test for pipeline services', () => {
       callback(null, MockProcessingConfig);
     });
 
-    await createPipeline('testExperimentId');
+    await createPipeline('testExperimentId', processingConfigUpdate);
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
   });
 
@@ -135,7 +177,7 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-execution' });
     });
 
-    await createPipeline('testExperimentId');
+    await createPipeline('testExperimentId', processingConfigUpdate);
     expect(describeClusterSpy).toMatchSnapshot();
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
 
