@@ -55,7 +55,7 @@ Array [
   Object {
     "type": "return",
     "value": Object {
-      "input": "{}",
+      "input": "{\\"samples\\":[\\"single-branch-in-map-state\\"]}",
       "stateMachineArn": "test-machine",
       "traceHeader": undefined,
     },
@@ -202,307 +202,307 @@ Array [
             },
           },
           "Resource": "arn:aws:states:::eks:call",
+          "ResultPath": null,
           "Type": "Task",
         },
         "Filters": Object {
-          "Branches": Array [
-            Object {
-              "StartAt": "CellSizeDistributionFilter",
-              "States": Object {
-                "CellSizeDistributionFilter": Object {
-                  "Catch": Array [
-                    Object {
-                      "ErrorEquals": Array [
-                        "EKS.409",
-                      ],
-                      "Next": "MitochondrialContentFilter",
-                      "ResultPath": "$.error-info",
+          "ItemsPath": "$.samples",
+          "Iterator": Object {
+            "StartAt": "CellSizeDistributionFilter",
+            "States": Object {
+              "CellSizeDistributionFilter": Object {
+                "Catch": Array [
+                  Object {
+                    "ErrorEquals": Array [
+                      "EKS.409",
+                    ],
+                    "Next": "MitochondrialContentFilter",
+                    "ResultPath": "$.error-info",
+                  },
+                ],
+                "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
+                "Next": "MitochondrialContentFilter",
+                "Parameters": Object {
+                  "CertificateAuthority": "AAAAAAAAAAA",
+                  "ClusterName": "biomage-test",
+                  "Endpoint": "https://test-endpoint.me/fgh",
+                  "Method": "POST",
+                  "Path": "/apis/batch/v1/namespaces/undefined/jobs",
+                  "RequestBody": Object {
+                    "apiVersion": "batch/v1",
+                    "kind": "Job",
+                    "metadata": Object {
+                      "name": "remoter-client-testExperimentId",
                     },
-                  ],
-                  "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
-                  "Next": "MitochondrialContentFilter",
-                  "Parameters": Object {
-                    "CertificateAuthority": "AAAAAAAAAAA",
-                    "ClusterName": "biomage-test",
-                    "Endpoint": "https://test-endpoint.me/fgh",
-                    "Method": "POST",
-                    "Path": "/apis/batch/v1/namespaces/undefined/jobs",
-                    "RequestBody": Object {
-                      "apiVersion": "batch/v1",
-                      "kind": "Job",
-                      "metadata": Object {
-                        "name": "remoter-client-testExperimentId",
-                      },
-                      "spec": Object {
-                        "template": Object {
-                          "metadata": Object {
-                            "name": "remoter-client-testExperimentId",
-                          },
-                          "spec": Object {
-                            "containers": Array [
-                              Object {
-                                "args": Array [
-                                  "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"cellSizeDistribution\\",\\"config\\":{}}",
-                                ],
-                                "image": "MOCK_IMAGE_PATH",
-                                "name": "remoter-client",
-                              },
-                            ],
-                            "restartPolicy": "Never",
-                          },
+                    "spec": Object {
+                      "template": Object {
+                        "metadata": Object {
+                          "name": "remoter-client-testExperimentId",
+                        },
+                        "spec": Object {
+                          "containers": Array [
+                            Object {
+                              "args": Array [
+                                "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"cellSizeDistribution\\",\\"config\\":{}}",
+                              ],
+                              "image": "MOCK_IMAGE_PATH",
+                              "name": "remoter-client",
+                            },
+                          ],
+                          "restartPolicy": "Never",
                         },
                       },
                     },
                   },
-                  "Resource": "arn:aws:states:::eks:runJob.sync",
-                  "Retry": Array [
-                    Object {
-                      "BackoffRate": 2,
-                      "ErrorEquals": Array [
-                        "EKS.409",
-                      ],
-                      "IntervalSeconds": 1,
-                      "MaxAttempts": 2,
-                    },
-                  ],
-                  "Type": "Task",
                 },
-                "ClassifierFilter": Object {
-                  "Catch": Array [
-                    Object {
-                      "ErrorEquals": Array [
-                        "EKS.409",
-                      ],
-                      "Next": "NumGenesVsNumUmisFilter",
-                      "ResultPath": "$.error-info",
+                "Resource": "arn:aws:states:::eks:runJob.sync",
+                "Retry": Array [
+                  Object {
+                    "BackoffRate": 2,
+                    "ErrorEquals": Array [
+                      "EKS.409",
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 2,
+                  },
+                ],
+                "Type": "Task",
+              },
+              "ClassifierFilter": Object {
+                "Catch": Array [
+                  Object {
+                    "ErrorEquals": Array [
+                      "EKS.409",
+                    ],
+                    "Next": "NumGenesVsNumUmisFilter",
+                    "ResultPath": "$.error-info",
+                  },
+                ],
+                "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
+                "Next": "NumGenesVsNumUmisFilter",
+                "Parameters": Object {
+                  "CertificateAuthority": "AAAAAAAAAAA",
+                  "ClusterName": "biomage-test",
+                  "Endpoint": "https://test-endpoint.me/fgh",
+                  "Method": "POST",
+                  "Path": "/apis/batch/v1/namespaces/undefined/jobs",
+                  "RequestBody": Object {
+                    "apiVersion": "batch/v1",
+                    "kind": "Job",
+                    "metadata": Object {
+                      "name": "remoter-client-testExperimentId",
                     },
-                  ],
-                  "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
-                  "Next": "NumGenesVsNumUmisFilter",
-                  "Parameters": Object {
-                    "CertificateAuthority": "AAAAAAAAAAA",
-                    "ClusterName": "biomage-test",
-                    "Endpoint": "https://test-endpoint.me/fgh",
-                    "Method": "POST",
-                    "Path": "/apis/batch/v1/namespaces/undefined/jobs",
-                    "RequestBody": Object {
-                      "apiVersion": "batch/v1",
-                      "kind": "Job",
-                      "metadata": Object {
-                        "name": "remoter-client-testExperimentId",
-                      },
-                      "spec": Object {
-                        "template": Object {
-                          "metadata": Object {
-                            "name": "remoter-client-testExperimentId",
-                          },
-                          "spec": Object {
-                            "containers": Array [
-                              Object {
-                                "args": Array [
-                                  "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"classifier\\",\\"config\\":{}}",
-                                ],
-                                "image": "MOCK_IMAGE_PATH",
-                                "name": "remoter-client",
-                              },
-                            ],
-                            "restartPolicy": "Never",
-                          },
+                    "spec": Object {
+                      "template": Object {
+                        "metadata": Object {
+                          "name": "remoter-client-testExperimentId",
+                        },
+                        "spec": Object {
+                          "containers": Array [
+                            Object {
+                              "args": Array [
+                                "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"classifier\\",\\"config\\":{}}",
+                              ],
+                              "image": "MOCK_IMAGE_PATH",
+                              "name": "remoter-client",
+                            },
+                          ],
+                          "restartPolicy": "Never",
                         },
                       },
                     },
                   },
-                  "Resource": "arn:aws:states:::eks:runJob.sync",
-                  "Retry": Array [
-                    Object {
-                      "BackoffRate": 2,
-                      "ErrorEquals": Array [
-                        "EKS.409",
-                      ],
-                      "IntervalSeconds": 1,
-                      "MaxAttempts": 2,
-                    },
-                  ],
-                  "Type": "Task",
                 },
-                "DoubletScoresFilter": Object {
-                  "Catch": Array [
-                    Object {
-                      "ErrorEquals": Array [
-                        "EKS.409",
-                      ],
-                      "ResultPath": "$.error-info",
+                "Resource": "arn:aws:states:::eks:runJob.sync",
+                "Retry": Array [
+                  Object {
+                    "BackoffRate": 2,
+                    "ErrorEquals": Array [
+                      "EKS.409",
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 2,
+                  },
+                ],
+                "Type": "Task",
+              },
+              "DoubletScoresFilter": Object {
+                "Catch": Array [
+                  Object {
+                    "ErrorEquals": Array [
+                      "EKS.409",
+                    ],
+                    "ResultPath": "$.error-info",
+                  },
+                ],
+                "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
+                "End": true,
+                "Parameters": Object {
+                  "CertificateAuthority": "AAAAAAAAAAA",
+                  "ClusterName": "biomage-test",
+                  "Endpoint": "https://test-endpoint.me/fgh",
+                  "Method": "POST",
+                  "Path": "/apis/batch/v1/namespaces/undefined/jobs",
+                  "RequestBody": Object {
+                    "apiVersion": "batch/v1",
+                    "kind": "Job",
+                    "metadata": Object {
+                      "name": "remoter-client-testExperimentId",
                     },
-                  ],
-                  "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
-                  "End": true,
-                  "Parameters": Object {
-                    "CertificateAuthority": "AAAAAAAAAAA",
-                    "ClusterName": "biomage-test",
-                    "Endpoint": "https://test-endpoint.me/fgh",
-                    "Method": "POST",
-                    "Path": "/apis/batch/v1/namespaces/undefined/jobs",
-                    "RequestBody": Object {
-                      "apiVersion": "batch/v1",
-                      "kind": "Job",
-                      "metadata": Object {
-                        "name": "remoter-client-testExperimentId",
-                      },
-                      "spec": Object {
-                        "template": Object {
-                          "metadata": Object {
-                            "name": "remoter-client-testExperimentId",
-                          },
-                          "spec": Object {
-                            "containers": Array [
-                              Object {
-                                "args": Array [
-                                  "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"doubletScores\\",\\"config\\":{\\"filterSettings\\":{\\"oneSetting\\":1},\\"oneSample\\":{\\"filterSettings\\":{\\"oneSetting\\":7}},\\"otherSample\\":{\\"filterSettings\\":{\\"oneSetting\\":15}}}}",
-                                ],
-                                "image": "MOCK_IMAGE_PATH",
-                                "name": "remoter-client",
-                              },
-                            ],
-                            "restartPolicy": "Never",
-                          },
+                    "spec": Object {
+                      "template": Object {
+                        "metadata": Object {
+                          "name": "remoter-client-testExperimentId",
+                        },
+                        "spec": Object {
+                          "containers": Array [
+                            Object {
+                              "args": Array [
+                                "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"doubletScores\\",\\"config\\":{\\"filterSettings\\":{\\"oneSetting\\":1},\\"oneSample\\":{\\"filterSettings\\":{\\"oneSetting\\":7}},\\"otherSample\\":{\\"filterSettings\\":{\\"oneSetting\\":15}}}}",
+                              ],
+                              "image": "MOCK_IMAGE_PATH",
+                              "name": "remoter-client",
+                            },
+                          ],
+                          "restartPolicy": "Never",
                         },
                       },
                     },
                   },
-                  "Resource": "arn:aws:states:::eks:runJob.sync",
-                  "Retry": Array [
-                    Object {
-                      "BackoffRate": 2,
-                      "ErrorEquals": Array [
-                        "EKS.409",
-                      ],
-                      "IntervalSeconds": 1,
-                      "MaxAttempts": 2,
-                    },
-                  ],
-                  "Type": "Task",
                 },
-                "MitochondrialContentFilter": Object {
-                  "Catch": Array [
-                    Object {
-                      "ErrorEquals": Array [
-                        "EKS.409",
-                      ],
-                      "Next": "ClassifierFilter",
-                      "ResultPath": "$.error-info",
+                "Resource": "arn:aws:states:::eks:runJob.sync",
+                "Retry": Array [
+                  Object {
+                    "BackoffRate": 2,
+                    "ErrorEquals": Array [
+                      "EKS.409",
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 2,
+                  },
+                ],
+                "Type": "Task",
+              },
+              "MitochondrialContentFilter": Object {
+                "Catch": Array [
+                  Object {
+                    "ErrorEquals": Array [
+                      "EKS.409",
+                    ],
+                    "Next": "ClassifierFilter",
+                    "ResultPath": "$.error-info",
+                  },
+                ],
+                "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
+                "Next": "ClassifierFilter",
+                "Parameters": Object {
+                  "CertificateAuthority": "AAAAAAAAAAA",
+                  "ClusterName": "biomage-test",
+                  "Endpoint": "https://test-endpoint.me/fgh",
+                  "Method": "POST",
+                  "Path": "/apis/batch/v1/namespaces/undefined/jobs",
+                  "RequestBody": Object {
+                    "apiVersion": "batch/v1",
+                    "kind": "Job",
+                    "metadata": Object {
+                      "name": "remoter-client-testExperimentId",
                     },
-                  ],
-                  "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
-                  "Next": "ClassifierFilter",
-                  "Parameters": Object {
-                    "CertificateAuthority": "AAAAAAAAAAA",
-                    "ClusterName": "biomage-test",
-                    "Endpoint": "https://test-endpoint.me/fgh",
-                    "Method": "POST",
-                    "Path": "/apis/batch/v1/namespaces/undefined/jobs",
-                    "RequestBody": Object {
-                      "apiVersion": "batch/v1",
-                      "kind": "Job",
-                      "metadata": Object {
-                        "name": "remoter-client-testExperimentId",
-                      },
-                      "spec": Object {
-                        "template": Object {
-                          "metadata": Object {
-                            "name": "remoter-client-testExperimentId",
-                          },
-                          "spec": Object {
-                            "containers": Array [
-                              Object {
-                                "args": Array [
-                                  "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"mitochondrialContent\\",\\"config\\":{}}",
-                                ],
-                                "image": "MOCK_IMAGE_PATH",
-                                "name": "remoter-client",
-                              },
-                            ],
-                            "restartPolicy": "Never",
-                          },
+                    "spec": Object {
+                      "template": Object {
+                        "metadata": Object {
+                          "name": "remoter-client-testExperimentId",
+                        },
+                        "spec": Object {
+                          "containers": Array [
+                            Object {
+                              "args": Array [
+                                "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"mitochondrialContent\\",\\"config\\":{}}",
+                              ],
+                              "image": "MOCK_IMAGE_PATH",
+                              "name": "remoter-client",
+                            },
+                          ],
+                          "restartPolicy": "Never",
                         },
                       },
                     },
                   },
-                  "Resource": "arn:aws:states:::eks:runJob.sync",
-                  "Retry": Array [
-                    Object {
-                      "BackoffRate": 2,
-                      "ErrorEquals": Array [
-                        "EKS.409",
-                      ],
-                      "IntervalSeconds": 1,
-                      "MaxAttempts": 2,
-                    },
-                  ],
-                  "Type": "Task",
                 },
-                "NumGenesVsNumUmisFilter": Object {
-                  "Catch": Array [
-                    Object {
-                      "ErrorEquals": Array [
-                        "EKS.409",
-                      ],
-                      "Next": "DoubletScoresFilter",
-                      "ResultPath": "$.error-info",
+                "Resource": "arn:aws:states:::eks:runJob.sync",
+                "Retry": Array [
+                  Object {
+                    "BackoffRate": 2,
+                    "ErrorEquals": Array [
+                      "EKS.409",
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 2,
+                  },
+                ],
+                "Type": "Task",
+              },
+              "NumGenesVsNumUmisFilter": Object {
+                "Catch": Array [
+                  Object {
+                    "ErrorEquals": Array [
+                      "EKS.409",
+                    ],
+                    "Next": "DoubletScoresFilter",
+                    "ResultPath": "$.error-info",
+                  },
+                ],
+                "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
+                "Next": "DoubletScoresFilter",
+                "Parameters": Object {
+                  "CertificateAuthority": "AAAAAAAAAAA",
+                  "ClusterName": "biomage-test",
+                  "Endpoint": "https://test-endpoint.me/fgh",
+                  "Method": "POST",
+                  "Path": "/apis/batch/v1/namespaces/undefined/jobs",
+                  "RequestBody": Object {
+                    "apiVersion": "batch/v1",
+                    "kind": "Job",
+                    "metadata": Object {
+                      "name": "remoter-client-testExperimentId",
                     },
-                  ],
-                  "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
-                  "Next": "DoubletScoresFilter",
-                  "Parameters": Object {
-                    "CertificateAuthority": "AAAAAAAAAAA",
-                    "ClusterName": "biomage-test",
-                    "Endpoint": "https://test-endpoint.me/fgh",
-                    "Method": "POST",
-                    "Path": "/apis/batch/v1/namespaces/undefined/jobs",
-                    "RequestBody": Object {
-                      "apiVersion": "batch/v1",
-                      "kind": "Job",
-                      "metadata": Object {
-                        "name": "remoter-client-testExperimentId",
-                      },
-                      "spec": Object {
-                        "template": Object {
-                          "metadata": Object {
-                            "name": "remoter-client-testExperimentId",
-                          },
-                          "spec": Object {
-                            "containers": Array [
-                              Object {
-                                "args": Array [
-                                  "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"numGenesVsNumUmis\\",\\"config\\":{}}",
-                                ],
-                                "image": "MOCK_IMAGE_PATH",
-                                "name": "remoter-client",
-                              },
-                            ],
-                            "restartPolicy": "Never",
-                          },
+                    "spec": Object {
+                      "template": Object {
+                        "metadata": Object {
+                          "name": "remoter-client-testExperimentId",
+                        },
+                        "spec": Object {
+                          "containers": Array [
+                            Object {
+                              "args": Array [
+                                "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"numGenesVsNumUmis\\",\\"config\\":{}}",
+                              ],
+                              "image": "MOCK_IMAGE_PATH",
+                              "name": "remoter-client",
+                            },
+                          ],
+                          "restartPolicy": "Never",
                         },
                       },
                     },
                   },
-                  "Resource": "arn:aws:states:::eks:runJob.sync",
-                  "Retry": Array [
-                    Object {
-                      "BackoffRate": 2,
-                      "ErrorEquals": Array [
-                        "EKS.409",
-                      ],
-                      "IntervalSeconds": 1,
-                      "MaxAttempts": 2,
-                    },
-                  ],
-                  "Type": "Task",
                 },
+                "Resource": "arn:aws:states:::eks:runJob.sync",
+                "Retry": Array [
+                  Object {
+                    "BackoffRate": 2,
+                    "ErrorEquals": Array [
+                      "EKS.409",
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 2,
+                  },
+                ],
+                "Type": "Task",
               },
             },
-          ],
+          },
           "Next": "DataIntegration",
-          "Type": "Parallel",
+          "Type": "Map",
         },
         "LaunchNewPipelineWorker": Object {
           "Catch": Array [
@@ -547,6 +547,7 @@ Array [
             },
           },
           "Resource": "arn:aws:states:::eks:call",
+          "ResultPath": null,
           "Retry": Array [
             Object {
               "BackoffRate": 2,
@@ -632,7 +633,7 @@ Array [
   Object {
     "type": "return",
     "value": Object {
-      "input": "{}",
+      "input": "{\\"samples\\":[\\"single-branch-in-map-state\\"]}",
       "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-pipeline-test-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
       "traceHeader": undefined,
     },

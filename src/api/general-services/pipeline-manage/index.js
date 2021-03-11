@@ -100,7 +100,9 @@ const executeStateMachine = async (stateMachineArn) => {
 
   const { executionArn } = await stepFunctions.startExecution({
     stateMachineArn,
-    input: '{}',
+    input: JSON.stringify({
+      samples: ['single-branch-in-map-state'],
+    }),
     traceHeader: traceId,
   }).promise();
 
@@ -141,15 +143,18 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
       DeleteCompletedPipelineWorker: {
         XStepType: 'delete-completed-jobs',
         Next: 'LaunchNewPipelineWorker',
+        ResultPath: null,
       },
       LaunchNewPipelineWorker: {
         XStepType: 'create-new-job-if-not-exist',
         Next: 'Filters',
+        ResultPath: null,
       },
       Filters: {
-        Type: 'Parallel',
+        Type: 'Map',
         Next: 'DataIntegration',
-        Branches: [{
+        ItemsPath: '$.samples',
+        Iterator: {
           StartAt: 'CellSizeDistributionFilter',
           States: {
             CellSizeDistributionFilter: {
@@ -188,7 +193,7 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
               End: true,
             },
           },
-        }],
+        },
       },
       DataIntegration: {
         XStepType: 'create-new-step',
