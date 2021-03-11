@@ -75,7 +75,12 @@ const pipelineResponse = async (io, message) => {
       )
     ));
 
-    Promise.all(plotConfigUploads);
+    logger.log('Uploading plotData for', taskName, 'to DynamoDB');
+
+    // Promise.all stops if it encounters errors.
+    // This handles errors so that error in one upload does not stop others
+    // Resulting promise resolves to an array with the resolve/reject value of p
+    Promise.all(plotConfigUploads.map((p) => p.catch((e) => e)));
   }
 
   experimentService.updateProcessingConfig(experimentId, [{ name: taskName, body: output.config }]);

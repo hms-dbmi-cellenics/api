@@ -28,14 +28,18 @@ class PlotsTablesService {
   }
 
   async updatePlotData(experimentId, plotUuid, plotData) {
-    const marshalledData = convertToDynamoDbRecord({ ':d': plotData });
+    const marshalledData = convertToDynamoDbRecord({
+      ':plotData': plotData,
+      ':plotType': plotUuid,
+      ':config': {},
+    });
 
     const params = {
       TableName: this.tableName,
       Key: {
         experimentId: { S: experimentId }, plotUuid: { S: plotUuid },
       },
-      UpdateExpression: 'SET plotData = :d',
+      UpdateExpression: 'SET plotData = :plotData, plotType = if_not_exists(plotType, :plotType), config = if_not_exists(config, :config)',
       ExpressionAttributeValues: marshalledData,
       ReturnValues: 'UPDATED_NEW',
     };

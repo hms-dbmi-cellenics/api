@@ -6,7 +6,7 @@ const createDynamoDbInstance = () => new AWS.DynamoDB({
 });
 
 const convertToDynamoDbRecord = (data) => AWS.DynamoDB.Converter.marshall(
-  data, { convertEmptyValues: true },
+  data, { convertEmptyValues: false },
 );
 const convertToJsObject = (data) => AWS.DynamoDB.Converter.unmarshall(data);
 
