@@ -75,19 +75,28 @@ const getStepsFromExecutionHistory = (history) => {
 
 const getPipelineStatus = async (experimentId) => {
   const { executionArn } = await (new ExperimentService()).getPipelineHandle(experimentId);
+  let execution = {};
+  let completedSteps = [];
+  if (!executionArn.length) {
+    execution = {
+      startDate: null,
+      stopDate: null,
+      status: 'NotCreated',
+    };
+  } else {
+    const stepFunctions = new AWS.StepFunctions({
+      region: config.awsRegion,
+    });
+    execution = await stepFunctions.describeExecution({
+      executionArn,
+    }).promise();
+    const history = await stepFunctions.getExecutionHistory({
+      executionArn,
+      includeExecutionData: false,
+    }).promise();
 
-  const stepFunctions = new AWS.StepFunctions({
-    region: config.awsRegion,
-  });
-  const execution = await stepFunctions.describeExecution({
-    executionArn,
-  }).promise();
-  const history = await stepFunctions.getExecutionHistory({
-    executionArn,
-    includeExecutionData: false,
-  }).promise();
-
-  const completedSteps = getStepsFromExecutionHistory(history);
+    completedSteps = getStepsFromExecutionHistory(history);
+  }
 
   const response = {
     pipeline: {

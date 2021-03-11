@@ -1,4 +1,5 @@
 const pipelineStatus = require('../../../src/api/general-services/pipeline-status');
+const ExperimentService = require('../../../src/api/route-services/experiment');
 
 describe('getStepsFromExecutionHistory', () => {
   const fullHistory = [
@@ -141,5 +142,29 @@ describe('getStepsFromExecutionHistory', () => {
     const events = truncateHistory('24-two-completions-vs-zero');
     const completedSteps = pipelineStatus.getStepsFromExecutionHistory({ events });
     expect(completedSteps).toEqual(['CellSizeDistributionFilter']);
+  });
+});
+
+jest.mock('../../../src/api/route-services/experiment', () => jest.fn().mockImplementation(() => ({
+  getPipelineHandle: () => ({
+    stateMachineArn: '',
+    executionArn: '',
+  }),
+})));
+
+describe('pipelineStatus', () => {
+  beforeEach(() => {
+    ExperimentService.mockClear();
+  });
+  it('handles properly an empty dynamodb record', async () => {
+    const status = await pipelineStatus('1234');
+    expect(status).toEqual({
+      pipeline: {
+        startDate: null,
+        stopDate: null,
+        status: 'NotCreated',
+        completedSteps: [],
+      },
+    });
   });
 });
