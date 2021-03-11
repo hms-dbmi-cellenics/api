@@ -116,10 +116,10 @@ describe('Test Pipeline Response Service', () => {
 
     // Expect websocket event
     client.on(`ExperimentUpdates-${experimentId}`, (res) => {
-      expect(res).toEqual(message);
+      expect(res).toEqual(errorMessage);
     });
 
-    await pipelineResponse(io, message);
+    await pipelineResponse(io, errorMessage);
 
     expect(s3Spy).not.toHaveBeenCalled();
     expect(dynamoDbSpy).not.toHaveBeenCalled();
