@@ -1,6 +1,5 @@
 const config = require('../../config');
 const { createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord } = require('../../utils/dynamoDb');
-const logger = require('../../utils/logging');
 
 class PlotsTablesService {
   constructor() {
@@ -30,8 +29,6 @@ class PlotsTablesService {
 
   async updatePlotData(experimentId, plotUuid, plotData) {
     const marshalledData = convertToDynamoDbRecord({ ':d': plotData });
-
-    logger.log('debugging marshalled data', marshalledData);
 
     const params = {
       TableName: this.tableName,

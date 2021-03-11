@@ -77,8 +77,7 @@ const pipelineResponse = async (io, message) => {
 
     Promise.all(plotConfigUploads);
   }
-  
-  const { taskName } = message.input;
+
   experimentService.updateProcessingConfig(experimentId, [{ name: taskName, body: output.config }]);
 
   // Concatenate into a proper response.
