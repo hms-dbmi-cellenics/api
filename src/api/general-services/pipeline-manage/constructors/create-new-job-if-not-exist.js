@@ -70,7 +70,7 @@ const createNewJobIfNotExist = (context, step) => {
       {
         ErrorEquals: ['EKS.409'],
         ResultPath: '$.error-info',
-        Next: step.Next,
+        Next: step.Next || step.XNext,
       },
     ],
   };

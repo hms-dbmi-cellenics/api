@@ -77,6 +77,7 @@ Array [
               "ErrorEquals": Array [
                 "EKS.409",
               ],
+              "Next": "EndOfPipeline",
               "ResultPath": "$.error-info",
             },
           ],
@@ -86,9 +87,7 @@ Array [
             "CertificateAuthority": "AAAAAAAAAAA",
             "ClusterName": "biomage-test",
             "Endpoint": "https://test-endpoint.me/fgh",
-            "Method": "POST",
-            "Path": "/apis/batch/v1/namespaces/undefined/jobs",
-            "RequestBody": Object {
+            "Job": Object {
               "apiVersion": "batch/v1",
               "kind": "Job",
               "metadata": Object {
@@ -144,9 +143,7 @@ Array [
             "CertificateAuthority": "AAAAAAAAAAA",
             "ClusterName": "biomage-test",
             "Endpoint": "https://test-endpoint.me/fgh",
-            "Method": "POST",
-            "Path": "/apis/batch/v1/namespaces/undefined/jobs",
-            "RequestBody": Object {
+            "Job": Object {
               "apiVersion": "batch/v1",
               "kind": "Job",
               "metadata": Object {
@@ -205,6 +202,10 @@ Array [
           "ResultPath": null,
           "Type": "Task",
         },
+        "EndOfPipeline": Object {
+          "End": true,
+          "Type": "Pass",
+        },
         "Filters": Object {
           "ItemsPath": "$.samples",
           "Iterator": Object {
@@ -226,9 +227,7 @@ Array [
                   "CertificateAuthority": "AAAAAAAAAAA",
                   "ClusterName": "biomage-test",
                   "Endpoint": "https://test-endpoint.me/fgh",
-                  "Method": "POST",
-                  "Path": "/apis/batch/v1/namespaces/undefined/jobs",
-                  "RequestBody": Object {
+                  "Job": Object {
                     "apiVersion": "batch/v1",
                     "kind": "Job",
                     "metadata": Object {
@@ -284,9 +283,7 @@ Array [
                   "CertificateAuthority": "AAAAAAAAAAA",
                   "ClusterName": "biomage-test",
                   "Endpoint": "https://test-endpoint.me/fgh",
-                  "Method": "POST",
-                  "Path": "/apis/batch/v1/namespaces/undefined/jobs",
-                  "RequestBody": Object {
+                  "Job": Object {
                     "apiVersion": "batch/v1",
                     "kind": "Job",
                     "metadata": Object {
@@ -332,6 +329,7 @@ Array [
                     "ErrorEquals": Array [
                       "EKS.409",
                     ],
+                    "Next": "EndOfMap",
                     "ResultPath": "$.error-info",
                   },
                 ],
@@ -341,9 +339,7 @@ Array [
                   "CertificateAuthority": "AAAAAAAAAAA",
                   "ClusterName": "biomage-test",
                   "Endpoint": "https://test-endpoint.me/fgh",
-                  "Method": "POST",
-                  "Path": "/apis/batch/v1/namespaces/undefined/jobs",
-                  "RequestBody": Object {
+                  "Job": Object {
                     "apiVersion": "batch/v1",
                     "kind": "Job",
                     "metadata": Object {
@@ -383,6 +379,10 @@ Array [
                 ],
                 "Type": "Task",
               },
+              "EndOfMap": Object {
+                "End": true,
+                "Type": "Pass",
+              },
               "MitochondrialContentFilter": Object {
                 "Catch": Array [
                   Object {
@@ -399,9 +399,7 @@ Array [
                   "CertificateAuthority": "AAAAAAAAAAA",
                   "ClusterName": "biomage-test",
                   "Endpoint": "https://test-endpoint.me/fgh",
-                  "Method": "POST",
-                  "Path": "/apis/batch/v1/namespaces/undefined/jobs",
-                  "RequestBody": Object {
+                  "Job": Object {
                     "apiVersion": "batch/v1",
                     "kind": "Job",
                     "metadata": Object {
@@ -457,9 +455,7 @@ Array [
                   "CertificateAuthority": "AAAAAAAAAAA",
                   "ClusterName": "biomage-test",
                   "Endpoint": "https://test-endpoint.me/fgh",
-                  "Method": "POST",
-                  "Path": "/apis/batch/v1/namespaces/undefined/jobs",
-                  "RequestBody": Object {
+                  "Job": Object {
                     "apiVersion": "batch/v1",
                     "kind": "Job",
                     "metadata": Object {

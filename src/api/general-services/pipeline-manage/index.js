@@ -190,6 +190,11 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
               XConstructorArgs: {
                 taskName: 'doubletScores',
               },
+              XNext: 'EndOfMap',
+              End: true,
+            },
+            EndOfMap: {
+              Type: 'Pass',
               End: true,
             },
           },
@@ -207,6 +212,11 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
         XConstructorArgs: {
           taskName: 'configureEmbedding',
         },
+        XNext: 'EndOfPipeline',
+        End: true,
+      },
+      EndOfPipeline: {
+        Type: 'Pass',
         End: true,
       },
     },
@@ -219,6 +229,7 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
         ...constructPipelineStep(context, o),
         XStepType: undefined,
         XConstructorArgs: undefined,
+        XNext: undefined,
       };
     }
     return undefined;
