@@ -32,6 +32,9 @@ const getStepsFromExecutionHistory = (history) => {
       if (this.visited.includes(event.previousEventId)) {
         return this;
       }
+      if (event.type === 'MapStateExited') {
+        return this;
+      }
       const branches = Object.values(this.branches);
       for (let ii = 0; ii < branches.length; ii += 1) {
         const candidate = branches[ii];

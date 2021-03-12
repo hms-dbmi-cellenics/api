@@ -121,6 +121,109 @@ describe('getStepsFromExecutionHistory', () => {
     },
   ];
 
+  const singleIterationHistory = [
+    {
+      type: 'ExecutionStarted',
+      id: 1,
+      previousEventId: 0,
+    },
+    {
+      type: 'Dummy',
+      id: 'dummy-state-having-zero-as-previous',
+      previousEventId: 0,
+    },
+    {
+      type: 'MapStateEntered',
+      id: 12,
+      previousEventId: 'dummy-state-having-zero-as-previous',
+      stateEnteredEventDetails: {
+        name: 'Filters',
+      },
+    },
+    {
+      type: 'MapStateStarted',
+      id: 13,
+      previousEventId: 12,
+      mapStateStartedEventDetails: {
+        length: 1,
+      },
+    },
+    {
+      type: 'MapIterationStarted',
+      id: 14,
+      previousEventId: 13,
+      mapIterationStartedEventDetails: {
+        name: 'Filters',
+        index: 0,
+      },
+    },
+    {
+      type: 'TaskStateEntered',
+      id: 15,
+      previousEventId: 14,
+      stateEnteredEventDetails: {
+        name: 'CellSizeDistributionFilter',
+      },
+    },
+    {
+      type: 'TaskSucceeded',
+      id: 16,
+      previousEventId: 15,
+    },
+    {
+      type: 'TaskStateExited',
+      id: 17,
+      previousEventId: 16,
+      stateExitedEventDetails: {
+        name: 'CellSizeDistributionFilter',
+      },
+    },
+    {
+      type: 'MapIterationSucceeded',
+      id: 18,
+      previousEventId: 17,
+      mapIterationSucceededEventDetails: {
+        name: 'Filters',
+        index: 0,
+      },
+    },
+    {
+      type: 'MapStateSucceeded',
+      id: 19,
+      previousEventId: 18,
+    },
+    {
+      type: 'MapStateExited',
+      id: 20,
+      previousEventId: 19,
+      stateExitedEventDetails: {
+        name: 'Filters',
+      },
+    },
+    {
+      type: 'TaskStateEntered',
+      id: 21,
+      previousEventId: 20,
+      stateEnteredEventDetails: {
+        name: 'DataIntegration',
+      },
+    },
+    {
+      type: 'TaskSucceeded',
+      id: 22,
+      previousEventId: 21,
+    },
+    {
+      type: 'TaskStateExited',
+      id: 23,
+      previousEventId: 22,
+      stateExitedEventDetails: {
+        name: 'DataIntegration',
+      },
+    },
+  ];
+
+
   const truncateHistory = (lastEventId) => {
     const lastEventIndex = fullHistory.findIndex((element) => element.id === lastEventId);
     return fullHistory.slice(0, lastEventIndex + 1);
@@ -144,8 +247,10 @@ describe('getStepsFromExecutionHistory', () => {
     expect(completedSteps).toEqual(['CellSizeDistributionFilter']);
   });
 
-  it.skip('returns only the steps contained in the Map for one element iterations', () => {
-    // TO-DO: it would not pass
+  it('returns only the steps contained in the Map for one-element iterations', () => {
+    const history = { events: singleIterationHistory };
+    const completedSteps = pipelineStatus.getStepsFromExecutionHistory(history);
+    expect(completedSteps).toEqual(['CellSizeDistributionFilter']);
   });
 });
 
