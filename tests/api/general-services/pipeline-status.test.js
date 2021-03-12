@@ -143,6 +143,10 @@ describe('getStepsFromExecutionHistory', () => {
     const completedSteps = pipelineStatus.getStepsFromExecutionHistory({ events });
     expect(completedSteps).toEqual(['CellSizeDistributionFilter']);
   });
+
+  it.skip('returns only the steps contained in the Map for one element iterations', () => {
+    // TO-DO: it would not pass
+  });
 });
 
 jest.mock('../../../src/api/route-services/experiment', () => jest.fn().mockImplementation(() => ({

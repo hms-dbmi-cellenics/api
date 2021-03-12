@@ -19,6 +19,13 @@ const createNewJobIfNotExist = (context, step) => {
           detached: true,
         },
       },
+      Catch: [
+        {
+          ErrorEquals: ['States.ALL'],
+          ResultPath: '$.error-info',
+          Next: step.XNextOnCatch || step.Next,
+        },
+      ],
     };
   }
 
@@ -70,7 +77,7 @@ const createNewJobIfNotExist = (context, step) => {
       {
         ErrorEquals: ['EKS.409'],
         ResultPath: '$.error-info',
-        Next: step.Next || step.XNext,
+        Next: step.XNextOnCatch || step.Next,
       },
     ],
   };

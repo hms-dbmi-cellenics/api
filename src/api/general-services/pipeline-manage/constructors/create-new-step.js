@@ -28,6 +28,13 @@ const createNewStep = (context, step, args) => {
           detached: false,
         },
       },
+      Catch: [
+        {
+          ErrorEquals: ['States.ALL'],
+          ResultPath: '$.error-info',
+          Next: step.XNextOnCatch || step.Next,
+        },
+      ],
     };
   }
 
@@ -81,7 +88,7 @@ const createNewStep = (context, step, args) => {
       {
         ErrorEquals: ['EKS.409'],
         ResultPath: '$.error-info',
-        Next: step.Next || step.XNext,
+        Next: step.XNextOnCatch || step.Next,
       },
     ],
   };
