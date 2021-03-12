@@ -6,6 +6,10 @@ const ioServer = require('socket.io')({
 const AWS = require('../../../src/utils/requireAWS');
 const pipelineResponse = require('../../../src/api/route-services/pipeline-response');
 
+jest.mock('../../../src/api/general-services/pipeline-status', () => jest.fn().mockImplementation(() => ({
+  pipelineStatus: () => ({}),
+})));
+
 describe('Test Pipeline Response Service', () => {
   let io;
   let client;

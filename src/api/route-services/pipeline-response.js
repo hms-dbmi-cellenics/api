@@ -86,13 +86,13 @@ const pipelineResponse = async (io, message) => {
 
   experimentService.updateProcessingConfig(experimentId, [{ name: taskName, body: output.config }]);
 
-  const statusResult = await pipelineStatus(experimentId);
+  const statusRes = await pipelineStatus(experimentId);
 
   // Concatenate into a proper response.
   const response = {
     ...message,
     output,
-    status: statusResult,
+    status: statusRes,
   };
 
   logger.log('Sending to all clients subscribed to experiment', experimentId);
