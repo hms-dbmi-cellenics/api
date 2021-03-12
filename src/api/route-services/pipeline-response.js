@@ -4,6 +4,7 @@ const logger = require('../../utils/logging');
 
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
+const pipelineStatus = require('../general-services/pipeline-status');
 
 const experimentService = new ExperimentService();
 const plotsTableService = new PlotsTablesService();
@@ -85,10 +86,13 @@ const pipelineResponse = async (io, message) => {
 
   experimentService.updateProcessingConfig(experimentId, [{ name: taskName, body: output.config }]);
 
+  const statusResult = await pipelineStatus(experimentId);
+
   // Concatenate into a proper response.
   const response = {
     ...message,
     output,
+    status: statusResult,
   };
 
   logger.log('Sending to all clients subscribed to experiment', experimentId);
