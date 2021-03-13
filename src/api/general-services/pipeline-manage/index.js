@@ -109,37 +109,9 @@ const executeStateMachine = async (stateMachineArn) => {
   return executionArn;
 };
 
-const createPipeline = async (experimentId, processingConfigUpdates) => {
-  const accountId = await config.awsAccountIdPromise();
-  const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
-
-  logger.log(`Fetching processing settings for ${experimentId}`);
-  const processingRes = await experimentService.getProcessingConfig(experimentId);
-  const { processingConfig } = processingRes;
-
-  if (processingConfigUpdates) {
-    processingConfigUpdates.forEach(({ name, body }) => {
-      if (!processingConfig[name]) {
-        processingConfig[name] = body;
-
-        return;
-      }
-
-      _.merge(processingConfig[name], body);
-    });
-  }
-
-  const context = {
-    experimentId,
-    accountId,
-    roleArn,
-    pipelineImages: await getPipelineImages(),
-    clusterInfo: await getClusterInfo(),
-    processingConfig,
-  };
-
+const buildStateMachineDefinition = (context) => {
   const skeleton = {
-    Comment: 'N/A',
+    Comment: `Pipeline for clusterEnv '${config.clusterEnv}'`,
     StartAt: 'DeleteCompletedPipelineWorker',
     States: {
       DeleteCompletedPipelineWorker: {
@@ -227,15 +199,44 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
   logger.log('Constructing pipeline steps...');
   const stateMachine = _.cloneDeepWith(skeleton, (o) => {
     if (_.isObject(o) && o.XStepType) {
-      return {
-        ...constructPipelineStep(context, o),
-        XStepType: undefined,
-        XConstructorArgs: undefined,
-        XNextOnCatch: undefined,
-      };
+      return _.omit(constructPipelineStep(context, o), ['XStepType', 'XConstructorArgs', 'XNextOnCatch']);
     }
     return undefined;
   });
+
+  return stateMachine;
+};
+
+const createPipeline = async (experimentId, processingConfigUpdates) => {
+  const accountId = await config.awsAccountIdPromise();
+  const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
+
+  logger.log(`Fetching processing settings for ${experimentId}`);
+  const processingRes = await experimentService.getProcessingConfig(experimentId);
+  const { processingConfig } = processingRes;
+
+  if (processingConfigUpdates) {
+    processingConfigUpdates.forEach(({ name, body }) => {
+      if (!processingConfig[name]) {
+        processingConfig[name] = body;
+
+        return;
+      }
+
+      _.merge(processingConfig[name], body);
+    });
+  }
+
+  const context = {
+    experimentId,
+    accountId,
+    roleArn,
+    pipelineImages: await getPipelineImages(),
+    clusterInfo: await getClusterInfo(),
+    processingConfig,
+  };
+
+  const stateMachine = buildStateMachineDefinition(context);
 
   logger.log('Skeleton constructed, now creating state machine from skeleton...');
   const stateMachineArn = await createNewStateMachine(context, stateMachine);
@@ -249,3 +250,4 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
 
 
 module.exports = createPipeline;
+module.exports.buildStateMachineDefinition = buildStateMachineDefinition;

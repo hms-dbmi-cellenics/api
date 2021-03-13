@@ -1,0 +1,725 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`non-tests to document the State Machines - local development 1`] = `
+
+{
+  "Comment": "Pipeline for clusterEnv 'development'",
+  "StartAt": "DeleteCompletedPipelineWorker",
+  "States": {
+    "DeleteCompletedPipelineWorker": {
+      "Next": "LaunchNewPipelineWorker",
+      "ResultPath": null,
+      "Type": "Task",
+      "Comment": "Removes Docker containers with pipeline runs on the local machine.",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:remove-previous-pipeline-containers"
+      }
+    },
+    "LaunchNewPipelineWorker": {
+      "Next": "Filters",
+      "ResultPath": null,
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
+        "Payload": {
+          "image": "mock-remoter-server-image",
+          "name": "pipeline-remoter-server",
+          "detached": true
+        }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "Filters"
+        }
+      ]
+    },
+    "Filters": {
+      "Type": "Map",
+      "Next": "DataIntegration",
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "CellSizeDistributionFilter",
+        "States": {
+          "CellSizeDistributionFilter": {
+            "Next": "MitochondrialContentFilter",
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Parameters": {
+              "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
+              "Payload": {
+                "image": "mock-remoter-client-image",
+                "name": "pipeline-remoter-client",
+                "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"cellSizeDistribution\\",\\"config\\":{}}",
+                "detached": false
+              }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "MitochondrialContentFilter"
+              }
+            ]
+          },
+          "MitochondrialContentFilter": {
+            "Next": "ClassifierFilter",
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Parameters": {
+              "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
+              "Payload": {
+                "image": "mock-remoter-client-image",
+                "name": "pipeline-remoter-client",
+                "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"mitochondrialContent\\",\\"config\\":{}}",
+                "detached": false
+              }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "ClassifierFilter"
+              }
+            ]
+          },
+          "ClassifierFilter": {
+            "Next": "NumGenesVsNumUmisFilter",
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Parameters": {
+              "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
+              "Payload": {
+                "image": "mock-remoter-client-image",
+                "name": "pipeline-remoter-client",
+                "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"classifier\\",\\"config\\":{}}",
+                "detached": false
+              }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "NumGenesVsNumUmisFilter"
+              }
+            ]
+          },
+          "NumGenesVsNumUmisFilter": {
+            "Next": "DoubletScoresFilter",
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Parameters": {
+              "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
+              "Payload": {
+                "image": "mock-remoter-client-image",
+                "name": "pipeline-remoter-client",
+                "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"numGenesVsNumUmis\\",\\"config\\":{}}",
+                "detached": false
+              }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "DoubletScoresFilter"
+              }
+            ]
+          },
+          "DoubletScoresFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Parameters": {
+              "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
+              "Payload": {
+                "image": "mock-remoter-client-image",
+                "name": "pipeline-remoter-client",
+                "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"doubletScores\\",\\"config\\":{}}",
+                "detached": false
+              }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "EndOfMap"
+              }
+            ]
+          },
+          "EndOfMap": {
+            "Type": "Pass",
+            "End": true
+          }
+        }
+      }
+    },
+    "DataIntegration": {
+      "Next": "ConfigureEmbedding",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
+        "Payload": {
+          "image": "mock-remoter-client-image",
+          "name": "pipeline-remoter-client",
+          "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"dataIntegration\\",\\"config\\":{}}",
+          "detached": false
+        }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "ConfigureEmbedding"
+        }
+      ]
+    },
+    "ConfigureEmbedding": {
+      "End": true,
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
+        "Payload": {
+          "image": "mock-remoter-client-image",
+          "name": "pipeline-remoter-client",
+          "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"configureEmbedding\\",\\"config\\":{}}",
+          "detached": false
+        }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "EndOfPipeline"
+        }
+      ]
+    },
+    "EndOfPipeline": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}
+`;
+
+exports[`non-tests to document the State Machines -cloud 1`] = `
+
+{
+  "Comment": "Pipeline for clusterEnv 'test'",
+  "StartAt": "DeleteCompletedPipelineWorker",
+  "States": {
+    "DeleteCompletedPipelineWorker": {
+      "Next": "LaunchNewPipelineWorker",
+      "ResultPath": null,
+      "Type": "Task",
+      "Comment": "Deletes all the preivous server jobs that are already completed.",
+      "Resource": "arn:aws:states:::eks:call",
+      "Parameters": {
+        "ClusterName": "mock-cluster-name",
+        "CertificateAuthority": "mock-ca",
+        "Endpoint": "mock-endpoint",
+        "Method": "DELETE",
+        "Path": "/apis/batch/v1/namespaces/worker-test-namespace/jobs",
+        "QueryParameters": {
+          "fieldSelector": [
+            "status.successful=1"
+          ]
+        }
+      }
+    },
+    "LaunchNewPipelineWorker": {
+      "Next": "Filters",
+      "ResultPath": null,
+      "Type": "Task",
+      "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
+      "Resource": "arn:aws:states:::eks:call",
+      "Parameters": {
+        "ClusterName": "mock-cluster-name",
+        "CertificateAuthority": "mock-ca",
+        "Endpoint": "mock-endpoint",
+        "Method": "POST",
+        "Path": "/apis/batch/v1/namespaces/worker-test-namespace/jobs",
+        "RequestBody": {
+          "apiVersion": "batch/v1",
+          "kind": "Job",
+          "metadata": {
+            "name": "remoter-server-mock-experiment-id"
+          },
+          "spec": {
+            "template": {
+              "metadata": {
+                "name": "remoter-server-mock-experiment-id"
+              },
+              "spec": {
+                "containers": [
+                  {
+                    "name": "remoter-server",
+                    "image": "mock-remoter-server-image"
+                  }
+                ],
+                "restartPolicy": "Never"
+              }
+            }
+          }
+        }
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "EKS.409"
+          ],
+          "IntervalSeconds": 1,
+          "BackoffRate": 2,
+          "MaxAttempts": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "EKS.409"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "Filters"
+        }
+      ]
+    },
+    "Filters": {
+      "Type": "Map",
+      "Next": "DataIntegration",
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "CellSizeDistributionFilter",
+        "States": {
+          "CellSizeDistributionFilter": {
+            "Next": "MitochondrialContentFilter",
+            "Type": "Task",
+            "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
+            "Resource": "arn:aws:states:::eks:runJob.sync",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "mock-endpoint",
+              "Namespace": "worker-test-namespace",
+              "Job": {
+                "apiVersion": "batch/v1",
+                "kind": "Job",
+                "metadata": {
+                  "name": "remoter-client-mock-experiment-id"
+                },
+                "spec": {
+                  "template": {
+                    "metadata": {
+                      "name": "remoter-client-mock-experiment-id"
+                    },
+                    "spec": {
+                      "containers": [
+                        {
+                          "name": "remoter-client",
+                          "image": "mock-remoter-client-image",
+                          "args": [
+                            "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"cellSizeDistribution\\",\\"config\\":{}}"
+                          ]
+                        }
+                      ],
+                      "restartPolicy": "Never"
+                    }
+                  }
+                }
+              }
+            },
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "EKS.409"
+                ],
+                "IntervalSeconds": 1,
+                "BackoffRate": 2,
+                "MaxAttempts": 2
+              }
+            ],
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "EKS.409"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "MitochondrialContentFilter"
+              }
+            ]
+          },
+          "MitochondrialContentFilter": {
+            "Next": "ClassifierFilter",
+            "Type": "Task",
+            "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
+            "Resource": "arn:aws:states:::eks:runJob.sync",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "mock-endpoint",
+              "Namespace": "worker-test-namespace",
+              "Job": {
+                "apiVersion": "batch/v1",
+                "kind": "Job",
+                "metadata": {
+                  "name": "remoter-client-mock-experiment-id"
+                },
+                "spec": {
+                  "template": {
+                    "metadata": {
+                      "name": "remoter-client-mock-experiment-id"
+                    },
+                    "spec": {
+                      "containers": [
+                        {
+                          "name": "remoter-client",
+                          "image": "mock-remoter-client-image",
+                          "args": [
+                            "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"mitochondrialContent\\",\\"config\\":{}}"
+                          ]
+                        }
+                      ],
+                      "restartPolicy": "Never"
+                    }
+                  }
+                }
+              }
+            },
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "EKS.409"
+                ],
+                "IntervalSeconds": 1,
+                "BackoffRate": 2,
+                "MaxAttempts": 2
+              }
+            ],
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "EKS.409"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "ClassifierFilter"
+              }
+            ]
+          },
+          "ClassifierFilter": {
+            "Next": "NumGenesVsNumUmisFilter",
+            "Type": "Task",
+            "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
+            "Resource": "arn:aws:states:::eks:runJob.sync",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "mock-endpoint",
+              "Namespace": "worker-test-namespace",
+              "Job": {
+                "apiVersion": "batch/v1",
+                "kind": "Job",
+                "metadata": {
+                  "name": "remoter-client-mock-experiment-id"
+                },
+                "spec": {
+                  "template": {
+                    "metadata": {
+                      "name": "remoter-client-mock-experiment-id"
+                    },
+                    "spec": {
+                      "containers": [
+                        {
+                          "name": "remoter-client",
+                          "image": "mock-remoter-client-image",
+                          "args": [
+                            "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"classifier\\",\\"config\\":{}}"
+                          ]
+                        }
+                      ],
+                      "restartPolicy": "Never"
+                    }
+                  }
+                }
+              }
+            },
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "EKS.409"
+                ],
+                "IntervalSeconds": 1,
+                "BackoffRate": 2,
+                "MaxAttempts": 2
+              }
+            ],
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "EKS.409"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "NumGenesVsNumUmisFilter"
+              }
+            ]
+          },
+          "NumGenesVsNumUmisFilter": {
+            "Next": "DoubletScoresFilter",
+            "Type": "Task",
+            "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
+            "Resource": "arn:aws:states:::eks:runJob.sync",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "mock-endpoint",
+              "Namespace": "worker-test-namespace",
+              "Job": {
+                "apiVersion": "batch/v1",
+                "kind": "Job",
+                "metadata": {
+                  "name": "remoter-client-mock-experiment-id"
+                },
+                "spec": {
+                  "template": {
+                    "metadata": {
+                      "name": "remoter-client-mock-experiment-id"
+                    },
+                    "spec": {
+                      "containers": [
+                        {
+                          "name": "remoter-client",
+                          "image": "mock-remoter-client-image",
+                          "args": [
+                            "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"numGenesVsNumUmis\\",\\"config\\":{}}"
+                          ]
+                        }
+                      ],
+                      "restartPolicy": "Never"
+                    }
+                  }
+                }
+              }
+            },
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "EKS.409"
+                ],
+                "IntervalSeconds": 1,
+                "BackoffRate": 2,
+                "MaxAttempts": 2
+              }
+            ],
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "EKS.409"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "DoubletScoresFilter"
+              }
+            ]
+          },
+          "DoubletScoresFilter": {
+            "End": true,
+            "Type": "Task",
+            "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
+            "Resource": "arn:aws:states:::eks:runJob.sync",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "mock-endpoint",
+              "Namespace": "worker-test-namespace",
+              "Job": {
+                "apiVersion": "batch/v1",
+                "kind": "Job",
+                "metadata": {
+                  "name": "remoter-client-mock-experiment-id"
+                },
+                "spec": {
+                  "template": {
+                    "metadata": {
+                      "name": "remoter-client-mock-experiment-id"
+                    },
+                    "spec": {
+                      "containers": [
+                        {
+                          "name": "remoter-client",
+                          "image": "mock-remoter-client-image",
+                          "args": [
+                            "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"doubletScores\\",\\"config\\":{}}"
+                          ]
+                        }
+                      ],
+                      "restartPolicy": "Never"
+                    }
+                  }
+                }
+              }
+            },
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "EKS.409"
+                ],
+                "IntervalSeconds": 1,
+                "BackoffRate": 2,
+                "MaxAttempts": 2
+              }
+            ],
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "EKS.409"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "EndOfMap"
+              }
+            ]
+          },
+          "EndOfMap": {
+            "Type": "Pass",
+            "End": true
+          }
+        }
+      }
+    },
+    "DataIntegration": {
+      "Next": "ConfigureEmbedding",
+      "Type": "Task",
+      "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
+      "Resource": "arn:aws:states:::eks:runJob.sync",
+      "Parameters": {
+        "ClusterName": "mock-cluster-name",
+        "CertificateAuthority": "mock-ca",
+        "Endpoint": "mock-endpoint",
+        "Namespace": "worker-test-namespace",
+        "Job": {
+          "apiVersion": "batch/v1",
+          "kind": "Job",
+          "metadata": {
+            "name": "remoter-client-mock-experiment-id"
+          },
+          "spec": {
+            "template": {
+              "metadata": {
+                "name": "remoter-client-mock-experiment-id"
+              },
+              "spec": {
+                "containers": [
+                  {
+                    "name": "remoter-client",
+                    "image": "mock-remoter-client-image",
+                    "args": [
+                      "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"dataIntegration\\",\\"config\\":{}}"
+                    ]
+                  }
+                ],
+                "restartPolicy": "Never"
+              }
+            }
+          }
+        }
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "EKS.409"
+          ],
+          "IntervalSeconds": 1,
+          "BackoffRate": 2,
+          "MaxAttempts": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "EKS.409"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "ConfigureEmbedding"
+        }
+      ]
+    },
+    "ConfigureEmbedding": {
+      "End": true,
+      "Type": "Task",
+      "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
+      "Resource": "arn:aws:states:::eks:runJob.sync",
+      "Parameters": {
+        "ClusterName": "mock-cluster-name",
+        "CertificateAuthority": "mock-ca",
+        "Endpoint": "mock-endpoint",
+        "Namespace": "worker-test-namespace",
+        "Job": {
+          "apiVersion": "batch/v1",
+          "kind": "Job",
+          "metadata": {
+            "name": "remoter-client-mock-experiment-id"
+          },
+          "spec": {
+            "template": {
+              "metadata": {
+                "name": "remoter-client-mock-experiment-id"
+              },
+              "spec": {
+                "containers": [
+                  {
+                    "name": "remoter-client",
+                    "image": "mock-remoter-client-image",
+                    "args": [
+                      "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"configureEmbedding\\",\\"config\\":{}}"
+                    ]
+                  }
+                ],
+                "restartPolicy": "Never"
+              }
+            }
+          }
+        }
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "EKS.409"
+          ],
+          "IntervalSeconds": 1,
+          "BackoffRate": 2,
+          "MaxAttempts": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "EKS.409"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "EndOfPipeline"
+        }
+      ]
+    },
+    "EndOfPipeline": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}
+`;

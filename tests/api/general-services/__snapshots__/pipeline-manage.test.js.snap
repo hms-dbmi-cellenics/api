@@ -68,7 +68,7 @@ Array [
   Object {
     "type": "return",
     "value": Object {
-      "Comment": "N/A",
+      "Comment": "Pipeline for clusterEnv 'test'",
       "StartAt": "DeleteCompletedPipelineWorker",
       "States": Object {
         "ConfigureEmbedding": Object {
@@ -113,6 +113,7 @@ Array [
                 },
               },
             },
+            "Namespace": "worker-test-namespace",
           },
           "Resource": "arn:aws:states:::eks:runJob.sync",
           "Retry": Array [
@@ -169,6 +170,7 @@ Array [
                 },
               },
             },
+            "Namespace": "worker-test-namespace",
           },
           "Resource": "arn:aws:states:::eks:runJob.sync",
           "Retry": Array [
@@ -191,7 +193,7 @@ Array [
             "ClusterName": "biomage-test",
             "Endpoint": "https://test-endpoint.me/fgh",
             "Method": "DELETE",
-            "Path": "/apis/batch/v1/namespaces/undefined/jobs",
+            "Path": "/apis/batch/v1/namespaces/worker-test-namespace/jobs",
             "QueryParameters": Object {
               "fieldSelector": Array [
                 "status.successful=1",
@@ -253,6 +255,7 @@ Array [
                       },
                     },
                   },
+                  "Namespace": "worker-test-namespace",
                 },
                 "Resource": "arn:aws:states:::eks:runJob.sync",
                 "Retry": Array [
@@ -309,6 +312,7 @@ Array [
                       },
                     },
                   },
+                  "Namespace": "worker-test-namespace",
                 },
                 "Resource": "arn:aws:states:::eks:runJob.sync",
                 "Retry": Array [
@@ -365,6 +369,7 @@ Array [
                       },
                     },
                   },
+                  "Namespace": "worker-test-namespace",
                 },
                 "Resource": "arn:aws:states:::eks:runJob.sync",
                 "Retry": Array [
@@ -425,6 +430,7 @@ Array [
                       },
                     },
                   },
+                  "Namespace": "worker-test-namespace",
                 },
                 "Resource": "arn:aws:states:::eks:runJob.sync",
                 "Retry": Array [
@@ -481,6 +487,7 @@ Array [
                       },
                     },
                   },
+                  "Namespace": "worker-test-namespace",
                 },
                 "Resource": "arn:aws:states:::eks:runJob.sync",
                 "Retry": Array [
@@ -517,7 +524,7 @@ Array [
             "ClusterName": "biomage-test",
             "Endpoint": "https://test-endpoint.me/fgh",
             "Method": "POST",
-            "Path": "/apis/batch/v1/namespaces/undefined/jobs",
+            "Path": "/apis/batch/v1/namespaces/worker-test-namespace/jobs",
             "RequestBody": Object {
               "apiVersion": "batch/v1",
               "kind": "Job",
