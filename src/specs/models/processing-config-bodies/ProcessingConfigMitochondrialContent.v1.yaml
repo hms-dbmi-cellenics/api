@@ -24,9 +24,6 @@ properties:
                 type: number
 additionalProperties:
   type: object
-  required:
-    - method
-    - methodSettings
   properties:
     filterSettings:
       type: object
@@ -46,7 +43,7 @@ additionalProperties:
                 maxFraction:
                   type: number
                 binStep:
-                  type: number            
+                  type: number         
 required:
   - filterSettings
 description: Processing config body for Mitochondrial Content filter.
