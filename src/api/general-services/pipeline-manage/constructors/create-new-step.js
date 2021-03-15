@@ -2,16 +2,18 @@ const config = require('../../../../config');
 
 const createNewStep = (context, step, args) => {
   const {
-    processingConfig, clusterInfo, experimentId, pipelineImages, accountId,
+    processingConfig, clusterInfo, experimentId, pipelineArtifacts, accountId,
   } = context;
 
   const { taskName } = args;
+  const remoterServer = (config.clusterEnv === 'development') ? 'host.docker.internal' : `remoter-server-${experimentId}.${config.workerNamespace}.svc.cluster.local`;
 
 
   const task = JSON.stringify({
     experimentId,
     taskName,
     config: processingConfig[taskName] || {},
+    server: remoterServer,
   });
 
   if (config.clusterEnv === 'development') {
@@ -22,7 +24,7 @@ const createNewStep = (context, step, args) => {
       Parameters: {
         FunctionName: `arn:aws:lambda:eu-west-1:${accountId}:function:local-container-launcher`,
         Payload: {
-          image: pipelineImages['remoter-client'],
+          image: pipelineArtifacts.images['remoter-client'],
           name: 'pipeline-remoter-client',
           task,
           detached: false,
@@ -64,7 +66,7 @@ const createNewStep = (context, step, args) => {
               containers: [
                 {
                   name: 'remoter-client',
-                  image: pipelineImages['remoter-client'],
+                  image: pipelineArtifacts.images['remoter-client'],
                   args: [
                     task,
                   ],

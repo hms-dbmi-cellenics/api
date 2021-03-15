@@ -2,7 +2,7 @@ const config = require('../../../../config');
 
 const createNewJobIfNotExist = (context, step) => {
   const {
-    clusterInfo, experimentId, pipelineImages, accountId,
+    clusterInfo, experimentId, pipelineArtifacts, accountId,
   } = context;
 
 
@@ -14,7 +14,7 @@ const createNewJobIfNotExist = (context, step) => {
       Parameters: {
         FunctionName: `arn:aws:lambda:eu-west-1:${accountId}:function:local-container-launcher`,
         Payload: {
-          image: pipelineImages['remoter-server'],
+          image: pipelineArtifacts.images['remoter-server'],
           name: 'pipeline-remoter-server',
           detached: true,
         },
@@ -40,27 +40,31 @@ const createNewJobIfNotExist = (context, step) => {
       CertificateAuthority: clusterInfo.certAuthority,
       Endpoint: clusterInfo.endpoint,
       Method: 'POST',
-      Path: `/apis/batch/v1/namespaces/${config.workerNamespace}/jobs`,
+      Path: `/apis/helm.fluxcd.io/v1/namespaces/${config.workerNamespace}/helmreleases`,
       RequestBody: {
-        apiVersion: 'batch/v1',
-        kind: 'Job',
+        apiVersion: 'helm.fluxcd.io/v1',
+        kind: 'HelmRelease',
         metadata: {
           name: `remoter-server-${experimentId}`,
+          namespace: config.workerNamespace,
+          annotations: {
+            'fluxcd.io/automated': 'true',
+          },
+          labels: {
+            sandboxId: config.sandboxId,
+          },
         },
         spec: {
-          template: {
-            metadata: {
-              name: `remoter-server-${experimentId}`,
-            },
-            spec: {
-              containers: [
-                {
-                  name: 'remoter-server',
-                  image: pipelineImages['remoter-server'],
-                },
-              ],
-              restartPolicy: 'Never',
-            },
+          releaseName: `remoter-server-${experimentId}`,
+          chart: {
+            git: 'git@github.com:biomage-ltd/pipeline',
+            path: 'remoter-server/chart',
+            ref: pipelineArtifacts.chartRef,
+          },
+          values: {
+            experimentId,
+            image: pipelineArtifacts.images['remoter-server'],
+            namespace: config.workerNamespace,
           },
         },
       },

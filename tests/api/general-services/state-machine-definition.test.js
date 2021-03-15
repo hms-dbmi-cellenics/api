@@ -20,9 +20,11 @@ describe('non-tests to document the State Machines', () => {
     experimentId: 'mock-experiment-id',
     accountId: 'mock-account-id',
     roleArn: 'mock-role-arn',
-    pipelineImages: {
-      'remoter-server': 'mock-remoter-server-image',
-      'remoter-client': 'mock-remoter-client-image',
+    pipelineArtifacts: {
+      images: {
+        'remoter-server': 'mock-remoter-server-image',
+        'remoter-client': 'mock-remoter-client-image',
+      },
     },
     clusterInfo: {
       name: 'mock-cluster-name',

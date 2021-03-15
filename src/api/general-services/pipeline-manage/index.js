@@ -14,7 +14,7 @@ const constructPipelineStep = require('./constructors/construct-pipeline-step');
 
 const experimentService = new ExperimentService();
 
-const getPipelineImages = async () => {
+const getPipelineArtifacts = async () => {
   const response = await fetch(
     config.pipelineInstanceConfigUrl,
     {
@@ -25,7 +25,7 @@ const getPipelineImages = async () => {
   const txt = await response.text();
   const manifest = YAML.parseAllDocuments(txt);
 
-  return jq.json(manifest, '..|objects|.images//empty');
+  return jq.json(manifest, '..|objects|.out//empty');
 };
 
 const getClusterInfo = async () => {
@@ -231,7 +231,7 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
     experimentId,
     accountId,
     roleArn,
-    pipelineImages: await getPipelineImages(),
+    pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
     processingConfig,
   };
