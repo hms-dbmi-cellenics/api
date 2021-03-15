@@ -60,7 +60,7 @@ const config = {
     prefix: '/',
   },
   workerInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/worker.yaml',
-  pipelineInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/pipeline.yaml',
+  pipelineInstanceConfigUrl: 'http://127.0.0.1:8080/pipeline.yaml',
   cachingEnabled: true,
   corsOriginUrl: 'https://scp.biomage.net',
 };
