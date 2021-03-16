@@ -52,6 +52,7 @@ const createNewJobIfNotExist = (context, step) => {
           },
           labels: {
             sandboxId: config.sandboxId,
+            type: 'pipeline',
           },
         },
         spec: {

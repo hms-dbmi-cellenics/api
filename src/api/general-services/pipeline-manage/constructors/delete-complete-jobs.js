@@ -29,8 +29,8 @@ const constructDeleteCompletedJobs = (context, step) => {
       Method: 'DELETE',
       Path: `/apis/batch/v1/namespaces/${config.workerNamespace}/jobs`,
       QueryParameters: {
-        fieldSelector: [
-          'status.successful=1',
+        labelSelector: [
+          'type=pipeline',
         ],
       },
     },
