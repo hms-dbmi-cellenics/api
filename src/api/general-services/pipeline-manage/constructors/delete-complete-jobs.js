@@ -34,6 +34,14 @@ const constructDeleteCompletedJobs = (context, step) => {
         ],
       },
     },
+    // TO-DO: remove
+    Catch: [
+      {
+        ErrorEquals: ['EKS.403'],
+        ResultPath: '$.error-info',
+        Next: step.XNextOnCatch || step.Next,
+      },
+    ],
   };
 };
 

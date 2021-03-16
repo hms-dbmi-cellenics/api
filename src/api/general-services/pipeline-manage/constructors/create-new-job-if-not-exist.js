@@ -81,7 +81,7 @@ const createNewJobIfNotExist = (context, step) => {
     ],
     Catch: [
       {
-        ErrorEquals: ['EKS.409'],
+        ErrorEquals: ['EKS.409', 'EKS.403'],
         ResultPath: '$.error-info',
         Next: step.XNextOnCatch || step.Next,
       },
