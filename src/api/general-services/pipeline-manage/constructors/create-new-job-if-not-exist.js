@@ -14,7 +14,7 @@ const createNewJobIfNotExist = (context, step) => {
       Parameters: {
         FunctionName: `arn:aws:lambda:eu-west-1:${accountId}:function:local-container-launcher`,
         Payload: {
-          image: pipelineImages['remoter-server'],
+          image: 'biomage-remoter-server',
           name: 'pipeline-remoter-server',
           detached: true,
         },

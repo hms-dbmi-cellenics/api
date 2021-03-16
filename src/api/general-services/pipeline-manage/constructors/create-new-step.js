@@ -22,7 +22,7 @@ const createNewStep = (context, step, args) => {
       Parameters: {
         FunctionName: `arn:aws:lambda:eu-west-1:${accountId}:function:local-container-launcher`,
         Payload: {
-          image: pipelineImages['remoter-client'],
+          image: 'biomage-remoter-client',
           name: 'pipeline-remoter-client',
           task,
           detached: false,
