@@ -51,6 +51,9 @@ const createNewStep = (context, step, args) => {
       CertificateAuthority: clusterInfo.certAuthority,
       Endpoint: clusterInfo.endpoint,
       Namespace: config.workerNamespace,
+      LogOptions: {
+        RetrieveLogs: true,
+      },
       Job: {
         apiVersion: 'batch/v1',
         kind: 'Job',
