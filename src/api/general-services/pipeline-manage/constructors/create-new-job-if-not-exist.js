@@ -66,6 +66,7 @@ const createNewJobIfNotExist = (context, step) => {
             experimentId,
             image: pipelineArtifacts.images['remoter-server'],
             namespace: config.workerNamespace,
+            sandboxId: config.sandboxId,
           },
         },
       },

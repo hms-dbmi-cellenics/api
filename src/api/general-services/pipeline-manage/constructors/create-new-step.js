@@ -59,11 +59,19 @@ const createNewStep = (context, step, args) => {
         kind: 'Job',
         metadata: {
           name: `remoter-client-${experimentId}`,
+          labels: {
+            sandboxId: config.sandboxId,
+            type: 'pipeline',
+          },
         },
         spec: {
           template: {
             metadata: {
               name: `remoter-client-${experimentId}`,
+              labels: {
+                sandboxId: config.sandboxId,
+                type: 'pipeline',
+              },
             },
             spec: {
               containers: [
