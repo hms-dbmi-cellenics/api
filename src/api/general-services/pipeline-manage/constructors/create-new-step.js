@@ -81,24 +81,6 @@ const createNewStep = (context, step, args) => {
                   args: [
                     task,
                   ],
-                  env: [
-                    {
-                      name: 'CLUSTER_ENV',
-                      value: config.clusterEnv,
-                    },
-                    {
-                      name: 'SANDBOX_ID',
-                      value: config.sandboxId,
-                    },
-                    {
-                      name: 'AWS_ACCOUNT_ID',
-                      value: accountId,
-                    },
-                    {
-                      name: 'AWS_DEFAULT_REGION',
-                      value: context.awsRegion,
-                    },
-                  ],
                 },
               ],
               restartPolicy: 'Never',
