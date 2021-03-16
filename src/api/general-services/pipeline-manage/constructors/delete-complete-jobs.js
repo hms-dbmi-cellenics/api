@@ -20,14 +20,14 @@ const constructDeleteCompletedJobs = (context, step) => {
   return {
     ...step,
     Type: 'Task',
-    Comment: 'Deletes all the preivous server jobs that are already completed.',
+    Comment: 'Deletes the prevoius server pipeline HelmRelease (Service+Job).',
     Resource: 'arn:aws:states:::eks:call',
     Parameters: {
       ClusterName: context.clusterInfo.name,
       CertificateAuthority: context.clusterInfo.certAuthority,
       Endpoint: context.clusterInfo.endpoint,
       Method: 'DELETE',
-      Path: `/apis/batch/v1/namespaces/${config.workerNamespace}/jobs`,
+      Path: `/apis/helm.fluxcd.io/v1/namespaces/${config.workerNamespace}/helmreleases`,
       QueryParameters: {
         labelSelector: [
           'type=pipeline',

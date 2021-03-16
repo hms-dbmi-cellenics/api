@@ -33,7 +33,7 @@ const createNewJobIfNotExist = (context, step) => {
   return {
     ...step,
     Type: 'Task',
-    Comment: 'Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.',
+    Comment: 'Attempts to create a Kubernetes Job+Service for the pipeline server. Will swallow a 409 (already exists) error.',
     Resource: 'arn:aws:states:::eks:call',
     Parameters: {
       ClusterName: clusterInfo.name,
