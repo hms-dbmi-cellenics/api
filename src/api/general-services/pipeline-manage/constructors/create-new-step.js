@@ -81,7 +81,7 @@ const createNewStep = (context, step, args) => {
                   args: [
                     task,
                   ],
-                  environment: [
+                  env: [
                     {
                       name: 'CLUSTER_ENV',
                       value: config.clusterEnv,
