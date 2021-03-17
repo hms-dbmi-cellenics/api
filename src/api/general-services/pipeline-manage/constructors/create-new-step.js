@@ -99,12 +99,13 @@ const createNewStep = (context, step, args) => {
                   args: [
                     task,
                   ],
-                  env: [
-                    {
-                      name: 'SAMPLE_ID',
-                      'value.$': '$',
-                    },
-                  ],
+                  // TODO: this is for multi-sample support for API.
+                  // env: [
+                  //   {
+                  //     name: 'SAMPLE_ID',
+                  //     'value.$': '$',
+                  //   },
+                  // ],
                 },
               ],
               restartPolicy: 'Never',
