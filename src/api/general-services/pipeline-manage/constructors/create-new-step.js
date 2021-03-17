@@ -58,7 +58,7 @@ const createNewStep = (context, step, args) => {
         apiVersion: 'batch/v1',
         kind: 'Job',
         metadata: {
-          name: `remoter-client-${experimentId}-${taskName}`,
+          name: `remoter-client-${experimentId}-${taskName.toLowerCase()}`.substring(0, 63),
           labels: {
             sandboxId: config.sandboxId,
             type: 'pipeline',
