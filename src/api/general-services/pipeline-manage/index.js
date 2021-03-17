@@ -25,9 +25,7 @@ const getPipelineArtifacts = async () => {
   const txt = await response.text();
   const manifest = YAML.parseAllDocuments(txt);
 
-  console.log(manifest);
-
-  console.log({
+  return {
     chartRef: jq.json(manifest, '..|objects| select(.metadata != null) | select( .metadata.name | contains("pipeline")) | .spec.chart.ref'),
     'remoter-server': jq.json(manifest, '..|objects|.["remoter-server"].image//empty'),
     'remoter-client': jq.json(manifest, '..|objects|.["remoter-client"].image//empty'),
