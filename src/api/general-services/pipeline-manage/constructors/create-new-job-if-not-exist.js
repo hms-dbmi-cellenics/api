@@ -40,13 +40,13 @@ const createNewJobIfNotExist = (context, step) => {
       CertificateAuthority: clusterInfo.certAuthority,
       Endpoint: clusterInfo.endpoint,
       Method: 'POST',
-      Path: `/apis/helm.fluxcd.io/v1/namespaces/${config.workerNamespace}/helmreleases`,
+      Path: `/apis/helm.fluxcd.io/v1/namespaces/${config.pipelineNamespace}/helmreleases`,
       RequestBody: {
         apiVersion: 'helm.fluxcd.io/v1',
         kind: 'HelmRelease',
         metadata: {
           name: `remoter-server-${experimentId}`,
-          namespace: config.workerNamespace,
+          namespace: config.pipelineNamespace,
           annotations: {
             'fluxcd.io/automated': 'true',
           },
@@ -64,8 +64,8 @@ const createNewJobIfNotExist = (context, step) => {
           },
           values: {
             experimentId,
-            image: pipelineArtifacts.images['remoter-server'],
-            namespace: config.workerNamespace,
+            image: pipelineArtifacts['remoter-server'],
+            namespace: config.pipelineNamespace,
             sandboxId: config.sandboxId,
             awsAccountId: accountId,
             clusterEnv: config.clusterEnv,

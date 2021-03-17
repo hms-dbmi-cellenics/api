@@ -6,7 +6,7 @@ const createNewStep = (context, step, args) => {
   } = context;
 
   const { taskName } = args;
-  const remoterServer = (config.clusterEnv === 'development') ? 'host.docker.internal' : `remoter-server-${experimentId}.${config.workerNamespace}.svc.cluster.local`;
+  const remoterServer = (config.clusterEnv === 'development') ? 'host.docker.internal' : `remoter-server-${experimentId}.${config.pipelineNamespace}.svc.cluster.local`;
 
 
   const task = JSON.stringify({
@@ -50,7 +50,7 @@ const createNewStep = (context, step, args) => {
       ClusterName: clusterInfo.name,
       CertificateAuthority: clusterInfo.certAuthority,
       Endpoint: clusterInfo.endpoint,
-      Namespace: config.workerNamespace,
+      Namespace: config.pipelineNamespace,
       LogOptions: {
         RetrieveLogs: true,
       },
@@ -77,7 +77,7 @@ const createNewStep = (context, step, args) => {
               containers: [
                 {
                   name: 'remoter-client',
-                  image: pipelineArtifacts.images['remoter-client'],
+                  image: pipelineArtifacts['remoter-client'],
                   args: [
                     task,
                   ],

@@ -27,7 +27,7 @@ const constructDeleteCompletedJobs = (context, step) => {
       CertificateAuthority: context.clusterInfo.certAuthority,
       Endpoint: context.clusterInfo.endpoint,
       Method: 'DELETE',
-      Path: `/apis/helm.fluxcd.io/v1/namespaces/${config.workerNamespace}/helmreleases`,
+      Path: `/apis/helm.fluxcd.io/v1/namespaces/${config.pipelineNamespace}/helmreleases`,
       QueryParameters: {
         labelSelector: [
           'type=pipeline',
