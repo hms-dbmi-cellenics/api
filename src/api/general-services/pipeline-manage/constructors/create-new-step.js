@@ -19,7 +19,6 @@ const createNewStep = (context, step, args) => {
     taskName,
     config: processingConfig[taskName] || {},
     server: remoterServer,
-    sample: '$.sample',
   });
 
   const stepHash = crypto
