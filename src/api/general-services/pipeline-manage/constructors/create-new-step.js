@@ -32,7 +32,6 @@ const createNewStep = (context, step, args) => {
       ...step,
       Type: 'Task',
       Resource: 'arn:aws:states:::lambda:invoke',
-
       // TODO: fix this, add some of old output
       // see https://docs.aws.amazon.com/step-functions/latest/dg/input-output-resultpath.html
       ResultPath: null,
@@ -61,6 +60,9 @@ const createNewStep = (context, step, args) => {
     Type: 'Task',
     Comment: 'Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.',
     Resource: 'arn:aws:states:::eks:runJob.sync',
+    // TODO: fix this, add some of old output
+    // see https://docs.aws.amazon.com/step-functions/latest/dg/input-output-resultpath.html
+    ResultPath: null,
     Parameters: {
       ClusterName: clusterInfo.name,
       CertificateAuthority: clusterInfo.certAuthority,
