@@ -42,6 +42,8 @@ const plotsInTables = {
 };
 
 const pipelineResponse = async (io, message) => {
+  console.log(message);
+
   await validateRequest(message, 'PipelineResponse.v1.yaml');
 
   // Fail hard if there was an error.
