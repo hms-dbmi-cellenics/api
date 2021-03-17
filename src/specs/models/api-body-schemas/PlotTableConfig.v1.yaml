@@ -12,13 +12,13 @@ properties:
     type: string
     description: The type of the plot to be saved. Can be one of the values specified herein.
     enum:
-      - umisInCells
-      - umisCellRank
-      - mitochondrialContent
-      - mitochondrialReads
-      - classifierContour
-      - genesVsUmisHistogram
-      - genesVsUmisScatterplot
+      - cellSizeDistributionHistogram
+      - cellSizeDistributionKneePlot
+      - mitochondrialFractionHistogram
+      - mitochondrialFractionLogHistogram
+      - classifierEmptyDropsPlot
+      - featuresVsUMIsHistogram
+      - featuresVsUMIsScatterplot
       - doubletScoreHistogram
       - dataIntegrationEmbedding
       - dataIntegrationFrequency
