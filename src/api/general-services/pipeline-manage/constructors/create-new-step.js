@@ -97,7 +97,7 @@ const createNewStep = (context, step, args) => {
                   env: [
                     {
                       name: 'SAMPLE_ID',
-                      'value.$': '$.',
+                      'value.$': '$',
                     },
                   ],
                 },
