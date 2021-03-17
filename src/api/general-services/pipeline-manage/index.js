@@ -25,7 +25,11 @@ const getPipelineArtifacts = async () => {
   const txt = await response.text();
   const manifest = YAML.parseAllDocuments(txt);
 
-  return jq.json(manifest, '..|objects|.out//empty');
+  return {
+    chartRef: jq.json(manifest, '..|objects|.values.chartRef//empty'),
+    'remoter-server': jq.json(manifest, '..|objects|.remoter-server.image//empty'),
+    'remoter-client': jq.json(manifest, '..|objects|.remoter-client.image//empty'),
+  };
 };
 
 const getClusterInfo = async () => {
