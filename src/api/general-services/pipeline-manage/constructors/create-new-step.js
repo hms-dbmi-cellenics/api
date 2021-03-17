@@ -32,6 +32,10 @@ const createNewStep = (context, step, args) => {
       ...step,
       Type: 'Task',
       Resource: 'arn:aws:states:::lambda:invoke',
+
+      // TODO: fix this, add some of old output
+      // see https://docs.aws.amazon.com/step-functions/latest/dg/input-output-resultpath.html
+      ResultPath: null,
       Parameters: {
         FunctionName: `arn:aws:lambda:eu-west-1:${accountId}:function:local-container-launcher`,
         Payload: {
