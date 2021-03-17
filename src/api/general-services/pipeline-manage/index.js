@@ -89,9 +89,12 @@ const createNewStateMachine = async (context, stateMachine) => {
 
     stateMachineArn = `arn:aws:states:${config.awsRegion}:${accountId}:stateMachine:${params.name}`;
 
-    await stepFunctions.updateStateMachine(
+    const a = await stepFunctions.updateStateMachine(
       { stateMachineArn, definition: params.definition, roleArn },
     ).promise();
+
+    console.log('result');
+    console.log(a);
   }
 
   return stateMachineArn;
