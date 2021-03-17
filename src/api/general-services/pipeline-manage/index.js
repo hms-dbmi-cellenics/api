@@ -16,7 +16,7 @@ const experimentService = new ExperimentService();
 
 const getPipelineArtifacts = async () => {
   const response = await fetch(
-    config.pipelineInstanceConfigUrl,
+    'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/xavier-api63-pipeline7-6.yaml',
     {
       method: 'GET',
     },
@@ -25,11 +25,13 @@ const getPipelineArtifacts = async () => {
   const txt = await response.text();
   const manifest = YAML.parseAllDocuments(txt);
 
-  return {
-    chartRef: jq.json(manifest, '..|objects|.chart.ref//empty'),
+  console.log(manifest);
+
+  console.log({
+    chartRef: jq.json(manifest, '..|objects| select(.metadata != null) | select( .metadata.name | contains("pipeline")) | .spec.chart.ref'),
     'remoter-server': jq.json(manifest, '..|objects|.["remoter-server"].image//empty'),
     'remoter-client': jq.json(manifest, '..|objects|.["remoter-client"].image//empty'),
-  };
+  });
 };
 
 const getClusterInfo = async () => {
