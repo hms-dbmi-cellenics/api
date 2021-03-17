@@ -27,8 +27,8 @@ const getPipelineArtifacts = async () => {
 
   return {
     chartRef: jq.json(manifest, '..|objects|.chart.ref//empty'),
-    'remoter-server': jq.json(manifest, '..|objects|.remoter-server.image//empty'),
-    'remoter-client': jq.json(manifest, '..|objects|.remoter-client.image//empty'),
+    'remoter-server': jq.json(manifest, '..|objects|.["remoter-server"].image//empty'),
+    'remoter-client': jq.json(manifest, '..|objects|.["remoter-client"].image//empty'),
   };
 };
 
