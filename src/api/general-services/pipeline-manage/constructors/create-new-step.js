@@ -1,4 +1,7 @@
+const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
 const config = require('../../../../config');
+
 
 const createNewStep = (context, step, args) => {
   const {
@@ -15,6 +18,11 @@ const createNewStep = (context, step, args) => {
     config: processingConfig[taskName] || {},
     server: remoterServer,
   });
+
+  const stepHash = crypto
+    .createHash('sha1')
+    .update(`${experimentId}-${uuidv4()}`)
+    .digest('hex');
 
   if (config.clusterEnv === 'development') {
     return {
@@ -58,9 +66,11 @@ const createNewStep = (context, step, args) => {
         apiVersion: 'batch/v1',
         kind: 'Job',
         metadata: {
-          name: `remoter-client-${experimentId}-${taskName.toLowerCase()}`.substring(0, 63),
+          name: `remoter-client-${stepHash}`,
           labels: {
             sandboxId: config.sandboxId,
+            experimentId,
+            taskName,
             type: 'pipeline',
           },
         },

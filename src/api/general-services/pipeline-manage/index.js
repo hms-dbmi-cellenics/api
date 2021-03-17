@@ -5,6 +5,7 @@ const YAML = require('yaml');
 const _ = require('lodash');
 const AWSXRay = require('aws-xray-sdk');
 const fetch = require('node-fetch');
+const { v4: uuidv4 } = require('uuid');
 const AWS = require('../../../utils/requireAWS');
 const config = require('../../../config');
 const logger = require('../../../utils/logging');
@@ -13,6 +14,7 @@ const ExperimentService = require('../../route-services/experiment');
 const constructPipelineStep = require('./constructors/construct-pipeline-step');
 
 const experimentService = new ExperimentService();
+
 
 const getPipelineArtifacts = async () => {
   const response = await fetch(
@@ -59,7 +61,7 @@ const createNewStateMachine = async (context, stateMachine) => {
 
   const pipelineHash = crypto
     .createHash('sha1')
-    .update(`${experimentId}-${sandboxId}`)
+    .update(`${experimentId}-${sandboxId}-${uuidv4()}`)
     .digest('hex');
 
   const params = {
