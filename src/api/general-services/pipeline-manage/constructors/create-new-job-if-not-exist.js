@@ -70,6 +70,7 @@ const createNewJobIfNotExist = (context, step) => {
             awsAccountId: accountId,
             clusterEnv: config.clusterEnv,
             awsRegion: config.awsRegion,
+            debugSleep: 60,
           },
         },
       },
