@@ -9,14 +9,17 @@ const createNewStep = (context, step, args) => {
   } = context;
 
   const { taskName } = args;
-  const remoterServer = (config.clusterEnv === 'development') ? 'host.docker.internal' : `remoter-server-${experimentId}.${config.pipelineNamespace}.svc.cluster.local`;
-
+  const remoterServer = (
+    config.clusterEnv === 'development'
+  ) ? 'host.docker.internal'
+    : `remoter-server-${experimentId}.${config.pipelineNamespace}.svc.cluster.local`;
 
   const task = JSON.stringify({
     experimentId,
     taskName,
     config: processingConfig[taskName] || {},
     server: remoterServer,
+    sample: '$.sample',
   });
 
   const stepHash = crypto
@@ -90,6 +93,12 @@ const createNewStep = (context, step, args) => {
                   image: pipelineArtifacts['remoter-client'],
                   args: [
                     task,
+                  ],
+                  env: [
+                    {
+                      name: 'SAMPLE_ID',
+                      'value.$': '$.',
+                    },
                   ],
                 },
               ],
