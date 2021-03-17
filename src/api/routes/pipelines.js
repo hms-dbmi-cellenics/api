@@ -32,7 +32,7 @@ module.exports = {
     } catch (e) {
       logger.error('Parsing initial SNS message failed:', e);
 
-      res.status(400).send('nok');
+      res.status(200).send('nok');
       return;
     }
 
@@ -45,7 +45,7 @@ module.exports = {
         'Pipeline response handler failed with error: ', e,
       );
 
-      res.status(500).send('nok');
+      res.status(200).send('nok');
       return;
     }
 
