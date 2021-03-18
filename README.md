@@ -159,6 +159,9 @@ aws --endpoint-url=http://localhost:4566 stepfunctions get-execution-history --e
 aws --endpoint-url=http://localhost:4566 stepfunctions describe-state-machine --state-machine-arn arn:aws:states:eu-west-1:...
 ```
 
+One of the test suites creates a snapshot with the definition of the [state machine used in inframock and in non-local
+deployments](https://github.com/biomage-ltd/api/blob/master/tests/api/general-services/__snapshots__/state-machine-definition.test.js.snap).
+
 Deployment
 ----------
 

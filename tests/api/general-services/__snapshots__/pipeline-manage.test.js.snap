@@ -626,7 +626,7 @@ Array [
                 "chart": Object {
                   "git": "git@github.com:biomage-ltd/pipeline",
                   "path": "remoter-server/chart",
-                  "ref": "debug-jira-650",
+                  "ref": "ebe7a737d28df209dc63b9345943861ca744a725",
                 },
                 "releaseName": "remoter-server-testExperimentId",
                 "values": Object {
