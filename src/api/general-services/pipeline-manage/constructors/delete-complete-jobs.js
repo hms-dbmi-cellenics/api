@@ -20,7 +20,7 @@ const constructDeleteCompletedJobs = (context, step) => {
   return {
     ...step,
     Type: 'Task',
-    Comment: 'Deletes the prevoius server pipeline HelmRelease (Service+Job).',
+    Comment: 'Deletes the previous server pipeline HelmRelease (Service+Job).',
     Resource: 'arn:aws:states:::eks:call',
     Parameters: {
       ClusterName: context.clusterInfo.name,
@@ -34,14 +34,6 @@ const constructDeleteCompletedJobs = (context, step) => {
         ],
       },
     },
-    // TO-DO: remove
-    Catch: [
-      {
-        ErrorEquals: ['EKS.403'],
-        ResultPath: '$.error-info',
-        Next: step.XNextOnCatch || step.Next,
-      },
-    ],
   };
 };
 
