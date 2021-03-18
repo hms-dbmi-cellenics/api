@@ -16,7 +16,7 @@ const experimentService = new ExperimentService();
 
 const getPipelineArtifacts = async () => {
   const response = await fetch(
-    'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/xavier-api63-pipeline7-6.yaml',
+    config.pipelineInstanceConfigUrl,
     {
       method: 'GET',
     },
@@ -85,7 +85,7 @@ const createNewStateMachine = async (context, stateMachine) => {
       throw e;
     }
 
-    console.log('State machine already exists, updating...');
+    logger.log('State machine already exists, updating...');
 
     stateMachineArn = `arn:aws:states:${config.awsRegion}:${accountId}:stateMachine:${params.name}`;
 

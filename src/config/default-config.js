@@ -61,7 +61,7 @@ const config = {
     prefix: '/',
   },
   workerInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/worker.yaml',
-  pipelineInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/xavier-api63-pipeline7-6.yaml',
+  pipelineInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/pipeline.yaml',
   cachingEnabled: true,
   corsOriginUrl: 'https://scp.biomage.net',
 };
