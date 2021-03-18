@@ -70,7 +70,6 @@ const createNewJobIfNotExist = (context, step) => {
             awsAccountId: accountId,
             clusterEnv: config.clusterEnv,
             awsRegion: config.awsRegion,
-            debugSleep: 60,
           },
         },
       },
@@ -85,7 +84,7 @@ const createNewJobIfNotExist = (context, step) => {
     ],
     Catch: [
       {
-        ErrorEquals: ['EKS.409', 'EKS.403'],
+        ErrorEquals: ['EKS.409'],
         ResultPath: '$.error-info',
         Next: step.XNextOnCatch || step.Next,
       },
