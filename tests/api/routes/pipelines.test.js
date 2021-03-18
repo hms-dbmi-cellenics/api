@@ -69,7 +69,8 @@ describe('PipelineResults route', () => {
       .post('/v1/pipelineResults')
       .send(invalidMsg)
       .set('Content-type', 'text/plain')
-      .expect(400);
+      .expect(200)
+      .expect('nok');
 
     expect(logger.error).toHaveBeenCalled();
     expect(https.get).toHaveBeenCalledTimes(0);
@@ -116,7 +117,8 @@ describe('PipelineResults route', () => {
       .post('/v1/pipelineResults')
       .send(brokenMsg)
       .set('Content-type', 'text/plain')
-      .expect(400);
+      .expect(200)
+      .expect('nok');
   });
 
   it('Returns an error when message in sns is malformed', async () => {
@@ -131,7 +133,8 @@ describe('PipelineResults route', () => {
       .post('/v1/pipelineResults')
       .send(validMsg)
       .set('Content-type', 'text/plain')
-      .expect(400);
+      .expect(200)
+      .expect('nok');
 
     expect(logger.error).toHaveBeenCalled();
     expect(mockHandleResponse).toHaveBeenCalledTimes(0);

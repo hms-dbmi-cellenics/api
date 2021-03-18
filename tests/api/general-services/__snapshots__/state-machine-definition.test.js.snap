@@ -340,7 +340,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "apiVersion": "batch/v1",
                 "kind": "Job",
                 "metadata": {
-                  "name": "remoter-client-801e65a57bfc15bba95538747a5635630ad30a29",
+                  "name": "remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27",
                   "labels": {
                     "experimentId": "mock-experiment-id",
                     "taskName": "cellSizeDistribution",
@@ -408,7 +408,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "apiVersion": "batch/v1",
                 "kind": "Job",
                 "metadata": {
-                  "name": "remoter-client-83971d0d41a2175ae1ac25587bd374082c80dbdc",
+                  "name": "remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27",
                   "labels": {
                     "experimentId": "mock-experiment-id",
                     "taskName": "mitochondrialContent",
@@ -476,7 +476,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "apiVersion": "batch/v1",
                 "kind": "Job",
                 "metadata": {
-                  "name": "remoter-client-ca90427e8bbc0bba84fcd79a6ea911c76107f8a6",
+                  "name": "remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27",
                   "labels": {
                     "experimentId": "mock-experiment-id",
                     "taskName": "classifier",
@@ -544,7 +544,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "apiVersion": "batch/v1",
                 "kind": "Job",
                 "metadata": {
-                  "name": "remoter-client-eeebb1f84cb68b74b1ba0f6399e27e42e53d15d1",
+                  "name": "remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27",
                   "labels": {
                     "experimentId": "mock-experiment-id",
                     "taskName": "numGenesVsNumUmis",
@@ -612,7 +612,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "apiVersion": "batch/v1",
                 "kind": "Job",
                 "metadata": {
-                  "name": "remoter-client-86c37c4060a2a65aae1bf6f204a6921c700fd4a9",
+                  "name": "remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27",
                   "labels": {
                     "experimentId": "mock-experiment-id",
                     "taskName": "doubletScores",
@@ -687,7 +687,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
           "apiVersion": "batch/v1",
           "kind": "Job",
           "metadata": {
-            "name": "remoter-client-be9d54037e7cce15765c4d6d544736a6e4b6c096",
+            "name": "remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27",
             "labels": {
               "experimentId": "mock-experiment-id",
               "taskName": "dataIntegration",
@@ -755,7 +755,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
           "apiVersion": "batch/v1",
           "kind": "Job",
           "metadata": {
-            "name": "remoter-client-58746b9ac5a59704190c48c31b02466dc3dd3707",
+            "name": "remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27",
             "labels": {
               "experimentId": "mock-experiment-id",
               "taskName": "configureEmbedding",

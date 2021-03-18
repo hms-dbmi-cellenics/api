@@ -96,7 +96,7 @@ Array [
                   "taskName": "configureEmbedding",
                   "type": "pipeline",
                 },
-                "name": "remoter-client-4b7804f411921d45a04341ed534c4b1835a84206",
+                "name": "remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773",
               },
               "spec": Object {
                 "template": Object {
@@ -165,7 +165,7 @@ Array [
                   "taskName": "dataIntegration",
                   "type": "pipeline",
                 },
-                "name": "remoter-client-7cdeb6ecdeb0e8c46825e54c41a8c132be4ae5a6",
+                "name": "remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773",
               },
               "spec": Object {
                 "template": Object {
@@ -262,7 +262,7 @@ Array [
                         "taskName": "cellSizeDistribution",
                         "type": "pipeline",
                       },
-                      "name": "remoter-client-358a69da12f00cf47ef5507a34f40d5145df2052",
+                      "name": "remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773",
                     },
                     "spec": Object {
                       "template": Object {
@@ -331,7 +331,7 @@ Array [
                         "taskName": "classifier",
                         "type": "pipeline",
                       },
-                      "name": "remoter-client-6060600fe603377e418db0937ff8545ada4f2b52",
+                      "name": "remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773",
                     },
                     "spec": Object {
                       "template": Object {
@@ -400,7 +400,7 @@ Array [
                         "taskName": "doubletScores",
                         "type": "pipeline",
                       },
-                      "name": "remoter-client-bff7a29bbbf49cb3e075d2f2e2e1873c9916e45f",
+                      "name": "remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773",
                     },
                     "spec": Object {
                       "template": Object {
@@ -473,7 +473,7 @@ Array [
                         "taskName": "mitochondrialContent",
                         "type": "pipeline",
                       },
-                      "name": "remoter-client-6ad152dff60ab5c322ab9eab3355b61c4fbca98f",
+                      "name": "remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773",
                     },
                     "spec": Object {
                       "template": Object {
@@ -542,7 +542,7 @@ Array [
                         "taskName": "numGenesVsNumUmis",
                         "type": "pipeline",
                       },
-                      "name": "remoter-client-28237f2e44fed034368b1ce69033029f9c089081",
+                      "name": "remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773",
                     },
                     "spec": Object {
                       "template": Object {

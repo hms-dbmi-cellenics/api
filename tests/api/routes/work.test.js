@@ -66,7 +66,8 @@ describe('WorkResults route', () => {
       .post('/v1/workResults')
       .send(invalidMsg)
       .set('Content-type', 'text/plain')
-      .expect(400);
+      .expect(200)
+      .expect('nok');
     expect(logger.error).toHaveBeenCalled();
     expect(https.get).toHaveBeenCalledTimes(0);
   });
@@ -108,7 +109,8 @@ describe('WorkResults route', () => {
       .post('/v1/workResults')
       .send(brokenMsg)
       .set('Content-type', 'text/plain')
-      .expect(400);
+      .expect(200)
+      .expect('nok');
   });
   it('Returns an error when message in sns is malformed', async () => {
     let validMsg = _.cloneDeep(JSON.parse(basicMsg));
@@ -123,7 +125,8 @@ describe('WorkResults route', () => {
       .post('/v1/workResults')
       .send(validMsg)
       .set('Content-type', 'text/plain')
-      .expect(400);
+      .expect(200)
+      .expect('nok');
 
     expect(logger.error).toHaveBeenCalled();
     expect(mockHandleResponse).toHaveBeenCalledTimes(0);

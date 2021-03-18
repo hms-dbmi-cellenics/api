@@ -1,6 +1,9 @@
 const config = require('../../../src/config');
 const createPipeline = require('../../../src/api/general-services/pipeline-manage');
 
+jest.mock('uuid', () => ({
+  v4: () => 'mock-uuid',
+}));
 
 const snapshotPlainJsonSerializer = {
   // eslint-disable-next-line no-unused-vars

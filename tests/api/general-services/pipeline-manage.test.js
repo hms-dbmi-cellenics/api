@@ -4,6 +4,10 @@ const AWS = require('../../../src/utils/requireAWS');
 
 const createPipeline = require('../../../src/api/general-services/pipeline-manage');
 
+jest.mock('uuid', () => ({
+  v4: () => 'mock-uuid',
+}));
+
 describe('test for pipeline services', () => {
   afterEach(() => {
     AWSMock.restore('EKS');
