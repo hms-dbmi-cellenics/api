@@ -104,7 +104,7 @@ class PlotsTablesService {
     if (plotDataKey) {
       const { plotData } = await this.readFromS3(plotDataKey);
 
-      configToReturn.plotData = plotData ?? {};
+      configToReturn.plotData = plotData || {};
     }
 
     return configToReturn;
