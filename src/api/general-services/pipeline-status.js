@@ -32,9 +32,11 @@ const getStepsFromExecutionHistory = (history) => {
       if (this.visited.includes(event.previousEventId)) {
         return this;
       }
-      if (event.type === 'MapStateExited') {
+
+      if (event.type === 'End') {
         return this;
       }
+
       const branches = Object.values(this.branches);
       for (let ii = 0; ii < branches.length; ii += 1) {
         const candidate = branches[ii];
@@ -60,12 +62,15 @@ const getStepsFromExecutionHistory = (history) => {
       }
     }
   }
+
   const main = new Branch(events[0], true);
   for (let ii = 1; ii < events.length; ii += 1) {
     const consumer = main.nextConsumer(events[ii]);
     consumer.consume(events[ii]);
   }
+
   let shortestCompleted = null;
+
   if (main.allBranchesStarted()) {
     const branches = Object.values(main.branches);
     for (let ii = 0; ii < branches.length; ii += 1) {
