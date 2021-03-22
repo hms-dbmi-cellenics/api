@@ -11,19 +11,19 @@ const plotsTableService = new PlotsTablesService();
 
 const plotsInTables = {
   cellSizeDistribution: [
-    'umisInCells',
-    'umisCellRank',
+    'cellSizeDistributionHistogram',
+    'cellSizeDistributionKneePlot',
   ],
   mitochondrialContent: [
-    'mitochondrialContent',
-    'mitochondrialReads',
+    'mitochondrialFractionHistogram',
+    'mitochondrialFractionLogHistogram',
   ],
   classifier: [
-    'classifierContour',
+    'classifierEmptyDropsPlot',
   ],
   numGenesVsNumUmis: [
-    'genesVsUmisHistogram',
-    'genesVsUmisScatterplot',
+    'featuresVsUMIsHistogram',
+    'featuresVsUMIsScatterplot',
   ],
   doubletScores: [
     'doubletScoreHistogram',
@@ -37,7 +37,7 @@ const plotsInTables = {
     'embeddingPreviewBySample',
     'embeddingPreviewByCellSets',
     'embeddingPreviewMitochondrialContent',
-    'embeddingPreviewDoubletScores',
+    'embeddingPreviewDoubletScore',
   ],
 };
 
@@ -55,6 +55,7 @@ const pipelineResponse = async (io, message) => {
   // Download output from S3.
   const s3 = new AWS.S3();
   const { output: { bucket, key } } = message;
+
   const outputObject = await s3.getObject(
     {
       Bucket: bucket,
@@ -72,7 +73,7 @@ const pipelineResponse = async (io, message) => {
       plotsTableService.updatePlotData(
         experimentId,
         plotUuid,
-        output.plotData,
+        output.plotDataKeys[plotUuid],
       )
     ));
 

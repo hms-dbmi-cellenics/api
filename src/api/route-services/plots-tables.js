@@ -1,5 +1,7 @@
 const config = require('../../config');
 const { createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord } = require('../../utils/dynamoDb');
+const AWS = require('../../utils/requireAWS');
+const validateRequest = require('../../utils/schema-validator');
 
 class PlotsTablesService {
   constructor() {
@@ -27,9 +29,9 @@ class PlotsTablesService {
     return tableData;
   }
 
-  async updatePlotData(experimentId, plotUuid, plotData) {
+  async updatePlotData(experimentId, plotUuid, plotDataKey) {
     const marshalledData = convertToDynamoDbRecord({
-      ':plotData': plotData,
+      ':plotDataKey': plotDataKey,
       ':plotType': plotUuid,
       ':config': {},
     });
@@ -39,7 +41,7 @@ class PlotsTablesService {
       Key: {
         experimentId: { S: experimentId }, plotUuid: { S: plotUuid },
       },
-      UpdateExpression: 'SET plotData = :plotData, plotType = if_not_exists(plotType, :plotType), config = if_not_exists(config, :config)',
+      UpdateExpression: 'SET plotDataKey = :plotDataKey, plotType = if_not_exists(plotType, :plotType), config = if_not_exists(config, :config)',
       ExpressionAttributeValues: marshalledData,
       ReturnValues: 'UPDATED_NEW',
     };
@@ -51,7 +53,7 @@ class PlotsTablesService {
     return prettyData;
   }
 
-  async read(experimentId, plotUuid) {
+  async readFromDynamoDB(experimentId, plotUuid) {
     const key = convertToDynamoDbRecord({
       experimentId,
       plotUuid,
@@ -61,8 +63,8 @@ class PlotsTablesService {
       TableName: this.tableName,
       Key: key,
     };
-    const dynamodb = createDynamoDbInstance();
 
+    const dynamodb = createDynamoDbInstance();
     const response = await dynamodb.getItem(params).promise();
 
     if (response.Item) {
@@ -71,6 +73,41 @@ class PlotsTablesService {
     }
 
     throw Error('Plot not found');
+  }
+
+  async readFromS3(plotDataKey) {
+    // Download output from S3.
+    const s3 = new AWS.S3();
+    const bucket = this.tableName;
+
+    const outputObject = await s3.getObject(
+      {
+        Bucket: bucket,
+        Key: plotDataKey,
+      },
+    ).promise();
+
+    const output = JSON.parse(outputObject.Body.toString());
+
+    if (output.plotData) {
+      await validateRequest(output, 'plots-tables-schemas/PlotData.v1.yaml');
+    }
+
+    return output;
+  }
+
+  async read(experimentId, plotUuid) {
+    const configOutput = await this.readFromDynamoDB(experimentId, plotUuid);
+
+    const { plotDataKey, ...configToReturn } = configOutput;
+
+    if (plotDataKey) {
+      const { plotData } = await this.readFromS3(plotDataKey);
+
+      configToReturn.plotData = plotData ?? {};
+    }
+
+    return configToReturn;
   }
 
   async delete(experimentId, plotUuid) {
