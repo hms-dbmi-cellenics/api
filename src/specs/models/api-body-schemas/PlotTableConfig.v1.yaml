@@ -35,5 +35,4 @@ properties:
   config:
     type: object
 required:
-  - plotType
   - config

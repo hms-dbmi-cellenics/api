@@ -9,10 +9,12 @@ const AWS = require('../../../utils/requireAWS');
 const config = require('../../../config');
 const logger = require('../../../utils/logging');
 const ExperimentService = require('../../route-services/experiment');
+const SamplesService = require('../../route-services/samples');
 
 const constructPipelineStep = require('./constructors/construct-pipeline-step');
 
 const experimentService = new ExperimentService();
+const samplesService = new SamplesService();
 
 const getPipelineArtifacts = async () => {
   const response = await fetch(
@@ -97,7 +99,7 @@ const createNewStateMachine = async (context, stateMachine) => {
   return stateMachineArn;
 };
 
-const executeStateMachine = async (stateMachineArn) => {
+const executeStateMachine = async (stateMachineArn, execInput) => {
   const stepFunctions = new AWS.StepFunctions({
     region: config.awsRegion,
   });
@@ -106,9 +108,7 @@ const executeStateMachine = async (stateMachineArn) => {
 
   const { executionArn } = await stepFunctions.startExecution({
     stateMachineArn,
-    input: JSON.stringify({
-      samples: ['single-branch-in-map-state'],
-    }),
+    input: JSON.stringify(execInput),
     traceHeader: traceId,
   }).promise();
 
@@ -221,6 +221,9 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
   const processingRes = await experimentService.getProcessingConfig(experimentId);
   const { processingConfig } = processingRes;
 
+  const samplesRes = await samplesService.getSampleIds(experimentId);
+  const { samples } = samplesRes;
+
   if (processingConfigUpdates) {
     processingConfigUpdates.forEach(({ name, body }) => {
       if (!processingConfig[name]) {
@@ -248,7 +251,12 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
   const stateMachineArn = await createNewStateMachine(context, stateMachine);
 
   logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
-  const executionArn = await executeStateMachine(stateMachineArn);
+
+  const execInput = {
+    samples: samples.ids.map((sampleUuid) => ({ sampleUuid })),
+  };
+
+  const executionArn = await executeStateMachine(stateMachineArn, execInput);
   logger.log(`Execution with ARN ${executionArn} created.`);
 
   return { stateMachineArn, executionArn };

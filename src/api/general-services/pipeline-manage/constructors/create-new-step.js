@@ -40,6 +40,7 @@ const createNewStep = (context, step, args) => {
           image: 'biomage-remoter-client',
           name: 'pipeline-remoter-client',
           task,
+          'sampleUuid.$': '$.sampleUuid',
           detached: false,
         },
       },
@@ -99,13 +100,12 @@ const createNewStep = (context, step, args) => {
                   args: [
                     task,
                   ],
-                  // TODO: this is for multi-sample support for API.
-                  // env: [
-                  //   {
-                  //     name: 'SAMPLE_ID',
-                  //     'value.$': '$',
-                  //   },
-                  // ],
+                  env: [
+                    {
+                      name: 'SAMPLE_ID',
+                      'value.$': '$.sampleUuid',
+                    },
+                  ],
                 },
               ],
               restartPolicy: 'Never',
