@@ -15,7 +15,7 @@ module.exports = {
   pipelineNamespace: 'pipeline-test-namespace',
   workerInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/worker.yaml',
   // TODO: to be changed once the merged PR is deployed
-  pipelineInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/xavier-api63-pipeline7-6.yaml',
+  pipelineInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/pipeline.yaml',
   api: {
     prefix: '/',
   },

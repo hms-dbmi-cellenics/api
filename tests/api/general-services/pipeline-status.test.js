@@ -247,10 +247,10 @@ describe('getStepsFromExecutionHistory', () => {
     expect(completedSteps).toEqual(['CellSizeDistributionFilter']);
   });
 
-  it('returns only the steps contained in the Map for one-element iterations', () => {
+  it('returns all elements contained in the Map for one-element iterations', () => {
     const history = { events: singleIterationHistory };
     const completedSteps = pipelineStatus.getStepsFromExecutionHistory(history);
-    expect(completedSteps).toEqual(['CellSizeDistributionFilter']);
+    expect(completedSteps).toEqual(['CellSizeDistributionFilter', 'DataIntegration']);
   });
 });
 

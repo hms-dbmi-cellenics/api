@@ -123,13 +123,19 @@ describe('test for pipeline services', () => {
     });
 
     const createStateMachineSpy = jest.fn(
-
       // eslint-disable-next-line consistent-return
       (stateMachineObject) => (_.cloneDeepWith(JSON.parse(stateMachineObject.definition), (o) => {
         if (_.isObject(o) && o.image) {
           return {
             ...o,
             image: 'MOCK_IMAGE_PATH',
+          };
+        }
+
+        if (_.isObject(o) && o.ref) {
+          return {
+            ...o,
+            ref: 'MOCK_REF_PATH',
           };
         }
       })),
