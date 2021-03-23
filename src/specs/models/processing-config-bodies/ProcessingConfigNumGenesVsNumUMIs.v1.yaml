@@ -21,6 +21,4 @@ properties:
               p.level:
                 type: number
 required:
-  - enabled
-  - auto
   - filterSettings
