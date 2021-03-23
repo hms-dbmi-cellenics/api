@@ -133,6 +133,7 @@ const buildStateMachineDefinition = (context) => {
       Filters: {
         Type: 'Map',
         Next: 'DataIntegration',
+        MaxConcurrency: 1,
         ItemsPath: '$.samples',
         Iterator: {
           StartAt: 'CellSizeDistributionFilter',
