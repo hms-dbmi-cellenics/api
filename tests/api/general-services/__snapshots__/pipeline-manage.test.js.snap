@@ -55,7 +55,7 @@ Array [
   Object {
     "type": "return",
     "value": Object {
-      "input": "{\\"samples\\":[\\"single-branch-in-map-state\\"]}",
+      "input": "{\\"samples\\":[{\\"sampleUuid\\":\\"sample-KO\\"}]}",
       "stateMachineArn": "test-machine",
       "traceHeader": undefined,
     },
@@ -111,6 +111,12 @@ Array [
                       Object {
                         "args": Array [
                           "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"configureEmbedding\\",\\"config\\":{},\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\"}",
+                        ],
+                        "env": Array [
+                          Object {
+                            "name": "SAMPLE_ID",
+                            "value.$": "$.sampleUuid",
+                          },
                         ],
                         "image": "MOCK_IMAGE_PATH",
                         "name": "remoter-client",
@@ -180,6 +186,12 @@ Array [
                       Object {
                         "args": Array [
                           "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"dataIntegration\\",\\"config\\":{},\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\"}",
+                        ],
+                        "env": Array [
+                          Object {
+                            "name": "SAMPLE_ID",
+                            "value.$": "$.sampleUuid",
+                          },
                         ],
                         "image": "MOCK_IMAGE_PATH",
                         "name": "remoter-client",
@@ -278,6 +290,12 @@ Array [
                               "args": Array [
                                 "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"cellSizeDistribution\\",\\"config\\":{},\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\"}",
                               ],
+                              "env": Array [
+                                Object {
+                                  "name": "SAMPLE_ID",
+                                  "value.$": "$.sampleUuid",
+                                },
+                              ],
                               "image": "MOCK_IMAGE_PATH",
                               "name": "remoter-client",
                             },
@@ -347,6 +365,12 @@ Array [
                               "args": Array [
                                 "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"classifier\\",\\"config\\":{},\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\"}",
                               ],
+                              "env": Array [
+                                Object {
+                                  "name": "SAMPLE_ID",
+                                  "value.$": "$.sampleUuid",
+                                },
+                              ],
                               "image": "MOCK_IMAGE_PATH",
                               "name": "remoter-client",
                             },
@@ -415,6 +439,12 @@ Array [
                             Object {
                               "args": Array [
                                 "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"doubletScores\\",\\"config\\":{\\"filterSettings\\":{\\"oneSetting\\":1},\\"oneSample\\":{\\"filterSettings\\":{\\"oneSetting\\":7}},\\"otherSample\\":{\\"filterSettings\\":{\\"oneSetting\\":15}}},\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\"}",
+                              ],
+                              "env": Array [
+                                Object {
+                                  "name": "SAMPLE_ID",
+                                  "value.$": "$.sampleUuid",
+                                },
                               ],
                               "image": "MOCK_IMAGE_PATH",
                               "name": "remoter-client",
@@ -489,6 +519,12 @@ Array [
                               "args": Array [
                                 "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"mitochondrialContent\\",\\"config\\":{},\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\"}",
                               ],
+                              "env": Array [
+                                Object {
+                                  "name": "SAMPLE_ID",
+                                  "value.$": "$.sampleUuid",
+                                },
+                              ],
                               "image": "MOCK_IMAGE_PATH",
                               "name": "remoter-client",
                             },
@@ -558,6 +594,12 @@ Array [
                               "args": Array [
                                 "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"numGenesVsNumUmis\\",\\"config\\":{},\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\"}",
                               ],
+                              "env": Array [
+                                Object {
+                                  "name": "SAMPLE_ID",
+                                  "value.$": "$.sampleUuid",
+                                },
+                              ],
                               "image": "MOCK_IMAGE_PATH",
                               "name": "remoter-client",
                             },
@@ -626,7 +668,7 @@ Array [
                 "chart": Object {
                   "git": "git@github.com:biomage-ltd/pipeline",
                   "path": "remoter-server/chart",
-                  "ref": "ebe7a737d28df209dc63b9345943861ca744a725",
+                  "ref": "23b1f3f4e58e6bc14d8149c341f1983889dae1c2",
                 },
                 "releaseName": "remoter-server-testExperimentId",
                 "values": Object {
@@ -727,7 +769,7 @@ Array [
   Object {
     "type": "return",
     "value": Object {
-      "input": "{\\"samples\\":[\\"single-branch-in-map-state\\"]}",
+      "input": "{\\"samples\\":[{\\"sampleUuid\\":\\"sample-KO\\"}]}",
       "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-pipeline-test-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
       "traceHeader": undefined,
     },

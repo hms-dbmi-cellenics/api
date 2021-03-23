@@ -46,6 +46,21 @@ describe('test for pipeline services', () => {
     },
   };
 
+  const MockSamples = {
+    Item: {
+      samples: {
+        M: {
+          ids: {
+            L: [
+              { S: 'sample-KO' },
+            ],
+          },
+        },
+      },
+    },
+
+  };
+
   const mockCluster = {
     cluster: {
       name: 'biomage-test',
@@ -98,10 +113,16 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-machine' });
     });
 
-    const getItemSpy = jest.fn((x) => x);
+    const getProcessingConfigSpy = jest.fn((x) => x);
+    const getSamplesSpy = jest.fn((x) => x);
     AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
-      getItemSpy(params);
-      callback(null, MockProcessingConfig);
+      if (params.TableName.match('experiments')) {
+        getProcessingConfigSpy(params);
+        callback(null, MockProcessingConfig);
+      } else if (params.TableName.match('samples')) {
+        getSamplesSpy(params);
+        callback(null, MockSamples);
+      }
     });
 
     await createPipeline('testExperimentId', processingConfigUpdate);
@@ -109,7 +130,8 @@ describe('test for pipeline services', () => {
 
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
 
-    expect(getItemSpy).toHaveBeenCalled();
+    expect(getProcessingConfigSpy).toHaveBeenCalled();
+    expect(getSamplesSpy).toHaveBeenCalled();
 
     expect(startExecutionSpy).toHaveBeenCalled();
     expect(startExecutionSpy.mock.results).toMatchSnapshot();
