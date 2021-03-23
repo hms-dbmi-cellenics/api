@@ -23,6 +23,7 @@ const pipelineResponse = async (io, message) => {
   // Download output from S3.
   const s3 = new AWS.S3();
   const { output: { bucket, key } } = message;
+
   const outputObject = await s3.getObject(
     {
       Bucket: bucket,
@@ -35,12 +36,12 @@ const pipelineResponse = async (io, message) => {
     await validateRequest(output.config, 'ProcessingConfigBodies.v1.yaml');
   }
 
-  if (output.plotData) {
-    const plotConfigUploads = Object.entries(output.plotData).map(([plotUuid, plotData]) => (
+  if (output.plotDataKeys) {
+    const plotConfigUploads = Object.entries(output.plotDataKeys).map(([plotUuid, objKey]) => (
       plotsTableService.updatePlotData(
         experimentId,
         plotUuid,
-        plotData,
+        objKey,
       )
     ));
 

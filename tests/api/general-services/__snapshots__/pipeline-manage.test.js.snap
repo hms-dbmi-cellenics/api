@@ -668,7 +668,7 @@ Array [
                 "chart": Object {
                   "git": "git@github.com:biomage-ltd/pipeline",
                   "path": "remoter-server/chart",
-                  "ref": "32d829539fec890d3a7539db5a142254a5c9b0cc",
+                  "ref": "MOCK_REF_PATH",
                 },
                 "releaseName": "remoter-server-testExperimentId",
                 "values": Object {
