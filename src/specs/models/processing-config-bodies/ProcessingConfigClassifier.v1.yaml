@@ -4,22 +4,14 @@ description: Processing config body for Classifier filter.
 properties:
   enabled:
     type: boolean
+  auto:
+    type: boolean
   filterSettings:
     type: object
     properties:
-      minProbabiliy:
+      FDR:
         type: number
-      bandwidth:
-        type: number
-additionalProperties:
-  type: object
-  properties:
-    filterSettings:
-      type: object
-      properties:
-        minProbabiliy:
-          type: number
-        bandwidth:
-          type: number
 required:
+  - enabled
+  - auto
   - filterSettings

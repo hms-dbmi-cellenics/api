@@ -1,7 +1,10 @@
 title: Number of genes vs UMIs
 type: object
+description: Processing config body for Number of genes vs UMIs filter.
 properties:
   enabled:
+    type: boolean
+  auto:
     type: boolean
   filterSettings:
     type: object
@@ -9,35 +12,15 @@ properties:
       regressionType:
         type: string
         minLength: 1
-      smoothing:
-        type: number
-      upperCutoff:
-        type: number
-      lowerCutoff:
-        type: number
-      stringency:
-        type: number
-      binStep:
-        type: number
-additionalProperties:
-  type: object
-  properties:
-    filterSettings:
-      type: object
-      properties:
-        regressionType:
-          type: string
-          minLength: 1
-        smoothing:
-          type: number
-        upperCutoff:
-          type: number
-        lowerCutoff:
-          type: number
-        stringency:
-          type: number
-        binStep:
-          type: number
+      regressionTypeSettings:
+        type: object
+        properties:
+          gam:
+            type: object
+            properties:
+              p.level:
+                type: number
 required:
+  - enabled
+  - auto
   - filterSettings
-description: Processing config body for Number of genes vs UMIs filter.
