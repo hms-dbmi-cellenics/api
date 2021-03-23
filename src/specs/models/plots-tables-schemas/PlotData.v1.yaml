@@ -1,0 +1,8 @@
+title: Plot Data
+type: object
+properties:
+  plotData:
+    type: array
+required:
+  - plotData
+description: Object storing the data for one particular plot.
