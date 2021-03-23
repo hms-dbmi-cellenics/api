@@ -42,6 +42,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
     "Filters": {
       "Type": "Map",
       "Next": "DataIntegration",
+      "MaxConcurrency": 1,
       "ItemsPath": "$.samples",
       "Iterator": {
         "StartAt": "CellSizeDistributionFilter",
@@ -325,6 +326,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
     "Filters": {
       "Type": "Map",
       "Next": "DataIntegration",
+      "MaxConcurrency": 1,
       "ItemsPath": "$.samples",
       "Iterator": {
         "StartAt": "CellSizeDistributionFilter",

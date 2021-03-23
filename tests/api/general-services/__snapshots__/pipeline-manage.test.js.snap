@@ -630,6 +630,7 @@ Array [
               },
             },
           },
+          "MaxConcurrency": 1,
           "Next": "DataIntegration",
           "Type": "Map",
         },
