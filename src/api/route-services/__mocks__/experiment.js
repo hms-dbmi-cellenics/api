@@ -73,7 +73,7 @@ const mockUpdateProcessingConfig = jest.fn(
             methodSettings: {
               seuratv4: {
                 numGenes: 2000,
-                normalisation: 'logNormalise',
+                normalisation: 'logNormalize',
               },
             },
           },

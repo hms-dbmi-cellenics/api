@@ -25,7 +25,7 @@ properties:
               normalisation:
                 type: string
                 enum:
-                  - logNormalise
+                  - logNormalize
                   - scTransform
             required:
               - numGenes
