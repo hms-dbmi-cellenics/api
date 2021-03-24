@@ -18,7 +18,7 @@ const getStepsFromExecutionHistory = (history) => {
       }
     }
 
-    allBranchesStarted() {
+    workingOnBranches() {
       return this.branchCount === Object.values(this.branches).length;
     }
 
@@ -33,7 +33,7 @@ const getStepsFromExecutionHistory = (history) => {
         return this;
       }
 
-      if (event.type === 'End') {
+      if (event.type === 'MapStateExited') {
         return this;
       }
 
@@ -58,6 +58,10 @@ const getStepsFromExecutionHistory = (history) => {
           this.completedTasks.push(this.currentState);
         } else if (event.type === 'MapStateStarted') {
           this.branchCount = event.mapStateStartedEventDetails.length;
+        } else if (event.type === 'MapStateExited') {
+          this.completedTasks = this.completedTasks.concat(this.branches[0].completedTasks);
+          this.branches = {};
+          this.branchCount = 0;
         }
       }
     }
@@ -71,7 +75,7 @@ const getStepsFromExecutionHistory = (history) => {
 
   let shortestCompleted = null;
 
-  if (main.allBranchesStarted()) {
+  if (main.workingOnBranches()) {
     const branches = Object.values(main.branches);
     for (let ii = 0; ii < branches.length; ii += 1) {
       if (!shortestCompleted || branches[ii].completedTasks.length < shortestCompleted.length) {
@@ -79,17 +83,18 @@ const getStepsFromExecutionHistory = (history) => {
       }
     }
   }
+  shortestCompleted = (shortestCompleted || []).concat(main.completedTasks);
   return shortestCompleted || [];
 };
 
 /*
- * Return the `completedSteps` of the state machine (SM) associated to the `experimentId`'s pipeline
- * The code assumes that
- *  - the relevant states for the steps are defined within a Map of the SM
- *  - the relevant Map is the first Map in the SM
- *  - a step is only considered completed if it has been completed for all iteration of the Map
- *  - steps are returned in the completion order, and are unique in the returned array
- */
+     * Return `completedSteps` of the state machine (SM) associated to the `experimentId`'s pipeline
+     * The code assumes that
+     *  - the relevant states for the steps are defined within a Map of the SM
+     *  - the relevant Map is the first Map in the SM
+     *  - a step is only considered completed if it has been completed for all iteration of the Map
+     *  - steps are returned in the completion order, and are unique in the returned array
+     */
 const getPipelineStatus = async (experimentId) => {
   const { executionArn } = await (new ExperimentService()).getPipelineHandle(experimentId);
   let execution = {};

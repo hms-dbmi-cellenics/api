@@ -113,10 +113,88 @@ describe('getStepsFromExecutionHistory', () => {
     {
       // Iteration 1
       type: 'TaskStateExited',
-      id: '24-two-completions-vs-zero',
+      id: '24-two-completions-vs-one',
       previousEventId: 23,
       stateExitedEventDetails: {
         name: 'CellSizeDistributionFilter',
+      },
+    },
+    {
+      // Iteration 1
+      type: 'TaskStateEntered',
+      id: 25,
+      previousEventId: '24-two-completions-vs-one',
+      stateEnteredEventDetails: {
+        name: 'MitochondrialContentFilter',
+      },
+    },
+    {
+      // Iteration 1
+      type: 'TaskSucceeded',
+      id: 26,
+      previousEventId: 25,
+    },
+    {
+      // Iteration 1
+      type: 'TaskStateExited',
+      id: 27,
+      previousEventId: 26,
+      stateExitedEventDetails: {
+        name: 'MitochondrialContentFilter',
+      },
+    },
+    {
+      // Iteration 1
+      type: 'MapIterationSucceeded',
+      id: 28,
+      previousEventId: 27,
+      mapIterationSucceededEventDetails: {
+        name: 'Filters',
+        index: 1,
+      },
+    },
+    {
+      // Iteration 0
+      type: 'MapIterationSucceeded',
+      id: 29,
+      previousEventId: 22,
+      mapIterationSucceededEventDetails: {
+        name: 'Filters',
+        index: 0,
+      },
+    },
+    {
+      type: 'MapStateSucceeded',
+      id: 30,
+      previousEventId: 29,
+    },
+    {
+      type: 'MapStateExited',
+      id: 31,
+      previousEventId: 30,
+      stateExitedEventDetails: {
+        name: 'Filters',
+      },
+    },
+    {
+      type: 'TaskStateEntered',
+      id: 32,
+      previousEventId: 31,
+      stateEnteredEventDetails: {
+        name: 'DataIntegration',
+      },
+    },
+    {
+      type: 'TaskSucceeded',
+      id: 33,
+      previousEventId: 32,
+    },
+    {
+      type: 'TaskStateExited',
+      id: 34,
+      previousEventId: 33,
+      stateExitedEventDetails: {
+        name: 'DataIntegration',
       },
     },
   ];
@@ -242,15 +320,21 @@ describe('getStepsFromExecutionHistory', () => {
   });
 
   it('returns steps completed in all branches', () => {
-    const events = truncateHistory('24-two-completions-vs-zero');
+    const events = truncateHistory('24-two-completions-vs-one');
     const completedSteps = pipelineStatus.getStepsFromExecutionHistory({ events });
     expect(completedSteps).toEqual(['CellSizeDistributionFilter']);
   });
 
-  it('returns all elements contained in the Map for one-element iterations', () => {
+  it('returns all steps in a finished single-sample execution', () => {
     const history = { events: singleIterationHistory };
     const completedSteps = pipelineStatus.getStepsFromExecutionHistory(history);
     expect(completedSteps).toEqual(['CellSizeDistributionFilter', 'DataIntegration']);
+  });
+
+  it('returns all steps in a finished multiple-sample execution', () => {
+    const history = { events: fullHistory };
+    const completedSteps = pipelineStatus.getStepsFromExecutionHistory(history);
+    expect(completedSteps).toEqual(['CellSizeDistributionFilter', 'MitochondrialContentFilter', 'DataIntegration']);
   });
 });
 
