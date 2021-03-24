@@ -38,7 +38,7 @@ const createNewStep = (context, step, args) => {
         FunctionName: `arn:aws:lambda:eu-west-1:${accountId}:function:local-container-launcher`,
         Payload: {
           image: 'biomage-remoter-client',
-          name: 'pipeline-remoter-client',
+          'name.$': 'States.Format(\'pipeline-remoter-client-{}\', $.sampleUuid)',
           task,
           'sampleUuid.$': '$.sampleUuid',
           detached: false,
@@ -75,7 +75,7 @@ const createNewStep = (context, step, args) => {
         apiVersion: 'batch/v1',
         kind: 'Job',
         metadata: {
-          name: `remoter-client-${stepHash}`,
+          'name.$': `States.Format('remoter-client-${stepHash}-{}', $.sampleUuid)`,
           labels: {
             sandboxId: config.sandboxId,
             experimentId,
@@ -86,7 +86,7 @@ const createNewStep = (context, step, args) => {
         spec: {
           template: {
             metadata: {
-              name: `remoter-client-${experimentId}`,
+              'name.$': `States.Format('remoter-client-${stepHash}-{}', $.sampleUuid)`,
               labels: {
                 sandboxId: config.sandboxId,
                 type: 'pipeline',
