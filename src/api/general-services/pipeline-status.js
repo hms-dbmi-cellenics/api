@@ -83,18 +83,16 @@ const getStepsFromExecutionHistory = (history) => {
       }
     }
   }
-  shortestCompleted = (shortestCompleted || []).concat(main.completedTasks);
-  return shortestCompleted || [];
+  shortestCompleted = (shortestCompleted || []).concat(main.completedTasks).filter((task) => !task.startsWith('_'));
+  return shortestCompleted;
 };
 
 /*
-     * Return `completedSteps` of the state machine (SM) associated to the `experimentId`'s pipeline
-     * The code assumes that
-     *  - the relevant states for the steps are defined within a Map of the SM
-     *  - the relevant Map is the first Map in the SM
-     *  - a step is only considered completed if it has been completed for all iteration of the Map
-     *  - steps are returned in the completion order, and are unique in the returned array
-     */
+ * Return `completedSteps` of the state machine (SM) associated to the `experimentId`'s pipeline
+ * The code assumes that
+ *  - a step is only considered completed if it has been completed for all iteration of the Map
+ *  - steps are returned in the completion order, and are unique in the returned array
+ */
 const getPipelineStatus = async (experimentId) => {
   const { executionArn } = await (new ExperimentService()).getPipelineHandle(experimentId);
   let execution = {};

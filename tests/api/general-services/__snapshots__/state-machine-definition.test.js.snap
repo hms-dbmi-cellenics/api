@@ -4,10 +4,10 @@ exports[`non-tests to document the State Machines - local development 1`] = `
 
 {
   "Comment": "Pipeline for clusterEnv 'development'",
-  "StartAt": "DeleteCompletedPipelineWorker",
+  "StartAt": "_DeleteCompletedPipelineWorker",
   "States": {
-    "DeleteCompletedPipelineWorker": {
-      "Next": "LaunchNewPipelineWorker",
+    "_DeleteCompletedPipelineWorker": {
+      "Next": "_LaunchNewPipelineWorker",
       "ResultPath": null,
       "Type": "Task",
       "Comment": "Removes Docker containers with pipeline runs on the local machine.",
@@ -16,7 +16,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
         "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:remove-previous-pipeline-containers"
       }
     },
-    "LaunchNewPipelineWorker": {
+    "_LaunchNewPipelineWorker": {
       "Next": "Filters",
       "ResultPath": null,
       "Type": "Task",
@@ -225,11 +225,11 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
-          "Next": "EndOfPipeline"
+          "Next": "_EndOfPipeline"
         }
       ]
     },
-    "EndOfPipeline": {
+    "_EndOfPipeline": {
       "Type": "Pass",
       "End": true
     }
@@ -241,10 +241,10 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
 
 {
   "Comment": "Pipeline for clusterEnv 'test'",
-  "StartAt": "DeleteCompletedPipelineWorker",
+  "StartAt": "_DeleteCompletedPipelineWorker",
   "States": {
-    "DeleteCompletedPipelineWorker": {
-      "Next": "LaunchNewPipelineWorker",
+    "_DeleteCompletedPipelineWorker": {
+      "Next": "_LaunchNewPipelineWorker",
       "ResultPath": null,
       "Type": "Task",
       "Comment": "Deletes the previous server pipeline HelmRelease (Service+Job).",
@@ -262,7 +262,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
         }
       }
     },
-    "LaunchNewPipelineWorker": {
+    "_LaunchNewPipelineWorker": {
       "Next": "Filters",
       "ResultPath": null,
       "Type": "Task",
@@ -860,11 +860,11 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "EKS.409"
           ],
           "ResultPath": "$.error-info",
-          "Next": "EndOfPipeline"
+          "Next": "_EndOfPipeline"
         }
       ]
     },
-    "EndOfPipeline": {
+    "_EndOfPipeline": {
       "Type": "Pass",
       "End": true
     }

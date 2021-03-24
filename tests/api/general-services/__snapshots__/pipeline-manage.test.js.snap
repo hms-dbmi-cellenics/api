@@ -69,7 +69,7 @@ Array [
     "type": "return",
     "value": Object {
       "Comment": "Pipeline for clusterEnv 'test'",
-      "StartAt": "DeleteCompletedPipelineWorker",
+      "StartAt": "_DeleteCompletedPipelineWorker",
       "States": Object {
         "ConfigureEmbedding": Object {
           "Catch": Array [
@@ -77,7 +77,7 @@ Array [
               "ErrorEquals": Array [
                 "EKS.409",
               ],
-              "Next": "EndOfPipeline",
+              "Next": "_EndOfPipeline",
               "ResultPath": "$.error-info",
             },
           ],
@@ -220,29 +220,6 @@ Array [
             },
           ],
           "Type": "Task",
-        },
-        "DeleteCompletedPipelineWorker": Object {
-          "Comment": "Deletes the previous server pipeline HelmRelease (Service+Job).",
-          "Next": "LaunchNewPipelineWorker",
-          "Parameters": Object {
-            "CertificateAuthority": "AAAAAAAAAAA",
-            "ClusterName": "biomage-test",
-            "Endpoint": "https://test-endpoint.me/fgh",
-            "Method": "DELETE",
-            "Path": "/apis/helm.fluxcd.io/v1/namespaces/pipeline-test-namespace/helmreleases",
-            "QueryParameters": Object {
-              "labelSelector": Array [
-                "type=pipeline",
-              ],
-            },
-          },
-          "Resource": "arn:aws:states:::eks:call",
-          "ResultPath": null,
-          "Type": "Task",
-        },
-        "EndOfPipeline": Object {
-          "End": true,
-          "Type": "Pass",
         },
         "Filters": Object {
           "ItemsPath": "$.samples",
@@ -634,7 +611,30 @@ Array [
           "Next": "DataIntegration",
           "Type": "Map",
         },
-        "LaunchNewPipelineWorker": Object {
+        "_DeleteCompletedPipelineWorker": Object {
+          "Comment": "Deletes the previous server pipeline HelmRelease (Service+Job).",
+          "Next": "_LaunchNewPipelineWorker",
+          "Parameters": Object {
+            "CertificateAuthority": "AAAAAAAAAAA",
+            "ClusterName": "biomage-test",
+            "Endpoint": "https://test-endpoint.me/fgh",
+            "Method": "DELETE",
+            "Path": "/apis/helm.fluxcd.io/v1/namespaces/pipeline-test-namespace/helmreleases",
+            "QueryParameters": Object {
+              "labelSelector": Array [
+                "type=pipeline",
+              ],
+            },
+          },
+          "Resource": "arn:aws:states:::eks:call",
+          "ResultPath": null,
+          "Type": "Task",
+        },
+        "_EndOfPipeline": Object {
+          "End": true,
+          "Type": "Pass",
+        },
+        "_LaunchNewPipelineWorker": Object {
           "Catch": Array [
             Object {
               "ErrorEquals": Array [

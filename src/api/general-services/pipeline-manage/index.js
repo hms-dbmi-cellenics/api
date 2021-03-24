@@ -118,14 +118,14 @@ const executeStateMachine = async (stateMachineArn, execInput) => {
 const buildStateMachineDefinition = (context) => {
   const skeleton = {
     Comment: `Pipeline for clusterEnv '${config.clusterEnv}'`,
-    StartAt: 'DeleteCompletedPipelineWorker',
+    StartAt: '_DeleteCompletedPipelineWorker',
     States: {
-      DeleteCompletedPipelineWorker: {
+      _DeleteCompletedPipelineWorker: {
         XStepType: 'delete-completed-jobs',
-        Next: 'LaunchNewPipelineWorker',
+        Next: '_LaunchNewPipelineWorker',
         ResultPath: null,
       },
-      LaunchNewPipelineWorker: {
+      _LaunchNewPipelineWorker: {
         XStepType: 'create-new-job-if-not-exist',
         Next: 'Filters',
         ResultPath: null,
@@ -200,10 +200,10 @@ const buildStateMachineDefinition = (context) => {
           perSample: false,
           taskName: 'configureEmbedding',
         },
-        XNextOnCatch: 'EndOfPipeline',
+        XNextOnCatch: '_EndOfPipeline',
         End: true,
       },
-      EndOfPipeline: {
+      _EndOfPipeline: {
         Type: 'Pass',
         End: true,
       },

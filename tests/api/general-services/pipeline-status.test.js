@@ -299,6 +299,27 @@ describe('getStepsFromExecutionHistory', () => {
         name: 'DataIntegration',
       },
     },
+    {
+      type: 'TaskStateEntered',
+      id: 24,
+      previousEventId: 23,
+      stateEnteredEventDetails: {
+        name: '_EndOfPipeline',
+      },
+    },
+    {
+      type: 'TaskSucceeded',
+      id: 25,
+      previousEventId: 24,
+    },
+    {
+      type: 'TaskStateExited',
+      id: 26,
+      previousEventId: 25,
+      stateExitedEventDetails: {
+        name: '_EndOfPipeline',
+      },
+    },
   ];
 
 
