@@ -56,7 +56,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
               "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
               "Payload": {
                 "image": "biomage-remoter-client",
-                "name": "pipeline-remoter-client",
+                "name.$": "States.Format('pipeline-remoter-client-{}', $.sampleUuid)",
                 "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"cellSizeDistribution\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
                 "sampleUuid.$": "$.sampleUuid",
                 "detached": false
@@ -81,7 +81,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
               "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
               "Payload": {
                 "image": "biomage-remoter-client",
-                "name": "pipeline-remoter-client",
+                "name.$": "States.Format('pipeline-remoter-client-{}', $.sampleUuid)",
                 "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"mitochondrialContent\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
                 "sampleUuid.$": "$.sampleUuid",
                 "detached": false
@@ -106,7 +106,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
               "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
               "Payload": {
                 "image": "biomage-remoter-client",
-                "name": "pipeline-remoter-client",
+                "name.$": "States.Format('pipeline-remoter-client-{}', $.sampleUuid)",
                 "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"classifier\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
                 "sampleUuid.$": "$.sampleUuid",
                 "detached": false
@@ -131,7 +131,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
               "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
               "Payload": {
                 "image": "biomage-remoter-client",
-                "name": "pipeline-remoter-client",
+                "name.$": "States.Format('pipeline-remoter-client-{}', $.sampleUuid)",
                 "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"numGenesVsNumUmis\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
                 "sampleUuid.$": "$.sampleUuid",
                 "detached": false
@@ -156,7 +156,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
               "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
               "Payload": {
                 "image": "biomage-remoter-client",
-                "name": "pipeline-remoter-client",
+                "name.$": "States.Format('pipeline-remoter-client-{}', $.sampleUuid)",
                 "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"doubletScores\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
                 "sampleUuid.$": "$.sampleUuid",
                 "detached": false
@@ -188,7 +188,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
         "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
         "Payload": {
           "image": "biomage-remoter-client",
-          "name": "pipeline-remoter-client",
+          "name.$": "States.Format('pipeline-remoter-client-{}', $.sampleUuid)",
           "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"dataIntegration\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
           "sampleUuid.$": "$.sampleUuid",
           "detached": false
@@ -213,7 +213,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
         "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
         "Payload": {
           "image": "biomage-remoter-client",
-          "name": "pipeline-remoter-client",
+          "name.$": "States.Format('pipeline-remoter-client-{}', $.sampleUuid)",
           "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"configureEmbedding\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
           "sampleUuid.$": "$.sampleUuid",
           "detached": false
@@ -350,7 +350,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "apiVersion": "batch/v1",
                 "kind": "Job",
                 "metadata": {
-                  "name": "remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27",
+                  "name.$": "States.Format('remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27-{}', $.sampleUuid)",
                   "labels": {
                     "experimentId": "mock-experiment-id",
                     "taskName": "cellSizeDistribution",
@@ -360,7 +360,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "spec": {
                   "template": {
                     "metadata": {
-                      "name": "remoter-client-mock-experiment-id",
+                      "name.$": "States.Format('remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27-{}', $.sampleUuid)",
                       "labels": {
                         "type": "pipeline"
                       }
@@ -425,7 +425,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "apiVersion": "batch/v1",
                 "kind": "Job",
                 "metadata": {
-                  "name": "remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27",
+                  "name.$": "States.Format('remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27-{}', $.sampleUuid)",
                   "labels": {
                     "experimentId": "mock-experiment-id",
                     "taskName": "mitochondrialContent",
@@ -435,7 +435,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "spec": {
                   "template": {
                     "metadata": {
-                      "name": "remoter-client-mock-experiment-id",
+                      "name.$": "States.Format('remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27-{}', $.sampleUuid)",
                       "labels": {
                         "type": "pipeline"
                       }
@@ -500,7 +500,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "apiVersion": "batch/v1",
                 "kind": "Job",
                 "metadata": {
-                  "name": "remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27",
+                  "name.$": "States.Format('remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27-{}', $.sampleUuid)",
                   "labels": {
                     "experimentId": "mock-experiment-id",
                     "taskName": "classifier",
@@ -510,7 +510,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "spec": {
                   "template": {
                     "metadata": {
-                      "name": "remoter-client-mock-experiment-id",
+                      "name.$": "States.Format('remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27-{}', $.sampleUuid)",
                       "labels": {
                         "type": "pipeline"
                       }
@@ -575,7 +575,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "apiVersion": "batch/v1",
                 "kind": "Job",
                 "metadata": {
-                  "name": "remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27",
+                  "name.$": "States.Format('remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27-{}', $.sampleUuid)",
                   "labels": {
                     "experimentId": "mock-experiment-id",
                     "taskName": "numGenesVsNumUmis",
@@ -585,7 +585,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "spec": {
                   "template": {
                     "metadata": {
-                      "name": "remoter-client-mock-experiment-id",
+                      "name.$": "States.Format('remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27-{}', $.sampleUuid)",
                       "labels": {
                         "type": "pipeline"
                       }
@@ -650,7 +650,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "apiVersion": "batch/v1",
                 "kind": "Job",
                 "metadata": {
-                  "name": "remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27",
+                  "name.$": "States.Format('remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27-{}', $.sampleUuid)",
                   "labels": {
                     "experimentId": "mock-experiment-id",
                     "taskName": "doubletScores",
@@ -660,7 +660,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "spec": {
                   "template": {
                     "metadata": {
-                      "name": "remoter-client-mock-experiment-id",
+                      "name.$": "States.Format('remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27-{}', $.sampleUuid)",
                       "labels": {
                         "type": "pipeline"
                       }
@@ -732,7 +732,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
           "apiVersion": "batch/v1",
           "kind": "Job",
           "metadata": {
-            "name": "remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27",
+            "name.$": "States.Format('remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27-{}', $.sampleUuid)",
             "labels": {
               "experimentId": "mock-experiment-id",
               "taskName": "dataIntegration",
@@ -742,7 +742,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
           "spec": {
             "template": {
               "metadata": {
-                "name": "remoter-client-mock-experiment-id",
+                "name.$": "States.Format('remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27-{}', $.sampleUuid)",
                 "labels": {
                   "type": "pipeline"
                 }
@@ -807,7 +807,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
           "apiVersion": "batch/v1",
           "kind": "Job",
           "metadata": {
-            "name": "remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27",
+            "name.$": "States.Format('remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27-{}', $.sampleUuid)",
             "labels": {
               "experimentId": "mock-experiment-id",
               "taskName": "configureEmbedding",
@@ -817,7 +817,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
           "spec": {
             "template": {
               "metadata": {
-                "name": "remoter-client-mock-experiment-id",
+                "name.$": "States.Format('remoter-client-8d82349945fc652555261e7d10f0b9b8b4942f27-{}', $.sampleUuid)",
                 "labels": {
                   "type": "pipeline"
                 }

@@ -96,7 +96,7 @@ Array [
                   "taskName": "configureEmbedding",
                   "type": "pipeline",
                 },
-                "name": "remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773",
+                "name.$": "States.Format('remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773-{}', $.sampleUuid)",
               },
               "spec": Object {
                 "template": Object {
@@ -104,7 +104,7 @@ Array [
                     "labels": Object {
                       "type": "pipeline",
                     },
-                    "name": "remoter-client-testExperimentId",
+                    "name.$": "States.Format('remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773-{}', $.sampleUuid)",
                   },
                   "spec": Object {
                     "containers": Array [
@@ -171,7 +171,7 @@ Array [
                   "taskName": "dataIntegration",
                   "type": "pipeline",
                 },
-                "name": "remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773",
+                "name.$": "States.Format('remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773-{}', $.sampleUuid)",
               },
               "spec": Object {
                 "template": Object {
@@ -179,7 +179,7 @@ Array [
                     "labels": Object {
                       "type": "pipeline",
                     },
-                    "name": "remoter-client-testExperimentId",
+                    "name.$": "States.Format('remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773-{}', $.sampleUuid)",
                   },
                   "spec": Object {
                     "containers": Array [
@@ -274,7 +274,7 @@ Array [
                         "taskName": "cellSizeDistribution",
                         "type": "pipeline",
                       },
-                      "name": "remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773",
+                      "name.$": "States.Format('remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773-{}', $.sampleUuid)",
                     },
                     "spec": Object {
                       "template": Object {
@@ -282,7 +282,7 @@ Array [
                           "labels": Object {
                             "type": "pipeline",
                           },
-                          "name": "remoter-client-testExperimentId",
+                          "name.$": "States.Format('remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773-{}', $.sampleUuid)",
                         },
                         "spec": Object {
                           "containers": Array [
@@ -349,7 +349,7 @@ Array [
                         "taskName": "classifier",
                         "type": "pipeline",
                       },
-                      "name": "remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773",
+                      "name.$": "States.Format('remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773-{}', $.sampleUuid)",
                     },
                     "spec": Object {
                       "template": Object {
@@ -357,7 +357,7 @@ Array [
                           "labels": Object {
                             "type": "pipeline",
                           },
-                          "name": "remoter-client-testExperimentId",
+                          "name.$": "States.Format('remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773-{}', $.sampleUuid)",
                         },
                         "spec": Object {
                           "containers": Array [
@@ -424,7 +424,7 @@ Array [
                         "taskName": "doubletScores",
                         "type": "pipeline",
                       },
-                      "name": "remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773",
+                      "name.$": "States.Format('remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773-{}', $.sampleUuid)",
                     },
                     "spec": Object {
                       "template": Object {
@@ -432,7 +432,7 @@ Array [
                           "labels": Object {
                             "type": "pipeline",
                           },
-                          "name": "remoter-client-testExperimentId",
+                          "name.$": "States.Format('remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773-{}', $.sampleUuid)",
                         },
                         "spec": Object {
                           "containers": Array [
@@ -503,7 +503,7 @@ Array [
                         "taskName": "mitochondrialContent",
                         "type": "pipeline",
                       },
-                      "name": "remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773",
+                      "name.$": "States.Format('remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773-{}', $.sampleUuid)",
                     },
                     "spec": Object {
                       "template": Object {
@@ -511,7 +511,7 @@ Array [
                           "labels": Object {
                             "type": "pipeline",
                           },
-                          "name": "remoter-client-testExperimentId",
+                          "name.$": "States.Format('remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773-{}', $.sampleUuid)",
                         },
                         "spec": Object {
                           "containers": Array [
@@ -578,7 +578,7 @@ Array [
                         "taskName": "numGenesVsNumUmis",
                         "type": "pipeline",
                       },
-                      "name": "remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773",
+                      "name.$": "States.Format('remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773-{}', $.sampleUuid)",
                     },
                     "spec": Object {
                       "template": Object {
@@ -586,7 +586,7 @@ Array [
                           "labels": Object {
                             "type": "pipeline",
                           },
-                          "name": "remoter-client-testExperimentId",
+                          "name.$": "States.Format('remoter-client-54f9fbc3f96a7220744a6e068d1dbfb604b3e773-{}', $.sampleUuid)",
                         },
                         "spec": Object {
                           "containers": Array [
