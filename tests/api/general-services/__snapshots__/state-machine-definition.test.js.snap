@@ -295,6 +295,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             },
             "values": {
               "experimentId": "mock-experiment-id",
+              "image": "mock-remoter-server-image",
               "namespace": "pipeline-test-namespace",
               "awsAccountId": "mock-account-id",
               "clusterEnv": "test",
@@ -368,6 +369,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                       "containers": [
                         {
                           "name": "remoter-client",
+                          "image": "mock-remoter-client-image",
                           "args": [
                             "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"cellSizeDistribution\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
                           ],
@@ -442,6 +444,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                       "containers": [
                         {
                           "name": "remoter-client",
+                          "image": "mock-remoter-client-image",
                           "args": [
                             "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"mitochondrialContent\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
                           ],
@@ -516,6 +519,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                       "containers": [
                         {
                           "name": "remoter-client",
+                          "image": "mock-remoter-client-image",
                           "args": [
                             "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"classifier\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
                           ],
@@ -590,6 +594,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                       "containers": [
                         {
                           "name": "remoter-client",
+                          "image": "mock-remoter-client-image",
                           "args": [
                             "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"numGenesVsNumUmis\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
                           ],
@@ -664,6 +669,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                       "containers": [
                         {
                           "name": "remoter-client",
+                          "image": "mock-remoter-client-image",
                           "args": [
                             "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"doubletScores\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
                           ],
@@ -745,6 +751,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "containers": [
                   {
                     "name": "remoter-client",
+                    "image": "mock-remoter-client-image",
                     "args": [
                       "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"dataIntegration\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
                     ],
@@ -819,6 +826,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                 "containers": [
                   {
                     "name": "remoter-client",
+                    "image": "mock-remoter-client-image",
                     "args": [
                       "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"configureEmbedding\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
                     ],
