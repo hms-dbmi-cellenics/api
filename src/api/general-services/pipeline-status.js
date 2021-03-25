@@ -1,7 +1,11 @@
+const _ = require('lodash');
 const AWS = require('../../utils/requireAWS');
 const ExperimentService = require('../route-services/experiment');
 const config = require('../../config');
 const logger = require('../../utils/logging');
+
+
+const privateSteps = ['DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker'];
 
 const getStepsFromExecutionHistory = (history) => {
   const { events } = history;
@@ -83,8 +87,12 @@ const getStepsFromExecutionHistory = (history) => {
       }
     }
   }
+
   shortestCompleted = (shortestCompleted || []).concat(main.completedTasks);
-  return shortestCompleted || [];
+
+  const shortestCompletedToReport = _.difference(shortestCompleted, privateSteps);
+
+  return shortestCompletedToReport || [];
 };
 
 /*
