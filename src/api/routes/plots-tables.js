@@ -12,7 +12,6 @@ module.exports = {
   },
   'plots-tables#read': (req, res, next) => {
     const { experimentId, plotUuid } = req.params;
-
     plotsTablesService.read(experimentId, plotUuid)
       .then((response) => res.json(response))
       .catch((e) => {

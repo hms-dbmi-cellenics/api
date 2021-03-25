@@ -38,7 +38,7 @@ const pipelineResponse = async (io, message) => {
 
   if (output.plotDataKeys) {
     const plotConfigUploads = Object.entries(output.plotDataKeys).map(([plotUuid, objKey]) => (
-      plotsTableService.updatePlotData(
+      plotsTableService.updatePlotDataKey(
         experimentId,
         plotUuid,
         objKey,

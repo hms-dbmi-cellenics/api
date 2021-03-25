@@ -24,12 +24,12 @@ class PlotsTablesService {
     };
 
     const dynamodb = createDynamoDbInstance();
-    await dynamodb.putItem(params).promise();
+    await dynamodb.updateItem(params).promise();
 
     return tableData;
   }
 
-  async updatePlotData(experimentId, plotUuid, plotDataKey) {
+  async updatePlotDataKey(experimentId, plotUuid, plotDataKey) {
     const marshalledData = convertToDynamoDbRecord({
       ':plotDataKey': plotDataKey,
       ':config': {},
