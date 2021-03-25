@@ -247,7 +247,7 @@ Array [
         "Filters": Object {
           "ItemsPath": "$.samples",
           "Iterator": Object {
-            "StartAt": "CellSizeDistributionFilter",
+            "StartAt": "ClassifierFilter",
             "States": Object {
               "CellSizeDistributionFilter": Object {
                 "Catch": Array [
@@ -330,12 +330,12 @@ Array [
                     "ErrorEquals": Array [
                       "EKS.409",
                     ],
-                    "Next": "NumGenesVsNumUmisFilter",
+                    "Next": "CellSizeDistributionFilter",
                     "ResultPath": "$.error-info",
                   },
                 ],
                 "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
-                "Next": "NumGenesVsNumUmisFilter",
+                "Next": "CellSizeDistributionFilter",
                 "Parameters": Object {
                   "CertificateAuthority": "AAAAAAAAAAA",
                   "ClusterName": "biomage-test",
@@ -484,12 +484,12 @@ Array [
                     "ErrorEquals": Array [
                       "EKS.409",
                     ],
-                    "Next": "ClassifierFilter",
+                    "Next": "NumGenesVsNumUmisFilter",
                     "ResultPath": "$.error-info",
                   },
                 ],
                 "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
-                "Next": "ClassifierFilter",
+                "Next": "NumGenesVsNumUmisFilter",
                 "Parameters": Object {
                   "CertificateAuthority": "AAAAAAAAAAA",
                   "ClusterName": "biomage-test",
