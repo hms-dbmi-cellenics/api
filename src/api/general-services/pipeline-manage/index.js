@@ -136,8 +136,16 @@ const buildStateMachineDefinition = (context) => {
         MaxConcurrency: 1,
         ItemsPath: '$.samples',
         Iterator: {
-          StartAt: 'CellSizeDistributionFilter',
+          StartAt: 'ClassifierFilter',
           States: {
+            ClassifierFilter: {
+              XStepType: 'create-new-step',
+              XConstructorArgs: {
+                perSample: true,
+                taskName: 'classifier',
+              },
+              Next: 'CellSizeDistributionFilter',
+            },
             CellSizeDistributionFilter: {
               XStepType: 'create-new-step',
               XConstructorArgs: {
@@ -151,14 +159,6 @@ const buildStateMachineDefinition = (context) => {
               XConstructorArgs: {
                 perSample: true,
                 taskName: 'mitochondrialContent',
-              },
-              Next: 'ClassifierFilter',
-            },
-            ClassifierFilter: {
-              XStepType: 'create-new-step',
-              XConstructorArgs: {
-                perSample: true,
-                taskName: 'classifier',
               },
               Next: 'NumGenesVsNumUmisFilter',
             },
