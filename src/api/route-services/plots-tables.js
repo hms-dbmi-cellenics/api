@@ -16,11 +16,19 @@ class PlotsTablesService {
       lastUpdated: new Date().toDateString(),
     };
 
-    const plotConfig = convertToDynamoDbRecord(tableData);
+    const marshalledData = convertToDynamoDbRecord({
+      ':config': data.config,
+      ':lastUpdated': new Date().toDateString(),
+    });
 
     const params = {
       TableName: this.tableName,
-      Item: plotConfig,
+      Key: {
+        experimentId: { S: experimentId }, plotUuid: { S: plotUuid },
+      },
+      UpdateExpression: 'SET config = :config, lastUpdated = :lastUpdated',
+      ExpressionAttributeValues: marshalledData,
+      ReturnValues: 'UPDATED_NEW',
     };
 
     const dynamodb = createDynamoDbInstance();
