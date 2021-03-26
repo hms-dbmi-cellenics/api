@@ -25,15 +25,15 @@ describe('Test Plot Config Service', () => {
       foo: 'bar', baz: [1, 2, 3],
     };
 
-    const putItem = jest.fn();
+    const updateItem = jest.fn();
     AWSMock.setSDKInstance(AWS);
-    AWSMock.mock('DynamoDB', 'putItem', (params, callback) => {
-      putItem(params);
+    AWSMock.mock('DynamoDB', 'updateItem', (params, callback) => {
+      updateItem(params);
       callback(null, data);
     });
 
     await new PlotsTablesService().create(EXPERIMENT_ID, PLOT_UUID, data);
-    expect(putItem).toMatchSnapshot();
+    expect(updateItem).toMatchSnapshot();
   });
 
   it('delete operation, delete data from database', async () => {

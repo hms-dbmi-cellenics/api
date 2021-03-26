@@ -5,34 +5,22 @@ exports[`Test Plot Config Service create operation, puts data in database 1`] = 
   "calls": Array [
     Array [
       Object {
-        "Item": Object {
-          "baz": Object {
-            "L": Array [
-              Object {
-                "N": "1",
-              },
-              Object {
-                "N": "2",
-              },
-              Object {
-                "N": "3",
-              },
-            ],
+        "ExpressionAttributeValues": Object {
+          ":lastUpdated": Object {
+            "S": "Wed Jan 01 2020",
           },
+        },
+        "Key": Object {
           "experimentId": Object {
             "S": "1",
-          },
-          "foo": Object {
-            "S": "bar",
-          },
-          "lastUpdated": Object {
-            "S": "Wed Jan 01 2020",
           },
           "plotUuid": Object {
             "S": "plot1",
           },
         },
+        "ReturnValues": "UPDATED_NEW",
         "TableName": "plots-tables-test",
+        "UpdateExpression": "SET config = :config, lastUpdated = :lastUpdated",
       },
     ],
   ],
