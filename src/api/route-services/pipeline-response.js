@@ -4,16 +4,17 @@ const logger = require('../../utils/logging');
 
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
+
 const pipelineStatus = require('../general-services/pipeline-status');
 
-const experimentService = new ExperimentService();
 const plotsTableService = new PlotsTablesService();
+const experimentService = new ExperimentService();
 
 const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');
 
   // Fail hard if there was an error.
-  const { response: { error }, input: { experimentId, taskName } } = message;
+  const { response: { error }, input: { experimentId, taskName, sampleUuid } } = message;
 
   if (error) {
     io.sockets.emit(`ExperimentUpdates-${experimentId}`, message);
@@ -53,7 +54,26 @@ const pipelineResponse = async (io, message) => {
     Promise.all(plotConfigUploads.map((p) => p.catch((e) => e)));
   }
 
-  experimentService.updateProcessingConfig(experimentId, [{ name: taskName, body: output.config }]);
+  const {
+    processingConfig: currentConfig,
+  } = await experimentService.getProcessingConfig(experimentId);
+
+  if (sampleUuid !== '') {
+    await experimentService.updateProcessingConfig(experimentId, [
+      {
+        name: taskName,
+        body: { ...currentConfig[taskName], [sampleUuid]: output.config },
+      },
+    ]);
+  } else {
+    await experimentService.updateProcessingConfig(experimentId, [
+      {
+        name: taskName,
+        body: output.config,
+      },
+    ]);
+  }
+
 
   const statusRes = await pipelineStatus(experimentId);
 

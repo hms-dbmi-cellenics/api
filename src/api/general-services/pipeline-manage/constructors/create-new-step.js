@@ -36,7 +36,6 @@ const createNewStep = (context, step, args) => {
           name: 'pipeline-remoter-client',
           task,
           ...perSample && { 'sampleUuid.$': '$.sampleUuid' },
-          ...!perSample && { sampleUuid: 'all' },
           detached: false,
         },
       },

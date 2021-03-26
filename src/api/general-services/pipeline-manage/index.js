@@ -226,8 +226,7 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
   logger.log(`Fetching processing settings for ${experimentId}`);
-  const processingRes = await experimentService.getProcessingConfig(experimentId);
-  const { processingConfig } = processingRes;
+  const { processingConfig } = await experimentService.getProcessingConfig(experimentId);
 
   const samplesRes = await samplesService.getSampleIds(experimentId);
   const { samples } = samplesRes;
@@ -244,13 +243,35 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
     });
   }
 
+
+  // This is the processing configuration merged for multiple samples where
+  // appropriate.
+  // eslint-disable-next-line consistent-return
+  const mergedProcessingConfig = _.cloneDeepWith(processingConfig, (o) => {
+    if (_.isObject(o) && !o.dataIntegration && o.enabled) {
+      // Find which samples have sample-specific configurations.
+      const sampleConfigs = _.intersection(Object.keys(o), samples.ids);
+
+      // Get an object that is only the "raw" configuration.
+      const rawConfig = _.omit(o, sampleConfigs);
+
+      const result = {};
+
+      samples.ids.forEach((sample) => {
+        result[sample] = _.merge(rawConfig, o[sample]);
+      });
+
+      return result;
+    }
+  });
+
   const context = {
     experimentId,
     accountId,
     roleArn,
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
-    processingConfig,
+    processingConfig: mergedProcessingConfig,
   };
 
   const stateMachine = buildStateMachineDefinition(context);

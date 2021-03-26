@@ -190,7 +190,6 @@ exports[`non-tests to document the State Machines - local development 1`] = `
           "image": "biomage-remoter-client",
           "name": "pipeline-remoter-client",
           "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"dataIntegration\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
-          "sampleUuid": "all",
           "detached": false
         }
       },
@@ -215,7 +214,6 @@ exports[`non-tests to document the State Machines - local development 1`] = `
           "image": "biomage-remoter-client",
           "name": "pipeline-remoter-client",
           "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"configureEmbedding\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
-          "sampleUuid": "all",
           "detached": false
         }
       },
