@@ -112,12 +112,7 @@ Array [
                         "args": Array [
                           "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"configureEmbedding\\",\\"config\\":{},\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\"}",
                         ],
-                        "env": Array [
-                          Object {
-                            "name": "SAMPLE_ID",
-                            "value": "all",
-                          },
-                        ],
+                        "env": Array [],
                         "image": "MOCK_IMAGE_PATH",
                         "name": "remoter-client",
                       },
@@ -187,12 +182,7 @@ Array [
                         "args": Array [
                           "{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"dataIntegration\\",\\"config\\":{},\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\"}",
                         ],
-                        "env": Array [
-                          Object {
-                            "name": "SAMPLE_ID",
-                            "value": "all",
-                          },
-                        ],
+                        "env": Array [],
                         "image": "MOCK_IMAGE_PATH",
                         "name": "remoter-client",
                       },

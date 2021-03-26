@@ -10,6 +10,19 @@ jest.mock('../../../src/api/general-services/pipeline-status', () => jest.fn().m
   pipelineStatus: () => ({}),
 })));
 
+const mockDynamoGetItem = (jsData) => {
+  const dynamodbData = {
+    Item: AWS.DynamoDB.Converter.marshall(jsData),
+  };
+  const getItemSpy = jest.fn((x) => x);
+  AWSMock.setSDKInstance(AWS);
+  AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
+    getItemSpy(params);
+    callback(null, dynamodbData);
+  });
+  return getItemSpy;
+};
+
 describe('Test Pipeline Response Service', () => {
   let io;
   let client;
@@ -18,6 +31,7 @@ describe('Test Pipeline Response Service', () => {
     input: {
       experimentId: '1234',
       taskName: 'cellSizeDistribution',
+      sampleUuid: '',
     },
     output: {
       bucket: 'aws-bucket',
@@ -68,7 +82,7 @@ describe('Test Pipeline Response Service', () => {
     io.close();
   });
 
-  it('functions propely with correct input', async () => {
+  it('functions propely with correct input (no sample UUID given)', async () => {
     AWSMock.setSDKInstance(AWS);
 
     const s3Spy = jest.fn((x) => x);
@@ -84,6 +98,14 @@ describe('Test Pipeline Response Service', () => {
     });
 
 
+    mockDynamoGetItem({
+      processingConfig: {
+        cellSizeDistribution: {
+          filterSettings: { binStep: 200, minCellSize: 420 }, enabled: true,
+        },
+      },
+    });
+
     // Expect websocket event
     client.on(`ExperimentUpdates-${experimentId}`, (res) => {
       expect(res).toEqual(message);
@@ -94,9 +116,46 @@ describe('Test Pipeline Response Service', () => {
     // Download output from S3
     expect(s3Spy).toHaveBeenCalled();
 
-    // Upload output to DynamoDB
     // Update processing settings in dynamoDB
-    expect(dynamoDbSpy).toHaveBeenCalled();
+    expect(dynamoDbSpy).toMatchSnapshot();
+  });
+
+  it('functions propely with correct input (custom sample UUID given)', async () => {
+    AWSMock.setSDKInstance(AWS);
+
+    const s3Spy = jest.fn((x) => x);
+    AWSMock.mock('S3', 'getObject', (params, callback) => {
+      s3Spy(params);
+      callback(null, s3output);
+    });
+
+    const dynamoDbSpy = jest.fn((x) => x);
+    AWSMock.mock('DynamoDB', 'updateItem', (params, callback) => {
+      dynamoDbSpy(params);
+      callback(null, {});
+    });
+
+
+    mockDynamoGetItem({
+      processingConfig: {
+        cellSizeDistribution: {
+          filterSettings: { binStep: 200, minCellSize: 420 }, enabled: true,
+        },
+      },
+    });
+
+    // Expect websocket event
+    client.on(`ExperimentUpdates-${experimentId}`, (res) => {
+      expect(res).toEqual(message);
+    });
+
+    await pipelineResponse(io, { ...message, input: { ...message.input, sampleUuid: 'control' } });
+
+    // Download output from S3
+    expect(s3Spy).toHaveBeenCalled();
+
+    // Update processing settings in dynamoDB
+    expect(dynamoDbSpy).toMatchSnapshot();
   });
 
   it('throws error on receiving error in message', async () => {

@@ -753,12 +753,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                     "args": [
                       "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"dataIntegration\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
                     ],
-                    "env": [
-                      {
-                        "name": "SAMPLE_ID",
-                        "value": "all"
-                      }
-                    ]
+                    "env": []
                   }
                 ],
                 "restartPolicy": "Never"
@@ -828,12 +823,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
                     "args": [
                       "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"configureEmbedding\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
                     ],
-                    "env": [
-                      {
-                        "name": "SAMPLE_ID",
-                        "value": "all"
-                      }
-                    ]
+                    "env": []
                   }
                 ],
                 "restartPolicy": "Never"

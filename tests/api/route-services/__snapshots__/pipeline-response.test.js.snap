@@ -1,0 +1,261 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test Pipeline Response Service functions propely with correct input (custom sample UUID given) 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ExpressionAttributeValues": Object {
+          ":updatedObject": Object {
+            "M": Object {},
+          },
+        },
+        "Key": Object {
+          "experimentId": Object {
+            "S": "1234",
+          },
+        },
+        "ReturnValues": "UPDATED_NEW",
+        "TableName": "experiments-test",
+        "UpdateExpression": "SET processingConfig = if_not_exists(processingConfig, :updatedObject)",
+      },
+    ],
+    Array [
+      Object {
+        "ExpressionAttributeNames": Object {
+          "#key1": "cellSizeDistribution",
+        },
+        "ExpressionAttributeValues": Object {
+          ":val1": Object {
+            "M": Object {
+              "control": Object {
+                "M": Object {
+                  "enabled": Object {
+                    "BOOL": true,
+                  },
+                  "filterSettings": Object {
+                    "M": Object {
+                      "binStep": Object {
+                        "N": "200",
+                      },
+                      "minCellSize": Object {
+                        "N": "10800",
+                      },
+                    },
+                  },
+                },
+              },
+              "enabled": Object {
+                "BOOL": true,
+              },
+              "filterSettings": Object {
+                "M": Object {
+                  "binStep": Object {
+                    "N": "200",
+                  },
+                  "minCellSize": Object {
+                    "N": "420",
+                  },
+                },
+              },
+            },
+          },
+        },
+        "Key": Object {
+          "experimentId": Object {
+            "S": "1234",
+          },
+        },
+        "ReturnValues": "UPDATED_NEW",
+        "TableName": "experiments-test",
+        "UpdateExpression": "SET processingConfig.#key1 = :val1",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "ExpressionAttributeValues": Object {
+          ":updatedObject": Object {
+            "M": Object {},
+          },
+        },
+        "Key": Object {
+          "experimentId": Object {
+            "S": "1234",
+          },
+        },
+        "ReturnValues": "UPDATED_NEW",
+        "TableName": "experiments-test",
+        "UpdateExpression": "SET processingConfig = if_not_exists(processingConfig, :updatedObject)",
+      },
+    },
+    Object {
+      "type": "return",
+      "value": Object {
+        "ExpressionAttributeNames": Object {
+          "#key1": "cellSizeDistribution",
+        },
+        "ExpressionAttributeValues": Object {
+          ":val1": Object {
+            "M": Object {
+              "control": Object {
+                "M": Object {
+                  "enabled": Object {
+                    "BOOL": true,
+                  },
+                  "filterSettings": Object {
+                    "M": Object {
+                      "binStep": Object {
+                        "N": "200",
+                      },
+                      "minCellSize": Object {
+                        "N": "10800",
+                      },
+                    },
+                  },
+                },
+              },
+              "enabled": Object {
+                "BOOL": true,
+              },
+              "filterSettings": Object {
+                "M": Object {
+                  "binStep": Object {
+                    "N": "200",
+                  },
+                  "minCellSize": Object {
+                    "N": "420",
+                  },
+                },
+              },
+            },
+          },
+        },
+        "Key": Object {
+          "experimentId": Object {
+            "S": "1234",
+          },
+        },
+        "ReturnValues": "UPDATED_NEW",
+        "TableName": "experiments-test",
+        "UpdateExpression": "SET processingConfig.#key1 = :val1",
+      },
+    },
+  ],
+}
+`;
+
+exports[`Test Pipeline Response Service functions propely with correct input (no sample UUID given) 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ExpressionAttributeValues": Object {
+          ":updatedObject": Object {
+            "M": Object {},
+          },
+        },
+        "Key": Object {
+          "experimentId": Object {
+            "S": "1234",
+          },
+        },
+        "ReturnValues": "UPDATED_NEW",
+        "TableName": "experiments-test",
+        "UpdateExpression": "SET processingConfig = if_not_exists(processingConfig, :updatedObject)",
+      },
+    ],
+    Array [
+      Object {
+        "ExpressionAttributeNames": Object {
+          "#key1": "cellSizeDistribution",
+        },
+        "ExpressionAttributeValues": Object {
+          ":val1": Object {
+            "M": Object {
+              "enabled": Object {
+                "BOOL": true,
+              },
+              "filterSettings": Object {
+                "M": Object {
+                  "binStep": Object {
+                    "N": "200",
+                  },
+                  "minCellSize": Object {
+                    "N": "10800",
+                  },
+                },
+              },
+            },
+          },
+        },
+        "Key": Object {
+          "experimentId": Object {
+            "S": "1234",
+          },
+        },
+        "ReturnValues": "UPDATED_NEW",
+        "TableName": "experiments-test",
+        "UpdateExpression": "SET processingConfig.#key1 = :val1",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "ExpressionAttributeValues": Object {
+          ":updatedObject": Object {
+            "M": Object {},
+          },
+        },
+        "Key": Object {
+          "experimentId": Object {
+            "S": "1234",
+          },
+        },
+        "ReturnValues": "UPDATED_NEW",
+        "TableName": "experiments-test",
+        "UpdateExpression": "SET processingConfig = if_not_exists(processingConfig, :updatedObject)",
+      },
+    },
+    Object {
+      "type": "return",
+      "value": Object {
+        "ExpressionAttributeNames": Object {
+          "#key1": "cellSizeDistribution",
+        },
+        "ExpressionAttributeValues": Object {
+          ":val1": Object {
+            "M": Object {
+              "enabled": Object {
+                "BOOL": true,
+              },
+              "filterSettings": Object {
+                "M": Object {
+                  "binStep": Object {
+                    "N": "200",
+                  },
+                  "minCellSize": Object {
+                    "N": "10800",
+                  },
+                },
+              },
+            },
+          },
+        },
+        "Key": Object {
+          "experimentId": Object {
+            "S": "1234",
+          },
+        },
+        "ReturnValues": "UPDATED_NEW",
+        "TableName": "experiments-test",
+        "UpdateExpression": "SET processingConfig.#key1 = :val1",
+      },
+    },
+  ],
+}
+`;
