@@ -243,7 +243,6 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
     });
   }
 
-
   // This is the processing configuration merged for multiple samples where
   // appropriate.
   // eslint-disable-next-line consistent-return
