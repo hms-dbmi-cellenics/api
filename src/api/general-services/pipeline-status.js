@@ -129,6 +129,7 @@ const getPipelineStatus = async (experimentId) => {
       const history = await stepFunctions.getExecutionHistory({
         executionArn,
         includeExecutionData: false,
+        nextToken,
       }).promise();
 
       events = [...events, ...history.events];
