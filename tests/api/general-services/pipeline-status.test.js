@@ -309,31 +309,29 @@ describe('getStepsFromExecutionHistory', () => {
 
   it('returns empty array if nothing has been completed', () => {
     const events = truncateHistory('19-before-anything-completed');
-    const completedSteps = pipelineStatus.getStepsFromExecutionHistory({ events });
+    const completedSteps = pipelineStatus.getStepsFromExecutionHistory(events);
     expect(completedSteps).toEqual([]);
   });
 
   it('returns empty array if any branch has not started', () => {
     const events = truncateHistory('20-one-comlpetion-vs-unstarted');
-    const completedSteps = pipelineStatus.getStepsFromExecutionHistory({ events });
+    const completedSteps = pipelineStatus.getStepsFromExecutionHistory(events);
     expect(completedSteps).toEqual([]);
   });
 
   it('returns steps completed in all branches', () => {
     const events = truncateHistory('24-two-completions-vs-one');
-    const completedSteps = pipelineStatus.getStepsFromExecutionHistory({ events });
+    const completedSteps = pipelineStatus.getStepsFromExecutionHistory(events);
     expect(completedSteps).toEqual(['CellSizeDistributionFilter']);
   });
 
   it('returns all steps in a finished single-sample execution', () => {
-    const history = { events: singleIterationHistory };
-    const completedSteps = pipelineStatus.getStepsFromExecutionHistory(history);
+    const completedSteps = pipelineStatus.getStepsFromExecutionHistory(singleIterationHistory);
     expect(completedSteps).toEqual(['CellSizeDistributionFilter', 'DataIntegration']);
   });
 
   it('returns all steps in a finished multiple-sample execution', () => {
-    const history = { events: fullHistory };
-    const completedSteps = pipelineStatus.getStepsFromExecutionHistory(history);
+    const completedSteps = pipelineStatus.getStepsFromExecutionHistory(fullHistory);
     expect(completedSteps).toEqual(['CellSizeDistributionFilter', 'MitochondrialContentFilter', 'DataIntegration']);
   });
 });
