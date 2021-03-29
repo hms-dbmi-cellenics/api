@@ -19,6 +19,16 @@ const createNewStep = (context, step, args) => {
     server: remoterServer,
   });
 
+  // If enabled is defined and is false.
+  if (config.enabled === false) {
+    return {
+      ...step,
+      Type: 'Pass',
+      ResultPath: null,
+
+    };
+  }
+
   const stepHash = crypto.randomBytes(5).toString('hex');
 
   if (config.clusterEnv === 'development') {
