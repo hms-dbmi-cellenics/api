@@ -133,7 +133,7 @@ const getPipelineStatus = async (experimentId) => {
       }).promise();
 
       events = [...events, ...history.events];
-      nextToken = events.nextToken;
+      nextToken = history.nextToken;
     } while (nextToken);
     /* eslint-enable no-await-in-loop */
 
