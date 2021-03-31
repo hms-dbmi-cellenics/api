@@ -112,18 +112,7 @@ class WorkSubmitService {
           }
         });
       }),
-      new Promise((resolve, reject) => {
-        AWSXRay.captureAsyncFunc('WorkSubmitService.createWorker', async (subsegment) => {
-          try {
-            const response = await this.createWorker();
-            resolve(response);
-          } catch (error) {
-            reject(error);
-          } finally {
-            subsegment.close();
-          }
-        });
-      }),
+      this.createWorker(),
     ]);
   }
 }
