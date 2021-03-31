@@ -28,6 +28,25 @@ module.exports = async (app) => {
   // Enable AWS XRay
   // eslint-disable-next-line global-require
   AWSXRay.captureHTTPsGlobal(require('http'));
+
+  AWSXRay.middleware.setSamplingRules({
+    rules: [
+      {
+        description: 'Health check',
+        http_method: '*',
+        host: '*',
+        url_path: '/v1/health',
+        fixed_target: 0,
+        rate: 0.0,
+      },
+    ],
+    default: {
+      fixed_target: 10,
+      rate: 0.05,
+    },
+    version: 2,
+  });
+
   app.use(AWSXRay.express.openSegment(`API-${config.clusterEnv}-${config.sandboxId}`));
 
   app.use((req, res, next) => {
