@@ -78,7 +78,7 @@ if (config.clusterEnv === 'staging') {
 // InfraMock. Set up API accordingly.
 if (config.clusterEnv === 'development') {
   logger.log('We are running on a development cluster, patching AWS to use InfraMock endpoint...');
-  // config.cachingEnabled = false;
+  config.cachingEnabled = false;
   config.awsAccountIdPromise = (async () => '000000000000')();
   AWS.config.update({
     endpoint: 'http://localhost:4566',

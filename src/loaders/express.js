@@ -28,7 +28,12 @@ module.exports = async (app) => {
   // Enable AWS XRay
   // eslint-disable-next-line global-require
   AWSXRay.captureHTTPsGlobal(require('http'));
-  app.use(AWSXRay.express.openSegment(`API-${config.clusterEnv}-express`));
+  app.use(AWSXRay.express.openSegment(`API-${config.clusterEnv}-${config.sandboxId}`));
+
+  app.use((req, res, next) => {
+    AWSXRay.getSegment().addMetadata('podName', config.podName);
+    next();
+  });
 
   app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
