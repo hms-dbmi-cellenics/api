@@ -1,0 +1,13 @@
+title: SampleResponse.v1
+type: object
+description: Response containing the samples
+properties:
+  experimentId:
+    type: string
+  samples:
+    type: object
+    properties:
+      ids:
+        type: array
+        items:
+          type: string

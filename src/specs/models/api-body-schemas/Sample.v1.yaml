@@ -1,0 +1,6 @@
+type: object
+title: ''
+description: Schema for Samples object
+properties:
+  experimentId:
+    type: string
