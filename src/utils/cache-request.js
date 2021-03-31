@@ -1,7 +1,9 @@
 const hash = require('object-hash');
+const AWSXRay = require('aws-xray-sdk');
 const config = require('../config');
 const CacheSingleton = require('../cache');
 const logger = require('./logging');
+
 
 const createObjectHash = (object) => hash.MD5(object);
 
@@ -20,6 +22,10 @@ const cacheGetRequest = async (
 
   const cache = CacheSingleton.get();
   const payload = await cache.get(key);
+
+  // Annotate current segment as cached.
+  AWSXRay.getSegment().addAnnotation('result', 'success-api-cache');
+
   return payload;
 };
 

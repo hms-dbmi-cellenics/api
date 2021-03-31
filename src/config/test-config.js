@@ -10,6 +10,7 @@ module.exports = {
   port: 3000,
   clusterEnv: 'test',
   awsRegion: 'eu-west-1',
+  podName: 'test',
   awsAccountIdPromise: getAwsAccountId(),
   workerNamespace: 'worker-test-namespace',
   pipelineNamespace: 'pipeline-test-namespace',

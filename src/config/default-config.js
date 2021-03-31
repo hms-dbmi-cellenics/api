@@ -52,6 +52,7 @@ const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
   clusterEnv: process.env.CLUSTER_ENV || 'development',
   sandboxId: process.env.SANDBOX_ID || 'default',
+  podName: process.env.K8S_POD_NAME || 'local',
   workerNamespace: `worker-${process.env.SANDBOX_ID || 'default'}`,
   pipelineNamespace: `pipeline-${process.env.SANDBOX_ID || 'default'}`,
   awsRegion,
@@ -77,7 +78,7 @@ if (config.clusterEnv === 'staging') {
 // InfraMock. Set up API accordingly.
 if (config.clusterEnv === 'development') {
   logger.log('We are running on a development cluster, patching AWS to use InfraMock endpoint...');
-  config.cachingEnabled = false;
+  // config.cachingEnabled = false;
   config.awsAccountIdPromise = (async () => '000000000000')();
   AWS.config.update({
     endpoint: 'http://localhost:4566',

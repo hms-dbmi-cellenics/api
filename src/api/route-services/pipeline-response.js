@@ -1,3 +1,4 @@
+const AWSXRay = require('aws-xray-sdk');
 const AWS = require('../../utils/requireAWS');
 const validateRequest = require('../../utils/schema-validator');
 const logger = require('../../utils/logging');
@@ -13,10 +14,13 @@ const experimentService = new ExperimentService();
 const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');
 
+  AWSXRay.getSegment().addMetadata('message', message);
+
   // Fail hard if there was an error.
   const { response: { error }, input: { experimentId, taskName, sampleUuid } } = message;
 
   if (error) {
+    AWSXRay.getSegment().addError(error);
     io.sockets.emit(`ExperimentUpdates-${experimentId}`, message);
     return;
   }

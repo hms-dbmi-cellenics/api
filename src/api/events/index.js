@@ -5,7 +5,7 @@ const config = require('../../config');
 
 module.exports = (socket) => {
   socket.on('WorkRequest', (data) => {
-    const segment = new AWSXRay.Segment(`API-${config.clusterEnv}-socket.io`);
+    const segment = new AWSXRay.Segment(`API-${config.clusterEnv}-${config.sandboxId}`);
     const ns = AWSXRay.getNamespace();
 
     ns.runPromise(async () => {
@@ -17,13 +17,14 @@ module.exports = (socket) => {
       segment.addIncomingRequestData({
         request: {
           method: 'POST',
-          url: 'socketio://WorkRequest',
+          url: `socketio://api-${config.sandboxId}-${config.clusterEnv}/WorkRequest`,
         },
       });
 
-      const { uuid, experimentId } = data;
-      segment.addAnnotation('uuid', uuid);
-      segment.addAnnotation('experimentId', experimentId);
+      const { uuid } = data;
+
+      segment.addMetadata('podName', config.podName);
+      segment.addMetadata('request', data);
 
       try {
         await handleWorkRequest(data, socket);

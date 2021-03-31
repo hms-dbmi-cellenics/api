@@ -1,9 +1,11 @@
 
 const crypto = require('crypto');
+const AWSXRay = require('aws-xray-sdk');
 const AWS = require('../../../utils/requireAWS');
 const createWorkerResources = require('./create-worker-k8s');
 const config = require('../../../config');
 const logger = require('../../../utils/logging');
+
 
 class WorkSubmitService {
   constructor(workRequest) {
@@ -86,6 +88,7 @@ class WorkSubmitService {
   async createWorker() {
     if (config.clusterEnv === 'development' || config.clusterEnv === 'test') {
       logger.log('Not creating a worker because we are running locally...');
+
       return;
     }
 
@@ -93,9 +96,34 @@ class WorkSubmitService {
   }
 
   async submitWork() {
+    AWSXRay.getSegment().addAnnotation('result', 'success-worker');
+    AWSXRay.getSegment().close();
+
     await Promise.all([
-      this.createWorker(),
-      this.getQueueAndHandleMessage(),
+      new Promise((resolve, reject) => {
+        AWSXRay.captureAsyncFunc('WorkSubmitService.getQueueAndHandleMessage', async (subsegment) => {
+          try {
+            const response = await this.getQueueAndHandleMessage();
+            resolve(response);
+          } catch (error) {
+            reject(error);
+          } finally {
+            subsegment.close();
+          }
+        });
+      }),
+      new Promise((resolve, reject) => {
+        AWSXRay.captureAsyncFunc('WorkSubmitService.createWorker', async (subsegment) => {
+          try {
+            const response = await this.createWorker();
+            resolve(response);
+          } catch (error) {
+            reject(error);
+          } finally {
+            subsegment.close();
+          }
+        });
+      }),
     ]);
   }
 }
