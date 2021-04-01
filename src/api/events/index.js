@@ -39,6 +39,7 @@ module.exports = (socket) => {
           response: {
             cacheable: false,
             error: e.message,
+            trace: AWSXRay.getSegment().trace_id,
           },
         });
       }

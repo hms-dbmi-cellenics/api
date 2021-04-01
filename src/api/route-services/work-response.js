@@ -1,3 +1,4 @@
+const AWSXRay = require('aws-xray-sdk');
 const AWS = require('../../utils/requireAWS');
 const validateRequest = require('../../utils/schema-validator');
 const logger = require('../../utils/logging');
@@ -82,6 +83,7 @@ class WorkResponseService {
     this.uuid = uuid;
 
     const { cacheable } = responseForClient.response;
+    responseForClient.response.trace = AWSXRay.getSegment().trace_id;
 
     try {
       if (cacheable) {

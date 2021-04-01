@@ -19,7 +19,6 @@ module.exports = {
     }
 
     const { io, parsedMessage } = result;
-
     let responseService = null;
 
     try {
@@ -51,6 +50,7 @@ module.exports = {
         response: {
           cacheable: false,
           error: e.message,
+          trace: AWSXRay.getSegment().trace_id,
         },
       });
 
