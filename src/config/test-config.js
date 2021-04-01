@@ -10,7 +10,7 @@ module.exports = {
   port: 3000,
   clusterEnv: 'test',
   awsRegion: 'eu-west-1',
-  awsAccountIdPromise: getAwsAccountId,
+  awsAccountIdPromise: getAwsAccountId(),
   workerNamespace: 'worker-test-namespace',
   pipelineNamespace: 'pipeline-test-namespace',
   workerInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/worker.yaml',

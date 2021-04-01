@@ -69,7 +69,7 @@ class WorkSubmitService {
     }
 
     try {
-      const accountId = await config.awsAccountIdPromise();
+      const accountId = await config.awsAccountIdPromise;
       const queueUrl = `https://sqs.${config.awsRegion}.amazonaws.com/${accountId}/${this.workQueueName}`;
       await this.sendMessageToQueue(queueUrl);
     } catch (error) {
