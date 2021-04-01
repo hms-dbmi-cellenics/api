@@ -3,6 +3,8 @@ type: object
 properties:
   enabled:
     type: boolean
+  auto:
+    type: boolean
   filterSettings:
     type: object
     required:

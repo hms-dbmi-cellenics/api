@@ -1,15 +1,5 @@
 title: Cell Size Distribution
 type: object
-properties:
-  enabled:
-    type: boolean
-  filterSettings:
-    type: object
-    properties:
-      minCellSize:
-        type: number
-      binStep:
-        type: number
 additionalProperties:
   type: object
   properties:
@@ -20,7 +10,18 @@ additionalProperties:
           type: number
         binStep:
           type: number
-
+description: Processing config body for Cell Size Distribution filter.
+properties:
+  enabled:
+    type: boolean
+  auto:
+    type: boolean
+  filterSettings:
+    type: object
+    properties:
+      minCellSize:
+        type: number
+      binStep:
+        type: number
 required:
   - filterSettings
-description: Processing config body for Cell Size Distribution filter.
