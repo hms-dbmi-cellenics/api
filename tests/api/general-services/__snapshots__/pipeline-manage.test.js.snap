@@ -246,7 +246,9 @@ Array [
                 "annotations": Object {
                   "fluxcd.io/automated": "true",
                 },
-                "labels": Object {},
+                "labels": Object {
+                  "type": "pipeline",
+                },
                 "name": "pipeline-testExperimentId",
                 "namespace": "pipeline-test-namespace",
               },

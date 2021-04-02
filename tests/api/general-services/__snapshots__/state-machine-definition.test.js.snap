@@ -199,7 +199,9 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "annotations": {
               "fluxcd.io/automated": "true"
             },
-            "labels": {}
+            "labels": {
+              "type": "pipeline"
+            }
           },
           "spec": {
             "releaseName": "pipeline-mock-experiment-id",
