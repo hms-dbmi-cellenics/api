@@ -72,7 +72,6 @@ Array [
       "StartAt": "DeleteCompletedPipelineWorker",
       "States": Object {
         "ConfigureEmbedding": Object {
-          "HeartbeatSeconds": 60,
           "Next": "EndOfPipeline",
           "Parameters": Object {
             "config": Object {},
@@ -87,7 +86,6 @@ Array [
           "Type": "Task",
         },
         "DataIntegration": Object {
-          "HeartbeatSeconds": 60,
           "Next": "ConfigureEmbedding",
           "Parameters": Object {
             "config": Object {},
@@ -130,7 +128,6 @@ Array [
             "StartAt": "ClassifierFilter",
             "States": Object {
               "CellSizeDistributionFilter": Object {
-                "HeartbeatSeconds": 60,
                 "Next": "MitochondrialContentFilter",
                 "Parameters": Object {
                   "config": Object {},
@@ -145,7 +142,6 @@ Array [
                 "Type": "Task",
               },
               "ClassifierFilter": Object {
-                "HeartbeatSeconds": 60,
                 "Next": "CellSizeDistributionFilter",
                 "Parameters": Object {
                   "config": Object {},
@@ -160,7 +156,6 @@ Array [
                 "Type": "Task",
               },
               "DoubletScoresFilter": Object {
-                "HeartbeatSeconds": 60,
                 "Next": "EndOfMap",
                 "Parameters": Object {
                   "config": Object {
@@ -193,7 +188,6 @@ Array [
                 "Type": "Pass",
               },
               "MitochondrialContentFilter": Object {
-                "HeartbeatSeconds": 60,
                 "Next": "NumGenesVsNumUmisFilter",
                 "Parameters": Object {
                   "config": Object {},
@@ -208,7 +202,6 @@ Array [
                 "Type": "Task",
               },
               "NumGenesVsNumUmisFilter": Object {
-                "HeartbeatSeconds": 60,
                 "Next": "DoubletScoresFilter",
                 "Parameters": Object {
                   "config": Object {},

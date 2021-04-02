@@ -52,7 +52,6 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
-            "HeartbeatSeconds": 60,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
@@ -66,7 +65,6 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
-            "HeartbeatSeconds": 60,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
@@ -80,7 +78,6 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
-            "HeartbeatSeconds": 60,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
@@ -94,7 +91,6 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
-            "HeartbeatSeconds": 60,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
@@ -108,7 +104,6 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
-            "HeartbeatSeconds": 60,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
@@ -129,7 +124,6 @@ exports[`non-tests to document the State Machines - local development 1`] = `
       "Type": "Task",
       "ResultPath": null,
       "TimeoutSeconds": 300,
-      "HeartbeatSeconds": 60,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
@@ -143,7 +137,6 @@ exports[`non-tests to document the State Machines - local development 1`] = `
       "Type": "Task",
       "ResultPath": null,
       "TimeoutSeconds": 300,
-      "HeartbeatSeconds": 60,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
@@ -257,7 +250,6 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
-            "HeartbeatSeconds": 60,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
@@ -271,7 +263,6 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
-            "HeartbeatSeconds": 60,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
@@ -285,7 +276,6 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
-            "HeartbeatSeconds": 60,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
@@ -299,7 +289,6 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
-            "HeartbeatSeconds": 60,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
@@ -313,7 +302,6 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
-            "HeartbeatSeconds": 60,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
@@ -334,7 +322,6 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
       "Type": "Task",
       "ResultPath": null,
       "TimeoutSeconds": 300,
-      "HeartbeatSeconds": 60,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
@@ -348,7 +335,6 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
       "Type": "Task",
       "ResultPath": null,
       "TimeoutSeconds": 300,
-      "HeartbeatSeconds": 60,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
