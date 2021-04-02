@@ -17,7 +17,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
       }
     },
     "LaunchNewPipelineWorker": {
-      "Next": "Filters",
+      "Next": "ClassifierFilterMap",
       "ResultPath": null,
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
@@ -35,20 +35,20 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
-          "Next": "Filters"
+          "Next": "ClassifierFilterMap"
         }
       ]
     },
-    "Filters": {
+    "ClassifierFilterMap": {
       "Type": "Map",
-      "Next": "DataIntegration",
-      "MaxConcurrency": 1,
+      "Next": "CellSizeDistributionFilterMap",
+      "ResultPath": null,
       "ItemsPath": "$.samples",
       "Iterator": {
         "StartAt": "ClassifierFilter",
         "States": {
           "ClassifierFilter": {
-            "Next": "CellSizeDistributionFilter",
+            "End": true,
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
@@ -59,9 +59,20 @@ exports[`non-tests to document the State Machines - local development 1`] = `
               "server": "host.docker.internal",
               "sampleUuid.$": "$.sampleUuid"
             }
-          },
+          }
+        }
+      }
+    },
+    "CellSizeDistributionFilterMap": {
+      "Type": "Map",
+      "Next": "MitochondrialContentFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "CellSizeDistributionFilter",
+        "States": {
           "CellSizeDistributionFilter": {
-            "Next": "MitochondrialContentFilter",
+            "End": true,
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
@@ -72,9 +83,20 @@ exports[`non-tests to document the State Machines - local development 1`] = `
               "server": "host.docker.internal",
               "sampleUuid.$": "$.sampleUuid"
             }
-          },
+          }
+        }
+      }
+    },
+    "MitochondrialContentFilterMap": {
+      "Type": "Map",
+      "Next": "NumGenesVsNumUmisFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "MitochondrialContentFilter",
+        "States": {
           "MitochondrialContentFilter": {
-            "Next": "NumGenesVsNumUmisFilter",
+            "End": true,
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
@@ -85,9 +107,20 @@ exports[`non-tests to document the State Machines - local development 1`] = `
               "server": "host.docker.internal",
               "sampleUuid.$": "$.sampleUuid"
             }
-          },
+          }
+        }
+      }
+    },
+    "NumGenesVsNumUmisFilterMap": {
+      "Type": "Map",
+      "Next": "DoubletScoresFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "NumGenesVsNumUmisFilter",
+        "States": {
           "NumGenesVsNumUmisFilter": {
-            "Next": "DoubletScoresFilter",
+            "End": true,
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
@@ -98,9 +131,20 @@ exports[`non-tests to document the State Machines - local development 1`] = `
               "server": "host.docker.internal",
               "sampleUuid.$": "$.sampleUuid"
             }
-          },
+          }
+        }
+      }
+    },
+    "DoubletScoresFilterMap": {
+      "Type": "Map",
+      "Next": "DataIntegration",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "DoubletScoresFilter",
+        "States": {
           "DoubletScoresFilter": {
-            "Next": "EndOfMap",
+            "End": true,
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
@@ -111,10 +155,6 @@ exports[`non-tests to document the State Machines - local development 1`] = `
               "server": "host.docker.internal",
               "sampleUuid.$": "$.sampleUuid"
             }
-          },
-          "EndOfMap": {
-            "Type": "Pass",
-            "End": true
           }
         }
       }
@@ -179,7 +219,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
       }
     },
     "LaunchNewPipelineWorker": {
-      "Next": "Filters",
+      "Next": "ClassifierFilterMap",
       "ResultPath": null,
       "Type": "Task",
       "Comment": "Attempts to create a Kubernetes Job+Service for the pipeline runner. Will swallow a 409 (already exists) error.",
@@ -235,20 +275,20 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "EKS.409"
           ],
           "ResultPath": "$.error-info",
-          "Next": "Filters"
+          "Next": "ClassifierFilterMap"
         }
       ]
     },
-    "Filters": {
+    "ClassifierFilterMap": {
       "Type": "Map",
-      "Next": "DataIntegration",
-      "MaxConcurrency": 1,
+      "Next": "CellSizeDistributionFilterMap",
+      "ResultPath": null,
       "ItemsPath": "$.samples",
       "Iterator": {
         "StartAt": "ClassifierFilter",
         "States": {
           "ClassifierFilter": {
-            "Next": "CellSizeDistributionFilter",
+            "End": true,
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
@@ -259,9 +299,20 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid"
             }
-          },
+          }
+        }
+      }
+    },
+    "CellSizeDistributionFilterMap": {
+      "Type": "Map",
+      "Next": "MitochondrialContentFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "CellSizeDistributionFilter",
+        "States": {
           "CellSizeDistributionFilter": {
-            "Next": "MitochondrialContentFilter",
+            "End": true,
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
@@ -272,9 +323,20 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid"
             }
-          },
+          }
+        }
+      }
+    },
+    "MitochondrialContentFilterMap": {
+      "Type": "Map",
+      "Next": "NumGenesVsNumUmisFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "MitochondrialContentFilter",
+        "States": {
           "MitochondrialContentFilter": {
-            "Next": "NumGenesVsNumUmisFilter",
+            "End": true,
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
@@ -285,9 +347,20 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid"
             }
-          },
+          }
+        }
+      }
+    },
+    "NumGenesVsNumUmisFilterMap": {
+      "Type": "Map",
+      "Next": "DoubletScoresFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "NumGenesVsNumUmisFilter",
+        "States": {
           "NumGenesVsNumUmisFilter": {
-            "Next": "DoubletScoresFilter",
+            "End": true,
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
@@ -298,9 +371,20 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid"
             }
-          },
+          }
+        }
+      }
+    },
+    "DoubletScoresFilterMap": {
+      "Type": "Map",
+      "Next": "DataIntegration",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "DoubletScoresFilter",
+        "States": {
           "DoubletScoresFilter": {
-            "Next": "EndOfMap",
+            "End": true,
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 300,
@@ -311,10 +395,6 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid"
             }
-          },
-          "EndOfMap": {
-            "Type": "Pass",
-            "End": true
           }
         }
       }

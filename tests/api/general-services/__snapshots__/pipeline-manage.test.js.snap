@@ -71,6 +71,56 @@ Array [
       "Comment": "Pipeline for clusterEnv 'test'",
       "StartAt": "DeleteCompletedPipelineWorker",
       "States": Object {
+        "CellSizeDistributionFilterMap": Object {
+          "ItemsPath": "$.samples",
+          "Iterator": Object {
+            "StartAt": "CellSizeDistributionFilter",
+            "States": Object {
+              "CellSizeDistributionFilter": Object {
+                "End": true,
+                "Parameters": Object {
+                  "config": Object {},
+                  "experimentId": "testExperimentId",
+                  "sampleUuid.$": "$.sampleUuid",
+                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
+                  "taskName": "cellSizeDistribution",
+                },
+                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-testExperimentId",
+                "ResultPath": null,
+                "TimeoutSeconds": 300,
+                "Type": "Task",
+              },
+            },
+          },
+          "Next": "MitochondrialContentFilterMap",
+          "ResultPath": null,
+          "Type": "Map",
+        },
+        "ClassifierFilterMap": Object {
+          "ItemsPath": "$.samples",
+          "Iterator": Object {
+            "StartAt": "ClassifierFilter",
+            "States": Object {
+              "ClassifierFilter": Object {
+                "End": true,
+                "Parameters": Object {
+                  "config": Object {},
+                  "experimentId": "testExperimentId",
+                  "sampleUuid.$": "$.sampleUuid",
+                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
+                  "taskName": "classifier",
+                },
+                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-testExperimentId",
+                "ResultPath": null,
+                "TimeoutSeconds": 300,
+                "Type": "Task",
+              },
+            },
+          },
+          "Next": "CellSizeDistributionFilterMap",
+          "ResultPath": null,
+          "Type": "Map",
+        },
         "ConfigureEmbedding": Object {
           "Next": "EndOfPipeline",
           "Parameters": Object {
@@ -118,45 +168,13 @@ Array [
           "ResultPath": null,
           "Type": "Task",
         },
-        "EndOfPipeline": Object {
-          "End": true,
-          "Type": "Pass",
-        },
-        "Filters": Object {
+        "DoubletScoresFilterMap": Object {
           "ItemsPath": "$.samples",
           "Iterator": Object {
-            "StartAt": "ClassifierFilter",
+            "StartAt": "DoubletScoresFilter",
             "States": Object {
-              "CellSizeDistributionFilter": Object {
-                "Next": "MitochondrialContentFilter",
-                "Parameters": Object {
-                  "config": Object {},
-                  "experimentId": "testExperimentId",
-                  "sampleUuid.$": "$.sampleUuid",
-                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
-                  "taskName": "cellSizeDistribution",
-                },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-testExperimentId",
-                "ResultPath": null,
-                "TimeoutSeconds": 300,
-                "Type": "Task",
-              },
-              "ClassifierFilter": Object {
-                "Next": "CellSizeDistributionFilter",
-                "Parameters": Object {
-                  "config": Object {},
-                  "experimentId": "testExperimentId",
-                  "sampleUuid.$": "$.sampleUuid",
-                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
-                  "taskName": "classifier",
-                },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-testExperimentId",
-                "ResultPath": null,
-                "TimeoutSeconds": 300,
-                "Type": "Task",
-              },
               "DoubletScoresFilter": Object {
-                "Next": "EndOfMap",
+                "End": true,
                 "Parameters": Object {
                   "config": Object {
                     "filterSettings": Object {
@@ -183,43 +201,15 @@ Array [
                 "TimeoutSeconds": 300,
                 "Type": "Task",
               },
-              "EndOfMap": Object {
-                "End": true,
-                "Type": "Pass",
-              },
-              "MitochondrialContentFilter": Object {
-                "Next": "NumGenesVsNumUmisFilter",
-                "Parameters": Object {
-                  "config": Object {},
-                  "experimentId": "testExperimentId",
-                  "sampleUuid.$": "$.sampleUuid",
-                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
-                  "taskName": "mitochondrialContent",
-                },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-testExperimentId",
-                "ResultPath": null,
-                "TimeoutSeconds": 300,
-                "Type": "Task",
-              },
-              "NumGenesVsNumUmisFilter": Object {
-                "Next": "DoubletScoresFilter",
-                "Parameters": Object {
-                  "config": Object {},
-                  "experimentId": "testExperimentId",
-                  "sampleUuid.$": "$.sampleUuid",
-                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
-                  "taskName": "numGenesVsNumUmis",
-                },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-testExperimentId",
-                "ResultPath": null,
-                "TimeoutSeconds": 300,
-                "Type": "Task",
-              },
             },
           },
-          "MaxConcurrency": 1,
           "Next": "DataIntegration",
+          "ResultPath": null,
           "Type": "Map",
+        },
+        "EndOfPipeline": Object {
+          "End": true,
+          "Type": "Pass",
         },
         "LaunchNewPipelineWorker": Object {
           "Catch": Array [
@@ -227,12 +217,12 @@ Array [
               "ErrorEquals": Array [
                 "EKS.409",
               ],
-              "Next": "Filters",
+              "Next": "ClassifierFilterMap",
               "ResultPath": "$.error-info",
             },
           ],
           "Comment": "Attempts to create a Kubernetes Job+Service for the pipeline runner. Will swallow a 409 (already exists) error.",
-          "Next": "Filters",
+          "Next": "ClassifierFilterMap",
           "Parameters": Object {
             "CertificateAuthority": "AAAAAAAAAAA",
             "ClusterName": "biomage-test",
@@ -284,6 +274,56 @@ Array [
             },
           ],
           "Type": "Task",
+        },
+        "MitochondrialContentFilterMap": Object {
+          "ItemsPath": "$.samples",
+          "Iterator": Object {
+            "StartAt": "MitochondrialContentFilter",
+            "States": Object {
+              "MitochondrialContentFilter": Object {
+                "End": true,
+                "Parameters": Object {
+                  "config": Object {},
+                  "experimentId": "testExperimentId",
+                  "sampleUuid.$": "$.sampleUuid",
+                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
+                  "taskName": "mitochondrialContent",
+                },
+                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-testExperimentId",
+                "ResultPath": null,
+                "TimeoutSeconds": 300,
+                "Type": "Task",
+              },
+            },
+          },
+          "Next": "NumGenesVsNumUmisFilterMap",
+          "ResultPath": null,
+          "Type": "Map",
+        },
+        "NumGenesVsNumUmisFilterMap": Object {
+          "ItemsPath": "$.samples",
+          "Iterator": Object {
+            "StartAt": "NumGenesVsNumUmisFilter",
+            "States": Object {
+              "NumGenesVsNumUmisFilter": Object {
+                "End": true,
+                "Parameters": Object {
+                  "config": Object {},
+                  "experimentId": "testExperimentId",
+                  "sampleUuid.$": "$.sampleUuid",
+                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
+                  "taskName": "numGenesVsNumUmis",
+                },
+                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-testExperimentId",
+                "ResultPath": null,
+                "TimeoutSeconds": 300,
+                "Type": "Task",
+              },
+            },
+          },
+          "Next": "DoubletScoresFilterMap",
+          "ResultPath": null,
+          "Type": "Map",
         },
       },
     },
