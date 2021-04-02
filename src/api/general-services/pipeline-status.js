@@ -57,7 +57,7 @@ const getStepsFromExecutionHistory = (events) => {
       } else {
         this.visited.push(event.id);
         this.updateCurrentState(event);
-        if (event.type === 'ActivitySucceeded') {
+        if (event.type === 'TaskSucceeded' || event.type === 'ActivitySucceeded') {
           this.completedTasks.push(this.currentState);
         } else if (event.type === 'MapStateStarted') {
           this.branchCount = event.mapStateStartedEventDetails.length;
