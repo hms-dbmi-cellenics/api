@@ -24,8 +24,8 @@ exports[`non-tests to document the State Machines - local development 1`] = `
       "Parameters": {
         "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
         "Payload": {
-          "image": "biomage-remoter-server",
-          "name": "pipeline-remoter-server",
+          "image": "biomage-qc-runner",
+          "name": "pipeline-qc-runner",
           "detached": true
         }
       },
@@ -50,127 +50,72 @@ exports[`non-tests to document the State Machines - local development 1`] = `
           "ClassifierFilter": {
             "Next": "CellSizeDistributionFilter",
             "Type": "Task",
-            "Resource": "arn:aws:states:::lambda:invoke",
             "ResultPath": null,
+            "TimeoutSeconds": 300,
+            "HeartbeatSeconds": 60,
             "Parameters": {
-              "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
-              "Payload": {
-                "image": "biomage-remoter-client",
-                "name": "pipeline-remoter-client",
-                "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"classifier\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
-                "sampleUuid.$": "$.sampleUuid",
-                "detached": false
-              }
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.ALL"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "CellSizeDistributionFilter"
-              }
-            ]
+              "experimentId": "mock-experiment-id",
+              "taskName": "classifier",
+              "config": {},
+              "server": "host.docker.internal",
+              "sampleUuid.$": "$.sampleUuid"
+            }
           },
           "CellSizeDistributionFilter": {
             "Next": "MitochondrialContentFilter",
             "Type": "Task",
-            "Resource": "arn:aws:states:::lambda:invoke",
             "ResultPath": null,
+            "TimeoutSeconds": 300,
+            "HeartbeatSeconds": 60,
             "Parameters": {
-              "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
-              "Payload": {
-                "image": "biomage-remoter-client",
-                "name": "pipeline-remoter-client",
-                "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"cellSizeDistribution\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
-                "sampleUuid.$": "$.sampleUuid",
-                "detached": false
-              }
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.ALL"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "MitochondrialContentFilter"
-              }
-            ]
+              "experimentId": "mock-experiment-id",
+              "taskName": "cellSizeDistribution",
+              "config": {},
+              "server": "host.docker.internal",
+              "sampleUuid.$": "$.sampleUuid"
+            }
           },
           "MitochondrialContentFilter": {
             "Next": "NumGenesVsNumUmisFilter",
             "Type": "Task",
-            "Resource": "arn:aws:states:::lambda:invoke",
             "ResultPath": null,
+            "TimeoutSeconds": 300,
+            "HeartbeatSeconds": 60,
             "Parameters": {
-              "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
-              "Payload": {
-                "image": "biomage-remoter-client",
-                "name": "pipeline-remoter-client",
-                "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"mitochondrialContent\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
-                "sampleUuid.$": "$.sampleUuid",
-                "detached": false
-              }
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.ALL"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "NumGenesVsNumUmisFilter"
-              }
-            ]
+              "experimentId": "mock-experiment-id",
+              "taskName": "mitochondrialContent",
+              "config": {},
+              "server": "host.docker.internal",
+              "sampleUuid.$": "$.sampleUuid"
+            }
           },
           "NumGenesVsNumUmisFilter": {
             "Next": "DoubletScoresFilter",
             "Type": "Task",
-            "Resource": "arn:aws:states:::lambda:invoke",
             "ResultPath": null,
+            "TimeoutSeconds": 300,
+            "HeartbeatSeconds": 60,
             "Parameters": {
-              "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
-              "Payload": {
-                "image": "biomage-remoter-client",
-                "name": "pipeline-remoter-client",
-                "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"numGenesVsNumUmis\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
-                "sampleUuid.$": "$.sampleUuid",
-                "detached": false
-              }
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.ALL"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "DoubletScoresFilter"
-              }
-            ]
+              "experimentId": "mock-experiment-id",
+              "taskName": "numGenesVsNumUmis",
+              "config": {},
+              "server": "host.docker.internal",
+              "sampleUuid.$": "$.sampleUuid"
+            }
           },
           "DoubletScoresFilter": {
-            "End": true,
+            "Next": "EndOfMap",
             "Type": "Task",
-            "Resource": "arn:aws:states:::lambda:invoke",
             "ResultPath": null,
+            "TimeoutSeconds": 300,
+            "HeartbeatSeconds": 60,
             "Parameters": {
-              "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
-              "Payload": {
-                "image": "biomage-remoter-client",
-                "name": "pipeline-remoter-client",
-                "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"doubletScores\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
-                "sampleUuid.$": "$.sampleUuid",
-                "detached": false
-              }
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.ALL"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "EndOfMap"
-              }
-            ]
+              "experimentId": "mock-experiment-id",
+              "taskName": "doubletScores",
+              "config": {},
+              "server": "host.docker.internal",
+              "sampleUuid.$": "$.sampleUuid"
+            }
           },
           "EndOfMap": {
             "Type": "Pass",
@@ -182,50 +127,30 @@ exports[`non-tests to document the State Machines - local development 1`] = `
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
       "Type": "Task",
-      "Resource": "arn:aws:states:::lambda:invoke",
       "ResultPath": null,
+      "TimeoutSeconds": 300,
+      "HeartbeatSeconds": 60,
       "Parameters": {
-        "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
-        "Payload": {
-          "image": "biomage-remoter-client",
-          "name": "pipeline-remoter-client",
-          "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"dataIntegration\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
-          "detached": false
-        }
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "ConfigureEmbedding"
-        }
-      ]
+        "experimentId": "mock-experiment-id",
+        "taskName": "dataIntegration",
+        "config": {},
+        "server": "host.docker.internal",
+        "sampleUuid": ""
+      }
     },
     "ConfigureEmbedding": {
-      "End": true,
+      "Next": "EndOfPipeline",
       "Type": "Task",
-      "Resource": "arn:aws:states:::lambda:invoke",
       "ResultPath": null,
+      "TimeoutSeconds": 300,
+      "HeartbeatSeconds": 60,
       "Parameters": {
-        "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
-        "Payload": {
-          "image": "biomage-remoter-client",
-          "name": "pipeline-remoter-client",
-          "task": "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"configureEmbedding\\",\\"config\\":{},\\"server\\":\\"host.docker.internal\\"}",
-          "detached": false
-        }
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "EndOfPipeline"
-        }
-      ]
+        "experimentId": "mock-experiment-id",
+        "taskName": "configureEmbedding",
+        "config": {},
+        "server": "host.docker.internal",
+        "sampleUuid": ""
+      }
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -264,7 +189,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
       "Next": "Filters",
       "ResultPath": null,
       "Type": "Task",
-      "Comment": "Attempts to create a Kubernetes Job+Service for the pipeline server. Will swallow a 409 (already exists) error.",
+      "Comment": "Attempts to create a Kubernetes Job+Service for the pipeline runner. Will swallow a 409 (already exists) error.",
       "Resource": "arn:aws:states:::eks:call",
       "Parameters": {
         "ClusterName": "mock-cluster-name",
@@ -276,24 +201,21 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
           "apiVersion": "helm.fluxcd.io/v1",
           "kind": "HelmRelease",
           "metadata": {
-            "name": "remoter-server-mock-experiment-id",
+            "name": "pipeline-mock-experiment-id",
             "namespace": "pipeline-test-namespace",
             "annotations": {
               "fluxcd.io/automated": "true"
             },
-            "labels": {
-              "type": "pipeline"
-            }
+            "labels": {}
           },
           "spec": {
-            "releaseName": "remoter-server-mock-experiment-id",
+            "releaseName": "pipeline-mock-experiment-id",
             "chart": {
               "git": "git@github.com:biomage-ltd/pipeline",
-              "path": "remoter-server/chart"
+              "path": "qc-runner/chart"
             },
             "values": {
               "experimentId": "mock-experiment-id",
-              "image": "mock-remoter-server-image",
               "namespace": "pipeline-test-namespace",
               "awsAccountId": "mock-account-id",
               "clusterEnv": "test",
@@ -333,377 +255,72 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
           "ClassifierFilter": {
             "Next": "CellSizeDistributionFilter",
             "Type": "Task",
-            "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
-            "Resource": "arn:aws:states:::eks:runJob.sync",
             "ResultPath": null,
+            "TimeoutSeconds": 300,
+            "HeartbeatSeconds": 60,
             "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
-              "Namespace": "pipeline-test-namespace",
-              "LogOptions": {
-                "RetrieveLogs": true
-              },
-              "Job": {
-                "apiVersion": "batch/v1",
-                "kind": "Job",
-                "metadata": {
-                  "name.$": "States.Format('remoter-client-6173646667-{}', $.index)",
-                  "labels": {
-                    "experimentId": "mock-experiment-id",
-                    "taskName": "classifier",
-                    "type": "pipeline"
-                  }
-                },
-                "spec": {
-                  "template": {
-                    "metadata": {
-                      "name.$": "States.Format('remoter-client-6173646667-{}', $.index)",
-                      "labels": {
-                        "type": "pipeline"
-                      }
-                    },
-                    "spec": {
-                      "containers": [
-                        {
-                          "name": "remoter-client",
-                          "image": "mock-remoter-client-image",
-                          "args": [
-                            "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"classifier\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
-                          ],
-                          "env": [
-                            {
-                              "name": "SAMPLE_ID",
-                              "value.$": "$.sampleUuid"
-                            }
-                          ]
-                        }
-                      ],
-                      "restartPolicy": "Never"
-                    }
-                  }
-                }
-              }
-            },
-            "Retry": [
-              {
-                "ErrorEquals": [
-                  "EKS.409"
-                ],
-                "IntervalSeconds": 1,
-                "BackoffRate": 2,
-                "MaxAttempts": 2
-              }
-            ],
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "EKS.409"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "CellSizeDistributionFilter"
-              }
-            ]
+              "experimentId": "mock-experiment-id",
+              "taskName": "classifier",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid"
+            }
           },
           "CellSizeDistributionFilter": {
             "Next": "MitochondrialContentFilter",
             "Type": "Task",
-            "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
-            "Resource": "arn:aws:states:::eks:runJob.sync",
             "ResultPath": null,
+            "TimeoutSeconds": 300,
+            "HeartbeatSeconds": 60,
             "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
-              "Namespace": "pipeline-test-namespace",
-              "LogOptions": {
-                "RetrieveLogs": true
-              },
-              "Job": {
-                "apiVersion": "batch/v1",
-                "kind": "Job",
-                "metadata": {
-                  "name.$": "States.Format('remoter-client-6173646667-{}', $.index)",
-                  "labels": {
-                    "experimentId": "mock-experiment-id",
-                    "taskName": "cellSizeDistribution",
-                    "type": "pipeline"
-                  }
-                },
-                "spec": {
-                  "template": {
-                    "metadata": {
-                      "name.$": "States.Format('remoter-client-6173646667-{}', $.index)",
-                      "labels": {
-                        "type": "pipeline"
-                      }
-                    },
-                    "spec": {
-                      "containers": [
-                        {
-                          "name": "remoter-client",
-                          "image": "mock-remoter-client-image",
-                          "args": [
-                            "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"cellSizeDistribution\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
-                          ],
-                          "env": [
-                            {
-                              "name": "SAMPLE_ID",
-                              "value.$": "$.sampleUuid"
-                            }
-                          ]
-                        }
-                      ],
-                      "restartPolicy": "Never"
-                    }
-                  }
-                }
-              }
-            },
-            "Retry": [
-              {
-                "ErrorEquals": [
-                  "EKS.409"
-                ],
-                "IntervalSeconds": 1,
-                "BackoffRate": 2,
-                "MaxAttempts": 2
-              }
-            ],
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "EKS.409"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "MitochondrialContentFilter"
-              }
-            ]
+              "experimentId": "mock-experiment-id",
+              "taskName": "cellSizeDistribution",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid"
+            }
           },
           "MitochondrialContentFilter": {
             "Next": "NumGenesVsNumUmisFilter",
             "Type": "Task",
-            "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
-            "Resource": "arn:aws:states:::eks:runJob.sync",
             "ResultPath": null,
+            "TimeoutSeconds": 300,
+            "HeartbeatSeconds": 60,
             "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
-              "Namespace": "pipeline-test-namespace",
-              "LogOptions": {
-                "RetrieveLogs": true
-              },
-              "Job": {
-                "apiVersion": "batch/v1",
-                "kind": "Job",
-                "metadata": {
-                  "name.$": "States.Format('remoter-client-6173646667-{}', $.index)",
-                  "labels": {
-                    "experimentId": "mock-experiment-id",
-                    "taskName": "mitochondrialContent",
-                    "type": "pipeline"
-                  }
-                },
-                "spec": {
-                  "template": {
-                    "metadata": {
-                      "name.$": "States.Format('remoter-client-6173646667-{}', $.index)",
-                      "labels": {
-                        "type": "pipeline"
-                      }
-                    },
-                    "spec": {
-                      "containers": [
-                        {
-                          "name": "remoter-client",
-                          "image": "mock-remoter-client-image",
-                          "args": [
-                            "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"mitochondrialContent\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
-                          ],
-                          "env": [
-                            {
-                              "name": "SAMPLE_ID",
-                              "value.$": "$.sampleUuid"
-                            }
-                          ]
-                        }
-                      ],
-                      "restartPolicy": "Never"
-                    }
-                  }
-                }
-              }
-            },
-            "Retry": [
-              {
-                "ErrorEquals": [
-                  "EKS.409"
-                ],
-                "IntervalSeconds": 1,
-                "BackoffRate": 2,
-                "MaxAttempts": 2
-              }
-            ],
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "EKS.409"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "NumGenesVsNumUmisFilter"
-              }
-            ]
+              "experimentId": "mock-experiment-id",
+              "taskName": "mitochondrialContent",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid"
+            }
           },
           "NumGenesVsNumUmisFilter": {
             "Next": "DoubletScoresFilter",
             "Type": "Task",
-            "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
-            "Resource": "arn:aws:states:::eks:runJob.sync",
             "ResultPath": null,
+            "TimeoutSeconds": 300,
+            "HeartbeatSeconds": 60,
             "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
-              "Namespace": "pipeline-test-namespace",
-              "LogOptions": {
-                "RetrieveLogs": true
-              },
-              "Job": {
-                "apiVersion": "batch/v1",
-                "kind": "Job",
-                "metadata": {
-                  "name.$": "States.Format('remoter-client-6173646667-{}', $.index)",
-                  "labels": {
-                    "experimentId": "mock-experiment-id",
-                    "taskName": "numGenesVsNumUmis",
-                    "type": "pipeline"
-                  }
-                },
-                "spec": {
-                  "template": {
-                    "metadata": {
-                      "name.$": "States.Format('remoter-client-6173646667-{}', $.index)",
-                      "labels": {
-                        "type": "pipeline"
-                      }
-                    },
-                    "spec": {
-                      "containers": [
-                        {
-                          "name": "remoter-client",
-                          "image": "mock-remoter-client-image",
-                          "args": [
-                            "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"numGenesVsNumUmis\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
-                          ],
-                          "env": [
-                            {
-                              "name": "SAMPLE_ID",
-                              "value.$": "$.sampleUuid"
-                            }
-                          ]
-                        }
-                      ],
-                      "restartPolicy": "Never"
-                    }
-                  }
-                }
-              }
-            },
-            "Retry": [
-              {
-                "ErrorEquals": [
-                  "EKS.409"
-                ],
-                "IntervalSeconds": 1,
-                "BackoffRate": 2,
-                "MaxAttempts": 2
-              }
-            ],
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "EKS.409"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "DoubletScoresFilter"
-              }
-            ]
+              "experimentId": "mock-experiment-id",
+              "taskName": "numGenesVsNumUmis",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid"
+            }
           },
           "DoubletScoresFilter": {
-            "End": true,
+            "Next": "EndOfMap",
             "Type": "Task",
-            "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
-            "Resource": "arn:aws:states:::eks:runJob.sync",
             "ResultPath": null,
+            "TimeoutSeconds": 300,
+            "HeartbeatSeconds": 60,
             "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
-              "Namespace": "pipeline-test-namespace",
-              "LogOptions": {
-                "RetrieveLogs": true
-              },
-              "Job": {
-                "apiVersion": "batch/v1",
-                "kind": "Job",
-                "metadata": {
-                  "name.$": "States.Format('remoter-client-6173646667-{}', $.index)",
-                  "labels": {
-                    "experimentId": "mock-experiment-id",
-                    "taskName": "doubletScores",
-                    "type": "pipeline"
-                  }
-                },
-                "spec": {
-                  "template": {
-                    "metadata": {
-                      "name.$": "States.Format('remoter-client-6173646667-{}', $.index)",
-                      "labels": {
-                        "type": "pipeline"
-                      }
-                    },
-                    "spec": {
-                      "containers": [
-                        {
-                          "name": "remoter-client",
-                          "image": "mock-remoter-client-image",
-                          "args": [
-                            "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"doubletScores\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
-                          ],
-                          "env": [
-                            {
-                              "name": "SAMPLE_ID",
-                              "value.$": "$.sampleUuid"
-                            }
-                          ]
-                        }
-                      ],
-                      "restartPolicy": "Never"
-                    }
-                  }
-                }
-              }
-            },
-            "Retry": [
-              {
-                "ErrorEquals": [
-                  "EKS.409"
-                ],
-                "IntervalSeconds": 1,
-                "BackoffRate": 2,
-                "MaxAttempts": 2
-              }
-            ],
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "EKS.409"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "EndOfMap"
-              }
-            ]
+              "experimentId": "mock-experiment-id",
+              "taskName": "doubletScores",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid"
+            }
           },
           "EndOfMap": {
             "Type": "Pass",
@@ -715,142 +332,30 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
       "Type": "Task",
-      "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
-      "Resource": "arn:aws:states:::eks:runJob.sync",
       "ResultPath": null,
+      "TimeoutSeconds": 300,
+      "HeartbeatSeconds": 60,
       "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
-        "Namespace": "pipeline-test-namespace",
-        "LogOptions": {
-          "RetrieveLogs": true
-        },
-        "Job": {
-          "apiVersion": "batch/v1",
-          "kind": "Job",
-          "metadata": {
-            "name": "remoter-client-6173646667",
-            "labels": {
-              "experimentId": "mock-experiment-id",
-              "taskName": "dataIntegration",
-              "type": "pipeline"
-            }
-          },
-          "spec": {
-            "template": {
-              "metadata": {
-                "name": "remoter-client-6173646667",
-                "labels": {
-                  "type": "pipeline"
-                }
-              },
-              "spec": {
-                "containers": [
-                  {
-                    "name": "remoter-client",
-                    "image": "mock-remoter-client-image",
-                    "args": [
-                      "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"dataIntegration\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
-                    ],
-                    "env": []
-                  }
-                ],
-                "restartPolicy": "Never"
-              }
-            }
-          }
-        }
-      },
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "EKS.409"
-          ],
-          "IntervalSeconds": 1,
-          "BackoffRate": 2,
-          "MaxAttempts": 2
-        }
-      ],
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "EKS.409"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "ConfigureEmbedding"
-        }
-      ]
+        "experimentId": "mock-experiment-id",
+        "taskName": "dataIntegration",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "sampleUuid": ""
+      }
     },
     "ConfigureEmbedding": {
-      "End": true,
+      "Next": "EndOfPipeline",
       "Type": "Task",
-      "Comment": "Attempts to create a Kubernetes Job for the pipeline server. Will swallow a 409 (already exists) error.",
-      "Resource": "arn:aws:states:::eks:runJob.sync",
       "ResultPath": null,
+      "TimeoutSeconds": 300,
+      "HeartbeatSeconds": 60,
       "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
-        "Namespace": "pipeline-test-namespace",
-        "LogOptions": {
-          "RetrieveLogs": true
-        },
-        "Job": {
-          "apiVersion": "batch/v1",
-          "kind": "Job",
-          "metadata": {
-            "name": "remoter-client-6173646667",
-            "labels": {
-              "experimentId": "mock-experiment-id",
-              "taskName": "configureEmbedding",
-              "type": "pipeline"
-            }
-          },
-          "spec": {
-            "template": {
-              "metadata": {
-                "name": "remoter-client-6173646667",
-                "labels": {
-                  "type": "pipeline"
-                }
-              },
-              "spec": {
-                "containers": [
-                  {
-                    "name": "remoter-client",
-                    "image": "mock-remoter-client-image",
-                    "args": [
-                      "{\\"experimentId\\":\\"mock-experiment-id\\",\\"taskName\\":\\"configureEmbedding\\",\\"config\\":{},\\"server\\":\\"remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local\\"}"
-                    ],
-                    "env": []
-                  }
-                ],
-                "restartPolicy": "Never"
-              }
-            }
-          }
-        }
-      },
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "EKS.409"
-          ],
-          "IntervalSeconds": 1,
-          "BackoffRate": 2,
-          "MaxAttempts": 2
-        }
-      ],
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "EKS.409"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "EndOfPipeline"
-        }
-      ]
+        "experimentId": "mock-experiment-id",
+        "taskName": "configureEmbedding",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "sampleUuid": ""
+      }
     },
     "EndOfPipeline": {
       "Type": "Pass",
