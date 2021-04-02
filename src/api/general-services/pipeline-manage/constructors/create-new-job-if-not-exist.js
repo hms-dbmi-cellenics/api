@@ -64,7 +64,7 @@ const createNewJobIfNotExist = (context, step) => {
           },
           values: {
             experimentId,
-            image: pipelineArtifacts['remoter-server'],
+            image: pipelineArtifacts['qc-runner'],
             namespace: config.pipelineNamespace,
             sandboxId: config.sandboxId,
             awsAccountId: accountId,
