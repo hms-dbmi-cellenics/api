@@ -108,6 +108,12 @@ describe('test for pipeline services', () => {
       callback(null, { stateMachineArn: 'test-machine' });
     });
 
+    const createActivitySpy = jest.fn((x) => x);
+    AWSMock.mock('StepFunctions', 'createActivity', (params, callback) => {
+      createActivitySpy(params);
+      callback(null, { activityArn: 'test-actvitiy' });
+    });
+
     const startExecutionSpy = jest.fn((x) => x);
     AWSMock.mock('StepFunctions', 'startExecution', (params, callback) => {
       startExecutionSpy(params);
@@ -134,6 +140,7 @@ describe('test for pipeline services', () => {
     expect(getProcessingConfigSpy).toHaveBeenCalled();
     expect(getSamplesSpy).toHaveBeenCalled();
 
+    expect(createActivitySpy).toHaveBeenCalled();
     expect(startExecutionSpy).toHaveBeenCalled();
     expect(startExecutionSpy.mock.results).toMatchSnapshot();
   });
@@ -167,6 +174,12 @@ describe('test for pipeline services', () => {
     AWSMock.mock('StepFunctions', 'createStateMachine', (params, callback) => {
       createStateMachineSpy(params);
       callback(null, { stateMachineArn: 'test-machine' });
+    });
+
+    const createActivitySpy = jest.fn((x) => x);
+    AWSMock.mock('StepFunctions', 'createActivity', (params, callback) => {
+      createActivitySpy(params);
+      callback(null, { activityArn: 'test-actvitiy' });
     });
 
     AWSMock.mock('StepFunctions', 'startExecution', (params, callback) => {
@@ -204,6 +217,12 @@ describe('test for pipeline services', () => {
       callback(null, { stateMachineArn: 'test-machine' });
     });
 
+    const createActivitySpy = jest.fn((x) => x);
+    AWSMock.mock('StepFunctions', 'createActivity', (params, callback) => {
+      createActivitySpy(params);
+      callback(null, { activityArn: 'test-actvitiy' });
+    });
+
     const startExecutionSpy = jest.fn((x) => x);
     AWSMock.mock('StepFunctions', 'startExecution', (params, callback) => {
       startExecutionSpy(params);
@@ -217,6 +236,7 @@ describe('test for pipeline services', () => {
     expect(updateStateMachineSpy).toHaveBeenCalled();
     expect(updateStateMachineSpy.mock.results).toMatchSnapshot();
 
+    expect(createActivitySpy).toHaveBeenCalled();
     expect(startExecutionSpy).toHaveBeenCalled();
     expect(startExecutionSpy.mock.results).toMatchSnapshot();
   });
