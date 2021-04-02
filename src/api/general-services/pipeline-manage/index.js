@@ -115,6 +115,18 @@ const executeStateMachine = async (stateMachineArn, execInput) => {
   return executionArn;
 };
 
+const createActivity = async (context) => {
+  const stepFunctions = new AWS.StepFunctions({
+    region: config.awsRegion,
+  });
+
+  const { activityArn } = await stepFunctions.createActivity({
+    name: context.activityArn.split(/[: ]+/).pop(),
+  }).promise();
+
+  return activityArn;
+};
+
 const buildStateMachineDefinition = (context) => {
   const skeleton = {
     Comment: `Pipeline for clusterEnv '${config.clusterEnv}'`,
@@ -176,8 +188,7 @@ const buildStateMachineDefinition = (context) => {
                 perSample: true,
                 taskName: 'doubletScores',
               },
-              XNextOnCatch: 'EndOfMap',
-              End: true,
+              Next: 'EndOfMap',
             },
             EndOfMap: {
               Type: 'Pass',
@@ -200,8 +211,7 @@ const buildStateMachineDefinition = (context) => {
           perSample: false,
           taskName: 'configureEmbedding',
         },
-        XNextOnCatch: 'EndOfPipeline',
-        End: true,
+        Next: 'EndOfPipeline',
       },
       EndOfPipeline: {
         Type: 'Pass',
@@ -268,6 +278,7 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
     experimentId,
     accountId,
     roleArn,
+    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:biomage-qc-${config.clusterEnv}-${experimentId}`,
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
     processingConfig: mergedProcessingConfig,
@@ -275,7 +286,12 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
 
   const stateMachine = buildStateMachineDefinition(context);
 
-  logger.log('Skeleton constructed, now creating state machine from skeleton...');
+  logger.log(stateMachine);
+
+  logger.log('Skeleton constructed, now creating activity if not already present...');
+  const activityArn = await createActivity(context);
+
+  logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
   const stateMachineArn = await createNewStateMachine(context, stateMachine);
 
   logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);

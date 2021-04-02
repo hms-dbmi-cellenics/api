@@ -63,8 +63,6 @@ module.exports = async (app) => {
     operationHandlers: path.join(__dirname, '..', 'api'),
   }));
 
-  app.use(AWSXRay.express.closeSegment());
-
   // Custom error handler.
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
@@ -79,6 +77,8 @@ module.exports = async (app) => {
 
     next(err);
   });
+
+  app.use(AWSXRay.express.closeSegment());
 
 
   // eslint-disable-next-line global-require
