@@ -86,6 +86,8 @@ if (config.clusterEnv === 'development') {
     s3ForcePathStyle: true,
   });
 
+  config.pipelineInstanceConfigUrl = 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/use-activities.yaml';
+
   config.corsOriginUrl = 'http://localhost:5000';
 }
 
