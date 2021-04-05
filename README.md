@@ -13,6 +13,19 @@ or connect it to the other parts of the Biomage Single Cell Platform.
 
 We hihgly recommend using VSCode for local development. Make sure you also have `npm` and `docker` installed.
 
+You will also need to have aws command line interface `aws-cli` installed and configured. See [install guide](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html). In MacOS you can run:
+
+        brew install awscli
+
+Once installed, run `aws configure`. You will need an AWS access & secret key for the configuration. Alternatively you can use the example data provided below:
+
+```bash
+AWS Access Key ID: AKIAIOSFODNN7EXAMPLE
+AWS Secret Access Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+Default region name: eu-west-1
+Default output format: json
+```
+
 ### Running locally
 
 To run the API, simply do:
@@ -137,7 +150,7 @@ pushed to the SNS topic the API is configured to listen to.
 If you want to test a custom response that you wrote yourself, you can use `aws-cli` pointed to the InfraMock endpoint.
 To do this, make sure that you:
 
-1. Have `aws-cli` installed. See documentation in here: https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html
+1. Have `aws-cli` installed. See Prerequisites section.
 2. Create a file `payload.json` at the same  
 Then you can push mocked worker responses as follows:
 
