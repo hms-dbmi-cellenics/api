@@ -2,7 +2,7 @@ const config = require('../../../../config');
 
 const createNewJobIfNotExist = (context, step) => {
   const {
-    clusterInfo, experimentId, pipelineArtifacts, accountId, activityArn,
+    clusterInfo, experimentId, pipelineArtifacts, accountId,
   } = context;
 
 
@@ -14,10 +14,9 @@ const createNewJobIfNotExist = (context, step) => {
       Parameters: {
         FunctionName: `arn:aws:lambda:eu-west-1:${accountId}:function:local-container-launcher`,
         Payload: {
-          image: 'biomage-qc-runner',
-          name: 'pipeline-qc-runner',
+          image: 'biomage-pipeline-runner',
+          name: 'pipeline-runner',
           detached: true,
-          activityArn,
         },
       },
       Catch: [
@@ -34,7 +33,7 @@ const createNewJobIfNotExist = (context, step) => {
   return {
     ...step,
     Type: 'Task',
-    Comment: 'Attempts to create a Kubernetes Job+Service for the pipeline runner. Will swallow a 409 (already exists) error.',
+    Comment: 'Attempts to create a Kubernetes Job+Service for the pipeline server. Will swallow a 409 (already exists) error.',
     Resource: 'arn:aws:states:::eks:call',
     Parameters: {
       ClusterName: clusterInfo.name,
@@ -46,7 +45,7 @@ const createNewJobIfNotExist = (context, step) => {
         apiVersion: 'helm.fluxcd.io/v1',
         kind: 'HelmRelease',
         metadata: {
-          name: `pipeline-${experimentId}`,
+          name: `remoter-server-${experimentId}`,
           namespace: config.pipelineNamespace,
           annotations: {
             'fluxcd.io/automated': 'true',
@@ -57,21 +56,20 @@ const createNewJobIfNotExist = (context, step) => {
           },
         },
         spec: {
-          releaseName: `pipeline-${experimentId}`,
+          releaseName: `remoter-server-${experimentId}`,
           chart: {
             git: 'git@github.com:biomage-ltd/pipeline',
-            path: 'qc-runner/chart',
+            path: 'remoter-server/chart',
             ref: pipelineArtifacts.chartRef,
           },
           values: {
             experimentId,
-            image: pipelineArtifacts['qc-runner'],
+            image: pipelineArtifacts['remoter-server'],
             namespace: config.pipelineNamespace,
             sandboxId: config.sandboxId,
             awsAccountId: accountId,
             clusterEnv: config.clusterEnv,
             awsRegion: config.awsRegion,
-            activityArn,
           },
         },
       },
