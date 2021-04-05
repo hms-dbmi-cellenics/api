@@ -70,11 +70,19 @@ const createWorkerResources = async (service) => {
 
     logger.log(`Worker instance ${release.name} successfully created.`);
   } catch (error) {
-    if (!error.stderr || !error.stderr.includes('release: already exists')) {
+    if (!error.stderr) {
       throw error;
     }
 
-    logger.log('Worker instance is being created by another process, skipping...');
+    if (
+      error.stderr.includes('release: already exists')
+      || error.stderr.includes('another operation (install/upgrade/rollback) is in progress')
+    ) {
+      logger.log('Worker instance is being created by another process, skipping...');
+      return;
+    }
+
+    throw error;
   }
 };
 
