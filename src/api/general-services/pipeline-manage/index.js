@@ -313,13 +313,11 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
     }
   });
 
-  const arnRandomString = Math.random().toString(36).slice(2);
-
   const context = {
     experimentId,
     accountId,
     roleArn,
-    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:biomage-qc-${config.clusterEnv}-${experimentId}-${arnRandomString}`,
+    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:biomage-qc-${config.clusterEnv}-${experimentId}`,
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
     processingConfig: mergedProcessingConfig,
