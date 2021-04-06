@@ -51,7 +51,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
@@ -75,7 +75,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
@@ -99,7 +99,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
@@ -123,7 +123,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
@@ -147,7 +147,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
@@ -163,7 +163,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
       "Next": "ConfigureEmbedding",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 300,
+      "TimeoutSeconds": 600,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
@@ -176,7 +176,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
       "Next": "EndOfPipeline",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 300,
+      "TimeoutSeconds": 600,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
@@ -291,7 +291,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
@@ -315,7 +315,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
@@ -339,7 +339,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
@@ -363,7 +363,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
@@ -387,7 +387,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
@@ -403,7 +403,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
       "Next": "ConfigureEmbedding",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 300,
+      "TimeoutSeconds": 600,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
@@ -416,7 +416,7 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
       "Next": "EndOfPipeline",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 300,
+      "TimeoutSeconds": 600,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
