@@ -249,6 +249,7 @@ const buildStateMachineDefinition = (context) => {
         XConstructorArgs: {
           perSample: false,
           taskName: 'configureEmbedding',
+          uploadCountMatrix: true,
         },
         Next: 'EndOfPipeline',
       },

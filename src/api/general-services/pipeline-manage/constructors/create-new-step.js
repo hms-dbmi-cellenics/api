@@ -5,7 +5,7 @@ const createNewStep = (context, step, args) => {
     processingConfig, experimentId, activityArn,
   } = context;
 
-  const { taskName, perSample } = args;
+  const { taskName, perSample, uploadCountMatrix } = args;
   const remoterServer = (
     config.clusterEnv === 'development'
   ) ? 'host.docker.internal'
@@ -27,6 +27,7 @@ const createNewStep = (context, step, args) => {
     Parameters: {
       ...task,
       ...perSample ? { 'sampleUuid.$': '$.sampleUuid' } : { sampleUuid: '' },
+      ...uploadCountMatrix ? { uploadCountMatrix: true } : { uploadCountMatrix: false },
     },
     ...!step.End && { Next: step.XNextOnCatch || step.Next },
   };
