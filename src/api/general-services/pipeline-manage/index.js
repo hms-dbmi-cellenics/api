@@ -296,7 +296,7 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
   // appropriate.
   // eslint-disable-next-line consistent-return
   const mergedProcessingConfig = _.cloneDeepWith(processingConfig, (o) => {
-    if (_.isObject(o) && !o.dataIntegration && typeof o.enabled === 'boolean') {
+    if (_.isObject(o) && !o.dataIntegration && !o.embeddingSettings) {
       // Find which samples have sample-specific configurations.
       const sampleConfigs = _.intersection(Object.keys(o), samples.ids);
 
