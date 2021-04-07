@@ -297,7 +297,7 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
   // appropriate.
   // eslint-disable-next-line consistent-return
   const mergedProcessingConfig = _.cloneDeepWith(processingConfig, (o) => {
-    if (_.isObject(o) && !o.dataIntegration && typeof o.enabled === 'boolean') {
+    if (_.isObject(o) && !o.dataIntegration && !o.embeddingSettings && typeof o.enabled === 'boolean') {
       // Find which samples have sample-specific configurations.
       const sampleConfigs = _.intersection(Object.keys(o), samples.ids);
 
@@ -307,7 +307,7 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
       const result = {};
 
       samples.ids.forEach((sample) => {
-        result[sample] = _.merge(rawConfig, o[sample]);
+        result[sample] = _.merge({}, rawConfig, o[sample]);
       });
 
       return result;
@@ -325,8 +325,6 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
   };
 
   const stateMachine = buildStateMachineDefinition(context);
-
-  logger.log(stateMachine);
 
   logger.log('Skeleton constructed, now creating activity if not already present...');
   const activityArn = await createActivity(context);
