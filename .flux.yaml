@@ -32,10 +32,10 @@ spec:
     resources:
       requests:
         cpu: "100m"
-    # hpa:
-    #   enabled: true
-    #   minReplicas: 1
-    #   maxReplicas: 10
-    #   targetCPUUtilizationPercentage: 80
+    hpa:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 80
 
     # filled in by CI. do not modify.

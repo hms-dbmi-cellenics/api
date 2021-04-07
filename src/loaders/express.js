@@ -89,6 +89,7 @@ module.exports = async (app) => {
       methods: ['GET', 'POST'],
       credentials: true,
     },
+    transports: ['websocket'],
   });
 
   const server = http.createServer(app);
