@@ -51,13 +51,14 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 3600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
               "config": {},
               "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid"
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
             }
           }
         }
@@ -75,13 +76,14 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 3600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
               "config": {},
               "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid"
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
             }
           }
         }
@@ -99,13 +101,14 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 3600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
               "config": {},
               "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid"
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
             }
           }
         }
@@ -123,13 +126,14 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 3600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
               "config": {},
               "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid"
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
             }
           }
         }
@@ -147,13 +151,14 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 3600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
               "config": {},
               "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid"
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
             }
           }
         }
@@ -163,26 +168,28 @@ exports[`non-tests to document the State Machines - local development 1`] = `
       "Next": "ConfigureEmbedding",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 300,
+      "TimeoutSeconds": 3600,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
         "config": {},
         "server": "host.docker.internal",
-        "sampleUuid": ""
+        "sampleUuid": "",
+        "uploadCountMatrix": false
       }
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 300,
+      "TimeoutSeconds": 3600,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
         "config": {},
         "server": "host.docker.internal",
-        "sampleUuid": ""
+        "sampleUuid": "",
+        "uploadCountMatrix": true
       }
     },
     "EndOfPipeline": {
@@ -291,13 +298,14 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 3600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "sampleUuid.$": "$.sampleUuid"
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
             }
           }
         }
@@ -315,13 +323,14 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 3600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "sampleUuid.$": "$.sampleUuid"
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
             }
           }
         }
@@ -339,13 +348,14 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 3600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "sampleUuid.$": "$.sampleUuid"
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
             }
           }
         }
@@ -363,13 +373,14 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 3600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "sampleUuid.$": "$.sampleUuid"
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
             }
           }
         }
@@ -387,13 +398,14 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 300,
+            "TimeoutSeconds": 3600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "sampleUuid.$": "$.sampleUuid"
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
             }
           }
         }
@@ -403,26 +415,28 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
       "Next": "ConfigureEmbedding",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 300,
+      "TimeoutSeconds": 3600,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "sampleUuid": ""
+        "sampleUuid": "",
+        "uploadCountMatrix": false
       }
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 300,
+      "TimeoutSeconds": 3600,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "sampleUuid": ""
+        "sampleUuid": "",
+        "uploadCountMatrix": true
       }
     },
     "EndOfPipeline": {

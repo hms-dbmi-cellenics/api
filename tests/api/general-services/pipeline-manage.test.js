@@ -22,6 +22,9 @@ describe('test for pipeline services', () => {
         M: {
           doubletScores: {
             M: {
+              enabled: {
+                BOOL: true,
+              },
               filterSettings: {
                 M: {
                   oneSetting: {
@@ -53,7 +56,8 @@ describe('test for pipeline services', () => {
         M: {
           ids: {
             L: [
-              { S: 'sample-KO' },
+              { S: 'oneSample' },
+              { S: 'otherSample' },
             ],
           },
         },
@@ -186,10 +190,16 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-machine' });
     });
 
-    const getItemSpy = jest.fn((x) => x);
+    const getProcessingConfigSpy = jest.fn((x) => x);
+    const getSamplesSpy = jest.fn((x) => x);
     AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
-      getItemSpy(params);
-      callback(null, MockProcessingConfig);
+      if (params.TableName.match('experiments')) {
+        getProcessingConfigSpy(params);
+        callback(null, _.cloneDeep(MockProcessingConfig));
+      } else if (params.TableName.match('samples')) {
+        getSamplesSpy(params);
+        callback(null, _.cloneDeep(MockSamples));
+      }
     });
 
     await createPipeline('testExperimentId', processingConfigUpdate);
