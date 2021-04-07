@@ -3,16 +3,16 @@ const cors = require('cors');
 const path = require('path');
 const OpenApiValidator = require('express-openapi-validator');
 const http = require('http');
-
 const AWSXRay = require('aws-xray-sdk');
 const config = require('../config');
+const authorizeRequest = require('../utils/authorizeRequest');
 
 module.exports = async (app) => {
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
   // It shows the real origin IP in the heroku or Cloudwatch logs
   app.enable('trust proxy');
-
   // Enable Cross Origin Resource Sharing to all origins by default
+
   app.use(cors({
     origin: config.corsOriginUrl,
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH'],
@@ -26,6 +26,21 @@ module.exports = async (app) => {
   app.use(bodyParser.text({ extended: false, limit: '1mb', parameterLimit: 300000 }));
   app.use(bodyParser.json({ extended: false, limit: '10mb', parameterLimit: 300000 }));
 
+  app.use((req, res, next) => {
+    // console.log('******************** MY NEW MIDDLEWARE ', req.params, req.body, req.query, req.headers.authorization, 'next is ', next);
+    const bearerHeader = req.headers.authorization;
+    const url = req.url.split('/');
+    const experimentId = url[url.indexOf('experiments') + 1];
+    console.log('BEARER TOKEN ', bearerHeader, 'EXPERIMENT ID IS ', experimentId);
+
+    if (!bearerHeader) {
+      return res.status(403).json({ error: 'No credentials sent!' });
+    }
+    authorizeRequest(experimentId);
+
+    const bearerToken = bearerHeader.split(' ')[1];
+    next();
+  });
   // Enable AWS XRay
   // eslint-disable-next-line global-require
   AWSXRay.captureHTTPsGlobal(require('http'));
@@ -65,6 +80,7 @@ module.exports = async (app) => {
 
   // Custom error handler.
   // eslint-disable-next-line no-unused-vars
+
   app.use((err, req, res, next) => {
     console.error('Error thrown in HTTP request');
     console.error(err);

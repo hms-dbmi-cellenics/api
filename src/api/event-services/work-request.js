@@ -5,12 +5,12 @@ const { cacheGetRequest } = require('../../utils/cache-request');
 const { CacheMissError } = require('../../cache/cache-utils');
 const { handlePagination } = require('../../utils/handlePagination');
 const validateRequest = require('../../utils/schema-validator');
-
+const authorizeRequest = require('../../utils/authorizeRequest');
 
 const handleWorkRequest = async (workRequest, socket) => {
   const { uuid, pagination } = workRequest;
 
-
+  console.log('WORK REQUEST HAHAHAH ', workRequest);
   try {
     logger.log(`Trying to fetch response to request ${uuid} from cache...`);
     const cachedResponse = await cacheGetRequest(workRequest);

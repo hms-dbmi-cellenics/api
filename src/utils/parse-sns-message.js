@@ -38,7 +38,7 @@ const parseSNSMessage = async (req) => {
       || msg.Type === 'UnsubscribeConfirmation')) {
     https.get(msg.SubscribeURL);
   }
-
+  logger.log('message is ', msg);
   // Notifications are passed on to the service for processing.
   if (msg.Type === 'Notification') {
     logger.log('SNS message is of type notification, sending to the handler...');

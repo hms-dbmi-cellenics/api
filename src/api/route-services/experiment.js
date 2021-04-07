@@ -28,12 +28,12 @@ const getExperimentAttributes = async (tableName, experimentId, attributes) => {
 class ExperimentService {
   constructor() {
     this.tableName = `experiments-${config.clusterEnv}`;
-
     mockData.matrixPath = mockData.matrixPath.replace('BUCKET_NAME', `biomage-source-${config.clusterEnv}`);
     this.mockData = convertToDynamoDbRecord(mockData);
   }
 
   async getExperimentData(experimentId) {
+    console.log('getting data ', experimentId);
     const data = await getExperimentAttributes(this.tableName, experimentId, ['experimentId', 'experimentName']);
     return data;
   }
