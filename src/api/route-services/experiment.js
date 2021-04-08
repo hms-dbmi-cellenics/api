@@ -33,8 +33,12 @@ class ExperimentService {
   }
 
   async getExperimentData(experimentId) {
-    console.log('getting data ', experimentId);
     const data = await getExperimentAttributes(this.tableName, experimentId, ['experimentId', 'experimentName']);
+    return data;
+  }
+
+  async getExperimentPermissions(experimentId) {
+    const data = await getExperimentAttributes(this.tableName, experimentId, ['experimentId', 'can_write']);
     return data;
   }
 

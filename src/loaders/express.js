@@ -26,21 +26,7 @@ module.exports = async (app) => {
   app.use(bodyParser.text({ extended: false, limit: '1mb', parameterLimit: 300000 }));
   app.use(bodyParser.json({ extended: false, limit: '10mb', parameterLimit: 300000 }));
 
-  app.use((req, res, next) => {
-    // console.log('******************** MY NEW MIDDLEWARE ', req.params, req.body, req.query, req.headers.authorization, 'next is ', next);
-    const bearerHeader = req.headers.authorization;
-    const url = req.url.split('/');
-    const experimentId = url[url.indexOf('experiments') + 1];
-    console.log('BEARER TOKEN ', bearerHeader, 'EXPERIMENT ID IS ', experimentId);
 
-    if (!bearerHeader) {
-      return res.status(403).json({ error: 'No credentials sent!' });
-    }
-    authorizeRequest(experimentId);
-
-    const bearerToken = bearerHeader.split(' ')[1];
-    next();
-  });
   // Enable AWS XRay
   // eslint-disable-next-line global-require
   AWSXRay.captureHTTPsGlobal(require('http'));
@@ -70,6 +56,34 @@ module.exports = async (app) => {
     AWSXRay.getSegment().addMetadata('podName', config.podName);
     next();
   });
+  const authenticationEnabled = false;
+  if (authenticationEnabled) {
+    app.use(async (req, res, next) => {
+      let workRequest = [];
+      try {
+        // this try is so that the api doesn't crash if there's nothing in the body
+        workRequest = JSON.parse(JSON.parse(req.body).Message).request || false;
+      // eslint-disable-next-line no-empty
+      } catch (err) {}
+      const bearerHeader = req.headers.authorization
+      || workRequest.extraHeaders.Authorization;
+      const url = req.url.split('/');
+
+      const experimentId = url[url.indexOf('experiments') + 1] || workRequest.experimentId;
+
+      if (!bearerHeader) {
+        return res.status(403).json({ error: 'No credentials sent!' });
+      }
+      const bearerToken = bearerHeader.split(' ')[1];
+      const isAuthorized = await authorizeRequest(experimentId, bearerToken);
+      console.log('AUTHORIZED - ', isAuthorized);
+      if (!isAuthorized) {
+        return res.status(403).json({ error: 'User is not authorized!' });
+      }
+      next();
+      return res.status(200);
+    });
+  }
 
   app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
@@ -80,6 +94,7 @@ module.exports = async (app) => {
 
   // Custom error handler.
   // eslint-disable-next-line no-unused-vars
+
 
   app.use((err, req, res, next) => {
     console.error('Error thrown in HTTP request');
@@ -95,7 +110,6 @@ module.exports = async (app) => {
   });
 
   app.use(AWSXRay.express.closeSegment());
-
 
   // eslint-disable-next-line global-require
   const io = require('socket.io')({
