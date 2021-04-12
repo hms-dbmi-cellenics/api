@@ -56,27 +56,25 @@ module.exports = async (app) => {
     AWSXRay.getSegment().addMetadata('podName', config.podName);
     next();
   });
+
   const authenticationEnabled = false;
   if (authenticationEnabled) {
     app.use(async (req, res, next) => {
       let workRequest = [];
-      try {
-        // this try is so that the api doesn't crash if there's nothing in the body
-        workRequest = JSON.parse(JSON.parse(req.body).Message).request || false;
-      // eslint-disable-next-line no-empty
-      } catch (err) {}
+      if (!req.headers.authorization) {
+        workRequest = JSON.parse(JSON.parse(req.body).Message).request;
+      }
       const bearerHeader = req.headers.authorization
       || workRequest.extraHeaders.Authorization;
       const url = req.url.split('/');
 
-      const experimentId = url[url.indexOf('experiments') + 1] || workRequest.experimentId;
+      const experimentId = workRequest.experimentId || url[url.indexOf('experiments') + 1];
 
       if (!bearerHeader) {
         return res.status(403).json({ error: 'No credentials sent!' });
       }
       const bearerToken = bearerHeader.split(' ')[1];
       const isAuthorized = await authorizeRequest(experimentId, bearerToken);
-      console.log('AUTHORIZED - ', isAuthorized);
       if (!isAuthorized) {
         return res.status(403).json({ error: 'User is not authorized!' });
       }
