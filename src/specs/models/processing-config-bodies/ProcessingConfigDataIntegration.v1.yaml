@@ -14,6 +14,7 @@ properties:
           - conos
           - liger
           - fastmnn
+          - unisample
       methodSettings:
         type: object
         properties:
