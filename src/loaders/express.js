@@ -62,19 +62,20 @@ module.exports = async (app) => {
     app.use(async (req, res, next) => {
       let workRequest = [];
       if (!req.headers.authorization) {
-        workRequest = JSON.parse(JSON.parse(req.body).Message).request;
+        try {
+          workRequest = JSON.parse(JSON.parse(req.body).Message).request;
+        } catch (err) {
+          return res.status(403).json({ error: 'No credentials sent!' });
+        }
       }
       const bearerHeader = req.headers.authorization
       || workRequest.extraHeaders.Authorization;
+
       const url = req.url.split('/');
-
       const experimentId = workRequest.experimentId || url[url.indexOf('experiments') + 1];
-
-      if (!bearerHeader) {
-        return res.status(403).json({ error: 'No credentials sent!' });
-      }
       const bearerToken = bearerHeader.split(' ')[1];
       const isAuthorized = await authorizeRequest(experimentId, bearerToken);
+
       if (!isAuthorized) {
         return res.status(403).json({ error: 'User is not authorized!' });
       }
