@@ -2,8 +2,6 @@ const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../src/utils/requireAWS');
 const authorizeRequest = require('../../src/utils/authorizeRequest');
 
-// const ExperimentService = require('../../src/api/route-services/experiment');
-
 describe('Tests for authorizing api requests ', () => {
   afterEach(() => {
     AWSMock.restore('DynamoDB');
