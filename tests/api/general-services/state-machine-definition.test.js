@@ -1,5 +1,5 @@
 const config = require('../../../src/config');
-const createPipeline = require('../../../src/api/general-services/pipeline-manage');
+const { buildStateMachineDefinition } = require('../../../src/api/general-services/pipeline-manage');
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
@@ -38,12 +38,12 @@ describe('non-tests to document the State Machines', () => {
 
   it('- local development', () => {
     config.clusterEnv = 'development';
-    const stateMachine = createPipeline.buildStateMachineDefinition(context);
+    const stateMachine = buildStateMachineDefinition(context);
     config.clusterEnv = 'test';
     expect(stateMachine).toMatchSnapshot();
   });
   it('-cloud', () => {
-    const stateMachine = createPipeline.buildStateMachineDefinition(context);
+    const stateMachine = buildStateMachineDefinition(context);
     expect(stateMachine).toMatchSnapshot();
   });
 });

@@ -12,6 +12,7 @@ const ExperimentService = require('../../route-services/experiment');
 const SamplesService = require('../../route-services/samples');
 
 const constructPipelineStep = require('./constructors/construct-pipeline-step');
+const asyncTimer = require('../../../utils/asyncTimer');
 
 const experimentService = new ExperimentService();
 const samplesService = new SamplesService();
@@ -93,6 +94,16 @@ const createNewStateMachine = async (context, stateMachine) => {
     await stepFunctions.updateStateMachine(
       { stateMachineArn, definition: params.definition, roleArn },
     ).promise();
+
+    /**
+     * Wait for 5 seconds before the state machine update is returned to the caller.
+     * Per https://docs.aws.amazon.com/step-functions/latest/apireference/API_UpdateStateMachine.html:
+     *
+     * Executions started immediately after calling UpdateStateMachine may use the
+     * previous state machine `definition` [...].
+     *
+     */
+    await asyncTimer(1500);
   }
 
   return stateMachineArn;
@@ -345,5 +356,7 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
 };
 
 
-module.exports = createPipeline;
-module.exports.buildStateMachineDefinition = buildStateMachineDefinition;
+module.exports = {
+  createPipeline,
+  buildStateMachineDefinition,
+};

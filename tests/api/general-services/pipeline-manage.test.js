@@ -2,12 +2,13 @@ const AWSMock = require('aws-sdk-mock');
 const _ = require('lodash');
 const AWS = require('../../../src/utils/requireAWS');
 
-const createPipeline = require('../../../src/api/general-services/pipeline-manage');
-
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
   randomBytes: () => Buffer.from('asdfg'),
 }));
+jest.mock('../../../src/utils/asyncTimer');
+
+const { createPipeline } = jest.requireActual('../../../src/api/general-services/pipeline-manage');
 
 describe('test for pipeline services', () => {
   afterEach(() => {
@@ -239,7 +240,10 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-execution' });
     });
 
+    createPipeline.waitForDefinitionToPropagate = () => true;
+
     await createPipeline('testExperimentId', processingConfigUpdate);
+
     expect(describeClusterSpy).toMatchSnapshot();
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
 

@@ -1,5 +1,5 @@
 const AWSXRay = require('aws-xray-sdk');
-const createPipeline = require('../general-services/pipeline-manage');
+const { createPipeline } = require('../general-services/pipeline-manage');
 const ExperimentService = require('../route-services/experiment');
 const getBackendStatus = require('../general-services/backend-status');
 const pipelineResponse = require('../route-services/pipeline-response');
