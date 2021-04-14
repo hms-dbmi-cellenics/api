@@ -96,14 +96,14 @@ const createNewStateMachine = async (context, stateMachine) => {
     ).promise();
 
     /**
-     * Wait for 5 seconds before the state machine update is returned to the caller.
+     * Wait for some time before the state machine update is returned to the caller.
      * Per https://docs.aws.amazon.com/step-functions/latest/apireference/API_UpdateStateMachine.html:
      *
      * Executions started immediately after calling UpdateStateMachine may use the
      * previous state machine `definition` [...].
      *
      */
-    await asyncTimer(1500);
+    await asyncTimer(3000);
   }
 
   return stateMachineArn;
