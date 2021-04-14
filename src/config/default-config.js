@@ -65,6 +65,8 @@ const config = {
   pipelineInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/pipeline.yaml',
   cachingEnabled: true,
   corsOriginUrl: 'https://scp.biomage.net',
+  debugStep: process.env.DEBUG_STEP || '',
+  debugPath: process.env.DEBUG_PATH || '',
 };
 
 if (config.clusterEnv === 'staging') {

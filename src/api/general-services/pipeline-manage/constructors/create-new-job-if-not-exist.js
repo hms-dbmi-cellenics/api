@@ -2,9 +2,8 @@ const config = require('../../../../config');
 
 const createNewJobIfNotExist = (context, step) => {
   const {
-    clusterInfo, experimentId, pipelineArtifacts, accountId, activityArn,
+    clusterInfo, experimentId, pipelineArtifacts, accountId, activityArn, debugStep, debugPath,
   } = context;
-
 
   if (config.clusterEnv === 'development') {
     return {
@@ -18,6 +17,8 @@ const createNewJobIfNotExist = (context, step) => {
           name: 'pipeline-runner',
           detached: true,
           activityArn,
+          debugStep,
+          debugPath,
         },
       },
       Catch: [

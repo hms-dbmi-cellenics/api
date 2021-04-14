@@ -25,8 +25,17 @@ async function startServer() {
       process.exit(1);
     }
 
+    const debugPath = process.env.DEBUG_PATH;
+    const debugStep = process.env.DEBUG_STEP;
+
     logger.log(`NODE_ENV: ${process.env.NODE_ENV}, cluster env: ${config.clusterEnv}`);
     logger.log(`Server listening on port: ${config.port}`);
+    logger.log(`DEBUG_STEP: ${debugStep}`);
+    logger.log(`DEBUG_PATH: ${debugPath}`);
+
+    if (debugStep !== '' && typeof debugPath === 'undefined') {
+      logger.log('DEBUG_PATH (where to save locally) required when specifying DEBUG_STEP⚠️');
+    }
   });
 }
 

@@ -272,6 +272,7 @@ const buildStateMachineDefinition = (context) => {
 };
 
 const createPipeline = async (experimentId, processingConfigUpdates) => {
+  const { debugStep, debugPath } = config;
   const accountId = await config.awsAccountIdPromise;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
@@ -318,6 +319,8 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
     experimentId,
     accountId,
     roleArn,
+    debugStep,
+    debugPath,
     activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:biomage-qc-${config.clusterEnv}-${experimentId}`,
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
