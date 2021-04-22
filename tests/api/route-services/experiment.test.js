@@ -31,6 +31,32 @@ describe('tests for the experiment service', () => {
     return updateItemSpy;
   };
 
+  const mockS3GetObject = (jsData) => {
+    const getObjectSpy = jest.fn((x) => x);
+    AWSMock.setSDKInstance(AWS);
+
+    AWSMock.mock('S3', 'getObject', (params, callback) => {
+      getObjectSpy(params);
+      callback(null, jsData);
+    });
+
+    return getObjectSpy;
+  };
+
+  const mockS3PutObject = () => {
+    const putObjectSpy = jest.fn((x) => x);
+    AWSMock.setSDKInstance(AWS);
+
+    AWSMock.mock('S3', 'putObject', (params, callback) => {
+      putObjectSpy(params);
+
+      callback(null, {});
+    });
+
+    return putObjectSpy;
+  };
+
+
   it('Get experiment data works', async (done) => {
     const jsData = {
       experimentId: '12345',
@@ -60,16 +86,17 @@ describe('tests for the experiment service', () => {
       ],
     };
 
-    const getItemSpy = mockDynamoGetItem(jsData);
+    const strData = JSON.stringify(jsData);
+
+    const getObjectSpy = mockS3GetObject({ Body: strData });
 
     (new ExperimentService()).getCellSets('12345')
       .then((data) => {
         expect(data).toEqual(jsData);
-        expect(getItemSpy).toHaveBeenCalledWith(
+        expect(getObjectSpy).toHaveBeenCalledWith(
           {
-            TableName: 'experiments-test',
-            Key: { experimentId: { S: '12345' } },
-            ProjectionExpression: 'cellSets',
+            Bucket: 'cell-sets-test',
+            Key: '12345',
           },
         );
       })
@@ -77,28 +104,18 @@ describe('tests for the experiment service', () => {
   });
 
   it('Update experiment cell sets works', async (done) => {
-    const jsTestData = [
-      {
-        name: 'Empty cluster',
-        key: 'empty',
-        color: '#ff00ff',
-        children: [],
-        cellIds: [],
-      },
-    ];
+    const testDataToPut = 'testDataToPutString';
 
-    const updateItemSpy = mockDynamoUpdateItem();
-    const dynamoTestData = AWS.DynamoDB.Converter.marshall({ ':x': jsTestData });
+    const putObjectSpy = mockS3PutObject();
 
-    (new ExperimentService()).updateCellSets('12345', jsTestData)
+    (new ExperimentService()).updateCellSets('12345', testDataToPut)
       .then((returnValue) => {
-        expect(returnValue).toEqual(jsTestData);
-        expect(updateItemSpy).toHaveBeenCalledWith(
+        expect(returnValue).toEqual(testDataToPut);
+        expect(putObjectSpy).toHaveBeenCalledWith(
           {
-            TableName: 'experiments-test',
-            Key: { experimentId: { S: '12345' } },
-            UpdateExpression: 'set cellSets = :x',
-            ExpressionAttributeValues: dynamoTestData,
+            Bucket: 'cell-sets-test',
+            Key: '12345',
+            Body: testDataToPut,
           },
         );
       })
