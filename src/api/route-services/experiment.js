@@ -95,13 +95,15 @@ class ExperimentService {
   }
 
   async updateCellSets(experimentId, cellSetData) {
+    const cellSetsObject = JSON.stringify({ cellSets: cellSetData });
+
     const s3 = new AWS.S3();
 
     await s3.putObject(
       {
         Bucket: this.cellSetsBucketName,
         Key: experimentId,
-        Body: cellSetData,
+        Body: cellSetsObject,
       },
     ).promise();
 

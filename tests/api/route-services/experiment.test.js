@@ -115,7 +115,7 @@ describe('tests for the experiment service', () => {
           {
             Bucket: 'cell-sets-test',
             Key: '12345',
-            Body: testDataToPut,
+            Body: JSON.stringify({ cellSets: testDataToPut }),
           },
         );
       })
