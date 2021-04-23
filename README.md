@@ -28,10 +28,13 @@ Default output format: json
 
 ### Running locally
 
-To run the API, simply do:
+To run the API, you can install the dependencies with:
 
-        npm install
-        npm start
+        make install
+
+And then run it with:
+
+        make run 
 
 You should see the following output on your terminal:
 
@@ -76,7 +79,7 @@ Whether the API runs with the local InfraMock instance, which should have Redis 
 services ready for use, or with a ***live*** cluster instead, is controlled by an enviornment variable called
 `CLUSTER_ENV`, which is set to `development` by default.
 
-Run `npm start` to run the API locally, while running Inframock from the previous step in a separate terminal tab.
+Run `make run` to run the API locally, while running Inframock from the previous step in a separate terminal tab.
 The output on the terminal should look similarly to this:
 
 ```bash
@@ -99,7 +102,7 @@ The output on the terminal should look similarly to this:
 ```
 
 To use a **live** (`staging` or `production`) cluster, make sure you run the API with the `CLUSTER_ENV` environment
-variable set to the appropriate value. For example, running `CLUSTER_ENV='production' npm start` will connect you to the
+variable set to the appropriate value. For example, running `CLUSTER_ENV='production' make run` will connect you to the
 production cluster and as a result you should see an output on the terminal similar to this:
 
 ```bash
