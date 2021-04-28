@@ -140,7 +140,7 @@ jobs:
           if [ "${{ matrix.environment }}" = "develop" ]; then
             SANDBOX_ID="default"
             CHART_REF="master"
-            DEPLOYMENT_NAME=$(echo $GITHUB_REPOSITORY-develop | awk -F '/' '{print $2}')
+            DEPLOYMENT_NAME=$(echo $GITHUB_REPOSITORY | awk -F '/' '{print $2}')
             echo "::set-output name=deployment-name::$DEPLOYMENT_NAME"
           fi
 
