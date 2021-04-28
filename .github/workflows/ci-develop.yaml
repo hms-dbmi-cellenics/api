@@ -1,4 +1,4 @@
-name: Build and Deploy the API
+name: Build and deploy the API to develop
 on:
   push:
     branches:
@@ -135,18 +135,20 @@ jobs:
         name: Fill out a new HelmRelease resource
         run: |-
           REF_DASHED=$(echo $GITHUB_REF | sed 's/\//-/g')
-          DEPLOYMENT_NAME=$(echo $GITHUB_REPOSITORY | awk -F '/' '{print $2}')
-          echo "::set-output name=deployment-name::$DEPLOYMENT_NAME"
           echo "::set-output name=ref-dashed::$REF_DASHED"
 
           if [ "${{ matrix.environment }}" = "develop" ]; then
             SANDBOX_ID="default"
             CHART_REF="master"
+            DEPLOYMENT_NAME=$(echo $GITHUB_REPOSITORY-develop | awk -F '/' '{print $2}')
+            echo "::set-output name=deployment-name::$DEPLOYMENT_NAME"
           fi
 
           if [ "${{ matrix.environment }}" = "staging" ]; then
             SANDBOX_ID="STAGING_SANDBOX_ID"
             CHART_REF="STAGING_CHART_REF"
+            DEPLOYMENT_NAME=$(echo $GITHUB_REPOSITORY | awk -F '/' '{print $2}')
+            echo "::set-output name=deployment-name::$DEPLOYMENT_NAME"
           fi
           
           yq w -d1 .flux.yaml metadata.name "$DEPLOYMENT_NAME" \
@@ -181,16 +183,16 @@ jobs:
           enforce_admins: false
           retries: 8
 
-      - name: Push production deployment to iac for deployment
+      - name: Push develop deployment to iac
         if:
-          github.ref == 'refs/heads/master' && github.event_name == 'push' && matrix.environment == 'production'
+          github.ref == 'refs/heads/develop' && github.event_name == 'push' && matrix.environment == 'develop'
         uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
           source_file: '${{ steps.fill-metadata.outputs.deployment-name }}.yaml'
           destination_repo: '${{ github.repository_owner }}/iac'
-          destination_folder: 'releases/${{ matrix.environment }}'
+          destination_folder: 'releases/staging'
           user_email: 'ci@biomage.net'
           user_name: 'Biomage CI/CD'
 
