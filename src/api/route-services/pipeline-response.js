@@ -1,10 +1,12 @@
 const AWSXRay = require('aws-xray-sdk');
+const { v4: uuidv4 } = require('uuid');
 const AWS = require('../../utils/requireAWS');
 const validateRequest = require('../../utils/schema-validator');
 const logger = require('../../utils/logging');
 
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
+const WorkSubmitService = require('../general-services/work-submit');
 
 const pipelineStatus = require('../general-services/pipeline-status');
 
@@ -78,8 +80,53 @@ const pipelineResponse = async (io, message) => {
     ]);
   }
 
-
   const statusRes = await pipelineStatus(experimentId);
+
+  if (taskName === 'configureEmbedding') {
+    const now = new Date();
+    const addTimeoutSeconds = 60;
+    const timeout = new Date(now.getTime() + addTimeoutSeconds * 1000);
+
+    // Run work request for embedding
+    const embeddingWorkRequest = {
+      experimentId,
+      timeout,
+      uuid: uuidv4(),
+      body: {
+        name: 'GetEmbedding',
+        type: output.config.embeddingSettings.method,
+        config: output.config.embeddingSettings.methodSettings[
+          output.config.embeddingSettings.method
+        ],
+      },
+      PipelineRunETag: statusRes.pipeline.startDate,
+    };
+
+    const embeddingWork = new WorkSubmitService(embeddingWorkRequest);
+    await embeddingWork.submitWork();
+
+    // Run work request for cell clustering
+    const clusteringWorkRequest = {
+      experimentId,
+      timeout,
+      uuid: uuidv4(),
+      body: {
+        name: 'ClusterCells',
+        cellSetName: 'Louvain clusters',
+        type: output.config.clusteringSettings.method,
+        cellSetKey: 'louvain',
+        config: {
+          resolution: output.config.clusteringSettings.methodSettings[
+            output.config.clusteringSettings.method
+          ],
+        },
+      },
+      PipelineRunETag: statusRes.pipeline.startDate,
+    };
+
+    const clusteringWork = new WorkSubmitService(clusteringWorkRequest);
+    await clusteringWork.submitWork();
+  }
 
   // Concatenate into a proper response.
   const response = {
