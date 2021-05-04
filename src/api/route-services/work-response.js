@@ -102,6 +102,10 @@ class WorkResponseService {
       throw e;
     }
 
+    if (socketId === 'no-socket') {
+      logger.log('Socket is not provided, no response sent out.');
+    }
+
     if (Date.parse(timeout) > Date.now()) {
       this.io.to(socketId).emit(`WorkResponse-${uuid}`, responseForClient);
       logger.log('Work response sent out.');
