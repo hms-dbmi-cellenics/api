@@ -39,7 +39,7 @@ const validateRequest = async (request, schemaPath) => {
   );
 
   if (!validation.valid) {
-    logger.log(`Validation error: ${request.body}`);
+    logger.log(`Validation error for: ${request}`);
     throw new Error(validation.errors[0]);
   }
 };
