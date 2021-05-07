@@ -5,7 +5,7 @@ info:
   description: The main Node.js pipeline API.
   license:
     name: MIT
-    url: "https://github.com/biomage-ltd/api/blob/master/LICENSE"
+    url: 'https://github.com/biomage-ltd/api/blob/master/LICENSE'
   contact:
     name: Biomage Ltd.
 servers:
@@ -29,7 +29,7 @@ paths:
       x-eov-operation-id: health#check
       x-eov-operation-handler: routes/health
       responses:
-        "200":
+        '200':
           description: API is available.
           content:
             application/json:
@@ -64,7 +64,7 @@ paths:
       x-eov-operation-id: work#response
       x-eov-operation-handler: routes/work
       requestBody:
-        description: "The results from the execution of a work request, sent via SNS."
+        description: 'The results from the execution of a work request, sent via SNS.'
         required: true
         content:
           text/plain:
@@ -77,14 +77,14 @@ paths:
               properties: {}
             examples: {}
       responses:
-        "200":
-          description: "A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*."
+        '200':
+          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
           content:
             text/plain:
               schema:
                 type: string
                 pattern: ok
-        "500":
+        '500':
           description: The data sent by the server could not be parsed as JSON.
           content:
             text/plain:
@@ -107,7 +107,7 @@ paths:
       x-eov-operation-id: pipelines#response
       x-eov-operation-handler: routes/pipelines
       requestBody:
-        description: "The results from the execution of a pipeline step, sent via SNS."
+        description: 'The results from the execution of a pipeline step, sent via SNS.'
         required: true
         content:
           text/plain:
@@ -120,14 +120,14 @@ paths:
               properties: {}
             examples: {}
       responses:
-        "200":
-          description: "A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*."
+        '200':
+          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
           content:
             text/plain:
               schema:
                 type: string
                 pattern: ok
-        "500":
+        '500':
           description: The data sent by the server could not be parsed as JSON.
           content:
             text/plain:
@@ -144,7 +144,7 @@ paths:
       tags:
         - work
     parameters: []
-  "/experiments/{experimentId}":
+  '/experiments/{experimentId}':
     get:
       tags:
         - experiments
@@ -154,13 +154,13 @@ paths:
       x-eov-operation-id: experiment#findByID
       x-eov-operation-handler: routes/experiment
       responses:
-        "200":
-          description: "Fetch successful, response below"
+        '200':
+          description: 'Fetch successful, response below'
           content:
             application/json:
               schema:
                 $ref: ./models/api-body-schemas/Experiment.v1.yaml
-        "404":
+        '404':
           description: Experiment not found
           content:
             application/json:
@@ -173,7 +173,7 @@ paths:
         in: path
         required: true
         description: ID of the experiment to find.
-  "/experiments/{experimentId}/cellSets":
+  '/experiments/{experimentId}/cellSets':
     get:
       tags:
         - experiments
@@ -183,8 +183,8 @@ paths:
       x-eov-operation-id: experiment#getCellSets
       x-eov-operation-handler: routes/experiment
       responses:
-        "200":
-          description: "Request successful, hierarchy returned below."
+        '200':
+          description: 'Request successful, hierarchy returned below.'
           content:
             application/json:
               schema:
@@ -194,7 +194,7 @@ paths:
                     type: array
                     items:
                       $ref: ./models/api-body-schemas/CellSets.v1.yaml
-        "404":
+        '404':
           description: Experiment not found.
           content:
             application/json:
@@ -208,12 +208,12 @@ paths:
         schema:
           type: string
     put:
-      summary: ""
+      summary: ''
       operationId: updateExperimentCellSetsById
       x-eov-operation-id: experiment#updateCellSets
       x-eov-operation-handler: routes/experiment
       responses:
-        "200":
+        '200':
           description: Update to object in response successful.
           content:
             application/json:
@@ -233,7 +233,7 @@ paths:
                   - $ref: ./models/api-body-schemas/CellSets.v1.yaml
       tags:
         - experiments
-  "/experiments/{experimentId}/processingConfig":
+  '/experiments/{experimentId}/processingConfig':
     get:
       summary: Retrieve processing configuration
       description: Returns a hirearchical view of processing configuration used in the experiment.
@@ -241,13 +241,13 @@ paths:
       x-eov-operation-id: experiment#getProcessingConfig
       x-eov-operation-handler: routes/experiment
       responses:
-        "200":
-          description: "Fetch successful, response below."
+        '200':
+          description: 'Fetch successful, response below.'
           content:
             application/json:
               schema:
                 $ref: ./models/ProcessingConfig.v1.yaml
-        "404":
+        '404':
           description: Experiment not found.
           content:
             application/json:
@@ -263,12 +263,12 @@ paths:
         schema:
           type: string
     put:
-      summary: ""
+      summary: ''
       operationId: updateExperimentProcessingConfigById
       x-eov-operation-id: experiment#updateProcessingConfig
       x-eov-operation-handler: routes/experiment
       responses:
-        "200":
+        '200':
           description: Update to object in response successful.
           content:
             application/json:
@@ -296,7 +296,7 @@ paths:
         description: Updates the keys specified by `name` with the body specified by `body`. A standard DynamoDB UpdateItem request should be called on the update.
       tags:
         - processing-config
-  "/experiments/{experimentId}/plots-tables/{plotUuid}":
+  '/experiments/{experimentId}/plots-tables/{plotUuid}':
     parameters:
       - schema:
           type: string
@@ -309,24 +309,24 @@ paths:
         in: path
         required: true
     put:
-      summary: ""
+      summary: ''
       operationId: updatePlotTable
       x-eov-operation-id: plots-tables#update
       x-eov-operation-handler: routes/plots-tables
       responses:
-        "200":
+        '200':
           description: Update to object in response successful.
           content:
             application/json:
               schema:
                 $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
-        "201":
+        '201':
           description: New resource created.
           content:
             application/json:
               schema:
                 $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
-        "404":
+        '404':
           description: Invalid experiment ID specified.
       description: Updates a plot and table for a given experiment with the data specified.
       requestBody:
@@ -336,12 +336,12 @@ paths:
               $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
         description: The new configuration to update the old one by.
     get:
-      summary: ""
+      summary: ''
       operationId: getPlotTable
       x-eov-operation-id: plots-tables#read
       x-eov-operation-handler: routes/plots-tables
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
@@ -349,15 +349,15 @@ paths:
                 $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
       description: Reads a plot and table for a given experiment with the data specified.
     delete:
-      summary: ""
+      summary: ''
       operationId: deletePlotTable
       x-eov-operation-id: plots-tables#delete
       x-eov-operation-handler: routes/plots-tables
       responses:
-        "200":
+        '200':
           description: OK
       description: Deletes a plot and table for a given experiment with the data specified.
-  "/experiments/{experimentId}/pipelines":
+  '/experiments/{experimentId}/pipelines':
     parameters:
       - schema:
           type: string
@@ -370,7 +370,7 @@ paths:
       x-eov-operation-id: pipelines#create
       x-eov-operation-handler: routes/pipelines
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
@@ -379,42 +379,100 @@ paths:
                 properties: {}
       description: This path will create a new pipeline that can run a state machine with different bioinformatics tasks.
     get:
-      summary: ""
+      summary: Create new pipeline
       operationId: get-experiments-experimentId-pipelines
       x-eov-operation-id: pipelines#get
       x-eov-operation-handler: routes/pipelines
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 type: object
                 properties: {}
-  "/experiments/{experimentId}/samples":
+  '/projects/{projectUuid}':
     parameters:
       - schema:
           type: string
-        name: experimentId
+        name: projectUuid
         in: path
         required: true
+    put:
+      summary: Create or update project
+      operationId: updateProject
+      x-eov-operation-id: projects#update
+      x-eov-operation-handler: routes/projects
+      responses:
+        '200':
+          description: Create or update sample object
+          content:
+            application/json:
+              schema:
+                $ref: ./models/api-body-schemas/Project.v1.yaml
+        '201':
+          description: New resource created.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/api-body-schemas/Project.v1.yaml
+        '404':
+          description: Invalid projectUuid.
+      description: Create or update a project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/api-body-schemas/Project.v1.yaml
+        description: The new configuration to update the old one by.
+  '/projects/{projectUuid}/samples':
+    parameters:
+      - schema:
+          type: string
+        name: projectUuid
+        in: path
+        required: true
+    put:
+      summary: Update sample
+      operationId: updateSample
+      x-eov-operation-id: samples#update
+      x-eov-operation-handler: routes/samples
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Invalid sampleUuid specified.
+        '500':
+          description: Internal Server Error
+      description: Updates a sample
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                projectUuid:
+                  type: string
+                experimentId:
+                  type: string
+                samples:
+                  $ref: ./models/api-body-schemas/Samples.v1.yaml
     get:
-      summary: Your GET endpoint
-      operationId: getSamples
+      summary: 'Get samples under a project '
+      operationId: getProjectSamples
       x-eov-operation-id: samples#get
       x-eov-operation-handler: routes/samples
-      tags: []
       responses:
-        "200":
-          description: "Fetch successful, samples returned below."
+        '200':
+          description: OK
           content:
             application/json:
               schema:
-                $ref: ./models/SampleResponse.v1.yaml
-        "400":
-          description: Samples not found.
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
-      description: Get all samples for an experiment
+                type: array
+                items:
+                  $ref: ./models/api-body-schemas/Samples.v1.yaml
+      description: Get all samples under a project
