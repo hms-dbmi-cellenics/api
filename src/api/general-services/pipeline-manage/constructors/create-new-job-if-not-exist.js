@@ -30,6 +30,8 @@ const createNewJobIfNotExist = (context, step) => {
     };
   }
 
+  const MAX_HELMRELEASE_NAME_LENGTH = 53;
+  const releaseName = `pipeline-${experimentId}`.substring(0, MAX_HELMRELEASE_NAME_LENGTH - 1);
 
   return {
     ...step,
@@ -46,7 +48,7 @@ const createNewJobIfNotExist = (context, step) => {
         apiVersion: 'helm.fluxcd.io/v1',
         kind: 'HelmRelease',
         metadata: {
-          name: `pipeline-${experimentId}`,
+          name: releaseName,
           namespace: config.pipelineNamespace,
           annotations: {
             'fluxcd.io/automated': 'true',
@@ -58,7 +60,7 @@ const createNewJobIfNotExist = (context, step) => {
           },
         },
         spec: {
-          releaseName: `pipeline-${experimentId}`,
+          releaseName,
           chart: {
             git: 'git@github.com:biomage-ltd/pipeline',
             path: 'qc-runner/chart',
