@@ -12,8 +12,9 @@ class SamplesService {
   async getSamples(projectUuid) {
     const params = {
       TableName: this.tableName,
-      Key: {
-        projectUuid: { S: projectUuid },
+      KeyConditionExpression: 'projectUuid = :projectUuid',
+      ExpressionAttributeValues: {
+        ':projectUuid': { S: projectUuid },
       },
       ProjectionExpression: 'samples',
     };
@@ -51,25 +52,6 @@ class SamplesService {
     throw Error('Sample not found');
   }
 
-  async getsampleUuids(experimentId) {
-    const params = {
-      TableName: this.tableName,
-      IndexName: 'gsiSamplesByExperiment',
-      Key: { experimentId: { S: experimentId } },
-      ProjectionExpression: 'samples.ids',
-    };
-    const dynamodb = createDynamoDbInstance();
-
-    const response = await dynamodb.query(params).promise();
-
-    if (response.Item) {
-      const prettyResponse = convertToJsObject(response.Item);
-      return prettyResponse;
-    }
-
-    throw Error('Sample not found');
-  }
-
   async updateSamples(projectUuid, body) {
     const marshalledData = convertToDynamoDbRecord({
       ':samples': body.samples,
@@ -91,6 +73,7 @@ class SamplesService {
     const result = await dynamodb.updateItem(params).promise();
 
     const prettyData = convertToJsObject(result.Attributes);
+
     return prettyData.samples;
   }
 }
