@@ -391,6 +391,33 @@ paths:
               schema:
                 type: object
                 properties: {}
+  '/experiments/{experimentId}/samples':
+    parameters:
+      - schema:
+          type: string
+        name: experimentId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      operationId: getSamples
+      x-eov-operation-id: samples#get
+      x-eov-operation-handler: routes/samples
+      tags: []
+      responses:
+        '200':
+          description: 'Fetch successful, samples returned below.'
+          content:
+            application/json:
+              schema:
+                $ref: ./models/SampleResponse.v1.yaml
+        '400':
+          description: Samples not found.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: Get all samples for an experiment
   '/projects/{projectUuid}':
     parameters:
       - schema:
@@ -416,6 +443,8 @@ paths:
             application/json:
               schema:
                 $ref: ./models/api-body-schemas/Project.v1.yaml
+        '415':
+          description: Unsupported Media Type
         '404':
           description: Invalid projectUuid.
       description: Create or update a project
@@ -444,10 +473,16 @@ paths:
             application/json:
               schema:
                 type: object
-        '404':
-          description: Invalid sampleUuid specified.
+                properties: {}
+        '415':
+          description: Unsupported Media Type
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
       description: Updates a sample
       requestBody:
         content:

@@ -2,8 +2,6 @@ type: object
 title: Sample object
 description: Schema for a sample object
 properties:
-  samples:
-    type: object
   ids:
     type: array
     items:
