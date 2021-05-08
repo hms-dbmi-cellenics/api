@@ -29,6 +29,28 @@ class SamplesService {
     throw Error('Sample not found');
   }
 
+  async getSampleIds(experimentId) {
+    const key = convertToDynamoDbRecord({
+      experimentId,
+    });
+
+    const params = {
+      TableName: this.tableName,
+      Key: key,
+      ProjectionExpression: 'samples.ids',
+    };
+    const dynamodb = createDynamoDbInstance();
+
+    const response = await dynamodb.getItem(params).promise();
+
+    if (response.Item) {
+      const prettyResponse = convertToJsObject(response.Item);
+      return prettyResponse;
+    }
+
+    throw Error('Sample not found');
+  }
+
   async getsampleUuids(experimentId) {
     const params = {
       TableName: this.tableName,
