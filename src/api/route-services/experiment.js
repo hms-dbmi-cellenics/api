@@ -17,8 +17,11 @@ const getExperimentAttributes = async (tableName, experimentId, attributes) => {
   const params = {
     TableName: tableName,
     Key: key,
-    ProjectionExpression: attributes.join(),
   };
+
+  if (Array.isArray(attributes) && attributes.length > 0) {
+    params.ProjectionExpression = attributes.join();
+  }
 
   const data = await dynamodb.getItem(params).promise();
   if (Object.keys(data).length === 0) {
@@ -29,7 +32,6 @@ const getExperimentAttributes = async (tableName, experimentId, attributes) => {
   return prettyData;
 };
 
-
 class ExperimentService {
   constructor() {
     this.experimentsTableName = `experiments-${config.clusterEnv}`;
@@ -39,9 +41,44 @@ class ExperimentService {
     this.mockData = convertToDynamoDbRecord(mockData);
   }
 
-  async getExperimentData(experimentId) {
-    const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['experimentId', 'experimentName']);
+  async getExperiment(experimentId) {
+    const data = await getExperimentAttributes(this.experimentsTableName, experimentId);
     return data;
+  }
+
+  async updateExperiment(experimentId, body) {
+    const dynamodb = createDynamoDbInstance();
+    const key = convertToDynamoDbRecord({ experimentId });
+
+    const marshalledData = convertToDynamoDbRecord({
+      ':experimentName': body.info.experimentName,
+      ':createdAt': body.info.createdAt,
+      ':lastViewed': body.info.lastViewed,
+      ':apiVersion': body.info.experimentName,
+      ':meta': {},
+      ':processingConfig': body.processingConfig,
+      ':projectId': body.info.projectId,
+    });
+
+    const params = {
+      TableName: this.experimentsTableName,
+      Key: key,
+      UpdateExpression: `SET experimentName = :experimentName,
+                          createdAt = :createdAt,
+                          lastViewed = :lastViewed,
+                          apiVersion = :apiVersion,
+                          meta = :meta,
+                          processingConfig = :processingConfig,
+                          projectId = :projectId`,
+      ExpressionAttributeValues: marshalledData,
+      ReturnValues: 'UPDATED_NEW',
+    };
+
+    const data = await dynamodb.updateItem(params).promise();
+
+    const prettyData = convertToJsObject(data.Attributes);
+
+    return prettyData;
   }
 
   async getExperimentPermissions(experimentId) {
