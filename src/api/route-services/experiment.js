@@ -55,6 +55,8 @@ class ExperimentService {
       ':createdAt': body.createdAt,
       ':lastViewed': body.lastViewed,
       ':projectUuid': body.projectUuid,
+      ':description': body.description,
+      ':meta': {},
     });
 
     const params = {
@@ -63,7 +65,9 @@ class ExperimentService {
       UpdateExpression: `SET experimentName = :experimentName,
                           createdAt = :createdAt,
                           lastViewed = :lastViewed,
-                          projectUuid = :projectUuid`,
+                          projectUuid = :projectUuid,
+                          description = :description,
+                          meta = :meta`,
       ExpressionAttributeValues: marshalledData,
       ReturnValues: 'UPDATED_NEW',
     };
