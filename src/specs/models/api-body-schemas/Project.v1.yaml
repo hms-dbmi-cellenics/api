@@ -1,0 +1,28 @@
+type: object
+title: ''
+description: Schema for a sample object
+properties:
+  name:
+    type: string
+  description:
+    type: string
+  createdDate:
+    type: string
+  lastModified:
+    type: string
+  uuid:
+    type: string
+  experiments:
+    type: array
+    items:
+      type: string
+  lastAnalyzed:
+    nullable: true
+    type: string
+  samples:
+    type: array
+    items:
+      type: string
+required:
+  - uuid
+  - experiments

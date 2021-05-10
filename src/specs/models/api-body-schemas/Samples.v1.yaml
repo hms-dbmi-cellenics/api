@@ -1,0 +1,8 @@
+type: object
+title: Sample object
+description: Schema for a sample object
+properties:
+  ids:
+    type: array
+    items:
+      type: string

@@ -398,7 +398,7 @@ paths:
                 properties: {}
       description: This path will create a new pipeline that can run a state machine with different bioinformatics tasks.
     get:
-      summary: ''
+      summary: Create new pipeline
       operationId: get-experiments-experimentId-pipelines
       x-eov-operation-id: pipelines#get
       x-eov-operation-handler: routes/pipelines
@@ -437,3 +437,96 @@ paths:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
       description: Get all samples for an experiment
+  '/projects/{projectUuid}':
+    parameters:
+      - schema:
+          type: string
+        name: projectUuid
+        in: path
+        required: true
+    put:
+      summary: Create or update project
+      operationId: updateProject
+      x-eov-operation-id: projects#update
+      x-eov-operation-handler: routes/projects
+      responses:
+        '200':
+          description: Create or update sample object
+          content:
+            application/json:
+              schema:
+                $ref: ./models/api-body-schemas/Project.v1.yaml
+        '201':
+          description: New resource created.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/api-body-schemas/Project.v1.yaml
+        '415':
+          description: Unsupported Media Type
+        '404':
+          description: Invalid projectUuid.
+      description: Create or update a project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/api-body-schemas/Project.v1.yaml
+        description: The new configuration to update the old one by.
+  '/projects/{projectUuid}/samples':
+    parameters:
+      - schema:
+          type: string
+        name: projectUuid
+        in: path
+        required: true
+    put:
+      summary: Update sample
+      operationId: updateSample
+      x-eov-operation-id: samples#update
+      x-eov-operation-handler: routes/samples
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '415':
+          description: Unsupported Media Type
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      description: Updates a sample
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                projectUuid:
+                  type: string
+                experimentId:
+                  type: string
+                samples:
+                  $ref: ./models/api-body-schemas/Samples.v1.yaml
+    get:
+      summary: 'Get samples under a project '
+      operationId: getProjectSamples
+      x-eov-operation-id: samples#get
+      x-eov-operation-handler: routes/samples
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ./models/api-body-schemas/Samples.v1.yaml
+      description: Get all samples under a project
