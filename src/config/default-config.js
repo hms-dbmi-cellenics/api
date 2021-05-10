@@ -39,6 +39,17 @@ if (!envFound) {
 
 const awsRegion = process.env.AWS_DEFAULT_REGION || 'eu-west-1';
 
+async function getAwsPoolId() {
+  const cognitoISP = new AWS.CognitoIdentityServiceProvider({
+    region: awsRegion,
+  });
+
+  const { UserPools } = await cognitoISP.listUserPools({ MaxResults: 60 }).promise();
+  const poolId = UserPools.find((pool) => pool.Name.includes(process.env.CLUSTER_ENV || 'staging')).Id;
+
+  return poolId;
+}
+
 async function getAwsAccountId() {
   const sts = new AWS.STS({
     region: awsRegion,
@@ -57,6 +68,7 @@ const config = {
   pipelineNamespace: `pipeline-${process.env.SANDBOX_ID || 'default'}`,
   awsRegion,
   awsAccountIdPromise: getAwsAccountId(),
+  awsUserPoolIdPromise: getAwsPoolId(),
   githubToken: process.env.READONLY_API_TOKEN_GITHUB,
   api: {
     prefix: '/',
