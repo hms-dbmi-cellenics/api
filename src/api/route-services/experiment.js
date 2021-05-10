@@ -51,13 +51,10 @@ class ExperimentService {
     const key = convertToDynamoDbRecord({ experimentId });
 
     const marshalledData = convertToDynamoDbRecord({
-      ':experimentName': body.info.experimentName,
-      ':createdAt': body.info.createdAt,
-      ':lastViewed': body.info.lastViewed,
-      ':apiVersion': body.info.experimentName,
-      ':meta': {},
-      ':processingConfig': body.processingConfig,
-      ':projectId': body.info.projectId,
+      ':experimentName': body.name,
+      ':createdAt': body.createdAt,
+      ':lastViewed': body.lastViewed,
+      ':projectUuid': body.projectUuid,
     });
 
     const params = {
@@ -66,10 +63,7 @@ class ExperimentService {
       UpdateExpression: `SET experimentName = :experimentName,
                           createdAt = :createdAt,
                           lastViewed = :lastViewed,
-                          apiVersion = :apiVersion,
-                          meta = :meta,
-                          processingConfig = :processingConfig,
-                          projectId = :projectId`,
+                          projectUuid = :projectUuid`,
       ExpressionAttributeValues: marshalledData,
       ReturnValues: 'UPDATED_NEW',
     };
