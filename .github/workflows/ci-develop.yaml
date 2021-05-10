@@ -25,6 +25,7 @@ jobs:
       name: Install dependencies
       run: |-
         npm ci
+
     - id: test
       name: Run unit tests
       run: |-
@@ -47,15 +48,18 @@ jobs:
           # This will take a ref like `refs/heads/master`
           # and turn it into `refs-heads-master`
           REF_ID=$(echo $GITHUB_REF | sed 's/\//-/g')
+
           # the final tag is something like:
           # refs-heads-master-a4f8bc313dae
           # this is what we push to ECR
           echo "::set-output name=tag::$REF_ID-$GITHUB_SHA"
+
           # This will take a GitHub repo name like `biomage-ltd/iac`
           # and turns it into `iac`. This will be the name of the
           # ECR repository.
           IMAGE_REPO_NAME=$(echo $GITHUB_REPOSITORY | awk -F '/' '{print $2}')
           echo "::set-output name=repo-name::$IMAGE_REPO_NAME"
+
       - id: set-up-creds
         name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -132,12 +136,14 @@ jobs:
         run: |-
           REF_DASHED=$(echo $GITHUB_REF | sed 's/\//-/g')
           echo "::set-output name=ref-dashed::$REF_DASHED"
+
           if [ "${{ matrix.environment }}" = "develop" ]; then
             SANDBOX_ID="default"
             CHART_REF="master"
             DEPLOYMENT_NAME=$(echo $GITHUB_REPOSITORY | awk -F '/' '{print $2}')
             echo "::set-output name=deployment-name::$DEPLOYMENT_NAME"
           fi
+
           if [ "${{ matrix.environment }}" = "staging" ]; then
             SANDBOX_ID="STAGING_SANDBOX_ID"
             CHART_REF="STAGING_CHART_REF"
@@ -161,6 +167,7 @@ jobs:
           | yq w -d1 - spec.values.image.tag "$REF_DASHED-$GITHUB_SHA" \
           | yq w -d1 - spec.values.serviceAccount.iamRole "arn:aws:iam::${{ steps.setup-aws.outputs.aws-account-id }}:role/api-role-staging" \
           > $DEPLOYMENT_NAME.yaml
+
           cat $DEPLOYMENT_NAME.yaml
         env:
           IMAGE_NAME: ${{ format('{0}/{1}:{2}', steps.login-ecr.outputs.registry, needs.build-docker.outputs.repo-name, needs.build-docker.outputs.tag) }}
@@ -197,6 +204,7 @@ jobs:
           REF_DASHED: ${{ steps.fill-metadata.outputs.ref-dashed }}
         run: |-
           mv $DEPLOYMENT_NAME.yaml $REF_DASHED.yaml
+
       - name: Push staging deployment template to iac
         if:
           matrix.environment == 'staging'
@@ -220,3 +228,4 @@ jobs:
           repo: iac
           enforce_admins: true
           retries: 8
+
