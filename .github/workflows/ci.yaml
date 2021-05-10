@@ -3,13 +3,10 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
 jobs:
   test:
     name: Run tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       CI: "true"
     steps:
@@ -35,7 +32,7 @@ jobs:
 
   build-docker:
     name: Build Docker container
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: test
     steps:
       - id: checkout
@@ -103,7 +100,7 @@ jobs:
 
   deploy:
     name: Deploy to Kubernetes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: build-docker
     strategy:
       max-parallel: 1

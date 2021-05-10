@@ -5,11 +5,18 @@ const logger = require('../../utils/logging');
 
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
-
-const pipelineStatus = require('../general-services/pipeline-status');
+const PipelineHook = require('../../utils/hookRunner');
 
 const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
+
+const pipelineStatus = require('../general-services/pipeline-status');
+const embeddingWorkRequest = require('../../utils/hooks/embeddingWorkRequest');
+const clusteringWorkRequest = require('../../utils/hooks/clusteringWorkRequest');
+
+const pipelineHook = new PipelineHook();
+pipelineHook.register('configureEmbedding', embeddingWorkRequest);
+pipelineHook.register('configureEmbedding', clusteringWorkRequest);
 
 const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');
@@ -78,8 +85,12 @@ const pipelineResponse = async (io, message) => {
     ]);
   }
 
-
   const statusRes = await pipelineStatus(experimentId);
+  pipelineHook.run(taskName, {
+    experimentId,
+    output,
+    statusRes,
+  });
 
   // Concatenate into a proper response.
   const response = {

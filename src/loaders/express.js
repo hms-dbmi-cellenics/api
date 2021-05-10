@@ -93,11 +93,10 @@ module.exports = async (app) => {
   }));
 
   // Custom error handler.
-  // eslint-disable-next-line no-unused-vars
-
 
   app.use((err, req, res, next) => {
     console.error('Error thrown in HTTP request');
+    console.error(req.body || 'Empty body');
     console.error(err);
 
     // format errors
