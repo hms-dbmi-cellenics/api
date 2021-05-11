@@ -1,21 +1,14 @@
-const mockUpdateProject = jest.fn((projectUuid, body) => {
-  if (!projectUuid
-    || !body
-  ) {
-    throw new Error('Invalid body');
+const { NotFoundError, OK } = require('../../../utils/responses');
+
+const mockUpdateProject = jest.fn((projectUuid) => new Promise((resolve) => {
+  console.log(projectUuid);
+
+  if (projectUuid === 'unknownProjectUuid') {
+    throw new NotFoundError('Project not found');
   }
 
-  return Promise.resolve({
-    name: 'Test project',
-    description: '',
-    createdDate: '',
-    lastModified: '',
-    uuid: 'project-1',
-    experiments: [],
-    lastAnalyzed: null,
-    samples: [],
-  });
-});
+  resolve(OK());
+}));
 
 const mock = jest.fn().mockImplementation(() => ({
   updateProject: mockUpdateProject,

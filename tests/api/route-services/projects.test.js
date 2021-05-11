@@ -2,6 +2,7 @@ const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../../src/utils/requireAWS');
 
 const ProjectsService = require('../../../src/api/route-services/projects');
+const { NotFoundError, OK } = require('../../../src/utils/responses');
 
 describe('tests for the projects service', () => {
   afterEach(() => {
@@ -21,7 +22,7 @@ describe('tests for the projects service', () => {
     return getItemSpy;
   };
 
-  it('udpateProject work', async (done) => {
+  it('Updates properly', async (done) => {
     const jsData = {
       name: 'Test project',
       description: '',
@@ -33,6 +34,10 @@ describe('tests for the projects service', () => {
       samples: [],
     };
 
+    const marshalledKey = AWS.DynamoDB.Converter.marshall({
+      projectUuid: 'project-1',
+    });
+
     const marshalledData = AWS.DynamoDB.Converter.marshall({
       ':project': jsData,
     });
@@ -40,18 +45,35 @@ describe('tests for the projects service', () => {
     const getItemSpy = mockDynamoUpdateItem(jsData);
 
     (new ProjectsService()).updateProject('project-1', jsData)
-      .then((data) => {
-        expect(data).toEqual(jsData);
+      .then((res) => {
+        expect(res).toEqual(OK());
         expect(getItemSpy).toHaveBeenCalledWith({
           TableName: 'projects-test',
-          Key: {
-            projectUuid: { S: 'project-1' },
-          },
+          Key: marshalledKey,
           UpdateExpression: 'SET projects = :project',
           ExpressionAttributeValues: marshalledData,
-          ReturnValues: 'UPDATED_NEW',
         });
       })
       .then(() => done());
+  });
+
+
+  it('Returns 404 if project is not found', async (done) => {
+    const jsData = {
+      name: 'Test project',
+      description: '',
+      createdDate: '',
+      lastModified: '',
+      uuid: 'project-1',
+      experiments: [],
+      lastAnalyzed: null,
+      samples: [],
+    };
+
+    (new ProjectsService()).updateProject('unknown-project', jsData)
+      .then(() => done())
+      .catch((err) => {
+        expect(Object.is(err, NotFoundError)).toBe(true);
+      });
   });
 });

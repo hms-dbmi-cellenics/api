@@ -57,6 +57,10 @@ describe('tests for the samples service', () => {
       },
     };
 
+    const marshalledData = AWS.DynamoDB.Converter.marshall({
+      ':projectUuid': 'project-1',
+    });
+
     const getItemSpy = mockDynamoQuery(jsData);
 
     (new SamplesService()).getSamples('project-1')
@@ -64,10 +68,9 @@ describe('tests for the samples service', () => {
         expect(data).toEqual(jsData);
         expect(getItemSpy).toHaveBeenCalledWith({
           TableName: 'samples-test',
+          IndexName: 'gsiExperimentid',
           KeyConditionExpression: 'projectUuid = :projectUuid',
-          ExpressionAttributeValues: {
-            ':projectUuid': { S: 'project-1' },
-          },
+          ExpressionAttributeValues: marshalledData,
           ProjectionExpression: 'samples',
         });
       })
@@ -81,21 +84,25 @@ describe('tests for the samples service', () => {
       },
     };
 
+    const marshalledKey = AWS.DynamoDB.Converter.marshall({
+      experimentId: 'project-1',
+    });
+
     const getItemSpy = mockDynamoGetItem(jsData);
 
-    (new SamplesService()).getSampleIds('project-1')
+    (new SamplesService()).getByExperimentId('project-1')
       .then((data) => {
         expect(data).toEqual(jsData);
         expect(getItemSpy).toHaveBeenCalledWith({
           TableName: 'samples-test',
-          Key: { experimentId: { S: 'project-1' } },
-          ProjectionExpression: 'samples.ids',
+          Key: marshalledKey,
+          ProjectionExpression: 'samples',
         });
       })
       .then(() => done());
   });
 
-  it('udpateSamples work', async (done) => {
+  it('updateSamples work', async (done) => {
     const jsData = {
       projectUuid: 'project-1',
       experimentId: 'experiment-1',
@@ -105,6 +112,18 @@ describe('tests for the samples service', () => {
         'sample-2': { name: 'sample-2' },
       },
     };
+
+    const expectedResponse = {
+      data: {
+        message: 'success',
+        code: 200,
+      },
+    };
+
+    const marshalledKey = AWS.DynamoDB.Converter.marshall({
+      experimentId: 'experiment-1',
+    });
+
     const marshalledData = AWS.DynamoDB.Converter.marshall({
       ':samples': jsData.samples,
       ':projectUuid': jsData.projectUuid,
@@ -114,13 +133,12 @@ describe('tests for the samples service', () => {
 
     (new SamplesService()).updateSamples('project-1', jsData)
       .then((data) => {
-        expect(data).toEqual(jsData.samples);
+        expect(data).toEqual(expectedResponse);
         expect(getItemSpy).toHaveBeenCalledWith({
           TableName: 'samples-test',
-          Key: { experimentId: { S: 'experiment-1' } },
+          Key: marshalledKey,
           UpdateExpression: 'SET samples = :samples, projectUuid = :projectUuid',
           ExpressionAttributeValues: marshalledData,
-          ReturnValues: 'UPDATED_NEW',
         });
       })
       .then(() => done());

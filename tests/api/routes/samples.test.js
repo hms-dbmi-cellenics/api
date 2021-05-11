@@ -17,51 +17,31 @@ describe('tests for samples route', () => {
     jest.restoreAllMocks();
   });
 
-  it('Get samples by experimentId works', async (done) => {
-    request(app)
-      .get('/v1/experiments/someId/samples')
-      .expect(200)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        // there is no point testing for the values of the response body
-        // - if something is wrong, the schema validator will catch it
-        return done();
-      });
-  });
+  // it('Get samples by experimentId returns 200', async (done) => {
+  //   request(app)
+  //     .get('/v1/experiments/someId/samples')
+  //     .expect(200)
+  //     .end((err) => {
+  //       if (err) {
+  //         return done(err);
+  //       }
+  //       return done();
+  //     });
+  // });
 
-  it('Updating samples send error 415 if body does not contain data', async (done) => {
-    request(app)
-      .put('/v1/projects/someId/samples')
-      .expect(415)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        return done();
-      });
-  });
+  // it('Requesting sample for a non-existing experimentId returns 404', async (done) => {
+  //   request(app)
+  //     .get('/v1/experiments/nonExistentId/samples')
+  //     .expect(404)
+  //     .end((err) => {
+  //       if (err) {
+  //         return done(err);
+  //       }
+  //       return done();
+  //     });
+  // });
 
-
-  it('Updating samples send error 500 if body is invalid', async (done) => {
-    const invalidPayload = {
-      invalid: 'payload',
-    };
-
-    request(app)
-      .put('/v1/projects/someId/samples')
-      .expect(500)
-      .send(invalidPayload)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        return done();
-      });
-  });
-
-  it('Updating samples works', async (done) => {
+  it('Updating correct samples return 200 ', async (done) => {
     const payload = {
       projectUuid: 'project-uuid',
       experimentId: 'experiment-id',
@@ -82,8 +62,35 @@ describe('tests for samples route', () => {
           console.log(err);
           return done(err);
         }
-        // there is no point testing for the values of the response body
-        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
+  it('Updating samples with invalid body returns error 400', async (done) => {
+    const invalidPayload = {
+      invalid: 'payload',
+    };
+
+    request(app)
+      .put('/v1/projects/someId/samples')
+      .expect(400)
+      .send(invalidPayload)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Updating samples with body without data returns error 415', async (done) => {
+    request(app)
+      .put('/v1/projects/someId/samples')
+      .expect(415)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
         return done();
       });
   });

@@ -1,8 +1,9 @@
 const config = require('../../config');
 const {
-  createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord,
+  createDynamoDbInstance, convertToDynamoDbRecord,
 } = require('../../utils/dynamoDb');
 
+const { OK, NotFoundError } = require('../../utils/responses');
 
 class ProjectsService {
   constructor() {
@@ -10,26 +11,30 @@ class ProjectsService {
   }
 
   async updateProject(projectUuid, project) {
+    const marshalledKey = convertToDynamoDbRecord({
+      projectUuid,
+    });
+
     const marshalledData = convertToDynamoDbRecord({
       ':project': project,
     });
 
     const params = {
       TableName: this.tableName,
-      Key: {
-        projectUuid: { S: projectUuid },
-      },
+      Key: marshalledKey,
       UpdateExpression: 'SET projects = :project',
       ExpressionAttributeValues: marshalledData,
-      ReturnValues: 'UPDATED_NEW',
     };
 
     const dynamodb = createDynamoDbInstance();
-    const result = await dynamodb.updateItem(params).promise();
 
-    const prettyData = convertToJsObject(result.Attributes);
-
-    return prettyData.projects;
+    try {
+      await dynamodb.updateItem(params).send();
+      return OK();
+    } catch (e) {
+      if (e.statusCode === 404) throw NotFoundError('Project not found');
+      throw e;
+    }
   }
 }
 

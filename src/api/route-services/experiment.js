@@ -8,7 +8,7 @@ const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord, configArrayToUpdateObjs,
 } = require('../../utils/dynamoDb');
 
-const NotFoundError = require('../../utils/NotFoundError');
+const NotFoundError = require('../../utils/responses/NotFoundError');
 
 const getExperimentAttributes = async (tableName, experimentId, attributes) => {
   const dynamodb = createDynamoDbInstance();

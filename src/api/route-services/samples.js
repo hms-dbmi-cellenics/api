@@ -1,3 +1,5 @@
+const { NotFoundError, OK } = require('../../utils/responses');
+
 const config = require('../../config');
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord,
@@ -10,12 +12,15 @@ class SamplesService {
   }
 
   async getSamples(projectUuid) {
+    const marshalledData = convertToDynamoDbRecord({
+      ':projectUuid': projectUuid,
+    });
+
     const params = {
       TableName: this.tableName,
+      IndexName: 'gsiExperimentid',
       KeyConditionExpression: 'projectUuid = :projectUuid',
-      ExpressionAttributeValues: {
-        ':projectUuid': { S: projectUuid },
-      },
+      ExpressionAttributeValues: marshalledData,
       ProjectionExpression: 'samples',
     };
     const dynamodb = createDynamoDbInstance();
@@ -27,18 +32,18 @@ class SamplesService {
       return prettyResponse;
     }
 
-    throw Error('Sample not found');
+    throw new NotFoundError('Samples not found');
   }
 
-  async getSampleIds(experimentId) {
-    const key = convertToDynamoDbRecord({
+  async getByExperimentId(experimentId) {
+    const marshalledKey = convertToDynamoDbRecord({
       experimentId,
     });
 
     const params = {
       TableName: this.tableName,
-      Key: key,
-      ProjectionExpression: 'samples.ids',
+      Key: marshalledKey,
+      ProjectionExpression: 'samples',
     };
     const dynamodb = createDynamoDbInstance();
 
@@ -49,10 +54,14 @@ class SamplesService {
       return prettyResponse;
     }
 
-    throw Error('Sample not found');
+    throw new NotFoundError('Samples not found');
   }
 
   async updateSamples(projectUuid, body) {
+    const marshalledKey = convertToDynamoDbRecord({
+      experimentId: body.experimentId,
+    });
+
     const marshalledData = convertToDynamoDbRecord({
       ':samples': body.samples,
       ':projectUuid': projectUuid,
@@ -61,20 +70,20 @@ class SamplesService {
     // Update samples
     const params = {
       TableName: this.tableName,
-      Key: {
-        experimentId: { S: body.experimentId },
-      },
+      Key: marshalledKey,
       UpdateExpression: 'SET samples = :samples, projectUuid = :projectUuid',
       ExpressionAttributeValues: marshalledData,
-      ReturnValues: 'UPDATED_NEW',
     };
 
     const dynamodb = createDynamoDbInstance();
-    const result = await dynamodb.updateItem(params).promise();
 
-    const prettyData = convertToJsObject(result.Attributes);
-
-    return prettyData.samples;
+    try {
+      await dynamodb.updateItem(params).send();
+      return OK();
+    } catch (e) {
+      if (e.statusCode === 404) throw NotFoundError('Project not found');
+      throw e;
+    }
   }
 }
 
