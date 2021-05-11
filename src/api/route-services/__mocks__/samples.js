@@ -53,7 +53,7 @@ const mockUpdateSamples = jest.fn((projectUuid, body) => new Promise((resolve, r
 
 const mock = jest.fn().mockImplementation(() => ({
   getSamples: mockGetSamples,
-  getByExperimentId: mockGetByExperimentId,
+  getSamplesByExperimentId: mockGetByExperimentId,
   updateSamples: mockUpdateSamples,
 }));
 

@@ -2,50 +2,17 @@ const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../../src/utils/requireAWS');
 
 const SamplesService = require('../../../src/api/route-services/samples');
+const {
+  mockDynamoGetItem,
+  mockDynamoQuery,
+  mockDynamoUpdateItem,
+} = require('../../test-utils/mockAWSServices');
 
 describe('tests for the samples service', () => {
   afterEach(() => {
     AWSMock.restore('DynamoDB');
   });
 
-  const mockDynamoGetItem = (jsData) => {
-    const dynamodbData = {
-      Item: AWS.DynamoDB.Converter.marshall(jsData),
-    };
-    const getItemSpy = jest.fn((x) => x);
-    AWSMock.setSDKInstance(AWS);
-    AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
-      getItemSpy(params);
-      callback(null, dynamodbData);
-    });
-    return getItemSpy;
-  };
-
-  const mockDynamoQuery = (jsData) => {
-    const dynamodbData = {
-      Item: AWS.DynamoDB.Converter.marshall(jsData),
-    };
-    const getItemSpy = jest.fn((x) => x);
-    AWSMock.setSDKInstance(AWS);
-    AWSMock.mock('DynamoDB', 'query', (params, callback) => {
-      getItemSpy(params);
-      callback(null, dynamodbData);
-    });
-    return getItemSpy;
-  };
-
-  const mockDynamoUpdateItem = (jsData) => {
-    const dynamodbData = {
-      Attributes: AWS.DynamoDB.Converter.marshall(jsData),
-    };
-    const getItemSpy = jest.fn((x) => x);
-    AWSMock.setSDKInstance(AWS);
-    AWSMock.mock('DynamoDB', 'updateItem', (params, callback) => {
-      getItemSpy(params);
-      callback(null, dynamodbData);
-    });
-    return getItemSpy;
-  };
 
   it('Get samples works', async (done) => {
     const jsData = {
@@ -90,7 +57,7 @@ describe('tests for the samples service', () => {
 
     const getItemSpy = mockDynamoGetItem(jsData);
 
-    (new SamplesService()).getByExperimentId('project-1')
+    (new SamplesService()).getSamplesByExperimentId('project-1')
       .then((data) => {
         expect(data).toEqual(jsData);
         expect(getItemSpy).toHaveBeenCalledWith({

@@ -35,7 +35,7 @@ class SamplesService {
     throw new NotFoundError('Samples not found');
   }
 
-  async getByExperimentId(experimentId) {
+  async getSamplesByExperimentId(experimentId) {
     const marshalledKey = convertToDynamoDbRecord({
       experimentId,
     });

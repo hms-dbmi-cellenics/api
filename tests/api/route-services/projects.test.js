@@ -2,25 +2,13 @@ const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../../src/utils/requireAWS');
 
 const ProjectsService = require('../../../src/api/route-services/projects');
+const { mockDynamoUpdateItem } = require('../../test-utils/mockAWSServices');
 const { NotFoundError, OK } = require('../../../src/utils/responses');
 
 describe('tests for the projects service', () => {
   afterEach(() => {
     AWSMock.restore('DynamoDB');
   });
-
-  const mockDynamoUpdateItem = (jsData) => {
-    const dynamodbData = {
-      Attributes: AWS.DynamoDB.Converter.marshall({ projects: jsData }),
-    };
-    const getItemSpy = jest.fn((x) => x);
-    AWSMock.setSDKInstance(AWS);
-    AWSMock.mock('DynamoDB', 'updateItem', (params, callback) => {
-      getItemSpy(params);
-      callback(null, dynamodbData);
-    });
-    return getItemSpy;
-  };
 
   it('Updates properly', async (done) => {
     const jsData = {
@@ -42,7 +30,7 @@ describe('tests for the projects service', () => {
       ':project': jsData,
     });
 
-    const getItemSpy = mockDynamoUpdateItem(jsData);
+    const getItemSpy = mockDynamoUpdateItem({ projects: jsData });
 
     (new ProjectsService()).updateProject('project-1', jsData)
       .then((res) => {

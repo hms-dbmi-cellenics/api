@@ -400,8 +400,8 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      operationId: getByExperimentId
-      x-eov-operation-id: samples#getByExperimentId
+      operationId: getSamplesByExperimentId
+      x-eov-operation-id: samples#getSamplesByExperimentId
       x-eov-operation-handler: routes/samples
       tags: []
       responses:

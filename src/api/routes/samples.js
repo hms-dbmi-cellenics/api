@@ -8,8 +8,8 @@ module.exports = {
       .then((data) => res.json(data))
       .catch(next);
   },
-  'samples#getByExperimentId': (req, res, next) => {
-    samplesService.getByExperimentId(req.params.experimentId)
+  'samples#getSamplesByExperimentId': (req, res, next) => {
+    samplesService.getSamplesByExperimentId(req.params.experimentId)
       .then((data) => res.json(data))
       .catch(next);
   },
