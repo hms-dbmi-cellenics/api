@@ -1,0 +1,8 @@
+title: HTTP Success
+type: object
+description: Schema for sucess in HTTP endpoints
+properties:
+  data:
+    type: object
+required:
+  - data

@@ -419,8 +419,8 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      operationId: getSamples
-      x-eov-operation-id: samples#get
+      operationId: getByExperimentId
+      x-eov-operation-id: samples#getByExperimentId
       x-eov-operation-handler: routes/samples
       tags: []
       responses:
@@ -429,8 +429,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/SampleResponse.v1.yaml
-        '400':
+                $ref: ./models/api-body-schemas/Samples.v1.yaml
+        '404':
           description: Samples not found.
           content:
             application/json:
@@ -455,17 +455,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/api-body-schemas/Project.v1.yaml
-        '201':
-          description: New resource created.
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '400':
+          description: Bad Request
           content:
             application/json:
               schema:
-                $ref: ./models/api-body-schemas/Project.v1.yaml
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '415':
           description: Unsupported Media Type
-        '404':
-          description: Invalid projectUuid.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
       description: Create or update a project
       requestBody:
         content:
@@ -491,17 +499,25 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties: {}
-        '415':
-          description: Unsupported Media Type
-        '500':
-          description: Internal Server Error
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '400':
+          description: Bad Request
           content:
             application/json:
               schema:
-                type: object
-                properties: {}
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
       description: Updates a sample
       requestBody:
         content:
@@ -526,7 +542,5 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
                   $ref: ./models/api-body-schemas/Samples.v1.yaml
       description: Get all samples under a project

@@ -289,7 +289,7 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
   logger.log(`Fetching processing settings for ${experimentId}`);
   const { processingConfig } = await experimentService.getProcessingConfig(experimentId);
 
-  const samplesRes = await samplesService.getSampleIds(experimentId);
+  const samplesRes = await samplesService.getByExperimentId(experimentId);
   const { samples } = samplesRes;
 
   if (processingConfigUpdates) {
