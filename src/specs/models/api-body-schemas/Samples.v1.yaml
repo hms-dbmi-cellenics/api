@@ -16,6 +16,7 @@ additionalProperties:
     uuid:
       type: string
     species:
+      nullable: true
       type: string
     createdDate:
       type: string
