@@ -20,6 +20,12 @@
 			"MD003": { "style": "setext_with_atx" },
 			"MD034": false,
 			"MD046": false
-		}
+		},
+		"[yaml]" : {
+			"editor.formatOnType" : true,
+		},
+		"yaml.format.enable": true,
+		"yaml.format.singleQuote": true,
+		"yaml.validate": true
 	}
 }

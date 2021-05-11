@@ -513,7 +513,7 @@ paths:
                 samples:
                   $ref: ./models/api-body-schemas/Samples.v1.yaml
     get:
-      summary: 'Get samples under a project '
+      summary: Get samples under a project
       operationId: getProjectSamples
       x-eov-operation-id: samples#get
       x-eov-operation-handler: routes/samples
@@ -523,11 +523,11 @@ paths:
           content:
             application/json:
               schema:
-                  $ref: ./models/api-body-schemas/Samples.v1.yaml
+                $ref: ./models/api-body-schemas/Samples.v1.yaml
         '404':
           description: Not Found
           content:
             application/json:
               schema:
-                  $ref: ./models/HTTPError.v1.yaml
+                $ref: ./models/HTTPError.v1.yaml
       description: Get all samples under a project
