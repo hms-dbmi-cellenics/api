@@ -5,7 +5,7 @@ const OpenApiValidator = require('express-openapi-validator');
 const http = require('http');
 const AWSXRay = require('aws-xray-sdk');
 const config = require('../config');
-const { authenticationMiddleware } = require('../utils/authMiddlewares');
+const { authenticationMiddlewareExpress } = require('../utils/authMiddlewares');
 
 module.exports = async (app) => {
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
@@ -59,7 +59,7 @@ module.exports = async (app) => {
   });
 
   // Authentication middleware.
-  const authMw = await authenticationMiddleware(app);
+  const authMw = await authenticationMiddlewareExpress(app);
   app.use(authMw);
 
   app.use(OpenApiValidator.middleware({
