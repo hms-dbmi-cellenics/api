@@ -72,7 +72,7 @@ module.exports = async (app) => {
   // Custom error handler.
 
   app.use((err, req, res, next) => {
-    console.error('Error thrown in HTTP request');
+    console.error(`Error thrown in HTTP request (${req.method} ${req.path})`);
     console.error(req.body || 'Empty body');
     console.error(err);
 

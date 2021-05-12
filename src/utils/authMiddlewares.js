@@ -1,4 +1,7 @@
-// const ExperimentService = require('../api/route-services/experiment');
+// See details at https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-verifying-a-jwt.html
+// for how JWT verification works with Cognito.
+
+const fetch = require('node-fetch');
 const jwt = require('jsonwebtoken');
 const jwtExpress = require('express-jwt');
 const jwkToPem = require('jwk-to-pem');
@@ -6,9 +9,10 @@ const util = require('util');
 const config = require('../config');
 const CacheSingleton = require('../cache');
 const { CacheMissError } = require('../cache/cache-utils');
+const { UnauthorizedError, UnauthenticedError } = require('./errors');
+const ExperimentService = require('../api/route-services/experiment');
 
-// See details at https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-verifying-a-jwt.html
-// for how JWT verification works with Cognito.
+const experimentService = new ExperimentService();
 
 const authenticationMiddlewareExpress = async (app) => {
   app.set('keys', {});
@@ -89,4 +93,30 @@ const authenticationMiddlewareSocketIO = async (authHeader) => {
   return result;
 };
 
-module.exports = { authenticationMiddlewareExpress, authenticationMiddlewareSocketIO };
+const authorizationMiddleware = async (req, res, next) => {
+  if (!req.user) {
+    next(new UnauthenticedError('The request does not contain an authentication token.'));
+    return;
+  }
+
+  const { 'cognito:username': userName, email } = req.user;
+
+  const { experimentId } = req.params;
+  const {
+    rbac_can_write: canWrite,
+  } = await experimentService.getExperimentPermissions(experimentId);
+
+  // If the logged in user has the permissions, forward request.
+  if (canWrite.includes(userName)) {
+    next();
+    return;
+  }
+
+  next(new UnauthorizedError(`User ${userName} (${email}) does not have access to experiment ${experimentId}.`));
+};
+
+module.exports = {
+  authenticationMiddlewareExpress,
+  authenticationMiddlewareSocketIO,
+  authorizationMiddleware,
+};
