@@ -464,54 +464,11 @@ paths:
         description: The new configuration to update the old one by.
   '/projects/{projectUuid}/samples':
     parameters:
-      - schema:
-          type: string
-        name: projectUuid
+      - name: projectUuid
         in: path
         required: true
-    put:
-      summary: Update sample
-      operationId: updateSample
-      x-eov-operation-id: samples#update
-      x-eov-operation-handler: routes/samples
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPSuccess.v1.yaml
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
-        '415':
-          description: Unsupported Media Type
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
-      description: Updates a sample
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                projectUuid:
-                  type: string
-                experimentId:
-                  type: string
-                samples:
-                  $ref: ./models/api-body-schemas/Samples.v1.yaml
+        schema:
+          type: string
     get:
       summary: Get samples under a project
       operationId: getProjectSamples
@@ -531,3 +488,58 @@ paths:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
       description: Get all samples under a project
+  '/projects/{projectUuid}/{experimentId}/samples':
+      parameters:
+        - name: projectUuid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: experimentId
+          in: path
+          required: true
+          schema:
+            type: string
+      put:
+        summary: Update sample
+        operationId: updateSample
+        x-eov-operation-id: samples#update
+        x-eov-operation-handler: routes/samples
+        responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: ./models/HTTPSuccess.v1.yaml
+          '400':
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  $ref: ./models/HTTPError.v1.yaml
+          '404':
+            description: Not Found
+            content:
+              application/json:
+                schema:
+                  $ref: ./models/HTTPError.v1.yaml
+          '415':
+            description: Unsupported Media Type
+            content:
+              application/json:
+                schema:
+                  $ref: ./models/HTTPError.v1.yaml
+        description: Updates a sample
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projectUuid:
+                    type: string
+                  experimentId:
+                    type: string
+                  samples:
+                    $ref: ./models/api-body-schemas/Samples.v1.yaml

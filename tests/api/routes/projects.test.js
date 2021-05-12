@@ -35,11 +35,8 @@ describe('tests for projects route', () => {
       .expect(200)
       .end((err) => {
         if (err) {
-          console.log(err);
           return done(err);
         }
-        // there is no point testing for the values of the response body
-        // - if something is wrong, the schema validator will catch it
         return done();
       });
   });

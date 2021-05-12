@@ -1,8 +1,6 @@
 const { NotFoundError, OK } = require('../../../utils/responses');
 
 const mockUpdateProject = jest.fn((projectUuid) => new Promise((resolve) => {
-  console.log(projectUuid);
-
   if (projectUuid === 'unknownProjectUuid') {
     throw new NotFoundError('Project not found');
   }
