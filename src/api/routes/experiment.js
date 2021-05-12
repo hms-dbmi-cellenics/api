@@ -1,11 +1,11 @@
 const ExperimentService = require('../route-services/experiment');
-const { authorizationMiddleware } = require('../../utils/authMiddlewares');
+const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
 
 const experimentService = new ExperimentService();
 
 module.exports = {
   'experiment#findByID': [
-    authorizationMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => {
       experimentService.getExperimentData(req.params.experimentId)
         .then((data) => res.json(data))
@@ -13,7 +13,7 @@ module.exports = {
     },
   ],
   'experiment#getCellSets': [
-    authorizationMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => {
       experimentService.getCellSets(req.params.experimentId)
         .then((data) => res.json(data))
@@ -21,7 +21,7 @@ module.exports = {
     },
   ],
   'experiment#updateCellSets': [
-    authorizationMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => {
       experimentService.updateCellSets(req.params.experimentId, req.body)
         .then((data) => res.json(data))
@@ -29,7 +29,7 @@ module.exports = {
     },
   ],
   'experiment#getProcessingConfig': [
-    authorizationMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => {
       experimentService.getProcessingConfig(req.params.experimentId)
         .then((data) => res.json(data))
@@ -37,7 +37,7 @@ module.exports = {
     },
   ],
   'experiment#updateProcessingConfig': [
-    authorizationMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => {
       experimentService.updateProcessingConfig(req.params.experimentId, req.body)
         .then((data) => res.json(data))

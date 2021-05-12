@@ -14,6 +14,10 @@ const ExperimentService = require('../api/route-services/experiment');
 
 const experimentService = new ExperimentService();
 
+/**
+ * Authentication middleware for Express. Returns a middleware that
+ * can be used in the API to authenticate Cognito-issued JWTs.
+ */
 const authenticationMiddlewareExpress = async (app) => {
   app.set('keys', {});
   const poolId = await config.awsUserPoolIdPromise;
@@ -55,6 +59,14 @@ const authenticationMiddlewareExpress = async (app) => {
   });
 };
 
+/**
+ * Authentication middleware for Socket.IO requests. Resolves with
+ * the JWT claim if the authentication was successful, or rejects with
+ * the error otherwise.
+ *
+ * @param {*} authHeader The bearer-encoded JWT token.
+ * @returns Promise that resolves or rejects based on authentication status.
+ */
 const authenticationMiddlewareSocketIO = async (authHeader) => {
   const poolId = await config.awsUserPoolIdPromise;
   const cache = CacheSingleton.get();
@@ -93,30 +105,52 @@ const authenticationMiddlewareSocketIO = async (authHeader) => {
   return result;
 };
 
-const authorizationMiddleware = async (req, res, next) => {
-  if (!req.user) {
-    next(new UnauthenticedError('The request does not contain an authentication token.'));
-    return;
-  }
+/**
+ * General authorization middleware. Resolves with nothing on
+ * successful authorization, or an exception on unauthorized access.
+ *
+ * @param {*} experimentId The ID of the experiment to check.
+ * @param {*} claim The JWT claim identifying the user.
+ * @returns Promise that resolves or rejects based on authentication status.
+ * @throws {UnauthorizedError} Authorization failed.
+ */
+const authorize = async (experimentId, claim) => {
+  const { 'cognito:username': userName, email } = claim;
 
-  const { 'cognito:username': userName, email } = req.user;
-
-  const { experimentId } = req.params;
   const {
     rbac_can_write: canWrite,
   } = await experimentService.getExperimentPermissions(experimentId);
 
   // If the logged in user has the permissions, forward request.
   if (canWrite.includes(userName)) {
-    next();
     return;
   }
 
-  next(new UnauthorizedError(`User ${userName} (${email}) does not have access to experiment ${experimentId}.`));
+  throw new UnauthorizedError(`User ${userName} (${email}) does not have access to experiment ${experimentId}.`);
+};
+
+/**
+ * Wrapper for the general authorization middleware for use in Express.
+ * Calls `authorize()` internally.
+ */
+const expressAuthorizationMiddleware = async (req, res, next) => {
+  if (!req.user) {
+    next(new UnauthenticedError('The request does not contain an authentication token.'));
+    return;
+  }
+
+  try {
+    await authorize(req.params.experimentId, req.user);
+    next();
+    return;
+  } catch (e) {
+    next(e);
+  }
 };
 
 module.exports = {
   authenticationMiddlewareExpress,
   authenticationMiddlewareSocketIO,
-  authorizationMiddleware,
+  expressAuthorizationMiddleware,
+  authorize,
 };

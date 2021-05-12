@@ -5,12 +5,12 @@ const getBackendStatus = require('../general-services/backend-status');
 const pipelineResponse = require('../route-services/pipeline-response');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 const logger = require('../../utils/logging');
-const { authorizationMiddleware } = require('../../utils/authMiddlewares');
+const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
 
 
 module.exports = {
   'pipelines#get': [
-    authorizationMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => {
       getBackendStatus(req.params.experimentId)
         .then((data) => res.json(data))
@@ -18,7 +18,7 @@ module.exports = {
     },
   ],
   'pipelines#create': [
-    authorizationMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => {
       const { processingConfig } = req.body;
 

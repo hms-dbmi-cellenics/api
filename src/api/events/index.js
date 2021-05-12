@@ -2,7 +2,7 @@ const AWSXRay = require('aws-xray-sdk');
 const handleWorkRequest = require('../event-services/work-request');
 const logger = require('../../utils/logging');
 const config = require('../../config');
-const { authenticationMiddlewareSocketIO } = require('../../utils/authMiddlewares');
+const { authenticationMiddlewareSocketIO, authorize } = require('../../utils/authMiddlewares');
 
 module.exports = (socket) => {
   socket.on('WorkRequest', (data) => {
@@ -22,17 +22,18 @@ module.exports = (socket) => {
         },
       });
 
-      const { uuid, Authorization } = data;
+      const { uuid, Authorization, experimentId } = data;
       segment.addMetadata('podName', config.podName);
       segment.addMetadata('request', data);
 
       try {
-        // Authenticate the user.
+        // Authenticate and authorize the user the user.
         if (!Authorization) {
           throw new Error('Authentication token must be present.');
         }
+        const jwtClaim = await authenticationMiddlewareSocketIO(Authorization, socket);
+        await authorize(experimentId, jwtClaim);
 
-        await authenticationMiddlewareSocketIO(Authorization, socket);
         await handleWorkRequest(data, socket);
       } catch (e) {
         logger.error('Error while processing WorkRequest event:');
