@@ -5,72 +5,72 @@ const mockDynamoGetItem = (payload = {}, error = null) => {
   const dynamodbData = {
     Item: AWS.DynamoDB.Converter.marshall(payload),
   };
-  const getItemSpy = jest.fn((x) => x);
+  const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
   AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
-    getItemSpy(params);
+    fnSpy(params);
     callback(error, dynamodbData);
   });
-  return getItemSpy;
+  return fnSpy;
 };
 
 const mockDynamoDeleteItem = (payload = {}, error = null) => {
-  const getItemSpy = jest.fn((x) => x);
+  const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
   AWSMock.mock('DynamoDB', 'deleteItem', (params, callback) => {
-    getItemSpy(params);
+    fnSpy(params);
     callback(error, payload);
   });
-  return getItemSpy;
+  return fnSpy;
 };
 
 const mockDynamoQuery = (payload = {}, error = null) => {
   const dynamodbData = {
     Item: AWS.DynamoDB.Converter.marshall(payload),
   };
-  const getItemSpy = jest.fn((x) => x);
+  const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
   AWSMock.mock('DynamoDB', 'query', (params, callback) => {
-    getItemSpy(params);
+    fnSpy(params);
     callback(error, dynamodbData);
   });
-  return getItemSpy;
+  return fnSpy;
 };
 
 const mockDynamoUpdateItem = (payload = {}, error = null) => {
   const dynamodbData = {
     Attributes: AWS.DynamoDB.Converter.marshall(payload),
   };
-  const getItemSpy = jest.fn((x) => x);
+  const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
   AWSMock.mock('DynamoDB', 'updateItem', (params, callback) => {
-    getItemSpy(params);
+    fnSpy(params);
     callback(error, dynamodbData);
   });
-  return getItemSpy;
+  return fnSpy;
 };
 
 const mockS3GetObject = (payload = {}, error = null) => {
-  const getObjectSpy = jest.fn((x) => x);
+  const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
   AWSMock.mock('S3', 'getObject', (params, callback) => {
-    getObjectSpy(params);
+    fnSpy(params);
     callback(error, payload);
   });
 
-  return getObjectSpy;
+  return fnSpy;
 };
 
 const mockS3PutObject = (payload = {}, error = null) => {
-  const putObjectSpy = jest.fn((x) => x);
+  const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
 
   AWSMock.mock('S3', 'putObject', (params, callback) => {
-    putObjectSpy(params);
+    fnSpy(params);
     callback(error, payload);
   });
 
-  return putObjectSpy;
+  return fnSpy;
 };
 
 module.exports = {
