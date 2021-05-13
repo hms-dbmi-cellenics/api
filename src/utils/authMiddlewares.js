@@ -123,7 +123,7 @@ const authorize = async (experimentId, claim) => {
 
   // If the logged in user has the permissions, forward request.
   if (canWrite.includes(userName)) {
-    return;
+    return true;
   }
 
   throw new UnauthorizedError(`User ${userName} (${email}) does not have access to experiment ${experimentId}.`);
