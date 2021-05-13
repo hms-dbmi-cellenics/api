@@ -11,6 +11,7 @@ const logger = require('../../../utils/logging');
 const ExperimentService = require('../../route-services/experiment');
 const SamplesService = require('../../route-services/samples');
 
+const skeletons = require('./state-machine-skeletons');
 const constructPipelineStep = require('./constructors/construct-pipeline-step');
 const asyncTimer = require('../../../utils/asyncTimer');
 
@@ -137,140 +138,7 @@ const createActivity = async (context) => {
   return activityArn;
 };
 
-const buildStateMachineDefinition = (context) => {
-  const skeleton = {
-    Comment: `Pipeline for clusterEnv '${config.clusterEnv}'`,
-    StartAt: 'DeleteCompletedPipelineWorker',
-    States: {
-      DeleteCompletedPipelineWorker: {
-        XStepType: 'delete-completed-jobs',
-        Next: 'LaunchNewPipelineWorker',
-        ResultPath: null,
-      },
-      LaunchNewPipelineWorker: {
-        XStepType: 'create-new-job-if-not-exist',
-        Next: 'ClassifierFilterMap',
-        ResultPath: null,
-      },
-      ClassifierFilterMap: {
-        Type: 'Map',
-        Next: 'CellSizeDistributionFilterMap',
-        ResultPath: null,
-        ItemsPath: '$.samples',
-        Iterator: {
-          StartAt: 'ClassifierFilter',
-          States: {
-            ClassifierFilter: {
-              XStepType: 'create-new-step',
-              XConstructorArgs: {
-                perSample: true,
-                taskName: 'classifier',
-              },
-              End: true,
-            },
-          },
-        },
-      },
-      CellSizeDistributionFilterMap: {
-        Type: 'Map',
-        Next: 'MitochondrialContentFilterMap',
-        ResultPath: null,
-        ItemsPath: '$.samples',
-        Iterator: {
-          StartAt: 'CellSizeDistributionFilter',
-          States: {
-            CellSizeDistributionFilter: {
-              XStepType: 'create-new-step',
-              XConstructorArgs: {
-                perSample: true,
-                taskName: 'cellSizeDistribution',
-              },
-              End: true,
-            },
-          },
-        },
-      },
-      MitochondrialContentFilterMap: {
-        Type: 'Map',
-        Next: 'NumGenesVsNumUmisFilterMap',
-        ResultPath: null,
-        ItemsPath: '$.samples',
-        Iterator: {
-          StartAt: 'MitochondrialContentFilter',
-          States: {
-            MitochondrialContentFilter: {
-              XStepType: 'create-new-step',
-              XConstructorArgs: {
-                perSample: true,
-                taskName: 'mitochondrialContent',
-              },
-              End: true,
-            },
-          },
-        },
-      },
-      NumGenesVsNumUmisFilterMap: {
-        Type: 'Map',
-        Next: 'DoubletScoresFilterMap',
-        ResultPath: null,
-        ItemsPath: '$.samples',
-        Iterator: {
-          StartAt: 'NumGenesVsNumUmisFilter',
-          States: {
-            NumGenesVsNumUmisFilter: {
-              XStepType: 'create-new-step',
-              XConstructorArgs: {
-                perSample: true,
-                taskName: 'numGenesVsNumUmis',
-              },
-              End: true,
-            },
-          },
-        },
-      },
-      DoubletScoresFilterMap: {
-        Type: 'Map',
-        Next: 'DataIntegration',
-        ResultPath: null,
-        ItemsPath: '$.samples',
-        Iterator: {
-          StartAt: 'DoubletScoresFilter',
-          States: {
-            DoubletScoresFilter: {
-              XStepType: 'create-new-step',
-              XConstructorArgs: {
-                perSample: true,
-                taskName: 'doubletScores',
-              },
-              End: true,
-            },
-          },
-        },
-      },
-      DataIntegration: {
-        XStepType: 'create-new-step',
-        XConstructorArgs: {
-          perSample: false,
-          taskName: 'dataIntegration',
-        },
-        Next: 'ConfigureEmbedding',
-      },
-      ConfigureEmbedding: {
-        XStepType: 'create-new-step',
-        XConstructorArgs: {
-          perSample: false,
-          taskName: 'configureEmbedding',
-          uploadCountMatrix: true,
-        },
-        Next: 'EndOfPipeline',
-      },
-      EndOfPipeline: {
-        Type: 'Pass',
-        End: true,
-      },
-    },
-  };
-
+const buildStateMachineDefinition = (skeleton, context) => {
   logger.log('Constructing pipeline steps...');
   const stateMachine = _.cloneDeepWith(skeleton, (o) => {
     if (_.isObject(o) && o.XStepType) {
@@ -335,7 +203,47 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
     processingConfig: mergedProcessingConfig,
   };
 
-  const stateMachine = buildStateMachineDefinition(context);
+  const stateMachine = buildStateMachineDefinition(skeletons.pipelineSkeleton, context);
+
+  logger.log('Skeleton constructed, now creating activity if not already present...');
+  const activityArn = await createActivity(context);
+
+  logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
+  const stateMachineArn = await createNewStateMachine(context, stateMachine);
+
+  logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
+
+  const execInput = {
+    samples: samples.ids.map((sampleUuid, index) => ({ sampleUuid, index })),
+  };
+
+  const executionArn = await executeStateMachine(stateMachineArn, execInput);
+  logger.log(`Execution with ARN ${executionArn} created.`);
+
+  return { stateMachineArn, executionArn };
+};
+
+const createGem2S = async (experimentId) => {
+  const accountId = await config.awsAccountIdPromise;
+  const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
+
+  // logger.log(`Fetching processing settings for ${experimentId}`);
+  // const { processingConfig } = await experimentService.getProcessingConfig(experimentId);
+
+  const samplesRes = await samplesService.getSampleIds(experimentId);
+  const { samples } = samplesRes;
+
+  const context = {
+    experimentId,
+    accountId,
+    roleArn,
+    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:biomage-gem2s-${config.clusterEnv}-${experimentId}`,
+    pipelineArtifacts: await getPipelineArtifacts(),
+    clusterInfo: await getClusterInfo(),
+    processingConfig: {},
+  };
+
+  const stateMachine = buildStateMachineDefinition(skeletons.gem2sSkeleton, context);
 
   logger.log('Skeleton constructed, now creating activity if not already present...');
   const activityArn = await createActivity(context);
@@ -358,5 +266,6 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
 
 module.exports = {
   createPipeline,
+  createGem2S,
   buildStateMachineDefinition,
 };
