@@ -4,6 +4,7 @@ const config = require('../../config');
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord,
 } = require('../../utils/dynamoDb');
+const logger = require('../../utils/logging');
 
 
 class SamplesService {
@@ -12,6 +13,7 @@ class SamplesService {
   }
 
   async getSamples(projectUuid) {
+    logger.log(`Gettings samples for projectUuid : ${projectUuid}`);
     const marshalledData = convertToDynamoDbRecord({
       ':projectUuid': projectUuid,
     });
@@ -36,6 +38,7 @@ class SamplesService {
   }
 
   async getSamplesByExperimentId(experimentId) {
+    logger.log(`Gettings samples using experimentId : ${experimentId}`);
     const marshalledKey = convertToDynamoDbRecord({
       experimentId,
     });
@@ -58,6 +61,9 @@ class SamplesService {
   }
 
   async updateSamples(projectUuid, body) {
+    logger.log(`Updating samples for project ${projectUuid} 
+      and ${body.experimentId} 
+      with payload : ${body.samples}`);
     const marshalledKey = convertToDynamoDbRecord({
       experimentId: body.experimentId,
     });
@@ -66,6 +72,7 @@ class SamplesService {
       ':samples': body.samples,
       ':projectUuid': projectUuid,
     });
+
 
     // Update samples
     const params = {

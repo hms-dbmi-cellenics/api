@@ -2,6 +2,7 @@ const config = require('../../config');
 const {
   createDynamoDbInstance, convertToDynamoDbRecord,
 } = require('../../utils/dynamoDb');
+const logger = require('../../utils/logging');
 
 const { OK, NotFoundError } = require('../../utils/responses');
 
@@ -11,6 +12,7 @@ class ProjectsService {
   }
 
   async updateProject(projectUuid, project) {
+    logger.log(`Getting project with id ${projectUuid}`);
     const marshalledKey = convertToDynamoDbRecord({
       projectUuid,
     });
