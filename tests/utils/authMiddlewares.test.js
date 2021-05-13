@@ -1,13 +1,13 @@
 const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../src/utils/requireAWS');
 const {
-  authenticationMiddlewareExpress,
-  authenticationMiddlewareSocketIO,
   expressAuthorizationMiddleware,
   authorize,
 } = require('../../src/utils/authMiddlewares');
+const { UnauthorizedError, UnauthenticedError } = require('../../src/utils/errors');
 
-describe('Tests for authorization/authentication middlewares ', () => {
+
+describe('Tests for authorization/authentication middlewares', () => {
   // Sample experiment permission data.
   const data = {
     experimentId: '12345',
@@ -86,6 +86,18 @@ describe('Tests for authorization/authentication middlewares ', () => {
     const next = jest.fn();
 
     await expressAuthorizationMiddleware(req, {}, next);
-    expect(next).toBeCalledWith(expect.any(Error));
+    expect(next).toBeCalledWith(expect.any(UnauthorizedError));
+  });
+
+  it('Express middleware can reject unauthenticated requests', async () => {
+    mockDynamoGetItem(data);
+
+    const req = {
+      params: { experimentId: '1234' },
+    };
+    const next = jest.fn();
+
+    await expressAuthorizationMiddleware(req, {}, next);
+    expect(next).toBeCalledWith(expect.any(UnauthenticedError));
   });
 });
