@@ -61,9 +61,7 @@ class SamplesService {
   }
 
   async updateSamples(projectUuid, body) {
-    logger.log(`Updating samples for project ${projectUuid} 
-      and ${body.experimentId} 
-      with payload : ${body.samples}`);
+    logger.log(`Updating samples for project ${projectUuid} and expId ${body.experimentId}`);
 
     const marshalledKey = convertToDynamoDbRecord({
       experimentId: body.experimentId,
@@ -87,6 +85,29 @@ class SamplesService {
 
     try {
       await dynamodb.updateItem(params).send();
+      return OK();
+    } catch (e) {
+      if (e.statusCode === 404) throw NotFoundError('Project not found');
+      throw e;
+    }
+  }
+
+  async deleteSample(projectUuid, experimentId) {
+    logger.log(`Deleting sample for project ${projectUuid} and expId ${experimentId}`);
+
+    const marshalledKey = convertToDynamoDbRecord({
+      experimentId,
+    });
+
+    const params = {
+      TableName: this.tableName,
+      Key: marshalledKey,
+    };
+
+    const dynamodb = createDynamoDbInstance();
+
+    try {
+      await dynamodb.deleteItem(params).send();
       return OK();
     } catch (e) {
       if (e.statusCode === 404) throw NotFoundError('Project not found');

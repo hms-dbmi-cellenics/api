@@ -463,7 +463,7 @@ paths:
               $ref: ./models/api-body-schemas/Project.v1.yaml
         description: The new configuration to update the old one by.
     delete:
-      summary: 'Deletes the proejct'
+      summary: 'Deletes the project'
       operationId: deleteProject
       x-eov-operation-id: projects#delete
       x-eov-operation-handler: routes/projects
