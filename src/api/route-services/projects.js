@@ -12,7 +12,8 @@ class ProjectsService {
   }
 
   async updateProject(projectUuid, project) {
-    logger.log(`Getting project with id ${projectUuid}`);
+    logger.log(`Updating project with id ${projectUuid}
+      and payload ${project}`);
     const marshalledKey = convertToDynamoDbRecord({
       projectUuid,
     });

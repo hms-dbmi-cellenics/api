@@ -64,6 +64,7 @@ class SamplesService {
     logger.log(`Updating samples for project ${projectUuid} 
       and ${body.experimentId} 
       with payload : ${body.samples}`);
+
     const marshalledKey = convertToDynamoDbRecord({
       experimentId: body.experimentId,
     });
