@@ -81,6 +81,7 @@ Array [
                 "Parameters": Object {
                   "config": Object {},
                   "experimentId": "testExperimentId",
+                  "processName": "pipeline",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
                   "taskName": "cellSizeDistribution",
@@ -107,6 +108,7 @@ Array [
                 "Parameters": Object {
                   "config": Object {},
                   "experimentId": "testExperimentId",
+                  "processName": "pipeline",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
                   "taskName": "classifier",
@@ -128,6 +130,7 @@ Array [
           "Parameters": Object {
             "config": Object {},
             "experimentId": "testExperimentId",
+            "processName": "pipeline",
             "sampleUuid": "",
             "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
             "taskName": "configureEmbedding",
@@ -143,6 +146,7 @@ Array [
           "Parameters": Object {
             "config": Object {},
             "experimentId": "testExperimentId",
+            "processName": "pipeline",
             "sampleUuid": "",
             "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
             "taskName": "dataIntegration",
@@ -195,6 +199,7 @@ Array [
                     },
                   },
                   "experimentId": "testExperimentId",
+                  "processName": "pipeline",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
                   "taskName": "doubletScores",
@@ -290,6 +295,7 @@ Array [
                 "Parameters": Object {
                   "config": Object {},
                   "experimentId": "testExperimentId",
+                  "processName": "pipeline",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
                   "taskName": "mitochondrialContent",
@@ -316,6 +322,7 @@ Array [
                 "Parameters": Object {
                   "config": Object {},
                   "experimentId": "testExperimentId",
+                  "processName": "pipeline",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
                   "taskName": "numGenesVsNumUmis",

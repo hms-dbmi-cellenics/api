@@ -1,13 +1,225 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`non-tests to document the State Machines - local development 1`] = `
+exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
 
 {
-  "Comment": "Pipeline for clusterEnv 'development'",
-  "StartAt": "DeleteCompletedPipelineWorker",
+  "Comment": "Gem2s for clusterEnv 'test'",
+  "StartAt": "DeleteCompletedGem2SWorker",
   "States": {
-    "DeleteCompletedPipelineWorker": {
-      "Next": "LaunchNewPipelineWorker",
+    "DeleteCompletedGem2SWorker": {
+      "Next": "LaunchNewGem2SWorker",
+      "ResultPath": null,
+      "Type": "Task",
+      "Comment": "Deletes the previous server pipeline HelmRelease (Service+Job).",
+      "Resource": "arn:aws:states:::eks:call",
+      "Parameters": {
+        "ClusterName": "mock-cluster-name",
+        "CertificateAuthority": "mock-ca",
+        "Endpoint": "mock-endpoint",
+        "Method": "DELETE",
+        "Path": "/apis/helm.fluxcd.io/v1/namespaces/pipeline-test-namespace/helmreleases",
+        "QueryParameters": {
+          "labelSelector": [
+            "type=pipeline,sandboxId=undefined,experimentId=mock-experiment-id"
+          ]
+        }
+      }
+    },
+    "LaunchNewGem2SWorker": {
+      "Next": "DownloadGem",
+      "ResultPath": null,
+      "Type": "Task",
+      "Comment": "Attempts to create a Kubernetes Job+Service for the pipeline runner. Will swallow a 409 (already exists) error.",
+      "Resource": "arn:aws:states:::eks:call",
+      "Parameters": {
+        "ClusterName": "mock-cluster-name",
+        "CertificateAuthority": "mock-ca",
+        "Endpoint": "mock-endpoint",
+        "Method": "POST",
+        "Path": "/apis/helm.fluxcd.io/v1/namespaces/pipeline-test-namespace/helmreleases",
+        "RequestBody": {
+          "apiVersion": "helm.fluxcd.io/v1",
+          "kind": "HelmRelease",
+          "metadata": {
+            "name": "pipeline-mock-experiment-id",
+            "namespace": "pipeline-test-namespace",
+            "annotations": {
+              "fluxcd.io/automated": "true"
+            },
+            "labels": {
+              "type": "pipeline",
+              "experimentId": "mock-experiment-id"
+            }
+          },
+          "spec": {
+            "releaseName": "pipeline-mock-experiment-id",
+            "chart": {
+              "git": "git@github.com:biomage-ltd/pipeline",
+              "path": "qc-runner/chart"
+            },
+            "values": {
+              "experimentId": "mock-experiment-id",
+              "namespace": "pipeline-test-namespace",
+              "awsAccountId": "mock-account-id",
+              "clusterEnv": "test",
+              "awsRegion": "eu-west-1"
+            }
+          }
+        }
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "EKS.409"
+          ],
+          "IntervalSeconds": 1,
+          "BackoffRate": 2,
+          "MaxAttempts": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "EKS.409"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "DownloadGem"
+        }
+      ]
+    },
+    "DownloadGem": {
+      "Next": "PreProcessingMap",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 3600,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "downloadGem",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "sampleUuid": "",
+        "uploadCountMatrix": false
+      }
+    },
+    "PreProcessingMap": {
+      "Type": "Map",
+      "Next": "EmptyDropsMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "PreprocessingFilter",
+        "States": {
+          "PreprocessingFilter": {
+            "End": true,
+            "Type": "Task",
+            "ResultPath": null,
+            "TimeoutSeconds": 3600,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "preproc",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
+            }
+          }
+        }
+      }
+    },
+    "EmptyDropsMap": {
+      "Type": "Map",
+      "Next": "DoubletScoresMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "EmptyDrops",
+        "States": {
+          "EmptyDrops": {
+            "End": true,
+            "Type": "Task",
+            "ResultPath": null,
+            "TimeoutSeconds": 3600,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "emptyDrops",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
+            }
+          }
+        }
+      }
+    },
+    "DoubletScoresMap": {
+      "Type": "Map",
+      "Next": "CreateSeurat",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "DoubletScores",
+        "States": {
+          "DoubletScores": {
+            "End": true,
+            "Type": "Task",
+            "ResultPath": null,
+            "TimeoutSeconds": 3600,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "doubletScores",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
+            }
+          }
+        }
+      }
+    },
+    "CreateSeurat": {
+      "Next": "PrepareExperiment",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 3600,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "createSeurat",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "sampleUuid": "",
+        "uploadCountMatrix": false
+      }
+    },
+    "PrepareExperiment": {
+      "Next": "EndOfGem2S",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 3600,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "prepareExperiment",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "sampleUuid": "",
+        "uploadCountMatrix": false
+      }
+    },
+    "EndOfGem2S": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}
+`;
+
+exports[`non-tests to document the State Machines - gem2s local development 1`] = `
+
+{
+  "Comment": "Gem2s for clusterEnv 'test'",
+  "StartAt": "DeleteCompletedGem2SWorker",
+  "States": {
+    "DeleteCompletedGem2SWorker": {
+      "Next": "LaunchNewGem2SWorker",
       "ResultPath": null,
       "Type": "Task",
       "Comment": "Removes Docker containers with pipeline runs on the local machine.",
@@ -16,8 +228,8 @@ exports[`non-tests to document the State Machines - local development 1`] = `
         "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:remove-previous-pipeline-containers"
       }
     },
-    "LaunchNewPipelineWorker": {
-      "Next": "ClassifierFilterMap",
+    "LaunchNewGem2SWorker": {
+      "Next": "DownloadGem",
       "ResultPath": null,
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
@@ -35,26 +247,40 @@ exports[`non-tests to document the State Machines - local development 1`] = `
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
-          "Next": "ClassifierFilterMap"
+          "Next": "DownloadGem"
         }
       ]
     },
-    "ClassifierFilterMap": {
+    "DownloadGem": {
+      "Next": "PreProcessingMap",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 3600,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "downloadGem",
+        "config": {},
+        "server": "host.docker.internal",
+        "sampleUuid": "",
+        "uploadCountMatrix": false
+      }
+    },
+    "PreProcessingMap": {
       "Type": "Map",
-      "Next": "CellSizeDistributionFilterMap",
+      "Next": "EmptyDropsMap",
       "ResultPath": null,
       "ItemsPath": "$.samples",
       "Iterator": {
-        "StartAt": "ClassifierFilter",
+        "StartAt": "PreprocessingFilter",
         "States": {
-          "ClassifierFilter": {
+          "PreprocessingFilter": {
             "End": true,
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 3600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
-              "taskName": "classifier",
+              "taskName": "preproc",
               "config": {},
               "server": "host.docker.internal",
               "sampleUuid.$": "$.sampleUuid",
@@ -64,22 +290,22 @@ exports[`non-tests to document the State Machines - local development 1`] = `
         }
       }
     },
-    "CellSizeDistributionFilterMap": {
+    "EmptyDropsMap": {
       "Type": "Map",
-      "Next": "MitochondrialContentFilterMap",
+      "Next": "DoubletScoresMap",
       "ResultPath": null,
       "ItemsPath": "$.samples",
       "Iterator": {
-        "StartAt": "CellSizeDistributionFilter",
+        "StartAt": "EmptyDrops",
         "States": {
-          "CellSizeDistributionFilter": {
+          "EmptyDrops": {
             "End": true,
             "Type": "Task",
             "ResultPath": null,
             "TimeoutSeconds": 3600,
             "Parameters": {
               "experimentId": "mock-experiment-id",
-              "taskName": "cellSizeDistribution",
+              "taskName": "emptyDrops",
               "config": {},
               "server": "host.docker.internal",
               "sampleUuid.$": "$.sampleUuid",
@@ -89,65 +315,15 @@ exports[`non-tests to document the State Machines - local development 1`] = `
         }
       }
     },
-    "MitochondrialContentFilterMap": {
+    "DoubletScoresMap": {
       "Type": "Map",
-      "Next": "NumGenesVsNumUmisFilterMap",
+      "Next": "CreateSeurat",
       "ResultPath": null,
       "ItemsPath": "$.samples",
       "Iterator": {
-        "StartAt": "MitochondrialContentFilter",
+        "StartAt": "DoubletScores",
         "States": {
-          "MitochondrialContentFilter": {
-            "End": true,
-            "Type": "Task",
-            "ResultPath": null,
-            "TimeoutSeconds": 3600,
-            "Parameters": {
-              "experimentId": "mock-experiment-id",
-              "taskName": "mitochondrialContent",
-              "config": {},
-              "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
-            }
-          }
-        }
-      }
-    },
-    "NumGenesVsNumUmisFilterMap": {
-      "Type": "Map",
-      "Next": "DoubletScoresFilterMap",
-      "ResultPath": null,
-      "ItemsPath": "$.samples",
-      "Iterator": {
-        "StartAt": "NumGenesVsNumUmisFilter",
-        "States": {
-          "NumGenesVsNumUmisFilter": {
-            "End": true,
-            "Type": "Task",
-            "ResultPath": null,
-            "TimeoutSeconds": 3600,
-            "Parameters": {
-              "experimentId": "mock-experiment-id",
-              "taskName": "numGenesVsNumUmis",
-              "config": {},
-              "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
-            }
-          }
-        }
-      }
-    },
-    "DoubletScoresFilterMap": {
-      "Type": "Map",
-      "Next": "DataIntegration",
-      "ResultPath": null,
-      "ItemsPath": "$.samples",
-      "Iterator": {
-        "StartAt": "DoubletScoresFilter",
-        "States": {
-          "DoubletScoresFilter": {
+          "DoubletScores": {
             "End": true,
             "Type": "Task",
             "ResultPath": null,
@@ -164,35 +340,35 @@ exports[`non-tests to document the State Machines - local development 1`] = `
         }
       }
     },
-    "DataIntegration": {
-      "Next": "ConfigureEmbedding",
+    "CreateSeurat": {
+      "Next": "PrepareExperiment",
       "Type": "Task",
       "ResultPath": null,
       "TimeoutSeconds": 3600,
       "Parameters": {
         "experimentId": "mock-experiment-id",
-        "taskName": "dataIntegration",
+        "taskName": "createSeurat",
         "config": {},
         "server": "host.docker.internal",
         "sampleUuid": "",
         "uploadCountMatrix": false
       }
     },
-    "ConfigureEmbedding": {
-      "Next": "EndOfPipeline",
+    "PrepareExperiment": {
+      "Next": "EndOfGem2S",
       "Type": "Task",
       "ResultPath": null,
       "TimeoutSeconds": 3600,
       "Parameters": {
         "experimentId": "mock-experiment-id",
-        "taskName": "configureEmbedding",
+        "taskName": "prepareExperiment",
         "config": {},
         "server": "host.docker.internal",
         "sampleUuid": "",
-        "uploadCountMatrix": true
+        "uploadCountMatrix": false
       }
     },
-    "EndOfPipeline": {
+    "EndOfGem2S": {
       "Type": "Pass",
       "End": true
     }
@@ -200,7 +376,7 @@ exports[`non-tests to document the State Machines - local development 1`] = `
 }
 `;
 
-exports[`non-tests to document the State Machines -cloud 1`] = `
+exports[`non-tests to document the State Machines - pipeline cloud 1`] = `
 
 {
   "Comment": "Pipeline for clusterEnv 'test'",
@@ -436,6 +612,206 @@ exports[`non-tests to document the State Machines -cloud 1`] = `
         "taskName": "configureEmbedding",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "sampleUuid": "",
+        "uploadCountMatrix": true
+      }
+    },
+    "EndOfPipeline": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}
+`;
+
+exports[`non-tests to document the State Machines - pipeline local development 1`] = `
+
+{
+  "Comment": "Pipeline for clusterEnv 'test'",
+  "StartAt": "DeleteCompletedPipelineWorker",
+  "States": {
+    "DeleteCompletedPipelineWorker": {
+      "Next": "LaunchNewPipelineWorker",
+      "ResultPath": null,
+      "Type": "Task",
+      "Comment": "Removes Docker containers with pipeline runs on the local machine.",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:remove-previous-pipeline-containers"
+      }
+    },
+    "LaunchNewPipelineWorker": {
+      "Next": "ClassifierFilterMap",
+      "ResultPath": null,
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
+        "Payload": {
+          "image": "biomage-pipeline-runner",
+          "name": "pipeline-runner",
+          "detached": true
+        }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "ClassifierFilterMap"
+        }
+      ]
+    },
+    "ClassifierFilterMap": {
+      "Type": "Map",
+      "Next": "CellSizeDistributionFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "ClassifierFilter",
+        "States": {
+          "ClassifierFilter": {
+            "End": true,
+            "Type": "Task",
+            "ResultPath": null,
+            "TimeoutSeconds": 3600,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "classifier",
+              "config": {},
+              "server": "host.docker.internal",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
+            }
+          }
+        }
+      }
+    },
+    "CellSizeDistributionFilterMap": {
+      "Type": "Map",
+      "Next": "MitochondrialContentFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "CellSizeDistributionFilter",
+        "States": {
+          "CellSizeDistributionFilter": {
+            "End": true,
+            "Type": "Task",
+            "ResultPath": null,
+            "TimeoutSeconds": 3600,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "cellSizeDistribution",
+              "config": {},
+              "server": "host.docker.internal",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
+            }
+          }
+        }
+      }
+    },
+    "MitochondrialContentFilterMap": {
+      "Type": "Map",
+      "Next": "NumGenesVsNumUmisFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "MitochondrialContentFilter",
+        "States": {
+          "MitochondrialContentFilter": {
+            "End": true,
+            "Type": "Task",
+            "ResultPath": null,
+            "TimeoutSeconds": 3600,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "mitochondrialContent",
+              "config": {},
+              "server": "host.docker.internal",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
+            }
+          }
+        }
+      }
+    },
+    "NumGenesVsNumUmisFilterMap": {
+      "Type": "Map",
+      "Next": "DoubletScoresFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "NumGenesVsNumUmisFilter",
+        "States": {
+          "NumGenesVsNumUmisFilter": {
+            "End": true,
+            "Type": "Task",
+            "ResultPath": null,
+            "TimeoutSeconds": 3600,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "numGenesVsNumUmis",
+              "config": {},
+              "server": "host.docker.internal",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
+            }
+          }
+        }
+      }
+    },
+    "DoubletScoresFilterMap": {
+      "Type": "Map",
+      "Next": "DataIntegration",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "DoubletScoresFilter",
+        "States": {
+          "DoubletScoresFilter": {
+            "End": true,
+            "Type": "Task",
+            "ResultPath": null,
+            "TimeoutSeconds": 3600,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "doubletScores",
+              "config": {},
+              "server": "host.docker.internal",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false
+            }
+          }
+        }
+      }
+    },
+    "DataIntegration": {
+      "Next": "ConfigureEmbedding",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 3600,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "dataIntegration",
+        "config": {},
+        "server": "host.docker.internal",
+        "sampleUuid": "",
+        "uploadCountMatrix": false
+      }
+    },
+    "ConfigureEmbedding": {
+      "Next": "EndOfPipeline",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 3600,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "configureEmbedding",
+        "config": {},
+        "server": "host.docker.internal",
         "sampleUuid": "",
         "uploadCountMatrix": true
       }

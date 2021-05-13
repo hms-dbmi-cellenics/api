@@ -1,4 +1,3 @@
-
 const crypto = require('crypto');
 const jq = require('jq-web');
 const YAML = require('yaml');
@@ -17,6 +16,9 @@ const asyncTimer = require('../../../utils/asyncTimer');
 
 const experimentService = new ExperimentService();
 const samplesService = new SamplesService();
+
+const PIPELINE_PROCESS_NAME = 'pipeline';
+const GEM2S_PROCESS_NAME = 'gem2s';
 
 const getPipelineArtifacts = async () => {
   const response = await fetch(
@@ -197,6 +199,7 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
     experimentId,
     accountId,
     roleArn,
+    processName: PIPELINE_PROCESS_NAME,
     activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:biomage-qc-${config.clusterEnv}-${experimentId}`,
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
@@ -226,7 +229,7 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
 const createGem2S = async (experimentId) => {
   const accountId = await config.awsAccountIdPromise;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
-
+  const processName = 'gem2s'
   // logger.log(`Fetching processing settings for ${experimentId}`);
   // const { processingConfig } = await experimentService.getProcessingConfig(experimentId);
 
@@ -237,6 +240,7 @@ const createGem2S = async (experimentId) => {
     experimentId,
     accountId,
     roleArn,
+    processName: GEM2S_PROCESS_NAME,
     activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:biomage-gem2s-${config.clusterEnv}-${experimentId}`,
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),

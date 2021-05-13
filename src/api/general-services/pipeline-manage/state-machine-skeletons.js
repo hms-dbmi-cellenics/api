@@ -153,7 +153,7 @@ const gem2sSkeleton = {
       XStepType: 'create-new-step',
       XConstructorArgs: {
         taskName: 'downloadGem',
-        samples: [],
+        samples: '$.samples',
       },
       Next: 'PreProcessingMap',
       // ItemsPath: '$.samples',
