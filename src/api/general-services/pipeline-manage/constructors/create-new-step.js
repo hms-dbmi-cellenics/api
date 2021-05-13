@@ -2,7 +2,7 @@ const config = require('../../../../config');
 
 const createNewStep = (context, step, args) => {
   const {
-    processingConfig, experimentId, activityArn,
+    processingConfig, experimentId, activityArn, processName,
   } = context;
 
   const { taskName, perSample, uploadCountMatrix } = args;
@@ -15,6 +15,7 @@ const createNewStep = (context, step, args) => {
   const task = {
     experimentId,
     taskName,
+    processName,
     config: processingConfig[taskName] || {},
     server: remoterServer,
   };
@@ -29,6 +30,7 @@ const createNewStep = (context, step, args) => {
       ...task,
       ...perSample ? { 'sampleUuid.$': '$.sampleUuid' } : { sampleUuid: '' },
       ...uploadCountMatrix ? { uploadCountMatrix: true } : { uploadCountMatrix: false },
+      
     },
     ...!step.End && { Next: step.XNextOnCatch || step.Next },
   };
