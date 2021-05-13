@@ -79,7 +79,17 @@ const config = {
   corsOriginUrl: 'https://scp.biomage.net',
 };
 
-if (config.clusterEnv === 'staging') {
+
+// We are in permanent develop staging environment
+if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
+  config.workerInstanceConfigUrl = 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/worker.yaml';
+  config.pipelineInstanceConfigUrl = 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/pipeline.yaml';
+  config.cachingEnabled = false;
+  config.corsOriginUrl = 'https://ui-default.scp-staging.biomage.net';
+}
+
+// We are in user staging environments
+if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
   config.workerInstanceConfigUrl = `https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/${config.sandboxId}.yaml`;
   config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/${config.sandboxId}.yaml`;
   config.cachingEnabled = false;
@@ -97,8 +107,6 @@ if (config.clusterEnv === 'development') {
     sslEnabled: false,
     s3ForcePathStyle: true,
   });
-
-  config.pipelineInstanceConfigUrl = 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/pipeline.yaml';
 
   config.corsOriginUrl = 'http://localhost:5000';
 }
