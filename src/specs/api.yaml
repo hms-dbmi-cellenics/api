@@ -462,6 +462,30 @@ paths:
             schema:
               $ref: ./models/api-body-schemas/Project.v1.yaml
         description: The new configuration to update the old one by.
+    delete:
+      summary: 'Deletes the proejct'
+      operationId: deleteProject
+      x-eov-operation-id: projects#delete
+      x-eov-operation-handler: routes/projects
+      responses:
+        '200':
+          description: Deletes object
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/api-body-schemas/Project.v1.yaml
+      description: Deletes project and associated samples.
   '/projects/{projectUuid}/samples':
     parameters:
       - name: projectUuid

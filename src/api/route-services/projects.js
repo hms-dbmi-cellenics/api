@@ -39,6 +39,31 @@ class ProjectsService {
       throw e;
     }
   }
+
+  async deleteProject(projectUuid) {
+    logger.log(`Deleting project with id ${projectUuid}`);
+    const marshalledKey = convertToDynamoDbRecord({
+      projectUuid,
+    });
+
+    const params = {
+      TableName: this.tableName,
+      Key: marshalledKey,
+    };
+
+    const dynamodb = createDynamoDbInstance();
+
+    try {
+      await dynamodb.deleteItem(params).promise();
+
+      console.log('project deleted');
+
+      return OK();
+    } catch (e) {
+      if (e.statusCode === 404) throw NotFoundError('Project not found');
+      throw e;
+    }
+  }
 }
 
 
