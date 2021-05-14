@@ -487,7 +487,7 @@ paths:
                 properties: {}
       description: This path will create a new pipeline that can run a state machine with different bioinformatics tasks.
     get:
-      summary: ''
+      summary: Create new pipeline
       operationId: get-experiments-experimentId-pipelines
       x-eov-operation-id: 'pipelines#get'
       x-eov-operation-handler: routes/pipelines
@@ -520,8 +520,8 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      operationId: getSamples
-      x-eov-operation-id: 'samples#get'
+      operationId: getSamplesByExperimentId
+      x-eov-operation-id: samples#getSamplesByExperimentId
       x-eov-operation-handler: routes/samples
       tags: []
       responses:
@@ -542,11 +542,155 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/SampleResponse.v1.yaml
-        '400':
+                $ref: ./models/api-body-schemas/Samples.v1.yaml
+        '404':
           description: Samples not found.
           content:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
       description: Get all samples for an experiment
+  '/projects/{projectUuid}':
+    parameters:
+      - schema:
+          type: string
+        name: projectUuid
+        in: path
+        required: true
+    put:
+      summary: Create or update project
+      operationId: updateProject
+      x-eov-operation-id: projects#update
+      x-eov-operation-handler: routes/projects
+      responses:
+        '200':
+          description: Create or update sample object
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: Create or update a project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/api-body-schemas/Project.v1.yaml
+        description: The new configuration to update the old one by.
+    delete:
+      summary: 'Deletes the project'
+      operationId: deleteProject
+      x-eov-operation-id: projects#delete
+      x-eov-operation-handler: routes/projects
+      responses:
+        '200':
+          description: Deletes object
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: Deletes project and associated samples.
+  '/projects/{projectUuid}/samples':
+    parameters:
+      - name: projectUuid
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get samples under a project
+      operationId: getProjectSamples
+      x-eov-operation-id: samples#get
+      x-eov-operation-handler: routes/samples
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./models/api-body-schemas/Samples.v1.yaml
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: Get all samples under a project
+  '/projects/{projectUuid}/{experimentId}/samples':
+      parameters:
+        - name: projectUuid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: experimentId
+          in: path
+          required: true
+          schema:
+            type: string
+      put:
+        summary: Update sample
+        operationId: updateSample
+        x-eov-operation-id: samples#update
+        x-eov-operation-handler: routes/samples
+        responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: ./models/HTTPSuccess.v1.yaml
+          '400':
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  $ref: ./models/HTTPError.v1.yaml
+          '404':
+            description: Not Found
+            content:
+              application/json:
+                schema:
+                  $ref: ./models/HTTPError.v1.yaml
+          '415':
+            description: Unsupported Media Type
+            content:
+              application/json:
+                schema:
+                  $ref: ./models/HTTPError.v1.yaml
+        description: Updates a sample
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projectUuid:
+                    type: string
+                  experimentId:
+                    type: string
+                  samples:
+                    $ref: ./models/api-body-schemas/Samples.v1.yaml

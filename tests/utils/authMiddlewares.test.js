@@ -1,11 +1,13 @@
 const AWSMock = require('aws-sdk-mock');
-const AWS = require('../../src/utils/requireAWS');
 const {
   expressAuthorizationMiddleware,
   authorize,
 } = require('../../src/utils/authMiddlewares');
-const { UnauthorizedError, UnauthentiicatedError } = require('../../src/utils/errors');
+const { UnauthorizedError, UnauthentiicatedError } = require('../../src/utils/responses');
 
+const {
+  mockDynamoGetItem,
+} = require('../test-utils/mockAWSServices');
 
 describe('Tests for authorization/authentication middlewares', () => {
   // Sample experiment permission data.
@@ -14,23 +16,9 @@ describe('Tests for authorization/authentication middlewares', () => {
     rbac_can_write: ['test-user'],
   };
 
-  const mockDynamoGetItem = (jsData) => {
-    const dynamodbData = {
-      Item: AWS.DynamoDB.Converter.marshall(jsData),
-    };
-    const getItemSpy = jest.fn((x) => x);
-
-    AWSMock.setSDKInstance(AWS);
-    AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
-      getItemSpy(params);
-      callback(null, dynamodbData);
-    });
-  };
-
   afterEach(() => {
     AWSMock.restore('DynamoDB');
   });
-
 
   it('Authorized user can proceed', async () => {
     mockDynamoGetItem(data);

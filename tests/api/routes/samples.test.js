@@ -13,29 +13,83 @@ describe('tests for samples route', () => {
   });
 
   afterEach(() => {
-    /**
-     * Most important since b'coz of caching, the mocked implementations sometimes does not reset
-     */
     jest.resetModules();
     jest.restoreAllMocks();
   });
 
-  it('Get samples by experimentId works', async (done) => {
+  it('Get samples by experimentId returns 200', async (done) => {
     request(app)
       .get('/v1/experiments/someId/samples')
       .expect(200)
-      .end((err, res) => {
+      .end((err) => {
         if (err) {
           return done(err);
         }
-        expect(res.body).toEqual({
-          samples: {
-            ids: ['sample-1'],
-            'sample-1': {
-              name: 'sample-1',
-            },
-          },
-        });
+        return done();
+      });
+  });
+
+  it('Requesting sample for a non-existing experimentId returns 404', async (done) => {
+    request(app)
+      .get('/v1/experiments/nonExistentId/samples')
+      .expect(404)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Updating correct samples return 200 ', async (done) => {
+    const payload = {
+      projectUuid: 'project-uuid',
+      experimentId: 'experiment-id',
+      samples: {
+        ids: ['sample-1'],
+        'sample-1': {
+          name: 'sample-1',
+        },
+      },
+    };
+
+    request(app)
+      .put('/v1/projects/someId/experimentId/samples')
+      .send(payload)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Updating samples with invalid body returns error 400', async (done) => {
+    const invalidPayload = {
+      invalid: 'payload',
+    };
+
+    request(app)
+      .put('/v1/projects/someId/experimentId/samples')
+      .expect(400)
+      .send(invalidPayload)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Updating samples with body without data returns error 415', async (done) => {
+    request(app)
+      .put('/v1/projects/someId/experimentId/samples')
+      .expect(415)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
         return done();
       });
   });

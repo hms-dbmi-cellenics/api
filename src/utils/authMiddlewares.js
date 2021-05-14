@@ -9,7 +9,7 @@ const util = require('util');
 const config = require('../config');
 const CacheSingleton = require('../cache');
 const { CacheMissError } = require('../cache/cache-utils');
-const { UnauthorizedError, UnauthentiicatedError } = require('./errors');
+const { UnauthorizedError, UnauthentiicatedError } = require('./responses');
 const ExperimentService = require('../api/route-services/experiment');
 
 const experimentService = new ExperimentService();
