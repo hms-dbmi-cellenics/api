@@ -27,6 +27,8 @@ module.exports = async (app) => {
   app.use(bodyParser.json({ extended: false, limit: '10mb', parameterLimit: 300000 }));
 
 
+  console.log('p');
+
   // Enable AWS XRay
   // eslint-disable-next-line global-require
   AWSXRay.captureHTTPsGlobal(require('http'));
@@ -50,6 +52,8 @@ module.exports = async (app) => {
   });
 
 
+  console.log('q');
+
   app.use(AWSXRay.express.openSegment(`API-${config.clusterEnv}-${config.sandboxId}`));
 
   app.use((req, res, next) => {
@@ -58,9 +62,16 @@ module.exports = async (app) => {
     next();
   });
 
+  console.log('r');
+
   // Authentication middleware.
   const authMw = await authenticationMiddlewareExpress(app);
+
+  console.log('s');
+
   app.use(authMw);
+
+  console.log('t');
 
   app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),

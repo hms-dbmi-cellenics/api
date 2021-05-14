@@ -32,8 +32,15 @@ console.log('k');
  * can be used in the API to authenticate Cognito-issued JWTs.
  */
 const authenticationMiddlewareExpress = async (app) => {
+  console.log('l');
+
   app.set('keys', {});
+
+  console.log('m');
+
   const poolId = await config.awsUserPoolIdPromise;
+
+  console.log('n');
 
   return jwtExpress({
     algorithms: ['RS256'],
@@ -160,6 +167,8 @@ const expressAuthorizationMiddleware = async (req, res, next) => {
     next(e);
   }
 };
+
+console.log('o');
 
 module.exports = {
   authenticationMiddlewareExpress,
