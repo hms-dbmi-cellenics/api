@@ -64,12 +64,14 @@ const createWorkerResources = async (service) => {
   // Attempt to deploy the worker.
   try {
     const params = `upgrade worker-${workerHash} chart-instance/ --namespace ${cfg.namespace} -f ${name} --install --wait -o json`.split(' ');
+    logger.log(`helm params: ${params}`);
 
     let { stdout: release } = await execFile(HELM_BINARY, params);
     release = JSON.parse(release);
 
     logger.log(`Worker instance ${release.name} successfully created.`);
   } catch (error) {
+    logger.error('helm failed', error);
     if (!error.stderr) {
       throw error;
     }
