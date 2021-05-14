@@ -92,7 +92,7 @@ class SamplesService {
     }
   }
 
-  async deleteSample(projectUuid, experimentId) {
+  async deleteSamples(projectUuid, experimentId) {
     logger.log(`Deleting sample for project ${projectUuid} and expId ${experimentId}`);
 
     const marshalledKey = convertToDynamoDbRecord({

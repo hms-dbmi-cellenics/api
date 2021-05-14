@@ -60,7 +60,7 @@ class ProjectsService {
       await dynamodb.updateItem(params).send();
       return OK();
     } catch (e) {
-      if (e.statusCode === 404) throw NotFoundError('Project not found');
+      if (e.statusCode === 400) throw new NotFoundError('Project not found');
       throw e;
     }
   }
@@ -85,14 +85,14 @@ class ProjectsService {
 
       if (experiments.length > 0) {
         const deletePromises = experiments.map(
-          (experimentId) => samplesService.deleteSample(projectUuid, experimentId),
+          (experimentId) => samplesService.deleteSamples(projectUuid, experimentId),
         );
 
         await Promise.all(deletePromises);
       }
       return OK();
     } catch (e) {
-      if (e.statusCode === 404) throw NotFoundError('Project not found');
+      if (e.statusCode === 400) throw new NotFoundError('Project not found');
       throw e;
     }
   }

@@ -480,11 +480,6 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: ./models/api-body-schemas/Project.v1.yaml
       description: Deletes project and associated samples.
   '/projects/{projectUuid}/samples':
     parameters:
