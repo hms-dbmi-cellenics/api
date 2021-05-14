@@ -65,7 +65,7 @@ class ExperimentService {
       UpdateExpression: `SET experimentName = :experimentName,
                           createdAt = :createdAt,
                           lastViewed = :lastViewed,
-                          projectUuid = :projectUuid,
+                          projectId = :projectId,
                           description = :description,
                           meta = :meta`,
       ExpressionAttributeValues: marshalledData,
