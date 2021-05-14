@@ -145,8 +145,14 @@ jobs:
           fi
 
           if [ "${{ matrix.environment }}" = "staging" ]; then
+            # api's chart is in IAC repo (which does not have develop branch) so if we are
+            # releasing a develop branch, it should use the master IAC repo branch
+            if [ "STAGING_CHART_REF" = "develop" ]; then
+              CHART_REF="master"
+            else
+              CHART_REF="STAGING_CHART_REF"
+            fi
             SANDBOX_ID="STAGING_SANDBOX_ID"
-            CHART_REF="STAGING_CHART_REF"
             DEPLOYMENT_NAME=$(echo $GITHUB_REPOSITORY | awk -F '/' '{print $2}')
             echo "::set-output name=deployment-name::$DEPLOYMENT_NAME"
           fi
