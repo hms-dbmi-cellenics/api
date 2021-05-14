@@ -7,11 +7,11 @@
  *
  */
 
-class UnauthentiicatedError extends Error {
+class UnauthenticatedError extends Error {
   constructor(message) {
     super(message);
     this.status = 401;
   }
 }
 
-module.exports = UnauthentiicatedError;
+module.exports = UnauthenticatedError;

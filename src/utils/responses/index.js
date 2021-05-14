@@ -1,10 +1,10 @@
 const NotFoundError = require('./NotFoundError');
-const UnauthentiicatedError = require('./UnauthenticatedError');
+const UnauthenticatedError = require('./UnauthenticatedError');
 const UnauthorizedError = require('./UnauthorizedError');
 const OK = require('./OK');
 
 module.exports = {
-  UnauthentiicatedError,
+  UnauthenticatedError,
   UnauthorizedError,
   NotFoundError,
   OK,

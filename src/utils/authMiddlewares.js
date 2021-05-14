@@ -9,7 +9,7 @@ const util = require('util');
 const config = require('../config');
 const CacheSingleton = require('../cache');
 const { CacheMissError } = require('../cache/cache-utils');
-const { UnauthorizedError, UnauthentiicatedError } = require('./responses');
+const { UnauthorizedError, UnauthenticatedError } = require('./responses');
 const ExperimentService = require('../api/route-services/experiment');
 
 const experimentService = new ExperimentService();
@@ -135,7 +135,7 @@ const authorize = async (experimentId, claim) => {
  */
 const expressAuthorizationMiddleware = async (req, res, next) => {
   if (!req.user) {
-    next(new UnauthentiicatedError('The request does not contain an authentication token.'));
+    next(new UnauthenticatedError('The request does not contain an authentication token.'));
     return;
   }
 

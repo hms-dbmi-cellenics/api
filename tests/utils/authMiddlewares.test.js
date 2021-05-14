@@ -3,7 +3,7 @@ const {
   expressAuthorizationMiddleware,
   authorize,
 } = require('../../src/utils/authMiddlewares');
-const { UnauthorizedError, UnauthentiicatedError } = require('../../src/utils/responses');
+const { UnauthorizedError, UnauthenticatedError } = require('../../src/utils/responses');
 
 const {
   mockDynamoGetItem,
@@ -86,6 +86,6 @@ describe('Tests for authorization/authentication middlewares', () => {
     const next = jest.fn();
 
     await expressAuthorizationMiddleware(req, {}, next);
-    expect(next).toBeCalledWith(expect.any(UnauthentiicatedError));
+    expect(next).toBeCalledWith(expect.any(UnauthenticatedError));
   });
 });
