@@ -54,7 +54,7 @@ class ExperimentService {
       ':experimentName': body.name,
       ':createdAt': body.createdAt,
       ':lastViewed': body.lastViewed,
-      ':projectUuid': body.projectUuid,
+      ':projectId': body.projectUuid,
       ':description': body.description,
       ':meta': {},
     });
