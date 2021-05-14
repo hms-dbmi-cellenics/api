@@ -35,11 +35,8 @@ describe('tests for projects route', () => {
       .expect(200)
       .end((err) => {
         if (err) {
-          console.log(err);
           return done(err);
         }
-        // there is no point testing for the values of the response body
-        // - if something is wrong, the schema validator will catch it
         return done();
       });
   });
@@ -74,7 +71,7 @@ describe('tests for projects route', () => {
     };
 
     request(app)
-      .put('/v1/projects/unknownProjectUuid')
+      .put('/v1/projects/unknown-project')
       .send(payload)
       .expect(404)
       .end((err) => {
@@ -89,6 +86,30 @@ describe('tests for projects route', () => {
     request(app)
       .put('/v1/projects/someId')
       .expect(415)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Deleting project send 200', async (done) => {
+    request(app)
+      .delete('/v1/projects/someId')
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Deleting project with unknown project sends error 404', async (done) => {
+    request(app)
+      .delete('/v1/projects/unknown-project')
+      .expect(404)
       .end((err) => {
         if (err) {
           return done(err);

@@ -10,18 +10,9 @@ jest.mock('../../../src/api/general-services/pipeline-status', () => jest.fn().m
   pipelineStatus: () => ({}),
 })));
 
-const mockDynamoGetItem = (jsData) => {
-  const dynamodbData = {
-    Item: AWS.DynamoDB.Converter.marshall(jsData),
-  };
-  const getItemSpy = jest.fn((x) => x);
-  AWSMock.setSDKInstance(AWS);
-  AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
-    getItemSpy(params);
-    callback(null, dynamodbData);
-  });
-  return getItemSpy;
-};
+const {
+  mockDynamoGetItem, mockS3GetObject, mockDynamoUpdateItem,
+} = require('../../test-utils/mockAWSServices');
 
 describe('Test Pipeline Response Service', () => {
   let io;
@@ -85,18 +76,8 @@ describe('Test Pipeline Response Service', () => {
   it('functions propely with correct input (no sample UUID given)', async () => {
     AWSMock.setSDKInstance(AWS);
 
-    const s3Spy = jest.fn((x) => x);
-    AWSMock.mock('S3', 'getObject', (params, callback) => {
-      s3Spy(params);
-      callback(null, s3output);
-    });
-
-    const dynamoDbSpy = jest.fn((x) => x);
-    AWSMock.mock('DynamoDB', 'updateItem', (params, callback) => {
-      dynamoDbSpy(params);
-      callback(null, {});
-    });
-
+    const s3Spy = mockS3GetObject(s3output);
+    const dynamoDbSpy = mockDynamoUpdateItem();
 
     mockDynamoGetItem({
       processingConfig: {
@@ -123,18 +104,8 @@ describe('Test Pipeline Response Service', () => {
   it('functions propely with correct input (custom sample UUID given)', async () => {
     AWSMock.setSDKInstance(AWS);
 
-    const s3Spy = jest.fn((x) => x);
-    AWSMock.mock('S3', 'getObject', (params, callback) => {
-      s3Spy(params);
-      callback(null, s3output);
-    });
-
-    const dynamoDbSpy = jest.fn((x) => x);
-    AWSMock.mock('DynamoDB', 'updateItem', (params, callback) => {
-      dynamoDbSpy(params);
-      callback(null, {});
-    });
-
+    const s3Spy = mockS3GetObject(s3output);
+    const dynamoDbSpy = mockDynamoUpdateItem();
 
     mockDynamoGetItem({
       processingConfig: {
@@ -164,18 +135,8 @@ describe('Test Pipeline Response Service', () => {
 
     AWSMock.setSDKInstance(AWS);
 
-    const s3Spy = jest.fn((x) => x);
-    AWSMock.mock('S3', 'getObject', (params, callback) => {
-      s3Spy(params);
-      callback(null, s3output);
-    });
-
-    const dynamoDbSpy = jest.fn((x) => x);
-    AWSMock.mock('DynamoDB', 'updateItem', (params, callback) => {
-      dynamoDbSpy(params);
-      callback(null, {});
-    });
-
+    const s3Spy = mockS3GetObject(s3output);
+    const dynamoDbSpy = mockDynamoUpdateItem();
 
     // Expect websocket event
     client.on(`ExperimentUpdates-${experimentId}`, (res) => {

@@ -17,29 +17,29 @@ describe('tests for samples route', () => {
     jest.restoreAllMocks();
   });
 
-  // it('Get samples by experimentId returns 200', async (done) => {
-  //   request(app)
-  //     .get('/v1/experiments/someId/samples')
-  //     .expect(200)
-  //     .end((err) => {
-  //       if (err) {
-  //         return done(err);
-  //       }
-  //       return done();
-  //     });
-  // });
+  it('Get samples by experimentId returns 200', async (done) => {
+    request(app)
+      .get('/v1/experiments/someId/samples')
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
 
-  // it('Requesting sample for a non-existing experimentId returns 404', async (done) => {
-  //   request(app)
-  //     .get('/v1/experiments/nonExistentId/samples')
-  //     .expect(404)
-  //     .end((err) => {
-  //       if (err) {
-  //         return done(err);
-  //       }
-  //       return done();
-  //     });
-  // });
+  it('Requesting sample for a non-existing experimentId returns 404', async (done) => {
+    request(app)
+      .get('/v1/experiments/nonExistentId/samples')
+      .expect(404)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
 
   it('Updating correct samples return 200 ', async (done) => {
     const payload = {
@@ -54,12 +54,11 @@ describe('tests for samples route', () => {
     };
 
     request(app)
-      .put('/v1/projects/someId/samples')
+      .put('/v1/projects/someId/experimentId/samples')
       .send(payload)
       .expect(200)
       .end((err) => {
         if (err) {
-          console.log(err);
           return done(err);
         }
         return done();
@@ -72,7 +71,7 @@ describe('tests for samples route', () => {
     };
 
     request(app)
-      .put('/v1/projects/someId/samples')
+      .put('/v1/projects/someId/experimentId/samples')
       .expect(400)
       .send(invalidPayload)
       .end((err) => {
@@ -85,7 +84,7 @@ describe('tests for samples route', () => {
 
   it('Updating samples with body without data returns error 415', async (done) => {
     request(app)
-      .put('/v1/projects/someId/samples')
+      .put('/v1/projects/someId/experimentId/samples')
       .expect(415)
       .end((err) => {
         if (err) {

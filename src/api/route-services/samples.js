@@ -4,6 +4,7 @@ const config = require('../../config');
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord,
 } = require('../../utils/dynamoDb');
+const logger = require('../../utils/logging');
 
 
 class SamplesService {
@@ -12,6 +13,7 @@ class SamplesService {
   }
 
   async getSamples(projectUuid) {
+    logger.log(`Gettings samples for projectUuid : ${projectUuid}`);
     const marshalledData = convertToDynamoDbRecord({
       ':projectUuid': projectUuid,
     });
@@ -35,7 +37,8 @@ class SamplesService {
     throw new NotFoundError('Samples not found');
   }
 
-  async getByExperimentId(experimentId) {
+  async getSamplesByExperimentId(experimentId) {
+    logger.log(`Gettings samples using experimentId : ${experimentId}`);
     const marshalledKey = convertToDynamoDbRecord({
       experimentId,
     });
@@ -58,6 +61,8 @@ class SamplesService {
   }
 
   async updateSamples(projectUuid, body) {
+    logger.log(`Updating samples for project ${projectUuid} and expId ${body.experimentId}`);
+
     const marshalledKey = convertToDynamoDbRecord({
       experimentId: body.experimentId,
     });
@@ -66,6 +71,7 @@ class SamplesService {
       ':samples': body.samples,
       ':projectUuid': projectUuid,
     });
+
 
     // Update samples
     const params = {
@@ -79,6 +85,29 @@ class SamplesService {
 
     try {
       await dynamodb.updateItem(params).send();
+      return OK();
+    } catch (e) {
+      if (e.statusCode === 404) throw NotFoundError('Project not found');
+      throw e;
+    }
+  }
+
+  async deleteSamples(projectUuid, experimentId) {
+    logger.log(`Deleting sample for project ${projectUuid} and expId ${experimentId}`);
+
+    const marshalledKey = convertToDynamoDbRecord({
+      experimentId,
+    });
+
+    const params = {
+      TableName: this.tableName,
+      Key: marshalledKey,
+    };
+
+    const dynamodb = createDynamoDbInstance();
+
+    try {
+      await dynamodb.deleteItem(params).send();
       return OK();
     } catch (e) {
       if (e.statusCode === 404) throw NotFoundError('Project not found');
