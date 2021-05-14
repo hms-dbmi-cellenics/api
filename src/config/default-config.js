@@ -2,6 +2,7 @@ const dotenv = require('dotenv');
 const AWS = require('aws-sdk');
 const logger = require('../utils/logging');
 
+console.log('a');
 // If we are not deployed on GitLab (AWS/k8s), the environment is given by
 // NODE_ENV, or development if NODE_ENV is not set.
 
@@ -39,6 +40,8 @@ if (!envFound) {
 
 const awsRegion = process.env.AWS_DEFAULT_REGION || 'eu-west-1';
 
+console.log('b');
+
 async function getAwsPoolId() {
   const cognitoISP = new AWS.CognitoIdentityServiceProvider({
     region: awsRegion,
@@ -50,6 +53,8 @@ async function getAwsPoolId() {
   return poolId;
 }
 
+console.log('c');
+
 async function getAwsAccountId() {
   const sts = new AWS.STS({
     region: awsRegion,
@@ -58,6 +63,8 @@ async function getAwsAccountId() {
   const data = await sts.getCallerIdentity({}).promise();
   return data.Account;
 }
+
+console.log('d');
 
 const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
@@ -96,6 +103,8 @@ if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
   config.corsOriginUrl = `https://ui-${config.sandboxId}.scp-staging.biomage.net`;
 }
 
+console.log('e');
+
 // We are in the `development` clusterEnv, meaning we run on
 // InfraMock. Set up API accordingly.
 if (config.clusterEnv === 'development') {
@@ -110,5 +119,7 @@ if (config.clusterEnv === 'development') {
 
   config.corsOriginUrl = 'http://localhost:5000';
 }
+
+console.log('f');
 
 module.exports = config;

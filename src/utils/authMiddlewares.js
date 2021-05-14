@@ -6,13 +6,26 @@ const jwt = require('jsonwebtoken');
 const jwtExpress = require('express-jwt');
 const jwkToPem = require('jwk-to-pem');
 const util = require('util');
+
+console.log('g');
+
 const config = require('../config');
+
+console.log('h');
+
 const CacheSingleton = require('../cache');
+
+console.log('i');
+
 const { CacheMissError } = require('../cache/cache-utils');
 const { UnauthorizedError, UnauthenticatedError } = require('./responses');
 const ExperimentService = require('../api/route-services/experiment');
 
+console.log('j');
+
 const experimentService = new ExperimentService();
+
+console.log('k');
 
 /**
  * Authentication middleware for Express. Returns a middleware that
