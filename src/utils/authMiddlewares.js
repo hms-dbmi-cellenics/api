@@ -111,7 +111,7 @@ const authenticationMiddlewareSocketIO = async (authHeader) => {
  *
  * @param {*} experimentId The ID of the experiment to check.
  * @param {*} claim The JWT claim identifying the user.
- * @returns Promise that resolves or rejects based on authentication status.
+ * @returns Promise that resolves or rejects based on authorization status.
  * @throws {UnauthorizedError} Authorization failed.
  */
 const authorize = async (experimentId, claim) => {
