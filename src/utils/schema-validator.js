@@ -4,8 +4,9 @@ const path = require('path');
 const SwaggerClient = require('swagger-client');
 const Validator = require('swagger-model-validator');
 const yaml = require('js-yaml');
-
 const _ = require('lodash');
+
+const logger = require('./logging');
 
 const validateRequest = async (request, schemaPath) => {
   const specPath = path.resolve(__dirname, '..', 'specs', 'models', schemaPath);
@@ -33,12 +34,13 @@ const validateRequest = async (request, schemaPath) => {
   });
 
   const validator = new Validator();
-  const res = validator.validate(
+  const validation = validator.validate(
     _.cloneDeep(request), _.cloneDeep(spec),
   );
 
-  if (!res.valid) {
-    throw new Error(res.errors[0]);
+  if (!validation.valid) {
+    logger.log(`Validation error for: ${request}`);
+    throw new Error(validation.errors[0]);
   }
 };
 

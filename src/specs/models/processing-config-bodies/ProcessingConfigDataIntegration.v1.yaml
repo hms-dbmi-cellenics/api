@@ -28,6 +28,29 @@ properties:
                 enum:
                   - logNormalize
                   - scTransform
+          fastmnn:
+            type: object
+            properties:
+              numGenes:
+                type: number
+              normalisation:
+                type: string
+                enum:
+                  - logNormalize
+                  - scTransform
+            required:
+              - numGenes
+              - normalisation
+          unisample:
+            type: object
+            properties:
+              numGenes:
+                type: number
+              normalisation:
+                type: string
+                enum:
+                  - logNormalize
+                  - scTransform
             required:
               - numGenes
               - normalisation

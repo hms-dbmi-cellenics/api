@@ -75,6 +75,14 @@ const mockUpdateProcessingConfig = jest.fn(
                 numGenes: 2000,
                 normalisation: 'logNormalize',
               },
+              fastmnn: {
+                numGenes: 2000,
+                normalisation: 'logNormalize',
+              },
+              unisample: {
+                numGenes: 2000,
+                normalisation: 'logNormalize',
+              },
             },
           },
           dimensionalityReduction: {
