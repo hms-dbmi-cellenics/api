@@ -4,7 +4,18 @@ const samplesService = new SamplesService();
 
 module.exports = {
   'samples#get': (req, res, next) => {
-    samplesService.getSamples(req.params.experimentId)
+    samplesService.getSamples(req.params.projectUuid)
+      .then((data) => res.json(data))
+      .catch(next);
+  },
+  'samples#getSamplesByExperimentId': (req, res, next) => {
+    samplesService.getSamplesByExperimentId(req.params.experimentId)
+      .then((data) => res.json(data))
+      .catch(next);
+  },
+  'samples#update': (req, res, next) => {
+    const { body, params: { projectUuid } } = req;
+    samplesService.updateSamples(projectUuid, body)
       .then((data) => res.json(data))
       .catch(next);
   },

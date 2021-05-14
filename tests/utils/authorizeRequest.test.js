@@ -1,22 +1,14 @@
 const AWSMock = require('aws-sdk-mock');
-const AWS = require('../../src/utils/requireAWS');
 const authorizeRequest = require('../../src/utils/authorizeRequest');
+
+const {
+  mockDynamoGetItem,
+} = require('../test-utils/mockAWSServices');
 
 describe('Tests for authorizing api requests ', () => {
   afterEach(() => {
     AWSMock.restore('DynamoDB');
   });
-  const mockDynamoGetItem = (jsData) => {
-    const dynamodbData = {
-      Item: AWS.DynamoDB.Converter.marshall(jsData),
-    };
-    const getItemSpy = jest.fn((x) => x);
-    AWSMock.setSDKInstance(AWS);
-    AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
-      getItemSpy(params);
-      callback(null, dynamodbData);
-    });
-  };
   const data = {
     experimentId: '12345',
     can_write: ['admin'],

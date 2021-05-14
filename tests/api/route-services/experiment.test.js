@@ -2,59 +2,17 @@ const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../../src/utils/requireAWS');
 
 const ExperimentService = require('../../../src/api/route-services/experiment');
+const {
+  mockDynamoGetItem,
+  mockDynamoUpdateItem,
+  mockS3GetObject,
+  mockS3PutObject,
+} = require('../../test-utils/mockAWSServices');
 
 describe('tests for the experiment service', () => {
   afterEach(() => {
     AWSMock.restore('DynamoDB');
   });
-
-  const mockDynamoGetItem = (jsData) => {
-    const dynamodbData = {
-      Item: AWS.DynamoDB.Converter.marshall(jsData),
-    };
-    const getItemSpy = jest.fn((x) => x);
-    AWSMock.setSDKInstance(AWS);
-    AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
-      getItemSpy(params);
-      callback(null, dynamodbData);
-    });
-    return getItemSpy;
-  };
-
-  const mockDynamoUpdateItem = () => {
-    const updateItemSpy = jest.fn((x) => x);
-    AWSMock.setSDKInstance(AWS);
-    AWSMock.mock('DynamoDB', 'updateItem', (params, callback) => {
-      updateItemSpy(params);
-      callback(null, {}); // We do not care about the return value here, it is not used.
-    });
-    return updateItemSpy;
-  };
-
-  const mockS3GetObject = (jsData) => {
-    const getObjectSpy = jest.fn((x) => x);
-    AWSMock.setSDKInstance(AWS);
-
-    AWSMock.mock('S3', 'getObject', (params, callback) => {
-      getObjectSpy(params);
-      callback(null, jsData);
-    });
-
-    return getObjectSpy;
-  };
-
-  const mockS3PutObject = () => {
-    const putObjectSpy = jest.fn((x) => x);
-    AWSMock.setSDKInstance(AWS);
-
-    AWSMock.mock('S3', 'putObject', (params, callback) => {
-      putObjectSpy(params);
-
-      callback(null, {});
-    });
-
-    return putObjectSpy;
-  };
 
 
   it('Get experiment data works', async (done) => {
