@@ -4,7 +4,7 @@ const {
   expressAuthorizationMiddleware,
   authorize,
 } = require('../../src/utils/authMiddlewares');
-const { UnauthorizedError, UnauthenticedError } = require('../../src/utils/errors');
+const { UnauthorizedError, UnauthentiicatedError } = require('../../src/utils/errors');
 
 
 describe('Tests for authorization/authentication middlewares', () => {
@@ -98,6 +98,6 @@ describe('Tests for authorization/authentication middlewares', () => {
     const next = jest.fn();
 
     await expressAuthorizationMiddleware(req, {}, next);
-    expect(next).toBeCalledWith(expect.any(UnauthenticedError));
+    expect(next).toBeCalledWith(expect.any(UnauthentiicatedError));
   });
 });

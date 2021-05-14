@@ -8,7 +8,7 @@
  * the target resource.
  *
  */
-class UnauthenticedError extends Error {
+class UnauthentiicatedError extends Error {
   constructor(message) {
     super(message);
     this.status = 401;
@@ -39,4 +39,4 @@ class NotFoundError extends Error {
   }
 }
 
-module.exports = { UnauthenticedError, UnauthorizedError, NotFoundError };
+module.exports = { UnauthentiicatedError, UnauthorizedError, NotFoundError };
