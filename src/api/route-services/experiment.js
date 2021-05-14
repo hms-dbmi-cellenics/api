@@ -41,7 +41,7 @@ class ExperimentService {
     this.mockData = convertToDynamoDbRecord(mockData);
   }
 
-  async getExperiment(experimentId) {
+  async getExperimentData(experimentId) {
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId);
     return data;
   }

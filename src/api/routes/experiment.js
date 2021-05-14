@@ -4,7 +4,7 @@ const experimentService = new ExperimentService();
 
 module.exports = {
   'experiment#getExperiment': (req, res, next) => {
-    experimentService.getExperiment(req.params.experimentId)
+    experimentService.getExperimentData(req.params.experimentId)
       .then((data) => res.json(data))
       .catch(next);
   },
