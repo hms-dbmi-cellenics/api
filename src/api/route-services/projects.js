@@ -79,8 +79,6 @@ class ProjectsService {
     const dynamodb = createDynamoDbInstance();
 
     try {
-      await dynamodb.deleteItem(params).send();
-
       const { experiments } = await this.getProject(projectUuid);
 
       if (experiments.length > 0) {
@@ -90,6 +88,9 @@ class ProjectsService {
 
         await Promise.all(deletePromises);
       }
+
+      await dynamodb.deleteItem(params).send();
+
       return OK();
     } catch (e) {
       if (e.statusCode === 400) throw new NotFoundError('Project not found');
