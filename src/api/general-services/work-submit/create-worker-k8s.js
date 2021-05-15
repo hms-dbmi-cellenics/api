@@ -104,9 +104,18 @@ const createWorkerResources = async (service) => {
   const justWait = lockHelmUpdate.isBusy(lockHelmUpdateKey);
   if (justWait) {
     logger.log('Helm update command lock: waiting');
-    await lockHelmUpdate.acquire(lockHelmUpdateKey, () => { logger.log('Helm update command lock: available'); });
+    await lockHelmUpdate.acquire(lockHelmUpdateKey, () => { logger.log('Helm update command lock: releasing'); });
   } else {
-    await lockHelmUpdate.acquire(lockHelmUpdateKey, () => { helmUpdate(service); });
+    logger.log('Helm update command lock: will acquire right away');
+    // eslint-disable-next-line no-async-promise-executor
+    await lockHelmUpdate.acquire(lockHelmUpdateKey, () => new Promise(async (resolve, reject) => {
+      try {
+        await helmUpdate(service);
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    }));
   }
 };
 
