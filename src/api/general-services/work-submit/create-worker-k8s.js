@@ -63,7 +63,7 @@ const createWorkerResources = async (service) => {
 
   // Attempt to deploy the worker.
   try {
-    const params = `upgrade worker-${workerHash} chart-instance/ --namespace ${cfg.namespace} -f ${name} --install --wait -o json`.split(' ');
+    const params = `upgrade worker-${workerHash} chart-instance/ --namespace ${cfg.namespace} -f ${name} --install --atomic -o json`.split(' ');
     logger.log(`helm params: ${params}`);
 
     let { stdout: release } = await execFile(HELM_BINARY, params);
@@ -75,6 +75,10 @@ const createWorkerResources = async (service) => {
     if (!error.stderr) {
       throw error;
     }
+    const params = `status worker-${workerHash} --namespace ${cfg.namespace} -o json`.split(' ');
+    logger.log(`helm params: ${params}`);
+    const status = await execFile(HELM_BINARY, params);
+    console.log(status);
 
     if (
       error.stderr.includes('release: already exists')
