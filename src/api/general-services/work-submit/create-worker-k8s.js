@@ -6,8 +6,12 @@ const fetch = require('node-fetch');
 const YAML = require('yaml');
 const { Downloader } = require('github-download-directory');
 const jq = require('jq-web');
+const AsyncLock = require('async-lock');
 const config = require('../../../config');
 const logger = require('../../../utils/logging');
+
+const lockHelmUpdateKey = 'lockHelmUpdate';
+const lockHelmUpdate = new AsyncLock();
 
 const constructChartValues = async (service) => {
   const { workQueueName } = service;
@@ -40,7 +44,7 @@ const constructChartValues = async (service) => {
   return { cfg, sha: jq.json(manifest, '.. | objects | select(.metadata.name == "worker") | .spec.chart.ref') };
 };
 
-const createWorkerResources = async (service) => {
+const helmUpdate = async (service) => {
   const { workerHash } = service;
   const HELM_BINARY = '/usr/local/bin/helm';
   const execFile = util.promisify(childProcess.execFile);
@@ -93,6 +97,16 @@ const createWorkerResources = async (service) => {
     }
 
     throw error;
+  }
+};
+
+const createWorkerResources = async (service) => {
+  const justWait = lockHelmUpdate.isBusy(lockHelmUpdateKey);
+  if (justWait) {
+    logger.log('Helm update command lock: waiting');
+    await lockHelmUpdate.acquire(lockHelmUpdateKey, () => { logger.log('Helm update command lock: available'); });
+  } else {
+    await lockHelmUpdate.acquire(lockHelmUpdateKey, () => { helmUpdate(service); });
   }
 };
 
