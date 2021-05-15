@@ -75,10 +75,14 @@ const createWorkerResources = async (service) => {
     if (!error.stderr) {
       throw error;
     }
-    const params = `status worker-${workerHash} --namespace ${cfg.namespace} -o json`.split(' ');
+    let params = `status worker-${workerHash} --namespace ${cfg.namespace}`.split(' ');
     logger.log(`helm params: ${params}`);
     const status = await execFile(HELM_BINARY, params);
     console.log(status);
+    params = `history worker-${workerHash} --namespace ${cfg.namespace}`.split(' ');
+    logger.log(`helm params: ${params}`);
+    const history = await execFile(HELM_BINARY, params);
+    console.log(history);
 
     if (
       error.stderr.includes('release: already exists')
