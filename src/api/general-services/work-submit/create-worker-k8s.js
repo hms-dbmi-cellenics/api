@@ -10,9 +10,6 @@ const AsyncLock = require('async-lock');
 const config = require('../../../config');
 const logger = require('../../../utils/logging');
 
-const lockHelmUpdateKey = 'lockHelmUpdate';
-const lockHelmUpdate = new AsyncLock();
-
 const constructChartValues = async (service) => {
   const { workQueueName } = service;
   const { experimentId } = service.workRequest;
@@ -68,26 +65,21 @@ const helmUpdate = async (service) => {
   // Attempt to deploy the worker.
   try {
     const params = `upgrade worker-${workerHash} chart-instance/ --namespace ${cfg.namespace} -f ${name} --install --atomic -o json`.split(' ');
-    logger.log(`helm params: ${params}`);
 
     let { stdout: release } = await execFile(HELM_BINARY, params);
     release = JSON.parse(release);
 
     logger.log(`Worker instance ${release.name} successfully created.`);
   } catch (error) {
-    logger.error('helm failed', error);
+    const params = `history worker-${workerHash} --namespace ${cfg.namespace}`;
+    logger.log(`helm update failed. Calling helm ${params}...`);
+    const history = await execFile(HELM_BINARY, params.split(' '));
+    logger.log(history);
+    logger.log('If a chart is stick updating, you may need to call helm rollback');
+
     if (!error.stderr) {
       throw error;
     }
-    let params = `status worker-${workerHash} --namespace ${cfg.namespace}`.split(' ');
-    logger.log(`helm params: ${params}`);
-    const status = await execFile(HELM_BINARY, params);
-    console.log(status);
-    params = `history worker-${workerHash} --namespace ${cfg.namespace}`.split(' ');
-    logger.log(`helm params: ${params}`);
-    const history = await execFile(HELM_BINARY, params);
-    console.log(history);
-
     if (
       error.stderr.includes('release: already exists')
       || error.stderr.includes('another operation (install/upgrade/rollback) is in progress')
@@ -99,6 +91,9 @@ const helmUpdate = async (service) => {
     throw error;
   }
 };
+
+const lockHelmUpdateKey = 'lockHelmUpdate';
+const lockHelmUpdate = new AsyncLock();
 
 const createWorkerResources = async (service) => {
   const justWait = lockHelmUpdate.isBusy(lockHelmUpdateKey);
