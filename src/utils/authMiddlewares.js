@@ -1,6 +1,7 @@
 // See details at https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-verifying-a-jwt.html
 // for how JWT verification works with Cognito.
 
+const AWSXRay = require('aws-xray-sdk');
 const fetch = require('node-fetch');
 const jwt = require('jsonwebtoken');
 const jwtExpress = require('express-jwt');
@@ -38,7 +39,11 @@ const authenticationMiddlewareExpress = async (app) => {
 
   console.log('m');
 
+  // This will be run outside a request context, so there is no X-Ray segment.
+  // Disable tracing so we don't end up with errors logged into the console.
+  AWSXRay.setContextMissingStrategy('IGNORE_ERROR');
   const poolId = await config.awsUserPoolIdPromise;
+  AWSXRay.setContextMissingStrategy('LOG_ERROR');
 
   console.log('n');
 
