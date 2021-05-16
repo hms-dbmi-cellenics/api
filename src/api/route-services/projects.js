@@ -65,6 +65,21 @@ class ProjectsService {
     }
   }
 
+  async getProjects() {
+    const params = {
+      TableName: this.tableName,
+    };
+    const dynamodb = createDynamoDbInstance();
+    const response = await dynamodb.scan(params).promise();
+
+    const projects = [];
+    response.Items.forEach((item) => {
+      const project = convertToJsObject(item);
+      projects.push(project.projects);
+    });
+    return projects;
+  }
+
   async deleteProject(projectUuid) {
     logger.log(`Deleting project with id ${projectUuid}`);
     const marshalledKey = convertToDynamoDbRecord({

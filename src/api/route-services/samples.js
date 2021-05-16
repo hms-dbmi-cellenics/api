@@ -14,24 +14,22 @@ class SamplesService {
 
   async getSamples(projectUuid) {
     logger.log(`Gettings samples for projectUuid : ${projectUuid}`);
-    const marshalledData = convertToDynamoDbRecord({
-      ':projectUuid': projectUuid,
-    });
 
     const params = {
       TableName: this.tableName,
-      IndexName: 'gsiExperimentid',
-      KeyConditionExpression: 'projectUuid = :projectUuid',
-      ExpressionAttributeValues: marshalledData,
-      ProjectionExpression: 'samples',
+      FilterExpression: 'projectUuid = :projectUuid',
+      ExpressionAttributeValues: {
+        ':projectUuid': { S: projectUuid },
+      },
     };
+
     const dynamodb = createDynamoDbInstance();
 
-    const response = await dynamodb.query(params).promise();
-
-    if (response.Item) {
-      const prettyResponse = convertToJsObject(response.Item);
-      return prettyResponse;
+    const response = await dynamodb.scan(params).promise();
+    if (response.Items) {
+      // const prettyResponse = response.Items.map((item) => convertToJsObject(item));
+      const prettyResponse = convertToJsObject(response.Items[0]);
+      return prettyResponse.samples;
     }
 
     throw new NotFoundError('Samples not found');

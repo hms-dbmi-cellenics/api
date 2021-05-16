@@ -562,3 +562,19 @@ paths:
                     type: string
                   samples:
                     $ref: ./models/api-body-schemas/Samples.v1.yaml
+  '/projects':
+    get:
+      summary: ''
+      operationId: getProjects
+      x-eov-operation-id: projects#get
+      x-eov-operation-handler: routes/projects
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ./models/api-body-schemas/Project.v1.yaml
+      description: Get the projects
