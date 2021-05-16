@@ -72,10 +72,10 @@ const helmUpdate = async (service) => {
     logger.log(`Worker instance ${release.name} successfully created.`);
   } catch (error) {
     const params = `history worker-${workerHash} --namespace ${cfg.namespace}`;
-    logger.log(`helm update failed. Calling helm ${params}...`);
+    logger.log(`helm update failed. Calling "helm ${params}"...`);
     const history = await execFile(HELM_BINARY, params.split(' '));
-    logger.log(history);
-    logger.log('If a chart is stick updating, you may need to call helm rollback');
+    logger.log(history.stdout);
+    logger.log(`If the chart is stuck updating, you may need to call "helm ${params.replace('history', 'rollback')}"`);
 
     if (!error.stderr) {
       throw error;
@@ -84,7 +84,7 @@ const helmUpdate = async (service) => {
       error.stderr.includes('release: already exists')
       || error.stderr.includes('another operation (install/upgrade/rollback) is in progress')
     ) {
-      logger.log('Worker instance is being created by another process, skipping...');
+      logger.log('Worker instance creation was already in progress, skipping...');
       return;
     }
 
