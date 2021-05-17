@@ -1,5 +1,5 @@
 const AWSXRay = require('aws-xray-sdk');
-const { createGem2S } = require('../general-services/pipeline-manage');
+const { createGem2SPipeline } = require('../general-services/pipeline-manage');
 const ExperimentService = require('../route-services/experiment');
 const getBackendStatus = require('../general-services/backend-status');
 const pipelineResponse = require('../route-services/pipeline-response');
@@ -14,7 +14,7 @@ module.exports = {
   },
 
   'gem2s#create': (req, res, next) => {
-    createGem2S(req.params.experimentId)
+    createGem2SPipeline(req.params.experimentId)
       .then((data) => {
         const experimentService = new ExperimentService();
         experimentService.savePipelineHandle(req.params.experimentId, data)

@@ -2,7 +2,7 @@ const config = require('../../../../config');
 
 const createNewJobIfNotExist = (context, step) => {
   const {
-    clusterInfo, experimentId, pipelineArtifacts, accountId, activityArn,
+    clusterInfo, experimentId, pipelineArtifacts, accountId, activityArn, processName,
   } = context;
 
 
@@ -31,7 +31,9 @@ const createNewJobIfNotExist = (context, step) => {
   }
 
   const MAX_HELMRELEASE_NAME_LENGTH = 53;
-  const releaseName = `pipeline-${experimentId}`.substring(0, MAX_HELMRELEASE_NAME_LENGTH - 1);
+  // TODO have differet names for gem2s vs. qc
+  // verify experimentID it's available in gem2s
+  const releaseName = `${processName}-${experimentId}`.substring(0, MAX_HELMRELEASE_NAME_LENGTH - 1);
 
   return {
     ...step,
@@ -63,12 +65,12 @@ const createNewJobIfNotExist = (context, step) => {
           releaseName,
           chart: {
             git: 'git@github.com:biomage-ltd/pipeline',
-            path: 'qc-runner/chart',
+            path: 'pipeline-runner/chart',
             ref: pipelineArtifacts.chartRef,
           },
           values: {
             experimentId,
-            image: pipelineArtifacts['qc-runner'],
+            image: pipelineArtifacts['pipeline-runner'],
             namespace: config.pipelineNamespace,
             sandboxId: config.sandboxId,
             awsAccountId: accountId,

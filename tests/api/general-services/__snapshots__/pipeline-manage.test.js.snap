@@ -255,7 +255,7 @@ Array [
               "spec": Object {
                 "chart": Object {
                   "git": "git@github.com:biomage-ltd/pipeline",
-                  "path": "qc-runner/chart",
+                  "path": "pipeline-runner/chart",
                   "ref": "MOCK_REF_PATH",
                 },
                 "releaseName": "pipeline-testExperimentId",

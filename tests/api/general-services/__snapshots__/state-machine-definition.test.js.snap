@@ -55,7 +55,7 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
             "releaseName": "pipeline-mock-experiment-id",
             "chart": {
               "git": "git@github.com:biomage-ltd/pipeline",
-              "path": "qc-runner/chart"
+              "path": "pipeline-runner/chart"
             },
             "values": {
               "experimentId": "mock-experiment-id",
@@ -431,7 +431,7 @@ exports[`non-tests to document the State Machines - pipeline cloud 1`] = `
             "releaseName": "pipeline-mock-experiment-id",
             "chart": {
               "git": "git@github.com:biomage-ltd/pipeline",
-              "path": "qc-runner/chart"
+              "path": "pipeline-runner/chart"
             },
             "values": {
               "experimentId": "mock-experiment-id",
