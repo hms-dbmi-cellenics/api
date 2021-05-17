@@ -1,4 +1,5 @@
 const AWSMock = require('aws-sdk-mock');
+const AWS = require('../../src/utils/requireAWS');
 const {
   expressAuthorizationMiddleware,
   authorize,
@@ -9,11 +10,13 @@ const {
   mockDynamoGetItem,
 } = require('../test-utils/mockAWSServices');
 
+const documentClient = new AWS.DynamoDB.DocumentClient();
+
 describe('Tests for authorization/authentication middlewares', () => {
   // Sample experiment permission data.
   const data = {
     experimentId: '12345',
-    rbac_can_write: ['test-user'],
+    rbac_can_write: documentClient.createSet(['test-user']),
   };
 
   afterEach(() => {

@@ -147,7 +147,7 @@ const authorize = async (experimentId, claim) => {
   } = await experimentService.getExperimentPermissions(experimentId);
 
   // If the logged in user has the permissions, forward request.
-  if (canWrite.includes(userName)) {
+  if (canWrite.values.includes(userName)) {
     return true;
   }
 
