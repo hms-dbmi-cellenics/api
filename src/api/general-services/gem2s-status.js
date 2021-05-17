@@ -5,7 +5,7 @@ const logger = require('../../utils/logging');
 
 const getStepsFromExecutionHistory = require('../../utils/getStepsFromExecutionHistory');
 
-const supportingSteps = ['DeleteCompletedGem2SWorker', 'LaunchNewGem2SWorker'];
+const supportingSteps = ['DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker'];
 
 /*
      * Return `completedSteps` of the state machine (SM) associated to the `experimentId`'s pipeline
@@ -15,7 +15,7 @@ const supportingSteps = ['DeleteCompletedGem2SWorker', 'LaunchNewGem2SWorker'];
      *  - a step is only considered completed if it has been completed for all iteration of the Map
      *  - steps are returned in the completion order, and are unique in the returned array
      */
-const getPipelineStatus = async (experimentId) => {
+const gem2sStatus = async (experimentId) => {
   const { executionArn } = await (new ExperimentService()).getPipelineHandle(experimentId);
   let execution = {};
   let completedSteps = [];
@@ -65,4 +65,4 @@ const getPipelineStatus = async (experimentId) => {
   return response;
 };
 
-module.exports = getPipelineStatus;
+module.exports = gem2sStatus;

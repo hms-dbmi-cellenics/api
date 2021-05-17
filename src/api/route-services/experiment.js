@@ -63,6 +63,15 @@ class ExperimentService {
     };
   }
 
+  async getGem2sHandle(experimentId) {
+    const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['meta']);
+    return {
+      stateMachineArn: '',
+      executionArn: '',
+      ...data.meta.gem2s,
+    };
+  }
+
   async getCellSets(experimentId) {
     const s3 = new AWS.S3();
 
