@@ -1,6 +1,6 @@
 const config = require('../../../../config');
 
-const gem2sSkeleton = {
+const gem2sPipelineSkeleton = {
   Comment: `Gem2s for clusterEnv '${config.clusterEnv}'`,
   StartAt: 'DeleteCompletedGem2SWorker',
   States: {
@@ -115,4 +115,4 @@ const gem2sSkeleton = {
   },
 };
 
-module.exports = { gem2sSkeleton };
+module.exports = { gem2sPipelineSkeleton };
