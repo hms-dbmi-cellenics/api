@@ -10,7 +10,8 @@ const logger = require('../../../utils/logging');
 const ExperimentService = require('../../route-services/experiment');
 const SamplesService = require('../../route-services/samples');
 
-const skeletons = require('./skeletons/gem2s-pipeline-skeleton');
+const { qcPipelineSkeleton } = require('./skeletons/qc-pipeline-skeleton');
+const { gem2sPipelineSkeleton } = require('./skeletons/gem2s-pipeline-skeleton');
 const constructPipelineStep = require('./constructors/construct-pipeline-step');
 const asyncTimer = require('../../../utils/asyncTimer');
 
@@ -206,7 +207,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
     processingConfig: mergedProcessingConfig,
   };
 
-  const stateMachine = buildStateMachineDefinition(skeletons.pipelineSkeleton, context);
+  const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
 
   logger.log('Skeleton constructed, now creating activity if not already present...');
   const activityArn = await createActivity(context);
@@ -254,7 +255,7 @@ const createGem2SPipeline = async (experimentId) => {
     processingConfig: {},
   };
 
-  const stateMachine = buildStateMachineDefinition(skeletons.gem2sSkeleton, context);
+  const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
 
   logger.log('Skeleton constructed, now creating activity if not already present...');
   const activityArn = await createActivity(context);
