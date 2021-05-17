@@ -71,7 +71,6 @@ class ProjectsService {
     };
     const dynamodb = createDynamoDbInstance();
     const response = await dynamodb.scan(params).promise();
-
     const projects = [];
     response.Items.forEach((item) => {
       const project = convertToJsObject(item);
