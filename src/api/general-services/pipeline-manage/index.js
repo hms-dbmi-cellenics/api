@@ -10,15 +10,15 @@ const logger = require('../../../utils/logging');
 const ExperimentService = require('../../route-services/experiment');
 const SamplesService = require('../../route-services/samples');
 
-const skeletons = require('./state-machine-skeletons');
+const skeletons = require('./skeletons/gem2s-pipeline-skeleton');
 const constructPipelineStep = require('./constructors/construct-pipeline-step');
 const asyncTimer = require('../../../utils/asyncTimer');
+
+const { PIPELINE_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('./constants');
 
 const experimentService = new ExperimentService();
 const samplesService = new SamplesService();
 
-const PIPELINE_PROCESS_NAME = 'pipeline';
-const GEM2S_PROCESS_NAME = 'gem2s';
 
 const getPipelineArtifacts = async () => {
   const response = await fetch(
@@ -33,7 +33,7 @@ const getPipelineArtifacts = async () => {
 
   return {
     chartRef: jq.json(manifest, '..|objects| select(.metadata != null) | select( .metadata.name | contains("pipeline")) | .spec.chart.ref//empty'),
-    'qc-runner': jq.json(manifest, '..|objects|.["qc-runner"].image//empty'),
+    'pipeline-runner': jq.json(manifest, '..|objects|.["pipeline-runner"].image//empty'), // change the name
   };
 };
 
@@ -152,7 +152,7 @@ const buildStateMachineDefinition = (skeleton, context) => {
   return stateMachine;
 };
 
-const createPipeline = async (experimentId, processingConfigUpdates) => {
+const createQCPipeline = async (experimentId, processingConfigUpdates) => {
   const accountId = await config.awsAccountIdPromise;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
@@ -226,17 +226,24 @@ const createPipeline = async (experimentId, processingConfigUpdates) => {
   return { stateMachineArn, executionArn };
 };
 
-const createGem2S = async (experimentId) => {
+const createGem2SPipeline = async (experimentId) => {
   const accountId = await config.awsAccountIdPromise;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
-  const processName = 'gem2s'
-  // logger.log(`Fetching processing settings for ${experimentId}`);
-  // const { processingConfig } = await experimentService.getProcessingConfig(experimentId);
 
-  const samplesRes = await samplesService.getSampleIds(experimentId);
-  const { samples } = samplesRes;
+  const experiment = await experimentService.getExperimentData(experimentId);
+  const { samples } = await samplesService.getSamples(experimentId);
+
+  const taskParams = {
+    projectId: experiment.projectId,
+    experimentName: experiment.experimentName,
+    organism: experiment.meta.organism,
+    input: { type: experiment.meta.type },
+    sampleIds: samples.ids,
+    sampleNames: samples.ids.map((id) => samples[id].name),
+  };
 
   const context = {
+    taskParams,
     experimentId,
     accountId,
     roleArn,
@@ -257,11 +264,7 @@ const createGem2S = async (experimentId) => {
 
   logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
 
-  const execInput = {
-    samples: samples.ids.map((sampleUuid, index) => ({ sampleUuid, index })),
-  };
-
-  const executionArn = await executeStateMachine(stateMachineArn, execInput);
+  const executionArn = await executeStateMachine(stateMachineArn);
   logger.log(`Execution with ARN ${executionArn} created.`);
 
   return { stateMachineArn, executionArn };
@@ -269,7 +272,7 @@ const createGem2S = async (experimentId) => {
 
 
 module.exports = {
-  createPipeline,
-  createGem2S,
+  createQCPipeline,
+  createGem2SPipeline,
   buildStateMachineDefinition,
 };

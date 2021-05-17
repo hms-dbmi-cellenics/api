@@ -1,12 +1,11 @@
 const AWSXRay = require('aws-xray-sdk');
-const { createPipeline } = require('../general-services/pipeline-manage');
+const { createQCPipeline } = require('../general-services/pipeline-manage');
 const ExperimentService = require('../route-services/experiment');
 const getBackendStatus = require('../general-services/backend-status');
 const pipelineResponse = require('../route-services/pipeline-response');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 const logger = require('../../utils/logging');
 const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
-
 
 module.exports = {
   'pipelines#get': [
@@ -22,7 +21,7 @@ module.exports = {
     (req, res, next) => {
       const { processingConfig } = req.body;
 
-      createPipeline(req.params.experimentId, processingConfig || [])
+      createQCPipeline(req.params.experimentId, processingConfig || [])
         .then((data) => {
           const experimentService = new ExperimentService();
           experimentService.savePipelineHandle(req.params.experimentId, data)
