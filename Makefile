@@ -15,6 +15,7 @@ check: ## Checks code for linting/construct errors
 	@echo "    [✓]\n"
 test: ## Runs UI tests
 	@npm test
+build: ## Empty target for uniform make interfaces because API does not neet to be build
 run: ## Runs the UI 
 	@npm start
 .PHONY:install check run help
