@@ -186,7 +186,7 @@ paths:
               schema:
                 type: object
                 properties: {}
-      description: Create new expeirment
+      description: Create new experiment
       requestBody:
         content:
           application/json:
@@ -518,7 +518,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/api-body-schemas/Samples.v1.yaml
+                type: array
+                items:
+                  type: object
+                  properties:
+                    experimentId:
+                      type: string
+                    projectUuid:
+                      type: string
+                    samples:
+                      $ref: ./models/api-body-schemas/Samples.v1.yaml
         '404':
           description: Not Found
           content:
