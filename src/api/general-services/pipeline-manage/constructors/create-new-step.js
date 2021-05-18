@@ -1,5 +1,5 @@
 const config = require('../../../../config');
-const { PIPELINE_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../constants');
+const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../constants');
 
 const createTask = (taskName, context) => {
   // TODO fill-in projectId
@@ -24,8 +24,8 @@ const createTask = (taskName, context) => {
   return task;
 };
 
-const getQCParams = (task, context) => {
-  const { perSample, uploadCountMatrix } = context;
+const getQCParams = (task, stepArgs) => {
+  const { perSample, uploadCountMatrix } = stepArgs;
   return {
     ...task,
     ...perSample ? { 'sampleUuid.$': '$.sampleUuid' } : { sampleUuid: '' },
@@ -42,11 +42,11 @@ const getGem2SParams = (task, context) => {
 };
 
 
-const buildParams = (task, context) => {
+const buildParams = (task, context, stepArgs) => {
   let processParams;
 
-  if (task.processName === PIPELINE_PROCESS_NAME) {
-    processParams = getQCParams(task, context);
+  if (task.processName === QC_PROCESS_NAME) {
+    processParams = getQCParams(task, stepArgs);
   } else if (task.processName === GEM2S_PROCESS_NAME) {
     processParams = getGem2SParams(task, context);
   }
@@ -57,7 +57,7 @@ const buildParams = (task, context) => {
   };
 };
 
-const createNewStep = (context, step, args) => {
+const createNewStep = (context, step, stepArgs) => {
   // const {
   //   processingConfig, experimentId, activityArn, processName,
   // } = context;
@@ -68,12 +68,12 @@ const createNewStep = (context, step, args) => {
   //   : `remoter-server-${experimentId}.${config.pipelineNamespace}.svc.cluster.local`;
 
   const { activityArn } = context;
-  const { taskName } = args;
+  const { taskName } = stepArgs;
   // const { taskName, perSample, uploadCountMatrix } = args;
 
   const task = createTask(taskName, context);
 
-  const params = buildParams(task, context);
+  const params = buildParams(task, context, stepArgs);
   // const task = {
   //   experimentId,
   //   taskName,

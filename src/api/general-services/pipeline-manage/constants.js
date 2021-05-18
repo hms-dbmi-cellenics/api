@@ -1,5 +1,5 @@
 
-const PIPELINE_PROCESS_NAME = 'qc';
+const QC_PROCESS_NAME = 'qc';
 const GEM2S_PROCESS_NAME = 'gem2s';
 
-module.exports = { PIPELINE_PROCESS_NAME, GEM2S_PROCESS_NAME };
+module.exports = { QC_PROCESS_NAME, GEM2S_PROCESS_NAME };
