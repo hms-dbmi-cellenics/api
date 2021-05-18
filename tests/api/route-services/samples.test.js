@@ -37,7 +37,7 @@ describe('tests for the samples service', () => {
         expect(data).toEqual(jsData);
         expect(getItemSpy).toHaveBeenCalledWith({
           TableName: 'samples-test',
-          IndexName: 'gsiExperimentid',
+          IndexName: 'gsiByProjectAndExperimentID',
           KeyConditionExpression: 'projectUuid = :projectUuid',
           ExpressionAttributeValues: marshalledData,
           ProjectionExpression: 'samples',
