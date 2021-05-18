@@ -20,7 +20,7 @@ class SamplesService {
 
     const params = {
       TableName: this.tableName,
-      IndexName: 'gsiExperimentid',
+      IndexName: 'gsiByProjectAndExperimentID',
       KeyConditionExpression: 'projectUuid = :projectUuid',
       ExpressionAttributeValues: marshalledData,
       ProjectionExpression: 'samples',
