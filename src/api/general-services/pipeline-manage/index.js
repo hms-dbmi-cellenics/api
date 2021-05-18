@@ -160,8 +160,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
   logger.log(`Fetching processing settings for ${experimentId}`);
   const { processingConfig } = await experimentService.getProcessingConfig(experimentId);
 
-  const samplesRes = await samplesService.getSamplesByExperimentId(experimentId);
-  const { samples } = samplesRes;
+  const { samples } = await samplesService.getSamplesByExperimentId(experimentId);
 
   if (processingConfigUpdates) {
     processingConfigUpdates.forEach(({ name, body }) => {
@@ -232,7 +231,7 @@ const createGem2SPipeline = async (experimentId) => {
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
   const experiment = await experimentService.getExperimentData(experimentId);
-  const { samples } = await samplesService.getSamples(experimentId);
+  const { samples } = await samplesService.getSamplesByExperimentId(experimentId);
 
   const taskParams = {
     projectId: experiment.projectId,

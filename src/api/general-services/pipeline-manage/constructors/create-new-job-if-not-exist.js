@@ -15,7 +15,7 @@ const createNewJobIfNotExist = (context, step) => {
         FunctionName: `arn:aws:lambda:eu-west-1:${accountId}:function:local-container-launcher`,
         Payload: {
           image: 'biomage-pipeline-runner',
-          name: 'pipeline-runner',
+          name: `${processName}-runner`,
           detached: true,
           activityArn,
         },
@@ -31,8 +31,6 @@ const createNewJobIfNotExist = (context, step) => {
   }
 
   const MAX_HELMRELEASE_NAME_LENGTH = 53;
-  // TODO have differet names for gem2s vs. qc
-  // verify experimentID it's available in gem2s
   const releaseName = `${processName}-${experimentId}`.substring(0, MAX_HELMRELEASE_NAME_LENGTH - 1);
 
   return {

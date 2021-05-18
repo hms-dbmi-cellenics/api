@@ -19,83 +19,32 @@ const gem2sPipelineSkeleton = {
       XConstructorArgs: {
         taskName: 'downloadGem',
       },
-      Next: 'PreProcessingMap',
-      // ItemsPath: '$.samples',
-      // Iterator: {
-      //   StartAt: 'ClassifierFilter',
-      //   States: {
-      //     ClassifierFilter: {
-      //       XStepType: 'create-new-step',
-      //       XConstructorArgs: {
-      //         perSample: true,
-      //         taskName: 'classifier',
-      //       },
-      //       End: true,
-      //     },
-      //   },
-      // },
+      Next: 'PreProcessing',
     },
-    PreProcessingMap: {
-      Type: 'Map',
-      Next: 'EmptyDropsMap',
-      ResultPath: null,
-      ItemsPath: '$',
-      Iterator: {
-        StartAt: 'PreprocessingFilter',
-        States: {
-          PreprocessingFilter: {
-            XStepType: 'create-new-step',
-            XConstructorArgs: {
-              perSample: true,
-              taskName: 'preproc',
-            },
-            End: true,
-          },
-        },
+    PreProcessing: {
+      XStepType: 'create-new-step',
+      XConstructorArgs: {
+        taskName: 'preproc',
       },
+      Next: 'EmptyDrops',
     },
-    EmptyDropsMap: {
-      Type: 'Map',
-      Next: 'DoubletScoresMap',
-      ResultPath: null,
-      ItemsPath: '$',
-      Iterator: {
-        StartAt: 'EmptyDrops',
-        States: {
-          EmptyDrops: {
-            XStepType: 'create-new-step',
-            XConstructorArgs: {
-              perSample: true,
-              taskName: 'emptyDrops',
-            },
-            End: true,
-          },
-        },
+    EmptyDrops: {
+      XStepType: 'create-new-step',
+      XConstructorArgs: {
+        taskName: 'emptyDrops',
       },
+      Next: 'DoubletScores',
     },
-    DoubletScoresMap: {
-      Type: 'Map',
+    DoubletScores: {
+      XStepType: 'create-new-step',
+      XConstructorArgs: {
+        taskName: 'doubletScores',
+      },
       Next: 'CreateSeurat',
-      ResultPath: null,
-      ItemsPath: '$',
-      Iterator: {
-        StartAt: 'DoubletScores',
-        States: {
-          DoubletScores: {
-            XStepType: 'create-new-step',
-            XConstructorArgs: {
-              perSample: true,
-              taskName: 'doubletScores',
-            },
-            End: true,
-          },
-        },
-      },
     },
     CreateSeurat: {
       XStepType: 'create-new-step',
       XConstructorArgs: {
-        perSample: false,
         taskName: 'createSeurat',
       },
       Next: 'PrepareExperiment',
@@ -103,7 +52,6 @@ const gem2sPipelineSkeleton = {
     PrepareExperiment: {
       XStepType: 'create-new-step',
       XConstructorArgs: {
-        perSample: false,
         taskName: 'prepareExperiment',
       },
       Next: 'EndOfGem2S',
