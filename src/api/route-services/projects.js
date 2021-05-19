@@ -79,33 +79,56 @@ class ProjectsService {
     const dynamodb = createDynamoDbInstance();
     const response = await dynamodb.scan(params).promise();
     const projectIds = [];
+    if (response.Items) {
+      response.Items.forEach((entry) => {
+        const newEntry = convertToJsObject(entry);
+        projectIds.push({ projectUuid: { S: newEntry.projectId } });
+      });
+      const projects = [];
 
-    response.Items.forEach((entry) => {
-      const newEntry = convertToJsObject(entry);
-      projectIds.push(newEntry.projectId);
-    });
-    const projects = [];
-
-    if (projectIds.length) {
+      const params2 = {
+        RequestItems: {
+          [this.tableName]: {
+            Keys: projectIds,
+          },
+        },
+      };
       return new Promise((resolve) => {
-        projectIds.forEach(async (id) => {
-          const newData = await this.getProject(id);
+        dynamodb.batchGetItem(params2, (err, data) => {
+          if (err) {
+            logger.log('Error: ', err);
+          } else {
+            const fetchedIds = data.Responses[this.tableName].map((entry) => {
+              const newData = convertToJsObject(entry);
+              return newData.projects.uuid;
+            });
+            const emptyProjects = projectIds.filter((entry) => (
+              fetchedIds.every((entry2) => entry.projectUuid.S !== entry2)
+            ));
 
-          if (!Object.keys(newData).length) {
-            newData.name = id;
-            newData.uuid = id;
-            newData.samples = [];
-            newData.metadataKeys = [];
-            newData.experiments = [id];
-          }
-          projects.push(newData);
-          if (projects.length === projectIds.length) {
-            resolve(projects);
+            emptyProjects.forEach((emptyProject) => {
+              const id = emptyProject.projectUuid.S;
+              const newProject = {};
+              newProject.name = id;
+              newProject.uuid = id;
+              newProject.samples = [];
+              newProject.metadataKeys = [];
+              newProject.experiments = [id];
+              projects.push(newProject);
+            });
+            data.Responses[this.tableName].forEach((entry) => {
+              const newData = convertToJsObject(entry);
+              console.log('new data is ', newData);
+              projects.push(newData.projects);
+              if (projects.length === projectIds.length) {
+                resolve(projects);
+              }
+            });
           }
         });
       });
     }
-    throw new NotFoundError('no projects found');
+    throw new NotFoundError('No projects available!');
   }
 
   async deleteProject(projectUuid) {
