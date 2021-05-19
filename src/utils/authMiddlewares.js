@@ -8,44 +8,28 @@ const jwtExpress = require('express-jwt');
 const jwkToPem = require('jwk-to-pem');
 const util = require('util');
 
-console.log('g');
-
 const config = require('../config');
 
-console.log('h');
-
 const CacheSingleton = require('../cache');
-
-console.log('i');
 
 const { CacheMissError } = require('../cache/cache-utils');
 const { UnauthorizedError, UnauthenticatedError } = require('./responses');
 const ExperimentService = require('../api/route-services/experiment');
 
-console.log('j');
-
 const experimentService = new ExperimentService();
-
-console.log('k');
 
 /**
  * Authentication middleware for Express. Returns a middleware that
  * can be used in the API to authenticate Cognito-issued JWTs.
  */
 const authenticationMiddlewareExpress = async (app) => {
-  console.log('l');
-
   app.set('keys', {});
-
-  console.log('m');
 
   // This will be run outside a request context, so there is no X-Ray segment.
   // Disable tracing so we don't end up with errors logged into the console.
   AWSXRay.setContextMissingStrategy(() => {});
   const poolId = await config.awsUserPoolIdPromise;
   AWSXRay.setContextMissingStrategy('LOG_ERROR');
-
-  console.log('n');
 
   return jwtExpress({
     algorithms: ['RS256'],
@@ -176,8 +160,6 @@ const expressAuthorizationMiddleware = async (req, res, next) => {
     next(e);
   }
 };
-
-console.log('o');
 
 module.exports = {
   authenticationMiddlewareExpress,
