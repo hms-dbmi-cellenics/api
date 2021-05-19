@@ -57,29 +57,11 @@ const buildParams = (task, context, stepArgs) => {
 };
 
 const createNewStep = (context, step, stepArgs) => {
-  // const {
-  //   processingConfig, experimentId, activityArn, processName,
-  // } = context;
-
-  // const remoterServer = (
-  //   config.clusterEnv === 'development'
-  // ) ? 'host.docker.internal'
-  //   : `remoter-server-${experimentId}.${config.pipelineNamespace}.svc.cluster.local`;
-
   const { activityArn } = context;
   const { taskName } = stepArgs;
-  // const { taskName, perSample, uploadCountMatrix } = args;
-
   const task = createTask(taskName, context);
-
   const params = buildParams(task, context, stepArgs);
-  // const task = {
-  //   experimentId,
-  //   taskName,
-  //   processName,
-  //   config: processingConfig[taskName] || {},
-  //   server: remoterServer,
-  // };
+
 
   return {
     ...step,
@@ -88,11 +70,6 @@ const createNewStep = (context, step, stepArgs) => {
     ResultPath: null,
     TimeoutSeconds: 3600,
     Parameters: params,
-    // {
-    //   ...task,
-    //   ...perSample ? { 'sampleUuid.$': '$.sampleUuid' } : { sampleUuid: '' },
-    //   ...uploadCountMatrix ? { uploadCountMatrix: true } : { uploadCountMatrix: false },
-    // },
     ...!step.End && { Next: step.XNextOnCatch || step.Next },
   };
 };
