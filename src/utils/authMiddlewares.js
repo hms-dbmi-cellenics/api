@@ -146,6 +146,10 @@ const authorize = async (experimentId, claim) => {
     rbac_can_write: canWrite,
   } = await experimentService.getExperimentPermissions(experimentId);
 
+  if (!canWrite) {
+    throw new UnauthorizedError(`Experiment ${experimentId} cannot be accesed.`);
+  }
+
   // If the logged in user has the permissions, forward request.
   if (canWrite.values.includes(userName)) {
     return true;
