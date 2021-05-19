@@ -54,6 +54,13 @@ const gem2sPipelineSkeleton = {
       XConstructorArgs: {
         taskName: 'prepareExperiment',
       },
+      Next: 'UploadToAWS',
+    },
+    UploadToAWS: {
+      XStepType: 'create-new-step',
+      XConstructorArgs: {
+        taskName: 'uploadToAWS',
+      },
       Next: 'EndOfGem2S',
     },
     EndOfGem2S: {
