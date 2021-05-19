@@ -41,7 +41,7 @@ const authenticationMiddlewareExpress = async (app) => {
 
   // This will be run outside a request context, so there is no X-Ray segment.
   // Disable tracing so we don't end up with errors logged into the console.
-  AWSXRay.setContextMissingStrategy('IGNORE_ERROR');
+  AWSXRay.setContextMissingStrategy((msg) => console.log(`Would like to ignore ${msg}`));
   const poolId = await config.awsUserPoolIdPromise;
   AWSXRay.setContextMissingStrategy('LOG_ERROR');
 
@@ -147,7 +147,7 @@ const authorize = async (experimentId, claim) => {
   } = await experimentService.getExperimentPermissions(experimentId);
 
   if (!canWrite) {
-    throw new UnauthorizedError(`Experiment ${experimentId} cannot be accesed.`);
+    throw new UnauthorizedError(`Experiment ${experimentId} cannot be accesed (malformed).`);
   }
 
   // If the logged in user has the permissions, forward request.
