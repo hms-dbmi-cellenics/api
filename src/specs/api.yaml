@@ -150,8 +150,8 @@ paths:
         - experiments
       summary: Get experiment details
       description: Returns the main details of the experiment.
-      operationId: getExperimentById
-      x-eov-operation-id: 'experiment#findByID'
+      operationId: getExperiment
+      x-eov-operation-id: 'experiment#getExperiment'
       x-eov-operation-handler: routes/experiment
       responses:
         '401':

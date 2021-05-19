@@ -4,10 +4,18 @@ const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares'
 const experimentService = new ExperimentService();
 
 module.exports = {
-  'experiment#findByID': [
+  'experiment#getExperiment': [
     expressAuthorizationMiddleware,
     (req, res, next) => {
       experimentService.getExperimentData(req.params.experimentId)
+        .then((data) => res.json(data))
+        .catch(next);
+    },
+  ],
+  'experiment#updateExperiment': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => {
+      experimentService.updateExperiment(req.params.experimentId, req.body)
         .then((data) => res.json(data))
         .catch(next);
     },
