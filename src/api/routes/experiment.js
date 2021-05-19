@@ -1,5 +1,5 @@
 const ExperimentService = require('../route-services/experiment');
-const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
+const { expressAuthorizationMiddleware, expressAuthorizationExperimentCreationMiddleware } = require('../../utils/authMiddlewares');
 
 const experimentService = new ExperimentService();
 
@@ -8,6 +8,14 @@ module.exports = {
     expressAuthorizationMiddleware,
     (req, res, next) => {
       experimentService.getExperimentData(req.params.experimentId)
+        .then((data) => res.json(data))
+        .catch(next);
+    },
+  ],
+  'experiment#createExperiment': [
+    expressAuthorizationExperimentCreationMiddleware,
+    (req, res, next) => {
+      experimentService.createExperiment(req.params.experimentId, req.body)
         .then((data) => res.json(data))
         .catch(next);
     },

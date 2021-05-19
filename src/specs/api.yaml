@@ -185,6 +185,24 @@ paths:
         in: path
         required: true
         description: ID of the experiment to find.
+    post:
+      summary: Create experiment
+      operationId: createExperiment
+      x-eov-operation-id: experiment#createExperiment
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: Create experiment
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
     put:
       summary: ''
       operationId: updateExperiment
@@ -198,7 +216,7 @@ paths:
               schema:
                 type: object
                 properties: {}
-      description: Create new experiment
+      description: Update experiment
       requestBody:
         content:
           application/json:
@@ -577,13 +595,13 @@ paths:
         in: path
         required: true
     put:
-      summary: Create or update project
+      summary: Update project
       operationId: updateProject
       x-eov-operation-id: projects#update
       x-eov-operation-handler: routes/projects
       responses:
         '200':
-          description: Create or update sample object
+          description: Update sample object
           content:
             application/json:
               schema:
@@ -606,7 +624,7 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-      description: Create or update a project
+      description: Update a project
       requestBody:
         content:
           application/json:
