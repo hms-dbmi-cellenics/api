@@ -21,15 +21,14 @@ describe('tests for the experiment service', () => {
       experimentName: 'TGFB1 experiment',
     };
 
-    const getItemSpy = mockDynamoGetItem(jsData);
+    const fnSpy = mockDynamoGetItem(jsData);
 
     (new ExperimentService()).getExperimentData('12345')
       .then((data) => {
         expect(data).toEqual(jsData);
-        expect(getItemSpy).toHaveBeenCalledWith({
+        expect(fnSpy).toHaveBeenCalledWith({
           TableName: 'experiments-test',
           Key: { experimentId: { S: '12345' } },
-          ProjectionExpression: 'experimentId,experimentName',
         });
       })
       .then(() => done());

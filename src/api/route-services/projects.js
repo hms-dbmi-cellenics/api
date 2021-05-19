@@ -88,13 +88,14 @@ class ProjectsService {
         projectIds.forEach(async (id) => {
           const newData = await this.getProject(id);
 
-          if (!newData.projects) {
-            newData.projects = {};
-            newData.projects.name = id;
-            newData.projects.uuid = id;
-            newData.projects.samples = [];
+          if (!Object.keys(newData).length) {
+            newData.name = id;
+            newData.uuid = id;
+            newData.samples = [];
+            newData.metadataKeys = [];
+            newData.experiments = [id];
           }
-          projects.push(newData.projects);
+          projects.push(newData);
           if (projects.length === projectIds.length) {
             resolve(projects);
           }

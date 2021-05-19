@@ -16,7 +16,7 @@ describe('tests for the samples service', () => {
   });
 
 
-  it('Get samples works', async (done) => {
+  it('Get samples by projectUuid works', async (done) => {
     const jsData = {
       samples: {
         ids: ['sample-1'],
@@ -30,17 +30,16 @@ describe('tests for the samples service', () => {
       ':projectUuid': 'project-1',
     });
 
-    const getItemSpy = mockDynamoQuery(jsData);
+    const fnSpy = mockDynamoQuery(jsData);
 
     (new SamplesService()).getSamples('project-1')
       .then((data) => {
-        expect(data).toEqual(jsData);
-        expect(getItemSpy).toHaveBeenCalledWith({
+        expect(data[0]).toEqual(jsData);
+        expect(fnSpy).toHaveBeenCalledWith({
           TableName: 'samples-test',
-          IndexName: 'gsiExperimentid',
+          IndexName: 'gsiByProjectAndExperimentID',
           KeyConditionExpression: 'projectUuid = :projectUuid',
           ExpressionAttributeValues: marshalledData,
-          ProjectionExpression: 'samples',
         });
       })
       .then(() => done());
