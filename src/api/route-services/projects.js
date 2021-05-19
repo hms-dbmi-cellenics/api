@@ -124,13 +124,12 @@ class ProjectsService {
             newProject.experiments = [id];
             projects.push(newProject);
           });
+
           data.Responses[this.tableName].forEach((entry) => {
             const newData = convertToJsObject(entry);
             projects.push(newData.projects);
-            if (projects.length === projectIds.length) {
-              resolve(projects);
-            }
           });
+          resolve(projects);
         }
       });
     });
