@@ -84,51 +84,56 @@ class ProjectsService {
         const newEntry = convertToJsObject(entry);
         projectIds.push({ projectUuid: { S: newEntry.projectId } });
       });
-      const projects = [];
-
-      const params2 = {
-        RequestItems: {
-          [this.tableName]: {
-            Keys: projectIds,
-          },
-        },
-      };
-      return new Promise((resolve) => {
-        dynamodb.batchGetItem(params2, (err, data) => {
-          if (err) {
-            logger.log('Error: ', err);
-          } else {
-            const fetchedIds = data.Responses[this.tableName].map((entry) => {
-              const newData = convertToJsObject(entry);
-              return newData.projects.uuid;
-            });
-            const emptyProjects = projectIds.filter((entry) => (
-              fetchedIds.every((entry2) => entry.projectUuid.S !== entry2)
-            ));
-
-            emptyProjects.forEach((emptyProject) => {
-              const id = emptyProject.projectUuid.S;
-              const newProject = {};
-              newProject.name = id;
-              newProject.uuid = id;
-              newProject.samples = [];
-              newProject.metadataKeys = [];
-              newProject.experiments = [id];
-              projects.push(newProject);
-            });
-            data.Responses[this.tableName].forEach((entry) => {
-              const newData = convertToJsObject(entry);
-              console.log('new data is ', newData);
-              projects.push(newData.projects);
-              if (projects.length === projectIds.length) {
-                resolve(projects);
-              }
-            });
-          }
-        });
-      });
+      return this.getProjectsFromIds(projectIds);
     }
     throw new NotFoundError('No projects available!');
+  }
+
+  async getProjectsFromIds(projectIds) {
+    const projects = [];
+    const dynamodb = createDynamoDbInstance();
+
+    const params = {
+      RequestItems: {
+        [this.tableName]: {
+          Keys: projectIds,
+        },
+      },
+    };
+
+    return new Promise((resolve) => {
+      dynamodb.batchGetItem(params, (err, data) => {
+        if (err) {
+          logger.log('Error: ', err);
+        } else {
+          const fetchedIds = data.Responses[this.tableName].map((entry) => {
+            const newData = convertToJsObject(entry);
+            return newData.projects.uuid;
+          });
+          const emptyProjects = projectIds.filter((entry) => (
+            fetchedIds.every((entry2) => entry.projectUuid.S !== entry2)
+          ));
+
+          emptyProjects.forEach((emptyProject) => {
+            const id = emptyProject.projectUuid.S;
+            const newProject = {};
+            newProject.name = id;
+            newProject.uuid = id;
+            newProject.samples = [];
+            newProject.metadataKeys = [];
+            newProject.experiments = [id];
+            projects.push(newProject);
+          });
+          data.Responses[this.tableName].forEach((entry) => {
+            const newData = convertToJsObject(entry);
+            projects.push(newData.projects);
+            if (projects.length === projectIds.length) {
+              resolve(projects);
+            }
+          });
+        }
+      });
+    });
   }
 
   async deleteProject(projectUuid) {
