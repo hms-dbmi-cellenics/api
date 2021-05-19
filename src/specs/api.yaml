@@ -185,6 +185,25 @@ paths:
         in: path
         required: true
         description: ID of the experiment to find.
+    put:
+      summary: ''
+      operationId: updateExperiment
+      x-eov-operation-id: experiment#updateExperiment
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      description: Create new experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/api-body-schemas/Experiment.v1.yaml
   '/experiments/{experimentId}/cellSets':
     get:
       tags:
@@ -631,7 +650,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/api-body-schemas/Samples.v1.yaml
+                type: array
+                items:
+                  type: object
+                  properties:
+                    experimentId:
+                      type: string
+                    projectUuid:
+                      type: string
+                    samples:
+                      $ref: ./models/api-body-schemas/Samples.v1.yaml
         '404':
           description: Not Found
           content:

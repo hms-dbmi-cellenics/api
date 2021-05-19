@@ -17,8 +17,11 @@ const getExperimentAttributes = async (tableName, experimentId, attributes) => {
   const params = {
     TableName: tableName,
     Key: key,
-    ProjectionExpression: attributes.join(),
   };
+
+  if (Array.isArray(attributes) && attributes.length > 0) {
+    params.ProjectionExpression = attributes.join();
+  }
 
   const data = await dynamodb.getItem(params).promise();
   if (Object.keys(data).length === 0) {
@@ -28,7 +31,6 @@ const getExperimentAttributes = async (tableName, experimentId, attributes) => {
   const prettyData = convertToJsObject(data.Item);
   return prettyData;
 };
-
 
 class ExperimentService {
   constructor() {
@@ -40,8 +42,41 @@ class ExperimentService {
   }
 
   async getExperimentData(experimentId) {
-    const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['experimentId', 'experimentName']);
+    const data = await getExperimentAttributes(this.experimentsTableName, experimentId);
     return data;
+  }
+
+  async updateExperiment(experimentId, body) {
+    const dynamodb = createDynamoDbInstance();
+    const key = convertToDynamoDbRecord({ experimentId });
+
+    const marshalledData = convertToDynamoDbRecord({
+      ':experimentName': body.name,
+      ':createdAt': body.createdAt,
+      ':lastViewed': body.lastViewed,
+      ':projectId': body.projectUuid,
+      ':description': body.description,
+      ':meta': {},
+    });
+
+    const params = {
+      TableName: this.experimentsTableName,
+      Key: key,
+      UpdateExpression: `SET experimentName = :experimentName,
+                          createdAt = :createdAt,
+                          lastViewed = :lastViewed,
+                          projectId = :projectId,
+                          description = :description,
+                          meta = :meta`,
+      ExpressionAttributeValues: marshalledData,
+      ReturnValues: 'UPDATED_NEW',
+    };
+
+    const data = await dynamodb.updateItem(params).promise();
+
+    const prettyData = convertToJsObject(data.Attributes);
+
+    return prettyData;
   }
 
   async getExperimentPermissions(experimentId) {

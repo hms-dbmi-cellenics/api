@@ -27,7 +27,7 @@ const mockDynamoDeleteItem = (payload = {}, error = null) => {
 
 const mockDynamoQuery = (payload = {}, error = null) => {
   const dynamodbData = {
-    Item: AWS.DynamoDB.Converter.marshall(payload),
+    Items: [AWS.DynamoDB.Converter.marshall(payload)],
   };
   const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);

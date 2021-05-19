@@ -20,17 +20,16 @@ class SamplesService {
 
     const params = {
       TableName: this.tableName,
-      IndexName: 'gsiExperimentid',
+      IndexName: 'gsiByProjectAndExperimentID',
       KeyConditionExpression: 'projectUuid = :projectUuid',
       ExpressionAttributeValues: marshalledData,
-      ProjectionExpression: 'samples',
     };
     const dynamodb = createDynamoDbInstance();
 
     const response = await dynamodb.query(params).promise();
 
-    if (response.Item) {
-      const prettyResponse = convertToJsObject(response.Item);
+    if (response.Items) {
+      const prettyResponse = response.Items.map((item) => convertToJsObject(item));
       return prettyResponse;
     }
 
