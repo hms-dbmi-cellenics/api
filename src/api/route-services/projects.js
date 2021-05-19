@@ -69,17 +69,20 @@ class ProjectsService {
   async getProjects() {
     const params = {
       TableName: experimentService.experimentsTableName,
-      AttributesToGet: ['projectId'],
+      ExpressionAttributeNames: {
+        '#pid': 'projectId',
+      },
+      FilterExpression: 'attribute_exists(projectId)',
+      ProjectionExpression: '#pid',
     };
 
     const dynamodb = createDynamoDbInstance();
     const response = await dynamodb.scan(params).promise();
     const projectIds = [];
+
     response.Items.forEach((entry) => {
-      if (entry.projectId) {
-        const newEntry = convertToJsObject(entry);
-        projectIds.push(newEntry.projectId);
-      }
+      const newEntry = convertToJsObject(entry);
+      projectIds.push(newEntry.projectId);
     });
     const projects = [];
 
