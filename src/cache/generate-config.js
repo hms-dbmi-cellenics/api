@@ -26,10 +26,12 @@ const updateRedisEndpoints = async () => {
     return {};
   }
 
+  logger.log('before new AWS.ElastiCache');
   const ec = new AWS.ElastiCache({
     region: config.awsRegion,
   });
 
+  logger.log('before ec.describeReplicationGroups');
   const r = await ec.describeReplicationGroups({
     ReplicationGroupId: `biomage-redis-${config.clusterEnv}`,
   }).promise();
