@@ -1,4 +1,3 @@
-
 const getBackendStatus = require('../general-services/backend-status');
 
 module.exports = {

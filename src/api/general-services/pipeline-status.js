@@ -103,9 +103,13 @@ const getStepsFromExecutionHistory = (events) => {
      *  - steps are returned in the completion order, and are unique in the returned array
      */
 const getPipelineStatus = async (processName, experimentId) => {
-  const { executionArn } = await (new ExperimentService()).getPipelineHandle(processName, experimentId);
+  const {
+    executionArn,
+  } = await (new ExperimentService()).getPipelineHandle(processName, experimentId);
+
   let execution = {};
   let completedSteps = [];
+
   if (!executionArn.length) {
     execution = {
       startDate: null,

@@ -179,7 +179,7 @@ describe('tests for the experiment service', () => {
 
     const getItemSpy = mockDynamoGetItem(jsData);
 
-    (new ExperimentService()).getPipelineHandle('12345')
+    (new ExperimentService()).getPipelineHandle('qc', '12345')
       .then((data) => {
         expect(data).toEqual(handle);
         expect(getItemSpy).toHaveBeenCalledWith(

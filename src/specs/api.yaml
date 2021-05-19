@@ -411,6 +411,12 @@ paths:
               schema:
                 type: object
                 properties: {}
+        '404':
+          description: Samples not found.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
   '/experiments/{experimentId}/samples':
     parameters:
       - schema:
