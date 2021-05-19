@@ -7,9 +7,10 @@ const logger = require('../../utils/logging');
 const { OK, NotFoundError } = require('../../utils/responses');
 
 const SamplesService = require('./samples');
+const ExperimentService = require('./experiment');
 
 const samplesService = new SamplesService();
-
+const experimentService = new ExperimentService();
 class ProjectsService {
   constructor() {
     this.tableName = `projects-${config.clusterEnv}`;
@@ -28,13 +29,13 @@ class ProjectsService {
 
     const dynamodb = createDynamoDbInstance();
     const response = await dynamodb.getItem(params).promise();
-
     if (response.Item) {
       const prettyResponse = convertToJsObject(response.Item);
       return prettyResponse.projects;
     }
 
-    throw new NotFoundError('Project not found');
+    logger.log('Project not found');
+    return response;
   }
 
   async updateProject(projectUuid, project) {
@@ -67,16 +68,40 @@ class ProjectsService {
 
   async getProjects() {
     const params = {
-      TableName: this.tableName,
+      TableName: experimentService.experimentsTableName,
+      AttributesToGet: ['projectId'],
     };
+
     const dynamodb = createDynamoDbInstance();
     const response = await dynamodb.scan(params).promise();
-    const projects = [];
-    response.Items.forEach((item) => {
-      const project = convertToJsObject(item);
-      projects.push(project.projects);
+    const projectIds = [];
+    response.Items.forEach((entry) => {
+      if (entry.projectId) {
+        const newEntry = convertToJsObject(entry);
+        projectIds.push(newEntry.projectId);
+      }
     });
-    return projects;
+    const projects = [];
+
+    if (projectIds.length) {
+      return new Promise((resolve) => {
+        projectIds.forEach(async (id) => {
+          const newData = await this.getProject(id);
+
+          if (!newData.projects) {
+            newData.projects = {};
+            newData.projects.name = id;
+            newData.projects.uuid = id;
+            newData.projects.samples = [];
+          }
+          projects.push(newData.projects);
+          if (projects.length === projectIds.length) {
+            resolve(projects);
+          }
+        });
+      });
+    }
+    throw new NotFoundError('no projects found');
   }
 
   async deleteProject(projectUuid) {
