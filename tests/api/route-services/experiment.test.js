@@ -19,6 +19,7 @@ describe('tests for the experiment service', () => {
     const jsData = {
       experimentId: '12345',
       experimentName: 'TGFB1 experiment',
+
     };
 
     const fnSpy = mockDynamoGetItem(jsData);
@@ -29,6 +30,7 @@ describe('tests for the experiment service', () => {
         expect(fnSpy).toHaveBeenCalledWith({
           TableName: 'experiments-test',
           Key: { experimentId: { S: '12345' } },
+          ProjectionExpression: 'projectId,meta,experimentId,experimentName',
         });
       })
       .then(() => done());
