@@ -89,12 +89,18 @@ class ExperimentService {
     return data;
   }
 
-  async getPipelineHandle(experimentId) {
+  async getPipelineHandle(processName, experimentId) {
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['meta']);
+
+    // In DynamoDB, the qc pipeline details is stored under `pipeline`
+    // Until the schema is changed, we have to do this translation.
+    // eslint-disable-next-line no-param-reassign
+    if (processName === 'qc') processName = 'pipeline';
+
     return {
       stateMachineArn: '',
       executionArn: '',
-      ...data.meta.pipeline,
+      ...data.meta[processName] || {},
     };
   }
 

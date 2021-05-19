@@ -3,11 +3,20 @@ const workerStatus = require('./worker-status');
 
 
 const getBackendStatus = async (experimentId) => {
-  const [{ pipeline }, { worker }] = await Promise.all(
-    [pipelineStatus(experimentId), workerStatus(experimentId)],
+  const [
+    { pipeline: gem2s },
+    { pipeline: qc },
+    { worker },
+  ] = await Promise.all(
+    [
+      pipelineStatus('gem2s', experimentId),
+      pipelineStatus('qc', experimentId),
+      workerStatus(experimentId),
+    ],
   );
   return {
-    pipeline,
+    gem2s,
+    qc,
     worker,
   };
 };
