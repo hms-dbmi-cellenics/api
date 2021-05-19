@@ -8,7 +8,7 @@ const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord, configArrayToUpdateObjs,
 } = require('../../utils/dynamoDb');
 
-const NotFoundError = require('../../utils/responses/NotFoundError');
+const { NotFoundError } = require('../../utils/responses');
 
 const getExperimentAttributes = async (tableName, experimentId, attributes) => {
   const dynamodb = createDynamoDbInstance();
@@ -80,7 +80,7 @@ class ExperimentService {
   }
 
   async getExperimentPermissions(experimentId) {
-    const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['experimentId', 'can_write']);
+    const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['experimentId', 'rbac_can_write']);
     return data;
   }
 

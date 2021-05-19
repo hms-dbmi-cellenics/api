@@ -5,9 +5,7 @@ const OpenApiValidator = require('express-openapi-validator');
 const http = require('http');
 const AWSXRay = require('aws-xray-sdk');
 const config = require('../config');
-
-// Enable authorization middleware when UI-level auth is available.
-// const authorizeRequest = require('../utils/authorizeRequest');
+const { authenticationMiddlewareExpress } = require('../utils/authMiddlewares');
 
 module.exports = async (app) => {
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
@@ -29,10 +27,12 @@ module.exports = async (app) => {
   app.use(bodyParser.json({ extended: false, limit: '10mb', parameterLimit: 300000 }));
 
 
+  console.log('p');
+
   // Enable AWS XRay
   // eslint-disable-next-line global-require
   AWSXRay.captureHTTPsGlobal(require('http'));
-
+  AWSXRay.setContextMissingStrategy('LOG_ERROR');
   AWSXRay.middleware.setSamplingRules({
     rules: [
       {
@@ -51,6 +51,9 @@ module.exports = async (app) => {
     version: 2,
   });
 
+
+  console.log('q');
+
   app.use(AWSXRay.express.openSegment(`API-${config.clusterEnv}-${config.sandboxId}`));
 
   app.use((req, res, next) => {
@@ -59,31 +62,16 @@ module.exports = async (app) => {
     next();
   });
 
+  console.log('r');
 
-  // Enable authorization middleware when UI-level auth is available.
-  // app.use(async (req, res, next) => {
-  //   let workRequest = [];
-  //   if (!req.headers.authorization) {
-  //     try {
-  //       workRequest = JSON.parse(JSON.parse(req.body).Message).request;
-  //     } catch (err) {
-  //       return res.status(403).json({ error: 'No credentials sent!' });
-  //     }
-  //   }
-  //   const bearerHeader = req.headers.authorization
-  //     || workRequest.extraHeaders.Authorization;
+  // Authentication middleware.
+  const authMw = await authenticationMiddlewareExpress(app);
 
-  //   const url = req.url.split('/');
-  //   const experimentId = workRequest.experimentId || url[url.indexOf('experiments') + 1];
-  //   const bearerToken = bearerHeader.split(' ')[1];
-  //   const isAuthorized = await authorizeRequest(experimentId, bearerToken);
+  console.log('s');
 
-  //   if (!isAuthorized) {
-  //     return res.status(403).json({ error: 'User is not authorized!' });
-  //   }
-  //   next();
-  //   return res.status(200);
-  // });
+  app.use(authMw);
+
+  console.log('t');
 
   app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
@@ -95,7 +83,7 @@ module.exports = async (app) => {
   // Custom error handler.
 
   app.use((err, req, res, next) => {
-    console.error('Error thrown in HTTP request');
+    console.error(`Error thrown in HTTP request (${req.method} ${req.path})`);
     console.error(req.body || 'Empty body');
     console.error(err);
 

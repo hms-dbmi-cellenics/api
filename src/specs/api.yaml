@@ -26,7 +26,7 @@ paths:
         - heartbeat
       summary: API health check
       operationId: checkHealth
-      x-eov-operation-id: health#check
+      x-eov-operation-id: 'health#check'
       x-eov-operation-handler: routes/health
       responses:
         '200':
@@ -61,7 +61,7 @@ paths:
   /workResults:
     post:
       operationId: receiveWork
-      x-eov-operation-id: work#response
+      x-eov-operation-id: 'work#response'
       x-eov-operation-handler: routes/work
       requestBody:
         description: 'The results from the execution of a work request, sent via SNS.'
@@ -104,7 +104,7 @@ paths:
   /pipelineResults:
     post:
       operationId: receivePipelineResponse
-      x-eov-operation-id: pipelines#response
+      x-eov-operation-id: 'pipelines#response'
       x-eov-operation-handler: routes/pipelines
       requestBody:
         description: 'The results from the execution of a pipeline step, sent via SNS.'
@@ -151,9 +151,21 @@ paths:
       summary: Get experiment details
       description: Returns the main details of the experiment.
       operationId: getExperiment
-      x-eov-operation-id: experiment#getExperiment
+      x-eov-operation-id: 'experiment#getExperiment'
       x-eov-operation-handler: routes/experiment
       responses:
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '200':
           description: 'Fetch successful, response below'
           content:
@@ -199,7 +211,7 @@ paths:
       summary: Get cell sets for experiment
       description: Returns a hirearchical view of cell sets in the experiment.
       operationId: getExperimentCellSetsById
-      x-eov-operation-id: experiment#getCellSets
+      x-eov-operation-id: 'experiment#getCellSets'
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
@@ -213,6 +225,18 @@ paths:
                     type: array
                     items:
                       $ref: ./models/api-body-schemas/CellSets.v1.yaml
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '404':
           description: Experiment not found.
           content:
@@ -229,9 +253,21 @@ paths:
     put:
       summary: ''
       operationId: updateExperimentCellSetsById
-      x-eov-operation-id: experiment#updateCellSets
+      x-eov-operation-id: 'experiment#updateCellSets'
       x-eov-operation-handler: routes/experiment
       responses:
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '200':
           description: Update to object in response successful.
           content:
@@ -257,9 +293,21 @@ paths:
       summary: Retrieve processing configuration
       description: Returns a hirearchical view of processing configuration used in the experiment.
       operationId: getExperimentProcessingConfigById
-      x-eov-operation-id: experiment#getProcessingConfig
+      x-eov-operation-id: 'experiment#getProcessingConfig'
       x-eov-operation-handler: routes/experiment
       responses:
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '200':
           description: 'Fetch successful, response below.'
           content:
@@ -284,9 +332,21 @@ paths:
     put:
       summary: ''
       operationId: updateExperimentProcessingConfigById
-      x-eov-operation-id: experiment#updateProcessingConfig
+      x-eov-operation-id: 'experiment#updateProcessingConfig'
       x-eov-operation-handler: routes/experiment
       responses:
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '200':
           description: Update to object in response successful.
           content:
@@ -330,9 +390,21 @@ paths:
     put:
       summary: ''
       operationId: updatePlotTable
-      x-eov-operation-id: plots-tables#update
+      x-eov-operation-id: 'plots-tables#update'
       x-eov-operation-handler: routes/plots-tables
       responses:
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '200':
           description: Update to object in response successful.
           content:
@@ -357,9 +429,21 @@ paths:
     get:
       summary: ''
       operationId: getPlotTable
-      x-eov-operation-id: plots-tables#read
+      x-eov-operation-id: 'plots-tables#read'
       x-eov-operation-handler: routes/plots-tables
       responses:
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '200':
           description: OK
           content:
@@ -370,9 +454,21 @@ paths:
     delete:
       summary: ''
       operationId: deletePlotTable
-      x-eov-operation-id: plots-tables#delete
+      x-eov-operation-id: 'plots-tables#delete'
       x-eov-operation-handler: routes/plots-tables
       responses:
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '200':
           description: OK
       description: Deletes a plot and table for a given experiment with the data specified.
@@ -386,9 +482,21 @@ paths:
     post:
       summary: Create a new pipeline for taks execution
       operationId: createNewPipeline
-      x-eov-operation-id: pipelines#create
+      x-eov-operation-id: 'pipelines#create'
       x-eov-operation-handler: routes/pipelines
       responses:
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '200':
           description: OK
           content:
@@ -400,9 +508,21 @@ paths:
     get:
       summary: Create new pipeline
       operationId: get-experiments-experimentId-pipelines
-      x-eov-operation-id: pipelines#get
+      x-eov-operation-id: 'pipelines#get'
       x-eov-operation-handler: routes/pipelines
       responses:
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '200':
           description: OK
           content:
@@ -424,6 +544,18 @@ paths:
       x-eov-operation-handler: routes/samples
       tags: []
       responses:
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '200':
           description: 'Fetch successful, samples returned below.'
           content:
