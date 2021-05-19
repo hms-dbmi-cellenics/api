@@ -15,7 +15,7 @@ module.exports = {
   'experiment#createExperiment': [
     expressAuthorizationExperimentCreationMiddleware,
     (req, res, next) => {
-      experimentService.createExperiment(req.params.experimentId, req.body)
+      experimentService.createExperiment(req.params.experimentId, req.body, req.user)
         .then((data) => res.json(data))
         .catch(next);
     },

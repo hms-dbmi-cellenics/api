@@ -46,9 +46,11 @@ class ExperimentService {
     return data;
   }
 
-  async createExperiment(experimentId, body) {
+  async createExperiment(experimentId, body, user) {
     const dynamodb = createDynamoDbInstance();
     const key = convertToDynamoDbRecord({ experimentId });
+
+    const documentClient = new AWS.DynamoDB.DocumentClient();
 
     const marshalledData = convertToDynamoDbRecord({
       ':experimentName': body.name,
@@ -57,6 +59,7 @@ class ExperimentService {
       ':projectId': body.projectUuid,
       ':description': body.description,
       ':meta': {},
+      ':rbac_can_write': documentClient.createSet([user.sub]),
     });
 
     const params = {
@@ -67,7 +70,8 @@ class ExperimentService {
                           lastViewed = :lastViewed,
                           projectId = :projectId,
                           description = :description,
-                          meta = :meta`,
+                          meta = :meta,
+                          rbac_can_write = :rbac_can_write`,
       ExpressionAttributeValues: marshalledData,
       ConditionExpression: 'attribute_not_exists(#experimentId)',
       ExpressionAttributeNames: { '#experimentId': 'experimentId' },
