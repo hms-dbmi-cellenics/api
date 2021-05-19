@@ -97,6 +97,7 @@ const pipelineResponse = async (io, message) => {
     ...message,
     output,
     status: statusRes,
+    type: 'dataProcessing',
   };
 
   logger.log('Sending to all clients subscribed to experiment', experimentId);
