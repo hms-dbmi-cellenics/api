@@ -41,7 +41,7 @@ const authenticationMiddlewareExpress = async (app) => {
 
   // This will be run outside a request context, so there is no X-Ray segment.
   // Disable tracing so we don't end up with errors logged into the console.
-  AWSXRay.setContextMissingStrategy((msg) => console.log(`Would like to ignore ${msg}`));
+  AWSXRay.setContextMissingStrategy(() => {});
   const poolId = await config.awsUserPoolIdPromise;
   AWSXRay.setContextMissingStrategy('LOG_ERROR');
 
