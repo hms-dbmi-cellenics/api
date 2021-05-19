@@ -41,7 +41,7 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
           "apiVersion": "helm.fluxcd.io/v1",
           "kind": "HelmRelease",
           "metadata": {
-            "name": "pipeline-mock-experiment-id",
+            "name": "undefined-mock-experiment-id",
             "namespace": "pipeline-test-namespace",
             "annotations": {
               "fluxcd.io/automated": "true"
@@ -52,7 +52,7 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
             }
           },
           "spec": {
-            "releaseName": "pipeline-mock-experiment-id",
+            "releaseName": "undefined-mock-experiment-id",
             "chart": {
               "git": "git@github.com:biomage-ltd/pipeline",
               "path": "pipeline-runner/chart"
@@ -88,7 +88,7 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
       ]
     },
     "DownloadGem": {
-      "Next": "PreProcessingMap",
+      "Next": "PreProcessing",
       "Type": "Task",
       "ResultPath": null,
       "TimeoutSeconds": 3600,
@@ -96,84 +96,43 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "sampleUuid": "",
-        "uploadCountMatrix": false
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
-    "PreProcessingMap": {
-      "Type": "Map",
-      "Next": "EmptyDropsMap",
+    "PreProcessing": {
+      "Next": "EmptyDrops",
+      "Type": "Task",
       "ResultPath": null,
-      "ItemsPath": "$.samples",
-      "Iterator": {
-        "StartAt": "PreprocessingFilter",
-        "States": {
-          "PreprocessingFilter": {
-            "End": true,
-            "Type": "Task",
-            "ResultPath": null,
-            "TimeoutSeconds": 3600,
-            "Parameters": {
-              "experimentId": "mock-experiment-id",
-              "taskName": "preproc",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
-            }
-          }
-        }
+      "TimeoutSeconds": 3600,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "preproc",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
-    "EmptyDropsMap": {
-      "Type": "Map",
-      "Next": "DoubletScoresMap",
+    "EmptyDrops": {
+      "Next": "DoubletScores",
+      "Type": "Task",
       "ResultPath": null,
-      "ItemsPath": "$.samples",
-      "Iterator": {
-        "StartAt": "EmptyDrops",
-        "States": {
-          "EmptyDrops": {
-            "End": true,
-            "Type": "Task",
-            "ResultPath": null,
-            "TimeoutSeconds": 3600,
-            "Parameters": {
-              "experimentId": "mock-experiment-id",
-              "taskName": "emptyDrops",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
-            }
-          }
-        }
+      "TimeoutSeconds": 3600,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "emptyDrops",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
-    "DoubletScoresMap": {
-      "Type": "Map",
+    "DoubletScores": {
       "Next": "CreateSeurat",
+      "Type": "Task",
       "ResultPath": null,
-      "ItemsPath": "$.samples",
-      "Iterator": {
-        "StartAt": "DoubletScores",
-        "States": {
-          "DoubletScores": {
-            "End": true,
-            "Type": "Task",
-            "ResultPath": null,
-            "TimeoutSeconds": 3600,
-            "Parameters": {
-              "experimentId": "mock-experiment-id",
-              "taskName": "doubletScores",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
-            }
-          }
-        }
+      "TimeoutSeconds": 3600,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "doubletScores",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "CreateSeurat": {
@@ -185,13 +144,11 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "sampleUuid": "",
-        "uploadCountMatrix": false
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "PrepareExperiment": {
-      "Next": "EndOfGem2S",
+      "Next": "UploadToAWS",
       "Type": "Task",
       "ResultPath": null,
       "TimeoutSeconds": 3600,
@@ -199,9 +156,19 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "sampleUuid": "",
-        "uploadCountMatrix": false
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "UploadToAWS": {
+      "Next": "EndOfGem2S",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 3600,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "uploadToAWS",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "EndOfGem2S": {
@@ -237,7 +204,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
         "Payload": {
           "image": "biomage-pipeline-runner",
-          "name": "pipeline-runner",
+          "name": "undefined-runner",
           "detached": true
         }
       },
@@ -252,7 +219,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       ]
     },
     "DownloadGem": {
-      "Next": "PreProcessingMap",
+      "Next": "PreProcessing",
       "Type": "Task",
       "ResultPath": null,
       "TimeoutSeconds": 3600,
@@ -260,84 +227,43 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
         "config": {},
-        "server": "host.docker.internal",
-        "sampleUuid": "",
-        "uploadCountMatrix": false
+        "server": "host.docker.internal"
       }
     },
-    "PreProcessingMap": {
-      "Type": "Map",
-      "Next": "EmptyDropsMap",
+    "PreProcessing": {
+      "Next": "EmptyDrops",
+      "Type": "Task",
       "ResultPath": null,
-      "ItemsPath": "$.samples",
-      "Iterator": {
-        "StartAt": "PreprocessingFilter",
-        "States": {
-          "PreprocessingFilter": {
-            "End": true,
-            "Type": "Task",
-            "ResultPath": null,
-            "TimeoutSeconds": 3600,
-            "Parameters": {
-              "experimentId": "mock-experiment-id",
-              "taskName": "preproc",
-              "config": {},
-              "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
-            }
-          }
-        }
+      "TimeoutSeconds": 3600,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "preproc",
+        "config": {},
+        "server": "host.docker.internal"
       }
     },
-    "EmptyDropsMap": {
-      "Type": "Map",
-      "Next": "DoubletScoresMap",
+    "EmptyDrops": {
+      "Next": "DoubletScores",
+      "Type": "Task",
       "ResultPath": null,
-      "ItemsPath": "$.samples",
-      "Iterator": {
-        "StartAt": "EmptyDrops",
-        "States": {
-          "EmptyDrops": {
-            "End": true,
-            "Type": "Task",
-            "ResultPath": null,
-            "TimeoutSeconds": 3600,
-            "Parameters": {
-              "experimentId": "mock-experiment-id",
-              "taskName": "emptyDrops",
-              "config": {},
-              "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
-            }
-          }
-        }
+      "TimeoutSeconds": 3600,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "emptyDrops",
+        "config": {},
+        "server": "host.docker.internal"
       }
     },
-    "DoubletScoresMap": {
-      "Type": "Map",
+    "DoubletScores": {
       "Next": "CreateSeurat",
+      "Type": "Task",
       "ResultPath": null,
-      "ItemsPath": "$.samples",
-      "Iterator": {
-        "StartAt": "DoubletScores",
-        "States": {
-          "DoubletScores": {
-            "End": true,
-            "Type": "Task",
-            "ResultPath": null,
-            "TimeoutSeconds": 3600,
-            "Parameters": {
-              "experimentId": "mock-experiment-id",
-              "taskName": "doubletScores",
-              "config": {},
-              "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
-            }
-          }
-        }
+      "TimeoutSeconds": 3600,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "doubletScores",
+        "config": {},
+        "server": "host.docker.internal"
       }
     },
     "CreateSeurat": {
@@ -349,13 +275,11 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
         "config": {},
-        "server": "host.docker.internal",
-        "sampleUuid": "",
-        "uploadCountMatrix": false
+        "server": "host.docker.internal"
       }
     },
     "PrepareExperiment": {
-      "Next": "EndOfGem2S",
+      "Next": "UploadToAWS",
       "Type": "Task",
       "ResultPath": null,
       "TimeoutSeconds": 3600,
@@ -363,9 +287,19 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
         "config": {},
-        "server": "host.docker.internal",
-        "sampleUuid": "",
-        "uploadCountMatrix": false
+        "server": "host.docker.internal"
+      }
+    },
+    "UploadToAWS": {
+      "Next": "EndOfGem2S",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 3600,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "uploadToAWS",
+        "config": {},
+        "server": "host.docker.internal"
       }
     },
     "EndOfGem2S": {
@@ -376,7 +310,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
 }
 `;
 
-exports[`non-tests to document the State Machines - pipeline cloud 1`] = `
+exports[`non-tests to document the State Machines - qc cloud 1`] = `
 
 {
   "Comment": "Pipeline for clusterEnv 'test'",
@@ -417,7 +351,7 @@ exports[`non-tests to document the State Machines - pipeline cloud 1`] = `
           "apiVersion": "helm.fluxcd.io/v1",
           "kind": "HelmRelease",
           "metadata": {
-            "name": "pipeline-mock-experiment-id",
+            "name": "undefined-mock-experiment-id",
             "namespace": "pipeline-test-namespace",
             "annotations": {
               "fluxcd.io/automated": "true"
@@ -428,7 +362,7 @@ exports[`non-tests to document the State Machines - pipeline cloud 1`] = `
             }
           },
           "spec": {
-            "releaseName": "pipeline-mock-experiment-id",
+            "releaseName": "undefined-mock-experiment-id",
             "chart": {
               "git": "git@github.com:biomage-ltd/pipeline",
               "path": "pipeline-runner/chart"
@@ -480,9 +414,7 @@ exports[`non-tests to document the State Machines - pipeline cloud 1`] = `
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
               "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
           }
         }
@@ -505,9 +437,7 @@ exports[`non-tests to document the State Machines - pipeline cloud 1`] = `
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
               "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
           }
         }
@@ -530,9 +460,7 @@ exports[`non-tests to document the State Machines - pipeline cloud 1`] = `
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
               "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
           }
         }
@@ -555,9 +483,7 @@ exports[`non-tests to document the State Machines - pipeline cloud 1`] = `
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
               "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
           }
         }
@@ -580,9 +506,7 @@ exports[`non-tests to document the State Machines - pipeline cloud 1`] = `
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
               "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
           }
         }
@@ -597,9 +521,7 @@ exports[`non-tests to document the State Machines - pipeline cloud 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "sampleUuid": "",
-        "uploadCountMatrix": false
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "ConfigureEmbedding": {
@@ -611,9 +533,7 @@ exports[`non-tests to document the State Machines - pipeline cloud 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "sampleUuid": "",
-        "uploadCountMatrix": true
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "EndOfPipeline": {
@@ -624,7 +544,7 @@ exports[`non-tests to document the State Machines - pipeline cloud 1`] = `
 }
 `;
 
-exports[`non-tests to document the State Machines - pipeline local development 1`] = `
+exports[`non-tests to document the State Machines - qc local development 1`] = `
 
 {
   "Comment": "Pipeline for clusterEnv 'test'",
@@ -649,7 +569,7 @@ exports[`non-tests to document the State Machines - pipeline local development 1
         "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
         "Payload": {
           "image": "biomage-pipeline-runner",
-          "name": "pipeline-runner",
+          "name": "undefined-runner",
           "detached": true
         }
       },
@@ -680,9 +600,7 @@ exports[`non-tests to document the State Machines - pipeline local development 1
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
               "config": {},
-              "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
+              "server": "host.docker.internal"
             }
           }
         }
@@ -705,9 +623,7 @@ exports[`non-tests to document the State Machines - pipeline local development 1
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
               "config": {},
-              "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
+              "server": "host.docker.internal"
             }
           }
         }
@@ -730,9 +646,7 @@ exports[`non-tests to document the State Machines - pipeline local development 1
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
               "config": {},
-              "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
+              "server": "host.docker.internal"
             }
           }
         }
@@ -755,9 +669,7 @@ exports[`non-tests to document the State Machines - pipeline local development 1
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
               "config": {},
-              "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
+              "server": "host.docker.internal"
             }
           }
         }
@@ -780,9 +692,7 @@ exports[`non-tests to document the State Machines - pipeline local development 1
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
               "config": {},
-              "server": "host.docker.internal",
-              "sampleUuid.$": "$.sampleUuid",
-              "uploadCountMatrix": false
+              "server": "host.docker.internal"
             }
           }
         }
@@ -797,9 +707,7 @@ exports[`non-tests to document the State Machines - pipeline local development 1
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
         "config": {},
-        "server": "host.docker.internal",
-        "sampleUuid": "",
-        "uploadCountMatrix": false
+        "server": "host.docker.internal"
       }
     },
     "ConfigureEmbedding": {
@@ -811,9 +719,7 @@ exports[`non-tests to document the State Machines - pipeline local development 1
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
         "config": {},
-        "server": "host.docker.internal",
-        "sampleUuid": "",
-        "uploadCountMatrix": true
+        "server": "host.docker.internal"
       }
     },
     "EndOfPipeline": {
