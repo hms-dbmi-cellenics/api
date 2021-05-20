@@ -8,7 +8,7 @@ jest.mock('crypto', () => ({
 }));
 jest.mock('../../../src/utils/asyncTimer');
 
-const { createPipeline } = jest.requireActual('../../../src/api/general-services/pipeline-manage');
+const { createQCPipeline } = jest.requireActual('../../../src/api/general-services/pipeline-manage');
 
 describe('test for pipeline services', () => {
   afterEach(() => {
@@ -137,7 +137,7 @@ describe('test for pipeline services', () => {
       }
     });
 
-    await createPipeline('testExperimentId', processingConfigUpdate);
+    await createQCPipeline('testExperimentId', processingConfigUpdate);
     expect(describeClusterSpy).toMatchSnapshot();
 
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
@@ -203,7 +203,7 @@ describe('test for pipeline services', () => {
       }
     });
 
-    await createPipeline('testExperimentId', processingConfigUpdate);
+    await createQCPipeline('testExperimentId', processingConfigUpdate);
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
   });
 
@@ -240,9 +240,9 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-execution' });
     });
 
-    createPipeline.waitForDefinitionToPropagate = () => true;
+    createQCPipeline.waitForDefinitionToPropagate = () => true;
 
-    await createPipeline('testExperimentId', processingConfigUpdate);
+    await createQCPipeline('testExperimentId', processingConfigUpdate);
 
     expect(describeClusterSpy).toMatchSnapshot();
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();

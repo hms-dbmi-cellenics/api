@@ -1,36 +1,29 @@
 const AWSXRay = require('aws-xray-sdk');
-const { createQCPipeline } = require('../general-services/pipeline-manage');
+const { createGem2SPipeline } = require('../general-services/pipeline-manage');
 const ExperimentService = require('../route-services/experiment');
 const getBackendStatus = require('../general-services/backend-status');
 const pipelineResponse = require('../route-services/pipeline-response');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 const logger = require('../../utils/logging');
-const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
 
 module.exports = {
-  'pipelines#get': [
-    expressAuthorizationMiddleware,
-    (req, res, next) => {
-      getBackendStatus(req.params.experimentId)
-        .then((data) => res.json(data))
-        .catch(next);
-    },
-  ],
-  'pipelines#create': [
-    expressAuthorizationMiddleware,
-    (req, res, next) => {
-      const { processingConfig } = req.body;
+  'gem2s#get': (req, res, next) => {
+    getBackendStatus(req.params.experimentId)
+      .then((data) => res.json(data))
+      .catch(next);
+  },
 
-      createQCPipeline(req.params.experimentId, processingConfig || [])
-        .then((data) => {
-          const experimentService = new ExperimentService();
-          experimentService.savePipelineHandle(req.params.experimentId, data)
-            .then(() => res.json(data));
-        })
-        .catch(next);
-    },
-  ],
-  'pipelines#response': async (req, res) => {
+  'gem2s#create': (req, res, next) => {
+    createGem2SPipeline(req.params.experimentId)
+      .then((data) => {
+        const experimentService = new ExperimentService();
+        experimentService.savePipelineHandle(req.params.experimentId, data)
+          .then(() => res.json(data));
+      })
+      .catch(next);
+  },
+
+  'gem2s#response': async (req, res) => {
     let result;
 
     try {
