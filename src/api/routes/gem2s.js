@@ -17,7 +17,7 @@ module.exports = {
     createGem2SPipeline(req.params.experimentId)
       .then((data) => {
         const experimentService = new ExperimentService();
-        experimentService.savePipelineHandle(req.params.experimentId, data)
+        experimentService.saveGem2sHandle(req.params.experimentId, data)
           .then(() => res.json(data));
       })
       .catch(next);
