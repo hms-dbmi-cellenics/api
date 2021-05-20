@@ -66,7 +66,12 @@ class ProjectsService {
     }
   }
 
+  /**
+   * Finds all projects referenced in experiments.
+   */
   async getProjects() {
+    // Get project data from the experiments table. Only return
+    // those tables that have a project ID associated with them.
     const params = {
       TableName: experimentService.experimentsTableName,
       ExpressionAttributeNames: {
@@ -78,29 +83,34 @@ class ProjectsService {
 
     const dynamodb = createDynamoDbInstance();
     const response = await dynamodb.scan(params).promise();
-    const projectIds = [];
-    if (response.Items) {
-      response.Items.forEach((entry) => {
-        const newEntry = convertToJsObject(entry);
-        projectIds.push({ projectUuid: { S: newEntry.projectId } });
-      });
-      return this.getProjectsFromIds(projectIds);
+
+    if (!response.Items) {
+      throw new NotFoundError('No projects available!');
     }
-    throw new NotFoundError('No projects available!');
+
+    const projectIds = response.Items.map((entry) => convertToJsObject(entry).projectId);
+    return this.getProjectsFromIds(new Set(projectIds));
   }
 
+  /**
+   * Returns information about a group of projects.
+   *
+   * @param {Set} projectIds A Set of projectId values that are to be queried.
+   * @returns An object containing descriptions of projects.
+   */
   async getProjectsFromIds(projectIds) {
     const dynamodb = createDynamoDbInstance();
 
     const params = {
       RequestItems: {
         [this.tableName]: {
-          Keys: projectIds,
+          Keys: projectIds.map(convertToDynamoDbRecord),
         },
       },
     };
 
     console.log('project IDs are', projectIds);
+    console.log('keys are', projectIds.map(convertToDynamoDbRecord));
 
     const data = await dynamodb.batchGetItem(params).promise();
 
