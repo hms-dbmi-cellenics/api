@@ -4,11 +4,11 @@ const mockData = require('./mock-data.json');
 const AWS = require('../../utils/requireAWS');
 const logger = require('../../utils/logging');
 
+const { OK, NotFoundError } = require('../../utils/responses');
+
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord, configArrayToUpdateObjs,
 } = require('../../utils/dynamoDb');
-
-const { NotFoundError } = require('../../utils/responses');
 
 const getExperimentAttributes = async (tableName, experimentId, attributes) => {
   const dynamodb = createDynamoDbInstance();
@@ -44,6 +44,45 @@ class ExperimentService {
   async getExperimentData(experimentId) {
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId);
     return data;
+  }
+
+  async createExperiment(experimentId, body, user) {
+    const dynamodb = createDynamoDbInstance();
+    const key = convertToDynamoDbRecord({ experimentId });
+
+    const documentClient = new AWS.DynamoDB.DocumentClient();
+
+    const rbacCanWrite = Array.from(new Set([config.adminArn, user.sub]));
+
+    const marshalledData = convertToDynamoDbRecord({
+      ':experimentName': body.name,
+      ':createdAt': body.createdAt,
+      ':lastViewed': body.lastViewed,
+      ':projectId': body.projectUuid,
+      ':description': body.description,
+      ':meta': {},
+      ':rbac_can_write': documentClient.createSet(rbacCanWrite),
+    });
+
+    const params = {
+      TableName: this.experimentsTableName,
+      Key: key,
+      UpdateExpression: `SET experimentName = :experimentName,
+                          createdAt = :createdAt,
+                          lastViewed = :lastViewed,
+                          projectId = :projectId,
+                          description = :description,
+                          meta = :meta,
+                          rbac_can_write = :rbac_can_write`,
+      ExpressionAttributeValues: marshalledData,
+      ConditionExpression: 'attribute_not_exists(#experimentId)',
+      ExpressionAttributeNames: { '#experimentId': 'experimentId' },
+      ReturnValues: 'ALL_NEW',
+    };
+
+    await dynamodb.updateItem(params).promise();
+
+    return OK();
   }
 
   async updateExperiment(experimentId, body) {

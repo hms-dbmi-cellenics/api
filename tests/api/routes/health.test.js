@@ -5,6 +5,8 @@ const CacheSingleton = require('../../../src/cache');
 
 jest.mock('../../../src/cache');
 
+jest.setTimeout(30000);
+
 describe('tests for the healthcheck route', () => {
   it('Check health', async (done) => {
     const { app } = await expressLoader(express());

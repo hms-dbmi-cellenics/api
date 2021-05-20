@@ -172,9 +172,18 @@ const expressAuthorizationMiddleware = async (req, res, next) => {
   }
 };
 
+const expressAuthenticationOnlyMiddleware = async (req, res, next) => {
+  if (!req.user) {
+    next(new UnauthenticatedError('The request does not contain an authentication token.'));
+    return;
+  }
+  next();
+};
+
 module.exports = {
   authenticationMiddlewareExpress,
   authenticationMiddlewareSocketIO,
   expressAuthorizationMiddleware,
+  expressAuthenticationOnlyMiddleware,
   authorize,
 };

@@ -86,6 +86,7 @@ if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
   config.pipelineInstanceConfigUrl = 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/pipeline.yaml';
   config.cachingEnabled = false;
   config.corsOriginUrl = 'https://ui-default.scp-staging.biomage.net';
+  config.adminArn = 'a07c6615-d982-413b-9fdc-48bd85182e83';
 }
 
 // We are in user staging environments
@@ -94,6 +95,7 @@ if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
   config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/${config.sandboxId}.yaml`;
   config.cachingEnabled = false;
   config.corsOriginUrl = `https://ui-${config.sandboxId}.scp-staging.biomage.net`;
+  config.adminArn = '70c213d4-e7b6-4920-aefb-706ce8606ee2';
 }
 
 // We are in the `development` clusterEnv, meaning we run on
@@ -109,6 +111,7 @@ if (config.clusterEnv === 'development') {
   });
 
   config.corsOriginUrl = 'http://localhost:5000';
+  config.adminArn = '70c213d4-e7b6-4920-aefb-706ce8606ee2';
 }
 
 module.exports = config;

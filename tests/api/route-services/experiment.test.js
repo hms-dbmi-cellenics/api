@@ -9,6 +9,8 @@ const {
   mockS3PutObject,
 } = require('../../test-utils/mockAWSServices');
 
+jest.setTimeout(30000);
+
 describe('tests for the experiment service', () => {
   afterEach(() => {
     AWSMock.restore('DynamoDB');
