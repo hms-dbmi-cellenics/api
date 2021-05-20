@@ -27,7 +27,7 @@ module.exports = (socket) => {
       segment.addMetadata('request', data);
 
       try {
-        // Authenticate and authorize the user the user.
+        // Authenticate and authorize the user
         if (!Authorization) {
           throw new Error('Authentication token must be present.');
         }

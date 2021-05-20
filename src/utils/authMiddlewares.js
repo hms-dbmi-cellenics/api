@@ -8,52 +8,47 @@ const jwtExpress = require('express-jwt');
 const jwkToPem = require('jwk-to-pem');
 const util = require('util');
 
-console.log('g');
-
 const config = require('../config');
 
-console.log('h');
-
 const CacheSingleton = require('../cache');
-
-console.log('i');
 
 const { CacheMissError } = require('../cache/cache-utils');
 const { UnauthorizedError, UnauthenticatedError } = require('./responses');
 const ExperimentService = require('../api/route-services/experiment');
 
-console.log('j');
-
 const experimentService = new ExperimentService();
-
-console.log('k');
 
 /**
  * Authentication middleware for Express. Returns a middleware that
  * can be used in the API to authenticate Cognito-issued JWTs.
  */
 const authenticationMiddlewareExpress = async (app) => {
-  console.log('l');
-
   app.set('keys', {});
-
-  console.log('m');
 
   // This will be run outside a request context, so there is no X-Ray segment.
   // Disable tracing so we don't end up with errors logged into the console.
-  AWSXRay.setContextMissingStrategy('LOG_ERROR');
+  AWSXRay.setContextMissingStrategy(() => { });
   const poolId = await config.awsUserPoolIdPromise;
   AWSXRay.setContextMissingStrategy('LOG_ERROR');
 
-  console.log('n');
-
   return jwtExpress({
+    // JWT tokens are susceptible for downgrade attacks if the algorithm used to sign
+    // the token is not specified.
+    // AWS only returns RS256 signed tokens so we explicitly specify this requirement.
     algorithms: ['RS256'],
+    // We don't always need users to be authenticated to perform an action (e.g. a health check).
+    // The authenticated claim, if successful, gets saved in the request under req.user,
+    // so during authorization we can check if the user parameter is actually present.
+    // If not, the user was not authenticated.
     credentialsRequired: false,
+    // JWT tokens are JSON files that are signed using a key.
+    // We need to make sure that the issuer in the token is correct:
+    // we verify that the signed JWT includes our own user pool.
     issuer: `https://cognito-idp.${config.awsRegion}.amazonaws.com/${poolId}`,
     secret: (req, payload, done) => {
       const token = req.headers.authorization.split(' ')[1];
       const [jwtHeaderRaw] = token.split('.');
+      // key ID that was used to sign the JWT
       const { kid } = JSON.parse(Buffer.from(jwtHeaderRaw, 'base64').toString('ascii'));
 
       // Get the issuer from the JWT claim.
@@ -147,7 +142,7 @@ const authorize = async (experimentId, claim) => {
   } = await experimentService.getExperimentPermissions(experimentId);
 
   if (!canWrite) {
-    throw new UnauthorizedError(`Experiment ${experimentId} cannot be accesed.`);
+    throw new UnauthorizedError(`Experiment ${experimentId} cannot be accesed (malformed).`);
   }
 
   // If the logged in user has the permissions, forward request.
@@ -184,8 +179,6 @@ const expressAuthorizationExperimentCreationMiddleware = async (req, res, next) 
   }
   next();
 };
-
-console.log('o');
 
 module.exports = {
   authenticationMiddlewareExpress,

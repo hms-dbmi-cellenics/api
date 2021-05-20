@@ -40,8 +40,6 @@ if (!envFound) {
 
 const awsRegion = process.env.AWS_DEFAULT_REGION || 'eu-west-1';
 
-console.log('b');
-
 async function getAwsPoolId() {
   const cognitoISP = new AWS.CognitoIdentityServiceProvider({
     region: awsRegion,
@@ -52,8 +50,6 @@ async function getAwsPoolId() {
 
   return poolId;
 }
-
-console.log('c');
 
 async function getAwsAccountId() {
   const sts = new AWS.STS({

@@ -52,8 +52,6 @@ module.exports = async (app) => {
   });
 
 
-  console.log('q');
-
   app.use(AWSXRay.express.openSegment(`API-${config.clusterEnv}-${config.sandboxId}`));
 
   app.use((req, res, next) => {
@@ -62,16 +60,10 @@ module.exports = async (app) => {
     next();
   });
 
-  console.log('r');
-
   // Authentication middleware.
   const authMw = await authenticationMiddlewareExpress(app);
 
-  console.log('s');
-
   app.use(authMw);
-
-  console.log('t');
 
   app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
