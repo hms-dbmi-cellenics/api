@@ -34,7 +34,7 @@ const getPipelineArtifacts = async () => {
 
   return {
     chartRef: jq.json(manifest, '..|objects| select(.metadata != null) | select( .metadata.name | contains("pipeline")) | .spec.chart.ref//empty'),
-    'pipeline-runner': jq.json(manifest, '..|objects|.["qc-runner"].image//empty'), // change the name
+    'pipeline-runner': jq.json(manifest, '..|objects|.["pipeline-runner"].image//empty'), // change the name
   };
 };
 
