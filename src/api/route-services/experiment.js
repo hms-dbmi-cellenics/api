@@ -10,6 +10,8 @@ const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord, configArrayToUpdateObjs,
 } = require('../../utils/dynamoDb');
 
+const adminArn = '70c213d4-e7b6-4920-aefb-706ce8606ee2';
+
 const getExperimentAttributes = async (tableName, experimentId, attributes) => {
   const dynamodb = createDynamoDbInstance();
   const key = convertToDynamoDbRecord({ experimentId });
@@ -59,7 +61,7 @@ class ExperimentService {
       ':projectId': body.projectUuid,
       ':description': body.description,
       ':meta': {},
-      ':rbac_can_write': documentClient.createSet([user.sub]),
+      ':rbac_can_write': documentClient.createSet([adminArn, user.sub]),
     });
 
     const params = {
