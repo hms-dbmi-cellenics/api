@@ -5,7 +5,7 @@ const authenticationMiddlewareExpress = async () => (req, res, next) => {
 const expressAuthorizationMiddleware = async (req, res, next) => {
   next();
 };
-const expressAuthorizationOnlyMiddleware = async (req, res, next) => {
+const expressAuthenticationOnlyMiddleware = async (req, res, next) => {
   next();
 };
 
@@ -16,6 +16,6 @@ module.exports = {
   authenticationMiddlewareExpress,
   authenticationMiddlewareSocketIO,
   expressAuthorizationMiddleware,
-  expressAuthorizationOnlyMiddleware,
+  expressAuthenticationOnlyMiddleware,
   authorize,
 };

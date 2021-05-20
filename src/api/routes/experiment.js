@@ -1,6 +1,6 @@
 const ExperimentService = require('../route-services/experiment');
 
-const { expressAuthorizationMiddleware, expressAuthorizationOnlyMiddleware } = require('../../utils/authMiddlewares');
+const { expressAuthorizationMiddleware, expressAuthenticationOnlyMiddleware } = require('../../utils/authMiddlewares');
 
 const experimentService = new ExperimentService();
 
@@ -14,7 +14,7 @@ module.exports = {
     },
   ],
   'experiment#createExperiment': [
-    expressAuthorizationOnlyMiddleware,
+    expressAuthenticationOnlyMiddleware,
     (req, res, next) => {
       experimentService.createExperiment(req.params.experimentId, req.body, req.user)
         .then((data) => res.json(data))
