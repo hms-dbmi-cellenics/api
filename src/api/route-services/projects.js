@@ -100,9 +100,6 @@ class ProjectsService {
    */
   async getProjectsFromIds(projectIds) {
     const dynamodb = createDynamoDbInstance();
-
-    console.log('project IDs are', projectIds);
-
     const params = {
       RequestItems: {
         [this.tableName]: {
@@ -111,18 +108,16 @@ class ProjectsService {
       },
     };
 
-    console.log('keys are', [...projectIds].map((projectUuid) => convertToDynamoDbRecord({ projectUuid })));
-
     const data = await dynamodb.batchGetItem(params).promise();
-
-    const fetchedIds = data.Responses[this.tableName].map((entry) => {
+    const existingProjectIds = new Set(data.Responses[this.tableName].map((entry) => {
       const newData = convertToJsObject(entry);
       return newData.projects.uuid;
-    });
+    }));
 
+    // Build up projects that do not exist in Dynamo yet.
     const projects = [...projectIds]
       .filter((entry) => (
-        fetchedIds.every((entry2) => entry !== entry2)
+        !existingProjectIds.has(entry)
       ))
       .map((emptyProject) => {
         const newProject = {};
