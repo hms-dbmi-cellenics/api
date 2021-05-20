@@ -122,11 +122,12 @@ class ProjectsService {
 
     const projects = [...projectIds]
       .filter((entry) => (
-        fetchedIds.every((entry2) => entry.projectUuid.S !== entry2)
+        fetchedIds.every((entry2) => entry !== entry2)
       ))
       .map((emptyProject) => {
-        const id = emptyProject.projectUuid.S;
         const newProject = {};
+
+        const id = emptyProject;
         newProject.name = id;
         newProject.uuid = id;
         newProject.samples = [];
