@@ -90,7 +90,6 @@ class ProjectsService {
   }
 
   async getProjectsFromIds(projectIds) {
-    const projects = [];
     const dynamodb = createDynamoDbInstance();
 
     const params = {
@@ -101,38 +100,37 @@ class ProjectsService {
       },
     };
 
-    return new Promise((resolve) => {
-      dynamodb.batchGetItem(params, (err, data) => {
-        if (err) {
-          logger.log('Error: ', err);
-        } else {
-          const fetchedIds = data.Responses[this.tableName].map((entry) => {
-            const newData = convertToJsObject(entry);
-            return newData.projects.uuid;
-          });
-          const emptyProjects = projectIds.filter((entry) => (
-            fetchedIds.every((entry2) => entry.projectUuid.S !== entry2)
-          ));
+    console.log('project IDs are', projectIds);
 
-          emptyProjects.forEach((emptyProject) => {
-            const id = emptyProject.projectUuid.S;
-            const newProject = {};
-            newProject.name = id;
-            newProject.uuid = id;
-            newProject.samples = [];
-            newProject.metadataKeys = [];
-            newProject.experiments = [id];
-            projects.push(newProject);
-          });
+    const data = await dynamodb.batchGetItem(params).promise();
 
-          data.Responses[this.tableName].forEach((entry) => {
-            const newData = convertToJsObject(entry);
-            projects.push(newData.projects);
-          });
-          resolve(projects);
-        }
-      });
+    const fetchedIds = data.Responses[this.tableName].map((entry) => {
+      const newData = convertToJsObject(entry);
+      return newData.projects.uuid;
     });
+
+    const projects = projectIds
+      .filter((entry) => (
+        fetchedIds.every((entry2) => entry.projectUuid.S !== entry2)
+      ))
+      .map((emptyProject) => {
+        const id = emptyProject.projectUuid.S;
+        const newProject = {};
+        newProject.name = id;
+        newProject.uuid = id;
+        newProject.samples = [];
+        newProject.metadataKeys = [];
+        newProject.experiments = [id];
+
+        return newProject;
+      });
+
+    data.Responses[this.tableName].forEach((entry) => {
+      const newData = convertToJsObject(entry);
+      projects.push(newData.projects);
+    });
+
+    return projects;
   }
 
   async deleteProject(projectUuid) {
