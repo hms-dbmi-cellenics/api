@@ -10,8 +10,6 @@ const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord, configArrayToUpdateObjs,
 } = require('../../utils/dynamoDb');
 
-const adminArn = '70c213d4-e7b6-4920-aefb-706ce8606ee2';
-
 const getExperimentAttributes = async (tableName, experimentId, attributes) => {
   const dynamodb = createDynamoDbInstance();
   const key = convertToDynamoDbRecord({ experimentId });
@@ -54,7 +52,7 @@ class ExperimentService {
 
     const documentClient = new AWS.DynamoDB.DocumentClient();
 
-    const rbacCanWrite = Array.from(new Set([adminArn, user.sub]));
+    const rbacCanWrite = Array.from(new Set([config.adminArn, user.sub]));
 
     const marshalledData = convertToDynamoDbRecord({
       ':experimentName': body.name,
