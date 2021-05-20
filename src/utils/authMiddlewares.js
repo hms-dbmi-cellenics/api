@@ -172,7 +172,7 @@ const expressAuthorizationMiddleware = async (req, res, next) => {
   }
 };
 
-const expressAuthorizationExperimentCreationMiddleware = async (req, res, next) => {
+const expressAuthorizationOnlyMiddleware = async (req, res, next) => {
   if (!req.user) {
     next(new UnauthenticatedError('The request does not contain an authentication token.'));
     return;
@@ -184,6 +184,6 @@ module.exports = {
   authenticationMiddlewareExpress,
   authenticationMiddlewareSocketIO,
   expressAuthorizationMiddleware,
-  expressAuthorizationExperimentCreationMiddleware,
+  expressAuthorizationOnlyMiddleware,
   authorize,
 };

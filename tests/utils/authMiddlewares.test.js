@@ -2,6 +2,7 @@ const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../src/utils/requireAWS');
 const {
   expressAuthorizationMiddleware,
+  expressAuthorizationOnlyMiddleware,
   authorize,
 } = require('../../src/utils/authMiddlewares');
 const { UnauthorizedError, UnauthenticatedError } = require('../../src/utils/responses');
