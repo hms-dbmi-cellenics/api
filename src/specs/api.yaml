@@ -203,6 +203,12 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
     put:
       summary: ''
       operationId: updateExperiment
@@ -216,6 +222,18 @@ paths:
               schema:
                 type: object
                 properties: {}
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to modify this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
       description: Update experiment
       requestBody:
         content:
