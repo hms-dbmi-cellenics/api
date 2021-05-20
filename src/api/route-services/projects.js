@@ -106,12 +106,12 @@ class ProjectsService {
     const params = {
       RequestItems: {
         [this.tableName]: {
-          Keys: [...projectIds].map(convertToDynamoDbRecord),
+          Keys: [...projectIds].map((projectUuid) => convertToDynamoDbRecord({ projectUuid })),
         },
       },
     };
 
-    console.log('keys are', [...projectIds].map(convertToDynamoDbRecord));
+    console.log('keys are', [...projectIds].map((projectUuid) => convertToDynamoDbRecord({ projectUuid })));
 
     const data = await dynamodb.batchGetItem(params).promise();
 
