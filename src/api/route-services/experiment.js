@@ -54,6 +54,8 @@ class ExperimentService {
 
     const documentClient = new AWS.DynamoDB.DocumentClient();
 
+    const rbacCanWrite = Array.from(new Set([adminArn, user.sub]));
+
     const marshalledData = convertToDynamoDbRecord({
       ':experimentName': body.name,
       ':createdAt': body.createdAt,
@@ -61,7 +63,7 @@ class ExperimentService {
       ':projectId': body.projectUuid,
       ':description': body.description,
       ':meta': {},
-      ':rbac_can_write': documentClient.createSet([adminArn, user.sub]),
+      ':rbac_can_write': documentClient.createSet(rbacCanWrite),
     });
 
     const params = {
