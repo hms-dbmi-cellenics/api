@@ -5,26 +5,32 @@ const getBackendStatus = require('../general-services/backend-status');
 const pipelineResponse = require('../route-services/pipeline-response');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 const logger = require('../../utils/logging');
+const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
+
 
 module.exports = {
-  'pipelines#get': (req, res, next) => {
-    getBackendStatus(req.params.experimentId)
-      .then((data) => res.json(data))
-      .catch(next);
-  },
+  'pipelines#get': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => {
+      getBackendStatus(req.params.experimentId)
+        .then((data) => res.json(data))
+        .catch(next);
+    },
+  ],
+  'pipelines#create': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => {
+      const { processingConfig } = req.body;
 
-  'pipelines#create': (req, res, next) => {
-    const { processingConfig } = req.body;
-
-    createPipeline(req.params.experimentId, processingConfig || [])
-      .then((data) => {
-        const experimentService = new ExperimentService();
-        experimentService.savePipelineHandle(req.params.experimentId, data)
-          .then(() => res.json(data));
-      })
-      .catch(next);
-  },
-
+      createPipeline(req.params.experimentId, processingConfig || [])
+        .then((data) => {
+          const experimentService = new ExperimentService();
+          experimentService.savePipelineHandle(req.params.experimentId, data)
+            .then(() => res.json(data));
+        })
+        .catch(next);
+    },
+  ],
   'pipelines#response': async (req, res) => {
     let result;
 
