@@ -101,16 +101,17 @@ class ProjectsService {
   async getProjectsFromIds(projectIds) {
     const dynamodb = createDynamoDbInstance();
 
+    console.log('project IDs are', projectIds);
+
     const params = {
       RequestItems: {
         [this.tableName]: {
-          Keys: projectIds.map(convertToDynamoDbRecord),
+          Keys: [...projectIds].map(convertToDynamoDbRecord),
         },
       },
     };
 
-    console.log('project IDs are', projectIds);
-    console.log('keys are', projectIds.map(convertToDynamoDbRecord));
+    console.log('keys are', [...projectIds].map(convertToDynamoDbRecord));
 
     const data = await dynamodb.batchGetItem(params).promise();
 
