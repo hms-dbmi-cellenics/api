@@ -120,7 +120,7 @@ class ProjectsService {
       return newData.projects.uuid;
     });
 
-    const projects = projectIds
+    const projects = [...projectIds]
       .filter((entry) => (
         fetchedIds.every((entry2) => entry.projectUuid.S !== entry2)
       ))
