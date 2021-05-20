@@ -27,7 +27,7 @@ class SamplesService {
     const dynamodb = createDynamoDbInstance();
 
     const response = await dynamodb.query(params).promise();
-    const items = response.Items ? response.Items[0] : response.Item;
+    const items = response.Items;
 
     if (items) {
       const prettyResponse = response.Items.map((item) => convertToJsObject(item));
