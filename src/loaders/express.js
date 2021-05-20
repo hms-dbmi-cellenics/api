@@ -26,9 +26,6 @@ module.exports = async (app) => {
   app.use(bodyParser.text({ extended: false, limit: '1mb', parameterLimit: 300000 }));
   app.use(bodyParser.json({ extended: false, limit: '10mb', parameterLimit: 300000 }));
 
-
-  console.log('p');
-
   // Enable AWS XRay
   // eslint-disable-next-line global-require
   AWSXRay.captureHTTPsGlobal(require('http'));

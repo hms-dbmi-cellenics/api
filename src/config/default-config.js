@@ -2,7 +2,6 @@ const dotenv = require('dotenv');
 const AWS = require('aws-sdk');
 const logger = require('../utils/logging');
 
-console.log('a');
 // If we are not deployed on GitLab (AWS/k8s), the environment is given by
 // NODE_ENV, or development if NODE_ENV is not set.
 
@@ -60,8 +59,6 @@ async function getAwsAccountId() {
   return data.Account;
 }
 
-console.log('d');
-
 const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
   clusterEnv: process.env.CLUSTER_ENV || 'development',
@@ -99,8 +96,6 @@ if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
   config.corsOriginUrl = `https://ui-${config.sandboxId}.scp-staging.biomage.net`;
 }
 
-console.log('e');
-
 // We are in the `development` clusterEnv, meaning we run on
 // InfraMock. Set up API accordingly.
 if (config.clusterEnv === 'development') {
@@ -115,7 +110,5 @@ if (config.clusterEnv === 'development') {
 
   config.corsOriginUrl = 'http://localhost:5000';
 }
-
-console.log('f');
 
 module.exports = config;
