@@ -70,6 +70,9 @@ class ProjectsService {
    * Finds all projects referenced in experiments.
    */
   async getProjects(user) {
+    if (!user) {
+      return [];
+    }
     // Get project data from the experiments table. Only return
     // those tables that have a project ID associated with them.
     const params = {
@@ -89,7 +92,7 @@ class ProjectsService {
     const response = await dynamodb.scan(params).promise();
 
     if (!response.Items) {
-      throw new NotFoundError('No projects available!');
+      return [];
     }
 
     const projectIds = response.Items.map((entry) => convertToJsObject(entry).projectId);
