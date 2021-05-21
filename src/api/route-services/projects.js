@@ -77,7 +77,7 @@ class ProjectsService {
     // those tables that have a project ID associated with them.
     const params = {
       TableName: experimentService.experimentsTableName,
-      FilterExpression: 'attribute_exists(projectId)',
+      FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
       ExpressionAttributeNames: {
         '#pid': 'projectId',
         '#rbac_can_write': 'rbac_can_write',
