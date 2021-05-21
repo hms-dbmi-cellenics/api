@@ -13,4 +13,9 @@ module.exports = {
       .then((data) => res.json(data))
       .catch(next);
   },
+
+  'projects#get': (req, res, next) => {
+    projectsService.getProjects().then((response) => res.json(response)).catch(next);
+  },
+
 };
