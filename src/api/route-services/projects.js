@@ -69,15 +69,19 @@ class ProjectsService {
   /**
    * Finds all projects referenced in experiments.
    */
-  async getProjects() {
+  async getProjects(user) {
     // Get project data from the experiments table. Only return
     // those tables that have a project ID associated with them.
     const params = {
       TableName: experimentService.experimentsTableName,
+      FilterExpression: 'attribute_exists(projectId)',
       ExpressionAttributeNames: {
         '#pid': 'projectId',
+        '#rbac_can_write': 'rbac_can_write',
       },
-      FilterExpression: 'attribute_exists(projectId)',
+      ExpressionAttributeValues: {
+        ':userId': { S: user.sub },
+      },
       ProjectionExpression: '#pid',
     };
 
