@@ -760,7 +760,7 @@ paths:
                     $ref: ./models/api-body-schemas/Samples.v1.yaml
   '/projects':
     get:
-      summary: ''
+      summary: List projects
       operationId: getProjects
       x-eov-operation-id: projects#get
       x-eov-operation-handler: routes/projects
@@ -771,6 +771,7 @@ paths:
             application/json:
               schema:
                 type: array
+                minItems: 0
                 items:
                   $ref: ./models/api-body-schemas/Project.v1.yaml
       description: Get the projects
