@@ -112,6 +112,9 @@ if (config.clusterEnv === 'development') {
     s3ForcePathStyle: true,
   });
 
+  // remove this line when the new gem2s-endpoint is merged and thus the production/pipeline.yaml is
+  // updated to new name pipeline-runner
+  config.pipelineInstanceConfigUrl = 'https://raw.githubusercontent.com/kafkasl/iac/master/releases/production/pipeline.yaml';
   config.corsOriginUrl = 'http://localhost:5000';
   config.adminArn = '70c213d4-e7b6-4920-aefb-706ce8606ee2';
 }
