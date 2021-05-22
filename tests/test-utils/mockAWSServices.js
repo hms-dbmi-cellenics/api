@@ -15,6 +15,24 @@ const mockDynamoGetItem = (payload = {}, error = null) => {
   return fnSpy;
 };
 
+const mockDynamoBatchGetItem = (response = {}, error = null) => {
+  const dynamodbData = Object.keys(response.Responses).reduce((acc, tableName) => ({
+    ...acc,
+    Responses: {
+      ...acc.Responses,
+      [tableName]: response.Responses[tableName].map((entry) => AWS.DynamoDB.Converter.marshall(entry)),
+    },
+  }), { Responses: {} });
+
+  const fnSpy = jest.fn((x) => x);
+  AWSMock.setSDKInstance(AWS);
+  AWSMock.mock('DynamoDB', 'batchGetItem', (params, callback) => {
+    fnSpy(params);
+    callback(error, dynamodbData);
+  });
+  return fnSpy;
+};
+
 const mockDynamoDeleteItem = (payload = {}, error = null) => {
   const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
@@ -25,13 +43,36 @@ const mockDynamoDeleteItem = (payload = {}, error = null) => {
   return fnSpy;
 };
 
-const mockDynamoQuery = (payload = {}, error = null) => {
+const mockDynamoQuery = (payload = [], error = null) => {
+  if (!Array.isArray(payload)) {
+    // eslint-disable-next-line no-param-reassign
+    payload = [payload];
+  }
+
   const dynamodbData = {
-    Items: [AWS.DynamoDB.Converter.marshall(payload)],
+    Items: payload.map((entry) => AWS.DynamoDB.Converter.marshall(entry)),
   };
   const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
   AWSMock.mock('DynamoDB', 'query', (params, callback) => {
+    fnSpy(params);
+    callback(error, dynamodbData);
+  });
+  return fnSpy;
+};
+
+const mockDynamoScan = (payload = {}, error = null) => {
+  if (!Array.isArray(payload)) {
+    // eslint-disable-next-line no-param-reassign
+    payload = [payload];
+  }
+
+  const dynamodbData = {
+    Items: payload.map((entry) => AWS.DynamoDB.Converter.marshall(entry)),
+  };
+  const fnSpy = jest.fn((x) => x);
+  AWSMock.setSDKInstance(AWS);
+  AWSMock.mock('DynamoDB', 'scan', (params, callback) => {
     fnSpy(params);
     callback(error, dynamodbData);
   });
@@ -76,7 +117,9 @@ const mockS3PutObject = (payload = {}, error = null) => {
 
 module.exports = {
   mockDynamoGetItem,
+  mockDynamoBatchGetItem,
   mockDynamoQuery,
+  mockDynamoScan,
   mockDynamoUpdateItem,
   mockDynamoDeleteItem,
   mockS3GetObject,
