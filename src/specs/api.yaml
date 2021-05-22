@@ -771,7 +771,6 @@ paths:
             application/json:
               schema:
                 type: array
-                minItems: 0
                 items:
                   $ref: ./models/api-body-schemas/Project.v1.yaml
       description: Get the projects

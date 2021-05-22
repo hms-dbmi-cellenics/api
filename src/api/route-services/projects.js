@@ -91,7 +91,7 @@ class ProjectsService {
     const dynamodb = createDynamoDbInstance();
     const response = await dynamodb.scan(params).promise();
 
-    if (!response.Items) {
+    if (!response.Items.length) {
       return [];
     }
 
