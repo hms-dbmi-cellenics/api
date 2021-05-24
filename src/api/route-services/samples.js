@@ -27,14 +27,16 @@ class SamplesService {
     const dynamodb = createDynamoDbInstance();
 
     const response = await dynamodb.query(params).promise();
+    const items = response.Items;
 
-    if (response.Items) {
+    if (items) {
       const prettyResponse = response.Items.map((item) => convertToJsObject(item));
       return prettyResponse;
     }
 
-    throw new NotFoundError('Samples not found');
+    throw new NotFoundError('Samples not found!');
   }
+
 
   async getSamplesByExperimentId(experimentId) {
     logger.log(`Gettings samples using experimentId : ${experimentId}`);
