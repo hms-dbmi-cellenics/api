@@ -23,7 +23,6 @@ const validateRequest = async (request, schemaPath) => {
     http: async ({ url, headers }) => {
       const data = yaml.safeLoad(fs.readFileSync(url), 'utf8');
 
-      console.log(`spec data ${data}`);
       return {
         ok: true,
         status: 200,
