@@ -1,6 +1,6 @@
 title: Experiment
+description: 'An experiment object as stored in dynamodb'
 type: object
 properties:
   experimentId:
     type: string
-description: ''

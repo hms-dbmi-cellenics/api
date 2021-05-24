@@ -115,11 +115,11 @@ class ExperimentService {
     const key = convertToDynamoDbRecord({ experimentId });
 
     const marshalledData = convertToDynamoDbRecord({
-      ':experimentName': body.name,
-      ':createdAt': body.createdAt,
-      ':lastViewed': body.lastViewed,
-      ':projectId': body.projectUuid,
-      ':description': body.description,
+      ':experimentName': body.name || '',
+      ':createdAt': body.createdAt || '',
+      ':lastViewed': body.lastViewed || '',
+      ':projectId': body.projectUuid || '',
+      ':description': body.description || '',
       ':meta': {},
     });
 
@@ -154,6 +154,9 @@ class ExperimentService {
   }
 
   async getPipelineHandle(experimentId) {
+    console.log('experimentId');
+    console.log(experimentId);
+
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['meta']);
     return {
       stateMachineArn: '',

@@ -1,0 +1,15 @@
+title: Pipeline response
+description: This is the format the gem2s clients communicate the result of a gem2s run.
+type: object
+properties:
+  oneOf:
+    - item:
+        $ref: ./api-body-schemas/Experiment.v1.yaml
+      table:
+        type: string
+        pattern: 'experiments'
+    - item:
+        $ref: ./api-body-schemas/Samples.v1.yaml
+      table:
+        type: string
+        pattern: 'samples'

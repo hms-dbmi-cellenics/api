@@ -2,7 +2,7 @@ const AWSXRay = require('aws-xray-sdk');
 const { createGem2SPipeline } = require('../general-services/pipeline-manage');
 const ExperimentService = require('../route-services/experiment');
 const getBackendStatus = require('../general-services/backend-status');
-const pipelineResponse = require('../route-services/pipeline-response');
+const gem2sResponse = require('../route-services/gem2s-response');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 const logger = require('../../utils/logging');
 const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
@@ -45,7 +45,7 @@ module.exports = {
     const { io, parsedMessage } = result;
 
     try {
-      await pipelineResponse(io, parsedMessage);
+      await gem2sResponse(io, parsedMessage);
     } catch (e) {
       logger.error(
         'Pipeline response handler failed with error: ', e,
