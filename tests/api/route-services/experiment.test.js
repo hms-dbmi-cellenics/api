@@ -206,13 +206,36 @@ describe('tests for the experiment service', () => {
     const updateItemSpy = mockDynamoUpdateItem();
     const dynamoTestData = AWS.DynamoDB.Converter.marshall({ ':x': jsTestData });
 
-    (new ExperimentService()).savePipelineHandle('12345', jsTestData)
+    (new ExperimentService()).saveQCHandle('12345', jsTestData)
       .then(() => {
         expect(updateItemSpy).toHaveBeenCalledWith(
           {
             TableName: 'experiments-test',
             Key: { experimentId: { S: '12345' } },
             UpdateExpression: 'set meta.pipeline = :x',
+            ExpressionAttributeValues: dynamoTestData,
+          },
+        );
+      })
+      .then(() => done());
+  });
+
+  it('Set gem2s Handle works', async (done) => {
+    const jsTestData = {
+      stateMachineArn: 'STATE-MACHINE-ID',
+      executionArn: 'EXECUTION-ID',
+    };
+
+    const updateItemSpy = mockDynamoUpdateItem();
+    const dynamoTestData = AWS.DynamoDB.Converter.marshall({ ':x': jsTestData });
+
+    (new ExperimentService()).saveGem2sHandle('12345', jsTestData)
+      .then(() => {
+        expect(updateItemSpy).toHaveBeenCalledWith(
+          {
+            TableName: 'experiments-test',
+            Key: { experimentId: { S: '12345' } },
+            UpdateExpression: 'set meta.gem2s = :x',
             ExpressionAttributeValues: dynamoTestData,
           },
         );
