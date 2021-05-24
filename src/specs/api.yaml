@@ -747,16 +747,16 @@ paths:
                   $ref: ./models/api-body-schemas/Experiment.v1.yaml
         '401':
           description: Not Found
-            content:
-              application/json:
-                schema:
-                  $ref: ./models/HTTPError.v1.yaml
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '404':
           description: Not Found
-            content:
-              application/json:
-                schema:
-                  $ref: ./models/HTTPError.v1.yaml
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
       description: Get all experiments under a project
   '/projects/{projectUuid}/{experimentId}/samples':
       parameters:

@@ -61,8 +61,6 @@ class ExperimentService {
     try {
       const response = await dynamodb.batchGetItem(params).promise();
 
-      console.log(response.Responses[this.experimentsTableName]);
-
       return response.Responses[this.experimentsTableName].map(
         (experiment) => convertToJsObject(experiment),
       );
