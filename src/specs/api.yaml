@@ -630,6 +630,18 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '404':
           description: Not Found
           content:
@@ -760,10 +772,11 @@ paths:
                     $ref: ./models/api-body-schemas/Samples.v1.yaml
   '/projects':
     get:
-      summary: ''
+      summary: 'Get the list of projects'
       operationId: getProjects
       x-eov-operation-id: projects#get
       x-eov-operation-handler: routes/projects
+      description: Get the projects
       responses:
         '200':
           description: OK
@@ -773,4 +786,9 @@ paths:
                 type: array
                 items:
                   $ref: ./models/api-body-schemas/Project.v1.yaml
-      description: Get the projects
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
