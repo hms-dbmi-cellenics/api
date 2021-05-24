@@ -17,5 +17,9 @@ module.exports = {
   'projects#get': (req, res, next) => {
     projectsService.getProjects().then((response) => res.json(response)).catch(next);
   },
+  'projects#getExperiments': (req, res, next) => {
+    projectsService.getExperiments(req.params.projectUuid)
+      .then((response) => res.json(response)).catch(next);
+  },
 
 };

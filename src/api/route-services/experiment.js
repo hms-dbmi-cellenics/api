@@ -47,6 +47,30 @@ class ExperimentService {
     return data;
   }
 
+  async getListOfExperiments(experimentIds) {
+    const dynamodb = createDynamoDbInstance();
+
+    const params = {
+      RequestItems: {
+        [this.experimentsTableName]: {
+          Keys: [...experimentIds].map((experimentId) => convertToDynamoDbRecord({ experimentId })),
+        },
+      },
+    };
+
+    try {
+      const response = await dynamodb.batchGetItem(params).promise();
+
+      return response.Responses[this.experimentsTableName].map(
+        (experiment) => convertToJsObject(experiment),
+      );
+    } catch (e) {
+      if (e.statusCode === 400) throw new NotFoundError('Experiments not found');
+      throw e;
+    }
+  }
+
+
   async createExperiment(experimentId, body, user) {
     const dynamodb = createDynamoDbInstance();
     const key = convertToDynamoDbRecord({ experimentId });

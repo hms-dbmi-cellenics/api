@@ -689,6 +689,40 @@ paths:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
       description: Deletes project and associated samples.
+  '/projects/{projectUuid}/experiments':
+    parameters:
+      - name: projectUuid
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get experiments under a project
+      operationId: getProjectExperiments
+      x-eov-operation-id: projects#getExperiments
+      x-eov-operation-handler: routes/projects
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ./models/api-body-schemas/Experiment.v1.yaml
+        '401':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: Get all experiments under a project
   '/projects/{projectUuid}/samples':
     parameters:
       - name: projectUuid
