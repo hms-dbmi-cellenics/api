@@ -53,7 +53,7 @@ class ExperimentService {
     const params = {
       RequestItems: {
         [this.experimentsTableName]: {
-          Keys: [...experimentIds].map((experimentId) => convertToDynamoDbRecord({ experimentId })),
+          Keys: experimentIds.map((experimentId) => convertToDynamoDbRecord({ experimentId })),
         },
       },
     };

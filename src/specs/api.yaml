@@ -711,7 +711,7 @@ paths:
                 items:
                   $ref: ./models/api-body-schemas/Experiment.v1.yaml
         '401':
-          description: Not Found
+          description: Unauthorized
           content:
             application/json:
               schema:
