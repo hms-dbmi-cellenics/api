@@ -1,7 +1,7 @@
 const AWSXRay = require('aws-xray-sdk');
 const { createQCPipeline } = require('../general-services/pipeline-manage');
-const ExperimentService = require('../route-services/experiment');
 const getBackendStatus = require('../general-services/backend-status');
+const ExperimentService = require('../route-services/experiment');
 const pipelineResponse = require('../route-services/pipeline-response');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 const logger = require('../../utils/logging');

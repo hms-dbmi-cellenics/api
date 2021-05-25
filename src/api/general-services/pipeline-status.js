@@ -103,14 +103,15 @@ const getStepsFromExecutionHistory = (events) => {
      *  - a step is only considered completed if it has been completed for all iteration of the Map
      *  - steps are returned in the completion order, and are unique in the returned array
      */
-const getPipelineStatus = async (experimentId, pipelineType) => {
+const getPipelineStatus = async (experimentId, processName) => {
   const experimentService = new ExperimentService();
 
   const pipelinesHandles = await experimentService.getPipelinesHandles(experimentId);
-  const { executionArn } = pipelinesHandles[pipelineType];
+  const { executionArn } = pipelinesHandles[processName];
 
   let execution = {};
   let completedSteps = [];
+
   if (!executionArn.length) {
     execution = {
       startDate: null,
@@ -146,7 +147,7 @@ const getPipelineStatus = async (experimentId, pipelineType) => {
   }
 
   const response = {
-    [pipelineType]: {
+    [processName]: {
       startDate: execution.startDate,
       stopDate: execution.stopDate,
       status: execution.status,

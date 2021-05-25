@@ -605,11 +605,12 @@ paths:
                 type: object
                 properties: {}
       description: This path will create a new pipeline that can run a state machine with different bioinformatics tasks.
+  '/experiments/{experimentId}/backendStatus':
     get:
       summary: Create new pipeline
       operationId: get-experiments-experimentId-pipelines
-      x-eov-operation-id: 'pipelines#get'
-      x-eov-operation-handler: routes/pipelines
+      x-eov-operation-id: backend-status#get
+      x-eov-operation-handler: routes/backend-status
       responses:
         '401':
           description: The request lacks authentication credentials.
@@ -630,6 +631,12 @@ paths:
               schema:
                 type: object
                 properties: {}
+        '404':
+          description: Experiment not found.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
   '/experiments/{experimentId}/samples':
     parameters:
       - schema:
