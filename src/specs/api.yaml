@@ -101,6 +101,49 @@ paths:
       tags:
         - work
     parameters: []
+  /gem2sResults:
+    post:
+      operationId: receiveGem2sResponse
+      x-eov-operation-id: 'gem2s#response'
+      x-eov-operation-handler: routes/gem2s
+      requestBody:
+        description: 'The results from the execution of a pipeline step, sent via SNS.'
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+            examples: {}
+          application/json:
+            schema:
+              type: object
+              properties: {}
+            examples: {}
+      responses:
+        '200':
+          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: ok
+        '500':
+          description: The data sent by the server could not be parsed as JSON.
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: nok
+      description: |-
+        Results from Step Function pipeline steps are relayed to the API through this endpoint.
+
+        Note that this endpoint is only exposed to AWS SNS, and since it has a specific communication protocol with limited feedback, the schema defined here is designed to be liberally enforceable. This endpoint is also used by SNS to handle subscribe/unsubscribe events.
+
+        The actual JSON passed by SNS is found in the `PipelineResponse` model, which is to be validated by the API.
+      summary: Retrieve results from pipeline step functions
+      tags:
+        - work
+    parameters: []
   /pipelineResults:
     post:
       operationId: receivePipelineResponse
@@ -508,7 +551,28 @@ paths:
         '200':
           description: OK
       description: Deletes a plot and table for a given experiment with the data specified.
-  '/experiments/{experimentId}/pipelines':
+  "/experiments/{experimentId}/gem2s":
+    parameters:
+      - schema:
+          type: string
+        name: experimentId
+        in: path
+        required: true
+    post:
+      summary: Create a new pipeline for gem2s execution
+      operationId: createNewGem2S
+      x-eov-operation-id: gem2s#create
+      x-eov-operation-handler: routes/gem2s
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      description: This path will create a new pipeline that can run a state machine with gem2s tasks.
+  "/experiments/{experimentId}/pipelines": # this should be changed to /qc at some point
     parameters:
       - schema:
           type: string
@@ -541,11 +605,12 @@ paths:
                 type: object
                 properties: {}
       description: This path will create a new pipeline that can run a state machine with different bioinformatics tasks.
+  '/experiments/{experimentId}/backendStatus':
     get:
       summary: Create new pipeline
       operationId: get-experiments-experimentId-pipelines
-      x-eov-operation-id: 'pipelines#get'
-      x-eov-operation-handler: routes/pipelines
+      x-eov-operation-id: backend-status#get
+      x-eov-operation-handler: routes/backend-status
       responses:
         '401':
           description: The request lacks authentication credentials.
@@ -566,6 +631,12 @@ paths:
               schema:
                 type: object
                 properties: {}
+        '404':
+          description: Experiment not found.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
   '/experiments/{experimentId}/samples':
     parameters:
       - schema:
@@ -630,6 +701,18 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '404':
           description: Not Found
           content:
@@ -668,6 +751,40 @@ paths:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
       description: Deletes project and associated samples.
+  '/projects/{projectUuid}/experiments':
+    parameters:
+      - name: projectUuid
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get experiments under a project
+      operationId: getProjectExperiments
+      x-eov-operation-id: projects#getExperiments
+      x-eov-operation-handler: routes/projects
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ./models/api-body-schemas/Experiment.v1.yaml
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: Get all experiments under a project
   '/projects/{projectUuid}/samples':
     parameters:
       - name: projectUuid
@@ -760,10 +877,11 @@ paths:
                     $ref: ./models/api-body-schemas/Samples.v1.yaml
   '/projects':
     get:
-      summary: List projects
+      summary: 'Get the list of projects'
       operationId: getProjects
       x-eov-operation-id: projects#get
       x-eov-operation-handler: routes/projects
+      description: Get the projects
       responses:
         '200':
           description: OK
@@ -773,4 +891,9 @@ paths:
                 type: array
                 items:
                   $ref: ./models/api-body-schemas/Project.v1.yaml
-      description: Get the projects
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml

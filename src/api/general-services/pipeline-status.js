@@ -5,7 +5,10 @@ const config = require('../../config');
 const logger = require('../../utils/logging');
 
 
-const privateSteps = ['DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker'];
+const privateSteps = [
+  'DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker',
+  'DeleteCompletedGem2SWorker', 'LaunchNewGem2SWorker',
+];
 
 const getStepsFromExecutionHistory = (events) => {
   class Branch {
@@ -97,15 +100,18 @@ const getStepsFromExecutionHistory = (events) => {
 /*
      * Return `completedSteps` of the state machine (SM) associated to the `experimentId`'s pipeline
      * The code assumes that
-     *  - the relevant states for the steps are defined within a Map of the SM
-     *  - the relevant Map is the first Map in the SM
      *  - a step is only considered completed if it has been completed for all iteration of the Map
      *  - steps are returned in the completion order, and are unique in the returned array
      */
-const getPipelineStatus = async (experimentId) => {
-  const { executionArn } = await (new ExperimentService()).getPipelineHandle(experimentId);
+const getPipelineStatus = async (experimentId, processName) => {
+  const experimentService = new ExperimentService();
+
+  const pipelinesHandles = await experimentService.getPipelinesHandles(experimentId);
+  const { executionArn } = pipelinesHandles[processName];
+
   let execution = {};
   let completedSteps = [];
+
   if (!executionArn.length) {
     execution = {
       startDate: null,
@@ -120,7 +126,6 @@ const getPipelineStatus = async (experimentId) => {
     execution = await stepFunctions.describeExecution({
       executionArn,
     }).promise();
-
 
     /* eslint-disable no-await-in-loop */
     let events = [];
@@ -142,7 +147,7 @@ const getPipelineStatus = async (experimentId) => {
   }
 
   const response = {
-    pipeline: {
+    [processName]: {
       startDate: execution.startDate,
       stopDate: execution.stopDate,
       status: execution.status,

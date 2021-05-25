@@ -1,36 +1,27 @@
 const AWSXRay = require('aws-xray-sdk');
-const { createQCPipeline } = require('../general-services/pipeline-manage');
-const getBackendStatus = require('../general-services/backend-status');
+const { createGem2SPipeline } = require('../general-services/pipeline-manage');
 const ExperimentService = require('../route-services/experiment');
-const pipelineResponse = require('../route-services/pipeline-response');
+const gem2sResponse = require('../route-services/gem2s-response');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 const logger = require('../../utils/logging');
+
 const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
 
 module.exports = {
-  'pipelines#get': [
+  'gem2s#create': [
     expressAuthorizationMiddleware,
     (req, res, next) => {
-      // The changes to add gem2s status will be obsoleted once agi's PR is merged in
-      getBackendStatus(req.params.experimentId)
-        .then((data) => res.json(data))
-        .catch(next);
-    },
-  ],
-  'pipelines#create': [
-    (req, res, next) => {
-      const { processingConfig } = req.body;
-
-      createQCPipeline(req.params.experimentId, processingConfig || [])
+      createGem2SPipeline(req.params.experimentId)
         .then((data) => {
           const experimentService = new ExperimentService();
-          experimentService.saveQCHandle(req.params.experimentId, data)
+          experimentService.saveGem2sHandle(req.params.experimentId, data)
             .then(() => res.json(data));
         })
         .catch(next);
     },
   ],
-  'pipelines#response': async (req, res) => {
+
+  'gem2s#response': async (req, res) => {
     let result;
 
     try {
@@ -45,7 +36,7 @@ module.exports = {
     const { io, parsedMessage } = result;
 
     try {
-      await pipelineResponse(io, parsedMessage);
+      await gem2sResponse(io, parsedMessage);
     } catch (e) {
       logger.error(
         'Pipeline response handler failed with error: ', e,

@@ -3,6 +3,7 @@ const request = require('supertest');
 const expressLoader = require('../../../src/loaders/express');
 
 jest.mock('../../../src/api/route-services/projects');
+jest.mock('../../../src/utils/authMiddlewares');
 
 describe('tests for projects route', () => {
   let app = null;
@@ -15,6 +16,42 @@ describe('tests for projects route', () => {
   afterEach(() => {
     jest.resetModules();
     jest.restoreAllMocks();
+  });
+
+  it('Getting list of projects via /projects return 200', async (done) => {
+    request(app)
+      .get('/v1/projects')
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Getting project experiments send 200', async (done) => {
+    request(app)
+      .get('/v1/projects/someId/experiments')
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Getting project experiments send 404 if id is not found', async (done) => {
+    request(app)
+      .get('/v1/projects/unknown-project/experiments')
+      .expect(404)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
   });
 
   it('Updating project send 200', async (done) => {

@@ -89,13 +89,17 @@ class ProjectsService {
     };
 
     const dynamodb = createDynamoDbInstance();
+
     const response = await dynamodb.scan(params).promise();
 
     if (!response.Items.length) {
       return [];
     }
 
-    const projectIds = response.Items.map((entry) => convertToJsObject(entry).projectId);
+    const projectIds = response.Items.map(
+      (entry) => convertToJsObject(entry).projectId,
+    ).filter((id) => id);
+
     return this.getProjectsFromIds(new Set(projectIds));
   }
 
@@ -116,10 +120,12 @@ class ProjectsService {
     };
 
     const data = await dynamodb.batchGetItem(params).promise();
+
     const existingProjectIds = new Set(data.Responses[this.tableName].map((entry) => {
       const newData = convertToJsObject(entry);
       return newData.projects.uuid;
     }));
+
 
     // Build up projects that do not exist in Dynamo yet.
     const projects = [...projectIds]
@@ -145,6 +151,27 @@ class ProjectsService {
     });
 
     return projects;
+  }
+
+  async getExperiments(projectUuid) {
+    const dynamodb = createDynamoDbInstance();
+
+    const marshalledKey = convertToDynamoDbRecord({ projectUuid });
+
+    const params = {
+      TableName: this.tableName,
+      Key: marshalledKey,
+    };
+
+    try {
+      const response = await dynamodb.getItem(params).promise();
+      const result = convertToJsObject(response.Item);
+
+      return experimentService.getListOfExperiments(result.projects.experiments);
+    } catch (e) {
+      if (e.statusCode === 400) throw new NotFoundError('Project not found');
+      throw e;
+    }
   }
 
   async deleteProject(projectUuid) {

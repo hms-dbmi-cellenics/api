@@ -3,6 +3,8 @@ const AWS = require('../../utils/requireAWS');
 const validateRequest = require('../../utils/schema-validator');
 const logger = require('../../utils/logging');
 
+const constants = require('../general-services/pipeline-manage/constants');
+
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
 const PipelineHook = require('../../utils/hookRunner');
@@ -10,7 +12,7 @@ const PipelineHook = require('../../utils/hookRunner');
 const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
 
-const pipelineStatus = require('../general-services/pipeline-status');
+const getPipelineStatus = require('../general-services/pipeline-status');
 const embeddingWorkRequest = require('../../utils/hooks/embeddingWorkRequest');
 const clusteringWorkRequest = require('../../utils/hooks/clusteringWorkRequest');
 
@@ -85,7 +87,7 @@ const pipelineResponse = async (io, message) => {
     ]);
   }
 
-  const statusRes = await pipelineStatus(experimentId);
+  const statusRes = await getPipelineStatus(experimentId, constants.QC_PROCESS_NAME);
   pipelineHook.run(taskName, {
     experimentId,
     output,
