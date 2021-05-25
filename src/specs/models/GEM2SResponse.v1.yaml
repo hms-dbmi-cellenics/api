@@ -4,9 +4,8 @@ type: object
 properties:
   experimentId:
     type: string
-  status:
+  taskName:
     type: string
-    pattern: OK
   oneOf:
     - item:
         $ref: ./api-body-schemas/Experiment.v1.yaml
