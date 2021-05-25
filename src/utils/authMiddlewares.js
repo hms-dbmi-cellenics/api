@@ -141,25 +141,25 @@ const authorize = async (authResource, claim, authByExperiment = true) => {
 
   let canWrite = null;
 
-  try {
-    if (authByExperiment) {
-      canWrite = await experimentService.getExperimentPermissions(authResource).rbac_can_write;
-    } else {
-      const experiment = await projectService.getExperiments(authResource);
-      if (experiment) canWrite = experiment[0].rbac_can_write;
-    }
-
-    if (!canWrite) {
-      throw new UnauthorizedError(`Experiment ${authResource} cannot be accesed (malformed).`);
-    }
-
-    // If the logged in user has the permissions, forward request.
-    if (canWrite.values.includes(userName)) {
-      return true;
-    }
-  } catch (e) {
-    throw new UnauthorizedError(`User ${userName} (${email}) does not have access to ${authByExperiment ? 'experiment' : 'project'} ${authResource}.`);
+  if (authByExperiment) {
+    const experiment = await experimentService.getExperimentPermissions(authResource);
+    if (experiment) canWrite = experiment.rbac_can_write;
+  } else {
+    const experiment = await projectService.getExperiments(authResource);
+    // experiment[0] because there is only 1 experiment per project
+    if (experiment) canWrite = experiment[0].rbac_can_write;
   }
+
+  if (!canWrite) {
+    throw new UnauthorizedError(`Experiment ${authResource} cannot be accesed (malformed).`);
+  }
+
+  // If the logged in user has the permissions, forward request.
+  if (canWrite.values.includes(userName)) {
+    return true;
+  }
+
+  throw new UnauthorizedError(`User ${userName} (${email}) does not have access to ${authByExperiment ? 'experiment' : 'project'} ${authResource}.`);
 };
 
 /**
