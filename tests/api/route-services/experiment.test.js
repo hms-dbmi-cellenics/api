@@ -7,6 +7,7 @@ const {
   mockDynamoUpdateItem,
   mockS3GetObject,
   mockS3PutObject,
+  mockDynamoBatchGetItem,
 } = require('../../test-utils/mockAWSServices');
 
 jest.setTimeout(30000);
@@ -21,6 +22,7 @@ describe('tests for the experiment service', () => {
     const jsData = {
       experimentId: '12345',
       experimentName: 'TGFB1 experiment',
+
     };
 
     const fnSpy = mockDynamoGetItem(jsData);
@@ -31,7 +33,37 @@ describe('tests for the experiment service', () => {
         expect(fnSpy).toHaveBeenCalledWith({
           TableName: 'experiments-test',
           Key: { experimentId: { S: '12345' } },
+          ProjectionExpression: 'projectId,meta,experimentId,experimentName',
         });
+      })
+      .then(() => done());
+  });
+
+  it('Get list of experiments work', async (done) => {
+    const experimentIds = ['experiment-1', 'experiment-2', 'experiment-3'];
+
+    const response = {
+      Responses: {
+        'experiments-test': experimentIds.map((experimentId) => AWS.DynamoDB.Converter.marshall({ experimentId })),
+      },
+    };
+
+    const fnSpy = mockDynamoBatchGetItem(response);
+
+    (new ExperimentService()).getListOfExperiments(experimentIds)
+      .then((data) => {
+        expect(data).toEqual(experimentIds.map((experimentId) => ({ experimentId })));
+        expect(fnSpy).toHaveBeenCalledWith(
+          {
+            RequestItems: {
+              'experiments-test': {
+                Keys: experimentIds.map(
+                  (experimentId) => AWS.DynamoDB.Converter.marshall({ experimentId }),
+                ),
+              },
+            },
+          },
+        );
       })
       .then(() => done());
   });

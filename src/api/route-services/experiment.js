@@ -42,7 +42,8 @@ class ExperimentService {
   }
 
   async getExperimentData(experimentId) {
-    const data = await getExperimentAttributes(this.experimentsTableName, experimentId);
+    const data = await getExperimentAttributes(this.experimentsTableName, experimentId,
+      ['projectId', 'meta', 'experimentId', 'experimentName']);
     return data;
   }
 
@@ -52,7 +53,7 @@ class ExperimentService {
     const params = {
       RequestItems: {
         [this.experimentsTableName]: {
-          Keys: [...experimentIds].map((experimentId) => convertToDynamoDbRecord({ experimentId })),
+          Keys: experimentIds.map((experimentId) => convertToDynamoDbRecord({ experimentId })),
         },
       },
     };

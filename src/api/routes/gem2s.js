@@ -1,5 +1,5 @@
 const AWSXRay = require('aws-xray-sdk');
-const { createQCPipeline } = require('../general-services/pipeline-manage');
+const { createGem2SPipeline } = require('../general-services/pipeline-manage');
 const ExperimentService = require('../route-services/experiment');
 const getBackendStatus = require('../general-services/backend-status');
 const pipelineResponse = require('../route-services/pipeline-response');
@@ -8,7 +8,7 @@ const logger = require('../../utils/logging');
 const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
 
 module.exports = {
-  'pipelines#get': [
+  'gem2s#get': [
     expressAuthorizationMiddleware,
     (req, res, next) => {
       getBackendStatus(req.params.experimentId)
@@ -16,12 +16,11 @@ module.exports = {
         .catch(next);
     },
   ],
-  'pipelines#create': [
+
+  'gem2s#create': [
     expressAuthorizationMiddleware,
     (req, res, next) => {
-      const { processingConfig } = req.body;
-
-      createQCPipeline(req.params.experimentId, processingConfig || [])
+      createGem2SPipeline(req.params.experimentId)
         .then((data) => {
           const experimentService = new ExperimentService();
           experimentService.savePipelineHandle(req.params.experimentId, data)
@@ -30,7 +29,8 @@ module.exports = {
         .catch(next);
     },
   ],
-  'pipelines#response': async (req, res) => {
+
+  'gem2s#response': async (req, res) => {
     let result;
 
     try {

@@ -98,18 +98,23 @@ if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
   config.adminArn = '70c213d4-e7b6-4920-aefb-706ce8606ee2';
 }
 
+
 // We are in the `development` clusterEnv, meaning we run on
 // InfraMock. Set up API accordingly.
 if (config.clusterEnv === 'development') {
-  logger.log('We are running on a development cluster, patching AWS to use InfraMock endpoint...');
+  const endpoint = 'http://localhost:4566';
+  logger.log(`Running development cluster on ${endpoint}, patching AWS to use InfraMock endpoint...`);
   config.cachingEnabled = false;
   config.awsAccountIdPromise = (async () => '000000000000')();
   AWS.config.update({
-    endpoint: 'http://localhost:4566',
+    endpoint,
     sslEnabled: false,
     s3ForcePathStyle: true,
   });
 
+  // remove this line when the new gem2s-endpoint is merged and thus the production/pipeline.yaml is
+  // updated to new name pipeline-runner
+  config.pipelineInstanceConfigUrl = 'https://raw.githubusercontent.com/kafkasl/iac/master/releases/production/pipeline.yaml';
   config.corsOriginUrl = 'http://localhost:5000';
   config.adminArn = '70c213d4-e7b6-4920-aefb-706ce8606ee2';
 }

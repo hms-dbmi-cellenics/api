@@ -1,22 +1,67 @@
 const config = require('../../../../config');
+const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../constants');
 
-const createNewStep = (context, step, args) => {
+const createTask = (taskName, context) => {
   const {
-    processingConfig, experimentId, activityArn,
+    projectId, processingConfig, experimentId, processName,
   } = context;
 
-  const { taskName, perSample, uploadCountMatrix } = args;
   const remoterServer = (
     config.clusterEnv === 'development'
   ) ? 'host.docker.internal'
     : `remoter-server-${experimentId}.${config.pipelineNamespace}.svc.cluster.local`;
 
   const task = {
+    projectId,
     experimentId,
     taskName,
+    processName,
     config: processingConfig[taskName] || {},
     server: remoterServer,
   };
+
+  return task;
+};
+
+const getQCParams = (task, stepArgs) => {
+  const { perSample, uploadCountMatrix } = stepArgs;
+  return {
+    ...task,
+    ...perSample ? { 'sampleUuid.$': '$.sampleUuid' } : { sampleUuid: '' },
+    ...uploadCountMatrix ? { uploadCountMatrix: true } : { uploadCountMatrix: false },
+  };
+};
+
+const getGem2SParams = (task, context) => {
+  const { taskParams } = context;
+  return {
+    ...task,
+    ...taskParams,
+  };
+};
+
+
+const buildParams = (task, context, stepArgs) => {
+  let processParams;
+
+  if (task.processName === QC_PROCESS_NAME) {
+    processParams = getQCParams(task, stepArgs);
+  } else if (task.processName === GEM2S_PROCESS_NAME) {
+    processParams = getGem2SParams(task, context);
+  }
+
+  return {
+    ...task,
+    ...processParams,
+  };
+};
+
+const createNewStep = (context, step, stepArgs) => {
+  const { activityArn } = context;
+  const { taskName } = stepArgs;
+  const task = createTask(taskName, context);
+  const params = buildParams(task, context, stepArgs);
+
 
   return {
     ...step,
@@ -24,11 +69,7 @@ const createNewStep = (context, step, args) => {
     Resource: activityArn,
     ResultPath: null,
     TimeoutSeconds: 3600,
-    Parameters: {
-      ...task,
-      ...perSample ? { 'sampleUuid.$': '$.sampleUuid' } : { sampleUuid: '' },
-      ...uploadCountMatrix ? { uploadCountMatrix: true } : { uploadCountMatrix: false },
-    },
+    Parameters: params,
     ...!step.End && { Next: step.XNextOnCatch || step.Next },
   };
 };

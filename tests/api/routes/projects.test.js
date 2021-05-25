@@ -18,6 +18,30 @@ describe('tests for projects route', () => {
     jest.restoreAllMocks();
   });
 
+  it('Getting project experiments send 200', async (done) => {
+    request(app)
+      .get('/v1/projects/someId/experiments')
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Getting project experiments send 404 if id is not found', async (done) => {
+    request(app)
+      .get('/v1/projects/unknown-project/experiments')
+      .expect(404)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
   it('Updating project send 200', async (done) => {
     const payload = {
       name: 'Test project',
