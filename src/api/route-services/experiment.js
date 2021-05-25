@@ -246,7 +246,7 @@ class ExperimentService {
     return prettyData;
   }
 
-  async savePipelineHandle(experimentId, handle) {
+  async saveHandle(experimentId, handle, service) {
     const dynamodb = createDynamoDbInstance();
     let key = { experimentId };
 
@@ -257,7 +257,7 @@ class ExperimentService {
     const params = {
       TableName: this.experimentsTableName,
       Key: key,
-      UpdateExpression: 'set meta.pipeline = :x',
+      UpdateExpression: `set meta.${service} = :x`,
       ExpressionAttributeValues: data,
     };
 
@@ -265,6 +265,14 @@ class ExperimentService {
 
     const prettyData = convertToJsObject(result.Attributes);
     return prettyData;
+  }
+
+  async saveQCHandle(experimentId, handle) {
+    return this.saveHandle(experimentId, handle, 'pipeline');
+  }
+
+  async saveGem2sHandle(experimentId, handle) {
+    return this.saveHandle(experimentId, handle, 'gem2s');
   }
 }
 

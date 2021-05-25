@@ -17,14 +17,13 @@ module.exports = {
     },
   ],
   'pipelines#create': [
-    expressAuthorizationMiddleware,
     (req, res, next) => {
       const { processingConfig } = req.body;
 
       createQCPipeline(req.params.experimentId, processingConfig || [])
         .then((data) => {
           const experimentService = new ExperimentService();
-          experimentService.savePipelineHandle(req.params.experimentId, data)
+          experimentService.saveQCHandle(req.params.experimentId, data)
             .then(() => res.json(data));
         })
         .catch(next);

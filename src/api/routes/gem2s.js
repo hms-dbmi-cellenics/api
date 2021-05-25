@@ -5,6 +5,7 @@ const getBackendStatus = require('../general-services/backend-status');
 const pipelineResponse = require('../route-services/pipeline-response');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 const logger = require('../../utils/logging');
+
 const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
 
 module.exports = {
@@ -23,7 +24,7 @@ module.exports = {
       createGem2SPipeline(req.params.experimentId)
         .then((data) => {
           const experimentService = new ExperimentService();
-          experimentService.savePipelineHandle(req.params.experimentId, data)
+          experimentService.saveGem2sHandle(req.params.experimentId, data)
             .then(() => res.json(data));
         })
         .catch(next);
