@@ -11,6 +11,7 @@ module.exports = {
   'pipelines#get': [
     expressAuthorizationMiddleware,
     (req, res, next) => {
+      // The changes to add gem2s status will be obsoleted once agi's PR is merged in
       getBackendStatus(req.params.experimentId)
         .then((data) => res.json(data))
         .catch(next);

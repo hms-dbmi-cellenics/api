@@ -82,13 +82,17 @@ class ProjectsService {
     };
 
     const dynamodb = createDynamoDbInstance();
+
     const response = await dynamodb.scan(params).promise();
 
     if (!response.Items) {
       throw new NotFoundError('No projects available!');
     }
 
-    const projectIds = response.Items.map((entry) => convertToJsObject(entry).projectId);
+    const projectIds = response.Items.map(
+      (entry) => convertToJsObject(entry).projectId,
+    ).filter((id) => id);
+
     return this.getProjectsFromIds(new Set(projectIds));
   }
 
@@ -109,10 +113,12 @@ class ProjectsService {
     };
 
     const data = await dynamodb.batchGetItem(params).promise();
+
     const existingProjectIds = new Set(data.Responses[this.tableName].map((entry) => {
       const newData = convertToJsObject(entry);
       return newData.projects.uuid;
     }));
+
 
     // Build up projects that do not exist in Dynamo yet.
     const projects = [...projectIds]

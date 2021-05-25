@@ -113,6 +113,7 @@ const mock = jest.fn().mockImplementation(() => ({
   updateCellSets: mockUpdateCellSets,
   getProcessingConfig: mockGetProcessingConfig,
   updateProcessingConfig: mockUpdateProcessingConfig,
+  experimentsTableName: 'experiments-test',
 }));
 
 module.exports = mock;

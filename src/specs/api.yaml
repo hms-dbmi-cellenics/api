@@ -101,6 +101,49 @@ paths:
       tags:
         - work
     parameters: []
+  /gem2sResults:
+    post:
+      operationId: receiveGem2sResponse
+      x-eov-operation-id: 'gem2s#response'
+      x-eov-operation-handler: routes/gem2s
+      requestBody:
+        description: 'The results from the execution of a pipeline step, sent via SNS.'
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+            examples: {}
+          application/json:
+            schema:
+              type: object
+              properties: {}
+            examples: {}
+      responses:
+        '200':
+          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: ok
+        '500':
+          description: The data sent by the server could not be parsed as JSON.
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: nok
+      description: |-
+        Results from Step Function pipeline steps are relayed to the API through this endpoint.
+
+        Note that this endpoint is only exposed to AWS SNS, and since it has a specific communication protocol with limited feedback, the schema defined here is designed to be liberally enforceable. This endpoint is also used by SNS to handle subscribe/unsubscribe events.
+
+        The actual JSON passed by SNS is found in the `PipelineResponse` model, which is to be validated by the API.
+      summary: Retrieve results from pipeline step functions
+      tags:
+        - work
+    parameters: []
   /pipelineResults:
     post:
       operationId: receivePipelineResponse

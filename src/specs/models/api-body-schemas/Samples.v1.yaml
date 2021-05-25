@@ -33,3 +33,5 @@ additionalProperties:
         type: string
     files:
       type: object
+required:
+  - ids
