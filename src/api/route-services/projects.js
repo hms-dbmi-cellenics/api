@@ -140,6 +140,27 @@ class ProjectsService {
     return projects;
   }
 
+  async getExperiments(projectUuid) {
+    const dynamodb = createDynamoDbInstance();
+
+    const marshalledKey = convertToDynamoDbRecord({ projectUuid });
+
+    const params = {
+      TableName: this.tableName,
+      Key: marshalledKey,
+    };
+
+    try {
+      const response = await dynamodb.getItem(params).promise();
+      const result = convertToJsObject(response.Item);
+
+      return experimentService.getListOfExperiments(result.projects.experiments);
+    } catch (e) {
+      if (e.statusCode === 400) throw new NotFoundError('Project not found');
+      throw e;
+    }
+  }
+
   async deleteProject(projectUuid) {
     logger.log(`Deleting project with id ${projectUuid}`);
     const marshalledKey = convertToDynamoDbRecord({
