@@ -28,7 +28,7 @@ Array [
       "loggingConfiguration": Object {
         "level": "OFF",
       },
-      "name": "biomage-pipeline-test-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
+      "name": "biomage-qc-test-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
       "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
       "tags": Array [
         Object {
@@ -81,6 +81,7 @@ Array [
                 "Parameters": Object {
                   "config": Object {},
                   "experimentId": "testExperimentId",
+                  "processName": "qc",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
                   "taskName": "cellSizeDistribution",
@@ -107,6 +108,7 @@ Array [
                 "Parameters": Object {
                   "config": Object {},
                   "experimentId": "testExperimentId",
+                  "processName": "qc",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
                   "taskName": "classifier",
@@ -128,6 +130,7 @@ Array [
           "Parameters": Object {
             "config": Object {},
             "experimentId": "testExperimentId",
+            "processName": "qc",
             "sampleUuid": "",
             "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
             "taskName": "configureEmbedding",
@@ -143,6 +146,7 @@ Array [
           "Parameters": Object {
             "config": Object {},
             "experimentId": "testExperimentId",
+            "processName": "qc",
             "sampleUuid": "",
             "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
             "taskName": "dataIntegration",
@@ -195,6 +199,7 @@ Array [
                     },
                   },
                   "experimentId": "testExperimentId",
+                  "processName": "qc",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
                   "taskName": "doubletScores",
@@ -244,16 +249,16 @@ Array [
                   "experimentId": "testExperimentId",
                   "type": "pipeline",
                 },
-                "name": "pipeline-testExperimentId",
+                "name": "qc-testExperimentId",
                 "namespace": "pipeline-test-namespace",
               },
               "spec": Object {
                 "chart": Object {
                   "git": "git@github.com:biomage-ltd/pipeline",
-                  "path": "qc-runner/chart",
+                  "path": "pipeline-runner/chart",
                   "ref": "MOCK_REF_PATH",
                 },
-                "releaseName": "pipeline-testExperimentId",
+                "releaseName": "qc-testExperimentId",
                 "values": Object {
                   "activityArn": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-testExperimentId",
                   "awsAccountId": "test-account-id",
@@ -290,6 +295,7 @@ Array [
                 "Parameters": Object {
                   "config": Object {},
                   "experimentId": "testExperimentId",
+                  "processName": "qc",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
                   "taskName": "mitochondrialContent",
@@ -316,6 +322,7 @@ Array [
                 "Parameters": Object {
                   "config": Object {},
                   "experimentId": "testExperimentId",
+                  "processName": "qc",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
                   "taskName": "numGenesVsNumUmis",
@@ -366,7 +373,7 @@ Array [
       "loggingConfiguration": Object {
         "level": "OFF",
       },
-      "name": "biomage-pipeline-test-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
+      "name": "biomage-qc-test-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
       "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
       "tags": Array [
         Object {
@@ -394,7 +401,7 @@ Array [
     "type": "return",
     "value": Object {
       "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
-      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-pipeline-test-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
+      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-qc-test-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
     },
   },
 ]
@@ -406,7 +413,7 @@ Array [
     "type": "return",
     "value": Object {
       "input": "{\\"samples\\":[{\\"sampleUuid\\":\\"oneSample\\",\\"index\\":0},{\\"sampleUuid\\":\\"otherSample\\",\\"index\\":1}]}",
-      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-pipeline-test-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
+      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-qc-test-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
       "traceHeader": undefined,
     },
   },

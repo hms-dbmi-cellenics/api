@@ -9,34 +9,37 @@ const {
   mockDynamoBatchGetItem,
   mockDynamoScan,
 } = require('../../test-utils/mockAWSServices');
+const ExperimentsService = require('../../../src/api/route-services/experiment');
 const { OK } = require('../../../src/utils/responses');
 
+jest.mock('../../../src/api/route-services/experiment');
+
 describe('tests for the projects service', () => {
+  const mockProject = {
+    name: 'Test project',
+    description: '',
+    createdDate: '',
+    lastModified: '',
+    uuid: 'project-1',
+    experiments: ['experiment-1'],
+    lastAnalyzed: null,
+    samples: [],
+  };
+
   afterEach(() => {
     AWSMock.restore('DynamoDB');
   });
 
-  it('GetProject gets a project and samples properly', async (done) => {
-    const project = {
-      name: 'Test project',
-      description: '',
-      createdDate: '',
-      lastModified: '',
-      uuid: 'project-1',
-      experiments: [],
-      lastAnalyzed: null,
-      samples: [],
-    };
-
+  it('GetProject gets project and samples properly', async (done) => {
     const marshalledKey = AWS.DynamoDB.Converter.marshall({
       projectUuid: 'project-1',
     });
 
-    const getFnSpy = mockDynamoGetItem({ projects: project });
+    const getFnSpy = mockDynamoGetItem({ projects: mockProject });
 
     (new ProjectsService()).getProject('project-1')
       .then((res) => {
-        expect(res).toEqual(project);
+        expect(res).toEqual(mockProject);
         expect(getFnSpy).toHaveBeenCalledWith({
           TableName: 'projects-test',
           Key: marshalledKey,
@@ -194,29 +197,41 @@ describe('tests for the projects service', () => {
       .then(() => done());
   });
 
-  it('UpdateProject updates project properly', async (done) => {
-    const jsData = {
-      name: 'Test project',
-      description: '',
-      createdDate: '',
-      lastModified: '',
-      uuid: 'project-1',
-      experiments: [],
-      lastAnalyzed: null,
-      samples: [],
-    };
+  it('GetExperiments gets projects', async (done) => {
+    const fnSpy = mockDynamoGetItem({ projects: mockProject });
 
+    const experimentsService = new ExperimentsService();
+
+    const marshalledKey = AWS.DynamoDB.Converter.marshall({
+      projectUuid: mockProject.projectUuid,
+    });
+
+    (new ProjectsService()).getExperiments()
+      .then((res) => {
+        expect(res).toEqual([{ experimentId: mockProject.experiments[0] }]);
+        expect(fnSpy).toHaveBeenCalledWith({
+          TableName: 'projects-test',
+          Key: marshalledKey,
+        });
+        expect(
+          experimentsService.getListOfExperiments,
+        ).toHaveBeenCalledWith(mockProject.experiments);
+      })
+      .then(() => done());
+  });
+
+  it('UpdateProject updates project properly', async (done) => {
     const marshalledKey = AWS.DynamoDB.Converter.marshall({
       projectUuid: 'project-1',
     });
 
     const marshalledData = AWS.DynamoDB.Converter.marshall({
-      ':project': jsData,
+      ':project': mockProject,
     });
 
-    const getItemSpy = mockDynamoUpdateItem({ projects: jsData });
+    const getItemSpy = mockDynamoUpdateItem({ projects: mockProject });
 
-    (new ProjectsService()).updateProject('project-1', jsData)
+    (new ProjectsService()).updateProject('project-1', mockProject)
       .then((res) => {
         expect(res).toEqual(OK());
         expect(getItemSpy).toHaveBeenCalledWith({

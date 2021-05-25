@@ -508,7 +508,28 @@ paths:
         '200':
           description: OK
       description: Deletes a plot and table for a given experiment with the data specified.
-  '/experiments/{experimentId}/pipelines':
+  "/experiments/{experimentId}/gem2s":
+    parameters:
+      - schema:
+          type: string
+        name: experimentId
+        in: path
+        required: true
+    post:
+      summary: Create a new pipeline for gem2s execution
+      operationId: createNewGem2S
+      x-eov-operation-id: gem2s#create
+      x-eov-operation-handler: routes/gem2s
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      description: This path will create a new pipeline that can run a state machine with gem2s tasks.
+  "/experiments/{experimentId}/pipelines": # this should be changed to /qc at some point
     parameters:
       - schema:
           type: string
@@ -668,6 +689,40 @@ paths:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
       description: Deletes project and associated samples.
+  '/projects/{projectUuid}/experiments':
+    parameters:
+      - name: projectUuid
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get experiments under a project
+      operationId: getProjectExperiments
+      x-eov-operation-id: projects#getExperiments
+      x-eov-operation-handler: routes/projects
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ./models/api-body-schemas/Experiment.v1.yaml
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: Get all experiments under a project
   '/projects/{projectUuid}/samples':
     parameters:
       - name: projectUuid
