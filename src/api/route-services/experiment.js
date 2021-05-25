@@ -5,6 +5,7 @@ const AWS = require('../../utils/requireAWS');
 const logger = require('../../utils/logging');
 
 const { OK, NotFoundError } = require('../../utils/responses');
+const constants = require('../general-services/pipeline-manage/constants');
 
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord, configArrayToUpdateObjs,
@@ -153,15 +154,20 @@ class ExperimentService {
     return data;
   }
 
-  async getPipelineHandle(experimentId) {
-    console.log('experimentId');
-    console.log(experimentId);
-
+  async getPipelinesHandles(experimentId) {
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['meta']);
+
     return {
-      stateMachineArn: '',
-      executionArn: '',
-      ...data.meta.pipeline,
+      [constants.QC_PROCESS_NAME]: {
+        stateMachineArn: '',
+        executionArn: '',
+        ...data.meta.pipeline,
+      },
+      [constants.GEM2S_PROCESS_NAME]: {
+        stateMachineArn: '',
+        executionArn: '',
+        ...data.meta.gem2s,
+      },
     };
   }
 

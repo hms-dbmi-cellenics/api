@@ -102,8 +102,12 @@ const getStepsFromExecutionHistory = (events) => {
      *  - a step is only considered completed if it has been completed for all iteration of the Map
      *  - steps are returned in the completion order, and are unique in the returned array
      */
-const getPipelineStatus = async (experimentId) => {
-  const { executionArn } = await (new ExperimentService()).getPipelineHandle(experimentId);
+const getPipelineStatus = async (experimentId, pipelineType) => {
+  const experimentService = new ExperimentService();
+
+  const pipelinesHandles = await experimentService.getPipelinesHandles(experimentId);
+  const { executionArn } = pipelinesHandles[pipelineType];
+
   let execution = {};
   let completedSteps = [];
   if (!executionArn.length) {
@@ -120,7 +124,6 @@ const getPipelineStatus = async (experimentId) => {
     execution = await stepFunctions.describeExecution({
       executionArn,
     }).promise();
-
 
     /* eslint-disable no-await-in-loop */
     let events = [];

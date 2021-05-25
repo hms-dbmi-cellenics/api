@@ -1,4 +1,6 @@
 const AWSXRay = require('aws-xray-sdk');
+
+const constants = require('../general-services/pipeline-manage/constants');
 const validateRequest = require('../../utils/schema-validator');
 const logger = require('../../utils/logging');
 
@@ -7,7 +9,7 @@ const SamplesService = require('./samples');
 
 const experimentService = new ExperimentService();
 const samplesService = new SamplesService();
-const pipelineStatus = require('../general-services/pipeline-status');
+const getPipelineStatus = require('../general-services/pipeline-status');
 
 const gem2sResponse = async (io, message) => {
   AWSXRay.getSegment().addMetadata('message', message);
@@ -26,7 +28,7 @@ const gem2sResponse = async (io, message) => {
     await samplesService.updateSamples(projectUuid, item);
   }
 
-  const statusRes = await pipelineStatus(experimentId);
+  const statusRes = await getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME);
 
   // if (statusRes.gem2s) {
   //   AWSXRay.getSegment().addError(error);

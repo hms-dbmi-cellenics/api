@@ -1,5 +1,6 @@
 const pipelineStatus = require('../../../src/api/general-services/pipeline-status');
 const ExperimentService = require('../../../src/api/route-services/experiment');
+const constants = require('../../../src/api/general-services/pipeline-manage/constants');
 
 describe('getStepsFromExecutionHistory', () => {
   const fullHistory = [
@@ -337,9 +338,15 @@ describe('getStepsFromExecutionHistory', () => {
 });
 
 jest.mock('../../../src/api/route-services/experiment', () => jest.fn().mockImplementation(() => ({
-  getPipelineHandle: () => ({
-    stateMachineArn: '',
-    executionArn: '',
+  getPipelinesHandles: () => ({
+    [constants.GEM2S_PROCESS_NAME]: {
+      stateMachineArn: '',
+      executionArn: '',
+    },
+    [constants.QC_PROCESS_NAME]: {
+      stateMachineArn: '',
+      executionArn: '',
+    },
   }),
 })));
 
