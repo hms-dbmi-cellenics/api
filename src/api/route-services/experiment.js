@@ -4,11 +4,11 @@ const mockData = require('./mock-data.json');
 const AWS = require('../../utils/requireAWS');
 const logger = require('../../utils/logging');
 
+const { OK, NotFoundError } = require('../../utils/responses');
+
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord, configArrayToUpdateObjs,
 } = require('../../utils/dynamoDb');
-
-const NotFoundError = require('../../utils/responses/NotFoundError');
 
 const getExperimentAttributes = async (tableName, experimentId, attributes) => {
   const dynamodb = createDynamoDbInstance();
@@ -42,8 +42,72 @@ class ExperimentService {
   }
 
   async getExperimentData(experimentId) {
-    const data = await getExperimentAttributes(this.experimentsTableName, experimentId);
+    const data = await getExperimentAttributes(this.experimentsTableName, experimentId,
+      ['projectId', 'meta', 'experimentId', 'experimentName']);
     return data;
+  }
+
+  async getListOfExperiments(experimentIds) {
+    const dynamodb = createDynamoDbInstance();
+
+    const params = {
+      RequestItems: {
+        [this.experimentsTableName]: {
+          Keys: experimentIds.map((experimentId) => convertToDynamoDbRecord({ experimentId })),
+        },
+      },
+    };
+
+    try {
+      const response = await dynamodb.batchGetItem(params).promise();
+
+      return response.Responses[this.experimentsTableName].map(
+        (experiment) => convertToJsObject(experiment),
+      );
+    } catch (e) {
+      if (e.statusCode === 400) throw new NotFoundError('Experiments not found');
+      throw e;
+    }
+  }
+
+
+  async createExperiment(experimentId, body, user) {
+    const dynamodb = createDynamoDbInstance();
+    const key = convertToDynamoDbRecord({ experimentId });
+
+    const documentClient = new AWS.DynamoDB.DocumentClient();
+
+    const rbacCanWrite = Array.from(new Set([config.adminArn, user.sub]));
+
+    const marshalledData = convertToDynamoDbRecord({
+      ':experimentName': body.name,
+      ':createdAt': body.createdAt,
+      ':lastViewed': body.lastViewed,
+      ':projectId': body.projectUuid,
+      ':description': body.description,
+      ':meta': {},
+      ':rbac_can_write': documentClient.createSet(rbacCanWrite),
+    });
+
+    const params = {
+      TableName: this.experimentsTableName,
+      Key: key,
+      UpdateExpression: `SET experimentName = :experimentName,
+                          createdAt = :createdAt,
+                          lastViewed = :lastViewed,
+                          projectId = :projectId,
+                          description = :description,
+                          meta = :meta,
+                          rbac_can_write = :rbac_can_write`,
+      ExpressionAttributeValues: marshalledData,
+      ConditionExpression: 'attribute_not_exists(#experimentId)',
+      ExpressionAttributeNames: { '#experimentId': 'experimentId' },
+      ReturnValues: 'ALL_NEW',
+    };
+
+    await dynamodb.updateItem(params).promise();
+
+    return OK();
   }
 
   async updateExperiment(experimentId, body) {
@@ -80,7 +144,7 @@ class ExperimentService {
   }
 
   async getExperimentPermissions(experimentId) {
-    const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['experimentId', 'can_write']);
+    const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['experimentId', 'rbac_can_write']);
     return data;
   }
 
@@ -188,7 +252,7 @@ class ExperimentService {
     return prettyData;
   }
 
-  async savePipelineHandle(experimentId, handle) {
+  async saveHandle(experimentId, handle, service) {
     const dynamodb = createDynamoDbInstance();
     let key = { experimentId };
 
@@ -199,7 +263,7 @@ class ExperimentService {
     const params = {
       TableName: this.experimentsTableName,
       Key: key,
-      UpdateExpression: 'set meta.pipeline = :x',
+      UpdateExpression: `set meta.${service} = :x`,
       ExpressionAttributeValues: data,
     };
 
@@ -207,6 +271,14 @@ class ExperimentService {
 
     const prettyData = convertToJsObject(result.Attributes);
     return prettyData;
+  }
+
+  async saveQCHandle(experimentId, handle) {
+    return this.saveHandle(experimentId, handle, 'pipeline');
+  }
+
+  async saveGem2sHandle(experimentId, handle) {
+    return this.saveHandle(experimentId, handle, 'gem2s');
   }
 }
 

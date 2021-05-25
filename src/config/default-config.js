@@ -39,6 +39,17 @@ if (!envFound) {
 
 const awsRegion = process.env.AWS_DEFAULT_REGION || 'eu-west-1';
 
+async function getAwsPoolId() {
+  const cognitoISP = new AWS.CognitoIdentityServiceProvider({
+    region: awsRegion,
+  });
+
+  const { UserPools } = await cognitoISP.listUserPools({ MaxResults: 60 }).promise();
+  const poolId = UserPools.find((pool) => pool.Name.includes(process.env.CLUSTER_ENV || 'staging')).Id;
+
+  return poolId;
+}
+
 async function getAwsAccountId() {
   const sts = new AWS.STS({
     region: awsRegion,
@@ -57,6 +68,7 @@ const config = {
   pipelineNamespace: `pipeline-${process.env.SANDBOX_ID || 'default'}`,
   awsRegion,
   awsAccountIdPromise: getAwsAccountId(),
+  awsUserPoolIdPromise: getAwsPoolId(),
   githubToken: process.env.READONLY_API_TOKEN_GITHUB,
   api: {
     prefix: '/',
@@ -74,6 +86,7 @@ if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
   config.pipelineInstanceConfigUrl = 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/pipeline.yaml';
   config.cachingEnabled = false;
   config.corsOriginUrl = 'https://ui-default.scp-staging.biomage.net';
+  config.adminArn = 'a07c6615-d982-413b-9fdc-48bd85182e83';
 }
 
 // We are in user staging environments
@@ -82,21 +95,28 @@ if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
   config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/${config.sandboxId}.yaml`;
   config.cachingEnabled = false;
   config.corsOriginUrl = `https://ui-${config.sandboxId}.scp-staging.biomage.net`;
+  config.adminArn = '70c213d4-e7b6-4920-aefb-706ce8606ee2';
 }
+
 
 // We are in the `development` clusterEnv, meaning we run on
 // InfraMock. Set up API accordingly.
 if (config.clusterEnv === 'development') {
-  logger.log('We are running on a development cluster, patching AWS to use InfraMock endpoint...');
+  const endpoint = 'http://localhost:4566';
+  logger.log(`Running development cluster on ${endpoint}, patching AWS to use InfraMock endpoint...`);
   config.cachingEnabled = false;
   config.awsAccountIdPromise = (async () => '000000000000')();
   AWS.config.update({
-    endpoint: 'http://localhost:4566',
+    endpoint,
     sslEnabled: false,
     s3ForcePathStyle: true,
   });
 
+  // remove this line when the new gem2s-endpoint is merged and thus the production/pipeline.yaml is
+  // updated to new name pipeline-runner
+  config.pipelineInstanceConfigUrl = 'https://raw.githubusercontent.com/kafkasl/iac/master/releases/production/pipeline.yaml';
   config.corsOriginUrl = 'http://localhost:5000';
+  config.adminArn = '70c213d4-e7b6-4920-aefb-706ce8606ee2';
 }
 
 module.exports = config;

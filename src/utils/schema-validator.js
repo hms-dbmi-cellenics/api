@@ -11,6 +11,10 @@ const logger = require('./logging');
 const validateRequest = async (request, schemaPath) => {
   const specPath = path.resolve(__dirname, '..', 'specs', 'models', schemaPath);
 
+  console.log('received validation request');
+  console.log({ request });
+  console.log({ schemaPath });
+  console.log({ specPath });
   // Create a custom Swagger client and 'HTTP fetcher' mock so we can load in
   // our spec spread across multiple local files. The result is the entire spec
   // fully resolved across all refs and imports.

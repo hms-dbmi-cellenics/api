@@ -132,7 +132,7 @@ class Cache {
 
     const { enabled } = this.conf;
     if (!enabled) {
-      logger.warn('Caching currently disabled, not setting anything.');
+      logger.warn('Caching currently disabled, not getting anything.');
       throw new CacheMissError('Caching disabled, automatic cache miss.');
     }
 

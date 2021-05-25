@@ -1,5 +1,7 @@
 const config = require('../../../src/config');
 const { buildStateMachineDefinition } = require('../../../src/api/general-services/pipeline-manage');
+const { qcPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons/qc-pipeline-skeleton');
+const { gem2sPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons/gem2s-pipeline-skeleton');
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
@@ -36,14 +38,26 @@ describe('non-tests to document the State Machines', () => {
     processingConfig: {},
   };
 
-  it('- local development', () => {
+  it('- qc local development', () => {
     config.clusterEnv = 'development';
-    const stateMachine = buildStateMachineDefinition(context);
+    const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     config.clusterEnv = 'test';
     expect(stateMachine).toMatchSnapshot();
   });
-  it('-cloud', () => {
-    const stateMachine = buildStateMachineDefinition(context);
+
+  it('- qc cloud', () => {
+    const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
+    expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('- gem2s local development', () => {
+    config.clusterEnv = 'development';
+    const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
+    config.clusterEnv = 'test';
+    expect(stateMachine).toMatchSnapshot();
+  });
+  it('- gem2s cloud', () => {
+    const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 });
