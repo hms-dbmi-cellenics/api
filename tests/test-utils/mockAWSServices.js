@@ -15,6 +15,16 @@ const mockDynamoGetItem = (payload = {}, error = null) => {
   return fnSpy;
 };
 
+const mockDynamoBatchGetItem = (response = {}, error = null) => {
+  const fnSpy = jest.fn((x) => x);
+  AWSMock.setSDKInstance(AWS);
+  AWSMock.mock('DynamoDB', 'batchGetItem', (params, callback) => {
+    fnSpy(params);
+    callback(error, response);
+  });
+  return fnSpy;
+};
+
 const mockDynamoDeleteItem = (payload = {}, error = null) => {
   const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
@@ -76,6 +86,7 @@ const mockS3PutObject = (payload = {}, error = null) => {
 
 module.exports = {
   mockDynamoGetItem,
+  mockDynamoBatchGetItem,
   mockDynamoQuery,
   mockDynamoUpdateItem,
   mockDynamoDeleteItem,
