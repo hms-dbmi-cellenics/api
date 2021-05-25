@@ -8,6 +8,7 @@ const { UnauthorizedError, UnauthenticatedError } = require('../../src/utils/res
 
 const {
   mockDynamoGetItem,
+  mockDynamoBatchGetItem,
 } = require('../test-utils/mockAWSServices');
 
 const documentClient = new AWS.DynamoDB.DocumentClient();
@@ -16,6 +17,7 @@ describe('Tests for authorization/authentication middlewares', () => {
   // Sample experiment permission data.
   const data = {
     experimentId: '12345',
+    projectId: '23456',
     rbac_can_write: documentClient.createSet(['test-user']),
   };
 
@@ -85,6 +87,38 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     const req = {
       params: { experimentId: '1234' },
+    };
+    const next = jest.fn();
+
+    await expressAuthorizationMiddleware(req, {}, next);
+    expect(next).toBeCalledWith(expect.any(UnauthenticatedError));
+  });
+
+  it('Express middleware can resolve using authorization using projectUuid', async () => {
+    mockDynamoBatchGetItem({
+      Responses: {
+        'experiments-test': [data],
+      },
+    });
+
+    const req = {
+      params: { projectUuid: '23456' },
+    };
+    const next = jest.fn();
+
+    await expressAuthorizationMiddleware(req, {}, next);
+    expect(next).toBeCalledWith(expect.any(UnauthenticatedError));
+  });
+
+  it('Express middleware with unknown projectUuid will throw unauth error', async () => {
+    mockDynamoBatchGetItem({
+      Responses: {
+        'experiments-test': [data],
+      },
+    });
+
+    const req = {
+      params: { projectUuid: '2345' },
     };
     const next = jest.fn();
 

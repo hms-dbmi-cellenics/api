@@ -15,8 +15,10 @@ const CacheSingleton = require('../cache');
 const { CacheMissError } = require('../cache/cache-utils');
 const { UnauthorizedError, UnauthenticatedError } = require('./responses');
 const ExperimentService = require('../api/route-services/experiment');
+const ProjectsService = require('../api/route-services/projects');
 
 const experimentService = new ExperimentService();
+const projectService = new ProjectsService();
 
 /**
  * Authentication middleware for Express. Returns a middleware that
@@ -134,15 +136,22 @@ const authenticationMiddlewareSocketIO = async (authHeader) => {
  * @returns Promise that resolves or rejects based on authorization status.
  * @throws {UnauthorizedError} Authorization failed.
  */
-const authorize = async (experimentId, claim) => {
+const authorize = async (authResource, claim, authByExperiment = true) => {
   const { 'cognito:username': userName, email } = claim;
 
-  const {
-    rbac_can_write: canWrite,
-  } = await experimentService.getExperimentPermissions(experimentId);
+  let canWrite = null;
+
+  if (authByExperiment) {
+    const experiment = await experimentService.getExperimentPermissions(authResource);
+    if (experiment) canWrite = experiment.rbac_can_write;
+  } else {
+    const experiment = await projectService.getExperiments(authResource);
+    // experiment[0] because there is only 1 experiment per project
+    if (experiment) canWrite = experiment[0].rbac_can_write;
+  }
 
   if (!canWrite) {
-    throw new UnauthorizedError(`Experiment ${experimentId} cannot be accesed (malformed).`);
+    throw new UnauthorizedError(`Experiment ${authResource} cannot be accesed (malformed).`);
   }
 
   // If the logged in user has the permissions, forward request.
@@ -150,7 +159,7 @@ const authorize = async (experimentId, claim) => {
     return true;
   }
 
-  throw new UnauthorizedError(`User ${userName} (${email}) does not have access to experiment ${experimentId}.`);
+  throw new UnauthorizedError(`User ${userName} (${email}) does not have access to ${authByExperiment ? 'experiment' : 'project'} ${authResource}.`);
 };
 
 /**
@@ -163,8 +172,11 @@ const expressAuthorizationMiddleware = async (req, res, next) => {
     return;
   }
 
+  const authByExperiment = !!req.params.experimentId;
+  const authResource = req.params.experimentId ? req.params.experimentId : req.params.projectUuid;
+
   try {
-    await authorize(req.params.experimentId, req.user);
+    await authorize(authResource, req.user, authByExperiment);
     next();
     return;
   } catch (e) {
