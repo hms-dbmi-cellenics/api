@@ -1,5 +1,10 @@
 const AWSMock = require('aws-sdk-mock');
+const _ = require('lodash');
 const AWS = require('../../src/utils/requireAWS');
+
+const marshallTableResults = (entries) => entries.map(
+  (entry) => AWS.DynamoDB.Converter.marshall(entry),
+);
 
 const mockDynamoGetItem = (payload = {}, error = null) => {
   const dynamodbData = {
@@ -16,13 +21,9 @@ const mockDynamoGetItem = (payload = {}, error = null) => {
 };
 
 const mockDynamoBatchGetItem = (response = {}, error = null) => {
-  const dynamodbData = Object.keys(response.Responses).reduce((acc, tableName) => ({
-    ...acc,
-    Responses: {
-      ...acc.Responses,
-      [tableName]: response.Responses[tableName].map((entry) => AWS.DynamoDB.Converter.marshall(entry)),
-    },
-  }), { Responses: {} });
+  const dynamodbData = {
+    Responses: _.mapValues(response.Responses, marshallTableResults),
+  };
 
   const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
