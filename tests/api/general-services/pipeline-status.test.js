@@ -1,6 +1,6 @@
+const constants = require('../../../src/api/general-services/pipeline-manage/constants');
 const pipelineStatus = require('../../../src/api/general-services/pipeline-status');
 const ExperimentService = require('../../../src/api/route-services/experiment');
-const constants = require('../../../src/api/general-services/pipeline-manage/constants');
 
 describe('getStepsFromExecutionHistory', () => {
   const fullHistory = [
@@ -337,27 +337,32 @@ describe('getStepsFromExecutionHistory', () => {
   });
 });
 
-jest.mock('../../../src/api/route-services/experiment', () => jest.fn().mockImplementation(() => ({
-  getPipelinesHandles: () => ({
-    [constants.GEM2S_PROCESS_NAME]: {
-      stateMachineArn: '',
-      executionArn: '',
-    },
-    [constants.QC_PROCESS_NAME]: {
-      stateMachineArn: '',
-      executionArn: '',
-    },
-  }),
-})));
+jest.mock('../../../src/api/route-services/experiment', () => jest.fn().mockImplementation(() => {
+  // eslint-disable-next-line global-require
+  const internalConstants = require('../../../src/api/general-services/pipeline-manage/constants');
+
+  return {
+    getPipelinesHandles: () => ({
+      [internalConstants.GEM2S_PROCESS_NAME]: {
+        stateMachineArn: '',
+        executionArn: '',
+      },
+      [internalConstants.QC_PROCESS_NAME]: {
+        stateMachineArn: '',
+        executionArn: '',
+      },
+    }),
+  };
+}));
 
 describe('pipelineStatus', () => {
   beforeEach(() => {
     ExperimentService.mockClear();
   });
   it('handles properly an empty dynamodb record', async () => {
-    const status = await pipelineStatus('1234');
+    const status = await pipelineStatus('1234', constants.QC_PROCESS_NAME);
     expect(status).toEqual({
-      pipeline: {
+      [constants.QC_PROCESS_NAME]: {
         startDate: null,
         stopDate: null,
         status: 'NotCreated',

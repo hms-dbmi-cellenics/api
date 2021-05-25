@@ -1,7 +1,6 @@
 const AWSXRay = require('aws-xray-sdk');
 const { createGem2SPipeline } = require('../general-services/pipeline-manage');
 const ExperimentService = require('../route-services/experiment');
-const getBackendStatus = require('../general-services/backend-status');
 const gem2sResponse = require('../route-services/gem2s-response');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 const logger = require('../../utils/logging');
@@ -9,15 +8,6 @@ const logger = require('../../utils/logging');
 const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
 
 module.exports = {
-  'gem2s#get': [
-    expressAuthorizationMiddleware,
-    (req, res, next) => {
-      getBackendStatus(req.params.experimentId)
-        .then((data) => res.json(data))
-        .catch(next);
-    },
-  ],
-
   'gem2s#create': [
     expressAuthorizationMiddleware,
     (req, res, next) => {

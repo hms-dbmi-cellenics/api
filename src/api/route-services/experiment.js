@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const config = require('../../config');
 const mockData = require('./mock-data.json');
 
@@ -115,39 +114,48 @@ class ExperimentService {
 
   async updateExperiment(experimentId, body) {
     const dynamodb = createDynamoDbInstance();
-    const entryKey = convertToDynamoDbRecord({ experimentId });
 
-    let dataToUpdate = [
-      { key: 'experimentName', value: body.name || body.experimentName },
-      { key: 'apiVersion', value: body.apiVersion },
-      { key: 'createdAt', value: body.createdAt },
-      { key: 'lastViewed', value: body.lastViewed },
-      { key: 'projectId', value: body.projectUuid || body.projectId },
-      { key: 'description', value: body.description },
-      { key: 'meta', value: body.meta },
-      { key: 'processingConfig', value: body.processingConfig },
-    ];
-
-    dataToUpdate = dataToUpdate.filter((attribute) => attribute.value);
+    const dataToUpdate = {
+      experimentName: body.name || body.experimentName,
+      apiVersion: body.apiVersion,
+      createdAt: body.createdAt,
+      lastViewed: body.lastViewed,
+      projectId: body.projectUuid || body.projectId,
+      description: body.description,
+      meta: body.meta,
+      processingConfig: body.processingConfig,
+    };
 
     const objectToMarshall = {};
-    let updateExpression = 'SET ';
+    const updateExpression = Object.entries(dataToUpdate).reduce((acc, [key, val]) => {
+      if (!val) {
+        return acc;
+      }
 
-    dataToUpdate.forEach(({ key, value }) => {
       const expressionKey = `:${key}`;
+      objectToMarshall[expressionKey] = val;
 
-      objectToMarshall[expressionKey] = value;
-      updateExpression += `${key} = ${expressionKey},`;
-    });
+      return [...acc, `${key} = ${expressionKey}`];
+    }, []);
 
-    updateExpression = _.trimEnd(updateExpression, ',');
-    const marshalledData = convertToDynamoDbRecord(objectToMarshall);
+    // dataToUpdate = dataToUpdate.filter((attribute) => attribute.value);
+
+    // let updateExpression = 'SET ';
+
+    // dataToUpdate.forEach(({ key, value }) => {
+    //   const expressionKey = `:${key}`;
+
+    //   objectToMarshall[expressionKey] = value;
+    //   updateExpression += `${key} = ${expressionKey},`;
+    // });
+
+    // updateExpression = _.trimEnd(updateExpression, ',');
 
     const params = {
       TableName: this.experimentsTableName,
-      Key: entryKey,
-      UpdateExpression: updateExpression,
-      ExpressionAttributeValues: marshalledData,
+      Key: convertToDynamoDbRecord({ experimentId }),
+      UpdateExpression: `SET ${updateExpression.join(', ')}`,
+      ExpressionAttributeValues: convertToDynamoDbRecord(objectToMarshall),
       ReturnValues: 'UPDATED_NEW',
     };
 

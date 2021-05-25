@@ -1,6 +1,8 @@
 const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../../src/utils/requireAWS');
 
+const constants = require('../../../src/api/general-services/pipeline-manage/constants');
+
 const ExperimentService = require('../../../src/api/route-services/experiment');
 const {
   mockDynamoGetItem,
@@ -167,14 +169,21 @@ describe('tests for the experiment service', () => {
 
   it('Get Pipeline Handle works', async (done) => {
     const handle = {
-      stateMachineArn: 'STATE-MACHINE-ID',
-      executionArn: '',
+      [constants.GEM2S_PROCESS_NAME]: {
+        executionArn: '',
+        stateMachineArn: '',
+      },
+      [constants.QC_PROCESS_NAME]: {
+        executionArn: '',
+        stateMachineArn: 'STATE-MACHINE-ID',
+      },
     };
+
 
     const jsData = {
       meta: {
         pipeline: {
-          stateMachineArn: handle.stateMachineArn,
+          stateMachineArn: handle[constants.QC_PROCESS_NAME].stateMachineArn,
         },
         organism: 'mmusculus',
         type: '10x',
