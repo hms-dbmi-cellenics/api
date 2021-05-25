@@ -632,7 +632,7 @@ paths:
                 type: object
                 properties: {}
         '404':
-          description: Samples not found.
+          description: Experiment not found.
           content:
             application/json:
               schema:
