@@ -100,8 +100,6 @@ const getStepsFromExecutionHistory = (events) => {
 /*
      * Return `completedSteps` of the state machine (SM) associated to the `experimentId`'s pipeline
      * The code assumes that
-     *  - the relevant states for the steps are defined within a Map of the SM
-     *  - the relevant Map is the first Map in the SM
      *  - a step is only considered completed if it has been completed for all iteration of the Map
      *  - steps are returned in the completion order, and are unique in the returned array
      */
