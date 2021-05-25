@@ -5,6 +5,8 @@ const AWS = require('../../utils/requireAWS');
 const logger = require('../../utils/logging');
 
 const { OK, NotFoundError } = require('../../utils/responses');
+const constants = require('../general-services/pipeline-manage/constants');
+
 
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord, configArrayToUpdateObjs,
@@ -112,27 +114,48 @@ class ExperimentService {
 
   async updateExperiment(experimentId, body) {
     const dynamodb = createDynamoDbInstance();
-    const key = convertToDynamoDbRecord({ experimentId });
 
-    const marshalledData = convertToDynamoDbRecord({
-      ':experimentName': body.name,
-      ':createdAt': body.createdAt,
-      ':lastViewed': body.lastViewed,
-      ':projectId': body.projectUuid,
-      ':description': body.description,
-      ':meta': {},
-    });
+    const dataToUpdate = {
+      experimentName: body.name || body.experimentName,
+      apiVersion: body.apiVersion,
+      createdAt: body.createdAt,
+      lastViewed: body.lastViewed,
+      projectId: body.projectUuid || body.projectId,
+      description: body.description,
+      meta: body.meta,
+      processingConfig: body.processingConfig,
+    };
+
+    const objectToMarshall = {};
+    const updateExpression = Object.entries(dataToUpdate).reduce((acc, [key, val]) => {
+      if (!val) {
+        return acc;
+      }
+
+      const expressionKey = `:${key}`;
+      objectToMarshall[expressionKey] = val;
+
+      return [...acc, `${key} = ${expressionKey}`];
+    }, []);
+
+    // dataToUpdate = dataToUpdate.filter((attribute) => attribute.value);
+
+    // let updateExpression = 'SET ';
+
+    // dataToUpdate.forEach(({ key, value }) => {
+    //   const expressionKey = `:${key}`;
+
+    //   objectToMarshall[expressionKey] = value;
+    //   updateExpression += `${key} = ${expressionKey},`;
+    // });
+
+    // updateExpression = _.trimEnd(updateExpression, ',');
 
     const params = {
       TableName: this.experimentsTableName,
-      Key: key,
-      UpdateExpression: `SET experimentName = :experimentName,
-                          createdAt = :createdAt,
-                          lastViewed = :lastViewed,
-                          projectId = :projectId,
-                          description = :description,
-                          meta = :meta`,
-      ExpressionAttributeValues: marshalledData,
+      Key: convertToDynamoDbRecord({ experimentId }),
+      UpdateExpression: `SET ${updateExpression.join(', ')}`,
+      ExpressionAttributeValues: convertToDynamoDbRecord(objectToMarshall),
       ReturnValues: 'UPDATED_NEW',
     };
 
@@ -153,12 +176,20 @@ class ExperimentService {
     return data;
   }
 
-  async getPipelineHandle(experimentId) {
+  async getPipelinesHandles(experimentId) {
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['meta']);
+
     return {
-      stateMachineArn: '',
-      executionArn: '',
-      ...data.meta.pipeline,
+      [constants.QC_PROCESS_NAME]: {
+        stateMachineArn: '',
+        executionArn: '',
+        ...data.meta.pipeline,
+      },
+      [constants.GEM2S_PROCESS_NAME]: {
+        stateMachineArn: '',
+        executionArn: '',
+        ...data.meta.gem2s,
+      },
     };
   }
 
