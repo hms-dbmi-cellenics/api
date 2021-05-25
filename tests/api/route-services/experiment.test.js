@@ -44,7 +44,7 @@ describe('tests for the experiment service', () => {
 
     const response = {
       Responses: {
-        'experiments-test': experimentIds.map((experimentId) => AWS.DynamoDB.Converter.marshall({ experimentId })),
+        'experiments-test': experimentIds.map((experimentId) => ({ experimentId })),
       },
     };
 
