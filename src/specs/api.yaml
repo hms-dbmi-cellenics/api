@@ -566,8 +566,8 @@ paths:
     get:
       summary: Create new pipeline
       operationId: get-experiments-experimentId-pipelines
-      x-eov-operation-id: 'pipelines#get'
-      x-eov-operation-handler: routes/pipelines
+      x-eov-operation-id: backend-status#get
+      x-eov-operation-handler: routes/backend-status
       responses:
         '401':
           description: The request lacks authentication credentials.
