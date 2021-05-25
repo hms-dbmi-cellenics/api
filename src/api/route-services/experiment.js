@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const config = require('../../config');
 const mockData = require('./mock-data.json');
 
@@ -6,6 +7,7 @@ const logger = require('../../utils/logging');
 
 const { OK, NotFoundError } = require('../../utils/responses');
 const constants = require('../general-services/pipeline-manage/constants');
+
 
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord, configArrayToUpdateObjs,
@@ -113,26 +115,38 @@ class ExperimentService {
 
   async updateExperiment(experimentId, body) {
     const dynamodb = createDynamoDbInstance();
-    const key = convertToDynamoDbRecord({ experimentId });
+    const entryKey = convertToDynamoDbRecord({ experimentId });
 
-    const marshalledData = convertToDynamoDbRecord({
-      ':experimentName': body.name || '',
-      ':createdAt': body.createdAt || '',
-      ':lastViewed': body.lastViewed || '',
-      ':projectId': body.projectUuid || '',
-      ':description': body.description || '',
-      ':meta': {},
+    let dataToUpdate = [
+      { key: 'experimentName', value: body.name || body.experimentName },
+      { key: 'apiVersion', value: body.apiVersion },
+      { key: 'createdAt', value: body.createdAt },
+      { key: 'lastViewed', value: body.lastViewed },
+      { key: 'projectId', value: body.projectUuid || body.projectId },
+      { key: 'description', value: body.description },
+      { key: 'meta', value: body.meta },
+      { key: 'processingConfig', value: body.processingConfig },
+    ];
+
+    dataToUpdate = dataToUpdate.filter((attribute) => attribute.value);
+
+    const objectToMarshall = {};
+    let updateExpression = 'SET ';
+
+    dataToUpdate.forEach(({ key, value }) => {
+      const expressionKey = `:${key}`;
+
+      objectToMarshall[expressionKey] = value;
+      updateExpression += `${key} = ${expressionKey},`;
     });
+
+    updateExpression = _.trimEnd(updateExpression, ',');
+    const marshalledData = convertToDynamoDbRecord(objectToMarshall);
 
     const params = {
       TableName: this.experimentsTableName,
-      Key: key,
-      UpdateExpression: `SET experimentName = :experimentName,
-                          createdAt = :createdAt,
-                          lastViewed = :lastViewed,
-                          projectId = :projectId,
-                          description = :description,
-                          meta = :meta`,
+      Key: entryKey,
+      UpdateExpression: updateExpression,
       ExpressionAttributeValues: marshalledData,
       ReturnValues: 'UPDATED_NEW',
     };

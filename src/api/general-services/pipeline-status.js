@@ -5,7 +5,10 @@ const config = require('../../config');
 const logger = require('../../utils/logging');
 
 
-const privateSteps = ['DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker'];
+const privateSteps = [
+  'DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker',
+  'DeleteCompletedGem2SWorker', 'LaunchNewGem2SWorker',
+];
 
 const getStepsFromExecutionHistory = (events) => {
   class Branch {
@@ -145,7 +148,7 @@ const getPipelineStatus = async (experimentId, pipelineType) => {
   }
 
   const response = {
-    pipeline: {
+    [pipelineType]: {
       startDate: execution.startDate,
       stopDate: execution.stopDate,
       status: execution.status,

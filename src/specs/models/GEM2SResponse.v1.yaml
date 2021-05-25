@@ -2,6 +2,11 @@ title: Pipeline response
 description: This is the format the gem2s clients communicate the result of a gem2s run.
 type: object
 properties:
+  experimentId:
+    type: string
+  status:
+    type: string
+    pattern: OK
   oneOf:
     - item:
         $ref: ./api-body-schemas/Experiment.v1.yaml
@@ -13,3 +18,6 @@ properties:
       table:
         type: string
         pattern: 'samples'
+required:
+  - experimentId
+  - status
