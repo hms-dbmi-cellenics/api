@@ -15,8 +15,10 @@ const CacheSingleton = require('../cache');
 const { CacheMissError } = require('../cache/cache-utils');
 const { UnauthorizedError, UnauthenticatedError } = require('./responses');
 const ExperimentService = require('../api/route-services/experiment');
+const ProjectsService = require('../api/route-services/projects');
 
 const experimentService = new ExperimentService();
+const projectService = new ProjectsService();
 
 /**
  * Authentication middleware for Express. Returns a middleware that
@@ -134,23 +136,30 @@ const authenticationMiddlewareSocketIO = async (authHeader) => {
  * @returns Promise that resolves or rejects based on authorization status.
  * @throws {UnauthorizedError} Authorization failed.
  */
-const authorize = async (experimentId, claim) => {
+const authorize = async (authResource, claim, authByExperiment = true) => {
   const { 'cognito:username': userName, email } = claim;
 
-  const {
-    rbac_can_write: canWrite,
-  } = await experimentService.getExperimentPermissions(experimentId);
+  let canWrite = null;
 
-  if (!canWrite) {
-    throw new UnauthorizedError(`Experiment ${experimentId} cannot be accesed (malformed).`);
+  try {
+    if (authByExperiment) {
+      canWrite = await experimentService.getExperimentPermissions(authResource).rbac_can_write;
+    } else {
+      const experiment = await projectService.getExperiments(authResource);
+      if (experiment) canWrite = experiment[0].rbac_can_write;
+    }
+
+    if (!canWrite) {
+      throw new UnauthorizedError(`Experiment ${authResource} cannot be accesed (malformed).`);
+    }
+
+    // If the logged in user has the permissions, forward request.
+    if (canWrite.values.includes(userName)) {
+      return true;
+    }
+  } catch (e) {
+    throw new UnauthorizedError(`User ${userName} (${email}) does not have access to ${authByExperiment ? 'experiment' : 'project'} ${authResource}.`);
   }
-
-  // If the logged in user has the permissions, forward request.
-  if (canWrite.values.includes(userName)) {
-    return true;
-  }
-
-  throw new UnauthorizedError(`User ${userName} (${email}) does not have access to experiment ${experimentId}.`);
 };
 
 /**
@@ -163,8 +172,11 @@ const expressAuthorizationMiddleware = async (req, res, next) => {
     return;
   }
 
+  const authByExperiment = !!req.params.experimentId;
+  const authResource = req.params.experimentId ? req.params.experimentId : req.params.projectUuid;
+
   try {
-    await authorize(req.params.experimentId, req.user);
+    await authorize(authResource, req.user, authByExperiment);
     next();
     return;
   } catch (e) {

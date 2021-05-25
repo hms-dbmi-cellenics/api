@@ -9,7 +9,7 @@ const projectsService = new ProjectsService();
 
 module.exports = {
   'projects#update': [
-    expressAuthorizationMiddleware,
+    expressAuthenticationOnlyMiddleware,
     (req, res, next) => {
       projectsService.updateProject(req.params.projectUuid, req.body)
         .then((data) => res.json(data))
@@ -29,7 +29,7 @@ module.exports = {
     },
   ],
   'projects#getExperiments': [
-    expressAuthenticationOnlyMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => {
       projectsService.getExperiments(req.params.projectUuid)
         .then((response) => res.json(response)).catch(next);
