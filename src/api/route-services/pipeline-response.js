@@ -94,7 +94,7 @@ const pipelineResponse = async (io, message) => {
   pipelineHook.run(taskName, {
     experimentId,
     output,
-    statusResToSend,
+    statusRes: statusResToSend,
   });
 
   // Concatenate into a proper response.
