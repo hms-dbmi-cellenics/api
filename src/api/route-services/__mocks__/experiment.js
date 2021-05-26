@@ -5,7 +5,7 @@ const mockExperimentData = jest.fn((experimentId) => new Promise((resolve) => {
   });
 }));
 
-const mockDeleteExperiment = jest.fn((experimentId) => new Promise((resolve) => {
+const mockDeleteExperiment = jest.fn(() => new Promise((resolve) => {
   resolve([]);
 }));
 
