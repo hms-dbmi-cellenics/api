@@ -29,8 +29,8 @@ class SamplesService {
     const response = await dynamodb.query(params).promise();
     const items = response.Items;
 
-    if (items) {
-      const prettyResponse = response.Items.map((item) => convertToJsObject(item));
+    if (items.length) {
+      const prettyResponse = items.map((item) => convertToJsObject(item));
       return prettyResponse;
     }
 
