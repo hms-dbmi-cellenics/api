@@ -160,6 +160,8 @@ class ProjectsService {
       const response = await dynamodb.getItem(params).promise();
       const result = convertToJsObject(response.Item);
 
+      if (!Object.prototype.hasOwnProperty.call(result, 'projects')) return [];
+
       return experimentService.getListOfExperiments(result.projects.experiments);
     } catch (e) {
       if (e.statusCode === 400) throw new NotFoundError('Project not found');
