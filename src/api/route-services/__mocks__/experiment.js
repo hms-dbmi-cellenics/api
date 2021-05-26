@@ -5,6 +5,10 @@ const mockExperimentData = jest.fn((experimentId) => new Promise((resolve) => {
   });
 }));
 
+const mockDeleteExperiment = jest.fn((experimentId) => new Promise((resolve) => {
+  resolve([]);
+}));
+
 const mockGetListOfExperiments = jest.fn((experimentIds) => new Promise((resolve) => {
   resolve(experimentIds.map((experimentId) => ({
     experimentId,
@@ -108,6 +112,7 @@ const mockUpdateProcessingConfig = jest.fn(
 
 const mock = jest.fn().mockImplementation(() => ({
   getExperimentData: mockExperimentData,
+  deleteExperiment: mockDeleteExperiment,
   getListOfExperiments: mockGetListOfExperiments,
   getCellSets: mockGetCellSets,
   updateCellSets: mockUpdateCellSets,
