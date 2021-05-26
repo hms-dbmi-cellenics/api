@@ -34,6 +34,10 @@ const getExperimentAttributes = async (tableName, experimentId, attributes) => {
   return prettyData;
 };
 
+const toUpdatePropertyArray = (updatePropertyObject) => (
+  Object.entries(updatePropertyObject).map(([key, val]) => ({ name: key, body: val }))
+);
+
 class ExperimentService {
   constructor() {
     this.experimentsTableName = `experiments-${config.clusterEnv}`;
@@ -122,9 +126,15 @@ class ExperimentService {
       lastViewed: body.lastViewed,
       projectId: body.projectUuid || body.projectId,
       description: body.description,
-      meta: body.meta,
-      processingConfig: body.processingConfig,
     };
+
+    if (body.meta) {
+      this.updatePropertyFromDiff(experimentId, 'meta', toUpdatePropertyArray(body.meta));
+    }
+
+    if (body.processingConfig) {
+      this.updateProcessingConfig(experimentId, toUpdatePropertyArray(body.processingConfig));
+    }
 
     const objectToMarshall = {};
     const updateExpression = Object.entries(dataToUpdate).reduce((acc, [key, val]) => {
@@ -137,19 +147,6 @@ class ExperimentService {
 
       return [...acc, `${key} = ${expressionKey}`];
     }, []);
-
-    // dataToUpdate = dataToUpdate.filter((attribute) => attribute.value);
-
-    // let updateExpression = 'SET ';
-
-    // dataToUpdate.forEach(({ key, value }) => {
-    //   const expressionKey = `:${key}`;
-
-    //   objectToMarshall[expressionKey] = value;
-    //   updateExpression += `${key} = ${expressionKey},`;
-    // });
-
-    // updateExpression = _.trimEnd(updateExpression, ',');
 
     const params = {
       TableName: this.experimentsTableName,
@@ -241,26 +238,32 @@ class ExperimentService {
   }
 
   async updateProcessingConfig(experimentId, processingConfig) {
+    return this.updatePropertyFromDiff(experimentId, 'processingConfig', processingConfig);
+  }
+
+  // Updates each sub attribute separately for
+  // one particular attribute (of type object) of a dynamodb entry
+  async updatePropertyFromDiff(experimentId, attributeKey, diff) {
     const dynamodb = createDynamoDbInstance();
 
     let key = { experimentId };
     key = convertToDynamoDbRecord(key);
 
-    const {
-      updExpr,
-      attrNames,
-      attrValues,
-    } = configArrayToUpdateObjs('processingConfig', processingConfig);
-
-    const createEmptyProcessingConfigParams = {
+    const emptyAttributeParams = {
       TableName: this.experimentsTableName,
       Key: { experimentId: { S: experimentId } },
-      UpdateExpression: 'SET processingConfig = if_not_exists(processingConfig, :updatedObject)',
+      UpdateExpression: `SET ${attributeKey} = if_not_exists(${attributeKey}, :updatedObject)`,
       ExpressionAttributeValues: { ':updatedObject': { M: {} } },
       ReturnValues: 'UPDATED_NEW',
     };
 
-    await dynamodb.updateItem(createEmptyProcessingConfigParams).promise();
+    await dynamodb.updateItem(emptyAttributeParams).promise();
+
+    const {
+      updExpr,
+      attrNames,
+      attrValues,
+    } = configArrayToUpdateObjs(attributeKey, diff);
 
     const params = {
       TableName: this.experimentsTableName,

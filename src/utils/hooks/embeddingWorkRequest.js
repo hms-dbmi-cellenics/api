@@ -1,3 +1,4 @@
+const constants = require('../../api/general-services/pipeline-manage/constants');
 const workRequestBuilder = require('../workRequestBuilder');
 
 const embeddingWorkRequest = async (payload) => {
@@ -11,7 +12,7 @@ const embeddingWorkRequest = async (payload) => {
         payload.output.config.embeddingSettings.method
       ],
     },
-    PipelineRunETag: payload.statusRes.pipeline.startDate,
+    PipelineRunETag: payload.statusRes[constants.QC_PROCESS_NAME].startDate,
   };
 
   const workRequest = await workRequestBuilder('GetEmbedding', embeddingWorkConfig);

@@ -1,3 +1,4 @@
+const constants = require('../../api/general-services/pipeline-manage/constants');
 const workRequestBuilder = require('../workRequestBuilder');
 
 const clusteringWorkRequest = async (payload) => {
@@ -13,7 +14,7 @@ const clusteringWorkRequest = async (payload) => {
         payload.output.config.clusteringSettings.method
       ],
     },
-    PipelineRunETag: payload.statusRes.pipeline.startDate,
+    PipelineRunETag: payload.statusRes[constants.QC_PROCESS_NAME].startDate,
   };
 
   const workRequest = await workRequestBuilder('ClusterCells', clusteringWorkConfig);

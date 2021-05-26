@@ -88,18 +88,21 @@ const pipelineResponse = async (io, message) => {
   }
 
   const statusRes = await getPipelineStatus(experimentId, constants.QC_PROCESS_NAME);
+
+  const statusResToSend = { pipeline: statusRes[constants.QC_PROCESS_NAME] };
+
   pipelineHook.run(taskName, {
     experimentId,
     output,
-    statusRes,
+    statusResToSend,
   });
 
   // Concatenate into a proper response.
   const response = {
     ...message,
     output,
-    status: statusRes,
-    type: 'dataProcessing',
+    status: statusResToSend,
+    type: 'qc',
   };
 
   logger.log('Sending to all clients subscribed to experiment', experimentId);
