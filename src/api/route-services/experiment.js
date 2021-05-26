@@ -9,37 +9,16 @@ const logger = require('../../utils/logging');
 const { OK, NotFoundError } = require('../../utils/responses');
 const constants = require('../general-services/pipeline-manage/constants');
 
+const {
+  getExperimentAttributes,
+  getDeepAttrsUpdateParameters,
+  getShallowAttrsUpdateParameters,
+} = require('./helpers');
 
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord,
-  configArrayToUpdateObjs, manyConfigArraysToUpdateObjs,
+  configArrayToUpdateObjs,
 } = require('../../utils/dynamoDb');
-
-const getExperimentAttributes = async (tableName, experimentId, attributes) => {
-  const dynamodb = createDynamoDbInstance();
-  const key = convertToDynamoDbRecord({ experimentId });
-
-  const params = {
-    TableName: tableName,
-    Key: key,
-  };
-
-  if (Array.isArray(attributes) && attributes.length > 0) {
-    params.ProjectionExpression = attributes.join();
-  }
-
-  const data = await dynamodb.getItem(params).promise();
-  if (Object.keys(data).length === 0) {
-    throw new NotFoundError('Experiment does not exist.');
-  }
-
-  const prettyData = convertToJsObject(data.Item);
-  return prettyData;
-};
-
-const toUpdatePropertyArray = (updatePropertyObject) => (
-  Object.entries(updatePropertyObject).map(([key, val]) => ({ name: key, body: val }))
-);
 
 class ExperimentService {
   constructor() {
@@ -124,42 +103,16 @@ class ExperimentService {
   async updateExperiment(experimentId, body) {
     const dynamodb = createDynamoDbInstance();
 
-    const dataToUpdate = {
-      experimentName: body.name || body.experimentName,
-      apiVersion: body.apiVersion,
-      createdAt: body.createdAt,
-      lastViewed: body.lastViewed,
-      projectId: body.projectUuid || body.projectId,
-      description: body.description,
-    };
-
-    const deepAttributesToUpdate = ['meta', 'processingConfig'].filter((key) => body[key]);
-
-    const configUpdatesDictionary = {};
-    deepAttributesToUpdate.forEach((key) => {
-      configUpdatesDictionary[key] = toUpdatePropertyArray(body[key]);
-    });
-
     const {
       updateExpressionList: deepPropsUpdateExprList,
       attributeValues: deepPropsAttrValues,
       attributeNames: deepPropsAttrNames,
-    } = manyConfigArraysToUpdateObjs(deepAttributesToUpdate, configUpdatesDictionary);
+    } = getDeepAttrsUpdateParameters(body);
 
-    const shallowPropsObjectToMarshall = {};
-    const shallowPropsUpdateExprList = Object.entries(dataToUpdate).reduce(
-      (acc, [key, val]) => {
-        if (!val) {
-          return acc;
-        }
-
-        const expressionKey = `:${key}`;
-        shallowPropsObjectToMarshall[expressionKey] = val;
-
-        return [...acc, `${key} = ${expressionKey}`];
-      }, [],
-    );
-    const shallowPropsAttrValues = convertToDynamoDbRecord(shallowPropsObjectToMarshall);
+    const {
+      updateExprList: shallowPropsUpdateExprList,
+      attrValues: shallowPropsAttrValues,
+    } = getShallowAttrsUpdateParameters(body);
 
     const updateExpression = deepPropsUpdateExprList.concat(shallowPropsUpdateExprList);
     const expressionAttributeValues = _.merge(deepPropsAttrValues, shallowPropsAttrValues);
