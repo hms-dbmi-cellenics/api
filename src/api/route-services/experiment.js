@@ -112,6 +112,29 @@ class ExperimentService {
     return OK();
   }
 
+  async deleteExperiment(experimentId) {
+    logger.log(`Deleting experiment ${experimentId}`);
+
+    const marshalledKey = convertToDynamoDbRecord({
+      experimentId,
+    });
+
+    const params = {
+      TableName: this.experimentsTableName,
+      Key: marshalledKey,
+    };
+
+    const dynamodb = createDynamoDbInstance();
+
+    try {
+      await dynamodb.deleteItem(params).send();
+      return OK();
+    } catch (e) {
+      if (e.statusCode === 404) throw NotFoundError('Experiment not found');
+      throw e;
+    }
+  }
+
   async updateExperiment(experimentId, body) {
     const dynamodb = createDynamoDbInstance();
 

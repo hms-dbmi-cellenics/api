@@ -10,9 +10,12 @@ const {
   mockS3GetObject,
   mockS3PutObject,
   mockDynamoBatchGetItem,
+  mockDynamoDeleteItem,
 } = require('../../test-utils/mockAWSServices');
 
 jest.setTimeout(30000);
+
+const { OK, NotFoundError } = require('../../../src/utils/responses');
 
 describe('tests for the experiment service', () => {
   afterEach(() => {
@@ -113,6 +116,56 @@ describe('tests for the experiment service', () => {
         );
       })
       .then(() => done());
+  });
+
+  it('Delete experiment works', async (done) => {
+    const fnSpy = mockDynamoDeleteItem();
+
+    const experimentId = '12345';
+
+    const marshalledKey = AWS.DynamoDB.Converter.marshall({ experimentId });
+
+    (new ExperimentService()).deleteExperiment(experimentId)
+      .then((returnValue) => {
+        expect(returnValue).toEqual(OK());
+        expect(fnSpy).toHaveBeenCalledWith(
+          {
+            TableName: 'experiments-test',
+            Key: marshalledKey,
+          },
+        );
+      })
+      .then(() => done());
+  });
+
+
+  it('Delete experiment returns NotFoundError if experiment does not exist', async (done) => {
+    const errMsg = 'Experiment does not exist';
+
+    const fnSpy = mockDynamoDeleteItem();
+
+    const experimentId = '12345';
+
+    const marshalledKey = AWS.DynamoDB.Converter.marshall({ experimentId });
+
+    mockDynamoDeleteItem([], new NotFoundError(errMsg));
+
+    (new ExperimentService()).deleteExperiment(experimentId)
+      .then((returnValue) => {
+        expect(returnValue).toEqual(OK());
+        expect(fnSpy).toHaveBeenCalledWith(
+          {
+            TableName: 'experiments-test',
+            Key: marshalledKey,
+          },
+        );
+      })
+      .then(() => done())
+      .catch((error) => {
+        expect(error instanceof NotFoundError).toEqual(true);
+        expect(error.message).toEqual(errMsg);
+        done();
+      });
   });
 
   it('Get processing config works', async (done) => {
