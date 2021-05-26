@@ -184,9 +184,11 @@ class ProjectsService {
       const { experiments } = await this.getProject(projectUuid);
 
       if (experiments.length > 0) {
-        const deletePromises = experiments.map(
-          (experimentId) => samplesService.deleteSamples(projectUuid, experimentId),
-        );
+        const deletePromises = experiments.reduce((acc, experimentId) => {
+          acc.push(experimentService.deleteExperiment(experimentId));
+          acc.push(samplesService.deleteSamples(projectUuid, experimentId));
+          return acc;
+        }, []);
 
         await Promise.all(deletePromises);
       }
