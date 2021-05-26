@@ -14,7 +14,7 @@ const clusteringWorkRequest = async (payload) => {
         payload.output.config.clusteringSettings.method
       ],
     },
-    PipelineRunETag: payload.statusRes[constants.QC_PROCESS_NAME].startDate,
+    PipelineRunETag: payload.statusRes[constants.OLD_QC_NAME_TO_BE_REMOVED].startDate,
   };
 
   const workRequest = await workRequestBuilder('ClusterCells', clusteringWorkConfig);
