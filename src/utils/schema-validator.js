@@ -33,6 +33,7 @@ const validateRequest = async (request, schemaPath) => {
     },
   });
 
+  console.log(`request to be be validate ${request}`);
   const validator = new Validator();
   const validation = validator.validate(
     _.cloneDeep(request), _.cloneDeep(spec),

@@ -36,7 +36,7 @@ module.exports = {
     try {
       result = await parseSNSMessage(req);
     } catch (e) {
-      logger.error('Parsing initial SNS message failed:', e);
+      logger.error('Parsing qc initial SNS message failed:', e);
       AWSXRay.getSegment().addError(e);
       res.status(200).send('nok');
       return;
@@ -48,7 +48,7 @@ module.exports = {
       await pipelineResponse(io, parsedMessage);
     } catch (e) {
       logger.error(
-        'Pipeline response handler failed with error: ', e,
+        'QC response handler failed with error: ', e,
       );
 
       AWSXRay.getSegment().addError(e);

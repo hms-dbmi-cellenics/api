@@ -8,7 +8,7 @@ jest.mock('crypto', () => ({
 }));
 jest.mock('../../../src/utils/asyncTimer');
 
-const { createQCPipeline } = jest.requireActual('../../../src/api/general-services/pipeline-manage');
+const { createQCPipeline, createGem2SPipeline } = jest.requireActual('../../../src/api/general-services/pipeline-manage');
 
 describe('test for pipeline services', () => {
   afterEach(() => {

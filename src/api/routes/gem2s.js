@@ -27,7 +27,7 @@ module.exports = {
     try {
       result = await parseSNSMessage(req);
     } catch (e) {
-      logger.error('Parsing initial SNS message failed:', e);
+      logger.error('Parsing gem2s initial SNS message failed:', e);
       AWSXRay.getSegment().addError(e);
       res.status(200).send('nok');
       return;
@@ -39,7 +39,7 @@ module.exports = {
       await gem2sResponse(io, parsedMessage);
     } catch (e) {
       logger.error(
-        'Pipeline response handler failed with error: ', e,
+        'Gem2S response handler failed with error: ', e,
       );
 
       AWSXRay.getSegment().addError(e);

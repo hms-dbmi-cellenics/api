@@ -33,6 +33,7 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
 };
 
 const gem2sResponse = async (io, message) => {
+  console.log(`message gem2s ${message}`);
   AWSXRay.getSegment().addMetadata('message', message);
 
   // Fail hard if there was an error.
