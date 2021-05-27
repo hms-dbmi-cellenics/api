@@ -69,15 +69,22 @@ class ProjectsService {
   /**
    * Finds all projects referenced in experiments.
    */
-  async getProjects() {
+  async getProjects(user) {
+    if (!user) {
+      return [];
+    }
     // Get project data from the experiments table. Only return
     // those tables that have a project ID associated with them.
     const params = {
       TableName: experimentService.experimentsTableName,
+      FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
       ExpressionAttributeNames: {
         '#pid': 'projectId',
+        '#rbac_can_write': 'rbac_can_write',
       },
-      FilterExpression: 'attribute_exists(projectId)',
+      ExpressionAttributeValues: {
+        ':userId': { S: user.sub },
+      },
       ProjectionExpression: '#pid',
     };
 
@@ -85,8 +92,8 @@ class ProjectsService {
 
     const response = await dynamodb.scan(params).promise();
 
-    if (!response.Items) {
-      throw new NotFoundError('No projects available!');
+    if (!response.Items.length) {
+      return [];
     }
 
     const projectIds = response.Items.map(
