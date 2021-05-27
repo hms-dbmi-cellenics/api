@@ -29,12 +29,11 @@ class SamplesService {
     const response = await dynamodb.query(params).promise();
     const items = response.Items;
 
-    if (items.length) {
-      const prettyResponse = items.map((item) => convertToJsObject(item));
-      return prettyResponse;
+    if (!items.length) {
+      throw new NotFoundError('Samples not found!');
     }
 
-    throw new NotFoundError('Samples not found!');
+    return items.map((item) => convertToJsObject(item));
   }
 
 
