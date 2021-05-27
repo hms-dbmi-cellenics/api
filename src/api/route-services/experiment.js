@@ -13,7 +13,7 @@ const {
   getExperimentAttributes,
   getDeepAttrsUpdateParams,
   getShallowAttrsUpdateParams,
-} = require('./helpers');
+} = require('./experimentHelpers');
 
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord,
