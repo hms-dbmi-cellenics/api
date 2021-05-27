@@ -2,7 +2,7 @@ const {
   createDynamoDbInstance,
   convertToJsObject,
   convertToDynamoDbRecord,
-  manyConfigArraysToUpdateObjs,
+  batchConvertToDynamoUpdateParams,
 } = require('../../utils/dynamoDb');
 
 const { NotFoundError } = require('../../utils/responses');
@@ -33,7 +33,16 @@ const toUpdatePropertyArray = (updatePropertyObject) => (
   Object.entries(updatePropertyObject).map(([key, val]) => ({ name: key, body: val }))
 );
 
-const getDeepAttrsUpdateParameters = (body) => {
+/**
+ *
+ * @param {*} body Object containing the attributes keys to update
+ *  as key and the new values to set as value
+ *  IMPORTANT this only updates the attributes that are deep (objects with properties)
+ * @returns An { updateExpressionList, attributeNames, attributeValues } object
+ *  that can be used in dynamodb params
+ *  (the updateExprList needs to be changed to `SET updateExprList.join(', ')` first)
+ */
+const getDeepAttrsUpdateParams = (body) => {
   const deepAttributesToUpdate = ['meta', 'processingConfig'].filter((key) => body[key]);
 
   const configUpdatesDictionary = {};
@@ -41,11 +50,19 @@ const getDeepAttrsUpdateParameters = (body) => {
     configUpdatesDictionary[key] = toUpdatePropertyArray(body[key]);
   });
 
-
-  return manyConfigArraysToUpdateObjs(deepAttributesToUpdate, configUpdatesDictionary);
+  return batchConvertToDynamoUpdateParams(deepAttributesToUpdate, configUpdatesDictionary);
 };
 
-const getShallowAttrsUpdateParameters = (body) => {
+/**
+ *
+ * @param {*} body Object containing the attributes keys to update
+ *  as key and the new values to set as value
+ *  IMPORTANT this only updates the attributes that are shallow (not objects with properties)
+ * @returns An { updateExpressionList, attributeValues } object
+ *  that can be used in dynamodb params
+ *  (the updateExpressionList needs to be changed to `SET updateExpressionList.join(', ')` first)
+ */
+const getShallowAttrsUpdateParams = (body) => {
   const dataToUpdate = {
     experimentName: body.name || body.experimentName,
     apiVersion: body.apiVersion,
@@ -56,7 +73,7 @@ const getShallowAttrsUpdateParameters = (body) => {
   };
 
   const objectToMarshall = {};
-  const updateExprList = Object.entries(dataToUpdate).reduce(
+  const updateExpressionList = Object.entries(dataToUpdate).reduce(
     (acc, [key, val]) => {
       if (!val) {
         return acc;
@@ -68,14 +85,15 @@ const getShallowAttrsUpdateParameters = (body) => {
       return [...acc, `${key} = ${expressionKey}`];
     }, [],
   );
-  const attrValues = convertToDynamoDbRecord(objectToMarshall);
 
-  return { updateExprList, attrValues };
+  const attributeValues = convertToDynamoDbRecord(objectToMarshall);
+
+  return { updateExpressionList, attributeValues };
 };
 
 module.exports = {
   getExperimentAttributes,
   toUpdatePropertyArray,
-  getDeepAttrsUpdateParameters,
-  getShallowAttrsUpdateParameters,
+  getDeepAttrsUpdateParams,
+  getShallowAttrsUpdateParams,
 };

@@ -11,13 +11,13 @@ const constants = require('../general-services/pipeline-manage/constants');
 
 const {
   getExperimentAttributes,
-  getDeepAttrsUpdateParameters,
-  getShallowAttrsUpdateParameters,
+  getDeepAttrsUpdateParams,
+  getShallowAttrsUpdateParams,
 } = require('./helpers');
 
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord,
-  configArrayToUpdateObjs,
+  convertToDynamoUpdateParams,
 } = require('../../utils/dynamoDb');
 
 class ExperimentService {
@@ -130,14 +130,14 @@ class ExperimentService {
       updateExpressionList: deepPropsUpdateExprList,
       attributeValues: deepPropsAttrValues,
       attributeNames: deepPropsAttrNames,
-    } = getDeepAttrsUpdateParameters(body);
+    } = getDeepAttrsUpdateParams(body);
 
     const {
-      updateExprList: shallowPropsUpdateExprList,
-      attrValues: shallowPropsAttrValues,
-    } = getShallowAttrsUpdateParameters(body);
+      updateExpressionList: shallowPropsUpdateExprList,
+      attributeValues: shallowPropsAttrValues,
+    } = getShallowAttrsUpdateParams(body);
 
-    const updateExpression = deepPropsUpdateExprList.concat(shallowPropsUpdateExprList);
+    const updateExpression = [...deepPropsUpdateExprList, ...shallowPropsUpdateExprList];
     const expressionAttributeValues = _.merge(deepPropsAttrValues, shallowPropsAttrValues);
 
     const params = {
@@ -259,7 +259,7 @@ class ExperimentService {
       updExpr,
       attrNames,
       attrValues,
-    } = configArrayToUpdateObjs(attributeKey, diff);
+    } = convertToDynamoUpdateParams(attributeKey, diff);
 
     const params = {
       TableName: this.experimentsTableName,

@@ -14,7 +14,7 @@ const convertToDynamoDbRecord = (data) => AWS.DynamoDB.Converter.marshall(
 const convertToJsObject = (data) => AWS.DynamoDB.Converter.unmarshall(data);
 
 // Decompose array of [{ name : '', body: {} }, ...] to update expression elements
-const configArrayToUpdateObjs = (key, configArr, baseIndex = 0) => {
+const convertToDynamoUpdateParams = (key, configArr, baseIndex = 0) => {
   const converted = configArr.reduce((acc, curr, idx) => ({
     updExpr: acc.updExpr.concat(`${key}.#key${idx + 1 + baseIndex} = :val${idx + 1 + baseIndex}, `),
     attrNames: {
@@ -35,7 +35,7 @@ const configArrayToUpdateObjs = (key, configArr, baseIndex = 0) => {
   return converted;
 };
 
-const manyConfigArraysToUpdateObjs = (keys, configArrayDict) => {
+const batchConvertToDynamoUpdateParams = (keys, configArrayDict) => {
   const updateExpressionList = [];
   let attributeNames = {};
   let attributeValues = {};
@@ -49,7 +49,7 @@ const manyConfigArraysToUpdateObjs = (keys, configArrayDict) => {
       updExpr,
       attrNames,
       attrValues,
-    } = configArrayToUpdateObjs(key, configArray, indexOffset);
+    } = convertToDynamoUpdateParams(key, configArray, indexOffset);
 
     updateExpressionList.push(_.trimStart(updExpr, 'SET'));
     attributeNames = _.merge(attributeNames, attrNames);
@@ -65,6 +65,6 @@ module.exports = {
   createDynamoDbInstance,
   convertToDynamoDbRecord,
   convertToJsObject,
-  configArrayToUpdateObjs,
-  manyConfigArraysToUpdateObjs,
+  convertToDynamoUpdateParams,
+  batchConvertToDynamoUpdateParams,
 };
