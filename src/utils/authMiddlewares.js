@@ -147,11 +147,11 @@ const authorize = async (authResource, claim, authByExperiment = true) => {
   } else {
     const experiment = await projectService.getExperiments(authResource);
     // experiment[0] because there is only 1 experiment per project
-    if (experiment) canWrite = experiment[0].rbac_can_write;
+    if (experiment.length > 0) canWrite = experiment[0].rbac_can_write;
   }
 
   if (!canWrite) {
-    throw new UnauthorizedError(`Experiment ${authResource} cannot be accesed (malformed).`);
+    throw new UnauthorizedError(`Experiment ${authResource} cannot be accessed (malformed).`);
   }
 
   // If the logged in user has the permissions, forward request.

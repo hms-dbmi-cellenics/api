@@ -1,7 +1,7 @@
-const { configArrayToUpdateObjs } = require('../../src/utils/dynamoDb');
+const { convertToDynamoUpdateParams } = require('../../src/utils/dynamoDb');
 
 describe('tests for DynamoDB functions', () => {
-  it('configArrayToUpdateObjs converts configArrray properly', () => {
+  it('convertToDynamoUpdateParams converts configArrray properly', () => {
     const input = [
       {
         name: 'conf1',
@@ -47,7 +47,7 @@ describe('tests for DynamoDB functions', () => {
       },
     };
 
-    const result = configArrayToUpdateObjs('test', input);
+    const result = convertToDynamoUpdateParams('test', input);
 
     expect(result).toEqual(output);
   });

@@ -13,6 +13,7 @@ const ExperimentsService = require('../../../src/api/route-services/experiment')
 const { OK } = require('../../../src/utils/responses');
 
 jest.mock('../../../src/api/route-services/experiment');
+jest.mock('../../../src/utils/authMiddlewares');
 
 describe('tests for the projects service', () => {
   const mockProject = {
@@ -70,18 +71,23 @@ describe('tests for the projects service', () => {
     const fnSpy = mockDynamoScan(projectIds);
 
     const projectService = new ProjectsService();
+    const user = { sub: 'mockSubject' };
 
     projectService.getProjectsFromIds = jest.fn().mockImplementation(() => fnResult);
 
-    projectService.getProjects()
+    projectService.getProjects(user)
       .then((res) => {
         expect(res).toEqual(fnResult);
         expect(fnSpy).toHaveBeenCalledWith({
           TableName: 'experiments-test',
           ExpressionAttributeNames: {
             '#pid': 'projectId',
+            '#rbac_can_write': 'rbac_can_write',
           },
-          FilterExpression: 'attribute_exists(projectId)',
+          ExpressionAttributeValues: {
+            ':userId': { S: user.sub },
+          },
+          FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
           ProjectionExpression: '#pid',
         });
         expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(new Set(projectIdsArr));

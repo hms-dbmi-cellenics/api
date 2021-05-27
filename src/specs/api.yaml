@@ -773,7 +773,13 @@ paths:
                 items:
                   $ref: ./models/api-body-schemas/Experiment.v1.yaml
         '401':
-          description: Unauthorized
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The request lacks authorization credentials.
           content:
             application/json:
               schema:
