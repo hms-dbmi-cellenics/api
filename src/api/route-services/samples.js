@@ -13,7 +13,7 @@ class SamplesService {
   }
 
   async getSamples(projectUuid) {
-    logger.log(`Gettings samples for projectUuid : ${projectUuid}`);
+    logger.log(`Getting samples for projectUuid : ${projectUuid}`);
     const marshalledData = convertToDynamoDbRecord({
       ':projectUuid': projectUuid,
     });
@@ -38,7 +38,7 @@ class SamplesService {
 
 
   async getSamplesByExperimentId(experimentId) {
-    logger.log(`Gettings samples using experimentId : ${experimentId}`);
+    logger.log(`Getting samples using experimentId : ${experimentId}`);
     const marshalledKey = convertToDynamoDbRecord({
       experimentId,
     });
