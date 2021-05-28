@@ -1,17 +1,17 @@
 const AWSXRay = require('aws-xray-sdk');
 
+const getPipelineStatus = require('../general-services/pipeline-status');
 const constants = require('../general-services/pipeline-manage/constants');
-const validateRequest = require('../../utils/schema-validator');
+const saveProcessingConfigFromGem2s = require('../../utils/hooks/saveProcessingConfigFromGem2s');
+const runQCPipeline = require('../../utils/hooks/runQCPipeline');
+
 const logger = require('../../utils/logging');
+const validateRequest = require('../../utils/schema-validator');
 
 const PipelineHook = require('../../utils/hookRunner');
 
 const pipelineHook = new PipelineHook();
 
-const getPipelineStatus = require('../general-services/pipeline-status');
-
-const saveProcessingConfigFromGem2s = require('../../utils/hooks/saveProcessingConfigFromGem2s');
-const runQCPipeline = require('../../utils/hooks/runQCPipeline');
 
 pipelineHook.register('uploadToAWS', [saveProcessingConfigFromGem2s, runQCPipeline]);
 
