@@ -2,23 +2,25 @@ const constants = require('../../api/general-services/pipeline-manage/constants'
 const workRequestBuilder = require('../workRequestBuilder');
 
 const clusteringWorkRequest = async (payload) => {
+  const { experimentId, output, statusRes } = payload;
+
   // Run work request for cell clustering
   const clusteringWorkConfig = {
-    experimentId: payload.experimentId,
+    experimentId,
     body: {
       name: 'ClusterCells',
       cellSetName: 'Louvain clusters',
       cellSetKey: 'louvain',
-      type: payload.output.config.clusteringSettings.method,
-      config: payload.output.config.clusteringSettings.methodSettings[
-        payload.output.config.clusteringSettings.method
+      type: output.config.clusteringSettings.method,
+      config: output.config.clusteringSettings.methodSettings[
+        output.config.clusteringSettings.method
       ],
     },
-    PipelineRunETag: payload.statusRes[constants.OLD_QC_NAME_TO_BE_REMOVED].startDate,
+    PipelineRunETag: statusRes[constants.OLD_QC_NAME_TO_BE_REMOVED].startDate,
   };
 
   const workRequest = await workRequestBuilder('ClusterCells', clusteringWorkConfig);
-  return workRequest;
+  workRequest.submitWork();
 };
 
 module.exports = clusteringWorkRequest;
