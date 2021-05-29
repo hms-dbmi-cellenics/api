@@ -245,8 +245,6 @@ const createGem2SPipeline = async (experimentId) => {
     return acc;
   }, {});
 
-  console.log(metadata);
-
   const taskParams = {
     projectId: experiment.projectId,
     experimentName: experiment.experimentName,
