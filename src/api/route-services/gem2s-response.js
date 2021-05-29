@@ -14,19 +14,20 @@ const getPipelineStatus = require('../general-services/pipeline-status');
 const sendUpdateToSubscribed = async (experimentId, message, io) => {
   const statusRes = await getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME);
 
-  // How do we handle errors? TODO This needs to be handled
-  // if (statusRes.gem2s) {
-  //   AWSXRay.getSegment().addError(error);
-  //   io.sockets.emit(`ExperimentUpdates-${experimentId}`, message);
-  //   return;
-  // }
-
   // Concatenate into a proper response.
   const response = {
     ...message,
     status: statusRes,
     type: 'gem2s',
   };
+
+  const { error } = message.response;
+
+  if (error) {
+    logger.log('Error in gem2s received');
+
+    AWSXRay.getSegment().addError(error);
+  }
 
   logger.log('Sending to all clients subscribed to experiment', experimentId);
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);

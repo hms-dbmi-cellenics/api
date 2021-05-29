@@ -26,13 +26,17 @@ const pipelineResponse = async (io, message) => {
   AWSXRay.getSegment().addMetadata('message', message);
 
   // Fail hard if there was an error.
-  const { response: { error }, input: { experimentId, taskName, sampleUuid } } = message;
+  const { error = null, experimentId } = message.response;
 
   if (error) {
+    logger.log('Error in qc received');
+
     AWSXRay.getSegment().addError(error);
     io.sockets.emit(`ExperimentUpdates-${experimentId}`, message);
     return;
   }
+
+  const { input: { taskName, sampleUuid } } = message;
 
   // Download output from S3.
   const s3 = new AWS.S3();
