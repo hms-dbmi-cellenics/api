@@ -25,23 +25,31 @@ const pipelineResponse = async (io, message) => {
 
   AWSXRay.getSegment().addMetadata('message', message);
 
-  // Fail hard if there was an error.
-  const { error = null } = message.response;
   const { experimentId } = message;
 
+  const statusRes = await getPipelineStatus(experimentId, constants.QC_PROCESS_NAME);
+  const statusResToSend = { pipeline: statusRes[constants.QC_PROCESS_NAME] };
+
+  const { error = null } = message.response;
+
+  // Fail hard if there was an error.
   if (error) {
     logger.log('Error in qc received');
-
     AWSXRay.getSegment().addError(error);
-    io.sockets.emit(`ExperimentUpdates-${experimentId}`, message);
+
+    const errorResponse = {
+      type: 'qc',
+      status: statusResToSend,
+      ...message,
+    };
+
+    io.sockets.emit(`ExperimentUpdates-${experimentId}`, errorResponse);
     return;
   }
 
-  const { input: { taskName, sampleUuid } } = message;
-
   // Download output from S3.
   const s3 = new AWS.S3();
-  const { output: { bucket, key } } = message;
+  const { input: { taskName, sampleUuid }, output: { bucket, key } } = message;
 
   const outputObject = await s3.getObject(
     {
@@ -92,10 +100,6 @@ const pipelineResponse = async (io, message) => {
       },
     ]);
   }
-
-  const statusRes = await getPipelineStatus(experimentId, constants.QC_PROCESS_NAME);
-
-  const statusResToSend = { pipeline: statusRes[constants.QC_PROCESS_NAME] };
 
   pipelineHook.run(taskName, {
     experimentId,
