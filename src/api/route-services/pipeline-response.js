@@ -26,7 +26,8 @@ const pipelineResponse = async (io, message) => {
   AWSXRay.getSegment().addMetadata('message', message);
 
   // Fail hard if there was an error.
-  const { error = null, experimentId } = message.response;
+  const { error = null } = message.response;
+  const { experimentId } = message;
 
   if (error) {
     logger.log('Error in qc received');
@@ -53,6 +54,7 @@ const pipelineResponse = async (io, message) => {
   if (output.config) {
     await validateRequest(output.config, 'ProcessingConfigBodies.v1.yaml');
   }
+
 
   if (output.plotDataKeys) {
     const plotConfigUploads = Object.entries(output.plotDataKeys).map(([plotUuid, objKey]) => (

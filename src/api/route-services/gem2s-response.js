@@ -21,7 +21,7 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
     type: 'gem2s',
   };
 
-  const { error } = message.response;
+  const { error = null } = message.response || {};
 
   if (error) {
     logger.log('Error in gem2s received');
