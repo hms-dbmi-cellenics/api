@@ -46,7 +46,7 @@ const gem2sResponse = async (io, message) => {
     experimentId, taskName, item,
   } = message;
 
-  pipelineHook.run(taskName, {
+  await pipelineHook.run(taskName, {
     experimentId,
     item,
   });

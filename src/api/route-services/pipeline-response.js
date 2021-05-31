@@ -91,7 +91,7 @@ const pipelineResponse = async (io, message) => {
 
   const statusResToSend = { pipeline: statusRes[constants.QC_PROCESS_NAME] };
 
-  pipelineHook.run(taskName, {
+  await pipelineHook.run(taskName, {
     experimentId,
     output,
     statusRes: statusResToSend,
