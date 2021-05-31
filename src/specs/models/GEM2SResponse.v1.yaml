@@ -5,19 +5,19 @@ properties:
   oneOf:
     - experimentId:
         type: string
-        taskName:
-          type: string
-        oneOf:
-          - item:
-              $ref: ./api-body-schemas/Experiment.v1.yaml
-            table:
-              type: string
-              pattern: 'experiments'
-          - item:
-              $ref: ./api-body-schemas/Samples.v1.yaml
-            table:
-              type: string
-              pattern: 'samples'
+      taskName:
+        type: string
+      oneOf:
+        - item:
+            $ref: ./api-body-schemas/Experiment.v1.yaml
+          table:
+            type: string
+            pattern: 'experiments'
+        - item:
+            $ref: ./api-body-schemas/Samples.v1.yaml
+          table:
+            type: string
+            pattern: 'samples'
       required:
         - experimentId
         - taskName
