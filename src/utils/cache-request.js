@@ -38,7 +38,7 @@ const cacheSetResponse = async (data, ttl = 129600) => {
     experimentId: data.request.experimentId,
     body: data.request.body,
     sandboxId,
-    PipelineRunETag: data.PipelineRunETag,
+    PipelineRunETag: data.request.PipelineRunETag,
   });
 
   logger.log(`Putting data in cache under key ${key}`);
