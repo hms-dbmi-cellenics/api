@@ -238,22 +238,23 @@ const createGem2SPipeline = async (experimentId) => {
 
   const defaultMetadataValue = 'N.A.';
 
-  const metadata = metadataKeys.reduce((acc, key) => {
-    acc[key] = samples.ids.map(
-      (sampleUuid) => samples[sampleUuid].metadata[key] || defaultMetadataValue,
-    );
-    return acc;
-  }, {});
-
   const taskParams = {
     projectId: experiment.projectId,
     experimentName: experiment.experimentName,
     organism: experiment.meta.organism,
-    metadata,
     input: { type: experiment.meta.type },
     sampleIds: samples.ids,
     sampleNames: samples.ids.map((id) => samples[id].name),
   };
+
+  if (metadataKeys.length) {
+    taskParams.metadata = metadataKeys.reduce((acc, key) => {
+      acc[key] = samples.ids.map(
+        (sampleUuid) => samples[sampleUuid].metadata[key] || defaultMetadataValue,
+      );
+      return acc;
+    }, {});
+  }
 
   const context = {
     taskParams,
