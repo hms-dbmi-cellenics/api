@@ -1,0 +1,526 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`safeBatchGetItem Combines correctly the result when over 100 1`] = `
+Object {
+  "ConsumedCapacity": Array [],
+  "Responses": Object {
+    "tableName": Array [
+      Object {
+        "key": 1,
+      },
+      Object {
+        "key": 2,
+      },
+      Object {
+        "key": 1,
+      },
+      Object {
+        "key": 2,
+      },
+    ],
+  },
+  "UnprocessedKeys": Object {},
+}
+`;
+
+exports[`safeBatchGetItem Returns correctly the result when under 100 1`] = `
+Object {
+  "ConsumedCapacity": Array [],
+  "Responses": Object {
+    "tableName": Array [
+      Object {
+        "key": 1,
+      },
+      Object {
+        "key": 2,
+      },
+    ],
+  },
+  "UnprocessedKeys": Object {},
+}
+`;
+
+exports[`safeBatchGetItem splits the params if they exceed 100 keys 1`] = `
+Array [
+  Object {
+    "RequestItems": Object {
+      "tableName": Object {
+        "AttributesToGet": Array [
+          "attributeId",
+        ],
+        "ConsistentRead": true,
+        "ExpressionAttributeNames": Object {},
+        "Keys": Array [
+          Object {
+            "key": 0,
+          },
+          Object {
+            "key": 1,
+          },
+          Object {
+            "key": 2,
+          },
+          Object {
+            "key": 3,
+          },
+          Object {
+            "key": 4,
+          },
+          Object {
+            "key": 5,
+          },
+          Object {
+            "key": 6,
+          },
+          Object {
+            "key": 7,
+          },
+          Object {
+            "key": 8,
+          },
+          Object {
+            "key": 9,
+          },
+          Object {
+            "key": 10,
+          },
+          Object {
+            "key": 11,
+          },
+          Object {
+            "key": 12,
+          },
+          Object {
+            "key": 13,
+          },
+          Object {
+            "key": 14,
+          },
+          Object {
+            "key": 15,
+          },
+          Object {
+            "key": 16,
+          },
+          Object {
+            "key": 17,
+          },
+          Object {
+            "key": 18,
+          },
+          Object {
+            "key": 19,
+          },
+          Object {
+            "key": 20,
+          },
+          Object {
+            "key": 21,
+          },
+          Object {
+            "key": 22,
+          },
+          Object {
+            "key": 23,
+          },
+          Object {
+            "key": 24,
+          },
+          Object {
+            "key": 25,
+          },
+          Object {
+            "key": 26,
+          },
+          Object {
+            "key": 27,
+          },
+          Object {
+            "key": 28,
+          },
+          Object {
+            "key": 29,
+          },
+          Object {
+            "key": 30,
+          },
+          Object {
+            "key": 31,
+          },
+          Object {
+            "key": 32,
+          },
+          Object {
+            "key": 33,
+          },
+          Object {
+            "key": 34,
+          },
+          Object {
+            "key": 35,
+          },
+          Object {
+            "key": 36,
+          },
+          Object {
+            "key": 37,
+          },
+          Object {
+            "key": 38,
+          },
+          Object {
+            "key": 39,
+          },
+          Object {
+            "key": 40,
+          },
+          Object {
+            "key": 41,
+          },
+          Object {
+            "key": 42,
+          },
+          Object {
+            "key": 43,
+          },
+          Object {
+            "key": 44,
+          },
+          Object {
+            "key": 45,
+          },
+          Object {
+            "key": 46,
+          },
+          Object {
+            "key": 47,
+          },
+          Object {
+            "key": 48,
+          },
+          Object {
+            "key": 49,
+          },
+          Object {
+            "key": 50,
+          },
+          Object {
+            "key": 51,
+          },
+          Object {
+            "key": 52,
+          },
+          Object {
+            "key": 53,
+          },
+          Object {
+            "key": 54,
+          },
+          Object {
+            "key": 55,
+          },
+          Object {
+            "key": 56,
+          },
+          Object {
+            "key": 57,
+          },
+          Object {
+            "key": 58,
+          },
+          Object {
+            "key": 59,
+          },
+          Object {
+            "key": 60,
+          },
+          Object {
+            "key": 61,
+          },
+          Object {
+            "key": 62,
+          },
+          Object {
+            "key": 63,
+          },
+          Object {
+            "key": 64,
+          },
+          Object {
+            "key": 65,
+          },
+          Object {
+            "key": 66,
+          },
+          Object {
+            "key": 67,
+          },
+          Object {
+            "key": 68,
+          },
+          Object {
+            "key": 69,
+          },
+          Object {
+            "key": 70,
+          },
+          Object {
+            "key": 71,
+          },
+          Object {
+            "key": 72,
+          },
+          Object {
+            "key": 73,
+          },
+          Object {
+            "key": 74,
+          },
+          Object {
+            "key": 75,
+          },
+          Object {
+            "key": 76,
+          },
+          Object {
+            "key": 77,
+          },
+          Object {
+            "key": 78,
+          },
+          Object {
+            "key": 79,
+          },
+          Object {
+            "key": 80,
+          },
+          Object {
+            "key": 81,
+          },
+          Object {
+            "key": 82,
+          },
+          Object {
+            "key": 83,
+          },
+          Object {
+            "key": 84,
+          },
+          Object {
+            "key": 85,
+          },
+          Object {
+            "key": 86,
+          },
+          Object {
+            "key": 87,
+          },
+          Object {
+            "key": 88,
+          },
+          Object {
+            "key": 89,
+          },
+          Object {
+            "key": 90,
+          },
+          Object {
+            "key": 91,
+          },
+          Object {
+            "key": 92,
+          },
+          Object {
+            "key": 93,
+          },
+          Object {
+            "key": 94,
+          },
+          Object {
+            "key": 95,
+          },
+          Object {
+            "key": 96,
+          },
+          Object {
+            "key": 97,
+          },
+          Object {
+            "key": 98,
+          },
+          Object {
+            "key": 99,
+          },
+        ],
+        "ProjectionExpression": "projectionExpressionValue",
+      },
+    },
+    "ReturnConsumedCapacity": "returnConsumedCapacityValue",
+  },
+  Object {
+    "RequestItems": Object {
+      "tableName": Object {
+        "AttributesToGet": Array [
+          "attributeId",
+        ],
+        "ConsistentRead": true,
+        "ExpressionAttributeNames": Object {},
+        "Keys": Array [
+          Object {
+            "key": 100,
+          },
+          Object {
+            "key": 101,
+          },
+          Object {
+            "key": 102,
+          },
+          Object {
+            "key": 103,
+          },
+          Object {
+            "key": 104,
+          },
+          Object {
+            "key": 105,
+          },
+          Object {
+            "key": 106,
+          },
+          Object {
+            "key": 107,
+          },
+          Object {
+            "key": 108,
+          },
+          Object {
+            "key": 109,
+          },
+          Object {
+            "key": 110,
+          },
+          Object {
+            "key": 111,
+          },
+          Object {
+            "key": 112,
+          },
+          Object {
+            "key": 113,
+          },
+          Object {
+            "key": 114,
+          },
+          Object {
+            "key": 115,
+          },
+          Object {
+            "key": 116,
+          },
+          Object {
+            "key": 117,
+          },
+          Object {
+            "key": 118,
+          },
+          Object {
+            "key": 119,
+          },
+          Object {
+            "key": 120,
+          },
+          Object {
+            "key": 121,
+          },
+          Object {
+            "key": 122,
+          },
+          Object {
+            "key": 123,
+          },
+          Object {
+            "key": 124,
+          },
+          Object {
+            "key": 125,
+          },
+          Object {
+            "key": 126,
+          },
+          Object {
+            "key": 127,
+          },
+          Object {
+            "key": 128,
+          },
+          Object {
+            "key": 129,
+          },
+          Object {
+            "key": 130,
+          },
+          Object {
+            "key": 131,
+          },
+          Object {
+            "key": 132,
+          },
+          Object {
+            "key": 133,
+          },
+          Object {
+            "key": 134,
+          },
+          Object {
+            "key": 135,
+          },
+          Object {
+            "key": 136,
+          },
+          Object {
+            "key": 137,
+          },
+          Object {
+            "key": 138,
+          },
+          Object {
+            "key": 139,
+          },
+          Object {
+            "key": 140,
+          },
+          Object {
+            "key": 141,
+          },
+          Object {
+            "key": 142,
+          },
+          Object {
+            "key": 143,
+          },
+          Object {
+            "key": 144,
+          },
+          Object {
+            "key": 145,
+          },
+          Object {
+            "key": 146,
+          },
+          Object {
+            "key": 147,
+          },
+          Object {
+            "key": 148,
+          },
+          Object {
+            "key": 149,
+          },
+        ],
+        "ProjectionExpression": "projectionExpressionValue",
+      },
+    },
+    "ReturnConsumedCapacity": "returnConsumedCapacityValue",
+  },
+]
+`;

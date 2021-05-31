@@ -39,8 +39,13 @@ const safeBatchGetItem = async (dynamodb, params) => {
     tableNames.forEach((tableName) => {
       const keysForTable = chunkedKeysByTableName[tableName][index];
 
+      const { Keys, ...restOfParams } = params.RequestItems[tableName];
+
       if (keysForTable) {
-        currentKeys[tableName] = { Keys: keysForTable };
+        currentKeys[tableName] = {
+          ...restOfParams,
+          Keys: keysForTable,
+        };
       }
     });
 
