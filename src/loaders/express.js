@@ -73,7 +73,7 @@ module.exports = async (app) => {
 
   app.use((err, req, res, next) => {
     console.error(`Error thrown in HTTP request (${req.method} ${req.path})`);
-    console.error(req.body || 'Empty body');
+    console.error(Object.keys(req.body).length ? req.body : 'Empty body');
     console.error(err);
 
     // format errors
