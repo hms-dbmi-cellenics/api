@@ -5,10 +5,34 @@ const { cacheGetRequest } = require('../../utils/cache-request');
 const { CacheMissError } = require('../../cache/cache-utils');
 const { handlePagination } = require('../../utils/handlePagination');
 const validateRequest = require('../../utils/schema-validator');
+const getPipelineStatus = require('../general-services/pipeline-status');
+
+const pipelineConstants = require('../general-services/pipeline-manage/constants');
 
 
 const handleWorkRequest = async (workRequest, socket) => {
-  const { uuid, pagination } = workRequest;
+  const { uuid, pagination, experimentId } = workRequest;
+
+  // Check if pipeline is runnning
+  const { qc: { status: qcPipelineStatus } } = await getPipelineStatus(
+    experimentId, pipelineConstants.QC_PROCESS_NAME,
+  );
+
+  if (qcPipelineStatus === pipelineConstants.NOT_CREATED) {
+    throw new Error('Work request can not be handled as QC pipeline has not been run');
+  }
+
+  if (qcPipelineStatus === pipelineConstants.RUNNING) {
+    throw new Error('Work request can not be handled as a QC pipeline is running');
+  }
+
+  if ([
+    pipelineConstants.ABORTED,
+    pipelineConstants.FAILED,
+    pipelineConstants.TIMED_OUT,
+  ].includes(qcPipelineStatus)) {
+    throw new Error('Work request can not be handled because the previous QC pipeline run had an error.');
+  }
 
   try {
     logger.log(`Trying to fetch response to request ${uuid} from cache...`);
