@@ -9,21 +9,6 @@ const getPipelineStatus = require('../general-services/pipeline-status');
 
 const pipelineConstants = require('../general-services/pipeline-manage/constants');
 
-class WorkRequestError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'WorkRequestError';
-  }
-}
-
-const createWorkResponseError = (message) => ({
-  response: {
-    code: 503,
-    error: message,
-  },
-});
-
-
 const handleWorkRequest = async (workRequest, socket) => {
   const { uuid, pagination, experimentId } = workRequest;
 
@@ -33,20 +18,8 @@ const handleWorkRequest = async (workRequest, socket) => {
   );
 
   try {
-    if (qcPipelineStatus === pipelineConstants.NOT_CREATED) {
-      throw new WorkRequestError('Work request can not be handled as QC pipeline has not been run');
-    }
-
-    if (qcPipelineStatus === pipelineConstants.RUNNING) {
-      throw new WorkRequestError('Work request can not be handled as a QC pipeline is running');
-    }
-
-    if ([
-      pipelineConstants.ABORTED,
-      pipelineConstants.FAILED,
-      pipelineConstants.TIMED_OUT,
-    ].includes(qcPipelineStatus)) {
-      throw new WorkRequestError('Work request can not be handled because the previous QC pipeline run had an error.');
+    if (qcPipelineStatus !== pipelineConstants.SUCCEEDED) {
+      throw new Error(`Work request can not be handled because pipeline is ${qcPipelineStatus}`);
     }
 
     logger.log(`Trying to fetch response to request ${uuid} from cache...`);
@@ -78,15 +51,10 @@ const handleWorkRequest = async (workRequest, socket) => {
 
       const workSubmitService = new WorkSubmitService(workRequest);
       await workSubmitService.submitWork();
-    } else if (e instanceof WorkRequestError) {
-      logger.log(e.message);
-      logger.log('Work request error : ', e.message);
-
-      socket.emit(`WorkResponse-${uuid}`, createWorkResponseError(e.message));
-      logger.log(`Error response sent back to ${uuid}`);
     } else {
       logger.log('Unexpected error happened while trying to process cached response:', e.message);
       AWSXRay.getSegment().addError(e);
+      throw e;
     }
   }
 };
