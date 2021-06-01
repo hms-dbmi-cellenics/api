@@ -337,18 +337,23 @@ describe('getStepsFromExecutionHistory', () => {
   });
 });
 
-jest.mock('../../../src/api/route-services/experiment', () => jest.fn().mockImplementation(() => ({
-  getPipelinesHandles: () => ({
-    [pipelineConstants.GEM2S_PROCESS_NAME]: {
-      stateMachineArn: '',
-      executionArn: '',
-    },
-    [pipelineConstants.QC_PROCESS_NAME]: {
-      stateMachineArn: '',
-      executionArn: '',
-    },
-  }),
-})));
+jest.mock('../../../src/api/route-services/experiment', () => jest.fn().mockImplementation(() => {
+  // eslint-disable-next-line global-require
+  const internalConstants = require('../../../src/api/general-services/pipeline-manage/constants');
+
+  return {
+    getPipelinesHandles: () => ({
+      [internalConstants.GEM2S_PROCESS_NAME]: {
+        stateMachineArn: '',
+        executionArn: '',
+      },
+      [internalConstants.QC_PROCESS_NAME]: {
+        stateMachineArn: '',
+        executionArn: '',
+      },
+    }),
+  };
+}));
 
 describe('pipelineStatus', () => {
   beforeEach(() => {
