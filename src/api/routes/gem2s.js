@@ -34,17 +34,18 @@ module.exports = {
     }
 
     const { io, parsedMessage } = result;
+    if (!parsedMessage) {
+      try {
+        await gem2sResponse(io, parsedMessage);
+      } catch (e) {
+        logger.error(
+          'gem2s pipeline response handler failed with error: ', e,
+        );
 
-    try {
-      await gem2sResponse(io, parsedMessage);
-    } catch (e) {
-      logger.error(
-        'Pipeline response handler failed with error: ', e,
-      );
-
-      AWSXRay.getSegment().addError(e);
-      res.status(200).send('nok');
-      return;
+        AWSXRay.getSegment().addError(e);
+        res.status(200).send('nok');
+        return;
+      }
     }
 
     res.status(200).send('ok');

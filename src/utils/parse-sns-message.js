@@ -53,6 +53,8 @@ const parseSNSMessage = async (req) => {
       logger.error('Error parsing message:', e);
       throw e;
     }
+  } else {
+    logger.log(`SNS message is of type "${msg.Type}", ignoring it`);
   }
 
   return {};
