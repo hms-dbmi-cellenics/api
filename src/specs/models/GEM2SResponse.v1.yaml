@@ -21,10 +21,13 @@ properties:
       required:
         - experimentId
         - taskName
-    - error:
-        description: "Whether there's been an error."
-        oneOf:
-          - type: string
-          - type: boolean
-      required: 
-        - error
+    - response:
+        type: object
+        properties:
+          error:
+            description: "Whether there's been an error."
+            oneOf:
+              - type: string
+              - type: boolean
+          required: 
+            - error
