@@ -12,7 +12,7 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
         },
         "Key": Object {
           "experimentId": Object {
-            "S": undefined,
+            "S": "1234",
           },
         },
         "ReturnValues": "UPDATED_NEW",
@@ -61,7 +61,11 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
             },
           },
         },
-        "Key": Object {},
+        "Key": Object {
+          "experimentId": Object {
+            "S": "1234",
+          },
+        },
         "ReturnValues": "UPDATED_NEW",
         "TableName": "experiments-test",
         "UpdateExpression": "SET processingConfig.#key1 = :val1",
@@ -79,7 +83,7 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
         },
         "Key": Object {
           "experimentId": Object {
-            "S": undefined,
+            "S": "1234",
           },
         },
         "ReturnValues": "UPDATED_NEW",
@@ -129,7 +133,11 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
             },
           },
         },
-        "Key": Object {},
+        "Key": Object {
+          "experimentId": Object {
+            "S": "1234",
+          },
+        },
         "ReturnValues": "UPDATED_NEW",
         "TableName": "experiments-test",
         "UpdateExpression": "SET processingConfig.#key1 = :val1",
@@ -151,7 +159,7 @@ exports[`Test Pipeline Response Service functions propely with correct input (no
         },
         "Key": Object {
           "experimentId": Object {
-            "S": undefined,
+            "S": "1234",
           },
         },
         "ReturnValues": "UPDATED_NEW",
@@ -183,7 +191,11 @@ exports[`Test Pipeline Response Service functions propely with correct input (no
             },
           },
         },
-        "Key": Object {},
+        "Key": Object {
+          "experimentId": Object {
+            "S": "1234",
+          },
+        },
         "ReturnValues": "UPDATED_NEW",
         "TableName": "experiments-test",
         "UpdateExpression": "SET processingConfig.#key1 = :val1",
@@ -201,7 +213,7 @@ exports[`Test Pipeline Response Service functions propely with correct input (no
         },
         "Key": Object {
           "experimentId": Object {
-            "S": undefined,
+            "S": "1234",
           },
         },
         "ReturnValues": "UPDATED_NEW",
@@ -234,7 +246,11 @@ exports[`Test Pipeline Response Service functions propely with correct input (no
             },
           },
         },
-        "Key": Object {},
+        "Key": Object {
+          "experimentId": Object {
+            "S": "1234",
+          },
+        },
         "ReturnValues": "UPDATED_NEW",
         "TableName": "experiments-test",
         "UpdateExpression": "SET processingConfig.#key1 = :val1",
