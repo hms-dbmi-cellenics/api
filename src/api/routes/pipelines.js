@@ -44,7 +44,7 @@ module.exports = {
 
     const { io, parsedMessage } = result;
 
-    if (!parsedMessage) {
+    if (parsedMessage) {
       try {
         await pipelineResponse(io, parsedMessage);
       } catch (e) {
