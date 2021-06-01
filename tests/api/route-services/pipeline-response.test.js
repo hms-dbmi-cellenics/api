@@ -29,6 +29,7 @@ describe('Test Pipeline Response Service', () => {
       key: '1234',
     },
     response: { error: false },
+    experimentId: '1234',
   };
 
   const s3output = {

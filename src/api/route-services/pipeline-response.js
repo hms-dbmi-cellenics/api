@@ -25,18 +25,31 @@ const pipelineResponse = async (io, message) => {
 
   AWSXRay.getSegment().addMetadata('message', message);
 
-  // Fail hard if there was an error.
-  const { response: { error }, input: { experimentId, taskName, sampleUuid } } = message;
+  const { experimentId } = message;
 
+  const statusRes = await getPipelineStatus(experimentId, constants.QC_PROCESS_NAME);
+  const statusResToSend = { pipeline: statusRes[constants.QC_PROCESS_NAME] };
+
+  const { error = null } = message.response;
+
+  // Fail hard if there was an error.
   if (error) {
+    logger.log('Error in qc received');
     AWSXRay.getSegment().addError(error);
-    io.sockets.emit(`ExperimentUpdates-${experimentId}`, message);
+
+    const errorResponse = {
+      type: 'qc',
+      status: statusResToSend,
+      ...message,
+    };
+
+    io.sockets.emit(`ExperimentUpdates-${experimentId}`, errorResponse);
     return;
   }
 
   // Download output from S3.
   const s3 = new AWS.S3();
-  const { output: { bucket, key } } = message;
+  const { input: { taskName, sampleUuid }, output: { bucket, key } } = message;
 
   const outputObject = await s3.getObject(
     {
@@ -49,6 +62,7 @@ const pipelineResponse = async (io, message) => {
   if (output.config) {
     await validateRequest(output.config, 'ProcessingConfigBodies.v1.yaml');
   }
+
 
   if (output.plotDataKeys) {
     const plotConfigUploads = Object.entries(output.plotDataKeys).map(([plotUuid, objKey]) => (
@@ -86,10 +100,6 @@ const pipelineResponse = async (io, message) => {
       },
     ]);
   }
-
-  const statusRes = await getPipelineStatus(experimentId, constants.QC_PROCESS_NAME);
-
-  const statusResToSend = { pipeline: statusRes[constants.QC_PROCESS_NAME] };
 
   await pipelineHook.run(taskName, {
     experimentId,

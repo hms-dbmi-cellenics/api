@@ -2,42 +2,42 @@ title: Pipeline response
 type: object
 description: This is the format the pipeline clients communicate the results of the steps they completed back to the API. The API is then responsible for transforming this data and returning it back to the user.
 properties:
-  output:
-    type: object
+    output:
+      type: object
+      required:
+        - bucket
+        - key
+      properties:
+        bucket:
+          type: string
+          description: The S3 bucket where the response body is located.
+        key:
+          type: string
+          description: The key within the S3 bucket where the result is located.
+    input:
+      type: object
+      properties:
+        experimentId:
+          type: string
+          description: The experiment ID for which the step was completed.
+        taskName:
+          type: string
+          description: The name of the task that was executed.
+        config:
+          $ref: ./ProcessingConfigBodies.v1.yaml
+      required:
+        - experimentId
+        - taskName
+    response:
+      type: object
+      properties:
+        error:
+          description: "Whether there's been an error."
+          oneOf:
+            - type: string
+            - type: boolean
+        required: 
+          - error
     required:
-      - bucket
-      - key
-    properties:
-      bucket:
-        type: string
-        description: The S3 bucket where the response body is located.
-      key:
-        type: string
-        description: The key within the S3 bucket where the result is located.
-  input:
-    type: object
-    properties:
-      experimentId:
-        type: string
-        description: The experiment ID for which the step was completed.
-      taskName:
-        type: string
-        description: The name of the task that was executed.
-      config:
-        $ref: ./ProcessingConfigBodies.v1.yaml
-    required:
-      - experimentId
-      - taskName
-  response:
-    type: object
-    required:
-      - error
-    properties:
-      error:
-        description: "Whether there's been an error."
-        oneOf:
-          - type: string
-          - type: boolean
-required:
-  - output
-  - response
+      - output
+      - response

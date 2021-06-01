@@ -107,6 +107,7 @@ const getPipelineStatus = async (experimentId, processName) => {
   const experimentService = new ExperimentService();
 
   const pipelinesHandles = await experimentService.getPipelinesHandles(experimentId);
+
   const { executionArn } = pipelinesHandles[processName];
 
   let execution = {};
