@@ -101,7 +101,7 @@ const pipelineResponse = async (io, message) => {
     ]);
   }
 
-  pipelineHook.run(taskName, {
+  await pipelineHook.run(taskName, {
     experimentId,
     output,
     statusRes: statusResToSend,

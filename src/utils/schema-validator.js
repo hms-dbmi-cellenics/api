@@ -4,6 +4,7 @@ const path = require('path');
 const SwaggerClient = require('swagger-client');
 const Validator = require('swagger-model-validator');
 const yaml = require('js-yaml');
+const AWSXRay = require('aws-xray-sdk');
 const _ = require('lodash');
 
 const logger = require('./logging');
@@ -14,6 +15,7 @@ const validateRequest = async (request, schemaPath) => {
   // Create a custom Swagger client and 'HTTP fetcher' mock so we can load in
   // our spec spread across multiple local files. The result is the entire spec
   // fully resolved across all refs and imports.
+  AWSXRay.setContextMissingStrategy(() => { });
   const { spec } = await SwaggerClient.resolve({
     url: specPath,
     http: async ({ url, headers }) => {
@@ -32,6 +34,7 @@ const validateRequest = async (request, schemaPath) => {
       };
     },
   });
+  AWSXRay.setContextMissingStrategy('LOG_ERROR');
 
   const validator = new Validator();
   const validation = validator.validate(

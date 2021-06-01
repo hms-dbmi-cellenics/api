@@ -7,13 +7,25 @@ describe('HookRunner', () => {
     expect(runner.hooks).toEqual({});
   });
 
-  it('should register hooks properly', () => {
+  it('should register single hooks properly', () => {
     const testFn = () => true;
 
     const runner = new HookRunner();
 
     runner.register('test', testFn);
     runner.register('test', testFn);
+
+    expect(Object.keys(runner.hooks).length).toEqual(1);
+    expect(runner.hooks.test.length).toEqual(2);
+  });
+
+  it('should register array of hooks properly', () => {
+    const testFn1 = () => true;
+    const testFn2 = () => true;
+
+    const runner = new HookRunner();
+
+    runner.register('test', [testFn1, testFn2]);
 
     expect(Object.keys(runner.hooks).length).toEqual(1);
     expect(runner.hooks.test.length).toEqual(2);

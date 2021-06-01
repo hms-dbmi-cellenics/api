@@ -9,6 +9,7 @@ const config = require('../../../config');
 const logger = require('../../../utils/logging');
 const ExperimentService = require('../../route-services/experiment');
 const SamplesService = require('../../route-services/samples');
+const ProjectService = require('../../route-services/projects');
 
 const { qcPipelineSkeleton } = require('./skeletons/qc-pipeline-skeleton');
 const { gem2sPipelineSkeleton } = require('./skeletons/gem2s-pipeline-skeleton');
@@ -19,6 +20,7 @@ const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('./constants');
 
 const experimentService = new ExperimentService();
 const samplesService = new SamplesService();
+const projectService = new ProjectService();
 
 
 const getPipelineArtifacts = async () => {
@@ -232,6 +234,9 @@ const createGem2SPipeline = async (experimentId) => {
 
   const experiment = await experimentService.getExperimentData(experimentId);
   const { samples } = await samplesService.getSamplesByExperimentId(experimentId);
+  const { metadataKeys } = await projectService.getProject(experiment.projectId);
+
+  const defaultMetadataValue = 'N.A.';
 
   const taskParams = {
     projectId: experiment.projectId,
@@ -241,6 +246,15 @@ const createGem2SPipeline = async (experimentId) => {
     sampleIds: samples.ids,
     sampleNames: samples.ids.map((id) => samples[id].name),
   };
+
+  if (metadataKeys.length) {
+    taskParams.metadata = metadataKeys.reduce((acc, key) => {
+      acc[key] = samples.ids.map(
+        (sampleUuid) => samples[sampleUuid].metadata[key] || defaultMetadataValue,
+      );
+      return acc;
+    }, {});
+  }
 
   const context = {
     taskParams,
