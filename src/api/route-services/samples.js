@@ -1,15 +1,19 @@
+const _ = require('lodash');
+
 const { NotFoundError, OK } = require('../../utils/responses');
 
 const config = require('../../config');
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord,
 } = require('../../utils/dynamoDb');
-const logger = require('../../utils/logging');
+const AWS = require('../../utils/requireAWS');
 
+const logger = require('../../utils/logging');
 
 class SamplesService {
   constructor() {
     this.tableName = `samples-${config.clusterEnv}`;
+    this.sampleFilesBucketName = `biomage-originals-${config.clusterEnv}`;
   }
 
   async getSamples(projectUuid) {
@@ -92,14 +96,40 @@ class SamplesService {
     }
   }
 
-  async deleteSamples(projectUuid, experimentId) {
+  async deleteSamplesFromS3(projectUuid, sampleUuids) {
+    const s3 = new AWS.S3();
+
+    const sampleObjectsToDelete = sampleUuids.map((sampleUuid) => (
+      [
+        { Key: `${projectUuid}/${sampleUuid}/barcodes.tsv.gz` },
+        { Key: `${projectUuid}/${sampleUuid}/features.tsv.gz` },
+        { Key: `${projectUuid}/${sampleUuid}/matrix.mtx.gz` },
+      ]
+    ));
+
+    const s3Params = {
+      Bucket: this.sampleFilesBucketName,
+      Delete: {
+        Objects: _.flatten(sampleObjectsToDelete),
+        Quiet: false,
+      },
+    };
+
+    const result = await s3.deleteObjects(s3Params).promise();
+
+    if (result.Errors.length) {
+      throw Error(`Delete S3 object errors: ${JSON.stringify(result.Errors)}`);
+    }
+  }
+
+  async deleteSamples(projectUuid, experimentId, sampleUuids) {
     logger.log(`Deleting sample for project ${projectUuid} and expId ${experimentId}`);
 
     const marshalledKey = convertToDynamoDbRecord({
       experimentId,
     });
 
-    const params = {
+    const dynamodbParams = {
       TableName: this.tableName,
       Key: marshalledKey,
     };
@@ -107,14 +137,18 @@ class SamplesService {
     const dynamodb = createDynamoDbInstance();
 
     try {
-      await dynamodb.deleteItem(params).send();
-      return OK();
+      await dynamodb.deleteItem(dynamodbParams).send();
     } catch (e) {
       if (e.statusCode === 404) throw NotFoundError('Project not found');
       throw e;
     }
+
+    if (sampleUuids.length) {
+      this.deleteSamplesFromS3(projectUuid, sampleUuids);
+    }
+
+    return OK();
   }
 }
-
 
 module.exports = SamplesService;

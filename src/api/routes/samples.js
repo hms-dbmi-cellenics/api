@@ -15,6 +15,7 @@ module.exports = {
   },
   'samples#update': (req, res, next) => {
     const { body, params: { projectUuid } } = req;
+
     samplesService.updateSamples(projectUuid, body)
       .then((data) => res.json(data))
       .catch(next);
