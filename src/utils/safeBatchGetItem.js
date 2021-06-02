@@ -1,5 +1,53 @@
 const _ = require('lodash');
 
+// DO NOT MODIFY, this value is specified in dynamodb docs
+const maxKeys = 100;
+
+const mergeIntoBatchKeysObject = (keys, tableName, batchKeysObject) => {
+  const sumOfKeys = _.sumBy(Object.values(batchKeysObject), (obj) => obj.length);
+
+  const spaceInRequest = maxKeys - sumOfKeys;
+
+  // If the new keys fit in the current object then just return it with the new entry
+  if (keys.length <= spaceInRequest) {
+    return [{ ...batchKeysObject, [tableName]: keys }];
+  }
+
+  const firstKeys = keys.slice(0, spaceInRequest);
+  const secondKeys = keys.slice(spaceInRequest);
+
+  // Put as many keys as we can fit in old object
+  const updatedBatchObj = {
+    ...batchKeysObject,
+    [tableName]: firstKeys,
+  };
+
+  // Create a new object for all the ones that we couldn't put
+  const newBatchObj = { [tableName]: secondKeys };
+
+  return [updatedBatchObj, newBatchObj];
+};
+
+const sendBatchGetItemRequest = (batchKeysObject, allParams, dynamodb) => {
+  const keysObject = {};
+
+  Object.entries(batchKeysObject).forEach(([tableName, keys]) => {
+    const { Keys, ...restOfParams } = allParams.RequestItems[tableName];
+
+    keysObject[tableName] = {
+      ...restOfParams,
+      Keys: keys,
+    };
+  });
+
+  const params = {
+    ...allParams,
+    RequestItems: keysObject,
+  };
+
+  return dynamodb.batchGetItem(params).promise();
+};
+
 const concatIfArray = (objValue, srcValue) => {
   if (_.isArray(objValue) && _.isArray(srcValue)) {
     return [...objValue, ...srcValue];
@@ -7,9 +55,6 @@ const concatIfArray = (objValue, srcValue) => {
 
   return undefined;
 };
-
-// DO NOT MODIFY, this value is specified in dynamodb docs
-const maxKeys = 100;
 
 /**
  * A wrapper for dynamodb's batchGetItem
@@ -21,45 +66,35 @@ const maxKeys = 100;
  * @returns The result as would be returned by batchGetItem
  */
 const safeBatchGetItem = async (dynamodb, params) => {
-  const tableNames = [];
-  const chunkedKeysByTableName = {};
+  let batchGetKeys = [{}];
 
-  let amountOfRequests = 0;
-
-  // For each table, separate keys into subarrays of the maximum size possible each (100 keys)
-  // example: chunkedKeysByTableName[tableName] = [[first 100 keys],[second 100 keys]]
+  // Fill up batchGetKeys with the keys for each table for each batchGet
   Object.entries(params.RequestItems).forEach(([tableName, { Keys: keys }]) => {
-    tableNames.push(tableName);
-    chunkedKeysByTableName[tableName] = _.chunk(keys, maxKeys);
+    const keyPartitions = _.chunk(keys, maxKeys);
 
-    amountOfRequests = Math.max(chunkedKeysByTableName[tableName].length, amountOfRequests);
+    // Take out last element of keyPartitions (that might still have not reached 100)
+    const lastKeyPartition = keyPartitions.pop();
+    // Take out last element of batchGetKeys (that might still have not reached 100)
+    const lastBatchGetObj = batchGetKeys.pop();
+
+    // Combine these two objects into one if possible
+    // (or into one with 100 and the other with the rest)
+    const lastBatchKeysObjects = mergeIntoBatchKeysObject(
+      lastKeyPartition,
+      tableName,
+      lastBatchGetObj,
+    );
+
+    // Convert all other keys that we know are groups of 100 into batchGetKeys objects
+    const newBatchGets = keyPartitions.map((partition) => ({ [tableName]: partition }));
+
+    // Concat all objects
+    batchGetKeys = [...batchGetKeys, ...newBatchGets, ...lastBatchKeysObjects];
   });
 
-  // Execute one request for each number in amountOfRequests
-  // (this is equivalent to using a traditional for)
-  const requestPromises = _.range(amountOfRequests).map(async (partitionIndex) => {
-    const currentKeys = {};
-
-    tableNames.forEach((tableName) => {
-      const keysForTable = chunkedKeysByTableName[tableName][partitionIndex];
-
-      const { Keys, ...restOfParams } = params.RequestItems[tableName];
-
-      if (keysForTable) {
-        currentKeys[tableName] = {
-          ...restOfParams,
-          Keys: keysForTable,
-        };
-      }
-    });
-
-    const chunkParams = {
-      ...params,
-      RequestItems: currentKeys,
-    };
-
-    return dynamodb.batchGetItem(chunkParams).promise();
-  });
+  const requestPromises = batchGetKeys.map(
+    (batchGetObject) => sendBatchGetItemRequest(batchGetObject, params, dynamodb),
+  );
 
   // Wait for all batchGetItems to resolve
   const getResults = await Promise.all(requestPromises);
