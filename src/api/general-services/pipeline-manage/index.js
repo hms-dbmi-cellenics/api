@@ -253,6 +253,7 @@ const createGem2SPipeline = async (experimentId) => {
       const sanitizedKey = key.replace(/-+/g, '_');
 
       acc[sanitizedKey] = samples.ids.map(
+        // Fetch using unsanitized key as it is the key used to store metadata in sample
         (sampleUuid) => samples[sampleUuid].metadata[key] || defaultMetadataValue,
       );
       return acc;
