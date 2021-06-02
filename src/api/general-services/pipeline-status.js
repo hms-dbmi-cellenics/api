@@ -144,7 +144,7 @@ const getPipelineStatus = async (experimentId, processName) => {
     /* eslint-enable no-await-in-loop */
 
     completedSteps = getStepsFromExecutionHistory(events);
-    logger.log(`ExecutionHistory for ARN ${executionArn}: ${events.length} events, ${completedSteps.length} completed steps`);
+    logger.log(`ExecutionHistory(${processName}) for ARN ${executionArn}: ${events.length} events, ${completedSteps.length} completed steps`);
   }
 
   const response = {

@@ -39,17 +39,19 @@ module.exports = {
     }
 
     const { io, parsedMessage } = result;
+    const isSnsNotification = parsedMessage !== undefined;
+    if (isSnsNotification) {
+      try {
+        await pipelineResponse(io, parsedMessage);
+      } catch (e) {
+        logger.error(
+          'qc pipeline response handler failed with error: ', e,
+        );
 
-    try {
-      await pipelineResponse(io, parsedMessage);
-    } catch (e) {
-      logger.error(
-        'Pipeline response handler failed with error: ', e,
-      );
-
-      AWSXRay.getSegment().addError(e);
-      res.status(200).send('nok');
-      return;
+        AWSXRay.getSegment().addError(e);
+        res.status(200).send('nok');
+        return;
+      }
     }
 
     res.status(200).send('ok');
