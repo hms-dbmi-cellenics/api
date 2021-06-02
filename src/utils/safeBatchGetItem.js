@@ -4,28 +4,26 @@ const _ = require('lodash');
 const maxKeys = 100;
 
 const mergeIntoBatchKeysObject = (keys, tableName, batchKeysObject) => {
-  const sumOfKeys = _.sumBy(Object.values(batchKeysObject), (obj) => obj.length);
+  const firstBatchObj = { ...batchKeysObject };
 
-  const spaceInRequest = maxKeys - sumOfKeys;
+  const spaceOccupied = _.sumBy(Object.values(batchKeysObject), (obj) => obj.length);
+  const freeSpace = maxKeys - spaceOccupied;
 
   // If the new keys fit in the current object then just return it with the new entry
-  if (keys.length <= spaceInRequest) {
+  if (keys.length <= freeSpace) {
     return [{ ...batchKeysObject, [tableName]: keys }];
   }
 
-  const firstKeys = keys.slice(0, spaceInRequest);
-  const secondKeys = keys.slice(spaceInRequest);
+  const firstKeys = keys.slice(0, freeSpace);
+  const secondKeys = keys.slice(freeSpace);
 
-  // Put as many keys as we can fit in old object
-  const updatedBatchObj = {
-    ...batchKeysObject,
-    [tableName]: firstKeys,
-  };
+  // Put as many keys as we can fit in old object (if we can)
+  if (freeSpace) firstBatchObj[tableName] = firstKeys;
 
-  // Create a new object for all the ones that we couldn't put
-  const newBatchObj = { [tableName]: secondKeys };
+  // Create a new object for all the ones that we couldn't put in the first one
+  const secondBatchObj = { [tableName]: secondKeys };
 
-  return [updatedBatchObj, newBatchObj];
+  return [firstBatchObj, secondBatchObj];
 };
 
 const sendBatchGetItemRequest = (batchKeysObject, allParams, dynamodb) => {

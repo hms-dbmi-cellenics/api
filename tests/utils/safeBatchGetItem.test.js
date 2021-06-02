@@ -2,20 +2,28 @@ const _ = require('lodash');
 
 const safeBatchGetItem = require('../../src/utils/safeBatchGetItem');
 
-const generateTestParams = (amountOfKeys) => (
-  {
-    RequestItems: {
-      tableName: {
-        AttributesToGet: ['attributeId'],
-        ConsistentRead: true,
-        ExpressionAttributeNames: {},
-        Keys: _.range(amountOfKeys).map((index) => ({ key: index })),
-        ProjectionExpression: 'projectionExpressionValue',
-      },
-    },
-    ReturnConsumedCapacity: 'returnConsumedCapacityValue',
-  }
-);
+const generateTableEntry = (amountOfKeys) => ({
+  AttributesToGet: ['attributeId'],
+  ConsistentRead: true,
+  ExpressionAttributeNames: {},
+  Keys: _.range(amountOfKeys).map((index) => ({ key: index })),
+  ProjectionExpression: 'projectionExpressionValue',
+});
+
+const addTableEntry = (params, tableName, tableKeyArray) => ({
+  ...params,
+  RequestItems: {
+    ...params.RequestItems,
+    [tableName]: tableKeyArray,
+  },
+});
+
+const generateTestParams = (amountOfKeys) => ({
+  RequestItems: {
+    tableName: generateTableEntry(amountOfKeys),
+  },
+  ReturnConsumedCapacity: 'returnConsumedCapacityValue',
+});
 
 let allParams = [];
 let lastBatchGetItemParams;
@@ -100,5 +108,49 @@ describe('safeBatchGetItem', () => {
     const result = await safeBatchGetItem(dynamodb, params);
 
     expect(result).toMatchSnapshot();
+  });
+
+  it('Works correctly with many tables when over 100', async () => {
+    const dynamodb = mockDynamodb();
+    let params = generateTestParams(200);
+    params = addTableEntry(params, 'anotherTableName', generateTableEntry(150));
+
+    await safeBatchGetItem(dynamodb, params);
+
+    // Was split into 4 calls
+    expect(allParams.length).toEqual(4);
+
+    // Keys were split correctly
+    expect(allParams).toMatchSnapshot();
+  });
+
+  it('Works correctly with many tables when under 100', async () => {
+    const dynamodb = mockDynamodb();
+    let params = generateTestParams(20);
+    params = addTableEntry(params, 'anotherTableName', generateTableEntry(30));
+    params = addTableEntry(params, 'anotherTableName1', generateTableEntry(40));
+
+    await safeBatchGetItem(dynamodb, params);
+
+    // Was NOT split into many calls
+    expect(allParams.length).toEqual(1);
+
+    // Keys were split correctly
+    expect(allParams).toMatchSnapshot();
+  });
+
+  it('Combines many tables correctly when over 100', async () => {
+    const dynamodb = mockDynamodb();
+    let params = generateTestParams(20);
+    params = addTableEntry(params, 'anotherTableName', generateTableEntry(70));
+    params = addTableEntry(params, 'anotherTableName1', generateTableEntry(40));
+
+    await safeBatchGetItem(dynamodb, params);
+
+    // Results in 2 calls
+    expect(allParams.length).toEqual(2);
+
+    // Keys were split correctly
+    expect(allParams).toMatchSnapshot();
   });
 });
