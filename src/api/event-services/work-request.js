@@ -17,9 +17,6 @@ const handleWorkRequest = async (workRequest, socket) => {
     experimentId, pipelineConstants.QC_PROCESS_NAME,
   );
 
-  console.log(' == QC PIPELINE STATUS == ');
-  console.log(qcPipelineStatus);
-
   try {
     if (qcPipelineStatus !== pipelineConstants.SUCCEEDED) {
       throw new Error(`Work request can not be handled because pipeline is ${qcPipelineStatus}`);
