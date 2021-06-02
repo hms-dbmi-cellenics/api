@@ -1600,41 +1600,6 @@ Array [
 ]
 `;
 
-exports[`safeBatchGetItem Works correctly with many tables when over 100 2`] = `
-Object {
-  "ConsumedCapacity": Array [],
-  "Responses": Object {
-    "tableName": Array [
-      Object {
-        "key": 1,
-      },
-      Object {
-        "key": 2,
-      },
-      Object {
-        "key": 1,
-      },
-      Object {
-        "key": 2,
-      },
-      Object {
-        "key": 1,
-      },
-      Object {
-        "key": 2,
-      },
-      Object {
-        "key": 1,
-      },
-      Object {
-        "key": 2,
-      },
-    ],
-  },
-  "UnprocessedKeys": Object {},
-}
-`;
-
 exports[`safeBatchGetItem Works correctly with many tables when under 100 1`] = `
 Array [
   Object {
@@ -1943,23 +1908,6 @@ Array [
     "ReturnConsumedCapacity": "returnConsumedCapacityValue",
   },
 ]
-`;
-
-exports[`safeBatchGetItem Works correctly with many tables when under 100 2`] = `
-Object {
-  "ConsumedCapacity": Array [],
-  "Responses": Object {
-    "tableName": Array [
-      Object {
-        "key": 1,
-      },
-      Object {
-        "key": 2,
-      },
-    ],
-  },
-  "UnprocessedKeys": Object {},
-}
 `;
 
 exports[`safeBatchGetItem splits the params if they exceed 100 keys 1`] = `
