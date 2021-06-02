@@ -34,7 +34,7 @@ module.exports = {
     }
 
     const { io, parsedMessage } = result;
-    if (!parsedMessage) {
+    if (parsedMessage) {
       try {
         await gem2sResponse(io, parsedMessage);
       } catch (e) {
