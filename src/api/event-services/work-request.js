@@ -21,7 +21,7 @@ const handleWorkRequest = async (workRequest, socket) => {
     const e = new Error(`Work request can not be handled because pipeline is ${qcPipelineStatus}`);
 
     AWSXRay.getSegment().addError(e);
-    throw new Error(e);
+    throw e;
   }
 
   try {
