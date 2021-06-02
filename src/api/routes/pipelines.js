@@ -43,8 +43,8 @@ module.exports = {
     }
 
     const { io, parsedMessage } = result;
-
-    if (parsedMessage) {
+    const isSnsNotification = parsedMessage !== undefined;
+    if (isSnsNotification) {
       try {
         await pipelineResponse(io, parsedMessage);
       } catch (e) {
