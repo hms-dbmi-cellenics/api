@@ -17,11 +17,14 @@ const handleWorkRequest = async (workRequest, socket) => {
     experimentId, pipelineConstants.QC_PROCESS_NAME,
   );
 
-  try {
-    if (qcPipelineStatus !== pipelineConstants.SUCCEEDED) {
-      throw new Error(`Work request can not be handled because pipeline is ${qcPipelineStatus}`);
-    }
+  if (qcPipelineStatus !== pipelineConstants.SUCCEEDED) {
+    const e = new Error(`Work request can not be handled because pipeline is ${qcPipelineStatus}`);
 
+    AWSXRay.getSegment().addError(e);
+    throw new Error(e);
+  }
+
+  try {
     logger.log(`Trying to fetch response to request ${uuid} from cache...`);
     const cachedResponse = await cacheGetRequest(workRequest);
     logger.log(`We found a cached response for ${uuid}. Checking if pagination is needed...`);
@@ -54,7 +57,6 @@ const handleWorkRequest = async (workRequest, socket) => {
     } else {
       logger.log('Unexpected error happened while trying to process cached response:', e.message);
       AWSXRay.getSegment().addError(e);
-      throw e;
     }
   }
 };
