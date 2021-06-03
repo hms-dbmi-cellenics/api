@@ -2,7 +2,10 @@ const MockSocket = require('socket.io-mock');
 const handleWorkRequest = require('../../../src/api/event-services/work-request');
 const handlePagination = require('../../../src/utils/handlePagination');
 const CacheSingleton = require('../../../src/cache');
+const getPipelineStatus = require('../../../src/api/general-services/pipeline-status');
+const pipelineConstants = require('../../../src/api/general-services/pipeline-manage/constants');
 
+jest.mock('../../../src/api/general-services/pipeline-status');
 jest.mock('../../../src/utils/handlePagination');
 jest.mock('../../../src/cache');
 
@@ -125,6 +128,37 @@ describe('handleWorkRequest', () => {
     } catch (e) {
       expect(e.message).toMatch(
         /^Error: minimumDistance is a required field/,
+      );
+    }
+  });
+
+  it('Throws if pipeline is not yet done or have failed', async () => {
+    // Initialize with an empty cache so a worker hit will be encountered.
+    CacheSingleton.createMock({});
+    expect.assertions(1);
+
+    const workRequest = {
+      uuid: '12345',
+      socketId: '6789',
+      experimentId: 'my-experiment',
+      timeout: '2099-01-01T00:00:00Z',
+      body: { name: 'GetEmbedding', type: 'umap', config: { distanceMetric: 'euclidean' } },
+    };
+
+    getPipelineStatus.mockImplementationOnce(() => ({
+      qc: {
+        ...getPipelineStatus.responseTemplates.qc,
+        status: pipelineConstants.RUNNING,
+      },
+    }));
+
+    try {
+      await handleWorkRequest(workRequest, socket);
+    } catch (e) {
+      console.log(e.message);
+
+      expect(e.message).toMatch(
+        'Work request can not be handled because pipeline is RUNNING',
       );
     }
   });

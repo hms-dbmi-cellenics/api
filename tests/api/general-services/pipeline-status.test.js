@@ -1,4 +1,4 @@
-const constants = require('../../../src/api/general-services/pipeline-manage/constants');
+const pipelineConstants = require('../../../src/api/general-services/pipeline-manage/constants');
 const pipelineStatus = require('../../../src/api/general-services/pipeline-status');
 const ExperimentService = require('../../../src/api/route-services/experiment');
 
@@ -360,12 +360,12 @@ describe('pipelineStatus', () => {
     ExperimentService.mockClear();
   });
   it('handles properly an empty dynamodb record', async () => {
-    const status = await pipelineStatus('1234', constants.QC_PROCESS_NAME);
+    const status = await pipelineStatus('1234', pipelineConstants.QC_PROCESS_NAME);
     expect(status).toEqual({
-      [constants.QC_PROCESS_NAME]: {
+      [pipelineConstants.QC_PROCESS_NAME]: {
         startDate: null,
         stopDate: null,
-        status: 'NotCreated',
+        status: pipelineConstants.NOT_CREATED,
         completedSteps: [],
       },
     });
