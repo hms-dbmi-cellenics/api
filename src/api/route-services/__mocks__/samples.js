@@ -75,7 +75,7 @@ const mock = jest.fn().mockImplementation(() => ({
   getSamples: mockGetSamples,
   getSamplesByExperimentId: mockGetByExperimentId,
   updateSamples: mockUpdateSamples,
-  deleteSamples: mockDeleteSamples,
+  deleteSamplesEntry: mockDeleteSamples,
 }));
 
 module.exports = mock;

@@ -20,4 +20,11 @@ module.exports = {
       .then((data) => res.json(data))
       .catch(next);
   },
+  'samples#delete': (req, res, next) => {
+    const { body, params: { experimentId, projectUuid } } = req;
+
+    samplesService.deleteSamplesEntry(projectUuid, experimentId, body.samples.ids)
+      .then((data) => res.json(data))
+      .catch(next);
+  },
 };

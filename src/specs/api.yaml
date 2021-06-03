@@ -875,10 +875,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  projectUuid:
-                    type: string
-                  experimentId:
-                    type: string
                   samples:
                     $ref: ./models/api-body-schemas/Samples.v1.yaml
   '/projects':

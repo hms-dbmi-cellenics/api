@@ -76,7 +76,6 @@ class SamplesService {
       ':projectUuid': projectUuid,
     });
 
-
     // Update samples
     const params = {
       TableName: this.tableName,
@@ -122,8 +121,29 @@ class SamplesService {
     }
   }
 
-  async deleteSamples(projectUuid, experimentId, sampleUuids) {
-    logger.log(`Deleting sample for project ${projectUuid} and expId ${experimentId}`);
+  async removeSamples(projectUuid, experimentId, sampleUuids) {
+    logger.log(`Removing samples in an entry for project ${projectUuid} and expId ${experimentId}`);
+
+    const marshalledKey = convertToDynamoDbRecord({
+      experimentId,
+    });
+
+    const removeSamplesExpression = sampleUuids.map(
+      (sampleUuid) => `samples.${sampleUuid}, samples.ids.${sampleUuid}`,
+    ).join(', ');
+
+    const params = {
+      TableName: this.tableName,
+      Key: marshalledKey,
+      UpdateExpression: `REMOVE ${removeSamplesExpression}`,
+      ReturnValues: 'ALL_NEW',
+    };
+
+    await createDynamoDbInstance().updateItem(params).promise();
+  }
+
+  async deleteSamplesEntry(projectUuid, experimentId, sampleUuids) {
+    logger.log(`Deleting samples entry for project ${projectUuid} and expId ${experimentId}`);
 
     const marshalledKey = convertToDynamoDbRecord({
       experimentId,
