@@ -104,6 +104,7 @@ class WorkResponseService {
 
     if (socketId === 'no-socket') {
       logger.log('Socket is not provided, no response sent out.');
+      return;
     }
 
     if (Date.parse(timeout) > Date.now()) {
