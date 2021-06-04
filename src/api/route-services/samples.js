@@ -138,18 +138,28 @@ class SamplesService {
       experimentId,
     });
 
-    const removeSamplesExpression = sampleUuids.map(
-      (sampleUuid) => `samples.${sampleUuid}`,
-    ).join(', ');
+    const removeSamplesList = sampleUuids.map((sampleUuid, index) => `samples.#val${index}`);
+    const expressionAttributeNames = sampleUuids.reduce((acc, sampleId, index) => {
+      acc[`#val${index}`] = sampleId;
+      return acc;
+    }, {});
 
     const params = {
       TableName: this.tableName,
       Key: marshalledKey,
-      UpdateExpression: `REMOVE ${removeSamplesExpression}`,
+      UpdateExpression: `REMOVE ${removeSamplesList.join(', ')}`,
+      ExpressionAttributeNames: expressionAttributeNames,
       ReturnValues: 'ALL_NEW',
     };
 
-    await createDynamoDbInstance().updateItem(params).promise();
+    const promises = [
+      createDynamoDbInstance().updateItem(params).promise(),
+      this.deleteSamplesFromS3(projectUuid, sampleUuids),
+    ];
+
+    await Promise.all(promises);
+
+    return OK();
   }
 
   async deleteSamplesEntry(projectUuid, experimentId, sampleUuids) {
@@ -166,16 +176,20 @@ class SamplesService {
 
     const dynamodb = createDynamoDbInstance();
 
+    const promises = [];
+
     try {
-      await dynamodb.deleteItem(dynamodbParams).send();
+      promises.push(await dynamodb.deleteItem(dynamodbParams).send());
     } catch (e) {
       if (e.statusCode === 404) throw NotFoundError('Project not found');
       throw e;
     }
 
     if (sampleUuids.length) {
-      this.deleteSamplesFromS3(projectUuid, sampleUuids);
+      promises.push(await this.deleteSamplesFromS3(projectUuid, sampleUuids));
     }
+
+    await Promise.all(promises);
 
     return OK();
   }
