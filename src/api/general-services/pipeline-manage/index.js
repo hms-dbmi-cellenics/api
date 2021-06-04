@@ -164,6 +164,8 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
 
   const { samples } = await samplesService.getSamplesByExperimentId(experimentId);
 
+  const sampleIds = Object.keys(samples);
+
   if (processingConfigUpdates) {
     processingConfigUpdates.forEach(({ name, body }) => {
       if (!processingConfig[name]) {
@@ -182,14 +184,14 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
   const mergedProcessingConfig = _.cloneDeepWith(processingConfig, (o) => {
     if (_.isObject(o) && !o.dataIntegration && !o.embeddingSettings && typeof o.enabled === 'boolean') {
       // Find which samples have sample-specific configurations.
-      const sampleConfigs = _.intersection(Object.keys(o), samples.ids);
+      const sampleConfigs = _.intersection(Object.keys(o), sampleIds);
 
       // Get an object that is only the "raw" configuration.
       const rawConfig = _.omit(o, sampleConfigs);
 
       const result = {};
 
-      samples.ids.forEach((sample) => {
+      sampleIds.forEach((sample) => {
         result[sample] = _.merge({}, rawConfig, o[sample]);
       });
 
@@ -219,7 +221,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
   logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
 
   const execInput = {
-    samples: samples.ids.map((sampleUuid, index) => ({ sampleUuid, index })),
+    samples: sampleIds.map((sampleUuid, index) => ({ sampleUuid, index })),
   };
 
   const executionArn = await executeStateMachine(stateMachineArn, execInput);
@@ -237,21 +239,21 @@ const createGem2SPipeline = async (experimentId) => {
   const { metadataKeys } = await projectService.getProject(experiment.projectId);
 
   const defaultMetadataValue = 'N.A.';
+  const samplesEntries = Object.entries(samples);
 
   const taskParams = {
     projectId: experiment.projectId,
     experimentName: experiment.experimentName,
     organism: experiment.meta.organism,
     input: { type: experiment.meta.type },
-    sampleIds: samples.ids,
-    sampleNames: samples.ids.map((id) => samples[id].name),
+    sampleIds: samplesEntries.map(([sampleId]) => sampleId),
+    sampleNames: samplesEntries.map(([, sample]) => sample.name),
   };
 
   if (metadataKeys.length) {
     taskParams.metadata = metadataKeys.reduce((acc, key) => {
-      acc[key] = samples.ids.map(
-        (sampleUuid) => samples[sampleUuid].metadata[key] || defaultMetadataValue,
-      );
+      acc[key] = samplesEntries.map(([, sample]) => sample.metadata[key] || defaultMetadataValue);
+
       return acc;
     }, {});
   }

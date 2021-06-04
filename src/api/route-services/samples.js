@@ -37,7 +37,14 @@ class SamplesService {
       throw new NotFoundError('Samples not found!');
     }
 
-    return items.map((item) => convertToJsObject(item));
+    return items.map((item) => {
+      const prettyItem = convertToJsObject(item);
+
+      // Remove ids property from old sample entries that still have it
+      delete prettyItem.samples.ids;
+
+      return prettyItem;
+    });
   }
 
 
@@ -58,8 +65,11 @@ class SamplesService {
 
     if (response.Item) {
       const prettyResponse = convertToJsObject(response.Item);
+      // Remove ids property from old sample entries that still have it
+      delete prettyResponse.samples.ids;
       return prettyResponse;
     }
+
 
     throw new NotFoundError('Samples not found');
   }
@@ -129,7 +139,7 @@ class SamplesService {
     });
 
     const removeSamplesExpression = sampleUuids.map(
-      (sampleUuid) => `samples.${sampleUuid}, samples.ids.${sampleUuid}`,
+      (sampleUuid) => `samples.${sampleUuid}`,
     ).join(', ');
 
     const params = {
