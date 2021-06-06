@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const AWS = require('../../utils/requireAWS');
 const ExperimentService = require('../route-services/experiment');
+const ProjectService = require('../route-services/projects');
 const config = require('../../config');
 const logger = require('../../utils/logging');
 const pipelineConstants = require('./pipeline-manage/constants');
@@ -74,6 +75,10 @@ const getStepsFromExecutionHistory = (events) => {
     }
   }
 
+  if (!events.length) {
+    return [];
+  }
+
   const main = new Branch(events[0], true);
   for (let ii = 1; ii < events.length; ii += 1) {
     const consumer = main.nextConsumer(events[ii]);
@@ -96,6 +101,21 @@ const getStepsFromExecutionHistory = (events) => {
   const shortestCompletedToReport = _.difference(shortestCompleted, privateSteps);
 
   return shortestCompletedToReport || [];
+};
+
+const gem2sNeedsRunning = async (handles, experimentId, processName, response) => {
+  let needsRunning = true;
+  const gem2sStatus = response[processName];
+  if (gem2sStatus.status === pipelineConstants.RUNNING) {
+    needsRunning = false;
+  } else if (gem2sStatus.status === pipelineConstants.SUCCEEDED) {
+    if (handles[processName].paramsHash) {
+      const projectService = new ProjectService();
+      const gem2sParams = await projectService.getGem2sParams(experimentId);
+      needsRunning = gem2sParams.paramsHash !== handles[processName].paramsHash;
+    }
+  }
+  return needsRunning;
 };
 
 /*
@@ -156,6 +176,13 @@ const getPipelineStatus = async (experimentId, processName) => {
       completedSteps,
     },
   };
+
+  if (processName === pipelineConstants.GEM2S_PROCESS_NAME) {
+    response[processName].needsRunning = await gem2sNeedsRunning(
+      pipelinesHandles, experimentId, processName, response,
+    );
+  }
+
   return response;
 };
 

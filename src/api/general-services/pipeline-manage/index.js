@@ -231,34 +231,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
 const createGem2SPipeline = async (experimentId) => {
   const accountId = await config.awsAccountIdPromise;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
-
-  const experiment = await experimentService.getExperimentData(experimentId);
-  const { samples } = await samplesService.getSamplesByExperimentId(experimentId);
-  const { metadataKeys } = await projectService.getProject(experiment.projectId);
-
-  const defaultMetadataValue = 'N.A.';
-
-  const taskParams = {
-    projectId: experiment.projectId,
-    experimentName: experiment.experimentName,
-    organism: experiment.meta.organism,
-    input: { type: experiment.meta.type },
-    sampleIds: samples.ids,
-    sampleNames: samples.ids.map((id) => samples[id].name),
-  };
-
-  if (metadataKeys.length) {
-    taskParams.metadata = metadataKeys.reduce((acc, key) => {
-      // Make sure the key does not contain '-' as it will cause failure in GEM2S
-      const sanitizedKey = key.replace(/-+/g, '_');
-
-      acc[sanitizedKey] = samples.ids.map(
-        // Fetch using unsanitized key as it is the key used to store metadata in sample
-        (sampleUuid) => samples[sampleUuid].metadata[key] || defaultMetadataValue,
-      );
-      return acc;
-    }, {});
-  }
+  const taskParams = await projectService.getGem2sParams(experimentId);
 
   const context = {
     taskParams,
@@ -285,7 +258,7 @@ const createGem2SPipeline = async (experimentId) => {
   const executionArn = await executeStateMachine(stateMachineArn);
   logger.log(`Execution with ARN ${executionArn} created.`);
 
-  return { stateMachineArn, executionArn };
+  return { stateMachineArn, executionArn, paramsHash: taskParams.paramsHash };
 };
 
 
