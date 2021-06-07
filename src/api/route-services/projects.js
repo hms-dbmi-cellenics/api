@@ -5,6 +5,7 @@ const {
 const logger = require('../../utils/logging');
 
 const { OK, NotFoundError } = require('../../utils/responses');
+const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 
 const SamplesService = require('./samples');
 const ExperimentService = require('./experiment');
@@ -119,7 +120,7 @@ class ProjectsService {
       },
     };
 
-    const data = await dynamodb.batchGetItem(params).promise();
+    const data = await safeBatchGetItem(dynamodb, params);
 
     const existingProjectIds = new Set(data.Responses[this.tableName].map((entry) => {
       const newData = convertToJsObject(entry);

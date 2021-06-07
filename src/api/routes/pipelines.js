@@ -10,24 +10,20 @@ const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares'
 module.exports = {
   'pipelines#get': [
     expressAuthorizationMiddleware,
-    (req, res, next) => {
+    async (req, res) => {
       // The changes to add gem2s status will be obsoleted once agi's PR is merged in
-      getBackendStatus(req.params.experimentId)
-        .then((data) => res.json(data))
-        .catch(next);
+      const data = await getBackendStatus(req.params.experimentId);
+      res.json(data);
     },
   ],
   'pipelines#create': [
-    (req, res, next) => {
+    async (req, res) => {
       const { processingConfig } = req.body;
 
-      createQCPipeline(req.params.experimentId, processingConfig || [])
-        .then((data) => {
-          const experimentService = new ExperimentService();
-          experimentService.saveQCHandle(req.params.experimentId, data)
-            .then(() => res.json(data));
-        })
-        .catch(next);
+      const data = await createQCPipeline(req.params.experimentId, processingConfig || []);
+      const experimentService = new ExperimentService();
+      await experimentService.saveQCHandle(req.params.experimentId, data);
+      res.json(data);
     },
   ],
   'pipelines#response': async (req, res) => {
@@ -43,17 +39,19 @@ module.exports = {
     }
 
     const { io, parsedMessage } = result;
+    const isSnsNotification = parsedMessage !== undefined;
+    if (isSnsNotification) {
+      try {
+        await pipelineResponse(io, parsedMessage);
+      } catch (e) {
+        logger.error(
+          'qc pipeline response handler failed with error: ', e,
+        );
 
-    try {
-      await pipelineResponse(io, parsedMessage);
-    } catch (e) {
-      logger.error(
-        'Pipeline response handler failed with error: ', e,
-      );
-
-      AWSXRay.getSegment().addError(e);
-      res.status(200).send('nok');
-      return;
+        AWSXRay.getSegment().addError(e);
+        res.status(200).send('nok');
+        return;
+      }
     }
 
     res.status(200).send('ok');

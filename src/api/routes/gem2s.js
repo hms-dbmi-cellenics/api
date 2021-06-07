@@ -10,14 +10,12 @@ const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares'
 module.exports = {
   'gem2s#create': [
     expressAuthorizationMiddleware,
-    (req, res, next) => {
-      createGem2SPipeline(req.params.experimentId)
-        .then((data) => {
-          const experimentService = new ExperimentService();
-          experimentService.saveGem2sHandle(req.params.experimentId, data)
-            .then(() => res.json(data));
-        })
-        .catch(next);
+    async (req, res) => {
+      const data = await createGem2SPipeline(req.params.experimentId);
+
+      const experimentService = new ExperimentService();
+      await experimentService.saveGem2sHandle(req.params.experimentId, data);
+      res.json(data);
     },
   ],
 
@@ -34,17 +32,19 @@ module.exports = {
     }
 
     const { io, parsedMessage } = result;
+    const isSnsNotification = parsedMessage !== undefined;
+    if (isSnsNotification) {
+      try {
+        await gem2sResponse(io, parsedMessage);
+      } catch (e) {
+        logger.error(
+          'gem2s pipeline response handler failed with error: ', e,
+        );
 
-    try {
-      await gem2sResponse(io, parsedMessage);
-    } catch (e) {
-      logger.error(
-        'Pipeline response handler failed with error: ', e,
-      );
-
-      AWSXRay.getSegment().addError(e);
-      res.status(200).send('nok');
-      return;
+        AWSXRay.getSegment().addError(e);
+        res.status(200).send('nok');
+        return;
+      }
     }
 
     res.status(200).send('ok');

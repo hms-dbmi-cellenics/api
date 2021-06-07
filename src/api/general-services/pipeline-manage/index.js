@@ -252,8 +252,13 @@ const createGem2SPipeline = async (experimentId) => {
 
   if (metadataKeys.length) {
     taskParams.metadata = metadataKeys.reduce((acc, key) => {
-      acc[key] = samplesEntries.map(([, sample]) => sample.metadata[key] || defaultMetadataValue);
+      // Make sure the key does not contain '-' as it will cause failure in GEM2S
+      const sanitizedKey = key.replace(/-+/g, '_');
 
+      // Fetch using unsanitized key as it is the key used to store metadata in sample
+      acc[sanitizedKey] = samplesEntries.map(
+        ([, sample]) => sample.metadata[key] || defaultMetadataValue,
+      );
       return acc;
     }, {});
   }

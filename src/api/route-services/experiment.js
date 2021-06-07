@@ -5,8 +5,9 @@ const mockData = require('./mock-data.json');
 
 const AWS = require('../../utils/requireAWS');
 const logger = require('../../utils/logging');
-
 const { OK, NotFoundError } = require('../../utils/responses');
+const safeBatchGetItem = require('../../utils/safeBatchGetItem');
+
 const constants = require('../general-services/pipeline-manage/constants');
 
 const {
@@ -47,7 +48,7 @@ class ExperimentService {
     };
 
     try {
-      const response = await dynamodb.batchGetItem(params).promise();
+      const response = await safeBatchGetItem(dynamodb, params);
 
       return response.Responses[this.experimentsTableName].map(
         (experiment) => convertToJsObject(experiment),

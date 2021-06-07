@@ -523,6 +523,12 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Experiment/plot not found.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '200':
           description: OK
           content:

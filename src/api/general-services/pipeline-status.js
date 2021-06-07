@@ -3,6 +3,7 @@ const AWS = require('../../utils/requireAWS');
 const ExperimentService = require('../route-services/experiment');
 const config = require('../../config');
 const logger = require('../../utils/logging');
+const pipelineConstants = require('./pipeline-manage/constants');
 
 
 const privateSteps = [
@@ -117,7 +118,7 @@ const getPipelineStatus = async (experimentId, processName) => {
     execution = {
       startDate: null,
       stopDate: null,
-      status: 'NotCreated',
+      status: pipelineConstants.NOT_CREATED,
     };
   } else {
     const stepFunctions = new AWS.StepFunctions({
@@ -144,7 +145,7 @@ const getPipelineStatus = async (experimentId, processName) => {
     /* eslint-enable no-await-in-loop */
 
     completedSteps = getStepsFromExecutionHistory(events);
-    logger.log(`ExecutionHistory for ARN ${executionArn}: ${events.length} events, ${completedSteps.length} completed steps`);
+    logger.log(`ExecutionHistory(${processName}) for ARN ${executionArn}: ${events.length} events, ${completedSteps.length} completed steps`);
   }
 
   const response = {

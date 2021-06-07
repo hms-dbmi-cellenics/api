@@ -1,21 +1,23 @@
+const pipelineConstants = require('../pipeline-manage/constants');
+
 const response = {
   gem2s: {
     completedSteps: [],
     startDate: null,
-    status: 'NotCreated',
+    status: pipelineConstants.NOT_CREATED,
     stopDate: null,
   },
   qc: {
     completedSteps: [],
     startDate: null,
-    status: 'NotCreated',
+    status: pipelineConstants.NOT_CREATED,
     stopDate: null,
   },
   worker: {
     ready: true,
     restartCount: 0,
     started: true,
-    status: 'Running',
+    status: pipelineConstants.RUNNING,
   },
 };
 

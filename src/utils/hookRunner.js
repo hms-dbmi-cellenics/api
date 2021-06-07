@@ -1,3 +1,5 @@
+const logger = require('./logging');
+
 class hookRunner {
   constructor() {
     this.hooks = {};
@@ -27,6 +29,7 @@ class hookRunner {
       // eslint-disable-next-line no-await-in-loop
       this.results[taskName].push(await this.hooks[taskName][idx](payload));
     }
+    logger.log(`Completed ${this.results[taskName].length} hooks for pipeline task ${taskName}`);
 
     return this.results;
   }

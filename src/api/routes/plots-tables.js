@@ -1,4 +1,6 @@
 const PlotsTablesService = require('../route-services/plots-tables');
+const { NotFoundError } = require('../../utils/responses');
+
 
 const plotsTablesService = new PlotsTablesService();
 
@@ -16,7 +18,7 @@ module.exports = {
       .then((response) => res.json(response))
       .catch((e) => {
         if (e.message.includes('not found')) {
-          res.status(404).send('');
+          throw (new NotFoundError('Plot not found'));
         } else {
           throw e;
         }
