@@ -8,6 +8,7 @@ const {
   mockDynamoQuery,
   mockDynamoUpdateItem,
   mockDynamoDeleteItem,
+  mockS3DeleteObjects,
 } = require('../../test-utils/mockAWSServices');
 
 describe('tests for the samples service', () => {
@@ -19,7 +20,6 @@ describe('tests for the samples service', () => {
   it('Get samples by projectUuid works', async (done) => {
     const jsData = {
       samples: {
-        ids: ['sample-1'],
         'sample-1': {
           name: 'sample-1',
         },
@@ -48,7 +48,6 @@ describe('tests for the samples service', () => {
   it('Get sample by experimentId works', async (done) => {
     const jsData = {
       samples: {
-        ids: ['sample-1', 'sample-2'],
         'sample-1': { name: 'sample-1' },
         'sample-2': { name: 'sample-2' },
       },
@@ -112,15 +111,29 @@ describe('tests for the samples service', () => {
       experimentId: 'experiment-1',
     });
 
-    const getFnSpy = mockDynamoDeleteItem();
+    const deleteDynamoFnSpy = mockDynamoDeleteItem();
+    const deleteS3FnSpy = mockS3DeleteObjects({ Errors: [] });
 
-    (new SamplesService()).deleteSamples('project-1', 'experiment-1')
+    const s3DeleteParams = {
+      Bucket: 'biomage-originals-test',
+      Delete: {
+        Objects: [
+          { Key: 'project-1/sampleUuid-1/barcodes.tsv.gz' },
+          { Key: 'project-1/sampleUuid-1/features.tsv.gz' },
+          { Key: 'project-1/sampleUuid-1/matrix.mtx.gz' },
+        ],
+        Quiet: false,
+      },
+    };
+
+    (new SamplesService()).deleteSamplesEntry('project-1', 'experiment-1', ['sampleUuid-1'])
       .then((data) => {
         expect(data).toEqual(OK());
-        expect(getFnSpy).toHaveBeenCalledWith({
+        expect(deleteDynamoFnSpy).toHaveBeenCalledWith({
           TableName: 'samples-test',
           Key: marshalledKey,
         });
+        expect(deleteS3FnSpy).toHaveBeenCalledWith(s3DeleteParams);
       })
       .then(() => done());
   });

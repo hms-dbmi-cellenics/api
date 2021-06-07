@@ -65,11 +65,11 @@ class SamplesService {
 
     if (response.Item) {
       const prettyResponse = convertToJsObject(response.Item);
+
       // Remove ids property from old sample entries that still have it
       delete prettyResponse.samples.ids;
       return prettyResponse;
     }
-
 
     throw new NotFoundError('Samples not found');
   }
