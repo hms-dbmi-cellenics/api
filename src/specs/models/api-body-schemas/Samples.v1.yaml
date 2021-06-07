@@ -1,4 +1,4 @@
-title: Samples container object as it is stored
+title: Sample object
 description: Schema for a sample object
 type: object
 additionalProperties:

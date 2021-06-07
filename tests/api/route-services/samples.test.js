@@ -76,7 +76,6 @@ describe('tests for the samples service', () => {
       projectUuid: 'project-1',
       experimentId: 'experiment-1',
       samples: {
-        ids: ['sample-1', 'sample-2'],
         'sample-1': { name: 'sample-1' },
         'sample-2': { name: 'sample-2' },
       },

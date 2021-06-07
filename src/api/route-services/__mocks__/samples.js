@@ -1,7 +1,6 @@
 const { OK } = require('../../../utils/responses');
 
 const mockSamples = {
-  ids: ['sample-1'],
   'sample-1': {
     name: 'sample-1',
     projectUuid: 'project-1',
