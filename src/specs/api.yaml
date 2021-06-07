@@ -806,6 +806,7 @@ paths:
           type: string
     get:
       summary: Get samples under a project
+      description: Get all samples under a project
       operationId: getProjectSamples
       x-eov-operation-id: samples#get
       x-eov-operation-handler: routes/samples
@@ -831,7 +832,6 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-      description: Get all samples under a project
   '/projects/{projectUuid}/{experimentId}/samples':
       parameters:
         - name: projectUuid
