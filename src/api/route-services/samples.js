@@ -2,6 +2,8 @@ const _ = require('lodash');
 
 const { NotFoundError, OK } = require('../../utils/responses');
 
+const { undefinedIfNotFound } = require('./utils');
+
 const config = require('../../config');
 const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord,
@@ -105,16 +107,14 @@ class SamplesService {
     }
   }
 
-  async deleteSamplesFromS3(projectUuid, sampleUuids) {
+  async deleteSamplesFromS3(projectUuid, samplesToRemoveUuids, allSamples) {
     const s3 = new AWS.S3();
 
-    const sampleObjectsToDelete = sampleUuids.map((sampleUuid) => (
-      [
-        { Key: `${projectUuid}/${sampleUuid}/barcodes.tsv.gz` },
-        { Key: `${projectUuid}/${sampleUuid}/features.tsv.gz` },
-        { Key: `${projectUuid}/${sampleUuid}/matrix.mtx.gz` },
-      ]
-    ));
+    const sampleObjectsToDelete = samplesToRemoveUuids.map((sampleUuid) => {
+      const fileKeysToDelete = Object.keys(allSamples[sampleUuid].files);
+
+      return fileKeysToDelete.map((fileKey) => ({ Key: `${projectUuid}/${sampleUuid}/${fileKey}` }));
+    });
 
     const s3Params = {
       Bucket: this.sampleFilesBucketName,
@@ -138,7 +138,7 @@ class SamplesService {
       experimentId,
     });
 
-    const removeSamplesList = sampleUuids.map((sampleUuid, index) => `samples.#val${index}`);
+    const updateExpressionList = sampleUuids.map((sampleUuid, index) => `samples.#val${index}`);
     const expressionAttributeNames = sampleUuids.reduce((acc, sampleId, index) => {
       acc[`#val${index}`] = sampleId;
       return acc;
@@ -147,14 +147,20 @@ class SamplesService {
     const params = {
       TableName: this.tableName,
       Key: marshalledKey,
-      UpdateExpression: `REMOVE ${removeSamplesList.join(', ')}`,
+      UpdateExpression: `REMOVE ${updateExpressionList.join(', ')}`,
       ExpressionAttributeNames: expressionAttributeNames,
       ReturnValues: 'ALL_NEW',
     };
 
+    const a = await undefinedIfNotFound(
+      this.getSamplesByExperimentId(experimentId),
+    ) || {};
+
+    const { samples: allSamples = {} } = a;
+
     const promises = [
       createDynamoDbInstance().updateItem(params).promise(),
-      this.deleteSamplesFromS3(projectUuid, sampleUuids),
+      this.deleteSamplesFromS3(projectUuid, sampleUuids, allSamples),
     ];
 
     await Promise.all(promises);
@@ -164,6 +170,10 @@ class SamplesService {
 
   async deleteSamplesEntry(projectUuid, experimentId, sampleUuids) {
     logger.log(`Deleting samples entry for project ${projectUuid} and expId ${experimentId}`);
+
+    const { samples: allSamples = {} } = await undefinedIfNotFound(
+      this.getSamplesByExperimentId(experimentId),
+    ) || {};
 
     const marshalledKey = convertToDynamoDbRecord({
       experimentId,
@@ -186,7 +196,7 @@ class SamplesService {
     }
 
     if (sampleUuids.length) {
-      promises.push(await this.deleteSamplesFromS3(projectUuid, sampleUuids));
+      promises.push(await this.deleteSamplesFromS3(projectUuid, sampleUuids, allSamples));
     }
 
     await Promise.all(promises);
