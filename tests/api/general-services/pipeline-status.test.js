@@ -8,6 +8,10 @@ const getExperimentAttributesSpy = jest.spyOn(experimentHelpers, 'getExperimentA
 const pipelineStatus = require('../../../src/api/general-services/pipeline-status');
 const ProjectService = require('../../../src/api/route-services/projects');
 
+const {
+  RUNNING, SUCCEEDED, NOT_CREATED, FAILED, TIMED_OUT, ABORTED, GEM2S_PROCESS_NAME, QC_PROCESS_NAME,
+} = constants;
+
 describe('getStepsFromExecutionHistory', () => {
   const fullHistory = [
     {
@@ -346,42 +350,46 @@ describe('getStepsFromExecutionHistory', () => {
 describe('pipelineStatus', () => {
   const mockNotRunResponse = {
     meta: {
-      [constants.GEM2S_PROCESS_NAME]: {
+      [GEM2S_PROCESS_NAME]: {
         stateMachineArn: '',
         executionArn: '',
       },
-      [constants.QC_PROCESS_NAME]: {
+      [QC_PROCESS_NAME]: {
         stateMachineArn: '',
         executionArn: '',
       },
     },
   };
+
   const mockHasBeenRun = {
     meta: {
-      [constants.GEM2S_PROCESS_NAME]: {
+      [GEM2S_PROCESS_NAME]: {
         stateMachineArn: 'arnSM_gem2s',
         executionArn: 'arnE_sem2s',
         paramsHash: 'hashOfTheSamplesData',
       },
-      [constants.QC_PROCESS_NAME]: {
+      [QC_PROCESS_NAME]: {
         stateMachineArn: 'arnSM_qc',
         executionArn: 'arnE_qc',
       },
     },
   };
+
   const mockHasBeenRunLegacy = {
     meta: {
-      [constants.GEM2S_PROCESS_NAME]: {
+      [GEM2S_PROCESS_NAME]: {
         stateMachineArn: 'arnSM_gem2s',
         executionArn: 'arnE_sem2s',
       },
-      [constants.QC_PROCESS_NAME]: {
+      [QC_PROCESS_NAME]: {
         stateMachineArn: 'arnSM_qc',
         executionArn: 'arnE_qc',
       },
     },
   };
+
   const mockDescribeExecution = jest.fn();
+
   const mockDynamoGetItem = jest.fn().mockImplementation(() => ({
     Item: AWS.DynamoDB.Converter.marshall({
       // Dumb meaningless payload to prevent crahes
@@ -391,15 +399,19 @@ describe('pipelineStatus', () => {
       },
     }),
   }));
+
   beforeEach(() => {
     getExperimentAttributesSpy.mockClear();
     AWSMock.setSDKInstance(AWS);
+
     AWSMock.mock('StepFunctions', 'describeExecution', (params, callback) => {
       callback(null, mockDescribeExecution(params));
     });
+
     AWSMock.mock('StepFunctions', 'getExecutionHistory', (params, callback) => {
       callback(null, { events: [] });
     });
+
     AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
       callback(null, mockDynamoGetItem(params));
     });
@@ -407,67 +419,79 @@ describe('pipelineStatus', () => {
 
   it('handles properly an empty dynamodb record', async () => {
     getExperimentAttributesSpy.mockReturnValueOnce(mockNotRunResponse);
-    const status = await pipelineStatus('1234', constants.QC_PROCESS_NAME);
+    const status = await pipelineStatus('1234', QC_PROCESS_NAME);
+
     expect(status).toEqual({
-      [constants.QC_PROCESS_NAME]: {
+      [QC_PROCESS_NAME]: {
         startDate: null,
         stopDate: null,
         status: constants.NOT_CREATED,
         completedSteps: [],
       },
     });
+
     expect(mockDynamoGetItem).not.toHaveBeenCalled();
   });
+
   it('returns a true "needsRunning" attribute for failed/not started gem2s pipelines', async () => {
     getExperimentAttributesSpy.mockReturnValue(mockHasBeenRun);
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const state of constants.STATES.filter(
-      (st) => !(st === constants.RUNNING || st === constants.SUCCEEDED),
-    )) {
+    [NOT_CREATED, FAILED, TIMED_OUT, ABORTED].forEach(async (state) => {
       mockDescribeExecution.mockReturnValue({ startDate: null, stopDate: null, status: state });
       // eslint-disable-next-line no-await-in-loop
-      const status = await pipelineStatus('1234', constants.GEM2S_PROCESS_NAME);
-      expect(status[constants.GEM2S_PROCESS_NAME].needsRunning).toBe(true);
+      const status = await pipelineStatus('1234', GEM2S_PROCESS_NAME);
+      expect(status[GEM2S_PROCESS_NAME].needsRunning).toBe(true);
       expect(mockDynamoGetItem).not.toHaveBeenCalled();
-    }
+    });
   });
+
   it('returns a false "needsRunning" attribute for running gem2s pipelines', async () => {
     getExperimentAttributesSpy.mockReturnValue(mockHasBeenRun);
     mockDescribeExecution.mockReturnValue(
-      { startDate: null, stopDate: null, status: constants.RUNNING },
+      { startDate: null, stopDate: null, status: RUNNING },
     );
-    const status = await pipelineStatus('1234', constants.GEM2S_PROCESS_NAME);
-    expect(status[constants.GEM2S_PROCESS_NAME].needsRunning).toBe(false);
+
+    const status = await pipelineStatus('1234', GEM2S_PROCESS_NAME);
+
+    expect(status[GEM2S_PROCESS_NAME].needsRunning).toBe(false);
     expect(mockDynamoGetItem).not.toHaveBeenCalled();
   });
+
   it('returns a true "needsRunning" attribute for sucesful gem2s pipelines without hash', async () => {
     getExperimentAttributesSpy.mockReturnValue(mockHasBeenRunLegacy);
     mockDescribeExecution.mockReturnValue(
-      { startDate: null, stopDate: null, status: constants.SUCCEEDED },
+      { startDate: null, stopDate: null, status: SUCCEEDED },
     );
-    const status = await pipelineStatus('1234', constants.GEM2S_PROCESS_NAME);
-    expect(status[constants.GEM2S_PROCESS_NAME].needsRunning).toBe(true);
+
+    const status = await pipelineStatus('1234', GEM2S_PROCESS_NAME);
+
+    expect(status[GEM2S_PROCESS_NAME].needsRunning).toBe(true);
     expect(mockDynamoGetItem).not.toHaveBeenCalled();
   });
+
   it('uses dynamodb to determine "needsRunning" attribute for succesful gem2s pipelines', async () => {
     getExperimentAttributesSpy.mockReturnValue(mockHasBeenRun);
     mockDescribeExecution.mockReturnValue(
-      { startDate: null, stopDate: null, status: constants.SUCCEEDED },
+      { startDate: null, stopDate: null, status: SUCCEEDED },
     );
     jest.spyOn(ProjectService.prototype, 'getProject').mockReturnValue({ metadataKeys: [] });
-    const status = await pipelineStatus('1234', constants.GEM2S_PROCESS_NAME);
-    expect(status[constants.GEM2S_PROCESS_NAME].needsRunning).toBe(true);
+
+    const status = await pipelineStatus('1234', GEM2S_PROCESS_NAME);
+
+    expect(status[GEM2S_PROCESS_NAME].needsRunning).toBe(true);
     expect(mockDynamoGetItem).toHaveBeenCalled();
   });
+
   it('returns a false "needsRunning" attribute for succesful gem2s pipelines with matching hashes', async () => {
     getExperimentAttributesSpy.mockReturnValue(mockHasBeenRun);
     mockDescribeExecution.mockReturnValue(
-      { startDate: null, stopDate: null, status: constants.SUCCEEDED },
+      { startDate: null, stopDate: null, status: SUCCEEDED },
     );
     const gem2sParamsSpy = jest.spyOn(ProjectService.prototype, 'getGem2sParams').mockReturnValue({ paramsHash: 'hashOfTheSamplesData' });
-    const status = await pipelineStatus('1234', constants.GEM2S_PROCESS_NAME);
-    expect(status[constants.GEM2S_PROCESS_NAME].needsRunning).toBe(false);
+
+    const status = await pipelineStatus('1234', GEM2S_PROCESS_NAME);
+
+    expect(status[GEM2S_PROCESS_NAME].needsRunning).toBe(false);
     expect(gem2sParamsSpy).toHaveBeenCalled();
   });
 });

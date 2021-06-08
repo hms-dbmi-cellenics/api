@@ -14,9 +14,6 @@ const SUCCEEDED = 'SUCCEEDED';
 // Custom defined statuses defined in the API
 const NOT_CREATED = 'NOT_CREATED';
 
-// Additional custom statuses
-const STATES = [NOT_CREATED, RUNNING, FAILED, TIMED_OUT, ABORTED, SUCCEEDED];
-
 module.exports = {
   QC_PROCESS_NAME,
   GEM2S_PROCESS_NAME,
@@ -27,5 +24,4 @@ module.exports = {
   ABORTED,
   SUCCEEDED,
   NOT_CREATED,
-  STATES,
 };
