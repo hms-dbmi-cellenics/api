@@ -111,6 +111,19 @@ describe('tests for the samples service', () => {
     });
 
     const deleteDynamoFnSpy = mockDynamoDeleteItem();
+
+    mockDynamoGetItem({
+      samples: {
+        'sampleUuid-1': {
+          files: {
+            'barcodes.tsv.gz': {},
+            'features.tsv.gz': {},
+            'matrix.mtx.gz': {},
+          },
+        },
+      },
+    });
+
     const deleteS3FnSpy = mockS3DeleteObjects({ Errors: [] });
 
     const s3DeleteParams = {
@@ -125,7 +138,7 @@ describe('tests for the samples service', () => {
       },
     };
 
-    (new SamplesService()).deleteSamplesEntry('project-1', 'experiment-1', ['sampleUuid-1'])
+    (new SamplesService()).deleteSamplesEntry('project-1', 'experiment-1', ['sampleUuid-1'], {})
       .then((data) => {
         expect(data).toEqual(OK());
         expect(deleteDynamoFnSpy).toHaveBeenCalledWith({

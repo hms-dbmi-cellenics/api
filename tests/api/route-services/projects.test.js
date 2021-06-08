@@ -259,7 +259,7 @@ describe('tests for the projects service', () => {
     });
 
     const deleteSpy = mockDynamoDeleteItem();
-    const getSpy = mockDynamoGetItem({ projects: { experiments, samples } });
+    const getSpy = mockDynamoGetItem({ projects: { experiments, samples }, samples });
 
     (new ProjectsService()).deleteProject('project-1')
       .then((res) => {
