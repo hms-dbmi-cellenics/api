@@ -12,7 +12,6 @@ const PipelineHook = require('../../utils/hookRunner');
 
 const pipelineHook = new PipelineHook();
 
-
 pipelineHook.register('uploadToAWS', [saveProcessingConfigFromGem2s, runQCPipeline]);
 
 const sendUpdateToSubscribed = async (experimentId, message, io) => {

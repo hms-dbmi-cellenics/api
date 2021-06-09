@@ -1,4 +1,3 @@
-const crypto = require('crypto');
 const config = require('../../config');
 const {
   createDynamoDbInstance, convertToDynamoDbRecord, convertToJsObject,
@@ -242,10 +241,6 @@ class ProjectsService {
         return acc;
       }, {});
     }
-    taskParams.paramsHash = crypto
-      .createHash('sha1')
-      .update(JSON.stringify(taskParams))
-      .digest('hex');
 
     return taskParams;
   }

@@ -9,7 +9,6 @@ const config = require('../../../config');
 const logger = require('../../../utils/logging');
 const ExperimentService = require('../../route-services/experiment');
 const SamplesService = require('../../route-services/samples');
-const ProjectService = require('../../route-services/projects');
 
 const { qcPipelineSkeleton } = require('./skeletons/qc-pipeline-skeleton');
 const { gem2sPipelineSkeleton } = require('./skeletons/gem2s-pipeline-skeleton');
@@ -20,8 +19,6 @@ const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('./constants');
 
 const experimentService = new ExperimentService();
 const samplesService = new SamplesService();
-const projectService = new ProjectService();
-
 
 const getPipelineArtifacts = async () => {
   const response = await fetch(
@@ -230,10 +227,9 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
   return { stateMachineArn, executionArn };
 };
 
-const createGem2SPipeline = async (experimentId) => {
+const createGem2SPipeline = async (experimentId, taskParams) => {
   const accountId = await config.awsAccountIdPromise;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
-  const taskParams = await projectService.getGem2sParams(experimentId);
 
   const context = {
     taskParams,
@@ -260,7 +256,7 @@ const createGem2SPipeline = async (experimentId) => {
   const executionArn = await executeStateMachine(stateMachineArn);
   logger.log(`Execution with ARN ${executionArn} created.`);
 
-  return { stateMachineArn, executionArn, paramsHash: taskParams.paramsHash };
+  return { stateMachineArn, executionArn };
 };
 
 
