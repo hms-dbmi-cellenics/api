@@ -46,7 +46,6 @@ describe('tests for samples route', () => {
       projectUuid: 'project-uuid',
       experimentId: 'experiment-id',
       samples: {
-        ids: ['sample-1'],
         'sample-1': {
           name: 'sample-1',
         },

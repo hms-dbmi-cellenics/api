@@ -806,6 +806,7 @@ paths:
           type: string
     get:
       summary: Get samples under a project
+      description: Get all samples under a project
       operationId: getProjectSamples
       x-eov-operation-id: samples#get
       x-eov-operation-handler: routes/samples
@@ -831,7 +832,6 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-      description: Get all samples under a project
   '/projects/{projectUuid}/{experimentId}/samples':
       parameters:
         - name: projectUuid
@@ -845,8 +845,8 @@ paths:
           schema:
             type: string
       put:
-        summary: Update sample
-        operationId: updateSample
+        summary: Update samples
+        operationId: updateSamples
         x-eov-operation-id: samples#update
         x-eov-operation-handler: routes/samples
         responses:
@@ -874,19 +874,51 @@ paths:
               application/json:
                 schema:
                   $ref: ./models/HTTPError.v1.yaml
-        description: Updates a sample
+        description: Updates a samples entry
         requestBody:
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  projectUuid:
-                    type: string
-                  experimentId:
-                    type: string
                   samples:
                     $ref: ./models/api-body-schemas/Samples.v1.yaml
+      delete:
+        summary: Remove samples
+        operationId: removeSamples
+        x-eov-operation-id: samples#remove
+        x-eov-operation-handler: routes/samples
+        responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: ./models/HTTPSuccess.v1.yaml
+          '400':
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  $ref: ./models/HTTPError.v1.yaml
+          '404':
+            description: Not Found
+            content:
+              application/json:
+                schema:
+                  $ref: ./models/HTTPError.v1.yaml
+          '415':
+            description: Unsupported Media Type
+            content:
+              application/json:
+                schema:
+                  $ref: ./models/HTTPError.v1.yaml
+        description: Removes samples from an entry
+        requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: ./models/samples-bodies/SamplesRemoveBody.v1.yaml
   '/projects':
     get:
       summary: 'Get the list of projects'
