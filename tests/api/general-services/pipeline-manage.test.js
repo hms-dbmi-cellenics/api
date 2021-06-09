@@ -8,38 +8,28 @@ jest.mock('crypto', () => ({
 }));
 jest.mock('../../../src/utils/asyncTimer');
 
-const { createQCPipeline } = jest.requireActual('../../../src/api/general-services/pipeline-manage');
-
-describe('test for pipeline services', () => {
-  afterEach(() => {
-    AWSMock.restore('EKS');
-    AWSMock.restore('StepFunctions');
-  });
-
-
-  const MockProcessingConfig = {
-    Item: {
-      processingConfig: {
-        M: {
-          doubletScores: {
-            M: {
-              enabled: {
-                BOOL: true,
-              },
-              filterSettings: {
-                M: {
-                  oneSetting: {
-                    N: 1,
-                  },
+const MockProcessingConfig = {
+  Item: {
+    processingConfig: {
+      M: {
+        doubletScores: {
+          M: {
+            enabled: {
+              BOOL: true,
+            },
+            filterSettings: {
+              M: {
+                oneSetting: {
+                  N: 1,
                 },
               },
-              oneSample: {
-                M: {
-                  filterSettings: {
-                    M: {
-                      oneSetting: {
-                        N: 1,
-                      },
+            },
+            oneSample: {
+              M: {
+                filterSettings: {
+                  M: {
+                    oneSetting: {
+                      N: 1,
                     },
                   },
                 },
@@ -49,23 +39,39 @@ describe('test for pipeline services', () => {
         },
       },
     },
-  };
+  },
+};
 
-  const MockSamples = {
-    Item: {
-      samples: {
-        M: {
-          ids: {
-            L: [
-              { S: 'oneSample' },
-              { S: 'otherSample' },
-            ],
+const MockSamples = {
+  Item: {
+    samples: {
+      M: {
+        oneSample: {
+          M: {
+            uuid: {
+              S: 'oneSample',
+            },
+          },
+        },
+        otherSample: {
+          M: {
+            uuid: {
+              S: 'otherSample',
+            },
           },
         },
       },
     },
+  },
+};
 
-  };
+const { createQCPipeline } = jest.requireActual('../../../src/api/general-services/pipeline-manage');
+
+describe('test for pipeline services', () => {
+  afterEach(() => {
+    AWSMock.restore('EKS');
+    AWSMock.restore('StepFunctions');
+  });
 
   const mockCluster = {
     cluster: {
@@ -196,10 +202,10 @@ describe('test for pipeline services', () => {
     AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
       if (params.TableName.match('experiments')) {
         getProcessingConfigSpy(params);
-        callback(null, _.cloneDeep(MockProcessingConfig));
+        callback(null, MockProcessingConfig);
       } else if (params.TableName.match('samples')) {
         getSamplesSpy(params);
-        callback(null, _.cloneDeep(MockSamples));
+        callback(null, MockSamples);
       }
     });
 

@@ -15,7 +15,15 @@ module.exports = {
   },
   'samples#update': (req, res, next) => {
     const { body, params: { projectUuid } } = req;
+
     samplesService.updateSamples(projectUuid, body)
+      .then((data) => res.json(data))
+      .catch(next);
+  },
+  'samples#remove': (req, res, next) => {
+    const { body: { ids }, params: { projectUuid, experimentId } } = req;
+
+    samplesService.removeSamples(projectUuid, experimentId, ids)
       .then((data) => res.json(data))
       .catch(next);
   },

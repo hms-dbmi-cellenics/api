@@ -252,13 +252,14 @@ describe('tests for the projects service', () => {
 
   it('DeleteProject deletes project and samples properly', async (done) => {
     const experiments = ['project-1'];
+    const samples = [];
 
     const marshalledKey = AWS.DynamoDB.Converter.marshall({
       projectUuid: 'project-1',
     });
 
     const deleteSpy = mockDynamoDeleteItem();
-    const getSpy = mockDynamoGetItem({ projects: { experiments } });
+    const getSpy = mockDynamoGetItem({ projects: { experiments, samples }, samples });
 
     (new ProjectsService()).deleteProject('project-1')
       .then((res) => {

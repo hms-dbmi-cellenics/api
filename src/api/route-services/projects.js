@@ -192,12 +192,12 @@ class ProjectsService {
     const dynamodb = createDynamoDbInstance();
 
     try {
-      const { experiments } = await this.getProject(projectUuid);
+      const { experiments, samples: sampleUuids } = await this.getProject(projectUuid);
 
       if (experiments.length > 0) {
         const deletePromises = experiments.reduce((acc, experimentId) => {
           acc.push(experimentService.deleteExperiment(experimentId));
-          acc.push(samplesService.deleteSamples(projectUuid, experimentId));
+          acc.push(samplesService.deleteSamplesEntry(projectUuid, experimentId, sampleUuids));
           return acc;
         }, []);
 
@@ -220,13 +220,15 @@ class ProjectsService {
 
     const defaultMetadataValue = 'N.A.';
 
+    const samplesEntries = Object.entries(samples);
+
     const taskParams = {
       projectId: experiment.projectId,
       experimentName: experiment.experimentName,
       organism: experiment.meta.organism,
       input: { type: experiment.meta.type },
-      sampleIds: samples.ids,
-      sampleNames: samples.ids.map((id) => samples[id].name),
+      sampleIds: samplesEntries.map(([sampleId]) => sampleId),
+      sampleNames: samplesEntries.map(([, sample]) => sample.name),
     };
 
     if (metadataKeys.length) {
@@ -234,9 +236,8 @@ class ProjectsService {
         // Make sure the key does not contain '-' as it will cause failure in GEM2S
         const sanitizedKey = key.replace(/-+/g, '_');
 
-        acc[sanitizedKey] = samples.ids.map(
-          // Fetch using unsanitized key as it is the key used to store metadata in sample
-          (sampleUuid) => samples[sampleUuid].metadata[key] || defaultMetadataValue,
+        acc[sanitizedKey] = samplesEntries.map(
+          ([, sample]) => sample.metadata[key] || defaultMetadataValue,
         );
         return acc;
       }, {});

@@ -155,8 +155,6 @@ describe('handleWorkRequest', () => {
     try {
       await handleWorkRequest(workRequest, socket);
     } catch (e) {
-      console.log(e.message);
-
       expect(e.message).toMatch(
         'Work request can not be handled because pipeline is RUNNING',
       );
