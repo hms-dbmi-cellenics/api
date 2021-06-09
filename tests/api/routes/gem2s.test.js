@@ -138,4 +138,23 @@ describe('tests for gem2s route', () => {
     expect(logger.error).toHaveBeenCalled();
     expect(mockHandleResponse).toHaveBeenCalledTimes(0);
   });
+
+  it('Returns an error when pipeline response handler fails', async () => {
+    let validMsg = _.cloneDeep(JSON.parse(basicMsg));
+    validMsg.Type = 'SubscriptionConfirmation';
+    validMsg = JSON.stringify(validMsg);
+
+    jest.mock('../../../src/utils/parse-sns-message.js', () => ({
+      parseSNSMessage: jest.fn().mockReturnValue(3), // any value that is not undefined
+    }));
+
+    await request(app)
+      .post('/v1/gem2sResults')
+      .send(validMsg)
+      .set('Content-type', 'text/plain')
+      .expect(200)
+      .expect('ok');
+
+    // TODO: case when response handler throws error
+  });
 });
