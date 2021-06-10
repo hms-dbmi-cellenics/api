@@ -1,4 +1,3 @@
-
 const express = require('express');
 const request = require('supertest');
 const https = require('https');
@@ -12,7 +11,7 @@ jest.mock('aws-xray-sdk');
 jest.mock('../../../src/utils/logging');
 jest.mock('../../../src/cache');
 
-const basicMsg = JSON.stringify({
+const basicMsg ={
   MessageId: 'da8827d4-ffc2-5efb-82c1-70f929b2081d',
   ResponseMetadata: {
     RequestId: '826314a1-e99f-5fe7-b845-438c3fef9901',
@@ -25,7 +24,7 @@ const basicMsg = JSON.stringify({
     },
     RetryAttempts: 0,
   },
-});
+};
 
 
 describe('PipelineResults route', () => {
@@ -44,7 +43,7 @@ describe('PipelineResults route', () => {
   });
 
   it('Can handle notifications', async () => {
-    let validMsg = _.cloneDeep(JSON.parse(basicMsg));
+    let validMsg = _.cloneDeep(basicMsg);
     validMsg.Type = 'Notification';
     validMsg = JSON.stringify(validMsg);
 
@@ -62,7 +61,7 @@ describe('PipelineResults route', () => {
   });
 
   it('Validating the response throws an error', async () => {
-    const invalidMsg = _.cloneDeep(basicMsg);
+    const invalidMsg = JSON.stringify(basicMsg);
     https.get = jest.fn();
 
     await request(app)
@@ -77,7 +76,7 @@ describe('PipelineResults route', () => {
   });
 
   it('Can handle message subscribtion', async () => {
-    let validMsg = _.cloneDeep(JSON.parse(basicMsg));
+    let validMsg = _.cloneDeep(basicMsg);
     validMsg.Type = 'SubscriptionConfirmation';
     validMsg = JSON.stringify(validMsg);
 
@@ -94,7 +93,7 @@ describe('PipelineResults route', () => {
   });
 
   it('Can handle message unsubscribtion', async () => {
-    let validMsg = _.cloneDeep(JSON.parse(basicMsg));
+    let validMsg = _.cloneDeep(basicMsg);
     validMsg.Type = 'UnsubscribeConfirmation';
     validMsg = JSON.stringify(validMsg);
 
@@ -122,7 +121,7 @@ describe('PipelineResults route', () => {
   });
 
   it('Returns an error when message in sns is malformed', async () => {
-    let validMsg = _.cloneDeep(JSON.parse(basicMsg));
+    let validMsg = _.cloneDeep(basicMsg);
     validMsg.Type = 'NotificationMalformed';
     validMsg = JSON.stringify(validMsg);
 

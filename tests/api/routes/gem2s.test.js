@@ -18,7 +18,7 @@ jest.mock('../../../src/api/route-services/gem2s-response');
 jest.mock('../../../src/api/general-services/pipeline-manage');
 jest.mock('../../../src/api/route-services/experiment');
 
-const basicMsg = JSON.stringify({
+const basicMsg = {
   MessageId: 'da8827d4-ffc2-5efb-82c1-70f929b2081d',
   ResponseMetadata: {
     RequestId: '826314a1-e99f-5fe7-b845-438c3fef9901',
@@ -31,7 +31,7 @@ const basicMsg = JSON.stringify({
     },
     RetryAttempts: 0,
   },
-});
+};
 
 
 describe('tests for gem2s route', () => {
@@ -51,7 +51,7 @@ describe('tests for gem2s route', () => {
   });
 
   it('Can handle valid notifications', async () => {
-    let validMsg = _.cloneDeep(JSON.parse(basicMsg));
+    let validMsg = _.cloneDeep(basicMsg);
     validMsg.Type = 'Notification';
     validMsg = JSON.stringify(validMsg);
 
@@ -69,7 +69,7 @@ describe('tests for gem2s route', () => {
   });
 
   it('Returns nok for invalid notifications', async () => {
-    let validMsg = _.cloneDeep(JSON.parse(basicMsg));
+    let validMsg = _.cloneDeep(basicMsg);
     validMsg.Type = 'Notification';
     validMsg = JSON.stringify(validMsg);
 
@@ -87,7 +87,7 @@ describe('tests for gem2s route', () => {
   });
 
   it('Validating the response throws an error', async () => {
-    const invalidMsg = _.cloneDeep(basicMsg);
+    const invalidMsg = JSON.stringify(basicMsg);
     https.get = jest.fn();
 
     await request(app)
@@ -102,7 +102,7 @@ describe('tests for gem2s route', () => {
   });
 
   it('Can handle message subscription', async () => {
-    let validMsg = _.cloneDeep(JSON.parse(basicMsg));
+    let validMsg = _.cloneDeep(basicMsg);
     validMsg.Type = 'SubscriptionConfirmation';
     validMsg = JSON.stringify(validMsg);
 
@@ -119,7 +119,7 @@ describe('tests for gem2s route', () => {
   });
 
   it('Can handle message unsubscription', async () => {
-    let validMsg = _.cloneDeep(JSON.parse(basicMsg));
+    let validMsg = _.cloneDeep(basicMsg);
     validMsg.Type = 'UnsubscribeConfirmation';
     validMsg = JSON.stringify(validMsg);
 
@@ -147,7 +147,7 @@ describe('tests for gem2s route', () => {
   });
 
   it('Returns an error when message in sns is malformed', async () => {
-    let validMsg = _.cloneDeep(JSON.parse(basicMsg));
+    let validMsg = _.cloneDeep(basicMsg);
     validMsg.Type = 'NotificationMalformed';
     validMsg = JSON.stringify(validMsg);
 
