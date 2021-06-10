@@ -9,16 +9,14 @@ const CacheSingleton = require('../../../src/cache');
 const gem2sResponse = require('../../../src/api/route-services/gem2s-response');
 const { createGem2SPipeline } = require('../../../src/api/general-services/pipeline-manage');
 
-jest.mock('../../../src/utils/authMiddlewares');
 jest.mock('sns-validator');
 jest.mock('aws-xray-sdk');
+jest.mock('../../../src/utils/authMiddlewares');
 jest.mock('../../../src/utils/logging');
 jest.mock('../../../src/cache');
 jest.mock('../../../src/api/route-services/gem2s-response');
 jest.mock('../../../src/api/general-services/pipeline-manage');
 jest.mock('../../../src/api/route-services/experiment');
-jest.mock('../../../src/api/route-services/samples');
-jest.mock('../../../src/api/route-services/projects');
 
 const basicMsg = JSON.stringify({
   MessageId: 'da8827d4-ffc2-5efb-82c1-70f929b2081d',
