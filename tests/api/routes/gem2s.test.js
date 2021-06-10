@@ -135,8 +135,8 @@ describe('tests for gem2s route', () => {
     expect(https.get).toHaveBeenCalledTimes(1);
   });
 
-  it('Get malformed work results returns an error', async () => {
-    const brokenMsg = JSON.stringify();
+  it('Returns an error for malformed work', async () => {
+    const brokenMsg = '';
 
     await request(app)
       .post('/v1/gem2sResults')

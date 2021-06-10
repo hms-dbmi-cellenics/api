@@ -11,7 +11,7 @@ jest.mock('aws-xray-sdk');
 jest.mock('../../../src/utils/logging');
 jest.mock('../../../src/cache');
 
-const basicMsg ={
+const basicMsg = {
   MessageId: 'da8827d4-ffc2-5efb-82c1-70f929b2081d',
   ResponseMetadata: {
     RequestId: '826314a1-e99f-5fe7-b845-438c3fef9901',
@@ -75,7 +75,7 @@ describe('PipelineResults route', () => {
     expect(https.get).toHaveBeenCalledTimes(0);
   });
 
-  it('Can handle message subscribtion', async () => {
+  it('Can handle message subscription', async () => {
     let validMsg = _.cloneDeep(basicMsg);
     validMsg.Type = 'SubscriptionConfirmation';
     validMsg = JSON.stringify(validMsg);
@@ -92,7 +92,7 @@ describe('PipelineResults route', () => {
     expect(https.get).toHaveBeenCalledTimes(1);
   });
 
-  it('Can handle message unsubscribtion', async () => {
+  it('Can handle message unsubscription', async () => {
     let validMsg = _.cloneDeep(basicMsg);
     validMsg.Type = 'UnsubscribeConfirmation';
     validMsg = JSON.stringify(validMsg);
@@ -109,8 +109,8 @@ describe('PipelineResults route', () => {
     expect(https.get).toHaveBeenCalledTimes(1);
   });
 
-  it('Get malformatted work results returns an error', async () => {
-    const brokenMsg = JSON.stringify();
+  it('Returns an error for malformed work', async () => {
+    const brokenMsg = '';
 
     await request(app)
       .post('/v1/pipelineResults')
