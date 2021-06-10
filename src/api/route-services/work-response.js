@@ -4,7 +4,7 @@ const validateRequest = require('../../utils/schema-validator');
 const logger = require('../../utils/logging');
 const { cacheSetResponse } = require('../../utils/cache-request');
 const { handlePagination } = require('../../utils/handlePagination');
-// const ExperimentService = require('./experiment');
+const ExperimentService = require('./experiment');
 
 // const experimentService = new ExperimentService();
 
@@ -33,12 +33,16 @@ class WorkResponseService {
       type: DATA_UPDATE,
     };
 
-    console.log('RESPONSE FOR CLIENT');
+    console.log('responseForClientDebug');
     console.log(responseForClient);
-    // const cellsets = responseForClient.results[0].body;
 
-    // await experimentService.updateCellSets(experimentId, cellsets);
+    if (responseForClient.request.body.name === 'ClusterCells') {
+      const cellSets = JSON.parse(responseForClient.results[0].body);
 
+      console.log('cellSetsDebug');
+      console.log(cellSets);
+      await (new ExperimentService()).updateLouvainCellSets(experimentId, cellSets);
+    }
 
     logger.log('Sending to all clients subscribed to experiment', experimentId);
     this.io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);

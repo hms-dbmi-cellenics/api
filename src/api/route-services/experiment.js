@@ -200,6 +200,9 @@ class ExperimentService {
 
       const data = JSON.parse(outputObject.Body.toString());
 
+      console.log('dataDebug');
+      console.log(data);
+
       return data;
     } catch (e) {
       if (e.code === 'NoSuchKey') {
@@ -218,7 +221,21 @@ class ExperimentService {
     }
   }
 
+  async updateLouvainCellSets(experimentId, cellSetsData) {
+    const cellSetsObject = await this.getCellSets(experimentId);
+
+    const { cellSets: cellSetsList } = cellSetsObject;
+
+    const newCellSetsList = _.filter(cellSetsList, (rootNode) => rootNode.key !== 'louvain');
+    newCellSetsList.push(cellSetsData);
+
+    await this.updateCellSets(experimentId, newCellSetsList);
+  }
+
   async updateCellSets(experimentId, cellSetData) {
+    console.log('cellSetDataDebug');
+    console.log(JSON.stringify(cellSetData));
+
     const cellSetsObject = JSON.stringify({ cellSets: cellSetData });
 
     const s3 = new AWS.S3();
