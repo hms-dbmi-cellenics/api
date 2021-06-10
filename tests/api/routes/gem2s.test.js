@@ -3,18 +3,22 @@ const request = require('supertest');
 const https = require('https');
 const _ = require('lodash');
 
-const gem2sResponse = require('../../../src/api/route-services/gem2s-response');
-
 const logger = require('../../../src/utils/logging');
 const expressLoader = require('../../../src/loaders/express');
 const CacheSingleton = require('../../../src/cache');
+const gem2sResponse = require('../../../src/api/route-services/gem2s-response');
+const { createGem2SPipeline } = require('../../../src/api/general-services/pipeline-manage');
 
+jest.mock('../../../src/utils/authMiddlewares');
 jest.mock('sns-validator');
 jest.mock('aws-xray-sdk');
 jest.mock('../../../src/utils/logging');
 jest.mock('../../../src/cache');
-
 jest.mock('../../../src/api/route-services/gem2s-response');
+jest.mock('../../../src/api/general-services/pipeline-manage');
+jest.mock('../../../src/api/route-services/experiment');
+jest.mock('../../../src/api/route-services/samples');
+jest.mock('../../../src/api/route-services/projects');
 
 const basicMsg = JSON.stringify({
   MessageId: 'da8827d4-ffc2-5efb-82c1-70f929b2081d',
@@ -159,5 +163,19 @@ describe('tests for gem2s route', () => {
       .expect('nok');
 
     expect(logger.error).toHaveBeenCalled();
+  });
+
+  it('Creates a new pipeline for gem2s execution', async (done) => {
+    createGem2SPipeline.mockReturnValue({});
+
+    request(app)
+      .post('/v1/experiments/someId/gem2s')
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
   });
 });

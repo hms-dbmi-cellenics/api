@@ -110,6 +110,8 @@ const mockUpdateProcessingConfig = jest.fn(
   }),
 );
 
+const mockSaveGem2sHandle = jest.fn(() => {});
+
 const mock = jest.fn().mockImplementation(() => ({
   getExperimentData: mockExperimentData,
   deleteExperiment: mockDeleteExperiment,
@@ -118,6 +120,7 @@ const mock = jest.fn().mockImplementation(() => ({
   updateCellSets: mockUpdateCellSets,
   getProcessingConfig: mockGetProcessingConfig,
   updateProcessingConfig: mockUpdateProcessingConfig,
+  saveGem2sHandle: mockSaveGem2sHandle,
   experimentsTableName: 'experiments-test',
 }));
 
