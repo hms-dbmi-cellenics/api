@@ -54,7 +54,8 @@ const getWorkerStatus = async (experimentId) => {
 
   let containerStatus = {};
 
-  if (workerDetails.status.containerStatuses.length >= 0) {
+  if (workerDetails.status.containerStatuses
+    && workerDetails.status.containerStatuses.length >= 0) {
     containerStatus = workerDetails.status.containerStatuses.reduce((accumulator, current) => ({
       ...accumulator,
       started: accumulator.started && current.started,
