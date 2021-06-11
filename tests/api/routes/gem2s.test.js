@@ -2,14 +2,21 @@ const express = require('express');
 const request = require('supertest');
 const https = require('https');
 const _ = require('lodash');
+
 const logger = require('../../../src/utils/logging');
 const expressLoader = require('../../../src/loaders/express');
 const CacheSingleton = require('../../../src/cache');
+const gem2sResponse = require('../../../src/api/route-services/gem2s-response');
+const { createGem2SPipeline } = require('../../../src/api/general-services/pipeline-manage');
 
 jest.mock('sns-validator');
 jest.mock('aws-xray-sdk');
+jest.mock('../../../src/utils/authMiddlewares');
 jest.mock('../../../src/utils/logging');
 jest.mock('../../../src/cache');
+jest.mock('../../../src/api/route-services/gem2s-response');
+jest.mock('../../../src/api/general-services/pipeline-manage');
+jest.mock('../../../src/api/route-services/experiment');
 
 const basicMsg = {
   MessageId: 'da8827d4-ffc2-5efb-82c1-70f929b2081d',
@@ -27,7 +34,7 @@ const basicMsg = {
 };
 
 
-describe('PipelineResults route', () => {
+describe('tests for gem2s route', () => {
   let app = null;
 
   beforeEach(async () => {
@@ -40,24 +47,43 @@ describe('PipelineResults route', () => {
   afterEach(() => {
     logger.log.mockClear();
     logger.error.mockClear();
+    jest.clearAllMocks();
   });
 
-  it('Can handle notifications', async () => {
+  it('Can handle valid notifications', async () => {
     let validMsg = _.cloneDeep(basicMsg);
     validMsg.Type = 'Notification';
     validMsg = JSON.stringify(validMsg);
 
-    const mockHandleResponse = jest.fn(() => { });
-    jest.mock('../../../src/api/route-services/pipeline-response', () => mockHandleResponse);
+    gem2sResponse.mockImplementation(() => { });
 
     await request(app)
-      .post('/v1/pipelineResults')
+      .post('/v1/gem2sResults')
       .send(validMsg)
       .set('Content-type', 'text/plain')
-      .expect(200);
+      .expect(200)
+      .expect('ok');
 
     expect(logger.error).toHaveBeenCalledTimes(0);
-    expect(mockHandleResponse).toHaveBeenCalledTimes(1);
+    expect(gem2sResponse).toHaveBeenCalledTimes(1);
+  });
+
+  it('Returns nok for invalid notifications', async () => {
+    let validMsg = _.cloneDeep(basicMsg);
+    validMsg.Type = 'Notification';
+    validMsg = JSON.stringify(validMsg);
+
+    gem2sResponse.mockImplementation(() => { throw new Error(); });
+
+    await request(app)
+      .post('/v1/gem2sResults')
+      .send(validMsg)
+      .set('Content-type', 'text/plain')
+      .expect(200)
+      .expect('nok');
+
+    expect(logger.error).toHaveBeenCalled();
+    expect(gem2sResponse).toHaveBeenCalledTimes(1);
   });
 
   it('Validating the response throws an error', async () => {
@@ -65,7 +91,7 @@ describe('PipelineResults route', () => {
     https.get = jest.fn();
 
     await request(app)
-      .post('/v1/pipelineResults')
+      .post('/v1/gem2sResults')
       .send(invalidMsg)
       .set('Content-type', 'text/plain')
       .expect(200)
@@ -83,7 +109,7 @@ describe('PipelineResults route', () => {
     https.get = jest.fn();
 
     await request(app)
-      .post('/v1/pipelineResults')
+      .post('/v1/gem2sResults')
       .send(validMsg)
       .set('Content-type', 'text/plain')
       .expect(200);
@@ -100,7 +126,7 @@ describe('PipelineResults route', () => {
     https.get = jest.fn();
 
     await request(app)
-      .post('/v1/pipelineResults')
+      .post('/v1/gem2sResults')
       .send(validMsg)
       .set('Content-type', 'text/plain')
       .expect(200);
@@ -113,7 +139,7 @@ describe('PipelineResults route', () => {
     const brokenMsg = '';
 
     await request(app)
-      .post('/v1/pipelineResults')
+      .post('/v1/gem2sResults')
       .send(brokenMsg)
       .set('Content-type', 'text/plain')
       .expect(200)
@@ -125,17 +151,29 @@ describe('PipelineResults route', () => {
     validMsg.Type = 'NotificationMalformed';
     validMsg = JSON.stringify(validMsg);
 
-    const mockHandleResponse = jest.fn(() => { });
-    jest.mock('../../../src/api/route-services/pipeline-response', () => mockHandleResponse);
+    gem2sResponse.mockImplementation(() => { });
 
     await request(app)
-      .post('/v1/pipelineResults')
+      .post('/v1/gem2sResults')
       .send(validMsg)
       .set('Content-type', 'text/plain')
       .expect(200)
       .expect('nok');
 
     expect(logger.error).toHaveBeenCalled();
-    expect(mockHandleResponse).toHaveBeenCalledTimes(0);
+  });
+
+  it('Creates a new pipeline for gem2s execution', async (done) => {
+    createGem2SPipeline.mockReturnValue({});
+
+    request(app)
+      .post('/v1/experiments/someId/gem2s')
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
   });
 });

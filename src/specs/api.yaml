@@ -557,7 +557,7 @@ paths:
         '200':
           description: OK
       description: Deletes a plot and table for a given experiment with the data specified.
-  "/experiments/{experimentId}/gem2s":
+  '/experiments/{experimentId}/gem2s':
     parameters:
       - schema:
           type: string
@@ -570,7 +570,7 @@ paths:
       x-eov-operation-id: gem2s#create
       x-eov-operation-handler: routes/gem2s
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
@@ -578,7 +578,7 @@ paths:
                 type: object
                 properties: {}
       description: This path will create a new pipeline that can run a state machine with gem2s tasks.
-  "/experiments/{experimentId}/pipelines": # this should be changed to /qc at some point
+  '/experiments/{experimentId}/pipelines': # this should be changed to /qc at some point
     parameters:
       - schema:
           type: string
