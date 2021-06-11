@@ -218,6 +218,17 @@ class ExperimentService {
     }
   }
 
+  async updateLouvainCellSets(experimentId, cellSetsData) {
+    const cellSetsObject = await this.getCellSets(experimentId);
+
+    const { cellSets: cellSetsList } = cellSetsObject;
+
+    const newCellSetsList = _.filter(cellSetsList, (rootNode) => rootNode.key !== 'louvain');
+    newCellSetsList.push(cellSetsData);
+
+    await this.updateCellSets(experimentId, newCellSetsList);
+  }
+
   async updateCellSets(experimentId, cellSetData) {
     const cellSetsObject = JSON.stringify({ cellSets: cellSetData });
 

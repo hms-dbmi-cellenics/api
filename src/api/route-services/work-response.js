@@ -4,6 +4,10 @@ const validateRequest = require('../../utils/schema-validator');
 const logger = require('../../utils/logging');
 const { cacheSetResponse } = require('../../utils/cache-request');
 const { handlePagination } = require('../../utils/handlePagination');
+const ExperimentService = require('./experiment');
+
+const NEW = 'NEW';
+const DATA_UPDATE = 'data_update';
 
 class WorkResponseService {
   constructor(io, workResponse) {
@@ -13,6 +17,28 @@ class WorkResponseService {
       this.io = io;
       return this;
     })();
+  }
+
+  async notifyDataUpdate(responseForClient) {
+    const { experimentId } = responseForClient.request;
+
+    // this should send the request so the UI can make it again if needed
+    // instead of sending the data to everyone
+    const response = {
+      response: responseForClient,
+      status: NEW,
+      type: DATA_UPDATE,
+    };
+
+    // for now we only want to notify about cell sets updates
+    if (responseForClient.request.body.name === 'ClusterCells') {
+      const cellSets = JSON.parse(responseForClient.results[0].body);
+      await (new ExperimentService()).updateLouvainCellSets(experimentId, cellSets);
+    }
+
+
+    logger.log('Sending to all clients subscribed to experiment', experimentId);
+    this.io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -102,10 +128,13 @@ class WorkResponseService {
       throw e;
     }
 
+    await this.notifyDataUpdate(responseForClient);
+
     if (socketId === 'no-socket') {
       logger.log('Socket is not provided, no response sent out.');
       return;
     }
+
 
     if (Date.parse(timeout) > Date.now()) {
       this.io.to(socketId).emit(`WorkResponse-${uuid}`, responseForClient);
