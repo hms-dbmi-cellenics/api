@@ -6,8 +6,6 @@ const { cacheSetResponse } = require('../../utils/cache-request');
 const { handlePagination } = require('../../utils/handlePagination');
 const ExperimentService = require('./experiment');
 
-// const experimentService = new ExperimentService();
-
 const NEW = 'NEW';
 const DATA_UPDATE = 'data_update';
 
@@ -24,23 +22,17 @@ class WorkResponseService {
   async notifyDataUpdate(responseForClient) {
     const { experimentId } = responseForClient.request;
 
-    // this should resend the request so the UI can replay it
+    // this should send the request so the UI can make it again if needed
     // instead of sending the data to everyone
     const response = {
       response: responseForClient,
-      // request: responseForClient.request,
       status: NEW,
       type: DATA_UPDATE,
     };
 
-    console.log('responseForClientDebug');
-    console.log(responseForClient);
-
+    // for now we only want to notify about cell sets updates
     if (responseForClient.request.body.name === 'ClusterCells') {
       const cellSets = JSON.parse(responseForClient.results[0].body);
-
-      console.log('cellSetsDebug');
-      console.log(cellSets);
       await (new ExperimentService()).updateLouvainCellSets(experimentId, cellSets);
     }
 
@@ -136,9 +128,6 @@ class WorkResponseService {
       throw e;
     }
 
-    // const { experimentId } = responseForClient.request;
-
-    // Does this belong in `if (socketId === 'no-socket') {` ?
     await this.notifyDataUpdate(responseForClient);
 
     if (socketId === 'no-socket') {

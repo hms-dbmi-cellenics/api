@@ -200,9 +200,6 @@ class ExperimentService {
 
       const data = JSON.parse(outputObject.Body.toString());
 
-      console.log('dataDebug');
-      console.log(data);
-
       return data;
     } catch (e) {
       if (e.code === 'NoSuchKey') {
@@ -233,9 +230,6 @@ class ExperimentService {
   }
 
   async updateCellSets(experimentId, cellSetData) {
-    console.log('cellSetDataDebug');
-    console.log(JSON.stringify(cellSetData));
-
     const cellSetsObject = JSON.stringify({ cellSets: cellSetData });
 
     const s3 = new AWS.S3();

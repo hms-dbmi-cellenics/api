@@ -40,8 +40,6 @@ module.exports = {
   'experiment#updateCellSets': [
     expressAuthorizationMiddleware,
     (req, res, next) => {
-      console.log('REQUEST UPDATE FOR CELLSETS MORTY');
-      console.log(JSON.stringify(req.body));
       experimentService.updateCellSets(req.params.experimentId, req.body)
         .then((data) => res.json(data))
         .catch(next);
