@@ -1,7 +1,5 @@
 const AWSXRay = require('aws-xray-sdk');
-const { createGem2SPipeline } = require('../general-services/pipeline-manage');
-const ExperimentService = require('../route-services/experiment');
-const gem2sResponse = require('../route-services/gem2s-response');
+const Gem2sService = require('../route-services/gem2s');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 const logger = require('../../utils/logging');
 
@@ -10,12 +8,10 @@ const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares'
 module.exports = {
   'gem2s#create': [
     expressAuthorizationMiddleware,
-    async (req, res) => {
-      const data = await createGem2SPipeline(req.params.experimentId);
+    async (req, res, next) => {
+      const { experimentId } = req.params;
 
-      const experimentService = new ExperimentService();
-      await experimentService.saveGem2sHandle(req.params.experimentId, data);
-      res.json(data);
+      Gem2sService.gem2sCreate(experimentId).then((response) => res.json(response)).catch(next);
     },
   ],
 
@@ -35,7 +31,7 @@ module.exports = {
     const isSnsNotification = parsedMessage !== undefined;
     if (isSnsNotification) {
       try {
-        await gem2sResponse(io, parsedMessage);
+        await Gem2sService.gem2sResponse(io, parsedMessage);
       } catch (e) {
         logger.error(
           'gem2s pipeline response handler failed with error: ', e,

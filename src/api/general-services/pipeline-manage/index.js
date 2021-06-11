@@ -9,7 +9,6 @@ const config = require('../../../config');
 const logger = require('../../../utils/logging');
 const ExperimentService = require('../../route-services/experiment');
 const SamplesService = require('../../route-services/samples');
-const ProjectService = require('../../route-services/projects');
 
 const { qcPipelineSkeleton } = require('./skeletons/qc-pipeline-skeleton');
 const { gem2sPipelineSkeleton } = require('./skeletons/gem2s-pipeline-skeleton');
@@ -20,8 +19,6 @@ const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('./constants');
 
 const experimentService = new ExperimentService();
 const samplesService = new SamplesService();
-const projectService = new ProjectService();
-
 
 const getPipelineArtifacts = async () => {
   const response = await fetch(
@@ -230,38 +227,9 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
   return { stateMachineArn, executionArn };
 };
 
-const createGem2SPipeline = async (experimentId) => {
+const createGem2SPipeline = async (experimentId, taskParams) => {
   const accountId = await config.awsAccountIdPromise;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
-
-  const experiment = await experimentService.getExperimentData(experimentId);
-  const { samples } = await samplesService.getSamplesByExperimentId(experimentId);
-  const { metadataKeys } = await projectService.getProject(experiment.projectId);
-
-  const defaultMetadataValue = 'N.A.';
-  const samplesEntries = Object.entries(samples);
-
-  const taskParams = {
-    projectId: experiment.projectId,
-    experimentName: experiment.experimentName,
-    organism: experiment.meta.organism,
-    input: { type: experiment.meta.type },
-    sampleIds: samplesEntries.map(([sampleId]) => sampleId),
-    sampleNames: samplesEntries.map(([, sample]) => sample.name),
-  };
-
-  if (metadataKeys.length) {
-    taskParams.metadata = metadataKeys.reduce((acc, key) => {
-      // Make sure the key does not contain '-' as it will cause failure in GEM2S
-      const sanitizedKey = key.replace(/-+/g, '_');
-
-      // Fetch using unsanitized key as it is the key used to store metadata in sample
-      acc[sanitizedKey] = samplesEntries.map(
-        ([, sample]) => sample.metadata[key] || defaultMetadataValue,
-      );
-      return acc;
-    }, {});
-  }
 
   const context = {
     taskParams,

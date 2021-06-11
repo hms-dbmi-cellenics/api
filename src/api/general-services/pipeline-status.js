@@ -74,6 +74,10 @@ const getStepsFromExecutionHistory = (events) => {
     }
   }
 
+  if (!events.length) {
+    return [];
+  }
+
   const main = new Branch(events[0], true);
   for (let ii = 1; ii < events.length; ii += 1) {
     const consumer = main.nextConsumer(events[ii]);
@@ -156,6 +160,7 @@ const getPipelineStatus = async (experimentId, processName) => {
       completedSteps,
     },
   };
+
   return response;
 };
 

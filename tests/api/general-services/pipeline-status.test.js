@@ -1,6 +1,16 @@
-const pipelineConstants = require('../../../src/api/general-services/pipeline-manage/constants');
+const AWSMock = require('aws-sdk-mock');
+const AWS = require('../../../src/utils/requireAWS');
+const constants = require('../../../src/api/general-services/pipeline-manage/constants');
+const experimentHelpers = require('../../../src/api/route-services/experimentHelpers');
+
+const getExperimentAttributesSpy = jest.spyOn(experimentHelpers, 'getExperimentAttributes');
+
 const pipelineStatus = require('../../../src/api/general-services/pipeline-status');
-const ExperimentService = require('../../../src/api/route-services/experiment');
+const ProjectService = require('../../../src/api/route-services/projects');
+
+const {
+  RUNNING, SUCCEEDED, NOT_CREATED, FAILED, TIMED_OUT, ABORTED, GEM2S_PROCESS_NAME, QC_PROCESS_NAME,
+} = constants;
 
 describe('getStepsFromExecutionHistory', () => {
   const fullHistory = [
@@ -337,37 +347,62 @@ describe('getStepsFromExecutionHistory', () => {
   });
 });
 
-jest.mock('../../../src/api/route-services/experiment', () => jest.fn().mockImplementation(() => {
-  // eslint-disable-next-line global-require
-  const internalConstants = require('../../../src/api/general-services/pipeline-manage/constants');
-
-  return {
-    getPipelinesHandles: () => ({
-      [internalConstants.GEM2S_PROCESS_NAME]: {
+describe('pipelineStatus', () => {
+  const mockNotRunResponse = {
+    meta: {
+      [GEM2S_PROCESS_NAME]: {
         stateMachineArn: '',
         executionArn: '',
       },
-      [internalConstants.QC_PROCESS_NAME]: {
+      [QC_PROCESS_NAME]: {
         stateMachineArn: '',
         executionArn: '',
+      },
+    },
+  };
+
+  const mockDescribeExecution = jest.fn();
+
+  const mockDynamoGetItem = jest.fn().mockImplementation(() => ({
+    Item: AWS.DynamoDB.Converter.marshall({
+      // Dumb meaningless payload to prevent crahes
+      meta: {},
+      samples: {
+        ids: [],
       },
     }),
-  };
-}));
+  }));
 
-describe('pipelineStatus', () => {
   beforeEach(() => {
-    ExperimentService.mockClear();
+    getExperimentAttributesSpy.mockClear();
+    AWSMock.setSDKInstance(AWS);
+
+    AWSMock.mock('StepFunctions', 'describeExecution', (params, callback) => {
+      callback(null, mockDescribeExecution(params));
+    });
+
+    AWSMock.mock('StepFunctions', 'getExecutionHistory', (params, callback) => {
+      callback(null, { events: [] });
+    });
+
+    AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
+      callback(null, mockDynamoGetItem(params));
+    });
   });
+
   it('handles properly an empty dynamodb record', async () => {
-    const status = await pipelineStatus('1234', pipelineConstants.QC_PROCESS_NAME);
+    getExperimentAttributesSpy.mockReturnValueOnce(mockNotRunResponse);
+    const status = await pipelineStatus('1234', QC_PROCESS_NAME);
+
     expect(status).toEqual({
-      [pipelineConstants.QC_PROCESS_NAME]: {
+      [QC_PROCESS_NAME]: {
         startDate: null,
         stopDate: null,
-        status: pipelineConstants.NOT_CREATED,
+        status: constants.NOT_CREATED,
         completedSteps: [],
       },
     });
+
+    expect(mockDynamoGetItem).not.toHaveBeenCalled();
   });
 });

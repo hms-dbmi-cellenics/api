@@ -46,7 +46,7 @@ const getWorkerStatus = async (experimentId) => {
 
   const workerDetails = podList.body.items[0];
 
-  if (!workerDetails) {
+  if (!workerDetails || !workerDetails.status.containerStatuses) {
     return response;
   }
 

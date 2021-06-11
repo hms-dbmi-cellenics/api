@@ -74,6 +74,8 @@ class ExperimentService {
       ':lastViewed': body.lastViewed,
       ':projectId': body.projectUuid,
       ':description': body.description,
+      ':input': body.input,
+      ':organism': body.organism,
       ':rbac_can_write': documentClient.createSet(rbacCanWrite),
       ':meta': {},
       ':processingConfig': {},

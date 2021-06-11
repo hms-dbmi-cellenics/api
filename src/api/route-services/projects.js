@@ -12,6 +12,7 @@ const ExperimentService = require('./experiment');
 
 const samplesService = new SamplesService();
 const experimentService = new ExperimentService();
+
 class ProjectsService {
   constructor() {
     this.tableName = `projects-${config.clusterEnv}`;

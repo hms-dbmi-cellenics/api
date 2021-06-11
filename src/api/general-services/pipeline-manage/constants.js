@@ -13,7 +13,6 @@ const SUCCEEDED = 'SUCCEEDED';
 
 // Custom defined statuses defined in the API
 const NOT_CREATED = 'NOT_CREATED';
-// Additional custom statuses
 
 module.exports = {
   QC_PROCESS_NAME,
