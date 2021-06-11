@@ -46,7 +46,7 @@ const getWorkerStatus = async (experimentId) => {
 
   const workerDetails = podList.body.items[0];
 
-  if (!workerDetails) {
+  if (!workerDetails || !workerDetails.status.containerStatuses) {
     return response;
   }
 
@@ -54,8 +54,7 @@ const getWorkerStatus = async (experimentId) => {
 
   let containerStatus = {};
 
-  if (workerDetails.status.containerStatuses
-    && workerDetails.status.containerStatuses.length >= 0) {
+  if (workerDetails.status.containerStatuses.length >= 0) {
     containerStatus = workerDetails.status.containerStatuses.reduce((accumulator, current) => ({
       ...accumulator,
       started: accumulator.started && current.started,
