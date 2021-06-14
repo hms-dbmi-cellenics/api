@@ -6,7 +6,7 @@ const _ = require('lodash');
 const logger = require('../../../src/utils/logging');
 const expressLoader = require('../../../src/loaders/express');
 const CacheSingleton = require('../../../src/cache');
-const gem2sResponse = require('../../../src/api/route-services/gem2s-response');
+const Gem2sService = require('../../../src/api/route-services/gem2s');
 const { createGem2SPipeline } = require('../../../src/api/general-services/pipeline-manage');
 
 jest.mock('sns-validator');
@@ -14,7 +14,7 @@ jest.mock('aws-xray-sdk');
 jest.mock('../../../src/utils/authMiddlewares');
 jest.mock('../../../src/utils/logging');
 jest.mock('../../../src/cache');
-jest.mock('../../../src/api/route-services/gem2s-response');
+jest.mock('../../../src/api/route-services/gem2s');
 jest.mock('../../../src/api/general-services/pipeline-manage');
 jest.mock('../../../src/api/route-services/experiment');
 
@@ -55,7 +55,7 @@ describe('tests for gem2s route', () => {
     validMsg.Type = 'Notification';
     validMsg = JSON.stringify(validMsg);
 
-    gem2sResponse.mockImplementation(() => { });
+    Gem2sService.gem2sResponse.mockImplementation(() => { });
 
     await request(app)
       .post('/v1/gem2sResults')
@@ -65,7 +65,7 @@ describe('tests for gem2s route', () => {
       .expect('ok');
 
     expect(logger.error).toHaveBeenCalledTimes(0);
-    expect(gem2sResponse).toHaveBeenCalledTimes(1);
+    expect(Gem2sService.gem2sResponse).toHaveBeenCalledTimes(1);
   });
 
   it('Returns nok for invalid notifications', async () => {
@@ -73,7 +73,7 @@ describe('tests for gem2s route', () => {
     validMsg.Type = 'Notification';
     validMsg = JSON.stringify(validMsg);
 
-    gem2sResponse.mockImplementation(() => { throw new Error(); });
+    Gem2sService.gem2sResponse.mockImplementation(() => { throw new Error(); });
 
     await request(app)
       .post('/v1/gem2sResults')
@@ -83,7 +83,7 @@ describe('tests for gem2s route', () => {
       .expect('nok');
 
     expect(logger.error).toHaveBeenCalled();
-    expect(gem2sResponse).toHaveBeenCalledTimes(1);
+    expect(Gem2sService.gem2sResponse).toHaveBeenCalledTimes(1);
   });
 
   it('Validating the response throws an error', async () => {
@@ -151,7 +151,7 @@ describe('tests for gem2s route', () => {
     validMsg.Type = 'NotificationMalformed';
     validMsg = JSON.stringify(validMsg);
 
-    gem2sResponse.mockImplementation(() => { });
+    Gem2sService.gem2sResponse.mockImplementation(() => { });
 
     await request(app)
       .post('/v1/gem2sResults')
@@ -165,6 +165,9 @@ describe('tests for gem2s route', () => {
 
   it('Creates a new pipeline for gem2s execution', async (done) => {
     createGem2SPipeline.mockReturnValue({});
+    Gem2sService.gem2sCreate.mockImplementation(
+      async () => ({ stateMachineArn: 'statemachine', executionArn: 'execution' }),
+    );
 
     request(app)
       .post('/v1/experiments/someId/gem2s')
