@@ -6,7 +6,7 @@ const _ = require('lodash');
 const logger = require('../../../src/utils/logging');
 const expressLoader = require('../../../src/loaders/express');
 const CacheSingleton = require('../../../src/cache');
-const Gem2sService = require('../../../src/api/route-services/gem2s');
+const { gem2sCreate, gem2sResponse } = require('../../../src/api/route-services/gem2s');
 const { createGem2SPipeline } = require('../../../src/api/general-services/pipeline-manage');
 
 jest.mock('sns-validator');
@@ -165,9 +165,7 @@ describe('tests for gem2s route', () => {
 
   it('Creates a new pipeline for gem2s execution', async (done) => {
     createGem2SPipeline.mockReturnValue({});
-    Gem2sService.gem2sCreate.mockImplementation(
-      async () => ({ stateMachineArn: 'statemachine', executionArn: 'execution' }),
-    );
+    gem2sCreate.mockImplementation(() => Promise.resolve({}));
 
     request(app)
       .post('/v1/experiments/someId/gem2s')
