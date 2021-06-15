@@ -55,7 +55,7 @@ describe('tests for gem2s route', () => {
     validMsg.Type = 'Notification';
     validMsg = JSON.stringify(validMsg);
 
-    Gem2sService.gem2sResponse.mockImplementation(() => { });
+    gem2sResponse.mockImplementation(() => { });
 
     await request(app)
       .post('/v1/gem2sResults')
@@ -65,7 +65,7 @@ describe('tests for gem2s route', () => {
       .expect('ok');
 
     expect(logger.error).toHaveBeenCalledTimes(0);
-    expect(Gem2sService.gem2sResponse).toHaveBeenCalledTimes(1);
+    expect(gem2sResponse).toHaveBeenCalledTimes(1);
   });
 
   it('Returns nok for invalid notifications', async () => {
@@ -73,7 +73,7 @@ describe('tests for gem2s route', () => {
     validMsg.Type = 'Notification';
     validMsg = JSON.stringify(validMsg);
 
-    Gem2sService.gem2sResponse.mockImplementation(() => { throw new Error(); });
+    gem2sResponse.mockImplementation(() => { throw new Error(); });
 
     await request(app)
       .post('/v1/gem2sResults')
@@ -83,7 +83,7 @@ describe('tests for gem2s route', () => {
       .expect('nok');
 
     expect(logger.error).toHaveBeenCalled();
-    expect(Gem2sService.gem2sResponse).toHaveBeenCalledTimes(1);
+    expect(gem2sResponse).toHaveBeenCalledTimes(1);
   });
 
   it('Validating the response throws an error', async () => {
@@ -151,7 +151,7 @@ describe('tests for gem2s route', () => {
     validMsg.Type = 'NotificationMalformed';
     validMsg = JSON.stringify(validMsg);
 
-    Gem2sService.gem2sResponse.mockImplementation(() => { });
+    gem2sResponse.mockImplementation(() => { });
 
     await request(app)
       .post('/v1/gem2sResults')
