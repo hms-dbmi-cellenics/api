@@ -117,6 +117,7 @@ const getPipelineStatus = async (experimentId, processName) => {
 
   let execution = {};
   let completedSteps = [];
+  let error = false;
 
   if (!executionArn.length) {
     execution = {
@@ -143,11 +144,13 @@ const getPipelineStatus = async (experimentId, processName) => {
         nextToken,
       }).promise();
 
+      if (execution.status === 'FAILED') {
+        error = history.events[history.events.length - 1].executionFailedEventDetails;
+      }
       events = [...events, ...history.events];
       nextToken = history.nextToken;
     } while (nextToken);
     /* eslint-enable no-await-in-loop */
-
     completedSteps = getStepsFromExecutionHistory(events);
     logger.log(`ExecutionHistory(${processName}) for ARN ${executionArn}: ${events.length} events, ${completedSteps.length} completed steps`);
   }
@@ -157,6 +160,7 @@ const getPipelineStatus = async (experimentId, processName) => {
       startDate: execution.startDate,
       stopDate: execution.stopDate,
       status: execution.status,
+      error,
       completedSteps,
     },
   };
