@@ -77,6 +77,7 @@ const config = {
   pipelineInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/pipeline.yaml',
   cachingEnabled: true,
   corsOriginUrl: 'https://scp.biomage.net',
+  adminArn: 'a07c6615-d982-413b-9fdc-48bd85182e83',
 };
 
 
