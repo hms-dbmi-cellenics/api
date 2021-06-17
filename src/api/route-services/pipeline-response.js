@@ -63,7 +63,6 @@ const pipelineResponse = async (io, message) => {
     await validateRequest(output.config, 'ProcessingConfigBodies.v1.yaml');
   }
 
-
   if (output.plotDataKeys) {
     const plotConfigUploads = Object.entries(output.plotDataKeys).map(([plotUuid, objKey]) => (
       plotsTableService.updatePlotDataKey(
