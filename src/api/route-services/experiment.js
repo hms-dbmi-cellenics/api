@@ -225,10 +225,16 @@ class ExperimentService {
 
     const { cellSets: cellSetsList } = cellSetsObject;
 
-    const newCellSetsList = _.filter(cellSetsList, (rootNode) => rootNode.key !== 'louvain');
-    newCellSetsList.push(cellSetsData);
+    const louvainIndex = _.findIndex(cellSetsList, { key: 'louvain' });
+    if (louvainIndex !== -1) {
+      // If louvain already exists replace
+      cellSetsList[louvainIndex] = cellSetsData;
+    } else {
+      // If not, insert in the front
+      cellSetsList.unshift(cellSetsData);
+    }
 
-    await this.updateCellSets(experimentId, newCellSetsList);
+    await this.updateCellSets(experimentId, cellSetsList);
   }
 
   async updateCellSets(experimentId, cellSetData) {
