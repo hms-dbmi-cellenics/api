@@ -81,6 +81,10 @@ const mockUpdateProcessingConfig = jest.fn(
           dataIntegration: {
             method: 'seuratv4',
             methodSettings: {
+              harmony: {
+                numGenes: 2000,
+                normalisation: 'logNormalize',
+              },
               seuratv4: {
                 numGenes: 2000,
                 normalisation: 'logNormalize',
