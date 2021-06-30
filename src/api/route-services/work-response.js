@@ -128,7 +128,10 @@ class WorkResponseService {
       logger.log('Sending work response to all clients subscribed to experiment', experimentId);
       this.io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 
-      await persistUpdates(experimentId, responseForClient);
+      if (!responseForClient.response.error) {
+        await persistUpdates(experimentId, responseForClient);
+      }
+
       return;
     }
 
