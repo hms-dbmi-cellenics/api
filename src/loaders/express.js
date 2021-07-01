@@ -57,13 +57,6 @@ module.exports = async (app) => {
     res.set('X-Amzn-Trace-Id', `Root=${AWSXRay.getSegment().trace_id}`);
     AWSXRay.getSegment().addAnnotation('podName', config.podName);
 
-    _.mapKeys(
-      req.params,
-      (value, key) => {
-        AWSXRay.getSegment().addAnnotation(key, value);
-      },
-    );
-
     next();
   });
 
@@ -79,8 +72,18 @@ module.exports = async (app) => {
     operationHandlers: path.join(__dirname, '..', 'api'),
   }));
 
-  // Custom error handler.
+  app.use((req, res, next) => {
+    _.mapKeys(
+      req.params,
+      (value, key) => {
+        AWSXRay.getSegment().addAnnotation(key, value);
+      },
+    );
 
+    next();
+  });
+
+  // Custom error handler.
   app.use((err, req, res, next) => {
     console.error(`Error thrown in HTTP request (${req.method} ${req.path})`);
     console.error(Object.keys(req.body).length ? req.body : 'Empty body');
