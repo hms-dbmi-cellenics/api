@@ -4,8 +4,10 @@ const path = require('path');
 const OpenApiValidator = require('express-openapi-validator');
 const http = require('http');
 const AWSXRay = require('aws-xray-sdk');
+const _ = require('lodash');
 const config = require('../config');
 const { authenticationMiddlewareExpress } = require('../utils/authMiddlewares');
+
 
 module.exports = async (app) => {
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
@@ -53,7 +55,15 @@ module.exports = async (app) => {
 
   app.use((req, res, next) => {
     res.set('X-Amzn-Trace-Id', `Root=${AWSXRay.getSegment().trace_id}`);
-    AWSXRay.getSegment().addMetadata('podName', config.podName);
+    AWSXRay.getSegment().addAnnotation('podName', config.podName);
+
+    _.mapKeys(
+      req.params,
+      (value, key) => {
+        AWSXRay.getSegment().addAnnotation(key, value);
+      },
+    );
+
     next();
   });
 
