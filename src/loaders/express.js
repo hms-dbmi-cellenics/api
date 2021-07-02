@@ -51,9 +51,13 @@ module.exports = async (app) => {
   });
 
 
-  // This is a weird middleware, it reacts to the response successfully being sent.
-  // It adds annotations to the segment after the response is sent. This is
-  // because OpenApiValidator blocks further middlewares somehow.
+  /**
+   * This middleware must be instantiated before the X-Ray middleware
+   * opens the segment. This adds a hook to run when `res` is sent to the
+   * client so we can add all necessary path parameters as annotations. Event
+   * handlers are executed in order, so this must happen before AWS can add
+   * its own hook.
+   */
   app.use((req, res, next) => {
     res.once('finish', () => {
       const segment = AWSXRay.resolveSegment(req.segment);
@@ -68,9 +72,6 @@ module.exports = async (app) => {
           },
         );
       }
-
-      console.log('segment is', segment);
-      console.log(' ');
     });
 
     next();
