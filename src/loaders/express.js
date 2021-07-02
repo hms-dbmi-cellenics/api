@@ -65,6 +65,23 @@ module.exports = async (app) => {
 
   app.use(authMw);
 
+  // This is a weird middleware, it reacts to the response successfully being sent.
+  // It adds annotations to the segment after the response is sent. This is
+  // because OpenApiValidator blocks further middlewares somehow.
+  app.use((req, res, next) => {
+    res.once('finish', () => {
+      _.mapKeys(
+        req.params,
+        (value, key) => {
+          const segment = AWSXRay.resolveSegment(req.segment);
+          segment.addAnnotation(key, value);
+        },
+      );
+    });
+
+    next();
+  });
+
   app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
     validateRequests: true,
@@ -73,15 +90,11 @@ module.exports = async (app) => {
   }));
 
   app.use((req, res, next) => {
-    _.mapKeys(
-      req.params,
-      (value, key) => {
-        AWSXRay.getSegment().addAnnotation(key, value);
-      },
-    );
+    console.log('middleware here tooo');
 
     next();
   });
+
 
   // Custom error handler.
   app.use((err, req, res, next) => {
