@@ -70,9 +70,9 @@ module.exports = async (app) => {
   // because OpenApiValidator blocks further middlewares somehow.
   app.use((req, res, next) => {
     res.once('finish', () => {
-      const segment = AWSXRay.resolveSegment(req.segment);
-
       console.log(req.params);
+
+      const segment = AWSXRay.getSegment();
 
       if (segment) {
         _.mapKeys(
@@ -80,7 +80,7 @@ module.exports = async (app) => {
           (value, key) => {
             console.log(key, value);
 
-            segment.addAnnotation(key, value);
+            AWSXRay.getSegment().addAnnotation(key, value);
           },
         );
       }
