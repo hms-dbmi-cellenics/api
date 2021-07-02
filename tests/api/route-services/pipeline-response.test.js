@@ -22,7 +22,7 @@ describe('Test Pipeline Response Service', () => {
     input: {
       experimentId: '1234',
       taskName: 'cellSizeDistribution',
-      sampleUuid: '',
+      sampleUuid: 'sampleId',
     },
     output: {
       bucket: 'aws-bucket',
@@ -83,7 +83,12 @@ describe('Test Pipeline Response Service', () => {
     mockDynamoGetItem({
       processingConfig: {
         cellSizeDistribution: {
-          filterSettings: { binStep: 200, minCellSize: 420 }, enabled: true,
+          sampleId: {
+            auto: true,
+            filterSettings: { binStep: 200, minCellSize: 420 },
+            defaultFilterSettings: { binStep: 200, minCellSize: 420 },
+          },
+          enabled: true,
         },
       },
     });
@@ -111,7 +116,12 @@ describe('Test Pipeline Response Service', () => {
     mockDynamoGetItem({
       processingConfig: {
         cellSizeDistribution: {
-          filterSettings: { binStep: 200, minCellSize: 420 }, enabled: true,
+          control: {
+            auto: true,
+            filterSettings: { binStep: 200, minCellSize: 420 },
+            defaultFilterSettings: { binStep: 200, minCellSize: 420 },
+          },
+          enabled: true,
         },
       },
     });
