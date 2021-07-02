@@ -83,9 +83,9 @@ module.exports = async (app) => {
           },
         );
       }
-
-      next();
     });
+
+    next();
   });
 
   app.use(OpenApiValidator.middleware({
