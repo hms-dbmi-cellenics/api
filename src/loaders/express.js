@@ -51,28 +51,12 @@ module.exports = async (app) => {
   });
 
 
-  app.use(AWSXRay.express.openSegment(`API-${config.clusterEnv}-${config.sandboxId}`));
-
-  app.use((req, res, next) => {
-    res.set('X-Amzn-Trace-Id', `Root=${AWSXRay.getSegment().trace_id}`);
-    AWSXRay.getSegment().addAnnotation('podName', config.podName);
-
-    next();
-  });
-
-  // Authentication middleware.
-  const authMw = await authenticationMiddlewareExpress(app);
-
-  app.use(authMw);
-
   // This is a weird middleware, it reacts to the response successfully being sent.
   // It adds annotations to the segment after the response is sent. This is
   // because OpenApiValidator blocks further middlewares somehow.
   app.use((req, res, next) => {
     res.once('finish', () => {
-      console.log(req.params);
-
-      const segment = AWSXRay.getSegment();
+      const segment = AWSXRay.resolveSegment(req.segment);
 
       if (segment) {
         _.mapKeys(
@@ -91,6 +75,20 @@ module.exports = async (app) => {
 
     next();
   });
+
+  app.use(AWSXRay.express.openSegment(`API-${config.clusterEnv}-${config.sandboxId}`));
+
+  app.use((req, res, next) => {
+    res.set('X-Amzn-Trace-Id', `Root=${AWSXRay.getSegment().trace_id}`);
+    AWSXRay.getSegment().addAnnotation('podName', config.podName);
+
+    next();
+  });
+
+  // Authentication middleware.
+  const authMw = await authenticationMiddlewareExpress(app);
+
+  app.use(authMw);
 
   app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
