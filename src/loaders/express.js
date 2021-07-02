@@ -72,17 +72,19 @@ module.exports = async (app) => {
     res.once('finish', () => {
       const segment = AWSXRay.resolveSegment(req.segment);
 
-      console.log('segment is', segment);
-      console.log('parameters are', req.params);
-
       if (segment) {
         _.mapKeys(
           req.params,
           (value, key) => {
+            console.log(key, value);
+
             segment.addAnnotation(key, value);
           },
         );
       }
+
+      console.log('segment is', segment);
+      console.log(' ');
     });
 
     next();
