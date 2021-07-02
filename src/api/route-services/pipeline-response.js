@@ -85,10 +85,15 @@ const pipelineResponse = async (io, message) => {
   } = await experimentService.getProcessingConfig(experimentId);
 
   if (sampleUuid !== '') {
+    const { defaultFilterSettings = null } = currentConfig[taskName][sampleUuid];
+
     await experimentService.updateProcessingConfig(experimentId, [
       {
         name: taskName,
-        body: { ...currentConfig[taskName], [sampleUuid]: output.config },
+        body: {
+          ...currentConfig[taskName],
+          [sampleUuid]: { defaultFilterSettings, ...output.config },
+        },
       },
     ]);
   } else {

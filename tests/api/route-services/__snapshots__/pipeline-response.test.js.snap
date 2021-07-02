@@ -30,6 +30,16 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
             "M": Object {
               "control": Object {
                 "M": Object {
+                  "defaultFilterSettings": Object {
+                    "M": Object {
+                      "binStep": Object {
+                        "N": "200",
+                      },
+                      "minCellSize": Object {
+                        "N": "420",
+                      },
+                    },
+                  },
                   "enabled": Object {
                     "BOOL": true,
                   },
@@ -47,16 +57,6 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
               },
               "enabled": Object {
                 "BOOL": true,
-              },
-              "filterSettings": Object {
-                "M": Object {
-                  "binStep": Object {
-                    "N": "200",
-                  },
-                  "minCellSize": Object {
-                    "N": "420",
-                  },
-                },
               },
             },
           },
@@ -102,6 +102,16 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
             "M": Object {
               "control": Object {
                 "M": Object {
+                  "defaultFilterSettings": Object {
+                    "M": Object {
+                      "binStep": Object {
+                        "N": "200",
+                      },
+                      "minCellSize": Object {
+                        "N": "420",
+                      },
+                    },
+                  },
                   "enabled": Object {
                     "BOOL": true,
                   },
@@ -119,16 +129,6 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
               },
               "enabled": Object {
                 "BOOL": true,
-              },
-              "filterSettings": Object {
-                "M": Object {
-                  "binStep": Object {
-                    "N": "200",
-                  },
-                  "minCellSize": Object {
-                    "N": "420",
-                  },
-                },
               },
             },
           },
@@ -178,13 +178,30 @@ exports[`Test Pipeline Response Service functions propely with correct input (no
               "enabled": Object {
                 "BOOL": true,
               },
-              "filterSettings": Object {
+              "sampleId": Object {
                 "M": Object {
-                  "binStep": Object {
-                    "N": "200",
+                  "defaultFilterSettings": Object {
+                    "M": Object {
+                      "binStep": Object {
+                        "N": "200",
+                      },
+                      "minCellSize": Object {
+                        "N": "420",
+                      },
+                    },
                   },
-                  "minCellSize": Object {
-                    "N": "10800",
+                  "enabled": Object {
+                    "BOOL": true,
+                  },
+                  "filterSettings": Object {
+                    "M": Object {
+                      "binStep": Object {
+                        "N": "200",
+                      },
+                      "minCellSize": Object {
+                        "N": "10800",
+                      },
+                    },
                   },
                 },
               },
@@ -233,13 +250,30 @@ exports[`Test Pipeline Response Service functions propely with correct input (no
               "enabled": Object {
                 "BOOL": true,
               },
-              "filterSettings": Object {
+              "sampleId": Object {
                 "M": Object {
-                  "binStep": Object {
-                    "N": "200",
+                  "defaultFilterSettings": Object {
+                    "M": Object {
+                      "binStep": Object {
+                        "N": "200",
+                      },
+                      "minCellSize": Object {
+                        "N": "420",
+                      },
+                    },
                   },
-                  "minCellSize": Object {
-                    "N": "10800",
+                  "enabled": Object {
+                    "BOOL": true,
+                  },
+                  "filterSettings": Object {
+                    "M": Object {
+                      "binStep": Object {
+                        "N": "200",
+                      },
+                      "minCellSize": Object {
+                        "N": "10800",
+                      },
+                    },
                   },
                 },
               },
