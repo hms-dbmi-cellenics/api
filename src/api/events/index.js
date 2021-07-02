@@ -15,16 +15,18 @@ module.exports = (socket) => {
 
       logger.log('Work submitted from client', socket.id, ':', data);
 
+      const { uuid, Authorization, experimentId } = data;
+
+      segment.addMetadata('request', data);
+      segment.addAnnotation('podName', config.podName);
+      segment.addAnnotation('experimentId', experimentId);
+
       segment.addIncomingRequestData({
         request: {
           method: 'POST',
-          url: `socketio://api-${config.sandboxId}-${config.clusterEnv}/WorkRequest`,
+          url: `socketio://api-${config.sandboxId}-${config.clusterEnv}/${experimentId}/WorkRequest`,
         },
       });
-
-      const { uuid, Authorization, experimentId } = data;
-      segment.addMetadata('podName', config.podName);
-      segment.addMetadata('request', data);
 
       try {
         // Authenticate and authorize the user
