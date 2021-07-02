@@ -74,7 +74,10 @@ module.exports = async (app) => {
         req.params,
         (value, key) => {
           const segment = AWSXRay.resolveSegment(req.segment);
-          segment.addAnnotation(key, value);
+
+          if (segment) {
+            segment.addAnnotation(key, value);
+          }
         },
       );
     });
@@ -88,13 +91,6 @@ module.exports = async (app) => {
     validateResponses: true,
     operationHandlers: path.join(__dirname, '..', 'api'),
   }));
-
-  app.use((req, res, next) => {
-    console.log('middleware here tooo');
-
-    next();
-  });
-
 
   // Custom error handler.
   app.use((err, req, res, next) => {
