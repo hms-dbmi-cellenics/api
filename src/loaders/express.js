@@ -82,8 +82,7 @@ module.exports = async (app) => {
   app.use((req, res, next) => {
     res.set('X-Amzn-Trace-Id', `Root=${AWSXRay.getSegment().trace_id}`);
     AWSXRay.getSegment().addAnnotation('podName', config.podName);
-    AWSXRay.getSegment().addAnnotation('UserId', req.headers.userid);
-    // console.log('GOT API REQUEST ', req.headers);
+    AWSXRay.getSegment().addAnnotation('userId', req.headers.userid);
     next();
   });
 
