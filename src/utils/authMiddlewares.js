@@ -123,7 +123,7 @@ const authenticationMiddlewareSocketIO = async (authHeader) => {
       issuer,
     },
   );
-
+  AWSXRay.getSegment().setUser(result.sub);
   return result;
 };
 

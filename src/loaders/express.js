@@ -82,7 +82,6 @@ module.exports = async (app) => {
   app.use((req, res, next) => {
     res.set('X-Amzn-Trace-Id', `Root=${AWSXRay.getSegment().trace_id}`);
     AWSXRay.getSegment().addAnnotation('podName', config.podName);
-    AWSXRay.getSegment().addAnnotation('userId', req.headers.userid);
     next();
   });
 
@@ -90,6 +89,12 @@ module.exports = async (app) => {
   const authMw = await authenticationMiddlewareExpress(app);
 
   app.use(authMw);
+
+  // adding userid to xray traces
+  app.use((req, res, next) => {
+    AWSXRay.getSegment().addUser(req.user.sub);
+    next();
+  });
 
   app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
