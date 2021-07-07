@@ -91,9 +91,8 @@ module.exports = async (app) => {
   app.use(authMw);
 
   // adding userid to xray traces
-  app.use((err, req, res, next) => {
+  app.use((req, res, next) => {
     AWSXRay.getSegment().setUser(req.user.sub);
-    res.status(err.status || 500);
     next();
   });
 
