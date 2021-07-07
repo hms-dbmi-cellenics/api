@@ -52,9 +52,10 @@ const authenticationMiddlewareExpress = async (app) => {
       const [jwtHeaderRaw] = token.split('.');
       // key ID that was used to sign the JWT
       const { kid } = JSON.parse(Buffer.from(jwtHeaderRaw, 'base64').toString('ascii'));
-
       // Get the issuer from the JWT claim.
-      const { iss } = payload;
+      const { iss, sub } = payload;
+
+      AWSXRay.getSegment().setUser(sub);
 
       if (!iss.endsWith(poolId)) {
         done('Issuer does not correspond to the correct environment.');
@@ -73,7 +74,6 @@ const authenticationMiddlewareExpress = async (app) => {
       fetch(`${iss}/.well-known/jwks.json`).then((res) => res.json()).then(({ keys }) => {
         const secret = keys.find((key) => key.kid === kid);
         const pem = jwkToPem(secret);
-
         app.set('keys', { ...app.get('keys'), kid: pem });
         done(null, pem);
       });

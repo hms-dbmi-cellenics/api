@@ -79,22 +79,11 @@ module.exports = async (app) => {
 
   app.use(AWSXRay.express.openSegment(`API-${config.clusterEnv}-${config.sandboxId}`));
 
-  app.use((req, res, next) => {
-    res.set('X-Amzn-Trace-Id', `Root=${AWSXRay.getSegment().trace_id}`);
-    AWSXRay.getSegment().addAnnotation('podName', config.podName);
-    next();
-  });
-
   // Authentication middleware.
   const authMw = await authenticationMiddlewareExpress(app);
 
   app.use(authMw);
 
-  // adding userid to xray traces
-  app.use((err, req, res, next) => {
-    AWSXRay.getSegment().setUser(req.user.sub);
-    next();
-  });
 
   app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
