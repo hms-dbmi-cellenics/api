@@ -92,7 +92,7 @@ module.exports = async (app) => {
 
   // adding userid to xray traces
   app.use((err, req, res, next) => {
-    AWSXRay.getSegment().addUser(req.user.sub);
+    AWSXRay.getSegment().setUser(req.user.sub);
     res.status(err.status || 500);
     next();
   });
