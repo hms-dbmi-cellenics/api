@@ -61,14 +61,14 @@ const withAutomaticSettings = (processingConfig) => {
   // adding default config to every filter with auto option
   Object.keys(processingConfig).forEach((step) => {
     const currentStepSettings = processingConfig[step];
-    const sampleId = Object.keys(currentStepSettings).find(
+    const sampleIds = Object.keys(currentStepSettings).filter(
       (currentSample) => currentStepSettings[currentSample].auto,
     );
 
-    if (sampleId) {
+    sampleIds.forEach((sampleId) => {
       processingConfigWithAuto[step][sampleId]
         .defaultFilterSettings = processingConfig[step][sampleId].filterSettings;
-    }
+    });
   });
 
   return processingConfigWithAuto;
