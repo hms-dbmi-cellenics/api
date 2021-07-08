@@ -16,7 +16,6 @@ module.exports = (socket) => {
       logger.log('Work submitted from client', socket.id, ':', data);
 
       const { uuid, Authorization, experimentId } = data;
-
       segment.addMetadata('request', data);
       segment.addAnnotation('podName', config.podName);
       segment.addAnnotation('experimentId', experimentId);
