@@ -88,7 +88,6 @@ class WorkResponseService {
 
     const responseForClient = this.workResponse;
     responseForClient.results = processedResults;
-
     const {
       uuid, socketId, timeout, pagination,
     } = responseForClient.request;
