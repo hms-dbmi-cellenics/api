@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const AWSXRay = require('aws-xray-sdk');
 
 const crypto = require('crypto');
@@ -17,6 +18,61 @@ const logger = require('../../utils/logging');
 const ExperimentService = require('./experiment');
 const ProjectService = require('./projects');
 const SamplesService = require('./samples');
+
+const uglyTemporalFixedProcessingConfig = (processingConfig, filterName) => {
+  // This is an ugly patch we need to remove once filterName's processing config is fixed
+  // (right now we only receive default values which we no longer use)
+  const {
+    auto, enabled, filterSettings, ...samples
+  } = processingConfig.cellSizeDistribution;
+
+  const sampleIds = Object.keys(samples);
+  const defaultFilterSetting = processingConfig[filterName];
+
+  const perSampleFilterSetting = sampleIds.reduce(
+    (acum, sampleId) => {
+      // eslint-disable-next-line no-param-reassign
+      acum[sampleId] = defaultFilterSetting;
+      return acum;
+    },
+    {},
+  );
+
+  const fixedProcessingConfig = _.clone(processingConfig);
+  fixedProcessingConfig[filterName] = {
+    ...processingConfig[filterName],
+    ...perSampleFilterSetting,
+  };
+
+  return fixedProcessingConfig;
+};
+
+const addMissingPerSampleProcessingConfigValues = (processingConfig) => {
+  let fixedProcessingConfig = uglyTemporalFixedProcessingConfig(processingConfig, 'classifier');
+  fixedProcessingConfig = uglyTemporalFixedProcessingConfig(fixedProcessingConfig, 'mitochondrialContent');
+
+  return fixedProcessingConfig;
+};
+
+
+const withAutomaticSettings = (processingConfig) => {
+  const processingConfigWithAuto = _.cloneDeep(processingConfig);
+
+  // adding default config to every filter with auto option
+  Object.keys(processingConfig).forEach((step) => {
+    const currentStepSettings = processingConfig[step];
+    const sampleIds = Object.keys(currentStepSettings).filter(
+      (currentSample) => currentStepSettings[currentSample].auto,
+    );
+
+    sampleIds.forEach((sampleId) => {
+      processingConfigWithAuto[step][sampleId]
+        .defaultFilterSettings = processingConfig[step][sampleId].filterSettings;
+    });
+  });
+
+  return processingConfigWithAuto;
+};
 
 const pipelineHook = new PipelineHook();
 
@@ -132,16 +188,26 @@ class Gem2sService {
     // Fail hard if there was an error.
     await validateRequest(message, 'GEM2SResponse.v1.yaml');
 
+    const messageForClient = _.cloneDeep(message);
+
     const {
       experimentId, taskName, item,
-    } = message;
+    } = messageForClient;
+
+    if (item) {
+      const fixedProcessingConfig = addMissingPerSampleProcessingConfigValues(
+        item.processingConfig,
+      );
+
+      item.processingConfig = withAutomaticSettings(fixedProcessingConfig);
+    }
 
     await pipelineHook.run(taskName, {
       experimentId,
       item,
     });
 
-    await this.sendUpdateToSubscribed(experimentId, message, io);
+    await this.sendUpdateToSubscribed(experimentId, messageForClient, io);
   }
 }
 
