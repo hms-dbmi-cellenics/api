@@ -8,9 +8,9 @@ coverage:
 
   status:
     project:                   # measuring the overall project coverage
-      default:                 # context, you can create multiple ones with custom titles
+      default:                 
         enabled: no           
-    patch:
+    patch:                    # measuring the coverage of new changes
       default:
         enabled: no
   
