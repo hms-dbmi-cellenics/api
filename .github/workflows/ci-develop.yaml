@@ -33,9 +33,9 @@ jobs:
         npm ci
 
     - id: test
-      name: Run unit tests
+      name: Run unit tests with code coverage
       run: |-
-        npm test
+        npm coverage
       env:
         AWS_DEFAULT_REGION: 'eu-west-1'
 
