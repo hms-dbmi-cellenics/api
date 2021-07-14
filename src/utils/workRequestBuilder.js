@@ -25,7 +25,7 @@ const workRequestBuilder = async (workerTaskName, config) => {
 
   const workConfig = {
     experimentId: null,
-    socketId: 'no-socket',
+    socketId: 'broadcast',
     timeout,
     uuid: uuidv4(),
     body: {},

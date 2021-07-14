@@ -4,8 +4,10 @@ const path = require('path');
 const OpenApiValidator = require('express-openapi-validator');
 const http = require('http');
 const AWSXRay = require('aws-xray-sdk');
+const _ = require('lodash');
 const config = require('../config');
 const { authenticationMiddlewareExpress } = require('../utils/authMiddlewares');
+
 
 module.exports = async (app) => {
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
@@ -49,11 +51,37 @@ module.exports = async (app) => {
   });
 
 
+  /**
+   * This middleware must be instantiated before the X-Ray middleware
+   * opens the segment. This adds a hook to run when `res` is sent to the
+   * client so we can add all necessary path parameters as annotations. Event
+   * handlers are executed in order, so this must happen before AWS can add
+   * its own hook.
+   */
+  app.use((req, res, next) => {
+    res.once('finish', () => {
+      const segment = AWSXRay.resolveSegment(req.segment);
+
+      if (segment) {
+        _.mapKeys(
+          req.params,
+          (value, key) => {
+            console.log(key, value);
+
+            AWSXRay.getSegment().addAnnotation(key, value);
+          },
+        );
+      }
+    });
+
+    next();
+  });
+
   app.use(AWSXRay.express.openSegment(`API-${config.clusterEnv}-${config.sandboxId}`));
 
   app.use((req, res, next) => {
     res.set('X-Amzn-Trace-Id', `Root=${AWSXRay.getSegment().trace_id}`);
-    AWSXRay.getSegment().addMetadata('podName', config.podName);
+    AWSXRay.getSegment().addAnnotation('podName', config.podName);
     next();
   });
 
@@ -70,7 +98,6 @@ module.exports = async (app) => {
   }));
 
   // Custom error handler.
-
   app.use((err, req, res, next) => {
     console.error(`Error thrown in HTTP request (${req.method} ${req.path})`);
     console.error(Object.keys(req.body).length ? req.body : 'Empty body');

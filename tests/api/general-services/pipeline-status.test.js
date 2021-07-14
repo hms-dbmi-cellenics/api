@@ -398,6 +398,7 @@ describe('pipelineStatus', () => {
       [QC_PROCESS_NAME]: {
         startDate: null,
         stopDate: null,
+        error: false,
         status: constants.NOT_CREATED,
         completedSteps: [],
       },

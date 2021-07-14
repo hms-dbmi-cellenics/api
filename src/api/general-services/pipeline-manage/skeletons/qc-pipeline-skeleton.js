@@ -115,6 +115,7 @@ const qcPipelineSkeleton = {
       XConstructorArgs: {
         perSample: false,
         taskName: 'dataIntegration',
+        uploadCountMatrix: true,
       },
       Next: 'ConfigureEmbedding',
     },
@@ -123,7 +124,6 @@ const qcPipelineSkeleton = {
       XConstructorArgs: {
         perSample: false,
         taskName: 'configureEmbedding',
-        uploadCountMatrix: true,
       },
       Next: 'EndOfPipeline',
     },

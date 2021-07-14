@@ -11,6 +11,45 @@ const privateSteps = [
   'DeleteCompletedGem2SWorker', 'LaunchNewGem2SWorker',
 ];
 
+
+const notCreatedStatus = {
+  startDate: null,
+  stopDate: null,
+  status: pipelineConstants.NOT_CREATED,
+  error: false,
+  completedSteps: [],
+};
+
+const date = (new Date()).toISOString();
+const mockedCompletedStatus = {
+  qc: {
+    startDate: date,
+    stopDate: date,
+    status: 'SUCCEEDED',
+    completedSteps: [
+      'ClassifierFilter',
+      'CellSizeDistributionFilter',
+      'MitochondrialContentFilter',
+      'NumGenesVsNumUmisFilter',
+      'DoubletScoresFilter',
+      'DataIntegration',
+      'ConfigureEmbedding'],
+  },
+  gem2s: {
+    startDate: date,
+    stopDate: date,
+    status: 'SUCCEEDED',
+    completedSteps: [
+      'DownloadGem',
+      'PreProcessing',
+      'EmptyDrops',
+      'DoubletScores',
+      'CreateSeurat',
+      'PrepareExperiment',
+      'UploadToAWS'],
+  },
+};
+
 const getStepsFromExecutionHistory = (events) => {
   class Branch {
     constructor(event, makeRoot) {
@@ -117,46 +156,70 @@ const getPipelineStatus = async (experimentId, processName) => {
 
   let execution = {};
   let completedSteps = [];
+  let error = false;
 
+  // if there aren't ARNs just return NOT_CREATED status
   if (!executionArn.length) {
-    execution = {
-      startDate: null,
-      stopDate: null,
-      status: pipelineConstants.NOT_CREATED,
+    return {
+      [processName]: notCreatedStatus,
     };
-  } else {
-    const stepFunctions = new AWS.StepFunctions({
-      region: config.awsRegion,
-    });
+  }
 
+  const stepFunctions = new AWS.StepFunctions({
+    region: config.awsRegion,
+  });
+
+  try {
     execution = await stepFunctions.describeExecution({
       executionArn,
     }).promise();
+  } catch (e) {
+    // if we get the execution does not exist it means we are using a pulled experiment so
+    // just return a mock sucess status
+    if (config.clusterEnv === 'development' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST) {
+      logger.log(`Returning a mocke success ${processName}-pipeline status because ARN ${executionArn} `
+        + `does not exist and we are running in ${config.clusterEnv} so we are assuming the experiment was `
+        + ' pulled from another env.');
 
-    /* eslint-disable no-await-in-loop */
-    let events = [];
-    let nextToken;
-    do {
-      const history = await stepFunctions.getExecutionHistory({
-        executionArn,
-        includeExecutionData: false,
-        nextToken,
-      }).promise();
+      return {
+        [processName]: mockedCompletedStatus[processName],
+      };
+    }
 
-      events = [...events, ...history.events];
-      nextToken = history.nextToken;
-    } while (nextToken);
-    /* eslint-enable no-await-in-loop */
-
-    completedSteps = getStepsFromExecutionHistory(events);
-    logger.log(`ExecutionHistory(${processName}) for ARN ${executionArn}: ${events.length} events, ${completedSteps.length} completed steps`);
+    throw e;
   }
+
+  /* eslint-disable no-await-in-loop */
+  let events = [];
+  let nextToken;
+  do {
+    const history = await stepFunctions.getExecutionHistory({
+      executionArn,
+      includeExecutionData: false,
+      nextToken,
+    }).promise();
+
+    events = [...events, ...history.events];
+    nextToken = history.nextToken;
+  } while (nextToken);
+
+  error = _.findLast(events, (elem) => elem.type === 'ExecutionFailed');
+
+  if (error) {
+    error = error.executionFailedEventDetails;
+  }
+
+  /* eslint-enable no-await-in-loop */
+  completedSteps = getStepsFromExecutionHistory(events);
+  logger.log(`ExecutionHistory(${processName}) for ARN ${executionArn}: ${events.length} events, ${completedSteps.length} completed steps`);
+
 
   const response = {
     [processName]: {
       startDate: execution.startDate,
       stopDate: execution.stopDate,
       status: execution.status,
+      error,
       completedSteps,
     },
   };

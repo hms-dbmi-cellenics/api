@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const AWSXRay = require('aws-xray-sdk');
 
 const crypto = require('crypto');
@@ -132,16 +133,18 @@ class Gem2sService {
     // Fail hard if there was an error.
     await validateRequest(message, 'GEM2SResponse.v1.yaml');
 
+    const messageForClient = _.cloneDeep(message);
+
     const {
       experimentId, taskName, item,
-    } = message;
+    } = messageForClient;
 
     await pipelineHook.run(taskName, {
       experimentId,
       item,
     });
 
-    await this.sendUpdateToSubscribed(experimentId, message, io);
+    await this.sendUpdateToSubscribed(experimentId, messageForClient, io);
   }
 }
 
