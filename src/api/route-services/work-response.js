@@ -22,7 +22,9 @@ const persistUpdates = async (experimentId, responseForClient) => {
 class WorkResponseService {
   constructor(io, workResponse) {
     return (async () => {
+      console.log('workResponseCreate');
       await validateRequest(workResponse, 'WorkResponse.v1.yaml');
+      console.log('workResponseCreateValidated');
       this.workResponse = workResponse;
       this.io = io;
       return this;
@@ -80,6 +82,8 @@ class WorkResponseService {
   }
 
   async handleResponse() {
+    console.log('handleResponse');
+    console.log(JSON.stringify(this.workResponse));
     let processedResults = await Promise.all(
       [this.processS3PathType(this.workResponse), this.processInlineType(this.workResponse)],
     );
@@ -115,6 +119,9 @@ class WorkResponseService {
       throw e;
     }
 
+    console.log('socketIdDebug');
+    console.log(socketId);
+
     if (socketId === 'broadcast') {
       const response = {
         response: responseForClient,
@@ -123,6 +130,9 @@ class WorkResponseService {
       };
 
       const { experimentId } = responseForClient.request;
+
+      console.log('responseForClientDebug');
+      console.log(responseForClient);
 
       logger.log('Sending work response to all clients subscribed to experiment', experimentId);
       this.io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
