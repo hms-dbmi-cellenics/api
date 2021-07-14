@@ -18,8 +18,6 @@ const markerGenesWorkRequest = async (payload) => {
     PipelineRunETag: statusRes[constants.OLD_QC_NAME_TO_BE_REMOVED].startDate,
   };
 
-  console.log('HOLAQUETAL');
-
   const workRequest = await workRequestBuilder('MarkerHeatmap', markerGenesWorkConfig);
   workRequest.submitWork();
 };
