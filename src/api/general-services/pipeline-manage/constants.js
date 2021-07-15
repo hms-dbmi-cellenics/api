@@ -19,6 +19,7 @@ const NOT_CREATED = 'NOT_CREATED';
 // (barring unexpected errors, it happens when pulling or moving experiments across environments
 // because the ARNs are not imported)
 const EXECUTION_DOES_NOT_EXIST = 'ExecutionDoesNotExist';
+const NOT_AUTHORIZED = 'NotAuthorized';
 
 module.exports = {
   QC_PROCESS_NAME,
@@ -31,4 +32,5 @@ module.exports = {
   SUCCEEDED,
   NOT_CREATED,
   EXECUTION_DOES_NOT_EXIST,
+  NOT_AUTHORIZED,
 };
