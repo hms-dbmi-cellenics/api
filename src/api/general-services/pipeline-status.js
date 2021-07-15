@@ -178,7 +178,7 @@ const getPipelineStatus = async (experimentId, processName) => {
     // just return a mock sucess status
     if (
       (config.clusterEnv === 'development' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
-      || (config.clusterEnv === 'staging' && e.code === pipelineConstants.NOT_AUTHORIZED)
+      || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
     ) {
       logger.log(
         `Returning a mocked success ${processName}-pipeline status because ARN ${executionArn} `
