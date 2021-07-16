@@ -33,11 +33,14 @@ jobs:
         npm ci
 
     - id: test
-      name: Run unit tests
+      name: Run unit tests with code coverage
       run: |-
-        npm test
+        npm run coverage
       env:
         AWS_DEFAULT_REGION: 'eu-west-1'
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
 
     - id: send-to-slack
       name: Send failure notification to Slack
