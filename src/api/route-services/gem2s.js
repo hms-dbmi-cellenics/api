@@ -92,10 +92,6 @@ class Gem2sService {
     const { [GEM2S_PROCESS_NAME]: gem2sHandle } = handles;
     const { [GEM2S_PROCESS_NAME]: { status: gem2sStatus } } = statusWrapper;
 
-    console.log(gem2sStatus);
-    console.log(paramsHash);
-    console.log(gem2sHandle.paramsHash);
-
     if (gem2sStatus === SUCCEEDED) {
       return paramsHash !== gem2sHandle.paramsHash;
     }
