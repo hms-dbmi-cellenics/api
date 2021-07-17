@@ -102,6 +102,9 @@ class Gem2sService {
   static async gem2sCreate(experimentId) {
     const taskParams = await this.generateGem2sTaskParams(experimentId);
 
+    console.log('== DEBUG taskParams ==');
+    console.log(JSON.stringify(taskParams));
+
     const paramsHash = crypto
       .createHash('sha1')
       .update(JSON.stringify(taskParams))
