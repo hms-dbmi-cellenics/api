@@ -88,7 +88,8 @@ const pipelineResponse = async (io, message) => {
     const { auto } = currentConfig[taskName][sampleUuid];
 
     // Remove this once we're done migrating to the new experiment schema with defaultFilterSettings
-    // let { defaultFilterSettings = null } = currentConfig[taskName][sampleUuid];
+    // let { defaultFilterSettings = null } = currentConfig[taskName][sampleUuid]
+
     const defaultFilterSettings = auto ? output.config.filterSettings : null;
 
     await experimentService.updateProcessingConfig(experimentId, [
