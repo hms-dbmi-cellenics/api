@@ -97,7 +97,7 @@ const pipelineResponse = async (io, message) => {
         name: taskName,
         body: {
           ...currentConfig[taskName],
-          [sampleUuid]: { defaultFilterSettings, ...output.config },
+          [sampleUuid]: { ...output.config, defaultFilterSettings },
         },
       },
     ]);
