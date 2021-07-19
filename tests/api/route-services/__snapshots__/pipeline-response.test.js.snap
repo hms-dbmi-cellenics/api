@@ -36,7 +36,7 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
                         "N": "200",
                       },
                       "minCellSize": Object {
-                        "N": "420",
+                        "N": "10800",
                       },
                     },
                   },
@@ -108,7 +108,7 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
                         "N": "200",
                       },
                       "minCellSize": Object {
-                        "N": "420",
+                        "N": "10800",
                       },
                     },
                   },
@@ -186,7 +186,7 @@ exports[`Test Pipeline Response Service functions propely with correct input (no
                         "N": "200",
                       },
                       "minCellSize": Object {
-                        "N": "420",
+                        "N": "10800",
                       },
                     },
                   },
@@ -258,7 +258,7 @@ exports[`Test Pipeline Response Service functions propely with correct input (no
                         "N": "200",
                       },
                       "minCellSize": Object {
-                        "N": "420",
+                        "N": "10800",
                       },
                     },
                   },
