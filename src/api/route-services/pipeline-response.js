@@ -84,6 +84,9 @@ const pipelineResponse = async (io, message) => {
     processingConfig: currentConfig,
   } = await experimentService.getProcessingConfig(experimentId);
 
+  console.log('== DEBUG OUTPUT ==');
+  console.log(output);
+
   if (sampleUuid !== '') {
     console.log('== DEBUG CURRENT CONFIG ==');
     console.log(currentConfig[taskName][sampleUuid]);
