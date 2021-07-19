@@ -33,6 +33,13 @@ const MockProcessingConfig = {
                     },
                   },
                 },
+                defaultFilterSettings: {
+                  M: {
+                    oneSetting: {
+                      N: 1,
+                    },
+                  },
+                },
               },
             },
           },

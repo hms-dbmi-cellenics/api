@@ -176,10 +176,15 @@ const getPipelineStatus = async (experimentId, processName) => {
   } catch (e) {
     // if we get the execution does not exist it means we are using a pulled experiment so
     // just return a mock sucess status
-    if (config.clusterEnv === 'development' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST) {
-      logger.log(`Returning a mocke success ${processName}-pipeline status because ARN ${executionArn} `
+    if (
+      (config.clusterEnv === 'development' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
+      || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
+    ) {
+      logger.log(
+        `Returning a mocked success ${processName}-pipeline status because ARN ${executionArn} `
         + `does not exist and we are running in ${config.clusterEnv} so we are assuming the experiment was `
-        + ' pulled from another env.');
+        + ' pulled from another env.',
+      );
 
       return {
         [processName]: mockedCompletedStatus[processName],
