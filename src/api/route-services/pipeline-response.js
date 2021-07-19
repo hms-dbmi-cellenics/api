@@ -81,22 +81,22 @@ const pipelineResponse = async (io, message) => {
   }
 
   const {
-    processingConfig: currentConfig,
+    processingConfig: previousConfig,
   } = await experimentService.getProcessingConfig(experimentId);
 
   if (sampleUuid !== '') {
-    const { auto } = currentConfig[taskName][sampleUuid];
+    const { auto } = output.config;
 
     // This is a temporary fix to save defaultFilterSettings calculated in the QC pipeline
     // to patch for old experiments with hardcoded defaultFilterSettings.
     // Remove this once we're done migrating to the new experiment schema with defaultFilterSettings
-    output.config.defaultFilterSettings = auto ? output.config.filterSettings : null;
+    if (auto) output.config.defaultFilterSettings = output.config.filterSettings;
 
     await experimentService.updateProcessingConfig(experimentId, [
       {
         name: taskName,
         body: {
-          ...currentConfig[taskName],
+          ...previousConfig[taskName],
           [sampleUuid]: { ...output.config },
         },
       },
