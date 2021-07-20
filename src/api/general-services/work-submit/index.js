@@ -63,16 +63,18 @@ class WorkSubmitService {
   }
 
   async getQueueAndHandleMessage() {
-    if (config.clusterEnv === 'development') {
-      logger.log('In development, directly creating a queue...');
-      const queueUrl = await this.createQueue();
-      await this.sendMessageToQueue(queueUrl);
-      return 'success';
-    }
-
     try {
-      const accountId = await config.awsAccountIdPromise;
-      const queueUrl = `https://sqs.${config.awsRegion}.amazonaws.com/${accountId}/${this.workQueueName}`;
+      let queueUrl = '';
+
+      if (config.clusterEnv === 'development') {
+        logger.log('In development, directly creating a queue...');
+
+        queueUrl = 'http://localhost:4566/000000000000/development-queue.fifo';
+      } else {
+        const accountId = await config.awsAccountIdPromise;
+        queueUrl = `https://sqs.${config.awsRegion}.amazonaws.com/${accountId}/${this.workQueueName}`;
+      }
+
       await this.sendMessageToQueue(queueUrl);
     } catch (error) {
       if (error.code !== 'AWS.SimpleQueueService.NonExistentQueue') { throw error; }
