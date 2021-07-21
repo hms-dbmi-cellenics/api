@@ -1,3 +1,4 @@
+[![codecov](https://codecov.io/gh/biomage-ltd/api/branch/develop/graph/badge.svg?token=hC9LshrTQm)](https://codecov.io/gh/biomage-ltd/api)
 API
 ======
 

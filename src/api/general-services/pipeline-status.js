@@ -182,8 +182,8 @@ const getPipelineStatus = async (experimentId, processName) => {
     ) {
       logger.log(
         `Returning a mocked success ${processName}-pipeline status because ARN ${executionArn} `
-          + `does not exist and we are running in ${config.clusterEnv} so we are assuming the experiment was `
-          + ' pulled from another env.',
+        + `does not exist and we are running in ${config.clusterEnv} so we are assuming the experiment was `
+        + ' pulled from another env.',
       );
 
       return {
