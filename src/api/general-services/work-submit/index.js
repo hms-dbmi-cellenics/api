@@ -67,8 +67,6 @@ class WorkSubmitService {
       let queueUrl = '';
 
       if (config.clusterEnv === 'development') {
-        logger.log('In development, directly creating a queue...');
-
         queueUrl = 'http://localhost:4566/000000000000/development-queue.fifo';
       } else {
         const accountId = await config.awsAccountIdPromise;
