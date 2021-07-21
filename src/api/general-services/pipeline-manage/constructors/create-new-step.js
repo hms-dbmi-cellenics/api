@@ -24,11 +24,12 @@ const createTask = (taskName, context) => {
 };
 
 const getQCParams = (task, stepArgs) => {
-  const { perSample, uploadCountMatrix } = stepArgs;
+  const { perSample, uploadCountMatrix, uploadCellSets } = stepArgs;
   return {
     ...task,
     ...perSample ? { 'sampleUuid.$': '$.sampleUuid' } : { sampleUuid: '' },
     ...uploadCountMatrix ? { uploadCountMatrix: true } : { uploadCountMatrix: false },
+    ...uploadCellSets ? { uploadCellSets: true } : { uploadCellSets: false },
   };
 };
 
