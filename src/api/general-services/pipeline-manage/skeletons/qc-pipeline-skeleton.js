@@ -116,7 +116,6 @@ const qcPipelineSkeleton = {
         perSample: false,
         taskName: 'dataIntegration',
         uploadCountMatrix: true,
-        uploadCellSets: true,
       },
       Next: 'ConfigureEmbedding',
     },
