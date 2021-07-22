@@ -6,6 +6,9 @@ on:
   release:
     types:
       - released
+  pull_request:
+    branches:
+      - master
 jobs:
   test:
     name: Run tests
@@ -28,10 +31,16 @@ jobs:
 
     - id: test
       name: Run unit tests
-      run: |-
-        npm test
+      uses: mattallty/jest-github-action@v1
       env:
         AWS_DEFAULT_REGION: 'eu-west-1'
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        test-command: "npm run coverage"
+        coverage-comment: false
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
 
     - id: send-to-slack
       name: Send failure notification to Slack
