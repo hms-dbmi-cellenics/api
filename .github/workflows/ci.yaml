@@ -170,21 +170,21 @@ jobs:
           if [ "${{ matrix.environment }}" = "production" ]; then
             SANDBOX_ID="default"
             CHART_REF="master"
-            KUBERNETES_ENV = "production"
+            KUBERNETES_ENV="production"
             IMAGE_TAG = "$REF_DASHED"
           fi
 
           if [ "${{ matrix.environment }}" = "develop" ]; then
             SANDBOX_ID="default"
             CHART_REF="master"
-            KUBERNETES_ENV = "staging"
+            KUBERNETES_ENV="staging"
             IMAGE_TAG = "$REF_DASHED-$GITHUB_SHA"
           fi
 
           if [ "${{ matrix.environment }}" = "staging" ]; then
             SANDBOX_ID="STAGING_SANDBOX_ID"
             CHART_REF="STAGING_CHART_REF"
-            KUBERNETES_ENV = "staging"
+            KUBERNETES_ENV="staging"
             IMAGE_TAG = "$REF_DASHED-$GITHUB_SHA"
           fi
 
