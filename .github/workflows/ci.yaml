@@ -281,3 +281,13 @@ jobs:
           channel: pipelines
           status: FAILED
           color: danger
+
+  ready-to-merge:
+    name: Ready for merging
+    runs-on: ubuntu-20.04
+    needs: deploy
+    steps:
+      - id: ready-to-merge
+        name: Signal readiness to merge
+        run: |-
+          exit 0
