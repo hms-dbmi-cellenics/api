@@ -66,7 +66,7 @@ jobs:
           # we will also take semver'd tags like `1.0.0` and use them for releases
 
           if [ "${{ github.event_name }}" = "release" ] && [ "${{ github.event.action }}" = "released" ]; then
-            echo "::set-output name=tag::$REF_ID"
+            echo "::set-output name=tag::${REF_ID/refs-tags-/}"
           else
             echo "::set-output name=tag::$REF_ID-$GITHUB_SHA"
           fi
@@ -171,7 +171,7 @@ jobs:
             SANDBOX_ID="default"
             CHART_REF="master"
             KUBERNETES_ENV="production"
-            IMAGE_TAG="$REF_DASHED"
+            IMAGE_TAG="${REF_DASHED/refs-tags-/}"
             IMAGE_GLOB="semver:>=0.0.0"
           fi
 
