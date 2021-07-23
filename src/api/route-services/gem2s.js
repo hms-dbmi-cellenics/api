@@ -49,7 +49,12 @@ class Gem2sService {
   static async generateGem2sTaskParams(experimentId) {
     const experiment = await (new ExperimentService()).getExperimentData(experimentId);
     const { samples } = await (new SamplesService()).getSamplesByExperimentId(experimentId);
-    const { metadataKeys } = await (new ProjectService()).getProject(experiment.projectId);
+    const {
+      metadataKeys,
+      samples: sampleIdsInOrder,
+    } = await new ProjectService().getProject(experiment.projectId);
+
+    console.log(sampleIdsInOrder);
 
     const defaultMetadataValue = 'N.A.';
 
@@ -60,8 +65,8 @@ class Gem2sService {
       experimentName: experiment.experimentName,
       organism: experiment.meta.organism,
       input: { type: experiment.meta.type },
-      sampleIds: samplesEntries.map(([sampleId]) => sampleId),
-      sampleNames: samplesEntries.map(([, sample]) => sample.name),
+      sampleIds: sampleIdsInOrder,
+      sampleNames: sampleIdsInOrder.map((sampleId) => samples[sampleId].name),
     };
 
     if (metadataKeys.length) {
