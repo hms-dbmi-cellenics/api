@@ -586,7 +586,7 @@ paths:
         in: path
         required: true
     post:
-      summary: Create a new pipeline for taks execution
+      summary: Create a new pipeline for task execution
       operationId: createNewPipeline
       x-eov-operation-id: 'pipelines#create'
       x-eov-operation-handler: routes/pipelines

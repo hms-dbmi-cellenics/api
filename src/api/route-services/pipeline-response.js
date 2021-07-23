@@ -22,7 +22,6 @@ pipelineHook.register('configureEmbedding', clusteringWorkRequest);
 
 const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');
-
   AWSXRay.getSegment().addMetadata('message', message);
 
   const { experimentId } = message;
@@ -104,7 +103,6 @@ const pipelineResponse = async (io, message) => {
       },
     ]);
   }
-
   await pipelineHook.run(taskName, {
     experimentId,
     output,

@@ -14,7 +14,6 @@ class hookRunner {
     } else {
       this.hooks[taskName].push(callback);
     }
-
     this.results[taskName] = [];
   }
 

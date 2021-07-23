@@ -3,7 +3,7 @@ const workRequestBuilder = require('../workRequestBuilder');
 
 const embeddingWorkRequest = async (payload) => {
   const { experimentId, output, statusRes } = payload;
-
+  console.log('RUNNING THE EMBEDDING WORK REQUEST ', output, output.config.embeddingSettings.methodSettings);
   // Run work request for embedding
   const embeddingWorkConfig = {
     experimentId,

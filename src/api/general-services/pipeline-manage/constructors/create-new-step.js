@@ -74,4 +74,4 @@ const createNewStep = (context, step, stepArgs) => {
   };
 };
 
-module.exports = createNewStep;
+module.exports = { createNewStep, buildParams, createTask };

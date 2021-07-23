@@ -3,7 +3,6 @@ const workRequestBuilder = require('../workRequestBuilder');
 
 const clusteringWorkRequest = async (payload) => {
   const { experimentId, output, statusRes } = payload;
-
   // Run work request for cell clustering
   const clusteringWorkConfig = {
     experimentId,
