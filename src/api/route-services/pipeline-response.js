@@ -13,6 +13,7 @@ const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
 
 const getPipelineStatus = require('../general-services/pipeline-status');
+
 const embeddingWorkRequest = require('../../utils/hooks/embeddingWorkRequest');
 const clusteringWorkRequest = require('../../utils/hooks/clusteringWorkRequest');
 
