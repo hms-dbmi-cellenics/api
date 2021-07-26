@@ -84,6 +84,7 @@ class WorkResponseService {
       [this.processS3PathType(this.workResponse), this.processInlineType(this.workResponse)],
     );
 
+
     processedResults = processedResults.flat();
 
     const responseForClient = this.workResponse;

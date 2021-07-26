@@ -206,14 +206,6 @@ class ExperimentService {
     } catch (e) {
       if (e.code === 'NoSuchKey') {
         logger.log(`ERROR: Couldn't find s3 cell sets bucket with key: ${experimentId}`);
-
-        const actualData = await getExperimentAttributes(this.experimentsTableName, experimentId, ['cellSets']);
-
-        if (actualData) {
-          logger.log('Found the cell sets in dynamodb, this means this experiment has an OUTDATED structure and its cell sets should be moved to s3');
-        }
-
-        return actualData;
       }
 
       throw e;

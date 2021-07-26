@@ -116,6 +116,12 @@ const pipelineResponse = async (io, message) => {
     statusRes: statusResToSend,
   });
 
+  // Send updated cell sets after data integration step
+  if (taskName === 'dataIntegration') {
+    const { cellSets } = await experimentService.getCellSets(experimentId);
+    output.cellSets = cellSets;
+  }
+
   // Concatenate into a proper response.
   const response = {
     ...message,
