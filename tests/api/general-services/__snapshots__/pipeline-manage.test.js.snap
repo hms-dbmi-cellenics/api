@@ -186,6 +186,9 @@ Array [
                 "Parameters": Object {
                   "config": Object {
                     "oneSample": Object {
+                      "defaultFilterSettings": Object {
+                        "oneSetting": 1,
+                      },
                       "enabled": true,
                       "filterSettings": Object {
                         "oneSetting": 7,

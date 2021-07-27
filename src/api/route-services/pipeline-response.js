@@ -13,6 +13,7 @@ const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
 
 const getPipelineStatus = require('../general-services/pipeline-status');
+
 const embeddingWorkRequest = require('../../utils/hooks/embeddingWorkRequest');
 const clusteringWorkRequest = require('../../utils/hooks/clusteringWorkRequest');
 
@@ -81,18 +82,23 @@ const pipelineResponse = async (io, message) => {
   }
 
   const {
-    processingConfig: currentConfig,
+    processingConfig: previousConfig,
   } = await experimentService.getProcessingConfig(experimentId);
 
   if (sampleUuid !== '') {
-    const { defaultFilterSettings = null } = currentConfig[taskName][sampleUuid];
+    const { auto } = output.config;
+
+    // This is a temporary fix to save defaultFilterSettings calculated in the QC pipeline
+    // to patch for old experiments with hardcoded defaultFilterSettings.
+    // Remove this once we're done migrating to the new experiment schema with defaultFilterSettings
+    if (auto) output.config.defaultFilterSettings = output.config.filterSettings;
 
     await experimentService.updateProcessingConfig(experimentId, [
       {
         name: taskName,
         body: {
-          ...currentConfig[taskName],
-          [sampleUuid]: { defaultFilterSettings, ...output.config },
+          ...previousConfig[taskName],
+          [sampleUuid]: { ...output.config },
         },
       },
     ]);
