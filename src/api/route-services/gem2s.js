@@ -54,8 +54,6 @@ class Gem2sService {
       samples: sampleIdsInOrder,
     } = await new ProjectService().getProject(experiment.projectId);
 
-    console.log(sampleIdsInOrder);
-
     const defaultMetadataValue = 'N.A.';
 
     const samplesEntries = Object.entries(samples);
