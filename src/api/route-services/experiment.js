@@ -25,6 +25,7 @@ class ExperimentService {
   constructor() {
     this.experimentsTableName = `experiments-${config.clusterEnv}`;
     this.cellSetsBucketName = `cell-sets-${config.clusterEnv}`;
+    this.processedMatrixBucketName = `processed-matrix-${config.clusterEnv}`;
 
     mockData.matrixPath = mockData.matrixPath.replace('BUCKET_NAME', `biomage-source-${config.clusterEnv}`);
     this.mockData = convertToDynamoDbRecord(mockData);
@@ -323,6 +324,27 @@ class ExperimentService {
 
   async saveGem2sHandle(experimentId, handle) {
     return this.saveHandle(experimentId, handle, 'gem2s');
+  }
+
+  async downloadData(experimentId, downloadType) {
+    let objectKey = '';
+
+    // Defined in UI repo in utils/dataDownloadTypes
+    if (downloadType === 'processed_seurat_object') {
+      objectKey = `${experimentId}/r.rds`;
+    } else {
+      throw new Error('Invalid download type requested');
+    }
+
+    const s3 = new AWS.S3();
+
+    const params = {
+      Bucket: this.processedMatrixBucketName,
+      Key: objectKey,
+    };
+
+    const dataObject = await s3.getObject(params);
+    return dataObject;
   }
 }
 
