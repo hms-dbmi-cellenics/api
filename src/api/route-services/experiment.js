@@ -32,7 +32,7 @@ class ExperimentService {
 
   async getExperimentData(experimentId) {
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId,
-      ['projectId', 'meta', 'experimentId', 'experimentName']);
+      ['projectId', 'meta', 'experimentId', 'experimentName', 'sampleIds']);
     return data;
   }
 

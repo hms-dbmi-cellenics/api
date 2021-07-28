@@ -79,7 +79,15 @@ class Gem2sService {
       }, {});
     }
 
-    return taskParams;
+    const orderInvariantSampleIds = [...sampleIdsInOrder].sort();
+
+    const hashParams = {
+      sampleIds: orderInvariantSampleIds,
+      sampleNames: orderInvariantSampleIds.map((sampleId) => samples[sampleId].name),
+      metadata: taskParams.metadata,
+    };
+
+    return { taskParams, hashParams };
   }
 
   static async gem2sShouldRun(experimentId, paramsHash) {
@@ -103,11 +111,14 @@ class Gem2sService {
   }
 
   static async gem2sCreate(experimentId) {
-    const taskParams = await this.generateGem2sTaskParams(experimentId);
+    const { taskParams, hashParams } = await this.generateGem2sTaskParams(experimentId);
+
+    const experimentService = new ExperimentService();
+    experimentService.updateExperiment(experimentId, { sampleIds: taskParams.sampleIds });
 
     const paramsHash = crypto
       .createHash('sha1')
-      .update(JSON.stringify(taskParams))
+      .update(JSON.stringify(hashParams))
       .digest('hex');
 
     const shouldRun = await this.gem2sShouldRun(experimentId, paramsHash);
@@ -121,7 +132,7 @@ class Gem2sService {
 
     const newHandle = await createGem2SPipeline(experimentId, taskParams, paramsHash);
 
-    const experimentService = new ExperimentService();
+
     await experimentService.saveGem2sHandle(
       experimentId,
       { paramsHash, ...newHandle },
