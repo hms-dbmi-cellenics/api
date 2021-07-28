@@ -13,7 +13,7 @@ or connect it to the other parts of the Biomage Single Cell Platform.
 
 ### Prerequisites
 
-We hihgly recommend using VSCode for local development. Make sure you also have `npm` and `docker` installed.
+We highly recommend using VSCode for local development. Make sure you also have `npm` and `docker` installed.
 
 You will also need to have aws command line interface `aws-cli` installed and configured. See [install guide](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html). In MacOS you can run:
 
@@ -156,7 +156,7 @@ If you want to test a custom response that you wrote yourself, you can use `aws-
 To do this, make sure that you:
 
 1. Have `aws-cli` installed. See Prerequisites section.
-2. Create a file `payload.json` at the same  
+2. Create a file `payload.json` at the same directory.
 Then you can push mocked worker responses as follows:
 
         aws --endpoint-url=http://localhost:4566 sns publish --topic-arn arn:aws:sns:eu-west-1:000000000000:work-results-development --message "$(< payload.json)"

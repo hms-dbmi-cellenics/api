@@ -2,7 +2,9 @@ title: Plot Data
 type: object
 properties:
   plotData:
-    type: array
+    anyOf:
+      - type: array
+      - type: object
 required:
   - plotData
 description: Object storing the data for one particular plot.
