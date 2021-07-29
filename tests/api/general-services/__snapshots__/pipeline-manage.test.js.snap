@@ -28,7 +28,7 @@ Array [
       "loggingConfiguration": Object {
         "level": "OFF",
       },
-      "name": "biomage-qc-test-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
+      "name": "biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
       "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
       "tags": Array [
         Object {
@@ -41,7 +41,7 @@ Array [
         },
         Object {
           "key": "sandboxId",
-          "value": undefined,
+          "value": "default",
         },
       ],
       "type": "STANDARD",
@@ -168,7 +168,7 @@ Array [
             "Path": "/apis/helm.fluxcd.io/v1/namespaces/pipeline-test-namespace/helmreleases",
             "QueryParameters": Object {
               "labelSelector": Array [
-                "type=pipeline,sandboxId=undefined,experimentId=testExperimentId",
+                "type=pipeline,sandboxId=default,experimentId=testExperimentId",
               ],
             },
           },
@@ -250,6 +250,7 @@ Array [
                 },
                 "labels": Object {
                   "experimentId": "testExperimentId",
+                  "sandboxId": "default",
                   "type": "pipeline",
                 },
                 "name": "qc-testExperimentId",
@@ -270,6 +271,7 @@ Array [
                   "experimentId": "testExperimentId",
                   "image": "MOCK_IMAGE_PATH",
                   "namespace": "pipeline-test-namespace",
+                  "sandboxId": "default",
                 },
               },
             },
@@ -376,7 +378,7 @@ Array [
       "loggingConfiguration": Object {
         "level": "OFF",
       },
-      "name": "biomage-qc-test-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
+      "name": "biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
       "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
       "tags": Array [
         Object {
@@ -389,7 +391,7 @@ Array [
         },
         Object {
           "key": "sandboxId",
-          "value": undefined,
+          "value": "default",
         },
       ],
       "type": "STANDARD",
@@ -404,7 +406,7 @@ Array [
     "type": "return",
     "value": Object {
       "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
-      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-qc-test-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
+      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
     },
   },
 ]
@@ -416,7 +418,7 @@ Array [
     "type": "return",
     "value": Object {
       "input": "{\\"samples\\":[{\\"sampleUuid\\":\\"oneSample\\",\\"index\\":0},{\\"sampleUuid\\":\\"otherSample\\",\\"index\\":1}]}",
-      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-qc-test-af3b5c3acaa6348165d8e5e73c70d93b732bf6db",
+      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
       "traceHeader": undefined,
     },
   },
