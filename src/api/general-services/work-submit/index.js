@@ -20,6 +20,7 @@ class WorkSubmitService {
       this.workQueueName = 'development-queue.fifo';
     } else {
       this.workQueueName = `queue-job-${this.workerHash}-${config.clusterEnv}.fifo`;
+      this.envQueueName = `queue-job-${config.sandboxId}-${config.clusterEnv}.fifo`;
     }
   }
 
@@ -64,16 +65,18 @@ class WorkSubmitService {
 
   async getQueueAndHandleMessage() {
     try {
-      let queueUrl = '';
+      const queueUrls = [];
 
       if (config.clusterEnv === 'development') {
-        queueUrl = 'http://localhost:4566/000000000000/development-queue.fifo';
+        queueUrls.push('http://localhost:4566/000000000000/development-queue.fifo');
       } else {
         const accountId = await config.awsAccountIdPromise;
-        queueUrl = `https://sqs.${config.awsRegion}.amazonaws.com/${accountId}/${this.workQueueName}`;
+
+        queueUrls.push(`https://sqs.${config.awsRegion}.amazonaws.com/${accountId}/${this.workQueueName}`);
+        queueUrls.push(`https://sqs.${config.awsRegion}.amazonaws.com/${accountId}/${this.envQueueName}`);
       }
 
-      await this.sendMessageToQueue(queueUrl);
+      await Promise.all(queueUrls.map((queueUrl) => this.sendMessageToQueue(queueUrl)));
     } catch (error) {
       if (error.code !== 'AWS.SimpleQueueService.NonExistentQueue') { throw error; }
       const queueUrl = await this.createQueue();
