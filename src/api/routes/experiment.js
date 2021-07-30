@@ -65,10 +65,7 @@ module.exports = {
     expressAuthorizationMiddleware,
     (req, res, next) => {
       experimentService.downloadData(req.params.experimentId, req.params.type)
-        .then((dataObject) => {
-          const stream = dataObject.createReadStream();
-          stream.pipe(res);
-        })
+        .then((data) => res.json(data))
         .catch(next);
     },
   ],

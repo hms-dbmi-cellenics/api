@@ -464,6 +464,14 @@ paths:
       responses:
         '200':
           description: Download request successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  signedUrl:
+                    type: string
+                    description: signed URL of the resource
         '401':
           description: The request lacks authentication credentials.
           content:

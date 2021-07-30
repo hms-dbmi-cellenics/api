@@ -341,10 +341,11 @@ class ExperimentService {
     const params = {
       Bucket: this.processedMatrixBucketName,
       Key: objectKey,
+      Expires: 120,
     };
 
-    const dataObject = await s3.getObject(params);
-    return dataObject;
+    const signedUrl = s3.getSignedUrl('getObject', params);
+    return { signedUrl };
   }
 }
 
