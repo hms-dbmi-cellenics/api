@@ -9,6 +9,7 @@ const { OK, NotFoundError } = require('../../utils/responses');
 const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 
 const constants = require('../general-services/pipeline-manage/constants');
+const downloadTypes = require('../../utils/downloadTypes');
 
 const {
   getExperimentAttributes,
@@ -328,9 +329,11 @@ class ExperimentService {
 
   async downloadData(experimentId, downloadType) {
     let objectKey = '';
+    let bucket = '';
 
-    // Defined in UI repo in utils/dataDownloadTypes
-    if (downloadType === 'processed_seurat_object') {
+    // Also defined in UI repo in utils/downloadTypes
+    if (downloadType === downloadTypes.PROCESSED_SEURAT_OBJECT) {
+      bucket = this.processedMatrixBucketName;
       objectKey = `${experimentId}/r.rds`;
     } else {
       throw new Error('Invalid download type requested');
@@ -339,7 +342,7 @@ class ExperimentService {
     const s3 = new AWS.S3();
 
     const params = {
-      Bucket: this.processedMatrixBucketName,
+      Bucket: bucket,
       Key: objectKey,
       Expires: 120,
     };
