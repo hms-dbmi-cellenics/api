@@ -26,7 +26,7 @@ paths:
         - heartbeat
       summary: API health check
       operationId: checkHealth
-      x-eov-operation-id: 'health#check'
+      x-eov-operation-id: health#check
       x-eov-operation-handler: routes/health
       responses:
         '200':
@@ -61,7 +61,7 @@ paths:
   /workResults:
     post:
       operationId: receiveWork
-      x-eov-operation-id: 'work#response'
+      x-eov-operation-id: work#response
       x-eov-operation-handler: routes/work
       requestBody:
         description: 'The results from the execution of a work request, sent via SNS.'
@@ -104,7 +104,7 @@ paths:
   /gem2sResults:
     post:
       operationId: receiveGem2sResponse
-      x-eov-operation-id: 'gem2s#response'
+      x-eov-operation-id: gem2s#response
       x-eov-operation-handler: routes/gem2s
       requestBody:
         description: 'The results from the execution of a pipeline step, sent via SNS.'
@@ -147,7 +147,7 @@ paths:
   /pipelineResults:
     post:
       operationId: receivePipelineResponse
-      x-eov-operation-id: 'pipelines#response'
+      x-eov-operation-id: pipelines#response
       x-eov-operation-handler: routes/pipelines
       requestBody:
         description: 'The results from the execution of a pipeline step, sent via SNS.'
@@ -194,9 +194,15 @@ paths:
       summary: Get experiment details
       description: Returns the main details of the experiment.
       operationId: getExperiment
-      x-eov-operation-id: 'experiment#getExperiment'
+      x-eov-operation-id: experiment#getExperiment
       x-eov-operation-handler: routes/experiment
       responses:
+        '200':
+          description: 'Fetch successful, response below'
+          content:
+            application/json:
+              schema:
+                $ref: ./models/api-body-schemas/Experiment.v1.yaml
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -209,12 +215,6 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-        '200':
-          description: 'Fetch successful, response below'
-          content:
-            application/json:
-              schema:
-                $ref: ./models/api-body-schemas/Experiment.v1.yaml
         '404':
           description: Experiment not found
           content:
@@ -230,6 +230,7 @@ paths:
         description: ID of the experiment to find.
     post:
       summary: Create experiment
+      description: Create a new experiment
       operationId: createExperiment
       x-eov-operation-id: experiment#createExperiment
       x-eov-operation-handler: routes/experiment
@@ -290,7 +291,7 @@ paths:
       summary: Get cell sets for experiment
       description: Returns a hirearchical view of cell sets in the experiment.
       operationId: getExperimentCellSetsById
-      x-eov-operation-id: 'experiment#getCellSets'
+      x-eov-operation-id: experiment#getCellSets
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
@@ -332,9 +333,18 @@ paths:
     put:
       summary: ''
       operationId: updateExperimentCellSetsById
-      x-eov-operation-id: 'experiment#updateCellSets'
+      x-eov-operation-id: experiment#updateCellSets
       x-eov-operation-handler: routes/experiment
       responses:
+        '200':
+          description: Update to object in response successful.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: ./models/api-body-schemas/CellSets.v1.yaml
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -347,15 +357,6 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-        '200':
-          description: Update to object in response successful.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  allOf:
-                    - $ref: ./models/api-body-schemas/CellSets.v1.yaml
       description: Updates the cell set information in the database with a modified tree.
       requestBody:
         content:
@@ -372,9 +373,15 @@ paths:
       summary: Retrieve processing configuration
       description: Returns a hirearchical view of processing configuration used in the experiment.
       operationId: getExperimentProcessingConfigById
-      x-eov-operation-id: 'experiment#getProcessingConfig'
+      x-eov-operation-id: experiment#getProcessingConfig
       x-eov-operation-handler: routes/experiment
       responses:
+        '200':
+          description: 'Fetch successful, response below.'
+          content:
+            application/json:
+              schema:
+                $ref: ./models/ProcessingConfig.v1.yaml
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -387,12 +394,6 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-        '200':
-          description: 'Fetch successful, response below.'
-          content:
-            application/json:
-              schema:
-                $ref: ./models/ProcessingConfig.v1.yaml
         '404':
           description: Experiment not found.
           content:
@@ -411,9 +412,16 @@ paths:
     put:
       summary: ''
       operationId: updateExperimentProcessingConfigById
-      x-eov-operation-id: 'experiment#updateProcessingConfig'
+      x-eov-operation-id: experiment#updateProcessingConfig
       x-eov-operation-handler: routes/experiment
       responses:
+        '200':
+          description: Update to object in response successful.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/ProcessingConfig.v1.yaml
+              examples: {}
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -426,13 +434,6 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-        '200':
-          description: Update to object in response successful.
-          content:
-            application/json:
-              schema:
-                $ref: ./models/ProcessingConfig.v1.yaml
-              examples: {}
       description: Updates the processing configuration in the database.
       requestBody:
         content:
@@ -454,6 +455,64 @@ paths:
         description: Updates the keys specified by `name` with the body specified by `body`. A standard DynamoDB UpdateItem request should be called on the update.
       tags:
         - processing-config
+  '/experiments/{experimentId}/download/{type}':
+    get:
+      summary: Download data according to the requested type
+      operationId: downloadExperimentData
+      x-eov-operation-id: experiment#downloadData
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: Download request successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  signedUrl:
+                    type: string
+                    description: signed URL of the resource
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Invalid experiment ID or download type specified
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: Endpoint to download files
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: experimentId
+        - schema:
+            type: string
+          in: query
+          name: type
+    parameters:
+      - schema:
+          type: string
+        name: experimentId
+        in: path
+        required: true
+        description: ID of the experiment
+      - schema:
+          type: string
+        name: type
+        in: path
+        required: true
+        description: Download type
   '/experiments/{experimentId}/plots-tables/{plotUuid}':
     parameters:
       - schema:
@@ -469,21 +528,9 @@ paths:
     put:
       summary: ''
       operationId: updatePlotTable
-      x-eov-operation-id: 'plots-tables#update'
+      x-eov-operation-id: plots-tables#update
       x-eov-operation-handler: routes/plots-tables
       responses:
-        '401':
-          description: The request lacks authentication credentials.
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
-        '403':
-          description: The authenticated user is not authorized to view this resource.
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
         '200':
           description: Update to object in response successful.
           content:
@@ -496,6 +543,18 @@ paths:
             application/json:
               schema:
                 $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '404':
           description: Invalid experiment ID specified.
       description: Updates a plot and table for a given experiment with the data specified.
@@ -508,9 +567,15 @@ paths:
     get:
       summary: ''
       operationId: getPlotTable
-      x-eov-operation-id: 'plots-tables#read'
+      x-eov-operation-id: plots-tables#read
       x-eov-operation-handler: routes/plots-tables
       responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -529,19 +594,15 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
       description: Reads a plot and table for a given experiment with the data specified.
     delete:
       summary: ''
       operationId: deletePlotTable
-      x-eov-operation-id: 'plots-tables#delete'
+      x-eov-operation-id: plots-tables#delete
       x-eov-operation-handler: routes/plots-tables
       responses:
+        '200':
+          description: OK
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -554,8 +615,6 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-        '200':
-          description: OK
       description: Deletes a plot and table for a given experiment with the data specified.
   '/experiments/{experimentId}/gem2s':
     parameters:
@@ -578,7 +637,7 @@ paths:
                 type: object
                 properties: {}
       description: This path will create a new pipeline that can run a state machine with gem2s tasks.
-  '/experiments/{experimentId}/pipelines': # this should be changed to /qc at some point
+  '/experiments/{experimentId}/pipelines':
     parameters:
       - schema:
           type: string
@@ -588,9 +647,16 @@ paths:
     post:
       summary: Create a new pipeline for taks execution
       operationId: createNewPipeline
-      x-eov-operation-id: 'pipelines#create'
+      x-eov-operation-id: pipelines#create
       x-eov-operation-handler: routes/pipelines
       responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -603,21 +669,22 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties: {}
       description: This path will create a new pipeline that can run a state machine with different bioinformatics tasks.
   '/experiments/{experimentId}/backendStatus':
     get:
       summary: Create new pipeline
+      description: Endpoint to download files
       operationId: get-experiments-experimentId-pipelines
       x-eov-operation-id: backend-status#get
       x-eov-operation-handler: routes/backend-status
       responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -630,19 +697,19 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties: {}
         '404':
           description: Experiment not found.
           content:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+    parameters:
+      - schema:
+          type: string
+        name: experimentId
+        in: path
+        required: true
+        description: ID of the experiment
   '/experiments/{experimentId}/samples':
     parameters:
       - schema:
@@ -657,6 +724,12 @@ paths:
       x-eov-operation-handler: routes/samples
       tags: []
       responses:
+        '200':
+          description: 'Fetch successful, samples returned below.'
+          content:
+            application/json:
+              schema:
+                $ref: ./models/api-body-schemas/Samples.v1.yaml
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -669,12 +742,6 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-        '200':
-          description: 'Fetch successful, samples returned below.'
-          content:
-            application/json:
-              schema:
-                $ref: ./models/api-body-schemas/Samples.v1.yaml
         '404':
           description: Samples not found.
           content:
@@ -739,7 +806,7 @@ paths:
               $ref: ./models/api-body-schemas/Project.v1.yaml
         description: The new configuration to update the old one by.
     delete:
-      summary: 'Deletes the project'
+      summary: Deletes the project
       operationId: deleteProject
       x-eov-operation-id: projects#delete
       x-eov-operation-handler: routes/projects
@@ -833,95 +900,95 @@ paths:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
   '/projects/{projectUuid}/{experimentId}/samples':
-      parameters:
-        - name: projectUuid
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: experimentId
-          in: path
-          required: true
-          schema:
-            type: string
-      put:
-        summary: Update samples
-        operationId: updateSamples
-        x-eov-operation-id: samples#update
-        x-eov-operation-handler: routes/samples
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  $ref: ./models/HTTPSuccess.v1.yaml
-          '400':
-            description: Bad Request
-            content:
-              application/json:
-                schema:
-                  $ref: ./models/HTTPError.v1.yaml
-          '404':
-            description: Not Found
-            content:
-              application/json:
-                schema:
-                  $ref: ./models/HTTPError.v1.yaml
-          '415':
-            description: Unsupported Media Type
-            content:
-              application/json:
-                schema:
-                  $ref: ./models/HTTPError.v1.yaml
-        description: Updates a samples entry
-        requestBody:
+    parameters:
+      - name: projectUuid
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: experimentId
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      summary: Update samples
+      operationId: updateSamples
+      x-eov-operation-id: samples#update
+      x-eov-operation-handler: routes/samples
+      responses:
+        '200':
+          description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  samples:
-                    $ref: ./models/api-body-schemas/Samples.v1.yaml
-      delete:
-        summary: Remove samples
-        operationId: removeSamples
-        x-eov-operation-id: samples#remove
-        x-eov-operation-handler: routes/samples
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  $ref: ./models/HTTPSuccess.v1.yaml
-          '400':
-            description: Bad Request
-            content:
-              application/json:
-                schema:
-                  $ref: ./models/HTTPError.v1.yaml
-          '404':
-            description: Not Found
-            content:
-              application/json:
-                schema:
-                  $ref: ./models/HTTPError.v1.yaml
-          '415':
-            description: Unsupported Media Type
-            content:
-              application/json:
-                schema:
-                  $ref: ./models/HTTPError.v1.yaml
-        description: Removes samples from an entry
-        requestBody:
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '400':
+          description: Bad Request
           content:
             application/json:
               schema:
-                $ref: ./models/samples-bodies/SamplesRemoveBody.v1.yaml
-  '/projects':
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: Updates a samples entry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                samples:
+                  $ref: ./models/api-body-schemas/Samples.v1.yaml
+    delete:
+      summary: Remove samples
+      operationId: removeSamples
+      x-eov-operation-id: samples#remove
+      x-eov-operation-handler: routes/samples
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: Removes samples from an entry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/samples-bodies/SamplesRemoveBody.v1.yaml
+  /projects:
     get:
-      summary: 'Get the list of projects'
+      summary: Get the list of projects
       operationId: getProjects
       x-eov-operation-id: projects#get
       x-eov-operation-handler: routes/projects

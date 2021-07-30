@@ -61,4 +61,12 @@ module.exports = {
         .catch(next);
     },
   ],
+  'experiment#downloadData': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => {
+      experimentService.downloadData(req.params.experimentId, req.params.type)
+        .then((data) => res.json(data))
+        .catch(next);
+    },
+  ],
 };
