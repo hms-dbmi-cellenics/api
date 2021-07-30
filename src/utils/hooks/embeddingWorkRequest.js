@@ -2,7 +2,12 @@ const constants = require('../../api/general-services/pipeline-manage/constants'
 const workRequestBuilder = require('../workRequestBuilder');
 
 const embeddingWorkRequest = async (payload) => {
+  console.log('I RUN DIS');
+  console.log('payloadDebug');
+  console.log(payload);
+
   const { experimentId, output, statusRes } = payload;
+
 
   // Run work request for embedding
   const embeddingWorkConfig = {
