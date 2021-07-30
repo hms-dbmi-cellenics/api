@@ -472,6 +472,12 @@ paths:
                   signedUrl:
                     type: string
                     description: signed URL of the resource
+        '400':
+          description: Invalid download type request.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '401':
           description: The request lacks authentication credentials.
           content:

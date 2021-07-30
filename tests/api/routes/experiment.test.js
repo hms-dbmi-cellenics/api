@@ -161,7 +161,7 @@ describe('tests for experiment route', () => {
   it('Downloading data with incorrect download type throws error', async (done) => {
     request(app)
       .get('/v1/experiments/someId/download/wrong_type')
-      .expect(404)
+      .expect(400)
       .end((err) => {
         if (err) {
           return done(err);

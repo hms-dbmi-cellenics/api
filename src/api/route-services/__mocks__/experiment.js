@@ -1,3 +1,5 @@
+const { BadRequestError } = require('../../../utils/responses');
+
 const mockExperimentData = jest.fn((experimentId) => new Promise((resolve) => {
   resolve({
     experimentId,
@@ -117,7 +119,7 @@ const mockUpdateProcessingConfig = jest.fn(
 const mockSaveGem2sHandle = jest.fn(() => {});
 
 const mockDownloadData = jest.fn((experimentId, downloadType) => new Promise((resolve, reject) => {
-  if (downloadType !== 'correct_type') reject();
+  if (downloadType !== 'correct_type') reject(new BadRequestError('wrong type'));
 
   resolve({
     signedUrl: 'http://somesignedurl.com',

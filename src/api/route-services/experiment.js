@@ -5,7 +5,7 @@ const mockData = require('./mock-data.json');
 
 const AWS = require('../../utils/requireAWS');
 const logger = require('../../utils/logging');
-const { OK, NotFoundError } = require('../../utils/responses');
+const { OK, NotFoundError, BadRequestError } = require('../../utils/responses');
 const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 
 const constants = require('../general-services/pipeline-manage/constants');
@@ -336,7 +336,7 @@ class ExperimentService {
       bucket = this.processedMatrixBucketName;
       objectKey = `${experimentId}/r.rds`;
     } else {
-      throw new Error('Invalid download type requested');
+      throw new BadRequestError('Invalid download type requested');
     }
 
     const s3 = new AWS.S3();
