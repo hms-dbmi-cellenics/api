@@ -143,4 +143,32 @@ describe('tests for experiment route', () => {
         return done();
       });
   });
+
+  it('Downloading data with the correct download type works', async (done) => {
+    request(app)
+      .get('/v1/experiments/someId/download/correct_type')
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
+  it('Downloading data with incorrect download type throws error', async (done) => {
+    request(app)
+      .get('/v1/experiments/someId/download/wrong_type')
+      .expect(404)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
 });
