@@ -16,7 +16,7 @@ const { OK } = require('../../utils/responses');
 const logger = require('../../utils/logging');
 
 const ExperimentService = require('./experiment');
-const ProjectService = require('./projects');
+const ProjectsService = require('./projects');
 const SamplesService = require('./samples');
 
 const pipelineHook = new PipelineHook();
@@ -51,8 +51,7 @@ class Gem2sService {
     const { samples } = await (new SamplesService()).getSamplesByExperimentId(experimentId);
     const {
       metadataKeys,
-      samples: sampleIdsInOrder,
-    } = await new ProjectService().getProject(experiment.projectId);
+    } = await new ProjectsService().getProject(experiment.projectId);
 
     const defaultMetadataValue = 'N.A.';
 
@@ -63,8 +62,8 @@ class Gem2sService {
       experimentName: experiment.experimentName,
       organism: experiment.meta.organism,
       input: { type: experiment.meta.type },
-      sampleIds: sampleIdsInOrder,
-      sampleNames: sampleIdsInOrder.map((sampleId) => samples[sampleId].name),
+      sampleIds: experiment.sampleIds,
+      sampleNames: experiment.sampleIds.map((sampleId) => samples[sampleId].name),
     };
 
     if (metadataKeys.length) {
@@ -79,7 +78,7 @@ class Gem2sService {
       }, {});
     }
 
-    const orderInvariantSampleIds = [...sampleIdsInOrder].sort();
+    const orderInvariantSampleIds = [...experiment.sampleIds].sort();
 
     const hashParams = {
       sampleIds: orderInvariantSampleIds,
@@ -113,9 +112,6 @@ class Gem2sService {
   static async gem2sCreate(experimentId) {
     const { taskParams, hashParams } = await this.generateGem2sTaskParams(experimentId);
 
-    const experimentService = new ExperimentService();
-    experimentService.updateExperiment(experimentId, { sampleIds: taskParams.sampleIds });
-
     const paramsHash = crypto
       .createHash('sha1')
       .update(JSON.stringify(hashParams))
@@ -132,7 +128,7 @@ class Gem2sService {
 
     const newHandle = await createGem2SPipeline(experimentId, taskParams, paramsHash);
 
-
+    const experimentService = new ExperimentService();
     await experimentService.saveGem2sHandle(
       experimentId,
       { paramsHash, ...newHandle },

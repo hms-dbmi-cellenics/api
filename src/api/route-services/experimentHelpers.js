@@ -66,7 +66,7 @@ const getShallowAttrsUpdateParams = (body) => {
   const dataToUpdate = {
     experimentName: body.name || body.experimentName,
     apiVersion: body.apiVersion,
-    createdAt: body.createdAt,
+    createdDate: body.createdDate,
     lastViewed: body.lastViewed,
     projectId: body.projectUuid || body.projectId,
     description: body.description,

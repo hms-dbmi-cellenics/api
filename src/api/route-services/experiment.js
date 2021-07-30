@@ -70,7 +70,7 @@ class ExperimentService {
 
     const marshalledData = convertToDynamoDbRecord({
       ':experimentName': body.name,
-      ':createdAt': body.createdAt,
+      ':createdDate': body.createdDate,
       ':lastViewed': body.lastViewed,
       ':projectId': body.projectUuid,
       ':description': body.description,
@@ -79,18 +79,20 @@ class ExperimentService {
       ':rbac_can_write': documentClient.createSet(rbacCanWrite),
       ':meta': {},
       ':processingConfig': {},
+      ':sampleIds': body.sampleIds,
     });
 
     const params = {
       TableName: this.experimentsTableName,
       Key: key,
       UpdateExpression: `SET experimentName = :experimentName,
-                          createdAt = :createdAt,
+                          createdDate = :createdDate,
                           lastViewed = :lastViewed,
                           projectId = :projectId,
                           description = :description,
                           meta = :meta,
                           processingConfig = :processingConfig,
+                          sampleIds = :sampleIds,
                           rbac_can_write = :rbac_can_write`,
       ExpressionAttributeValues: marshalledData,
       ConditionExpression: 'attribute_not_exists(#experimentId)',

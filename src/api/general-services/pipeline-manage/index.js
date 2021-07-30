@@ -9,7 +9,6 @@ const AWS = require('../../../utils/requireAWS');
 const config = require('../../../config');
 const logger = require('../../../utils/logging');
 const ExperimentService = require('../../route-services/experiment');
-const SamplesService = require('../../route-services/samples');
 
 const { qcPipelineSkeleton } = require('./skeletons/qc-pipeline-skeleton');
 const { gem2sPipelineSkeleton } = require('./skeletons/gem2s-pipeline-skeleton');
@@ -19,7 +18,6 @@ const asyncTimer = require('../../../utils/asyncTimer');
 const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('./constants');
 
 const experimentService = new ExperimentService();
-const samplesService = new SamplesService();
 
 const getPipelineArtifacts = async () => {
   const response = await fetch(
@@ -158,10 +156,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
   logger.log(`Fetching processing settings for ${experimentId}`);
   const { processingConfig } = await experimentService.getProcessingConfig(experimentId);
-
-  const { samples } = await samplesService.getSamplesByExperimentId(experimentId);
-
-  const sampleIds = Object.keys(samples);
+  const { sampleIds } = await experimentService.getExperimentData(experimentId);
 
   if (processingConfigUpdates) {
     processingConfigUpdates.forEach(({ name, body }) => {
