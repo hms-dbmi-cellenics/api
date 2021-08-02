@@ -4,7 +4,7 @@
   "description": "Node.js API for the single-cell pipeline.",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --silent",
     "test:loud": "jest",
     "test:debug": "node --inspect node_modules/.bin/jest --runInBand --silent",
     "coverage": "jest --coverage --silent",
