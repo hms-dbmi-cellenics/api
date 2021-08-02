@@ -27,8 +27,9 @@ class ExperimentService {
     this.experimentsTableName = `experiments-${config.clusterEnv}`;
     this.cellSetsBucketName = `cell-sets-${config.clusterEnv}`;
     this.processedMatrixBucketName = `processed-matrix-${config.clusterEnv}`;
+    this.rawSeuratBucketName = `biomage-source-${config.clusterEnv}`;
 
-    mockData.matrixPath = mockData.matrixPath.replace('BUCKET_NAME', `biomage-source-${config.clusterEnv}`);
+    mockData.matrixPath = mockData.matrixPath.replace('BUCKET_NAME', this.rawSeuratBucketName);
     this.mockData = convertToDynamoDbRecord(mockData);
   }
 
@@ -334,6 +335,9 @@ class ExperimentService {
     // Also defined in UI repo in utils/downloadTypes
     if (downloadType === downloadTypes.PROCESSED_SEURAT_OBJECT) {
       bucket = this.processedMatrixBucketName;
+      objectKey = `${experimentId}/r.rds`;
+    } else if (downloadType === downloadTypes.RAW_SEURAT_OBJECT) {
+      bucket = this.rawSeuratBucketName;
       objectKey = `${experimentId}/r.rds`;
     } else {
       throw new BadRequestError('Invalid download type requested');
