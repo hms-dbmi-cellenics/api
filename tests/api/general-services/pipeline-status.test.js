@@ -1,15 +1,11 @@
 const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../../src/utils/requireAWS');
 const constants = require('../../../src/api/general-services/pipeline-manage/constants');
-const experimentHelpers = require('../../../src/api/route-services/experimentHelpers');
-
-const getExperimentAttributesSpy = jest.spyOn(experimentHelpers, 'getExperimentAttributes');
 
 const pipelineStatus = require('../../../src/api/general-services/pipeline-status');
-const ProjectService = require('../../../src/api/route-services/projects');
 
 const {
-  RUNNING, SUCCEEDED, NOT_CREATED, FAILED, TIMED_OUT, ABORTED, GEM2S_PROCESS_NAME, QC_PROCESS_NAME,
+  GEM2S_PROCESS_NAME, QC_PROCESS_NAME, OLD_QC_NAME_TO_BE_REMOVED,
 } = constants;
 
 describe('getStepsFromExecutionHistory', () => {
@@ -349,16 +345,33 @@ describe('getStepsFromExecutionHistory', () => {
 
 describe('pipelineStatus', () => {
   const mockNotRunResponse = {
-    meta: {
-      [GEM2S_PROCESS_NAME]: {
-        stateMachineArn: '',
-        executionArn: '',
-      },
-      [QC_PROCESS_NAME]: {
-        stateMachineArn: '',
-        executionArn: '',
+    Item: {
+      meta: {
+        M: {
+          [GEM2S_PROCESS_NAME]: {
+            M: {
+              stateMachineArn: {
+                S: '',
+              },
+              executionArn: {
+                S: '',
+              },
+            },
+          },
+          [OLD_QC_NAME_TO_BE_REMOVED]: {
+            M: {
+              stateMachineArn: {
+                S: '',
+              },
+              executionArn: {
+                S: '',
+              },
+            },
+          },
+        },
       },
     },
+
   };
 
   const mockDescribeExecution = jest.fn();
@@ -374,7 +387,6 @@ describe('pipelineStatus', () => {
   }));
 
   beforeEach(() => {
-    getExperimentAttributesSpy.mockClear();
     AWSMock.setSDKInstance(AWS);
 
     AWSMock.mock('StepFunctions', 'describeExecution', (params, callback) => {
@@ -385,13 +397,14 @@ describe('pipelineStatus', () => {
       callback(null, { events: [] });
     });
 
+    const getPipelineHandleSpy = jest.fn((x) => x);
     AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
-      callback(null, mockDynamoGetItem(params));
+      getPipelineHandleSpy(params);
+      callback(null, mockNotRunResponse);
     });
   });
 
   it('handles properly an empty dynamodb record', async () => {
-    getExperimentAttributesSpy.mockReturnValueOnce(mockNotRunResponse);
     const status = await pipelineStatus('1234', QC_PROCESS_NAME);
 
     expect(status).toEqual({

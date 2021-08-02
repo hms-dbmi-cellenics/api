@@ -8,8 +8,18 @@ jest.mock('crypto', () => ({
 }));
 jest.mock('../../../src/utils/asyncTimer');
 
-const MockProcessingConfig = {
+const MockExperimentData = {
   Item: {
+    sampleIds: {
+      L: [
+        {
+          S: 'oneSample',
+        },
+        {
+          S: 'otherSample',
+        },
+      ],
+    },
     processingConfig: {
       M: {
         doubletScores: {
@@ -41,29 +51,6 @@ const MockProcessingConfig = {
                   },
                 },
               },
-            },
-          },
-        },
-      },
-    },
-  },
-};
-
-const MockSamples = {
-  Item: {
-    samples: {
-      M: {
-        oneSample: {
-          M: {
-            uuid: {
-              S: 'oneSample',
-            },
-          },
-        },
-        otherSample: {
-          M: {
-            uuid: {
-              S: 'otherSample',
             },
           },
         },
@@ -138,15 +125,11 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-machine' });
     });
 
-    const getProcessingConfigSpy = jest.fn((x) => x);
-    const getSamplesSpy = jest.fn((x) => x);
+    const getExperimentDataSpy = jest.fn((x) => x);
     AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
       if (params.TableName.match('experiments')) {
-        getProcessingConfigSpy(params);
-        callback(null, MockProcessingConfig);
-      } else if (params.TableName.match('samples')) {
-        getSamplesSpy(params);
-        callback(null, MockSamples);
+        getExperimentDataSpy(params);
+        callback(null, MockExperimentData);
       }
     });
 
@@ -155,8 +138,7 @@ describe('test for pipeline services', () => {
 
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
 
-    expect(getProcessingConfigSpy).toHaveBeenCalled();
-    expect(getSamplesSpy).toHaveBeenCalled();
+    expect(getExperimentDataSpy).toHaveBeenCalled();
 
     expect(createActivitySpy).toHaveBeenCalled();
     expect(startExecutionSpy).toHaveBeenCalled();
@@ -204,15 +186,11 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-machine' });
     });
 
-    const getProcessingConfigSpy = jest.fn((x) => x);
-    const getSamplesSpy = jest.fn((x) => x);
+    const getExperimentDataSpy = jest.fn((x) => x);
     AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
       if (params.TableName.match('experiments')) {
-        getProcessingConfigSpy(params);
-        callback(null, MockProcessingConfig);
-      } else if (params.TableName.match('samples')) {
-        getSamplesSpy(params);
-        callback(null, MockSamples);
+        getExperimentDataSpy(params);
+        callback(null, MockExperimentData);
       }
     });
 

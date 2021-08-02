@@ -46,7 +46,7 @@ class Gem2sService {
     io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
   }
 
-  static async generateGem2sTaskParams(experimentId) {
+  static async generateGem2sParams(experimentId) {
     const experiment = await (new ExperimentService()).getExperimentData(experimentId);
     const { samples } = await (new SamplesService()).getSamplesByExperimentId(experimentId);
     const {
@@ -81,6 +81,8 @@ class Gem2sService {
     const orderInvariantSampleIds = [...experiment.sampleIds].sort();
 
     const hashParams = {
+      organism: experiment.meta.organism,
+      input: { type: experiment.meta.type },
       sampleIds: orderInvariantSampleIds,
       sampleNames: orderInvariantSampleIds.map((sampleId) => samples[sampleId].name),
       metadata: taskParams.metadata,
@@ -110,7 +112,7 @@ class Gem2sService {
   }
 
   static async gem2sCreate(experimentId) {
-    const { taskParams, hashParams } = await this.generateGem2sTaskParams(experimentId);
+    const { taskParams, hashParams } = await this.generateGem2sParams(experimentId);
 
     const paramsHash = crypto
       .createHash('sha1')

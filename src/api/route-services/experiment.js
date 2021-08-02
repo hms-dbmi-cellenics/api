@@ -11,13 +11,14 @@ const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 const constants = require('../general-services/pipeline-manage/constants');
 
 const {
-  getExperimentAttributes,
   getDeepAttrsUpdateParams,
   getShallowAttrsUpdateParams,
 } = require('./experimentHelpers');
 
 const {
-  createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord,
+  createDynamoDbInstance,
+  convertToJsObject,
+  convertToDynamoDbRecord,
   convertToDynamoUpdateParams,
 } = require('../../utils/dynamoDb');
 
@@ -30,8 +31,31 @@ class ExperimentService {
     this.mockData = convertToDynamoDbRecord(mockData);
   }
 
+
+  async getExperimentAttributes(experimentId, attributes) {
+    const dynamodb = createDynamoDbInstance();
+    const key = convertToDynamoDbRecord({ experimentId });
+
+    const params = {
+      TableName: this.experimentsTableName,
+      Key: key,
+    };
+
+    if (Array.isArray(attributes) && attributes.length > 0) {
+      params.ProjectionExpression = attributes.join();
+    }
+
+    const data = await dynamodb.getItem(params).promise();
+    if (Object.keys(data).length === 0) {
+      throw new NotFoundError('Experiment does not exist.');
+    }
+
+    const prettyData = convertToJsObject(data.Item);
+    return prettyData;
+  }
+
   async getExperimentData(experimentId) {
-    const data = await getExperimentAttributes(this.experimentsTableName, experimentId,
+    const data = await this.getExperimentAttributes(experimentId,
       ['projectId', 'meta', 'experimentId', 'experimentName', 'sampleIds']);
     return data;
   }
@@ -165,28 +189,28 @@ class ExperimentService {
   }
 
   async getExperimentPermissions(experimentId) {
-    const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['experimentId', 'rbac_can_write']);
+    const data = await this.getExperimentAttributes(experimentId, ['experimentId', 'rbac_can_write']);
     return data;
   }
 
   async getProcessingConfig(experimentId) {
-    const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['processingConfig']);
+    const data = await this.getExperimentAttributes(experimentId, ['processingConfig']);
     return data;
   }
 
   async getPipelinesHandles(experimentId) {
-    const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['meta']);
+    const data = await this.getExperimentAttributes(experimentId, ['meta']);
 
     return {
       [constants.QC_PROCESS_NAME]: {
         stateMachineArn: '',
         executionArn: '',
-        ...data.meta.pipeline,
+        ...data.meta[constants.OLD_QC_NAME_TO_BE_REMOVED],
       },
       [constants.GEM2S_PROCESS_NAME]: {
         stateMachineArn: '',
         executionArn: '',
-        ...data.meta.gem2s,
+        ...data.meta[constants.GEM2S_PROCESS_NAME],
       },
     };
   }
@@ -209,7 +233,7 @@ class ExperimentService {
       if (e.code === 'NoSuchKey') {
         logger.log(`ERROR: Couldn't find s3 cell sets bucket with key: ${experimentId}`);
 
-        const actualData = await getExperimentAttributes(this.experimentsTableName, experimentId, ['cellSets']);
+        const actualData = await this.getExperimentAttributes(experimentId, ['cellSets']);
 
         if (actualData) {
           logger.log('Found the cell sets in dynamodb, this means this experiment has an OUTDATED structure and its cell sets should be moved to s3');
