@@ -78,6 +78,7 @@ class Gem2sService {
       }, {});
     }
 
+    // Different sample order should not change the hash.
     const orderInvariantSampleIds = [...experiment.sampleIds].sort();
 
     const hashParams = {
