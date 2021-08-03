@@ -330,13 +330,18 @@ class ExperimentService {
   async downloadData(experimentId, downloadType) {
     let objectKey = '';
     let bucket = '';
+    let downloadedFileName = '';
+
+    if (!Object.values(downloadTypes).includes(downloadType)) throw new BadRequestError('Invalid download type requested');
+
+    const { projectId } = await getExperimentAttributes(this.experimentsTableName, experimentId, ['projectId']);
+    const filenamePrefix = projectId.split('-')[0];
 
     // Also defined in UI repo in utils/downloadTypes
     if (downloadType === downloadTypes.PROCESSED_SEURAT_OBJECT) {
       bucket = this.processedMatrixBucketName;
       objectKey = `${experimentId}/r.rds`;
-    } else {
-      throw new BadRequestError('Invalid download type requested');
+      downloadedFileName = `${filenamePrefix}_processed_matrix.rds`;
     }
 
     const s3 = new AWS.S3();
@@ -344,6 +349,7 @@ class ExperimentService {
     const params = {
       Bucket: bucket,
       Key: objectKey,
+      ResponseContentDisposition: `attachment; filename ="${downloadedFileName}"`,
       Expires: 120,
     };
 

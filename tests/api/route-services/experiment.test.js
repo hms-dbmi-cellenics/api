@@ -339,11 +339,22 @@ describe('tests for the experiment service', () => {
   it('downloadData returns signed url when the correct download type is given', async (done) => {
     const signedUrlSpy = mockS3GetSignedUrl();
 
+    const projectId = 'someProject-UUID-with-several-parts';
+    const filenamePrefix = projectId.split('-')[0];
+    const expectedFileName = `${filenamePrefix}_processed_matrix.rds`;
+
+    mockDynamoGetItem({ projectId });
+
     (new ExperimentService()).downloadData('12345', 'processed_seurat_object')
       .then(() => {
         expect(signedUrlSpy).toHaveBeenCalledWith(
           'getObject',
-          { Bucket: 'processed-matrix-test', Expires: 120, Key: '12345/r.rds' },
+          {
+            Bucket: 'processed-matrix-test',
+            Expires: 120,
+            Key: '12345/r.rds',
+            ResponseContentDisposition: `attachment; filename ="${expectedFileName}"`,
+          },
         );
       }).then(() => done());
   });
