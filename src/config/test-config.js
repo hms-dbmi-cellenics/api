@@ -11,6 +11,7 @@ module.exports = {
   clusterEnv: 'test',
   awsRegion: 'eu-west-1',
   podName: 'test',
+  sandboxId: 'default',
   awsAccountIdPromise: getAwsAccountId(),
   workerNamespace: 'worker-test-namespace',
   pipelineNamespace: 'pipeline-test-namespace',
