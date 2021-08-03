@@ -5,10 +5,11 @@ const mockData = require('./mock-data.json');
 
 const AWS = require('../../utils/requireAWS');
 const logger = require('../../utils/logging');
-const { OK, NotFoundError } = require('../../utils/responses');
+const { OK, NotFoundError, BadRequestError } = require('../../utils/responses');
 const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 
 const constants = require('../general-services/pipeline-manage/constants');
+const downloadTypes = require('../../utils/downloadTypes');
 
 const {
   getExperimentAttributes,
@@ -25,6 +26,7 @@ class ExperimentService {
   constructor() {
     this.experimentsTableName = `experiments-${config.clusterEnv}`;
     this.cellSetsBucketName = `cell-sets-${config.clusterEnv}`;
+    this.processedMatrixBucketName = `processed-matrix-${config.clusterEnv}`;
 
     mockData.matrixPath = mockData.matrixPath.replace('BUCKET_NAME', `biomage-source-${config.clusterEnv}`);
     this.mockData = convertToDynamoDbRecord(mockData);
@@ -323,6 +325,36 @@ class ExperimentService {
 
   async saveGem2sHandle(experimentId, handle) {
     return this.saveHandle(experimentId, handle, 'gem2s');
+  }
+
+  async downloadData(experimentId, downloadType) {
+    let objectKey = '';
+    let bucket = '';
+    let downloadedFileName = '';
+
+    if (!Object.values(downloadTypes).includes(downloadType)) throw new BadRequestError('Invalid download type requested');
+
+    const { projectId } = await getExperimentAttributes(this.experimentsTableName, experimentId, ['projectId']);
+    const filenamePrefix = projectId.split('-')[0];
+
+    // Also defined in UI repo in utils/downloadTypes
+    if (downloadType === downloadTypes.PROCESSED_SEURAT_OBJECT) {
+      bucket = this.processedMatrixBucketName;
+      objectKey = `${experimentId}/r.rds`;
+      downloadedFileName = `${filenamePrefix}_processed_matrix.rds`;
+    }
+
+    const s3 = new AWS.S3();
+
+    const params = {
+      Bucket: bucket,
+      Key: objectKey,
+      ResponseContentDisposition: `attachment; filename ="${downloadedFileName}"`,
+      Expires: 120,
+    };
+
+    const signedUrl = s3.getSignedUrl('getObject', params);
+    return { signedUrl };
   }
 }
 
