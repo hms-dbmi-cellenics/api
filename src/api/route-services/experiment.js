@@ -342,10 +342,13 @@ class ExperimentService {
     let bucket = '';
     let downloadedFileName = '';
 
+    if (!Object.values(downloadTypes).includes(downloadType)) throw new BadRequestError('Invalid download type requested');
+
     const { projectId } = await getExperimentAttributes(this.experimentsTableName, experimentId, ['projectId']);
     const filenamePrefix = projectId.split('-')[0];
 
     // Also defined in UI repo in utils/downloadTypes
+    // eslint-disable-next-line default-case
     switch (downloadType) {
       case downloadTypes.PROCESSED_SEURAT_OBJECT:
         bucket = this.processedMatrixBucketName;
@@ -357,9 +360,8 @@ class ExperimentService {
         objectKey = `${experimentId}/r.rds`;
         downloadedFileName = `${filenamePrefix}_raw_matrix.rds`;
         break;
-      default:
-        throw new BadRequestError('Invalid download type requested');
     }
+
 
     const s3 = new AWS.S3();
 
