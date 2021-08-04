@@ -18,7 +18,9 @@ const {
 } = require('./experimentHelpers');
 
 const {
-  createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord,
+  createDynamoDbInstance,
+  convertToJsObject,
+  convertToDynamoDbRecord,
   convertToDynamoUpdateParams,
 } = require('../../utils/dynamoDb');
 
@@ -35,7 +37,7 @@ class ExperimentService {
 
   async getExperimentData(experimentId) {
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId,
-      ['projectId', 'meta', 'experimentId', 'experimentName']);
+      ['projectId', 'meta', 'experimentId', 'experimentName', 'sampleIds']);
     return data;
   }
 
@@ -73,7 +75,7 @@ class ExperimentService {
 
     const marshalledData = convertToDynamoDbRecord({
       ':experimentName': body.name,
-      ':createdAt': body.createdAt,
+      ':createdDate': body.createdDate,
       ':lastViewed': body.lastViewed,
       ':projectId': body.projectUuid,
       ':description': body.description,
@@ -82,18 +84,20 @@ class ExperimentService {
       ':rbac_can_write': documentClient.createSet(rbacCanWrite),
       ':meta': {},
       ':processingConfig': {},
+      ':sampleIds': body.sampleIds,
     });
 
     const params = {
       TableName: this.experimentsTableName,
       Key: key,
       UpdateExpression: `SET experimentName = :experimentName,
-                          createdAt = :createdAt,
+                          createdDate = :createdDate,
                           lastViewed = :lastViewed,
                           projectId = :projectId,
                           description = :description,
                           meta = :meta,
                           processingConfig = :processingConfig,
+                          sampleIds = :sampleIds,
                           rbac_can_write = :rbac_can_write`,
       ExpressionAttributeValues: marshalledData,
       ConditionExpression: 'attribute_not_exists(#experimentId)',
@@ -182,14 +186,19 @@ class ExperimentService {
       [constants.QC_PROCESS_NAME]: {
         stateMachineArn: '',
         executionArn: '',
-        ...data.meta.pipeline,
+        ...data.meta[constants.OLD_QC_NAME_TO_BE_REMOVED],
       },
       [constants.GEM2S_PROCESS_NAME]: {
         stateMachineArn: '',
         executionArn: '',
-        ...data.meta.gem2s,
+        ...data.meta[constants.GEM2S_PROCESS_NAME],
       },
     };
+  }
+
+  async getAttributesToCreateQCPipeline(experimentId) {
+    const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['processingConfig', 'sampleIds']);
+    return data;
   }
 
   async getCellSets(experimentId) {
@@ -331,16 +340,25 @@ class ExperimentService {
   async downloadData(experimentId, downloadType) {
     let objectKey = '';
     let bucket = '';
+    let downloadedFileName = '';
+
+    const { projectId } = await getExperimentAttributes(this.experimentsTableName, experimentId, ['projectId']);
+    const filenamePrefix = projectId.split('-')[0];
 
     // Also defined in UI repo in utils/downloadTypes
-    if (downloadType === downloadTypes.PROCESSED_SEURAT_OBJECT) {
-      bucket = this.processedMatrixBucketName;
-      objectKey = `${experimentId}/r.rds`;
-    } else if (downloadType === downloadTypes.RAW_SEURAT_OBJECT) {
-      bucket = this.rawSeuratBucketName;
-      objectKey = `${experimentId}/r.rds`;
-    } else {
-      throw new BadRequestError('Invalid download type requested');
+    switch (downloadType) {
+      case downloadTypes.PROCESSED_SEURAT_OBJECT:
+        bucket = this.processedMatrixBucketName;
+        objectKey = `${experimentId}/r.rds`;
+        downloadedFileName = `${filenamePrefix}_processed_matrix.rds`;
+        break;
+      case downloadTypes.RAW_SEURAT_OBJECT:
+        bucket = this.rawSeuratBucketName;
+        objectKey = `${experimentId}/r.rds`;
+        downloadedFileName = `${filenamePrefix}_raw_matrix.rds`;
+        break;
+      default:
+        throw new BadRequestError('Invalid download type requested');
     }
 
     const s3 = new AWS.S3();
@@ -348,6 +366,7 @@ class ExperimentService {
     const params = {
       Bucket: bucket,
       Key: objectKey,
+      ResponseContentDisposition: `attachment; filename ="${downloadedFileName}"`,
       Expires: 120,
     };
 

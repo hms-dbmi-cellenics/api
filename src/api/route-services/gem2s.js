@@ -16,7 +16,7 @@ const { OK } = require('../../utils/responses');
 const logger = require('../../utils/logging');
 
 const ExperimentService = require('./experiment');
-const ProjectService = require('./projects');
+const ProjectsService = require('./projects');
 const SamplesService = require('./samples');
 
 const pipelineHook = new PipelineHook();
@@ -46,10 +46,12 @@ class Gem2sService {
     io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
   }
 
-  static async generateGem2sTaskParams(experimentId) {
+  static async generateGem2sParams(experimentId) {
     const experiment = await (new ExperimentService()).getExperimentData(experimentId);
     const { samples } = await (new SamplesService()).getSamplesByExperimentId(experimentId);
-    const { metadataKeys } = await (new ProjectService()).getProject(experiment.projectId);
+    const {
+      metadataKeys,
+    } = await new ProjectsService().getProject(experiment.projectId);
 
     const defaultMetadataValue = 'N.A.';
 
@@ -60,8 +62,8 @@ class Gem2sService {
       experimentName: experiment.experimentName,
       organism: experiment.meta.organism,
       input: { type: experiment.meta.type },
-      sampleIds: samplesEntries.map(([sampleId]) => sampleId),
-      sampleNames: samplesEntries.map(([, sample]) => sample.name),
+      sampleIds: experiment.sampleIds,
+      sampleNames: experiment.sampleIds.map((sampleId) => samples[sampleId].name),
     };
 
     if (metadataKeys.length) {
@@ -76,7 +78,18 @@ class Gem2sService {
       }, {});
     }
 
-    return taskParams;
+    // Different sample order should not change the hash.
+    const orderInvariantSampleIds = [...experiment.sampleIds].sort();
+
+    const hashParams = {
+      organism: experiment.meta.organism,
+      input: { type: experiment.meta.type },
+      sampleIds: orderInvariantSampleIds,
+      sampleNames: orderInvariantSampleIds.map((sampleId) => samples[sampleId].name),
+      metadata: taskParams.metadata,
+    };
+
+    return { taskParams, hashParams };
   }
 
   static async gem2sShouldRun(experimentId, paramsHash) {
@@ -100,11 +113,11 @@ class Gem2sService {
   }
 
   static async gem2sCreate(experimentId) {
-    const taskParams = await this.generateGem2sTaskParams(experimentId);
+    const { taskParams, hashParams } = await this.generateGem2sParams(experimentId);
 
     const paramsHash = crypto
       .createHash('sha1')
-      .update(JSON.stringify(taskParams))
+      .update(JSON.stringify(hashParams))
       .digest('hex');
 
     const shouldRun = await this.gem2sShouldRun(experimentId, paramsHash);
