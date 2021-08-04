@@ -1,15 +1,64 @@
 const constants = require('../../../src/api/general-services/pipeline-manage/constants');
 
-const ExperimentService = require('../../../src/api/route-services/experiment.js');
+const ExperimentService = require('../../../src/api/route-services/experiment');
+const SamplesService = require('../../../src/api/route-services/samples');
+const ProjectsService = require('../../../src/api/route-services/projects');
 const getPipelineStatus = require('../../../src/api/general-services/pipeline-status');
 
 const Gem2sService = require('../../../src/api/route-services/gem2s');
 
 const {
-  RUNNING, SUCCEEDED, NOT_CREATED, FAILED, TIMED_OUT, ABORTED, GEM2S_PROCESS_NAME, QC_PROCESS_NAME,
+  RUNNING, SUCCEEDED, NOT_CREATED, FAILED, TIMED_OUT, GEM2S_PROCESS_NAME, QC_PROCESS_NAME,
 } = constants;
 
-jest.mock('../../../src/api/route-services/experiment.js');
+const mockGem2sParamsBackendCall = (
+  customProjectResponse = null,
+  customSamplesResponse = null,
+  customMetadataResponse = null,
+) => {
+  const projectResponse = {
+    projectId: 'project-2',
+    experimentName: 'New experiment',
+    meta: {
+      organism: null,
+      type: '10x',
+    },
+    sampleIds: ['sample-1', 'sample-2'],
+    ...customProjectResponse,
+  };
+
+  const samplesResponse = {
+    samples: {
+      'sample-1': { name: 'Sample 1' },
+      'sample-2': { name: 'Sample 2' },
+    },
+    ...customSamplesResponse,
+  };
+
+  const metadataResponse = {
+    metadataKeys: [],
+    ...customMetadataResponse,
+  };
+
+  ExperimentService.mockImplementation(() => ({
+    getExperimentData: jest.fn()
+      .mockImplementationOnce(() => Promise.resolve(projectResponse)),
+  }));
+
+  SamplesService.mockImplementation(() => ({
+    getSamplesByExperimentId: jest.fn()
+      .mockImplementationOnce(() => Promise.resolve(samplesResponse)),
+  }));
+
+  ProjectsService.mockImplementation(() => ({
+    getProject: jest.fn()
+      .mockImplementationOnce(() => Promise.resolve(metadataResponse)),
+  }));
+};
+
+jest.mock('../../../src/api/route-services/experiment');
+jest.mock('../../../src/api/route-services/samples');
+jest.mock('../../../src/api/route-services/projects');
 jest.mock('../../../src/api/general-services/pipeline-status');
 
 describe('gem2sShouldRun', () => {
@@ -182,5 +231,127 @@ describe('gem2sShouldRun', () => {
     const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'differentHash');
 
     expect(shouldRun).toEqual(true);
+  });
+
+
+  it('generateGem2sTaskParams returns the same hash param if passed diferent information on non-vital fields', async () => {
+    ExperimentService.mockImplementation(() => ({
+      getExperimentData: jest.fn()
+        .mockImplementationOnce(() => Promise.resolve({
+          projectId: 'project-1',
+          experimentName: 'New experiment',
+          meta: {
+            organism: null,
+            type: '10x',
+          },
+          sampleIds: ['sample-2', 'sample-1'],
+        })),
+    }));
+
+    SamplesService.mockImplementation(() => ({
+      getSamplesByExperimentId: jest.fn()
+        .mockImplementationOnce(() => Promise.resolve({
+          samples: {
+            'sample-1': { name: 'Sample 1' },
+            'sample-2': { name: 'Sample 2' },
+          },
+        })),
+    }));
+
+    ProjectsService.mockImplementation(() => ({
+      getProject: jest.fn()
+        .mockImplementationOnce(() => Promise.resolve({ metadataKeys: [] })),
+    }));
+
+    const { taskParams: task1, hashParams: hash1 } = await Gem2sService.generateGem2sParams('experimentId');
+
+    ExperimentService.mockImplementation(() => ({
+      getExperimentData: jest.fn()
+        .mockImplementationOnce(() => Promise.resolve({
+          projectId: 'project-2', // Changed
+          experimentName: 'Another new experiment', // Changed
+          meta: {
+            organism: null,
+            type: '10x',
+          },
+          sampleIds: ['sample-1', 'sample-2'],
+        })),
+    }));
+
+    SamplesService.mockImplementation(() => ({
+      getSamplesByExperimentId: jest.fn()
+        .mockImplementationOnce(() => Promise.resolve({
+          samples: {
+            'sample-1': { name: 'Sample 1' },
+            'sample-2': { name: 'Sample 2' },
+          },
+        })),
+    }));
+
+    ProjectsService.mockImplementation(() => ({
+      getProject: jest.fn()
+        .mockImplementationOnce(() => Promise.resolve({ metadataKeys: [] })),
+    }));
+
+
+    const { taskParams: task2, hashParams: hash2 } = await Gem2sService.generateGem2sParams('experimentId');
+
+    expect(hash1).toEqual(hash2);
+  });
+
+  it('generateGem2sTaskParams - different sample order should return the same hash', async () => {
+    mockGem2sParamsBackendCall();
+
+    const { taskParams: task1, hashParams: hash1 } = await Gem2sService.generateGem2sParams('experimentId');
+
+    mockGem2sParamsBackendCall({
+      sampleIds: ['sample-1', 'sample-2'], // Different sample order
+    });
+
+    const { taskParams: task2, hashParams: hash2 } = await Gem2sService.generateGem2sParams('experimentId');
+
+    expect(hash1).toEqual(hash2);
+  });
+
+  it('generateGem2sTaskParams returns different hash param if passed diferent information on sample names', async () => {
+    mockGem2sParamsBackendCall();
+
+    const { taskParams: task1, hashParams: hash1 } = await Gem2sService.generateGem2sParams('experimentId');
+
+    mockGem2sParamsBackendCall(
+      null,
+      {
+        samples: {
+          'sample-1': { name: 'Sample A' },
+          'sample-2': { name: 'Sample B' }, // Different sample names
+        },
+      },
+      null,
+    );
+
+    const { taskParams: task2, hashParams: hash2 } = await Gem2sService.generateGem2sParams('experimentId');
+
+    expect(hash1).not.toEqual(hash2);
+  });
+
+  it('generateGem2sTaskParams returns different hash param if passed diferent information on metadata', async () => {
+    mockGem2sParamsBackendCall();
+
+    const { taskParams: task1, hashParams: hash1 } = await Gem2sService.generateGem2sParams('experimentId');
+
+    mockGem2sParamsBackendCall(
+      { metadataKeys: ['meta-1'] },
+      {
+        samples: {
+          'sample-1': { name: 'Sample 1', metadata: { 'meta-1': 'Meta A' } },
+          'sample-2': { name: 'Sample 2', metadata: { 'meta-1': 'Meta B' } },
+        },
+      },
+      { metadataKeys: ['meta-1'] },
+    );
+
+    const { taskParams: task2, hashParams: hash2 } = await Gem2sService.generateGem2sParams('experimentId');
+
+    expect(hash1).not.toEqual(hash2);
   });
 });
