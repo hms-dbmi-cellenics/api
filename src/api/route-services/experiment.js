@@ -29,8 +29,9 @@ class ExperimentService {
     this.experimentsTableName = `experiments-${config.clusterEnv}`;
     this.cellSetsBucketName = `cell-sets-${config.clusterEnv}`;
     this.processedMatrixBucketName = `processed-matrix-${config.clusterEnv}`;
+    this.rawSeuratBucketName = `biomage-source-${config.clusterEnv}`;
 
-    mockData.matrixPath = mockData.matrixPath.replace('BUCKET_NAME', `biomage-source-${config.clusterEnv}`);
+    mockData.matrixPath = mockData.matrixPath.replace('BUCKET_NAME', this.rawSeuratBucketName);
     this.mockData = convertToDynamoDbRecord(mockData);
   }
 
@@ -347,11 +348,20 @@ class ExperimentService {
     const filenamePrefix = projectId.split('-')[0];
 
     // Also defined in UI repo in utils/downloadTypes
-    if (downloadType === downloadTypes.PROCESSED_SEURAT_OBJECT) {
-      bucket = this.processedMatrixBucketName;
-      objectKey = `${experimentId}/r.rds`;
-      downloadedFileName = `${filenamePrefix}_processed_matrix.rds`;
+    // eslint-disable-next-line default-case
+    switch (downloadType) {
+      case downloadTypes.PROCESSED_SEURAT_OBJECT:
+        bucket = this.processedMatrixBucketName;
+        objectKey = `${experimentId}/r.rds`;
+        downloadedFileName = `${filenamePrefix}_processed_matrix.rds`;
+        break;
+      case downloadTypes.RAW_SEURAT_OBJECT:
+        bucket = this.rawSeuratBucketName;
+        objectKey = `${experimentId}/r.rds`;
+        downloadedFileName = `${filenamePrefix}_raw_matrix.rds`;
+        break;
     }
+
 
     const s3 = new AWS.S3();
 
