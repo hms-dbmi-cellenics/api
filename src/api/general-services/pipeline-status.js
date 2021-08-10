@@ -174,6 +174,14 @@ const getPipelineStatus = async (experimentId, processName) => {
       executionArn,
     }).promise();
   } catch (e) {
+    // state machines in staging are removed after some time, in this situation we return
+    // NOT_CREATED status so that the pipeline can be run again
+    if (config.clusterEnv === 'staging' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST) {
+      return {
+        [processName]: notCreatedStatus,
+      };
+    }
+
     // if we get the execution does not exist it means we are using a pulled experiment so
     // just return a mock sucess status
     if (
