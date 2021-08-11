@@ -25,7 +25,13 @@ const createWorkerResources = async (service) => {
   const patch = {
     op: 'add', path: '/metadata/labels/experimentId', value: experimentId,
   };
-  await k8sApi.patchNamespacedPod(name, namespace, patch);
+  await k8sApi.patchNamespacedPod(name, namespace, patch,
+    undefined, undefined, undefined, undefined,
+    {
+      headers: {
+        'content-type': 'application/json-patch+json',
+      },
+    });
 };
 
 module.exports = createWorkerResources;
