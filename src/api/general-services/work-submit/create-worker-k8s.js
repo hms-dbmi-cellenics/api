@@ -11,11 +11,18 @@ const createWorkerResources = async (service) => {
   const namespace = `worker-${sandboxId}`;
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
-  const response = await k8sApi.listNamespacedPod(namespace);
-  const pods = response.body.items;
+  const [assignedPods, unassignedPods] = await Promise.all(
+    k8sApi.listNamespacedPod(namespace, null, null, null, null, `experimentId=${experimentId}`),
+    k8sApi.listNamespacedPod(namespace, null, null, null, null, 'experimentId DoesNotExist'),
+  );
 
-  logger.log(pods);
-  logger.log(pods.length, 'candidate pods found. Selecting one...');
+  if (assignedPods.body.items.length > 0) {
+    logger.log('Experiment already assigned a worker, skipping creation...');
+    return;
+  }
+
+  const pods = unassignedPods.body.items;
+  logger.log(pods.length, 'unassigned candidate pods found. Selecting one...');
 
   // Select a pod to run this experiment on.
   const selectedPod = parseInt(experimentId, 16) % pods.length;
