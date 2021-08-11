@@ -14,7 +14,7 @@ const createWorkerResources = async (service) => {
   const [assignedPods, unassignedPods] = await Promise.all(
     [
       k8sApi.listNamespacedPod(namespace, null, null, null, null, `experimentId=${experimentId}`),
-      k8sApi.listNamespacedPod(namespace, null, null, null, null, 'experimentId DoesNotExist'),
+      k8sApi.listNamespacedPod(namespace, null, null, null, null, 'experimentId in ()'),
     ],
   );
 
