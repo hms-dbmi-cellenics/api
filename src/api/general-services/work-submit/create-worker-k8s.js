@@ -5,15 +5,27 @@ const logger = require('../../../utils/logging');
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
 
-const createWorkerResources = async () => {
+const createWorkerResources = async (service) => {
   const { sandboxId } = config;
-
+  const { experimentId } = service.workRequest;
+  const namespace = `worker-${sandboxId}`;
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
-  const response = await k8sApi.listNamespacedPod(`worker-${sandboxId}`);
 
+  const response = await k8sApi.listNamespacedPod(namespace);
   const pods = response.body.items;
 
   logger.log(pods);
+  logger.log(pods.length, 'candidate pods found. Selecting one...');
+
+  // Select a pod to run this experiment on.
+  const selectedPod = parseInt(experimentId, 16) % pods.length;
+  const { name } = pods[selectedPod].metadata;
+  logger.log('Pod number', selectedPod, ' with name', name, 'chosen');
+
+  const patch = {
+    op: 'add', path: '/metadata/labels/experimentId', value: experimentId,
+  };
+  await k8sApi.patchNamespacedPod(name, namespace, patch);
 };
 
 module.exports = createWorkerResources;
