@@ -22,9 +22,11 @@ const createWorkerResources = async (service) => {
   const { name } = pods[selectedPod].metadata;
   logger.log('Pod number', selectedPod, ' with name', name, 'chosen');
 
-  const patch = {
-    op: 'add', path: '/metadata/labels/experimentId', value: experimentId,
-  };
+  const patch = [
+    {
+      op: 'add', path: '/metadata/labels/experimentId', value: experimentId,
+    },
+  ];
   await k8sApi.patchNamespacedPod(name, namespace, patch,
     undefined, undefined, undefined, undefined,
     {
