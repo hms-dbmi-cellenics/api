@@ -9,7 +9,7 @@ const createClient = (options) => {
     host,
     port,
     tls: {},
-    reconnectOnError: (err) => true,
+    reconnectOnError: () => true,
     retryStrategy: (times) => {
       if (times > 10) {
         logger.error(`redis:${endpoint}`, 'Failed to establish connection.');

@@ -5,11 +5,13 @@ const logger = require('../../../utils/logging');
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
 
-const createWorkerResources = async (service) => {
+const createWorkerResources = async () => {
   const { sandboxId } = config;
 
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
-  const pods = await k8sApi.listNamespacedPod(`worker-${sandboxId}`);
+  const response = await k8sApi.listNamespacedPod(`worker-${sandboxId}`);
+
+  const pods = response.body.items;
 
   logger.log(pods);
 };
