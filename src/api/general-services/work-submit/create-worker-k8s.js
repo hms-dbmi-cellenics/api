@@ -35,7 +35,11 @@ const createWorkerResources = async (service) => {
     {
       op: 'add', path: '/metadata/labels/experimentId', value: experimentId,
     },
+    {
+      op: 'add', path: '/metadata/labels/workQueueName', value: service.workQueueName,
+    },
   ];
+
   await k8sApi.patchNamespacedPod(name, namespace, patch,
     undefined, undefined, undefined, undefined,
     {
