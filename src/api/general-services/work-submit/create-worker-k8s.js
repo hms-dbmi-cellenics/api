@@ -41,17 +41,13 @@ const createWorkerResources = async (service) => {
     },
   ];
 
-  try {
-    await k8sApi.patchNamespacedPod(name, namespace, patch,
-      undefined, undefined, undefined, undefined,
-      {
-        headers: {
-          'content-type': 'application/json-patch+json',
-        },
-      });
-  } catch (e) {
-    logger.log(e);
-  }
+  await k8sApi.patchNamespacedPod(name, namespace, patch,
+    undefined, undefined, undefined, undefined,
+    {
+      headers: {
+        'content-type': 'application/json-patch+json',
+      },
+    });
 };
 
 module.exports = createWorkerResources;

@@ -93,7 +93,21 @@ class WorkSubmitService {
       return;
     }
 
-    await createWorkerResources(this);
+    let numTries = 0;
+    do {
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        await createWorkerResources(this);
+        break;
+      } catch (e) {
+        if (e.response && e.response.statusCode === 422) {
+          logger.log('Could not assign experiment to worker, trying again...');
+          numTries += 1;
+        } else {
+          throw e;
+        }
+      }
+    } while (numTries < 10);
   }
 
   async submitWork() {
