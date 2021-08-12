@@ -32,7 +32,7 @@ const createWorkerResources = async (service) => {
   logger.log('Pod number', selectedPod, ' with name', name, 'chosen');
 
   const patch = [
-    { op: 'test', path: '/metadata/labels/experimentId', value: 'asd' },
+    { op: 'test', path: '/metadata/labels/experimentId', value: null },
     {
       op: 'add', path: '/metadata/labels/experimentId', value: experimentId,
     },
