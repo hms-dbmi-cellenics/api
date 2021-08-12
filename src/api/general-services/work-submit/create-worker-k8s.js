@@ -32,7 +32,7 @@ const createWorkerResources = async (service) => {
   logger.log('Pod number', selectedPod, ' with name', name, 'chosen');
 
   const patch = [
-    { op: 'test', path: '/metadata/labels/experimentId', value: null },
+    { op: 'test', path: '/metadata/labels/experimentId', value: 'asd' },
     {
       op: 'add', path: '/metadata/labels/experimentId', value: experimentId,
     },
@@ -41,13 +41,17 @@ const createWorkerResources = async (service) => {
     },
   ];
 
-  await k8sApi.patchNamespacedPod(name, namespace, patch,
-    undefined, undefined, undefined, undefined,
-    {
-      headers: {
-        'content-type': 'application/json-patch+json',
-      },
-    });
+  try {
+    await k8sApi.patchNamespacedPod(name, namespace, patch,
+      undefined, undefined, undefined, undefined,
+      {
+        headers: {
+          'content-type': 'application/json-patch+json',
+        },
+      });
+  } catch (e) {
+    logger.log(e);
+  }
 };
 
 module.exports = createWorkerResources;
