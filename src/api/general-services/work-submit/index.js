@@ -20,7 +20,6 @@ class WorkSubmitService {
       this.workQueueName = 'development-queue.fifo';
     } else {
       this.workQueueName = `queue-job-${this.workerHash}-${config.clusterEnv}.fifo`;
-      this.envQueueName = `queue-job-${config.sandboxId}-${config.clusterEnv}.fifo`;
     }
   }
 
@@ -73,7 +72,6 @@ class WorkSubmitService {
         const accountId = await config.awsAccountIdPromise;
 
         queueUrls.push(`https://sqs.${config.awsRegion}.amazonaws.com/${accountId}/${this.workQueueName}`);
-        queueUrls.push(`https://sqs.${config.awsRegion}.amazonaws.com/${accountId}/${this.envQueueName}`);
       }
 
       await Promise.all(queueUrls.map((queueUrl) => this.sendMessageToQueue(queueUrl)));
@@ -95,7 +93,26 @@ class WorkSubmitService {
       return;
     }
 
-    await createWorkerResources(this);
+    let numTries = 0;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        await createWorkerResources(this);
+        break;
+      } catch (e) {
+        if (e.response && e.response.statusCode === 422) {
+          logger.log('Could not assign experiment to worker (potential race condition), trying again...');
+          numTries += 1;
+        } else {
+          throw e;
+        }
+
+        if (numTries > 10) {
+          throw e;
+        }
+      }
+    }
   }
 
   async submitWork() {
