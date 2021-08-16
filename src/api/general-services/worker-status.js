@@ -30,20 +30,10 @@ const getWorkerStatus = async (experimentId) => {
     };
   }
 
-  const workerHash = crypto
-    .createHash('sha1')
-    .update(`${experimentId}-${config.sandboxId}`)
-    .digest('hex');
-
-  const coreApi = kc.makeApiClient(k8s.CoreV1Api);
+  const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
   // Get worker status
-  const podList = await coreApi.listNamespacedPod(
-    `worker-${config.sandboxId}`,
-    undefined, undefined, undefined, undefined,
-    `pod-template-hash=${workerHash}`,
-    // `job-name=worker-${workerHash}-job`,
-  );
+  const podList = k8sApi.listNamespacedPod(`worker-${config.sandboxId}`, null, null, null, null, `experimentId=${experimentId}`);
 
   const workerDetails = podList.body.items[0];
 
