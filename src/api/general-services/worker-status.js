@@ -41,7 +41,8 @@ const getWorkerStatus = async (experimentId) => {
   const podList = await coreApi.listNamespacedPod(
     `worker-${config.sandboxId}`,
     undefined, undefined, undefined, undefined,
-    `job-name=worker-${workerHash}-job`,
+    `pod-template-hash=${workerHash}`,
+    // `job-name=worker-${workerHash}-job`,
   );
 
   const workerDetails = podList.body.items[0];
