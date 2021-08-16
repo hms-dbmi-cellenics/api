@@ -93,7 +93,7 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
       "Next": "PreProcessing",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
@@ -105,7 +105,7 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
       "Next": "EmptyDrops",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
@@ -117,7 +117,7 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
       "Next": "DoubletScores",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
@@ -129,7 +129,7 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
       "Next": "CreateSeurat",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
@@ -141,7 +141,7 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
       "Next": "PrepareExperiment",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
@@ -153,7 +153,7 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
       "Next": "UploadToAWS",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
@@ -165,7 +165,7 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
       "Next": "EndOfGem2S",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
@@ -224,7 +224,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Next": "PreProcessing",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
@@ -236,7 +236,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Next": "EmptyDrops",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
@@ -248,7 +248,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Next": "DoubletScores",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
@@ -260,7 +260,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Next": "CreateSeurat",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
@@ -272,7 +272,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Next": "PrepareExperiment",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
@@ -284,7 +284,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Next": "UploadToAWS",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
@@ -296,7 +296,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Next": "EndOfGem2S",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
@@ -413,7 +413,7 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 3600,
+            "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
@@ -436,7 +436,7 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 3600,
+            "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
@@ -459,7 +459,7 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 3600,
+            "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
@@ -482,7 +482,7 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 3600,
+            "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
@@ -505,7 +505,7 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 3600,
+            "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
@@ -520,7 +520,7 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
       "Next": "ConfigureEmbedding",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
@@ -532,7 +532,7 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
       "Next": "EndOfPipeline",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
@@ -599,7 +599,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 3600,
+            "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
@@ -622,7 +622,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 3600,
+            "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
@@ -645,7 +645,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 3600,
+            "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
@@ -668,7 +668,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 3600,
+            "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
@@ -691,7 +691,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
             "End": true,
             "Type": "Task",
             "ResultPath": null,
-            "TimeoutSeconds": 3600,
+            "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
@@ -706,7 +706,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
       "Next": "ConfigureEmbedding",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
@@ -718,7 +718,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
       "Next": "EndOfPipeline",
       "Type": "Task",
       "ResultPath": null,
-      "TimeoutSeconds": 3600,
+      "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
