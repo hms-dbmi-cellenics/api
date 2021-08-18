@@ -21,8 +21,8 @@ const workRequestBuilder = async (workerTaskName, config) => {
 
   // Add timeout
   const now = new Date();
-  const addTimeoutSeconds = 60;
-  const timeout = new Date(now.getTime() + addTimeoutSeconds * 1000);
+  const oneMinute = 60;
+  const timeout = new Date(now.getTime() + 60 * oneMinute * 1000);
 
   const workConfig = {
     experimentId: null,
