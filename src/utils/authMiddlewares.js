@@ -103,7 +103,7 @@ const authenticationMiddlewareSocketIO = async (authHeader) => {
       const { kid } = header;
 
       cache.get(kid)
-        .then((pem) => callback(null, pem))
+        .then(({ pem }) => callback(null, pem))
         .catch((e) => {
           if (!(e instanceof CacheMissError)) {
             throw e;
@@ -113,7 +113,7 @@ const authenticationMiddlewareSocketIO = async (authHeader) => {
             const secret = keys.find((key) => key.kid === kid);
             const pem = jwkToPem(secret);
 
-            cache.set(kid, pem, 3600 * 48);
+            cache.set(kid, { pem }, 3600 * 48);
             callback(null, pem);
           });
         });
