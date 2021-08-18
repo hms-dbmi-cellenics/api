@@ -84,6 +84,7 @@ class Cache {
       // because setex does not support setting objects.
       const stringifiedData = JSON.stringify(data);
 
+      // Sigh.
       if (stringifiedData.length > 500 * 1000 * 1000) {
         throw new Error('Values over 500 MB are not stored as Redis values are limited to 512 MiB.');
       }
