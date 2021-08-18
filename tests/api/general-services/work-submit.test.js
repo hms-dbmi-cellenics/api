@@ -25,18 +25,11 @@ describe('tests for the work-submit service', () => {
 
     const w = new WorkSubmitService(workRequest);
     w.submitWork().then(() => {
-      expect(sendMessageSpy).toHaveBeenCalledTimes(2);
+      expect(sendMessageSpy).toHaveBeenCalledTimes(1);
       expect(sendMessageSpy).toHaveBeenCalledWith(
         {
           MessageBody: JSON.stringify(workRequest),
           QueueUrl: 'https://sqs.eu-west-1.amazonaws.com/test-account-id/queue-job-1cd932135df1889ebf59575eb8fbe4b6c29858ee-test.fifo',
-          MessageGroupId: 'work',
-        },
-      );
-      expect(sendMessageSpy).toHaveBeenCalledWith(
-        {
-          MessageBody: JSON.stringify(workRequest),
-          QueueUrl: 'https://sqs.eu-west-1.amazonaws.com/test-account-id/queue-job-default-test.fifo',
           MessageGroupId: 'work',
         },
       );

@@ -9,19 +9,7 @@ const createClient = (options) => {
     host,
     port,
     tls: {},
-    reconnectOnError: (err) => {
-      const targetError = 'READONLY';
-
-      if (err.message.includes(targetError)) {
-        // Only reconnect when the error contains "READONLY"
-        // Once failover happens on ElastiCache, the reader will
-        // become the master, causing a READONLY error. Force
-        // reconnection so we connect to the new master.
-        return true;
-      }
-
-      return false;
-    },
+    reconnectOnError: () => true,
     retryStrategy: (times) => {
       if (times > 10) {
         logger.error(`redis:${endpoint}`, 'Failed to establish connection.');
