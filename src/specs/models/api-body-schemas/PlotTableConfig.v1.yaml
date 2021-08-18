@@ -33,6 +33,7 @@ properties:
       - heatmap
       - frequency
       - violin
+      - markerHeatmap
   config:
     type: object
 required:
