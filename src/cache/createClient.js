@@ -38,7 +38,8 @@ const createClient = (options) => {
   });
 
   redis.on('error', (error) => {
-    logger.error(`redis:${endpoint}`, 'An error occurred:', error.message);
+    logger.error(`redis:${endpoint}`, 'An error occurred:');
+    logger.error(`redis:${endpoint}`, error);
   });
 
   return redis;
