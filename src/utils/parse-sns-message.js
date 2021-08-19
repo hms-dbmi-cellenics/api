@@ -45,7 +45,7 @@ const parseSNSMessage = async (req) => {
       const parsedMessage = JSON.parse(msg.Message);
 
       logger.log(`[MSG ${msg.MessageId}] Message sent via SNS is parsed:`);
-      logger.log(`[MSG ${msg.MessageId}] ${parsedMessage}`);
+      logger.log(`[MSG ${msg.MessageId}] ${msg.Message}`);
 
       return { io, parsedMessage };
     } catch (e) {
