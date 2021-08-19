@@ -222,10 +222,7 @@ const getPipelineStatus = async (experimentId, processName) => {
     error = error.executionFailedEventDetails;
   }
 
-  /* eslint-enable no-await-in-loop */
   completedSteps = getStepsFromExecutionHistory(events);
-  logger.debug(`ExecutionHistory(${processName}) for ARN ${executionArn}: ${events.length} events, ${completedSteps.length} completed steps`);
-
 
   const response = {
     [processName]: {
