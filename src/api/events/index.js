@@ -14,7 +14,7 @@ module.exports = (socket) => {
       AWSXRay.setSegment(segment);
 
       logger.log(`[REQ ??, SOCKET ${socket.id}] Work submitted from client.`);
-      logger.log(`[REQ ??, SOCKET ${socket.id}] ${data}`);
+      logger.log(`[REQ ??, SOCKET ${socket.id}] ${JSON.stringify(data)}`);
 
       const { uuid, Authorization, experimentId } = data;
       segment.addMetadata('request', data);

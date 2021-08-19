@@ -55,7 +55,7 @@ const handleWorkRequest = async (workRequest, socket) => {
       await workSubmitService.submitWork();
     } else {
       logger.log(`[REQ ${uuid}, SOCKET ${socket.id}] Unexpected error while processing cached response.`);
-      logger.log(`[REQ ${uuid}, SOCKET ${socket.id}] ${e}`);
+      logger.trace(e);
       AWSXRay.getSegment().addError(e);
     }
   }
