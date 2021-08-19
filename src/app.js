@@ -17,7 +17,16 @@ async function startServer() {
     logger.debug(`Client with socket ID ${socket.id} (IP: ${socket.conn.remoteAddress}) successsfully connected.`);
     // eslint-disable-next-line global-require
     require('./api/events')(socket);
+
+    socket.on('disconnecting', (reason) => {
+      logger.debug(`Client with socket ID ${socket.id} disconnecting, reason: ${reason}`);
+    });
+
+    socket.on('disconnect', (reason) => {
+      logger.debug(`Client with socket ID ${socket.id} disconnected, reason: ${reason}`);
+    });
   });
+
 
   // Set up HTTP server.
   server.listen(config.port, (err) => {
