@@ -100,10 +100,10 @@ class WorkResponseService {
 
     try {
       if (cacheable) {
-        logger.log('Response will be cached.');
+        logger.log(`[RES ${this.uuid}] Response will be cached.`);
         await cacheSetResponse(responseForClient);
       } else {
-        logger.log('Skipping caching as `cacheable` is set to false.');
+        logger.log(`[RES ${this.uuid}] Skipping caching as cacheable is set to false.`);
       }
 
       // Order results according to the pagination
@@ -111,7 +111,7 @@ class WorkResponseService {
         responseForClient.results = handlePagination(processedResults, pagination);
       }
     } catch (e) {
-      logger.error('Error trying to cache or paginate data: ', e);
+      logger.error(`[RES ${this.uuid}] Error trying to cache or paginate data: `, e);
       throw e;
     }
 
@@ -124,7 +124,7 @@ class WorkResponseService {
 
       const { experimentId } = responseForClient.request;
 
-      logger.log('Sending work response to all clients subscribed to experiment', experimentId);
+      logger.log(`[RES ${this.uuid}] Sending work response to all clients subscribed to experiment`, experimentId);
       this.io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 
       if (!responseForClient.response.error) {
@@ -136,9 +136,9 @@ class WorkResponseService {
 
     if (Date.parse(timeout) > Date.now()) {
       this.io.to(socketId).emit(`WorkResponse-${uuid}`, responseForClient);
-      logger.log('Work response sent out.');
+      logger.log(`[RES ${this.uuid}] Work response sent out.`);
     } else {
-      logger.log(`Work response not sent out as timeout of ${timeout} has expired.`);
+      logger.log(`[RES ${this.uuid}] Work response not sent out as timeout of ${timeout} has expired.`);
     }
   }
 }

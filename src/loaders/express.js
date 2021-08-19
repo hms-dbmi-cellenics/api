@@ -66,8 +66,6 @@ module.exports = async (app) => {
         _.mapKeys(
           req.params,
           (value, key) => {
-            console.log(key, value);
-
             AWSXRay.getSegment().addAnnotation(key, value);
           },
         );

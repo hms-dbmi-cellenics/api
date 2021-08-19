@@ -13,7 +13,8 @@ module.exports = (socket) => {
       AWSXRay.capturePromise();
       AWSXRay.setSegment(segment);
 
-      logger.log('Work submitted from client', socket.id, ':', data);
+      logger.log(`[REQ ??, SOCKET ${socket.id}] Work submitted from client.`);
+      logger.log(`[REQ ??, SOCKET ${socket.id}] ${data}`);
 
       const { uuid, Authorization, experimentId } = data;
       segment.addMetadata('request', data);
@@ -37,7 +38,7 @@ module.exports = (socket) => {
 
         await handleWorkRequest(data, socket);
       } catch (e) {
-        logger.error('Error while processing WorkRequest event:');
+        logger.log(`[REQ ??, SOCKET ${socket.id}] Error while processing WorkRequest event.`);
         logger.trace(e);
         segment.addError(e);
 
@@ -50,6 +51,8 @@ module.exports = (socket) => {
             trace: AWSXRay.getSegment().trace_id,
           },
         });
+
+        logger.log(`[REQ ??, SOCKET ${socket.id}] Error sent back to client.`);
       }
 
       segment.close();
