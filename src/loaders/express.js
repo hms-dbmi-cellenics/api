@@ -127,7 +127,6 @@ module.exports = async (app) => {
       methods: ['GET', 'POST'],
       credentials: true,
     },
-    maxHttpBufferSize: 1e9,
     pingTimeout: 30000,
     transports: ['websocket'],
   });
