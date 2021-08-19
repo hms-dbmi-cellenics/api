@@ -19,7 +19,8 @@ const createWorkerResources = async (service) => {
   );
 
   if (assignedPods.body.items.length > 0) {
-    logger.log(`Experiment ${experimentId} already assigned a worker (${assignedPods.body.items}), skipping creation...`);
+    logger.log(`Experiment ${experimentId} already assigned a worker, skipping creation...`);
+    logger.log(assignedPods.body.items);
     return;
   }
 
