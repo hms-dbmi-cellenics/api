@@ -8,8 +8,8 @@
     "test:loud": "jest",
     "test:debug": "node --inspect node_modules/.bin/jest --runInBand --silent",
     "coverage": "jest --coverage --silent",
-    "dev": "DEBUG=engine*,socket.io-server* nodemon --max-old-space-size=8192 src/app.js",
-    "start": "DEBUG=engine*,socket.io-server* node --max-old-space-size=8192 src/app.js",
+    "dev": "DEBUG=socket.io:* nodemon --max-old-space-size=8192 src/app.js",
+    "start": "DEBUG=socket.io:* node --max-old-space-size=8192 src/app.js",
     "lint": "eslint ./src",
     "detect-secrets": "pip3 install detect-secrets && git diff --staged --name-only | xargs detect-secrets-hook --baseline .secrets.baseline"
   },
