@@ -31,7 +31,14 @@ module.exports = async (app) => {
   // Enable AWS XRay
   // eslint-disable-next-line global-require
   AWSXRay.captureHTTPsGlobal(require('http'));
+  AWSXRay.setLogger({
+    error: () => { /* logging code */ },
+    warn: () => { /* logging code */ },
+    info: () => { /* logging code */ },
+    debug: () => { /* logging code */ },
+  });
   AWSXRay.setContextMissingStrategy('LOG_ERROR');
+
   AWSXRay.middleware.setSamplingRules({
     rules: [
       {
