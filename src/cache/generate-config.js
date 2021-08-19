@@ -7,7 +7,7 @@ const BASE_CONFIG = {
   primary: { host: 'localhost', port: '6379' },
   reader: { host: 'localhost', port: '6379' },
   retryDelay: 10000,
-  redisGetTimeout: 3000,
+  redisGetTimeout: 10000,
   // ttl has to be in ms. Set to 36 hours = 36*60*60*1000 ms = 129600000
   l1CacheSettings: { ttl: 129600000, size: 1000, minLatencyToStore: 50 },
   enabled: config.cachingEnabled,
