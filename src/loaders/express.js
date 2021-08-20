@@ -86,7 +86,10 @@ module.exports = async (app) => {
 
   app.use((req, res, next) => {
     res.set('X-Amzn-Trace-Id', `Root=${AWSXRay.getSegment().trace_id}`);
+    AWSXRay.getSegment().addMetadata('request', JSON.stringify(req.body));
+    AWSXRay.getSegment().addMetadata('headers', JSON.stringify(req.headers));
     AWSXRay.getSegment().addAnnotation('podName', config.podName);
+    AWSXRay.getSegment().addAnnotation('sandboxId', config.sandboxId);
     next();
   });
 

@@ -19,6 +19,7 @@ module.exports = (socket) => {
       const { uuid, Authorization, experimentId } = data;
       segment.addMetadata('request', data);
       segment.addAnnotation('podName', config.podName);
+      segment.addAnnotation('sandboxId', config.sandboxId);
       segment.addAnnotation('experimentId', experimentId);
 
       segment.addIncomingRequestData({
