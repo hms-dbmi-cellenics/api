@@ -40,7 +40,7 @@ const createWorkerResources = async (service) => {
       op: 'add', path: '/metadata/labels/experimentId', value: experimentId,
     },
     {
-      op: 'add', path: '/metadata/labels/workQueueName', value: service.workQueueName,
+      op: 'add', path: '/metadata/labels/workQueueHash', value: service.workerHash,
     },
   ];
 
