@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const jq = require('jq-web');
+const jq = require('node-jq');
 const YAML = require('yaml');
 const _ = require('lodash');
 const AWSXRay = require('aws-xray-sdk');
@@ -30,9 +30,28 @@ const getPipelineArtifacts = async () => {
   const txt = await response.text();
   const manifest = YAML.parseAllDocuments(txt);
 
+  const [chartRef, pipelineRunner] = await Promise.all([
+    jq.run(
+      '..|objects| select(.metadata != null) | select( .metadata.name | contains("pipeline")) | .spec.chart.ref//empty',
+      manifest,
+      {
+        input: 'json',
+        output: 'json',
+      },
+    ),
+    jq.run(
+      '..|objects|.["pipeline-runner"].image//empty',
+      manifest,
+      {
+        input: 'json',
+        output: 'json',
+      },
+    ),
+  ]);
+
   return {
-    chartRef: jq.json(manifest, '..|objects| select(.metadata != null) | select( .metadata.name | contains("pipeline")) | .spec.chart.ref//empty'),
-    'pipeline-runner': jq.json(manifest, '..|objects|.["pipeline-runner"].image//empty'),
+    chartRef,
+    'pipeline-runner': pipelineRunner,
   };
 };
 

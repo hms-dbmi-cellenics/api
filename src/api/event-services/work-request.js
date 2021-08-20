@@ -25,37 +25,37 @@ const handleWorkRequest = async (workRequest, socket) => {
   }
 
   try {
-    logger.log(`Trying to fetch response to request ${uuid} from cache...`);
+    logger.log(`[REQ ${uuid}, SOCKET ${socket.id}] Trying to fetch response from cache...`);
     const cachedResponse = await cacheGetRequest(workRequest);
-    logger.log(`We found a cached response for ${uuid}. Checking if pagination is needed...`);
 
     if (pagination) {
-      logger.log('Pagination is needed, processing response...');
+      logger.log(`[REQ ${uuid}, SOCKET ${socket.id}] We found a cached response, pagination needed. Processing response...`);
       cachedResponse.results = handlePagination(cachedResponse.results, pagination);
-      logger.log('Paginated');
     } else {
-      logger.log('No pagination required.');
+      logger.log(`[REQ ${uuid}, SOCKET ${socket.id}] We found a cached response, no pagination needed.`);
     }
 
     socket.emit(`WorkResponse-${uuid}`, cachedResponse);
-    logger.log(`Response sent back to ${uuid}`);
+    logger.log(`[REQ ${uuid}, SOCKET ${socket.id}] Response sent back from cache.`);
   } catch (e) {
     if (e instanceof CacheMissError) {
-      logger.log(e.message);
-      logger.log(`Cache miss on ${uuid}, sending it to the worker...`);
+      logger.log(`[REQ ${uuid}, SOCKET ${socket.id}] Cache miss error: ${e}`);
+      logger.log(`[REQ ${uuid}, SOCKET ${socket.id}] Forwarding to worker...`);
+
       await validateRequest(workRequest, 'WorkRequest.v1.yaml');
       const { timeout } = workRequest;
       if (Date.parse(timeout) <= Date.now()) {
         // Annotate current segment as expired.
         AWSXRay.getSegment().addAnnotation('result', 'error-timeout');
 
-        throw new Error(`Work request will not be handled as timeout of ${timeout} is in the past...`);
+        throw new Error(`Request timed out at ${timeout}.`);
       }
 
       const workSubmitService = new WorkSubmitService(workRequest);
       await workSubmitService.submitWork();
     } else {
-      logger.log('Unexpected error happened while trying to process cached response:', e.message);
+      logger.log(`[REQ ${uuid}, SOCKET ${socket.id}] Unexpected error while processing cached response.`);
+      logger.trace(e);
       AWSXRay.getSegment().addError(e);
     }
   }

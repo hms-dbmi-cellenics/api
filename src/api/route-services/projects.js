@@ -36,7 +36,7 @@ class ProjectsService {
       return prettyResponse.projects;
     }
 
-    logger.log('Project not found');
+    logger.log(`Project ${projectUuid} not found`);
     return response;
   }
 

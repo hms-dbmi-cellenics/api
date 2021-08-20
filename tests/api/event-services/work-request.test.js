@@ -39,7 +39,7 @@ describe('handleWorkRequest', () => {
       await handleWorkRequest(workRequest, socket);
     } catch (e) {
       expect(e.message).toMatch(
-        /^Work request will not be handled as timeout/,
+        /^Request timed out at/,
       );
     }
   });

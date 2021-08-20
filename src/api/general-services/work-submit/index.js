@@ -50,7 +50,8 @@ class WorkSubmitService {
    * @param {string} queueUrl adsas
    */
   async sendMessageToQueue(queueUrl) {
-    logger.log(`Sending message to queue ${queueUrl}...`);
+    logger.log(`[REQ ${this.workRequest.uuid}] Sending message to queue ${queueUrl}...`);
+
     const sqs = new AWS.SQS({
       region: config.awsRegion,
     });
@@ -116,24 +117,12 @@ class WorkSubmitService {
   }
 
   async submitWork() {
-    AWSXRay.getSegment().addAnnotation('result', 'success-worker');
-    AWSXRay.getSegment().close();
-
     await Promise.all([
-      new Promise((resolve, reject) => {
-        AWSXRay.captureAsyncFunc('WorkSubmitService.getQueueAndHandleMessage', async (subsegment) => {
-          try {
-            const response = await this.getQueueAndHandleMessage();
-            resolve(response);
-          } catch (error) {
-            reject(error);
-          } finally {
-            subsegment.close();
-          }
-        });
-      }),
       this.createWorker(),
+      this.getQueueAndHandleMessage(),
     ]);
+
+    AWSXRay.getSegment().addAnnotation('result', 'success-worker');
   }
 }
 

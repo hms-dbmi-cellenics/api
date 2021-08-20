@@ -1,5 +1,4 @@
 const AWS = require('aws-sdk');
-const AWSXRay = require('aws-xray-sdk');
 const config = require('../config');
 const logger = require('../utils/logging');
 
@@ -8,7 +7,7 @@ const BASE_CONFIG = {
   primary: { host: 'localhost', port: '6379' },
   reader: { host: 'localhost', port: '6379' },
   retryDelay: 10000,
-  redisGetTimeout: 3000,
+  redisGetTimeout: null,
   // ttl has to be in ms. Set to 36 hours = 36*60*60*1000 ms = 129600000
   l1CacheSettings: { ttl: 129600000, size: 1000, minLatencyToStore: 50 },
   enabled: config.cachingEnabled,
@@ -27,9 +26,6 @@ const updateRedisEndpoints = async () => {
     return {};
   }
 
-  // This will be run outside a request context, so there is no X-Ray segment
-  AWSXRay.setContextMissingStrategy(() => { });
-
   const ec = new AWS.ElastiCache({
     region: config.awsRegion,
   });
@@ -37,8 +33,6 @@ const updateRedisEndpoints = async () => {
   const r = await ec.describeReplicationGroups({
     ReplicationGroupId: `biomage-redis-${config.clusterEnv}`,
   }).promise();
-
-  AWSXRay.setContextMissingStrategy('LOG_ERROR');
 
   // There is only one group matching the ID.
   const clusterProps = r.ReplicationGroups[0];

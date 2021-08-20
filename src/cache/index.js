@@ -83,11 +83,15 @@ class Cache {
       // IMPORTANT: the data that is set to the cache MUST be stringified,
       // because setex does not support setting objects.
       const stringifiedData = JSON.stringify(data);
+
+      // Sigh.
+      if (stringifiedData.length > 500 * 1000 * 1000) {
+        throw new Error('Values over 500 MB are not stored as Redis values are limited to 512 MiB.');
+      }
+
       await client.setex(key, ttl || cacheDuration, stringifiedData);
     } catch (error) {
-      logger.error();
-      logger.error(`redis:primary Cannot SETEX from ${key} as an error occurred: ${error.message}`);
-      logger.error();
+      logger.error(`Cannot SETEX from ${key} as an error occurred: ${error.message}`);
     }
   }
 
@@ -95,32 +99,24 @@ class Cache {
     const { client, status, ready } = this.getClientAndStatus('primary');
 
     if (!ready) {
-      const message = `redis:reader Cannot GET from ${key} as client is in status ${status}`;
-      logger.warn(message);
-      throw new Error(message);
+      throw new Error(`Cannot GET from ${key} as client is in status ${status}`);
     }
 
-    try {
-      let result;
+    let result;
 
-      if (this.conf.redisGetTimeout) {
-        result = await Promise.race([timeout(this.conf.redisGetTimeout), client.get(key)]);
-      } else {
-        result = await client.get(key);
-      }
-
-      if (!result) {
-        throw new Error(`No value found in Redis cache under key ${key}`);
-      }
-
-      // unstringify the data
-      result = JSON.parse(result);
-      return result;
-    } catch (error) {
-      const message = `Cannot GET from ${key} as an error occurred: ${error.message}`;
-      logger.error('redis:reader', message);
-      throw new Error(message);
+    if (this.conf.redisGetTimeout) {
+      result = await Promise.race([timeout(this.conf.redisGetTimeout), client.get(key)]);
+    } else {
+      result = await client.get(key);
     }
+
+    if (!result) {
+      throw new Error(`No value found in Redis cache under key ${key}`);
+    }
+
+    // unstringify the data
+    result = JSON.parse(result);
+    return result;
   }
 
   async get(key) {
@@ -132,7 +128,6 @@ class Cache {
 
     const { enabled } = this.conf;
     if (!enabled) {
-      logger.warn('Caching currently disabled, not getting anything.');
       throw new CacheMissError('Caching disabled, automatic cache miss.');
     }
 
@@ -156,7 +151,6 @@ class Cache {
       response.responseFrom = 'redis';
       return _.cloneDeep(response);
     } catch (error) {
-      logger.error(`cache:get Cache lookup for key ${key} failed:`, error.message);
       throw new CacheMissError(error.message);
     }
   }

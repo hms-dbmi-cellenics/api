@@ -8,13 +8,13 @@ const validator = new MessageValidator();
 
 const parseSNSMessage = async (req) => {
   let msg;
-  logger.log('SNS message of length', req.body.length, 'arrived, parsing...');
+  logger.log('[MSG ??] SNS message of length', req.body.length, 'arrived.');
 
   // First let's try parsing the body. It should be JSON.
   try {
     msg = JSON.parse(req.body);
   } catch (error) {
-    logger.trace('Parsing error: ', error);
+    logger.trace('[MSG ??] Error while parsing: ', error);
     throw error;
   }
 
@@ -25,9 +25,9 @@ const parseSNSMessage = async (req) => {
     msg = await validate(msg);
   } catch (err) {
     if (config.clusterEnv === 'development') {
-      logger.log('Error was thrown in development, ignoring it as expected.');
+      logger.log('[MSG ??] Error was thrown in development, ignoring it as expected.');
     } else {
-      logger.error('Error validating the SNS response:', err);
+      logger.error('[MSG ??] Error validating the SNS response:', err);
       throw err;
     }
   }
@@ -40,21 +40,20 @@ const parseSNSMessage = async (req) => {
   }
   // Notifications are passed on to the service for processing.
   if (msg.Type === 'Notification') {
-    logger.log('SNS message is of type notification, sending to the handler...');
-
     try {
       const io = req.app.get('io');
       const parsedMessage = JSON.parse(msg.Message);
 
-      logger.log('Message sent via SNS is parsed:', parsedMessage);
+      logger.log(`[MSG ${msg.MessageId}] Message sent via SNS is parsed:`);
+      logger.log(`[MSG ${msg.MessageId}] ${JSON.stringify(parsedMessage, null, 2)}`);
 
       return { io, parsedMessage };
     } catch (e) {
-      logger.error('Error parsing message:', e);
+      logger.error('[MSG ??] Error parsing message:', e);
       throw e;
     }
   } else {
-    logger.log(`SNS message is of type "${msg.Type}", ignoring it`);
+    logger.log(`[MSG ??] Ignoring message of type ${msg.Type}`);
   }
 
   return {};
