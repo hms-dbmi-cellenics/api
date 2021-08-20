@@ -31,7 +31,14 @@ module.exports = async (app) => {
   // Enable AWS XRay
   // eslint-disable-next-line global-require
   AWSXRay.captureHTTPsGlobal(require('http'));
+  AWSXRay.setLogger({
+    error: () => { /* logging code */ },
+    warn: () => { /* logging code */ },
+    info: () => { /* logging code */ },
+    debug: () => { /* logging code */ },
+  });
   AWSXRay.setContextMissingStrategy('LOG_ERROR');
+
   AWSXRay.middleware.setSamplingRules({
     rules: [
       {
@@ -66,8 +73,6 @@ module.exports = async (app) => {
         _.mapKeys(
           req.params,
           (value, key) => {
-            console.log(key, value);
-
             AWSXRay.getSegment().addAnnotation(key, value);
           },
         );
@@ -81,7 +86,10 @@ module.exports = async (app) => {
 
   app.use((req, res, next) => {
     res.set('X-Amzn-Trace-Id', `Root=${AWSXRay.getSegment().trace_id}`);
+    AWSXRay.getSegment().addMetadata('request', JSON.stringify(req.body));
+    AWSXRay.getSegment().addMetadata('headers', JSON.stringify(req.headers));
     AWSXRay.getSegment().addAnnotation('podName', config.podName);
+    AWSXRay.getSegment().addAnnotation('sandboxId', config.sandboxId);
     next();
   });
 
@@ -122,6 +130,7 @@ module.exports = async (app) => {
       methods: ['GET', 'POST'],
       credentials: true,
     },
+    pingTimeout: 600000,
     transports: ['websocket'],
   });
 

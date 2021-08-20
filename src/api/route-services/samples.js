@@ -19,7 +19,6 @@ class SamplesService {
   }
 
   async getSamples(projectUuid) {
-    logger.log(`Getting samples for projectUuid : ${projectUuid}`);
     const marshalledData = convertToDynamoDbRecord({
       ':projectUuid': projectUuid,
     });
@@ -36,7 +35,7 @@ class SamplesService {
     const items = response.Items;
 
     if (!items.length) {
-      throw new NotFoundError('Samples not found!');
+      throw new NotFoundError('Samples not found.');
     }
 
     return items.map((item) => {
@@ -51,7 +50,6 @@ class SamplesService {
 
 
   async getSamplesByExperimentId(experimentId) {
-    logger.log(`Getting samples using experimentId : ${experimentId}`);
     const marshalledKey = convertToDynamoDbRecord({
       experimentId,
     });

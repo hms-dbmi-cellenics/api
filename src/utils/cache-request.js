@@ -19,8 +19,6 @@ const cacheGetRequest = async (
     PipelineRunETag: data.PipelineRunETag,
   });
 
-  logger.log(`Looking up data in cache under key ${key}`);
-
   const cache = CacheSingleton.get();
   const payload = await cache.get(key);
 

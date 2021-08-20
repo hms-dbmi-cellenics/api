@@ -5,7 +5,6 @@ const config = require('../../config');
 const logger = require('../../utils/logging');
 const pipelineConstants = require('./pipeline-manage/constants');
 
-
 const privateSteps = [
   'DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker',
   'DeleteCompletedGem2SWorker', 'LaunchNewGem2SWorker',
@@ -222,10 +221,7 @@ const getPipelineStatus = async (experimentId, processName) => {
     error = error.executionFailedEventDetails;
   }
 
-  /* eslint-enable no-await-in-loop */
   completedSteps = getStepsFromExecutionHistory(events);
-  logger.log(`ExecutionHistory(${processName}) for ARN ${executionArn}: ${events.length} events, ${completedSteps.length} completed steps`);
-
 
   const response = {
     [processName]: {
@@ -241,4 +237,5 @@ const getPipelineStatus = async (experimentId, processName) => {
 };
 
 module.exports = getPipelineStatus;
+
 module.exports.getStepsFromExecutionHistory = getStepsFromExecutionHistory;

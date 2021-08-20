@@ -3,7 +3,7 @@ const logger = require('../../src/utils/logging');
 
 const mockApi = {
   createNamespacedJob: jest.fn(() => {
-    logger.log('creating a fake namespace obj');
+    logger.debug('creating a fake namespace obj');
     return new Promise((resolve) => {
       resolve({
         status: 200,
@@ -11,7 +11,7 @@ const mockApi = {
     });
   }),
   createNamespacedPersistentVolumeClaim: jest.fn(() => {
-    logger.log('creating a fake namespace obj');
+    logger.debug('creating a fake namespace obj');
     return new Promise((resolve) => {
       resolve({
         status: 200,
@@ -24,7 +24,7 @@ const mockApi = {
 };
 
 k8s.KubeConfig.mockImplementation(() => {
-  logger.log('mocking the constructor');
+  logger.debug('mocking the constructor');
   return {
     loadFromDefault: jest.fn(),
     makeApiClient: jest.fn(() => mockApi),

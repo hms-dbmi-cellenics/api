@@ -20,7 +20,6 @@ class WorkSubmitService {
       this.workQueueName = 'development-queue.fifo';
     } else {
       this.workQueueName = `queue-job-${this.workerHash}-${config.clusterEnv}.fifo`;
-      this.envQueueName = `queue-job-${config.sandboxId}-${config.clusterEnv}.fifo`;
     }
   }
 
@@ -51,7 +50,8 @@ class WorkSubmitService {
    * @param {string} queueUrl adsas
    */
   async sendMessageToQueue(queueUrl) {
-    logger.log(`Sending message to queue ${queueUrl}...`);
+    logger.log(`[REQ ${this.workRequest.uuid}] Sending message to queue ${queueUrl}...`);
+
     const sqs = new AWS.SQS({
       region: config.awsRegion,
     });
@@ -73,7 +73,6 @@ class WorkSubmitService {
         const accountId = await config.awsAccountIdPromise;
 
         queueUrls.push(`https://sqs.${config.awsRegion}.amazonaws.com/${accountId}/${this.workQueueName}`);
-        queueUrls.push(`https://sqs.${config.awsRegion}.amazonaws.com/${accountId}/${this.envQueueName}`);
       }
 
       await Promise.all(queueUrls.map((queueUrl) => this.sendMessageToQueue(queueUrl)));
@@ -95,28 +94,35 @@ class WorkSubmitService {
       return;
     }
 
-    await createWorkerResources(this);
+    let numTries = 0;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        await createWorkerResources(this);
+        break;
+      } catch (e) {
+        if (e.response && e.response.statusCode === 422) {
+          logger.log('Could not assign experiment to worker (potential race condition), trying again...');
+          numTries += 1;
+        } else {
+          throw e;
+        }
+
+        if (numTries > 10) {
+          throw e;
+        }
+      }
+    }
   }
 
   async submitWork() {
-    AWSXRay.getSegment().addAnnotation('result', 'success-worker');
-    AWSXRay.getSegment().close();
-
     await Promise.all([
-      new Promise((resolve, reject) => {
-        AWSXRay.captureAsyncFunc('WorkSubmitService.getQueueAndHandleMessage', async (subsegment) => {
-          try {
-            const response = await this.getQueueAndHandleMessage();
-            resolve(response);
-          } catch (error) {
-            reject(error);
-          } finally {
-            subsegment.close();
-          }
-        });
-      }),
       this.createWorker(),
+      this.getQueueAndHandleMessage(),
     ]);
+
+    AWSXRay.getSegment().addAnnotation('result', 'success-worker');
   }
 }
 

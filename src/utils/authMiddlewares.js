@@ -29,9 +29,7 @@ const authenticationMiddlewareExpress = async (app) => {
 
   // This will be run outside a request context, so there is no X-Ray segment.
   // Disable tracing so we don't end up with errors logged into the console.
-  AWSXRay.setContextMissingStrategy(() => { });
   const poolId = await config.awsUserPoolIdPromise;
-  AWSXRay.setContextMissingStrategy('LOG_ERROR');
 
   return jwtExpress({
     // JWT tokens are susceptible for downgrade attacks if the algorithm used to sign
@@ -103,7 +101,7 @@ const authenticationMiddlewareSocketIO = async (authHeader) => {
       const { kid } = header;
 
       cache.get(kid)
-        .then((pem) => callback(null, pem))
+        .then(({ pem }) => callback(null, pem))
         .catch((e) => {
           if (!(e instanceof CacheMissError)) {
             throw e;
@@ -113,7 +111,7 @@ const authenticationMiddlewareSocketIO = async (authHeader) => {
             const secret = keys.find((key) => key.kid === kid);
             const pem = jwkToPem(secret);
 
-            cache.set(kid, pem, 3600 * 48);
+            cache.set(kid, { pem }, 3600 * 48);
             callback(null, pem);
           });
         });

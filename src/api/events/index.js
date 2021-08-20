@@ -13,11 +13,13 @@ module.exports = (socket) => {
       AWSXRay.capturePromise();
       AWSXRay.setSegment(segment);
 
-      logger.log('Work submitted from client', socket.id, ':', data);
+      logger.log(`[REQ ??, SOCKET ${socket.id}] Work submitted from client.`);
+      logger.log(`[REQ ??, SOCKET ${socket.id}] ${JSON.stringify(data, null, 2)}`);
 
       const { uuid, Authorization, experimentId } = data;
       segment.addMetadata('request', data);
       segment.addAnnotation('podName', config.podName);
+      segment.addAnnotation('sandboxId', config.sandboxId);
       segment.addAnnotation('experimentId', experimentId);
 
       segment.addIncomingRequestData({
@@ -34,10 +36,9 @@ module.exports = (socket) => {
         }
         const jwtClaim = await authenticationMiddlewareSocketIO(Authorization, socket);
         await authorize(experimentId, jwtClaim);
-
         await handleWorkRequest(data, socket);
       } catch (e) {
-        logger.error('Error while processing WorkRequest event:');
+        logger.log(`[REQ ??, SOCKET ${socket.id}] Error while processing WorkRequest event.`);
         logger.trace(e);
         segment.addError(e);
 
@@ -50,6 +51,8 @@ module.exports = (socket) => {
             trace: AWSXRay.getSegment().trace_id,
           },
         });
+
+        logger.log(`[REQ ??, SOCKET ${socket.id}] Error sent back to client.`);
       }
 
       segment.close();

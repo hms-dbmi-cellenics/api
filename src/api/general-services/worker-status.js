@@ -1,7 +1,5 @@
 const k8s = require('@kubernetes/client-node');
-const crypto = require('crypto');
 const config = require('../../config');
-
 
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
@@ -30,18 +28,13 @@ const getWorkerStatus = async (experimentId) => {
     };
   }
 
-  const workerHash = crypto
-    .createHash('sha1')
-    .update(`${experimentId}-${config.sandboxId}`)
-    .digest('hex');
-
-  const coreApi = kc.makeApiClient(k8s.CoreV1Api);
+  const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
   // Get worker status
-  const podList = await coreApi.listNamespacedPod(
+  const podList = await k8sApi.listNamespacedPod(
     `worker-${config.sandboxId}`,
-    undefined, undefined, undefined, undefined,
-    `job-name=worker-${workerHash}-job`,
+    null, null, null, null,
+    `experimentId=${experimentId}`,
   );
 
   const workerDetails = podList.body.items[0];
