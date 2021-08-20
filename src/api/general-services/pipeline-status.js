@@ -238,7 +238,7 @@ const getPipelineStatus = async (experimentId, processName) => {
   return response;
 };
 
-module.exports = async (...args) => AWSXRay.captureAsyncFunc('getPipelineStatus', async (subsegment) => {
+module.exports = (...args) => AWSXRay.captureAsyncFunc('getPipelineStatus', async (subsegment) => {
   await getPipelineStatus(...args);
   subsegment.close();
 });
