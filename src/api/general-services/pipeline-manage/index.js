@@ -30,8 +30,8 @@ const getPipelineArtifacts = async () => {
   const txt = await response.text();
   const manifest = YAML.parseAllDocuments(txt);
 
-  return {
-    chartRef: jq.run(
+  const [chartRef, pipelineRunner] = await Promise.all(
+    jq.run(
       '..|objects| select(.metadata != null) | select( .metadata.name | contains("pipeline")) | .spec.chart.ref//empty',
       manifest,
       {
@@ -39,7 +39,7 @@ const getPipelineArtifacts = async () => {
         output: 'json',
       },
     ),
-    'pipeline-runner': jq.run(
+    jq.run(
       '..|objects|.["pipeline-runner"].image//empty',
       manifest,
       {
@@ -47,6 +47,11 @@ const getPipelineArtifacts = async () => {
         output: 'json',
       },
     ),
+  );
+
+  return {
+    chartRef,
+    'pipeline-runner': pipelineRunner,
   };
 };
 
