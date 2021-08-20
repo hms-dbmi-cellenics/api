@@ -1,11 +1,9 @@
 const _ = require('lodash');
-const AWSXRay = require('aws-xray-sdk');
 const AWS = require('../../utils/requireAWS');
 const ExperimentService = require('../route-services/experiment');
 const config = require('../../config');
 const logger = require('../../utils/logging');
 const pipelineConstants = require('./pipeline-manage/constants');
-
 
 const privateSteps = [
   'DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker',
@@ -238,9 +236,6 @@ const getPipelineStatus = async (experimentId, processName) => {
   return response;
 };
 
-module.exports = (...args) => AWSXRay.captureAsyncFunc('getPipelineStatus', async (subsegment) => {
-  await getPipelineStatus(...args);
-  subsegment.close();
-});
+module.exports = getPipelineStatus;
 
 module.exports.getStepsFromExecutionHistory = getStepsFromExecutionHistory;
