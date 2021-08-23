@@ -2,32 +2,24 @@ title: GEM2S response
 description: This is the format the gem2s clients communicate the result of a gem2s run.
 type: object
 properties:
-  oneOf:
-    - experimentId:
-        type: string
-      taskName:
-        type: string
-      oneOf:
-        - item:
-            $ref: ./api-body-schemas/Experiment.v1.yaml
-          table:
-            type: string
-            pattern: 'experiments'
-        - item:
-            $ref: ./api-body-schemas/Samples.v1.yaml
-          table:
-            type: string
-            pattern: 'samples'
-      required:
-        - experimentId
-        - taskName
-    - response:
-        type: object
-        properties:
-          error:
-            description: "Whether there's been an error."
-            oneOf:
-              - type: string
-              - type: boolean
-          required: 
-            - error
+  experimentId:
+    type: string
+  taskName:
+    type: string
+  data:
+    anyOf:
+      - type: object
+      - type: array
+  response:
+    type: object
+    properties:
+      error:
+        description: Whether there's been an error.
+        oneOf:
+          - type: string
+          - type: boolean
+    required:
+      - error
+required:
+  - experimentId
+  - taskName
