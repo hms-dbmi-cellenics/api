@@ -1,15 +1,15 @@
 const _ = require('lodash');
 
+const jsonMerger = require('json-merger');
 const config = require('../../config');
-const mockData = require('./mock-data.json');
-
 const AWS = require('../../utils/requireAWS');
 const logger = require('../../utils/logging');
 const { OK, NotFoundError, BadRequestError } = require('../../utils/responses');
 const safeBatchGetItem = require('../../utils/safeBatchGetItem');
-
 const constants = require('../general-services/pipeline-manage/constants');
 const downloadTypes = require('../../utils/downloadTypes');
+
+const mockData = require('./mock-data.json');
 
 const {
   getExperimentAttributes,
@@ -232,23 +232,6 @@ class ExperimentService {
     }
   }
 
-  async updateLouvainCellSets(experimentId, cellSetsData) {
-    const cellSetsObject = await this.getCellSets(experimentId);
-
-    const { cellSets: cellSetsList } = cellSetsObject;
-
-    const louvainIndex = _.findIndex(cellSetsList, { key: 'louvain' });
-    if (louvainIndex !== -1) {
-      // If louvain already exists replace
-      cellSetsList[louvainIndex] = cellSetsData;
-    } else {
-      // If not, insert in the front
-      cellSetsList.unshift(cellSetsData);
-    }
-
-    await this.updateCellSets(experimentId, cellSetsList);
-  }
-
   async updateCellSets(experimentId, cellSetData) {
     const cellSetsObject = JSON.stringify({ cellSets: cellSetData });
 
@@ -263,6 +246,26 @@ class ExperimentService {
     ).promise();
 
     return cellSetData;
+  }
+
+  async patchCellSets(experimentId, patch) {
+    const cellSetsObject = await this.getCellSets(experimentId);
+    const { cellSets: cellSetsList } = cellSetsObject;
+
+    /**
+     * The $remove operation will replace the element in the array with an
+     * undefined value. We will therefore remove this from the array.
+     */
+    const patchedArray = jsonMerger.mergeObjects(
+      [cellSetsList, patch],
+    ).filter((x) => x !== undefined);
+
+    console.log(patchedArray);
+    console.log(typeof patchedArray);
+
+    const response = await this.updateCellSets(experimentId, patchedArray);
+
+    return response;
   }
 
   async updateProcessingConfig(experimentId, processingConfig) {
