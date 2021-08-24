@@ -28,7 +28,7 @@ describe('handleWorkRequest', () => {
     expect.assertions(1);
 
     const workRequest = {
-      uuid: '12345',
+      ETag: '12345',
       socketId: '6789',
       experimentId: 'my-experiment',
       timeout: '2001-01-01T00:00:00Z',
@@ -50,7 +50,7 @@ describe('handleWorkRequest', () => {
     expect.assertions(1);
 
     const workRequest = {
-      uuid: '12345',
+      ETag: '12345',
       socketId: '6789',
       experimentId: 'my-experiment',
       timeout: '2099-01-01T00:00:00Z',
@@ -72,7 +72,7 @@ describe('handleWorkRequest', () => {
     expect.assertions(1);
 
     const workRequest = {
-      uuid: '12345',
+      ETag: '12345',
       socketId: '6789',
       experimentId: 'my-experiment',
       timeout: '2099-01-01T00:00:00Z',
@@ -94,7 +94,7 @@ describe('handleWorkRequest', () => {
     expect.assertions(1);
 
     const workRequest = {
-      uuid: '12345',
+      ETag: '12345',
       socketId: '6789',
       experimentId: 'my-experiment',
       timeout: '2099-01-01T00:00:00Z',
@@ -116,7 +116,7 @@ describe('handleWorkRequest', () => {
     expect.assertions(1);
 
     const workRequest = {
-      uuid: '12345',
+      ETag: '12345',
       socketId: '6789',
       experimentId: 'my-experiment',
       timeout: '2099-01-01T00:00:00Z',
@@ -138,7 +138,7 @@ describe('handleWorkRequest', () => {
     expect.assertions(1);
 
     const workRequest = {
-      uuid: '12345',
+      ETag: '12345',
       socketId: '6789',
       experimentId: 'my-experiment',
       timeout: '2099-01-01T00:00:00Z',
@@ -186,7 +186,7 @@ describe('handleWorkRequest', () => {
     });
 
     const workRequest = {
-      uuid: '12345',
+      ETag: '12345',
       socketId: '6789',
       experimentId: 'my-experiment',
       timeout: '2099-01-01T00:00:00Z',

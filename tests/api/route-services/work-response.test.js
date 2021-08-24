@@ -20,7 +20,7 @@ describe('tests for the work-response service', () => {
 
   const responseFormat = {
     request: {
-      uuid: '55',
+      ETag: '55',
       socketId: null,
       experimentId: '5e959f9c9f4b120771249001',
       timeout: '2099-01-01T00:00:00Z',

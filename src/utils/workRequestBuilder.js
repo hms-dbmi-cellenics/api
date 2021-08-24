@@ -1,4 +1,3 @@
-const { v4: uuidv4 } = require('uuid');
 const WorkSubmitService = require('../api/general-services/work-submit');
 
 const validateRequest = require('./schema-validator');
@@ -28,7 +27,7 @@ const workRequestBuilder = async (workerTaskName, config) => {
     experimentId: null,
     socketId: 'broadcast',
     timeout,
-    uuid: uuidv4(),
+    ETag: 'deadbeef',
     body: {},
     PipelineRunETag: null,
     ...config,
