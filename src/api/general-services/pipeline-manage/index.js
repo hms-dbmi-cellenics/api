@@ -40,7 +40,7 @@ const getPipelineArtifacts = async () => {
       },
     ),
     jq.run(
-      '..|objects|.["pipeline-runner"].image//empty',
+      '..|objects|.["pipelineRunner"].image//empty',
       manifest,
       {
         input: 'json',
@@ -51,7 +51,7 @@ const getPipelineArtifacts = async () => {
 
   return {
     chartRef,
-    'pipeline-runner': pipelineRunner,
+    pipelineRunner,
   };
 };
 
