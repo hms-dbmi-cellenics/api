@@ -1,20 +1,63 @@
 const config = require('../../../../config');
 
 
+const createLocalPipeline = {
+  DeleteCompletedPipelineWorker: {
+    XStepType: 'delete-completed-jobs',
+    Next: 'LaunchNewPipelineWorker',
+    ResultPath: null,
+  },
+  LaunchNewPipelineWorker: {
+    XStepType: 'create-new-job-if-not-exist',
+    Next: 'ClassifierFilterMap',
+    ResultPath: null,
+  },
+};
+
+const waitForActivity = {
+  WaitForWork: {
+    Type: 'Pass',
+    Result: {
+      index: 0,
+      step: 1,
+    },
+    ResultPath: '$.iterator',
+    Next: 'Iterator',
+  },
+  Iterator: {
+    Type: 'Task',
+    Resource: 'arn:aws:lambda:us-east-1:123456789012:function:Iterate',
+    ResultPath: '$.iterator',
+    Next: 'IsWorkAssigned',
+  },
+  IsWorkAssigned: {
+    Type: 'Choice',
+    Choices: [
+      {
+        // probably check here if an activty ARN has been assigned
+        Variable: '$.iterator.continue',
+        BooleanEquals: true,
+        Next: 'WaitForWork',
+      },
+    ],
+    Default: 'Done',
+  },
+};
+
+const initialSteps = () => {
+  // if we are running locally launch a pipeline job
+  if (config.clusterEnv === 'development') {
+    return createLocalPipeline;
+  }
+  // if we are in staging / production wait for an activity to be assigned
+  return waitForActivity;
+};
+
 const qcPipelineSkeleton = {
   Comment: `Pipeline for clusterEnv '${config.clusterEnv}'`,
   StartAt: 'DeleteCompletedPipelineWorker',
   States: {
-    DeleteCompletedPipelineWorker: {
-      XStepType: 'delete-completed-jobs',
-      Next: 'LaunchNewPipelineWorker',
-      ResultPath: null,
-    },
-    LaunchNewPipelineWorker: {
-      XStepType: 'create-new-job-if-not-exist',
-      Next: 'ClassifierFilterMap',
-      ResultPath: null,
-    },
+    ...initialSteps(),
     ClassifierFilterMap: {
       Type: 'Map',
       Next: 'CellSizeDistributionFilterMap',

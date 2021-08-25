@@ -229,7 +229,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
   console.log(JSON.stringify(stateMachine, null, 2));
 
   logger.log('Skeleton constructed, now creating activity if not already present...');
-  const activityArn = await createActivity(context);
+  const activityArn = await createActivity(context); // the context contains the activityArn
 
   logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
   const stateMachineArn = await createNewStateMachine(context, stateMachine, QC_PROCESS_NAME);
