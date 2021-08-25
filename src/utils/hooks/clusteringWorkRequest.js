@@ -19,6 +19,13 @@ const clusteringWorkRequest = async (payload) => {
     PipelineRunETag: statusRes[constants.OLD_QC_NAME_TO_BE_REMOVED].startDate,
   };
 
+  // Temporary: add very long timeout
+  const now = new Date();
+  const addTimeoutSeconds = 60;
+  const timeout = new Date(now.getTime() + 15 * addTimeoutSeconds * 1000);
+
+  clusteringWorkConfig.body.config.timeout = timeout;
+
   const workRequest = await workRequestBuilder('ClusterCells', clusteringWorkConfig);
   workRequest.submitWork();
 };
