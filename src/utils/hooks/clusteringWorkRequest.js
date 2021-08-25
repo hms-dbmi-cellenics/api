@@ -22,7 +22,7 @@ const clusteringWorkRequest = async (payload) => {
   // Temporary: add very long timeout
   const now = new Date();
   const addTimeoutSeconds = 60;
-  const timeout = new Date(now.getTime() + 10 * addTimeoutSeconds * 1000);
+  const timeout = new Date(now.getTime() + 15 * addTimeoutSeconds * 1000);
 
   clusteringWorkConfig.body.config.timeout = timeout;
 
