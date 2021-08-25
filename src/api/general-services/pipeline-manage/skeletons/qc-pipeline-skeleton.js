@@ -14,33 +14,53 @@ const createLocalPipeline = {
   },
 };
 
-const waitForActivity = {
-  WaitForWork: {
-    Type: 'Pass',
-    Result: {
-      index: 0,
-      step: 1,
-    },
-    ResultPath: '$.iterator',
-    Next: 'Iterator',
+// const waitForActivity = {
+//   GetUnassignedPods: {
+//     XStepType: 'get-unassigned-pods',
+//     ResultPath: '$.pods',
+//     Next: 'PatchPod',
+//   },
+//   PatchPod: {
+//     XstepType: 'patch-pod',
+//     ResultPath: '$',
+//     Next: 'IsPatchSuccessful',
+//   },
+//   IsPatchSuccessful: {
+//     Type: 'Choice',
+//     Choices: [
+//       {
+//         // probably check here if an activty ARN has been assigned
+//         Variable: '$.StatusCode',
+//         BooleanNotEquals: '200',
+//         Next: 'GetUnassigned',
+//       },
+//     ],
+//     Default: 'ClassifierFilterMap',
+//   },
+// };
+
+const assignWorkToPod = {
+  GetUnassignedPod: {
+    XStepType: 'get-unassigned-pod',
+    ResultPath: '$.pods',
+    Next: 'PatchPod',
   },
-  Iterator: {
-    Type: 'Task',
-    Resource: 'arn:aws:lambda:us-east-1:123456789012:function:Iterate',
-    ResultPath: '$.iterator',
-    Next: 'IsWorkAssigned',
+  PatchPod: {
+    XstepType: 'patch-pod',
+    ResultPath: '$',
+    Next: 'IsPatchSuccessful',
   },
-  IsWorkAssigned: {
+  IsPatchSuccessful: {
     Type: 'Choice',
     Choices: [
       {
         // probably check here if an activty ARN has been assigned
-        Variable: '$.iterator.continue',
-        BooleanEquals: true,
-        Next: 'WaitForWork',
+        Variable: '$.StatusCode',
+        BooleanNotEquals: '200',
+        Next: 'GetUnassigned',
       },
     ],
-    Default: 'Done',
+    Default: 'ClassifierFilterMap',
   },
 };
 
@@ -50,7 +70,7 @@ const initialSteps = () => {
     return createLocalPipeline;
   }
   // if we are in staging / production wait for an activity to be assigned
-  return waitForActivity;
+  return assignWorkToPod;
 };
 
 const qcPipelineSkeleton = {

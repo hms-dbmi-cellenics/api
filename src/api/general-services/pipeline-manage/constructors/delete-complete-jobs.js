@@ -18,23 +18,25 @@ const constructDeleteCompletedJobs = (context, step) => {
   }
 
   return {
-    ...step,
-    Type: 'Task',
-    Comment: 'Deletes the previous server pipeline HelmRelease (Service+Job).',
-    Resource: 'arn:aws:states:::eks:call',
-    Parameters: {
-      ClusterName: context.clusterInfo.name,
-      CertificateAuthority: context.clusterInfo.certAuthority,
-      Endpoint: context.clusterInfo.endpoint,
-      Method: 'DELETE',
-      Path: `/apis/helm.fluxcd.io/v1/namespaces/${config.pipelineNamespace}/helmreleases`,
-      QueryParameters: {
-        labelSelector: [
-          `type=pipeline,sandboxId=${config.sandboxId},experimentId=${experimentId}`,
-        ],
+    LaunchNewPipelineWorker: {
+      Next: 'ClassifierFilterMap',
+      ResultPath: null,
+      Type: 'Task',
+      Comment: 'Deletes the previous server pipeline HelmRelease (Service+Job).',
+      Resource: 'arn:aws:states:::eks:call',
+      Parameters: {
+        ClusterName: context.clusterInfo.name,
+        CertificateAuthority: context.clusterInfo.certAuthority,
+        Endpoint: context.clusterInfo.endpoint,
+        Method: 'DELETE',
+        Path: `/apis/helm.fluxcd.io/v1/namespaces/${config.pipelineNamespace}/helmreleases`,
+        QueryParameters: {
+          labelSelector: [
+            `type=pipeline,sandboxId=${config.sandboxId},experimentId=${experimentId}`,
+          ],
+        },
       },
     },
   };
 };
-
 module.exports = constructDeleteCompletedJobs;
