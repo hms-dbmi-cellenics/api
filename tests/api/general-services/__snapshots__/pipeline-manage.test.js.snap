@@ -69,7 +69,7 @@ Array [
     "type": "return",
     "value": Object {
       "Comment": "Pipeline for clusterEnv 'test'",
-      "StartAt": "DeleteCompletedPipelineWorker",
+      "StartAt": "GetUnassignedPod",
       "States": Object {
         "CellSizeDistributionFilterMap": Object {
           "ItemsPath": "$.samples",
@@ -157,25 +157,6 @@ Array [
           "TimeoutSeconds": 10800,
           "Type": "Task",
         },
-        "DeleteCompletedPipelineWorker": Object {
-          "Comment": "Deletes the previous server pipeline HelmRelease (Service+Job).",
-          "Next": "LaunchNewPipelineWorker",
-          "Parameters": Object {
-            "CertificateAuthority": "AAAAAAAAAAA",
-            "ClusterName": "biomage-test",
-            "Endpoint": "https://test-endpoint.me/fgh",
-            "Method": "DELETE",
-            "Path": "/apis/helm.fluxcd.io/v1/namespaces/pipeline-test-namespace/helmreleases",
-            "QueryParameters": Object {
-              "labelSelector": Array [
-                "type=pipeline,sandboxId=default,experimentId=testExperimentId",
-              ],
-            },
-          },
-          "Resource": "arn:aws:states:::eks:call",
-          "ResultPath": null,
-          "Type": "Task",
-        },
         "DoubletScoresFilterMap": Object {
           "ItemsPath": "$.samples",
           "Iterator": Object {
@@ -223,72 +204,46 @@ Array [
           "End": true,
           "Type": "Pass",
         },
-        "LaunchNewPipelineWorker": Object {
-          "Catch": Array [
-            Object {
-              "ErrorEquals": Array [
-                "EKS.409",
-              ],
-              "Next": "ClassifierFilterMap",
-              "ResultPath": "$.error-info",
-            },
-          ],
-          "Comment": "Attempts to create a Kubernetes Job+Service for the pipeline runner. Will swallow a 409 (already exists) error.",
-          "Next": "ClassifierFilterMap",
+        "GetUnassignedPod": Object {
+          "Comment": "Attempts to create a Kubernetes Job+Service for the pipeline runner.",
+          "Next": "PatchPod",
           "Parameters": Object {
             "CertificateAuthority": "AAAAAAAAAAA",
             "ClusterName": "biomage-test",
             "Endpoint": "https://test-endpoint.me/fgh",
-            "Method": "POST",
-            "Path": "/apis/helm.fluxcd.io/v1/namespaces/pipeline-test-namespace/helmreleases",
-            "RequestBody": Object {
-              "apiVersion": "helm.fluxcd.io/v1",
-              "kind": "HelmRelease",
-              "metadata": Object {
-                "annotations": Object {
-                  "fluxcd.io/automated": "true",
-                },
-                "labels": Object {
-                  "experimentId": "testExperimentId",
-                  "sandboxId": "default",
-                  "type": "pipeline",
-                },
-                "name": "qc-testExperimentId",
-                "namespace": "pipeline-test-namespace",
-              },
-              "spec": Object {
-                "chart": Object {
-                  "git": "git@github.com:biomage-ltd/pipeline",
-                  "path": "pipeline-runner/chart",
-                  "ref": "MOCK_REF_PATH",
-                },
-                "releaseName": "qc-testExperimentId",
-                "values": Object {
-                  "activityArn": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-mock-uuid",
-                  "awsAccountId": "test-account-id",
-                  "awsRegion": "eu-west-1",
-                  "clusterEnv": "test",
-                  "experimentId": "testExperimentId",
-                  "image": "MOCK_IMAGE_PATH",
-                  "namespace": "pipeline-test-namespace",
-                  "sandboxId": "default",
-                },
-              },
+            "Method": "GET",
+            "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+            "QueryParameters": Object {
+              "labelSelector": Array [
+                "!activityArn",
+              ],
             },
           },
           "Resource": "arn:aws:states:::eks:call",
-          "ResultPath": null,
           "Retry": Array [
             Object {
               "BackoffRate": 2,
               "ErrorEquals": Array [
-                "EKS.409",
+                "EKS.404",
               ],
               "IntervalSeconds": 1,
-              "MaxAttempts": 2,
+              "MaxAttempts": 5,
             },
           ],
           "Type": "Task",
+        },
+        "IsPatchSuccessful": Object {
+          "Choices": Array [
+            Object {
+              "Next": "GetUnassignedPod",
+              "Not": Object {
+                "NumericEquals": 200,
+                "Variable": "$.StatusCode",
+              },
+            },
+          ],
+          "Default": "ClassifierFilterMap",
+          "Type": "Choice",
         },
         "MitochondrialContentFilterMap": Object {
           "ItemsPath": "$.samples",
@@ -343,6 +298,35 @@ Array [
           "Next": "DoubletScoresFilterMap",
           "ResultPath": null,
           "Type": "Map",
+        },
+        "PatchPod": Object {
+          "Comment": "Patch pod XXXX.",
+          "Next": "IsPatchSuccessful",
+          "Parameters": Object {
+            "CertificateAuthority": "AAAAAAAAAAA",
+            "ClusterName": "biomage-test",
+            "Endpoint": "https://test-endpoint.me/fgh",
+            "Method": "PATCH",
+            "Path": "/api/v1/namespaces/pipeline-test-namespace/pods/podname",
+            "RequestBody": Object {
+              "apiVersion": "helm.fluxcd.io/v1",
+              "kind": "HelmRelease",
+              "meta": Array [
+                Object {
+                  "op": "test",
+                  "path": "/metadata/labels/activityArn",
+                  "value": null,
+                },
+                Object {
+                  "op": "add",
+                  "path": "/metadata/labels/activityArn",
+                  "value": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-mock-uuid",
+                },
+              ],
+            },
+          },
+          "Resource": "arn:aws:states:::eks:call",
+          "Type": "Task",
         },
       },
     },

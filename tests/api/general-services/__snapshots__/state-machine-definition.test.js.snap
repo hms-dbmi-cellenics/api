@@ -7,21 +7,23 @@ exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
   "StartAt": "DeleteCompletedGem2SWorker",
   "States": {
     "DeleteCompletedGem2SWorker": {
-      "Next": "LaunchNewGem2SWorker",
-      "ResultPath": null,
-      "Type": "Task",
-      "Comment": "Deletes the previous server pipeline HelmRelease (Service+Job).",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
-        "Method": "DELETE",
-        "Path": "/apis/helm.fluxcd.io/v1/namespaces/pipeline-test-namespace/helmreleases",
-        "QueryParameters": {
-          "labelSelector": [
-            "type=pipeline,sandboxId=default,experimentId=mock-experiment-id"
-          ]
+      "LaunchNewPipelineWorker": {
+        "Next": "ClassifierFilterMap",
+        "ResultPath": null,
+        "Type": "Task",
+        "Comment": "Deletes the previous server pipeline HelmRelease (Service+Job).",
+        "Resource": "arn:aws:states:::eks:call",
+        "Parameters": {
+          "ClusterName": "mock-cluster-name",
+          "CertificateAuthority": "mock-ca",
+          "Endpoint": "mock-endpoint",
+          "Method": "DELETE",
+          "Path": "/apis/helm.fluxcd.io/v1/namespaces/pipeline-test-namespace/helmreleases",
+          "QueryParameters": {
+            "labelSelector": [
+              "type=pipeline,sandboxId=default,experimentId=mock-experiment-id"
+            ]
+          }
         }
       }
     },
@@ -316,90 +318,76 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
 
 {
   "Comment": "Pipeline for clusterEnv 'test'",
-  "StartAt": "DeleteCompletedPipelineWorker",
+  "StartAt": "GetUnassignedPod",
   "States": {
-    "DeleteCompletedPipelineWorker": {
-      "Next": "LaunchNewPipelineWorker",
-      "ResultPath": null,
+    "GetUnassignedPod": {
+      "Next": "PatchPod",
       "Type": "Task",
-      "Comment": "Deletes the previous server pipeline HelmRelease (Service+Job).",
+      "Comment": "Attempts to create a Kubernetes Job+Service for the pipeline runner.",
       "Resource": "arn:aws:states:::eks:call",
       "Parameters": {
         "ClusterName": "mock-cluster-name",
         "CertificateAuthority": "mock-ca",
         "Endpoint": "mock-endpoint",
-        "Method": "DELETE",
-        "Path": "/apis/helm.fluxcd.io/v1/namespaces/pipeline-test-namespace/helmreleases",
+        "Method": "GET",
+        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
         "QueryParameters": {
           "labelSelector": [
-            "type=pipeline,sandboxId=default,experimentId=mock-experiment-id"
+            "!activityArn"
           ]
-        }
-      }
-    },
-    "LaunchNewPipelineWorker": {
-      "Next": "ClassifierFilterMap",
-      "ResultPath": null,
-      "Type": "Task",
-      "Comment": "Attempts to create a Kubernetes Job+Service for the pipeline runner. Will swallow a 409 (already exists) error.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
-        "Method": "POST",
-        "Path": "/apis/helm.fluxcd.io/v1/namespaces/pipeline-test-namespace/helmreleases",
-        "RequestBody": {
-          "apiVersion": "helm.fluxcd.io/v1",
-          "kind": "HelmRelease",
-          "metadata": {
-            "name": "undefined-mock-experiment-id",
-            "namespace": "pipeline-test-namespace",
-            "annotations": {
-              "fluxcd.io/automated": "true"
-            },
-            "labels": {
-              "sandboxId": "default",
-              "type": "pipeline",
-              "experimentId": "mock-experiment-id"
-            }
-          },
-          "spec": {
-            "releaseName": "undefined-mock-experiment-id",
-            "chart": {
-              "git": "git@github.com:biomage-ltd/pipeline",
-              "path": "pipeline-runner/chart"
-            },
-            "values": {
-              "experimentId": "mock-experiment-id",
-              "namespace": "pipeline-test-namespace",
-              "sandboxId": "default",
-              "awsAccountId": "mock-account-id",
-              "clusterEnv": "test",
-              "awsRegion": "eu-west-1"
-            }
-          }
         }
       },
       "Retry": [
         {
           "ErrorEquals": [
-            "EKS.409"
+            "EKS.404"
           ],
           "IntervalSeconds": 1,
           "BackoffRate": 2,
-          "MaxAttempts": 2
-        }
-      ],
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "EKS.409"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "ClassifierFilterMap"
+          "MaxAttempts": 5
         }
       ]
+    },
+    "PatchPod": {
+      "Next": "IsPatchSuccessful",
+      "Type": "Task",
+      "Comment": "Patch pod XXXX.",
+      "Resource": "arn:aws:states:::eks:call",
+      "Parameters": {
+        "ClusterName": "mock-cluster-name",
+        "CertificateAuthority": "mock-ca",
+        "Endpoint": "mock-endpoint",
+        "Method": "PATCH",
+        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods/podname",
+        "RequestBody": {
+          "apiVersion": "helm.fluxcd.io/v1",
+          "kind": "HelmRelease",
+          "meta": [
+            {
+              "op": "test",
+              "path": "/metadata/labels/activityArn",
+              "value": null
+            },
+            {
+              "op": "add",
+              "path": "/metadata/labels/activityArn"
+            }
+          ]
+        }
+      }
+    },
+    "IsPatchSuccessful": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Not": {
+            "Variable": "$.StatusCode",
+            "NumericEquals": 200
+          },
+          "Next": "GetUnassignedPod"
+        }
+      ],
+      "Default": "ClassifierFilterMap"
     },
     "ClassifierFilterMap": {
       "Type": "Map",
@@ -552,40 +540,76 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
 
 {
   "Comment": "Pipeline for clusterEnv 'test'",
-  "StartAt": "DeleteCompletedPipelineWorker",
+  "StartAt": "GetUnassignedPod",
   "States": {
-    "DeleteCompletedPipelineWorker": {
-      "Next": "LaunchNewPipelineWorker",
-      "ResultPath": null,
+    "GetUnassignedPod": {
+      "Next": "PatchPod",
       "Type": "Task",
-      "Comment": "Removes Docker containers with pipeline runs on the local machine.",
-      "Resource": "arn:aws:states:::lambda:invoke",
+      "Comment": "Attempts to create a Kubernetes Job+Service for the pipeline runner.",
+      "Resource": "arn:aws:states:::eks:call",
       "Parameters": {
-        "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:remove-previous-pipeline-containers"
-      }
-    },
-    "LaunchNewPipelineWorker": {
-      "Next": "ClassifierFilterMap",
-      "ResultPath": null,
-      "Type": "Task",
-      "Resource": "arn:aws:states:::lambda:invoke",
-      "Parameters": {
-        "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
-        "Payload": {
-          "image": "biomage-pipeline-runner",
-          "name": "undefined-runner",
-          "detached": true
+        "ClusterName": "mock-cluster-name",
+        "CertificateAuthority": "mock-ca",
+        "Endpoint": "mock-endpoint",
+        "Method": "GET",
+        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+        "QueryParameters": {
+          "labelSelector": [
+            "!activityArn"
+          ]
         }
       },
-      "Catch": [
+      "Retry": [
         {
           "ErrorEquals": [
-            "States.ALL"
+            "EKS.404"
           ],
-          "ResultPath": "$.error-info",
-          "Next": "ClassifierFilterMap"
+          "IntervalSeconds": 1,
+          "BackoffRate": 2,
+          "MaxAttempts": 5
         }
       ]
+    },
+    "PatchPod": {
+      "Next": "IsPatchSuccessful",
+      "Type": "Task",
+      "Comment": "Patch pod XXXX.",
+      "Resource": "arn:aws:states:::eks:call",
+      "Parameters": {
+        "ClusterName": "mock-cluster-name",
+        "CertificateAuthority": "mock-ca",
+        "Endpoint": "mock-endpoint",
+        "Method": "PATCH",
+        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods/podname",
+        "RequestBody": {
+          "apiVersion": "helm.fluxcd.io/v1",
+          "kind": "HelmRelease",
+          "meta": [
+            {
+              "op": "test",
+              "path": "/metadata/labels/activityArn",
+              "value": null
+            },
+            {
+              "op": "add",
+              "path": "/metadata/labels/activityArn"
+            }
+          ]
+        }
+      }
+    },
+    "IsPatchSuccessful": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Not": {
+            "Variable": "$.StatusCode",
+            "NumericEquals": 200
+          },
+          "Next": "GetUnassignedPod"
+        }
+      ],
+      "Default": "ClassifierFilterMap"
     },
     "ClassifierFilterMap": {
       "Type": "Map",

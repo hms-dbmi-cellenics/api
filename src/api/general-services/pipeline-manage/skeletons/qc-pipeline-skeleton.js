@@ -42,22 +42,24 @@ const createLocalPipeline = {
 const assignWorkToPod = {
   GetUnassignedPod: {
     XStepType: 'get-unassigned-pod',
-    ResultPath: '$.pods',
+    // ResultPath: '$.pods',
     Next: 'PatchPod',
   },
   PatchPod: {
-    XstepType: 'patch-pod',
-    ResultPath: '$',
+    XStepType: 'patch-pod',
+    // ResultPath: '$',
     Next: 'IsPatchSuccessful',
   },
   IsPatchSuccessful: {
     Type: 'Choice',
     Choices: [
       {
-        // probably check here if an activty ARN has been assigned
-        Variable: '$.StatusCode',
-        BooleanNotEquals: '200',
-        Next: 'GetUnassigned',
+        Not: {
+          // probably check here if an activty ARN has been assigned
+          Variable: '$.StatusCode',
+          NumericEquals: 200,
+        },
+        Next: 'GetUnassignedPod',
       },
     ],
     Default: 'ClassifierFilterMap',
@@ -73,9 +75,17 @@ const initialSteps = () => {
   return assignWorkToPod;
 };
 
+const firstStep = () => {
+  if (config.clusterEnv === 'development') {
+    return 'DeleteCompletedPipelineWorker';
+  }
+
+  return 'GetUnassignedPod';
+};
+
 const qcPipelineSkeleton = {
   Comment: `Pipeline for clusterEnv '${config.clusterEnv}'`,
-  StartAt: 'DeleteCompletedPipelineWorker',
+  StartAt: firstStep(),
   States: {
     ...initialSteps(),
     ClassifierFilterMap: {
