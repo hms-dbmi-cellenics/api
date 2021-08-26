@@ -27,4 +27,15 @@ module.exports = {
       .then((data) => res.json(data))
       .catch(next);
   },
+  'samples#uploadSampleFileLink': (req, res, next) => {
+    const { params: { projectUuid, sampleUuid, fileName } } = req;
+
+    try {
+      const uploadLink = samplesService.getS3UploadLink(projectUuid, sampleUuid, fileName);
+
+      res.json(uploadLink);
+    } catch (e) {
+      next(e);
+    }
+  },
 };

@@ -992,6 +992,20 @@ paths:
           application/json:
             schema:
               $ref: ./models/samples-bodies/SamplesRemoveBody.v1.yaml
+  '/projects/{projectUuid}/samples/{sampleUuid}/{fileName}':
+    get:
+      summary: Get file upload link
+      description: Get temporary s3 upload link for fileName
+      operationId: uploadSampleFileLink
+      x-eov-operation-id: samples#uploadSampleFileLink
+      x-eov-operation-handler: routes/samples
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
   /projects:
     get:
       summary: Get the list of projects

@@ -9,7 +9,6 @@ const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord,
 } = require('../../utils/dynamoDb');
 const AWS = require('../../utils/requireAWS');
-
 const logger = require('../../utils/logging');
 
 class SamplesService {
@@ -105,30 +104,6 @@ class SamplesService {
     }
   }
 
-  async deleteSamplesFromS3(projectUuid, samplesToRemoveUuids, allSamples) {
-    const s3 = new AWS.S3();
-
-    const sampleObjectsToDelete = samplesToRemoveUuids.map((sampleUuid) => {
-      const fileKeysToDelete = Object.keys(allSamples[sampleUuid].files);
-
-      return fileKeysToDelete.map((fileKey) => ({ Key: `${projectUuid}/${sampleUuid}/${fileKey}` }));
-    });
-
-    const s3Params = {
-      Bucket: this.sampleFilesBucketName,
-      Delete: {
-        Objects: _.flatten(sampleObjectsToDelete),
-        Quiet: false,
-      },
-    };
-
-    const result = await s3.deleteObjects(s3Params).promise();
-
-    if (result.Errors.length) {
-      throw Error(`Delete S3 object errors: ${JSON.stringify(result.Errors)}`);
-    }
-  }
-
   async removeSamples(projectUuid, experimentId, sampleUuids) {
     logger.log(`Removing samples in an entry for project ${projectUuid} and expId ${experimentId}`);
 
@@ -200,6 +175,42 @@ class SamplesService {
     await Promise.all(promises);
 
     return OK();
+  }
+
+  getS3UploadLink(projectUuid, sampleUuid, fileName) {
+    const s3 = new AWS.S3();
+
+    const params = {
+      Bucket: this.sampleFilesBucketName,
+      Key: `${projectUuid}/${sampleUuid}/${fileName}`,
+      Expires: 60,
+    };
+
+    return s3.getSignedUrl('putObject', params);
+  }
+
+  async deleteSamplesFromS3(projectUuid, samplesToRemoveUuids, allSamples) {
+    const s3 = new AWS.S3();
+
+    const sampleObjectsToDelete = samplesToRemoveUuids.map((sampleUuid) => {
+      const fileKeysToDelete = Object.keys(allSamples[sampleUuid].files);
+
+      return fileKeysToDelete.map((fileKey) => ({ Key: `${projectUuid}/${sampleUuid}/${fileKey}` }));
+    });
+
+    const s3Params = {
+      Bucket: this.sampleFilesBucketName,
+      Delete: {
+        Objects: _.flatten(sampleObjectsToDelete),
+        Quiet: false,
+      },
+    };
+
+    const result = await s3.deleteObjects(s3Params).promise();
+
+    if (result.Errors.length) {
+      throw Error(`Delete S3 object errors: ${JSON.stringify(result.Errors)}`);
+    }
   }
 }
 
