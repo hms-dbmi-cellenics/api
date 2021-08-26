@@ -375,6 +375,24 @@ class ExperimentService {
     const signedUrl = s3.getSignedUrl('getObject', params);
     return { signedUrl };
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  async downloadPublicDataset() {
+    console.log('HERE!!!');
+    const s3 = new AWS.S3();
+
+    const folderName = 'pbmc_10k_v3/pbmc_10k';
+    const bucket = 'biomage-originals-production';
+    const downloadedFileName = 'pbmc_10k';
+    const params = {
+      Bucket: bucket,
+      Key: folderName,
+      ResponseContentDisposition: `attachment; filename ="${downloadedFileName}"`,
+    };
+    const signedUrl = s3.getSignedUrl('getObject', params);
+    console.log('SIGNED URL IS ', signedUrl);
+    return { signedUrl };
+  }
 }
 
 module.exports = ExperimentService;

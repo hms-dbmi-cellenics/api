@@ -69,4 +69,12 @@ module.exports = {
         .catch(next);
     },
   ],
+
+  'experiment#downloadPublicDataset': [
+    (req, res, next) => {
+      experimentService.downloadPublicDataset()
+        .then((data) => res.json(data))
+        .catch(next);
+    },
+  ],
 };

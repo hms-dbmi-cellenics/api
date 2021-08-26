@@ -455,6 +455,32 @@ paths:
         description: Updates the keys specified by `name` with the body specified by `body`. A standard DynamoDB UpdateItem request should be called on the update.
       tags:
         - processing-config
+  /downloadPublicDataset:
+    get:
+      summary: get the public pbmc dataset from s3
+      x-eov-operation-id: experiment#downloadPublicDataset
+      x-eov-operation-handler: routes/experiment
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  signedUrl:
+                    type: string
+                    description: signed URL of the resource
+        '404':
+          description: Dataset not found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      operationId: get-publicDataset
+      description: Download successfull
+
   '/experiments/{experimentId}/download/{type}':
     get:
       summary: Download data according to the requested type
@@ -468,7 +494,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: 
+                properties:
                   signedUrl:
                     type: string
                     description: signed URL of the resource
@@ -1014,3 +1040,4 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+
