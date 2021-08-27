@@ -1,86 +1,40 @@
-const config = require('../../../../config');
+// the full activityArn is too long to be used as a tag (> 63 chars)
+// so we just send the last part of the arn as the rest can be constructed.
+//  E.g.
+// arn:aws:states:eu-west-1:242905224710:activity:pipeline-production-01037a63-a801-4ea4-a93e-...
+// => pipeline-production-01037a63-a801-4ea4-a93e-def76c1e5bd2
+const getActivityId = (activityArn) => {
+  if (activityArn === undefined) {
+    return undefined;
+  }
+
+  const split = activityArn.split(':');
+  return split[split.length - 1];
+};
+
 
 const patchPod = (context, step) => {
   const {
     clusterInfo, activityArn,
   } = context;
 
+
   return {
     ...step,
     Type: 'Task',
-    Comment: 'Patch pod XXXX.',
+    Comment: 'Patch pod to set the activity ID label.',
     Resource: 'arn:aws:states:::eks:call',
     Parameters: {
       ClusterName: clusterInfo.name,
       CertificateAuthority: clusterInfo.certAuthority,
       Endpoint: clusterInfo.endpoint,
       Method: 'PATCH',
-      Path: `/api/v1/namespaces/${config.pipelineNamespace}/pods/podname`,
+      'Path.$': '$.metadata.selfLink',
       RequestBody: {
-        apiVersion: 'helm.fluxcd.io/v1',
-        kind: 'HelmRelease',
-        meta:
-          [
-            { op: 'test', path: '/metadata/labels/activityArn', value: null },
-            {
-              op: 'add', path: '/metadata/labels/activityArn', value: activityArn,
-            },
-            // {
-            //   op: 'add', path: '/metadata/labels/workQueueName', value: service.workQueueName,
-            // },
-          ],
+        metadata: {
+          labels: { activityId: getActivityId(activityArn) },
+        },
       },
-      //   Path: `/apis/helm.fluxcd.io/v1/namespaces/${config.pipelineNamespace}/helmreleases`,
-      //   RequestBody: {
-      //     apiVersion: 'helm.fluxcd.io/v1',
-      //     kind: 'HelmRelease',
-      //     metadata: {
-      //       name: releaseName,
-      //       namespace: config.pipelineNamespace,
-      //       annotations: {
-      //         'fluxcd.io/automated': 'true',
-      //       },
-      //       labels: {
-      //         sandboxId: config.sandboxId,
-      //         type: 'pipeline',
-      //         experimentId,
-      //       },
-      //     },
-      //     spec: {
-      //       releaseName,
-      //       chart: {
-      //         git: 'git@github.com:biomage-ltd/pipeline',
-      //         path: 'pipeline-runner/chart',
-      //         ref: pipelineArtifacts.chartRef,
-      //       },
-      //       values: {
-      //         experimentId,
-      //         image: pipelineArtifacts.pipelineRunner,
-      //         namespace: config.pipelineNamespace,
-      //         sandboxId: config.sandboxId,
-      //         awsAccountId: accountId,
-      //         clusterEnv: config.clusterEnv,
-      //         awsRegion: config.awsRegion,
-      //         activityArn,
-      //       },
-      //     },
-      //   },
-      // },
-      // Retry: [
-      //   {
-      //     ErrorEquals: ['EKS.409'],
-      //     IntervalSeconds: 1,
-      //     BackoffRate: 2.0,
-      //     MaxAttempts: 2,
-      //   },
-      // ],
-      // Catch: [
-      //   {
-      //     ErrorEquals: ['EKS.409'],
-      //     ResultPath: '$.error-info',
-      //     Next: step.XNextOnCatch || step.Next,
-      //   },
-      // ],
     },
   };
 };

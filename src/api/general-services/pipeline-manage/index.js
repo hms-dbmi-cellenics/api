@@ -19,6 +19,7 @@ const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('./constants');
 
 const experimentService = new ExperimentService();
 
+
 const getPipelineArtifacts = async () => {
   const response = await fetch(
     config.pipelineInstanceConfigUrl,
@@ -217,7 +218,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
     accountId,
     roleArn,
     processName: QC_PROCESS_NAME,
-    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:biomage-${QC_PROCESS_NAME}-${config.clusterEnv}-${uuidv4()}`,
+    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
     processingConfig: mergedProcessingConfig,
@@ -256,7 +257,7 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
     accountId,
     roleArn,
     processName: GEM2S_PROCESS_NAME,
-    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:biomage-${GEM2S_PROCESS_NAME}-${config.clusterEnv}-${uuidv4()}`,
+    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
     processingConfig: {},
@@ -271,6 +272,7 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
   const stateMachineArn = await createNewStateMachine(context, stateMachine, GEM2S_PROCESS_NAME);
 
   logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
+
 
   const executionArn = await executeStateMachine(stateMachineArn);
   logger.log(`Execution with ARN ${executionArn} created.`);

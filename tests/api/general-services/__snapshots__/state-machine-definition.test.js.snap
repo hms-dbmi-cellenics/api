@@ -322,8 +322,9 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
   "States": {
     "GetUnassignedPod": {
       "Next": "PatchPod",
+      "ResultPath": "$.ResponseBody.items[0]",
       "Type": "Task",
-      "Comment": "Attempts to create a Kubernetes Job+Service for the pipeline runner.",
+      "Comment": "Retrieves an unassigned pipeline pod.",
       "Resource": "arn:aws:states:::eks:call",
       "Parameters": {
         "ClusterName": "mock-cluster-name",
@@ -333,7 +334,7 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
         "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
         "QueryParameters": {
           "labelSelector": [
-            "!activityArn"
+            "!activityId,type=pipeline"
           ]
         }
       },
@@ -351,28 +352,18 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
     "PatchPod": {
       "Next": "IsPatchSuccessful",
       "Type": "Task",
-      "Comment": "Patch pod XXXX.",
+      "Comment": "Patch pod to set the activity ID label.",
       "Resource": "arn:aws:states:::eks:call",
       "Parameters": {
         "ClusterName": "mock-cluster-name",
         "CertificateAuthority": "mock-ca",
         "Endpoint": "mock-endpoint",
         "Method": "PATCH",
-        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods/podname",
+        "Path.$": "$.metadata.selfLink",
         "RequestBody": {
-          "apiVersion": "helm.fluxcd.io/v1",
-          "kind": "HelmRelease",
-          "meta": [
-            {
-              "op": "test",
-              "path": "/metadata/labels/activityArn",
-              "value": null
-            },
-            {
-              "op": "add",
-              "path": "/metadata/labels/activityArn"
-            }
-          ]
+          "metadata": {
+            "labels": {}
+          }
         }
       }
     },
@@ -544,8 +535,9 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
   "States": {
     "GetUnassignedPod": {
       "Next": "PatchPod",
+      "ResultPath": "$.ResponseBody.items[0]",
       "Type": "Task",
-      "Comment": "Attempts to create a Kubernetes Job+Service for the pipeline runner.",
+      "Comment": "Retrieves an unassigned pipeline pod.",
       "Resource": "arn:aws:states:::eks:call",
       "Parameters": {
         "ClusterName": "mock-cluster-name",
@@ -555,7 +547,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
         "QueryParameters": {
           "labelSelector": [
-            "!activityArn"
+            "!activityId,type=pipeline"
           ]
         }
       },
@@ -573,28 +565,18 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
     "PatchPod": {
       "Next": "IsPatchSuccessful",
       "Type": "Task",
-      "Comment": "Patch pod XXXX.",
+      "Comment": "Patch pod to set the activity ID label.",
       "Resource": "arn:aws:states:::eks:call",
       "Parameters": {
         "ClusterName": "mock-cluster-name",
         "CertificateAuthority": "mock-ca",
         "Endpoint": "mock-endpoint",
         "Method": "PATCH",
-        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods/podname",
+        "Path.$": "$.metadata.selfLink",
         "RequestBody": {
-          "apiVersion": "helm.fluxcd.io/v1",
-          "kind": "HelmRelease",
-          "meta": [
-            {
-              "op": "test",
-              "path": "/metadata/labels/activityArn",
-              "value": null
-            },
-            {
-              "op": "add",
-              "path": "/metadata/labels/activityArn"
-            }
-          ]
+          "metadata": {
+            "labels": {}
+          }
         }
       }
     },

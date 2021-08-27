@@ -1,93 +1,11 @@
 const config = require('../../../../config');
-
-
-const createLocalPipeline = {
-  DeleteCompletedPipelineWorker: {
-    XStepType: 'delete-completed-jobs',
-    Next: 'LaunchNewPipelineWorker',
-    ResultPath: null,
-  },
-  LaunchNewPipelineWorker: {
-    XStepType: 'create-new-job-if-not-exist',
-    Next: 'ClassifierFilterMap',
-    ResultPath: null,
-  },
-};
-
-// const waitForActivity = {
-//   GetUnassignedPods: {
-//     XStepType: 'get-unassigned-pods',
-//     ResultPath: '$.pods',
-//     Next: 'PatchPod',
-//   },
-//   PatchPod: {
-//     XstepType: 'patch-pod',
-//     ResultPath: '$',
-//     Next: 'IsPatchSuccessful',
-//   },
-//   IsPatchSuccessful: {
-//     Type: 'Choice',
-//     Choices: [
-//       {
-//         // probably check here if an activty ARN has been assigned
-//         Variable: '$.StatusCode',
-//         BooleanNotEquals: '200',
-//         Next: 'GetUnassigned',
-//       },
-//     ],
-//     Default: 'ClassifierFilterMap',
-//   },
-// };
-
-const assignWorkToPod = {
-  GetUnassignedPod: {
-    XStepType: 'get-unassigned-pod',
-    // ResultPath: '$.pods',
-    Next: 'PatchPod',
-  },
-  PatchPod: {
-    XStepType: 'patch-pod',
-    // ResultPath: '$',
-    Next: 'IsPatchSuccessful',
-  },
-  IsPatchSuccessful: {
-    Type: 'Choice',
-    Choices: [
-      {
-        Not: {
-          // probably check here if an activty ARN has been assigned
-          Variable: '$.StatusCode',
-          NumericEquals: 200,
-        },
-        Next: 'GetUnassignedPod',
-      },
-    ],
-    Default: 'ClassifierFilterMap',
-  },
-};
-
-const initialSteps = () => {
-  // if we are running locally launch a pipeline job
-  if (config.clusterEnv === 'development') {
-    return createLocalPipeline;
-  }
-  // if we are in staging / production wait for an activity to be assigned
-  return assignWorkToPod;
-};
-
-const firstStep = () => {
-  if (config.clusterEnv === 'development') {
-    return 'DeleteCompletedPipelineWorker';
-  }
-
-  return 'GetUnassignedPod';
-};
+const { firstStep, buildInitialSteps } = require('./initialization');
 
 const qcPipelineSkeleton = {
   Comment: `Pipeline for clusterEnv '${config.clusterEnv}'`,
   StartAt: firstStep(),
   States: {
-    ...initialSteps(),
+    ...buildInitialSteps('ClassifierFilterMap'),
     ClassifierFilterMap: {
       Type: 'Map',
       Next: 'CellSizeDistributionFilterMap',
