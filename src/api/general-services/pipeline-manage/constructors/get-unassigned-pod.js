@@ -10,6 +10,7 @@ const getUnassignedPod = (context, step) => {
     Type: 'Task',
     Comment: 'Retrieves an unassigned pipeline pod.',
     Resource: 'arn:aws:states:::eks:call',
+    OutputPath: '$.ResponseBody.items[0]',
     Parameters: {
       ClusterName: clusterInfo.name,
       CertificateAuthority: clusterInfo.certAuthority,
