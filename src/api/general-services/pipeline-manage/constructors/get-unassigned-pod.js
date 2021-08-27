@@ -30,13 +30,6 @@ const getUnassignedPod = (context, step) => {
         MaxAttempts: 5,
       },
     ],
-    // Catch: [
-    //   {
-    //     ErrorEquals: ['EKS.404'],
-    //     ResultPath: '$.error-info',
-    //     Next: step.XNextOnCatch || step.Next,
-    //   },
-    // ],
   };
 };
 

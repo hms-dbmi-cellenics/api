@@ -71,6 +71,27 @@ Array [
       "Comment": "Pipeline for clusterEnv 'test'",
       "StartAt": "GetUnassignedPod",
       "States": Object {
+        "AssignPodToPipeline": Object {
+          "Comment": "Patch pod to set the activity ID label.",
+          "Next": "IsPatchSuccessful",
+          "Parameters": Object {
+            "CertificateAuthority": "AAAAAAAAAAA",
+            "ClusterName": "biomage-test",
+            "Endpoint": "https://test-endpoint.me/fgh",
+            "Method": "PATCH",
+            "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
+            "RequestBody": Object {
+              "metadata": Object {
+                "labels": Object {
+                  "activityId": "pipeline-test-mock-uuid",
+                },
+              },
+            },
+          },
+          "Resource": "arn:aws:states:::eks:call",
+          "ResultPath": "$.PatchResult",
+          "Type": "Task",
+        },
         "CellSizeDistributionFilterMap": Object {
           "ItemsPath": "$.samples",
           "Iterator": Object {
@@ -239,7 +260,7 @@ Array [
               "Next": "GetUnassignedPod",
               "Not": Object {
                 "NumericEquals": 200,
-                "Variable": "$.StatusCode",
+                "Variable": "$.PatchResult.StatusCode",
               },
             },
           ],
@@ -254,7 +275,7 @@ Array [
               "Variable": "$.Data.ResponseBody.items[0]",
             },
           ],
-          "Default": "PatchPod",
+          "Default": "AssignPodToPipeline",
           "Type": "Choice",
         },
         "MitochondrialContentFilterMap": Object {
@@ -310,26 +331,6 @@ Array [
           "Next": "DoubletScoresFilterMap",
           "ResultPath": null,
           "Type": "Map",
-        },
-        "PatchPod": Object {
-          "Comment": "Patch pod to set the activity ID label.",
-          "Next": "IsPatchSuccessful",
-          "Parameters": Object {
-            "CertificateAuthority": "AAAAAAAAAAA",
-            "ClusterName": "biomage-test",
-            "Endpoint": "https://test-endpoint.me/fgh",
-            "Method": "PATCH",
-            "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
-            "RequestBody": Object {
-              "metadata": Object {
-                "labels": Object {
-                  "activityId": "pipeline-test-mock-uuid",
-                },
-              },
-            },
-          },
-          "Resource": "arn:aws:states:::eks:call",
-          "Type": "Task",
         },
         "Wait": Object {
           "Next": "GetUnassignedPod",

@@ -13,7 +13,7 @@ const getActivityId = (activityArn) => {
 };
 
 
-const patchPod = (context, step) => {
+const assignPodToPipeline = (context, step) => {
   const {
     clusterInfo, activityArn,
   } = context;
@@ -39,4 +39,4 @@ const patchPod = (context, step) => {
   };
 };
 
-module.exports = patchPod;
+module.exports = assignPodToPipeline;

@@ -358,15 +358,16 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
           "Next": "Wait"
         }
       ],
-      "Default": "PatchPod"
+      "Default": "AssignPodToPipeline"
     },
     "Wait": {
       "Type": "Wait",
       "Seconds": 2,
       "Next": "GetUnassignedPod"
     },
-    "PatchPod": {
+    "AssignPodToPipeline": {
       "Next": "IsPatchSuccessful",
+      "ResultPath": "$.PatchResult",
       "Type": "Task",
       "Comment": "Patch pod to set the activity ID label.",
       "Resource": "arn:aws:states:::eks:call",
@@ -388,7 +389,7 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
       "Choices": [
         {
           "Not": {
-            "Variable": "$.StatusCode",
+            "Variable": "$.PatchResult.StatusCode",
             "NumericEquals": 200
           },
           "Next": "GetUnassignedPod"
@@ -587,15 +588,16 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           "Next": "Wait"
         }
       ],
-      "Default": "PatchPod"
+      "Default": "AssignPodToPipeline"
     },
     "Wait": {
       "Type": "Wait",
       "Seconds": 2,
       "Next": "GetUnassignedPod"
     },
-    "PatchPod": {
+    "AssignPodToPipeline": {
       "Next": "IsPatchSuccessful",
+      "ResultPath": "$.PatchResult",
       "Type": "Task",
       "Comment": "Patch pod to set the activity ID label.",
       "Resource": "arn:aws:states:::eks:call",
@@ -617,7 +619,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
       "Choices": [
         {
           "Not": {
-            "Variable": "$.StatusCode",
+            "Variable": "$.PatchResult.StatusCode",
             "NumericEquals": 200
           },
           "Next": "GetUnassignedPod"

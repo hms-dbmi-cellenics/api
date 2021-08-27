@@ -28,16 +28,17 @@ const assignWorkToPod = (nextStep) => ({
         Next: 'Wait',
       },
     ],
-    Default: 'PatchPod',
+    Default: 'AssignPodToPipeline',
   },
   Wait: {
     Type: 'Wait',
     Seconds: 2,
     Next: 'GetUnassignedPod',
   },
-  PatchPod: {
-    XStepType: 'patch-pod',
+  AssignPodToPipeline: {
+    XStepType: 'assign-pod-to-pipeline',
     Next: 'IsPatchSuccessful',
+    ResultPath: '$.PatchResult',
   },
   IsPatchSuccessful: {
     Type: 'Choice',
@@ -45,7 +46,7 @@ const assignWorkToPod = (nextStep) => ({
       {
         Not: {
           // probably check here if an activty ARN has been assigned
-          Variable: '$.StatusCode',
+          Variable: '$.PatchResult.StatusCode',
           NumericEquals: 200,
         },
         Next: 'GetUnassignedPod',
