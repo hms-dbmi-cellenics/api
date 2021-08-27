@@ -16,8 +16,24 @@ const createLocalPipeline = (nextStep) => ({
 const assignWorkToPod = (nextStep) => ({
   GetUnassignedPod: {
     XStepType: 'get-unassigned-pod',
-    Next: 'PatchPod',
-    ResultPath: '$.ResponseBody.items[0]',
+    Next: 'IsPodAvailable',
+    ResultPath: '$.Data',
+  },
+  IsPodAvailable: {
+    Type: 'Choice',
+    Choices: [
+      {
+        Variable: '$.Data.ResponseBody.items[0]',
+        IsPresent: false,
+        Next: 'Wait',
+      },
+    ],
+    Default: 'PatchPod',
+  },
+  Wait: {
+    Type: 'Wait',
+    Seconds: 2,
+    Next: 'GetUnassignedPod',
   },
   PatchPod: {
     XStepType: 'patch-pod',

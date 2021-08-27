@@ -29,7 +29,7 @@ const patchPod = (context, step) => {
       CertificateAuthority: clusterInfo.certAuthority,
       Endpoint: clusterInfo.endpoint,
       Method: 'PATCH',
-      'Path.$': '$.metadata.selfLink',
+      'Path.$': '$.Data.ResponseBody.items[0].metadata.selfLink',
       RequestBody: {
         metadata: {
           labels: { activityId: getActivityId(activityArn) },

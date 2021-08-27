@@ -206,7 +206,7 @@ Array [
         },
         "GetUnassignedPod": Object {
           "Comment": "Retrieves an unassigned pipeline pod.",
-          "Next": "PatchPod",
+          "Next": "IsPodAvailable",
           "Parameters": Object {
             "CertificateAuthority": "AAAAAAAAAAA",
             "ClusterName": "biomage-test",
@@ -220,7 +220,7 @@ Array [
             },
           },
           "Resource": "arn:aws:states:::eks:call",
-          "ResultPath": "$.ResponseBody.items[0]",
+          "ResultPath": "$.Data",
           "Retry": Array [
             Object {
               "BackoffRate": 2,
@@ -244,6 +244,17 @@ Array [
             },
           ],
           "Default": "ClassifierFilterMap",
+          "Type": "Choice",
+        },
+        "IsPodAvailable": Object {
+          "Choices": Array [
+            Object {
+              "IsPresent": false,
+              "Next": "Wait",
+              "Variable": "$.Data.ResponseBody.items[0]",
+            },
+          ],
+          "Default": "PatchPod",
           "Type": "Choice",
         },
         "MitochondrialContentFilterMap": Object {
@@ -308,7 +319,7 @@ Array [
             "ClusterName": "biomage-test",
             "Endpoint": "https://test-endpoint.me/fgh",
             "Method": "PATCH",
-            "Path.$": "$.metadata.selfLink",
+            "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
             "RequestBody": Object {
               "metadata": Object {
                 "labels": Object {
@@ -319,6 +330,11 @@ Array [
           },
           "Resource": "arn:aws:states:::eks:call",
           "Type": "Task",
+        },
+        "Wait": Object {
+          "Next": "GetUnassignedPod",
+          "Seconds": 2,
+          "Type": "Wait",
         },
       },
     },

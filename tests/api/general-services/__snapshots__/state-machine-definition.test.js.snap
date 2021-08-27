@@ -321,8 +321,8 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
   "StartAt": "GetUnassignedPod",
   "States": {
     "GetUnassignedPod": {
-      "Next": "PatchPod",
-      "ResultPath": "$.ResponseBody.items[0]",
+      "Next": "IsPodAvailable",
+      "ResultPath": "$.Data",
       "Type": "Task",
       "Comment": "Retrieves an unassigned pipeline pod.",
       "Resource": "arn:aws:states:::eks:call",
@@ -349,6 +349,22 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
         }
       ]
     },
+    "IsPodAvailable": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.Data.ResponseBody.items[0]",
+          "IsPresent": false,
+          "Next": "Wait"
+        }
+      ],
+      "Default": "PatchPod"
+    },
+    "Wait": {
+      "Type": "Wait",
+      "Seconds": 2,
+      "Next": "GetUnassignedPod"
+    },
     "PatchPod": {
       "Next": "IsPatchSuccessful",
       "Type": "Task",
@@ -359,7 +375,7 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
         "CertificateAuthority": "mock-ca",
         "Endpoint": "mock-endpoint",
         "Method": "PATCH",
-        "Path.$": "$.metadata.selfLink",
+        "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
         "RequestBody": {
           "metadata": {
             "labels": {}
@@ -534,8 +550,8 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
   "StartAt": "GetUnassignedPod",
   "States": {
     "GetUnassignedPod": {
-      "Next": "PatchPod",
-      "ResultPath": "$.ResponseBody.items[0]",
+      "Next": "IsPodAvailable",
+      "ResultPath": "$.Data",
       "Type": "Task",
       "Comment": "Retrieves an unassigned pipeline pod.",
       "Resource": "arn:aws:states:::eks:call",
@@ -562,6 +578,22 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         }
       ]
     },
+    "IsPodAvailable": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.Data.ResponseBody.items[0]",
+          "IsPresent": false,
+          "Next": "Wait"
+        }
+      ],
+      "Default": "PatchPod"
+    },
+    "Wait": {
+      "Type": "Wait",
+      "Seconds": 2,
+      "Next": "GetUnassignedPod"
+    },
     "PatchPod": {
       "Next": "IsPatchSuccessful",
       "Type": "Task",
@@ -572,7 +604,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "CertificateAuthority": "mock-ca",
         "Endpoint": "mock-endpoint",
         "Method": "PATCH",
-        "Path.$": "$.metadata.selfLink",
+        "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
         "RequestBody": {
           "metadata": {
             "labels": {}
