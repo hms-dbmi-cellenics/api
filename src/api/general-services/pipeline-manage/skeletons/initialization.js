@@ -60,7 +60,7 @@ const assignWorkToPod = (nextStep) => ({
 const buildInitialSteps = (nextStep) => {
   // if we are running locally launch a pipeline job
   if (config.clusterEnv === 'development') {
-    return createLocalPipeline;
+    return createLocalPipeline(nextStep);
   }
   // if we are in staging / production wait for an activity to be assigned
   return assignWorkToPod(nextStep);

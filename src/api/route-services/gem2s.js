@@ -105,7 +105,7 @@ class Gem2sService {
     const { [GEM2S_PROCESS_NAME]: gem2sHandle } = handles;
     const { [GEM2S_PROCESS_NAME]: { status: gem2sStatus } } = statusWrapper;
 
-    logger.log(`Gem2s status is ${gem2sStatus}.\nNew hash: ${paramsHash}\nOld hash: ${gem2sHandle.paramsHash}`);
+    logger.log(`Gem2s status is ${gem2sStatus}. new hash: ${paramsHash}; old hash: ${gem2sHandle.paramsHash}`);
     if (gem2sStatus === SUCCEEDED) {
       return paramsHash !== gem2sHandle.paramsHash;
     }
