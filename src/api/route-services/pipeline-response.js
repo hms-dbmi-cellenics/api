@@ -14,12 +14,7 @@ const experimentService = new ExperimentService();
 
 const getPipelineStatus = require('../general-services/pipeline-status');
 
-const embeddingWorkRequest = require('../../utils/hooks/embeddingWorkRequest');
-const clusteringWorkRequest = require('../../utils/hooks/clusteringWorkRequest');
-
 const pipelineHook = new PipelineHook();
-pipelineHook.register('configureEmbedding', embeddingWorkRequest);
-pipelineHook.register('configureEmbedding', clusteringWorkRequest);
 
 const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');
