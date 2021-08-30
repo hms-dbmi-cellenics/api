@@ -1,9 +1,7 @@
 const config = require('../../../../config');
 
 const constructDeleteCompletedJobs = (context, step) => {
-  const {
-    accountId, experimentId,
-  } = context;
+  const { accountId } = context;
 
   if (config.clusterEnv === 'development') {
     return {
@@ -17,26 +15,7 @@ const constructDeleteCompletedJobs = (context, step) => {
     };
   }
 
-  return {
-    LaunchNewPipelineWorker: {
-      Next: 'ClassifierFilterMap',
-      ResultPath: null,
-      Type: 'Task',
-      Comment: 'Deletes the previous server pipeline HelmRelease (Service+Job).',
-      Resource: 'arn:aws:states:::eks:call',
-      Parameters: {
-        ClusterName: context.clusterInfo.name,
-        CertificateAuthority: context.clusterInfo.certAuthority,
-        Endpoint: context.clusterInfo.endpoint,
-        Method: 'DELETE',
-        Path: `/apis/helm.fluxcd.io/v1/namespaces/${config.pipelineNamespace}/helmreleases`,
-        QueryParameters: {
-          labelSelector: [
-            `type=pipeline,sandboxId=${config.sandboxId},experimentId=${experimentId}`,
-          ],
-        },
-      },
-    },
-  };
+  throw Error(`constructDeleteCompletedJobs should only be called in local environment, current env: ${config.clusterEnv}`);
 };
+
 module.exports = constructDeleteCompletedJobs;
