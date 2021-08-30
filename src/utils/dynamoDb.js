@@ -51,7 +51,11 @@ const batchConvertToDynamoUpdateParams = (keys, configArrayDict) => {
       attrValues,
     } = convertToDynamoUpdateParams(key, configArray, indexOffset);
 
-    updateExpressionList.push(_.trimStart(updExpr, 'SET'));
+    const updExprWithoutStart = _.trimStart(updExpr, 'SET');
+    if (updExprWithoutStart) {
+      updateExpressionList.push(updExprWithoutStart);
+    }
+
     attributeNames = _.merge(attributeNames, attrNames);
     attributeValues = _.merge(attributeValues, attrValues);
 

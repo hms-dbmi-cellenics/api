@@ -82,7 +82,7 @@ class ExperimentService {
       ':input': body.input,
       ':organism': body.organism,
       ':rbac_can_write': documentClient.createSet(rbacCanWrite),
-      ':meta': {},
+      ':meta': body.meta || {},
       ':processingConfig': {},
       ':sampleIds': body.sampleIds,
     });
