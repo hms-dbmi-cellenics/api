@@ -1,5 +1,3 @@
-const config = require('../../../../config');
-
 const createLocalPipeline = (nextStep) => ({
   DeleteCompletedPipelineWorker: {
     XStepType: 'delete-completed-jobs',
@@ -57,17 +55,17 @@ const assignWorkToPod = (nextStep) => ({
 });
 
 
-const buildInitialSteps = (nextStep) => {
+const buildInitialSteps = (clusterEnv, nextStep) => {
   // if we are running locally launch a pipeline job
-  if (config.clusterEnv === 'development') {
+  if (clusterEnv === 'development') {
     return createLocalPipeline(nextStep);
   }
   // if we are in staging / production wait for an activity to be assigned
   return assignWorkToPod(nextStep);
 };
 
-const firstStep = () => {
-  if (config.clusterEnv === 'development') {
+const firstStep = (clusterEnv) => {
+  if (clusterEnv === 'development') {
     return 'DeleteCompletedPipelineWorker';
   }
 

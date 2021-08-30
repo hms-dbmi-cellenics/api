@@ -1,11 +1,10 @@
-const config = require('../../../../config');
 const { firstStep, buildInitialSteps } = require('./initialization');
 
-const qcPipelineSkeleton = {
-  Comment: `Pipeline for clusterEnv '${config.clusterEnv}'`,
-  StartAt: firstStep(),
+const getQcPipelineSkeleton = (clusterEnv) => ({
+  Comment: `Pipeline for clusterEnv '${clusterEnv}'`,
+  StartAt: firstStep(clusterEnv),
   States: {
-    ...buildInitialSteps('ClassifierFilterMap'),
+    ...buildInitialSteps(clusterEnv, 'ClassifierFilterMap'),
     ClassifierFilterMap: {
       Type: 'Map',
       Next: 'CellSizeDistributionFilterMap',
@@ -123,6 +122,6 @@ const qcPipelineSkeleton = {
       End: true,
     },
   },
-};
+});
 
-module.exports = { qcPipelineSkeleton };
+module.exports = { getQcPipelineSkeleton };

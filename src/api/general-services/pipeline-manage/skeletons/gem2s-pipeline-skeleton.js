@@ -1,11 +1,10 @@
-const config = require('../../../../config');
 const { firstStep, buildInitialSteps } = require('./initialization');
 
-const gem2sPipelineSkeleton = {
-  Comment: `Gem2s for clusterEnv '${config.clusterEnv}'`,
-  StartAt: firstStep(),
+const getGem2sPipelineSkeleton = (clusterEnv) => ({
+  Comment: `Gem2s for clusterEnv '${clusterEnv}'`,
+  StartAt: firstStep(clusterEnv),
   States: {
-    ...buildInitialSteps('DownloadGem'),
+    ...buildInitialSteps(clusterEnv, 'DownloadGem'),
     DownloadGem: {
       XStepType: 'create-new-step',
       XConstructorArgs: {
@@ -60,6 +59,6 @@ const gem2sPipelineSkeleton = {
       End: true,
     },
   },
-};
+});
 
-module.exports = { gem2sPipelineSkeleton };
+module.exports = { getGem2sPipelineSkeleton };

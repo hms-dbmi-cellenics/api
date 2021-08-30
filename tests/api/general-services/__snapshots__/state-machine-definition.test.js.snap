@@ -1,184 +1,140 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`non-tests to document the State Machines - gem2s cloud 1`] = `
-
-{
-  "Comment": "Gem2s for clusterEnv 'test'",
-  "StartAt": "GetUnassignedPod",
-  "States": {
-    "GetUnassignedPod": {
-      "Next": "IsPodAvailable",
-      "ResultPath": "$.Data",
-      "Type": "Task",
-      "Comment": "Retrieves an unassigned pipeline pod.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
-        "Method": "GET",
-        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-        "QueryParameters": {
-          "labelSelector": [
-            "!activityId,type=pipeline"
-          ]
-        }
-      },
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "EKS.404"
-          ],
-          "IntervalSeconds": 1,
-          "BackoffRate": 2,
-          "MaxAttempts": 5
-        }
-      ]
-    },
-    "IsPodAvailable": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Variable": "$.Data.ResponseBody.items[0]",
-          "IsPresent": false,
-          "Next": "Wait"
-        }
-      ],
-      "Default": "AssignPodToPipeline"
-    },
-    "Wait": {
-      "Type": "Wait",
-      "Seconds": 2,
-      "Next": "GetUnassignedPod"
-    },
-    "AssignPodToPipeline": {
-      "Next": "IsPatchSuccessful",
-      "ResultPath": "$.PatchResult",
-      "Type": "Task",
-      "Comment": "Patch pod to set the activity ID label.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
-        "Method": "PATCH",
-        "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
-        "RequestBody": {
-          "metadata": {
-            "labels": {}
-          }
-        }
-      }
-    },
-    "IsPatchSuccessful": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Not": {
-            "Variable": "$.PatchResult.StatusCode",
-            "NumericEquals": 200
-          },
-          "Next": "GetUnassignedPod"
-        }
-      ],
-      "Default": "DownloadGem"
-    },
-    "DownloadGem": {
-      "Next": "PreProcessing",
-      "Type": "Task",
-      "ResultPath": null,
-      "TimeoutSeconds": 10800,
-      "Parameters": {
-        "experimentId": "mock-experiment-id",
-        "taskName": "downloadGem",
-        "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
-    },
-    "PreProcessing": {
-      "Next": "EmptyDrops",
-      "Type": "Task",
-      "ResultPath": null,
-      "TimeoutSeconds": 10800,
-      "Parameters": {
-        "experimentId": "mock-experiment-id",
-        "taskName": "preproc",
-        "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
-    },
-    "EmptyDrops": {
-      "Next": "DoubletScores",
-      "Type": "Task",
-      "ResultPath": null,
-      "TimeoutSeconds": 10800,
-      "Parameters": {
-        "experimentId": "mock-experiment-id",
-        "taskName": "emptyDrops",
-        "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
-    },
-    "DoubletScores": {
-      "Next": "CreateSeurat",
-      "Type": "Task",
-      "ResultPath": null,
-      "TimeoutSeconds": 10800,
-      "Parameters": {
-        "experimentId": "mock-experiment-id",
-        "taskName": "doubletScores",
-        "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
-    },
-    "CreateSeurat": {
-      "Next": "PrepareExperiment",
-      "Type": "Task",
-      "ResultPath": null,
-      "TimeoutSeconds": 10800,
-      "Parameters": {
-        "experimentId": "mock-experiment-id",
-        "taskName": "createSeurat",
-        "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
-    },
-    "PrepareExperiment": {
-      "Next": "UploadToAWS",
-      "Type": "Task",
-      "ResultPath": null,
-      "TimeoutSeconds": 10800,
-      "Parameters": {
-        "experimentId": "mock-experiment-id",
-        "taskName": "prepareExperiment",
-        "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
-    },
-    "UploadToAWS": {
-      "Next": "EndOfGem2S",
-      "Type": "Task",
-      "ResultPath": null,
-      "TimeoutSeconds": 10800,
-      "Parameters": {
-        "experimentId": "mock-experiment-id",
-        "taskName": "uploadToAWS",
-        "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
-    },
-    "EndOfGem2S": {
-      "Type": "Pass",
-      "End": true
-    }
-  }
-}
-`;
-
 exports[`non-tests to document the State Machines - gem2s local development 1`] = `
 
 {
-  "Comment": "Gem2s for clusterEnv 'test'",
+  "Comment": "Gem2s for clusterEnv 'development'",
+  "StartAt": "DeleteCompletedPipelineWorker",
+  "States": {
+    "DeleteCompletedPipelineWorker": {
+      "Next": "LaunchNewPipelineWorker",
+      "ResultPath": null,
+      "Type": "Task",
+      "Comment": "Removes Docker containers with pipeline runs on the local machine.",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:remove-previous-pipeline-containers"
+      }
+    },
+    "LaunchNewPipelineWorker": {
+      "Next": "DownloadGem",
+      "ResultPath": null,
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
+        "Payload": {
+          "image": "biomage-pipeline-runner",
+          "name": "undefined-runner",
+          "detached": true
+        }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "DownloadGem"
+        }
+      ]
+    },
+    "DownloadGem": {
+      "Next": "PreProcessing",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "downloadGem",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "PreProcessing": {
+      "Next": "EmptyDrops",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "preproc",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "EmptyDrops": {
+      "Next": "DoubletScores",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "emptyDrops",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "DoubletScores": {
+      "Next": "CreateSeurat",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "doubletScores",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "CreateSeurat": {
+      "Next": "PrepareExperiment",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "createSeurat",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "PrepareExperiment": {
+      "Next": "UploadToAWS",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "prepareExperiment",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "UploadToAWS": {
+      "Next": "EndOfGem2S",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "uploadToAWS",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "EndOfGem2S": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}
+`;
+
+exports[`non-tests to document the State Machines - gem2s production 1`] = `
+
+{
+  "Comment": "Gem2s for clusterEnv 'production'",
   "StartAt": "GetUnassignedPod",
   "States": {
     "GetUnassignedPod": {
@@ -267,7 +223,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
         "config": {},
-        "server": "host.docker.internal"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "PreProcessing": {
@@ -279,7 +235,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
         "config": {},
-        "server": "host.docker.internal"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "EmptyDrops": {
@@ -291,7 +247,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
         "config": {},
-        "server": "host.docker.internal"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "DoubletScores": {
@@ -303,7 +259,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
         "config": {},
-        "server": "host.docker.internal"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "CreateSeurat": {
@@ -315,7 +271,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
         "config": {},
-        "server": "host.docker.internal"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "PrepareExperiment": {
@@ -327,7 +283,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
         "config": {},
-        "server": "host.docker.internal"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "UploadToAWS": {
@@ -339,7 +295,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
         "config": {},
-        "server": "host.docker.internal"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "EndOfGem2S": {
@@ -350,10 +306,371 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
 }
 `;
 
-exports[`non-tests to document the State Machines - qc cloud 1`] = `
+exports[`non-tests to document the State Machines - gem2s staging 1`] = `
 
 {
-  "Comment": "Pipeline for clusterEnv 'test'",
+  "Comment": "Gem2s for clusterEnv 'staging'",
+  "StartAt": "GetUnassignedPod",
+  "States": {
+    "GetUnassignedPod": {
+      "Next": "IsPodAvailable",
+      "ResultPath": "$.Data",
+      "Type": "Task",
+      "Comment": "Retrieves an unassigned pipeline pod.",
+      "Resource": "arn:aws:states:::eks:call",
+      "Parameters": {
+        "ClusterName": "mock-cluster-name",
+        "CertificateAuthority": "mock-ca",
+        "Endpoint": "mock-endpoint",
+        "Method": "GET",
+        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+        "QueryParameters": {
+          "labelSelector": [
+            "!activityId,type=pipeline"
+          ]
+        }
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "EKS.404"
+          ],
+          "IntervalSeconds": 1,
+          "BackoffRate": 2,
+          "MaxAttempts": 5
+        }
+      ]
+    },
+    "IsPodAvailable": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.Data.ResponseBody.items[0]",
+          "IsPresent": false,
+          "Next": "Wait"
+        }
+      ],
+      "Default": "AssignPodToPipeline"
+    },
+    "Wait": {
+      "Type": "Wait",
+      "Seconds": 2,
+      "Next": "GetUnassignedPod"
+    },
+    "AssignPodToPipeline": {
+      "Next": "IsPatchSuccessful",
+      "ResultPath": "$.PatchResult",
+      "Type": "Task",
+      "Comment": "Patch pod to set the activity ID label.",
+      "Resource": "arn:aws:states:::eks:call",
+      "Parameters": {
+        "ClusterName": "mock-cluster-name",
+        "CertificateAuthority": "mock-ca",
+        "Endpoint": "mock-endpoint",
+        "Method": "PATCH",
+        "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
+        "RequestBody": {
+          "metadata": {
+            "labels": {}
+          }
+        }
+      }
+    },
+    "IsPatchSuccessful": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Not": {
+            "Variable": "$.PatchResult.StatusCode",
+            "NumericEquals": 200
+          },
+          "Next": "GetUnassignedPod"
+        }
+      ],
+      "Default": "DownloadGem"
+    },
+    "DownloadGem": {
+      "Next": "PreProcessing",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "downloadGem",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "PreProcessing": {
+      "Next": "EmptyDrops",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "preproc",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "EmptyDrops": {
+      "Next": "DoubletScores",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "emptyDrops",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "DoubletScores": {
+      "Next": "CreateSeurat",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "doubletScores",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "CreateSeurat": {
+      "Next": "PrepareExperiment",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "createSeurat",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "PrepareExperiment": {
+      "Next": "UploadToAWS",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "prepareExperiment",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "UploadToAWS": {
+      "Next": "EndOfGem2S",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "uploadToAWS",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "EndOfGem2S": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}
+`;
+
+exports[`non-tests to document the State Machines - qc local development 1`] = `
+
+{
+  "Comment": "Pipeline for clusterEnv 'development'",
+  "StartAt": "DeleteCompletedPipelineWorker",
+  "States": {
+    "DeleteCompletedPipelineWorker": {
+      "Next": "LaunchNewPipelineWorker",
+      "ResultPath": null,
+      "Type": "Task",
+      "Comment": "Removes Docker containers with pipeline runs on the local machine.",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:remove-previous-pipeline-containers"
+      }
+    },
+    "LaunchNewPipelineWorker": {
+      "Next": "ClassifierFilterMap",
+      "ResultPath": null,
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
+        "Payload": {
+          "image": "biomage-pipeline-runner",
+          "name": "undefined-runner",
+          "detached": true
+        }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "ClassifierFilterMap"
+        }
+      ]
+    },
+    "ClassifierFilterMap": {
+      "Type": "Map",
+      "Next": "CellSizeDistributionFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "ClassifierFilter",
+        "States": {
+          "ClassifierFilter": {
+            "End": true,
+            "Type": "Task",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "classifier",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "CellSizeDistributionFilterMap": {
+      "Type": "Map",
+      "Next": "MitochondrialContentFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "CellSizeDistributionFilter",
+        "States": {
+          "CellSizeDistributionFilter": {
+            "End": true,
+            "Type": "Task",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "cellSizeDistribution",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "MitochondrialContentFilterMap": {
+      "Type": "Map",
+      "Next": "NumGenesVsNumUmisFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "MitochondrialContentFilter",
+        "States": {
+          "MitochondrialContentFilter": {
+            "End": true,
+            "Type": "Task",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "mitochondrialContent",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "NumGenesVsNumUmisFilterMap": {
+      "Type": "Map",
+      "Next": "DoubletScoresFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "NumGenesVsNumUmisFilter",
+        "States": {
+          "NumGenesVsNumUmisFilter": {
+            "End": true,
+            "Type": "Task",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "numGenesVsNumUmis",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "DoubletScoresFilterMap": {
+      "Type": "Map",
+      "Next": "DataIntegration",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "DoubletScoresFilter",
+        "States": {
+          "DoubletScoresFilter": {
+            "End": true,
+            "Type": "Task",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "doubletScores",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "DataIntegration": {
+      "Next": "ConfigureEmbedding",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "dataIntegration",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "ConfigureEmbedding": {
+      "Next": "EndOfPipeline",
+      "Type": "Task",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "configureEmbedding",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "EndOfPipeline": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}
+`;
+
+exports[`non-tests to document the State Machines - qc production 1`] = `
+
+{
+  "Comment": "Pipeline for clusterEnv 'production'",
   "StartAt": "GetUnassignedPod",
   "States": {
     "GetUnassignedPod": {
@@ -580,10 +897,10 @@ exports[`non-tests to document the State Machines - qc cloud 1`] = `
 }
 `;
 
-exports[`non-tests to document the State Machines - qc local development 1`] = `
+exports[`non-tests to document the State Machines - qc staging 1`] = `
 
 {
-  "Comment": "Pipeline for clusterEnv 'test'",
+  "Comment": "Pipeline for clusterEnv 'staging'",
   "StartAt": "GetUnassignedPod",
   "States": {
     "GetUnassignedPod": {
@@ -680,7 +997,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
               "config": {},
-              "server": "host.docker.internal"
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
           }
         }
@@ -703,7 +1020,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
               "config": {},
-              "server": "host.docker.internal"
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
           }
         }
@@ -726,7 +1043,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
               "config": {},
-              "server": "host.docker.internal"
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
           }
         }
@@ -749,7 +1066,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
               "config": {},
-              "server": "host.docker.internal"
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
           }
         }
@@ -772,7 +1089,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
               "config": {},
-              "server": "host.docker.internal"
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
           }
         }
@@ -787,7 +1104,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
         "config": {},
-        "server": "host.docker.internal"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "ConfigureEmbedding": {
@@ -799,7 +1116,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
         "config": {},
-        "server": "host.docker.internal"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "EndOfPipeline": {

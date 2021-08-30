@@ -10,8 +10,8 @@ const config = require('../../../config');
 const logger = require('../../../utils/logging');
 const ExperimentService = require('../../route-services/experiment');
 
-const { qcPipelineSkeleton } = require('./skeletons/qc-pipeline-skeleton');
-const { gem2sPipelineSkeleton } = require('./skeletons/gem2s-pipeline-skeleton');
+const { getQcPipelineSkeleton } = require('./skeletons/qc-pipeline-skeleton');
+const { getGem2sPipelineSkeleton } = require('./skeletons/gem2s-pipeline-skeleton');
 const constructPipelineStep = require('./constructors/construct-pipeline-step');
 const asyncTimer = require('../../../utils/asyncTimer');
 
@@ -224,12 +224,17 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
     processingConfig: mergedProcessingConfig,
   };
 
+
+  const qcPipelineSkeleton = getQcPipelineSkeleton(config.clusterEnv);
+
+  logger.log('Skeleton constructed, now building state machine definition...');
   const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
 
+  // TODO removed after develop
   console.log('State machine definition');
   console.log(JSON.stringify(stateMachine, null, 2));
 
-  logger.log('Skeleton constructed, now creating activity if not already present...');
+  logger.log('State machine definition built, now creating activity if not already present...');
   const activityArn = await createActivity(context); // the context contains the activityArn
 
   logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
@@ -263,9 +268,12 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
     processingConfig: {},
   };
 
+  const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv);
+
+  logger.log('Skeleton constructed, now building state machine definition...');
   const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
 
-  logger.log('Skeleton constructed, now creating activity if not already present...');
+  logger.log('State machine definition built, now creating activity if not already present...');
   const activityArn = await createActivity(context);
 
   logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
