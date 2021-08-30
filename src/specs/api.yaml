@@ -992,13 +992,19 @@ paths:
           application/json:
             schema:
               $ref: ./models/samples-bodies/SamplesRemoveBody.v1.yaml
-  '/projects/{projectUuid}/samples/{sampleUuid}/{fileName}':
+  '/projects/{projectUuid}/samples/{sampleUuid}/{fileName}/uploadLink':
     get:
       summary: Get file upload link
       description: Get temporary s3 upload link for fileName
       operationId: uploadSampleFileLink
       x-eov-operation-id: samples#uploadSampleFileLink
       x-eov-operation-handler: routes/samples
+      parameters:
+        - in: query
+          name: cellranger_version
+          description: The cellranger version of the dataset
+          schema:
+            type: string
       responses:
         '200':
           description: OK

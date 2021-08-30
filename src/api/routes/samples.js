@@ -28,10 +28,13 @@ module.exports = {
       .catch(next);
   },
   'samples#uploadSampleFileLink': (req, res, next) => {
-    const { params: { projectUuid, sampleUuid, fileName } } = req;
+    const { params: { projectUuid, sampleUuid, fileName }, query } = req;
 
     try {
-      const uploadLink = samplesService.getS3UploadLink(projectUuid, sampleUuid, fileName);
+      const { cellranger_version = undefined } = query;
+
+      const uploadLink = samplesService
+        .getS3UploadLink(projectUuid, sampleUuid, fileName, cellranger_version);
 
       res.json(uploadLink);
     } catch (e) {

@@ -177,16 +177,25 @@ class SamplesService {
     return OK();
   }
 
-  getS3UploadLink(projectUuid, sampleUuid, fileName) {
+  getS3UploadLink(projectUuid, sampleUuid, fileName, cellrangerVersion) {
     const s3 = new AWS.S3();
 
     const params = {
       Bucket: this.sampleFilesBucketName,
       Key: `${projectUuid}/${sampleUuid}/${fileName}`,
-      Expires: 60,
+      Expires: 360,
+      ContentType: 'application/x-www-form-urlencoded',
     };
 
-    return s3.getSignedUrl('putObject', params);
+    if (cellrangerVersion) {
+      params.Metadata = {
+        cellranger_version: cellrangerVersion,
+      };
+    }
+
+    const signedUrl = s3.getSignedUrl('putObject', params);
+
+    return signedUrl;
   }
 
   async deleteSamplesFromS3(projectUuid, samplesToRemoveUuids, allSamples) {
