@@ -48,7 +48,6 @@ module.exports = {
   'experiment#patchCellSets': [
     expressAuthorizationMiddleware,
     (req, res, next) => {
-      console.log('where the fuck are you');
       experimentService.patchCellSets(req.params.experimentId, req.body)
         .then((data) => res.json(data))
         .catch(next);
