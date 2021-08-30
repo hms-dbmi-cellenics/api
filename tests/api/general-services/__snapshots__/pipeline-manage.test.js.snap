@@ -84,7 +84,7 @@ Array [
                   "ClusterName": "biomage-test",
                   "Endpoint": "https://test-endpoint.me/fgh",
                   "Method": "PATCH",
-                  "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
+                  "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
                   "RequestBody": Object {
                     "metadata": Object {
                       "labels": Object {
@@ -116,7 +116,6 @@ Array [
                   },
                 },
                 "Resource": "arn:aws:states:::eks:call",
-                "ResultPath": "$.Data",
                 "Type": "Task",
               },
               "IsPodAvailable": Object {
@@ -124,7 +123,7 @@ Array [
                   Object {
                     "IsPresent": false,
                     "Next": "NoPodsAvailable",
-                    "Variable": "$.Data.ResponseBody.items[0]",
+                    "Variable": "$.ResponseBody.items[0]",
                   },
                 ],
                 "Comment": "Redirects to an error state if there are no available pods.",

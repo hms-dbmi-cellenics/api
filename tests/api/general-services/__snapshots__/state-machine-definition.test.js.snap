@@ -158,7 +158,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "States": {
           "GetUnassignedPod": {
             "Next": "IsPodAvailable",
-            "ResultPath": "$.Data",
             "Type": "Task",
             "Comment": "Retrieves first unassigned and running pipeline pod.",
             "Resource": "arn:aws:states:::eks:call",
@@ -183,7 +182,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "Comment": "Redirects to an error state if there are no available pods.",
             "Choices": [
               {
-                "Variable": "$.Data.ResponseBody.items[0]",
+                "Variable": "$.ResponseBody.items[0]",
                 "IsPresent": false,
                 "Next": "NoPodsAvailable"
               }
@@ -206,7 +205,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
               "CertificateAuthority": "mock-ca",
               "Endpoint": "mock-endpoint",
               "Method": "PATCH",
-              "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
+              "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
               "RequestBody": {
                 "metadata": {
                   "labels": {}
@@ -336,7 +335,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "States": {
           "GetUnassignedPod": {
             "Next": "IsPodAvailable",
-            "ResultPath": "$.Data",
             "Type": "Task",
             "Comment": "Retrieves first unassigned and running pipeline pod.",
             "Resource": "arn:aws:states:::eks:call",
@@ -361,7 +359,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "Comment": "Redirects to an error state if there are no available pods.",
             "Choices": [
               {
-                "Variable": "$.Data.ResponseBody.items[0]",
+                "Variable": "$.ResponseBody.items[0]",
                 "IsPresent": false,
                 "Next": "NoPodsAvailable"
               }
@@ -384,7 +382,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
               "CertificateAuthority": "mock-ca",
               "Endpoint": "mock-endpoint",
               "Method": "PATCH",
-              "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
+              "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
               "RequestBody": {
                 "metadata": {
                   "labels": {}
@@ -700,7 +698,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "States": {
           "GetUnassignedPod": {
             "Next": "IsPodAvailable",
-            "ResultPath": "$.Data",
             "Type": "Task",
             "Comment": "Retrieves first unassigned and running pipeline pod.",
             "Resource": "arn:aws:states:::eks:call",
@@ -725,7 +722,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "Comment": "Redirects to an error state if there are no available pods.",
             "Choices": [
               {
-                "Variable": "$.Data.ResponseBody.items[0]",
+                "Variable": "$.ResponseBody.items[0]",
                 "IsPresent": false,
                 "Next": "NoPodsAvailable"
               }
@@ -748,7 +745,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "CertificateAuthority": "mock-ca",
               "Endpoint": "mock-endpoint",
               "Method": "PATCH",
-              "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
+              "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
               "RequestBody": {
                 "metadata": {
                   "labels": {}
@@ -933,7 +930,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "States": {
           "GetUnassignedPod": {
             "Next": "IsPodAvailable",
-            "ResultPath": "$.Data",
             "Type": "Task",
             "Comment": "Retrieves first unassigned and running pipeline pod.",
             "Resource": "arn:aws:states:::eks:call",
@@ -958,7 +954,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "Comment": "Redirects to an error state if there are no available pods.",
             "Choices": [
               {
-                "Variable": "$.Data.ResponseBody.items[0]",
+                "Variable": "$.ResponseBody.items[0]",
                 "IsPresent": false,
                 "Next": "NoPodsAvailable"
               }
@@ -981,7 +977,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "CertificateAuthority": "mock-ca",
               "Endpoint": "mock-endpoint",
               "Method": "PATCH",
-              "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
+              "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
               "RequestBody": {
                 "metadata": {
                   "labels": {}

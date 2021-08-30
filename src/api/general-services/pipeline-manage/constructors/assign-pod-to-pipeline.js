@@ -39,7 +39,6 @@ const assignPodToPipeline = (context, step) => {
       States: {
         GetUnassignedPod: {
           Next: 'IsPodAvailable',
-          ResultPath: '$.Data',
           Type: 'Task',
           Comment: 'Retrieves first unassigned and running pipeline pod.',
           Resource: 'arn:aws:states:::eks:call',
@@ -64,7 +63,7 @@ const assignPodToPipeline = (context, step) => {
           Comment: 'Redirects to an error state if there are no available pods.',
           Choices: [
             {
-              Variable: '$.Data.ResponseBody.items[0]',
+              Variable: '$.ResponseBody.items[0]',
               IsPresent: false,
               Next: 'NoPodsAvailable',
             },
@@ -87,7 +86,7 @@ const assignPodToPipeline = (context, step) => {
             CertificateAuthority: clusterInfo.certAuthority,
             Endpoint: clusterInfo.endpoint,
             Method: 'PATCH',
-            'Path.$': '$.Data.ResponseBody.items[0].metadata.selfLink',
+            'Path.$': '$.ResponseBody.items[0].metadata.selfLink',
             RequestBody: {
               metadata: {
                 labels: { activityId: getActivityId(activityArn) },
@@ -100,22 +99,6 @@ const assignPodToPipeline = (context, step) => {
     },
   };
 };
-//   Type: 'Task',
-//   Comment: 'Patch pod to set the activity ID label.',
-//   Resource: 'arn:aws:states:::eks:call',
-//   Parameters: {
-//     ClusterName: clusterInfo.name,
-//     CertificateAuthority: clusterInfo.certAuthority,
-//     Endpoint: clusterInfo.endpoint,
-//     Method: 'PATCH',
-//     'Path.$': '$.Data.ResponseBody.items[0].metadata.selfLink',
-//     RequestBody: {
-//       metadata: {
-//         labels: { activityId: getActivityId(activityArn) },
-//       },
-//     },
-//   },
-// };
 
 
 module.exports = assignPodToPipeline;
