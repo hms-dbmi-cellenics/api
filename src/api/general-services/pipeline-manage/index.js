@@ -132,6 +132,12 @@ const createNewStateMachine = async (context, stateMachine, processName) => {
 };
 
 const executeStateMachine = async (stateMachineArn, execInput) => {
+  // when running in aws the step functions use a map step to retry the process
+  // of assigning the pipeline to an available pod
+  // this requires an array as input (the retries one) although we don't use the value
+  const input = execInput || {};
+  input.retries = ['retry'];
+
   const stepFunctions = new AWS.StepFunctions({
     region: config.awsRegion,
   });
@@ -140,7 +146,7 @@ const executeStateMachine = async (stateMachineArn, execInput) => {
 
   const { executionArn } = await stepFunctions.startExecution({
     stateMachineArn,
-    input: JSON.stringify(execInput),
+    input: JSON.stringify(input),
     traceHeader: traceId,
   }).promise();
 
@@ -229,10 +235,6 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
 
   logger.log('Skeleton constructed, now building state machine definition...');
   const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
-
-  // TODO removed after develop
-  console.log('State machine definition');
-  console.log(JSON.stringify(stateMachine, null, 2));
 
   logger.log('State machine definition built, now creating activity if not already present...');
   const activityArn = await createActivity(context); // the context contains the activityArn

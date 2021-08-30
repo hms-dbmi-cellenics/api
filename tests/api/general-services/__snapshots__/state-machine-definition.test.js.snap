@@ -135,84 +135,87 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
 
 {
   "Comment": "Gem2s for clusterEnv 'production'",
-  "StartAt": "GetUnassignedPod",
+  "StartAt": "AssignPipelineToPod",
   "States": {
-    "GetUnassignedPod": {
-      "Next": "IsPodAvailable",
-      "ResultPath": "$.Data",
-      "Type": "Task",
-      "Comment": "Retrieves an unassigned pipeline pod.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
-        "Method": "GET",
-        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-        "QueryParameters": {
-          "labelSelector": [
-            "!activityId,type=pipeline"
-          ]
-        }
-      },
+    "AssignPipelineToPod": {
+      "Next": "DownloadGem",
+      "ResultPath": null,
+      "Type": "Map",
+      "ItemsPath": "$.retries",
+      "MaxConcurrency": 1,
       "Retry": [
         {
           "ErrorEquals": [
-            "EKS.404"
+            "NoPodsAvailable"
           ],
-          "IntervalSeconds": 1,
-          "BackoffRate": 2,
-          "MaxAttempts": 5
-        }
-      ]
-    },
-    "IsPodAvailable": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Variable": "$.Data.ResponseBody.items[0]",
-          "IsPresent": false,
-          "Next": "Wait"
+          "IntervalSeconds": 2,
+          "MaxAttempts": 10,
+          "BackoffRate": 1.5
         }
       ],
-      "Default": "AssignPodToPipeline"
-    },
-    "Wait": {
-      "Type": "Wait",
-      "Seconds": 2,
-      "Next": "GetUnassignedPod"
-    },
-    "AssignPodToPipeline": {
-      "Next": "IsPatchSuccessful",
-      "ResultPath": "$.PatchResult",
-      "Type": "Task",
-      "Comment": "Patch pod to set the activity ID label.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
-        "Method": "PATCH",
-        "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
-        "RequestBody": {
-          "metadata": {
-            "labels": {}
+      "Iterator": {
+        "StartAt": "GetUnassignedPod",
+        "States": {
+          "GetUnassignedPod": {
+            "Next": "IsPodAvailable",
+            "ResultPath": "$.Data",
+            "Type": "Task",
+            "Comment": "Retrieves first unassigned and running pipeline pod.",
+            "Resource": "arn:aws:states:::eks:call",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "mock-endpoint",
+              "Method": "GET",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+              "QueryParameters": {
+                "labelSelector": [
+                  "!activityId,type=pipeline"
+                ],
+                "fieldSelector": [
+                  "status.phase=Running"
+                ]
+              }
+            }
+          },
+          "IsPodAvailable": {
+            "Type": "Choice",
+            "Comment": "Redirects to an error state if there are no available pods.",
+            "Choices": [
+              {
+                "Variable": "$.Data.ResponseBody.items[0]",
+                "IsPresent": false,
+                "Next": "NoPodsAvailable"
+              }
+            ],
+            "Default": "AssignPodToPipeline"
+          },
+          "NoPodsAvailable": {
+            "Type": "Fail",
+            "Cause": "No available and running pipeline pods.",
+            "Error": "NoPodsAvailable"
+          },
+          "AssignPodToPipeline": {
+            "End": true,
+            "ResultPath": "$.PatchResult",
+            "Type": "Task",
+            "Comment": "Patch pod to set the activity ID label.",
+            "Resource": "arn:aws:states:::eks:call",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "mock-endpoint",
+              "Method": "PATCH",
+              "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
+              "RequestBody": {
+                "metadata": {
+                  "labels": {}
+                }
+              }
+            }
           }
         }
       }
-    },
-    "IsPatchSuccessful": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Not": {
-            "Variable": "$.PatchResult.StatusCode",
-            "NumericEquals": 200
-          },
-          "Next": "GetUnassignedPod"
-        }
-      ],
-      "Default": "DownloadGem"
     },
     "DownloadGem": {
       "Next": "PreProcessing",
@@ -310,84 +313,87 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
 
 {
   "Comment": "Gem2s for clusterEnv 'staging'",
-  "StartAt": "GetUnassignedPod",
+  "StartAt": "AssignPipelineToPod",
   "States": {
-    "GetUnassignedPod": {
-      "Next": "IsPodAvailable",
-      "ResultPath": "$.Data",
-      "Type": "Task",
-      "Comment": "Retrieves an unassigned pipeline pod.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
-        "Method": "GET",
-        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-        "QueryParameters": {
-          "labelSelector": [
-            "!activityId,type=pipeline"
-          ]
-        }
-      },
+    "AssignPipelineToPod": {
+      "Next": "DownloadGem",
+      "ResultPath": null,
+      "Type": "Map",
+      "ItemsPath": "$.retries",
+      "MaxConcurrency": 1,
       "Retry": [
         {
           "ErrorEquals": [
-            "EKS.404"
+            "NoPodsAvailable"
           ],
-          "IntervalSeconds": 1,
-          "BackoffRate": 2,
-          "MaxAttempts": 5
-        }
-      ]
-    },
-    "IsPodAvailable": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Variable": "$.Data.ResponseBody.items[0]",
-          "IsPresent": false,
-          "Next": "Wait"
+          "IntervalSeconds": 2,
+          "MaxAttempts": 10,
+          "BackoffRate": 1.5
         }
       ],
-      "Default": "AssignPodToPipeline"
-    },
-    "Wait": {
-      "Type": "Wait",
-      "Seconds": 2,
-      "Next": "GetUnassignedPod"
-    },
-    "AssignPodToPipeline": {
-      "Next": "IsPatchSuccessful",
-      "ResultPath": "$.PatchResult",
-      "Type": "Task",
-      "Comment": "Patch pod to set the activity ID label.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
-        "Method": "PATCH",
-        "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
-        "RequestBody": {
-          "metadata": {
-            "labels": {}
+      "Iterator": {
+        "StartAt": "GetUnassignedPod",
+        "States": {
+          "GetUnassignedPod": {
+            "Next": "IsPodAvailable",
+            "ResultPath": "$.Data",
+            "Type": "Task",
+            "Comment": "Retrieves first unassigned and running pipeline pod.",
+            "Resource": "arn:aws:states:::eks:call",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "mock-endpoint",
+              "Method": "GET",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+              "QueryParameters": {
+                "labelSelector": [
+                  "!activityId,type=pipeline"
+                ],
+                "fieldSelector": [
+                  "status.phase=Running"
+                ]
+              }
+            }
+          },
+          "IsPodAvailable": {
+            "Type": "Choice",
+            "Comment": "Redirects to an error state if there are no available pods.",
+            "Choices": [
+              {
+                "Variable": "$.Data.ResponseBody.items[0]",
+                "IsPresent": false,
+                "Next": "NoPodsAvailable"
+              }
+            ],
+            "Default": "AssignPodToPipeline"
+          },
+          "NoPodsAvailable": {
+            "Type": "Fail",
+            "Cause": "No available and running pipeline pods.",
+            "Error": "NoPodsAvailable"
+          },
+          "AssignPodToPipeline": {
+            "End": true,
+            "ResultPath": "$.PatchResult",
+            "Type": "Task",
+            "Comment": "Patch pod to set the activity ID label.",
+            "Resource": "arn:aws:states:::eks:call",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "mock-endpoint",
+              "Method": "PATCH",
+              "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
+              "RequestBody": {
+                "metadata": {
+                  "labels": {}
+                }
+              }
+            }
           }
         }
       }
-    },
-    "IsPatchSuccessful": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Not": {
-            "Variable": "$.PatchResult.StatusCode",
-            "NumericEquals": 200
-          },
-          "Next": "GetUnassignedPod"
-        }
-      ],
-      "Default": "DownloadGem"
     },
     "DownloadGem": {
       "Next": "PreProcessing",
@@ -671,84 +677,87 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
 
 {
   "Comment": "Pipeline for clusterEnv 'production'",
-  "StartAt": "GetUnassignedPod",
+  "StartAt": "AssignPipelineToPod",
   "States": {
-    "GetUnassignedPod": {
-      "Next": "IsPodAvailable",
-      "ResultPath": "$.Data",
-      "Type": "Task",
-      "Comment": "Retrieves an unassigned pipeline pod.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
-        "Method": "GET",
-        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-        "QueryParameters": {
-          "labelSelector": [
-            "!activityId,type=pipeline"
-          ]
-        }
-      },
+    "AssignPipelineToPod": {
+      "Next": "ClassifierFilterMap",
+      "ResultPath": null,
+      "Type": "Map",
+      "ItemsPath": "$.retries",
+      "MaxConcurrency": 1,
       "Retry": [
         {
           "ErrorEquals": [
-            "EKS.404"
+            "NoPodsAvailable"
           ],
-          "IntervalSeconds": 1,
-          "BackoffRate": 2,
-          "MaxAttempts": 5
-        }
-      ]
-    },
-    "IsPodAvailable": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Variable": "$.Data.ResponseBody.items[0]",
-          "IsPresent": false,
-          "Next": "Wait"
+          "IntervalSeconds": 2,
+          "MaxAttempts": 10,
+          "BackoffRate": 1.5
         }
       ],
-      "Default": "AssignPodToPipeline"
-    },
-    "Wait": {
-      "Type": "Wait",
-      "Seconds": 2,
-      "Next": "GetUnassignedPod"
-    },
-    "AssignPodToPipeline": {
-      "Next": "IsPatchSuccessful",
-      "ResultPath": "$.PatchResult",
-      "Type": "Task",
-      "Comment": "Patch pod to set the activity ID label.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
-        "Method": "PATCH",
-        "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
-        "RequestBody": {
-          "metadata": {
-            "labels": {}
+      "Iterator": {
+        "StartAt": "GetUnassignedPod",
+        "States": {
+          "GetUnassignedPod": {
+            "Next": "IsPodAvailable",
+            "ResultPath": "$.Data",
+            "Type": "Task",
+            "Comment": "Retrieves first unassigned and running pipeline pod.",
+            "Resource": "arn:aws:states:::eks:call",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "mock-endpoint",
+              "Method": "GET",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+              "QueryParameters": {
+                "labelSelector": [
+                  "!activityId,type=pipeline"
+                ],
+                "fieldSelector": [
+                  "status.phase=Running"
+                ]
+              }
+            }
+          },
+          "IsPodAvailable": {
+            "Type": "Choice",
+            "Comment": "Redirects to an error state if there are no available pods.",
+            "Choices": [
+              {
+                "Variable": "$.Data.ResponseBody.items[0]",
+                "IsPresent": false,
+                "Next": "NoPodsAvailable"
+              }
+            ],
+            "Default": "AssignPodToPipeline"
+          },
+          "NoPodsAvailable": {
+            "Type": "Fail",
+            "Cause": "No available and running pipeline pods.",
+            "Error": "NoPodsAvailable"
+          },
+          "AssignPodToPipeline": {
+            "End": true,
+            "ResultPath": "$.PatchResult",
+            "Type": "Task",
+            "Comment": "Patch pod to set the activity ID label.",
+            "Resource": "arn:aws:states:::eks:call",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "mock-endpoint",
+              "Method": "PATCH",
+              "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
+              "RequestBody": {
+                "metadata": {
+                  "labels": {}
+                }
+              }
+            }
           }
         }
       }
-    },
-    "IsPatchSuccessful": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Not": {
-            "Variable": "$.PatchResult.StatusCode",
-            "NumericEquals": 200
-          },
-          "Next": "GetUnassignedPod"
-        }
-      ],
-      "Default": "ClassifierFilterMap"
     },
     "ClassifierFilterMap": {
       "Type": "Map",
@@ -901,84 +910,87 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
 
 {
   "Comment": "Pipeline for clusterEnv 'staging'",
-  "StartAt": "GetUnassignedPod",
+  "StartAt": "AssignPipelineToPod",
   "States": {
-    "GetUnassignedPod": {
-      "Next": "IsPodAvailable",
-      "ResultPath": "$.Data",
-      "Type": "Task",
-      "Comment": "Retrieves an unassigned pipeline pod.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
-        "Method": "GET",
-        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-        "QueryParameters": {
-          "labelSelector": [
-            "!activityId,type=pipeline"
-          ]
-        }
-      },
+    "AssignPipelineToPod": {
+      "Next": "ClassifierFilterMap",
+      "ResultPath": null,
+      "Type": "Map",
+      "ItemsPath": "$.retries",
+      "MaxConcurrency": 1,
       "Retry": [
         {
           "ErrorEquals": [
-            "EKS.404"
+            "NoPodsAvailable"
           ],
-          "IntervalSeconds": 1,
-          "BackoffRate": 2,
-          "MaxAttempts": 5
-        }
-      ]
-    },
-    "IsPodAvailable": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Variable": "$.Data.ResponseBody.items[0]",
-          "IsPresent": false,
-          "Next": "Wait"
+          "IntervalSeconds": 2,
+          "MaxAttempts": 10,
+          "BackoffRate": 1.5
         }
       ],
-      "Default": "AssignPodToPipeline"
-    },
-    "Wait": {
-      "Type": "Wait",
-      "Seconds": 2,
-      "Next": "GetUnassignedPod"
-    },
-    "AssignPodToPipeline": {
-      "Next": "IsPatchSuccessful",
-      "ResultPath": "$.PatchResult",
-      "Type": "Task",
-      "Comment": "Patch pod to set the activity ID label.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
-        "Method": "PATCH",
-        "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
-        "RequestBody": {
-          "metadata": {
-            "labels": {}
+      "Iterator": {
+        "StartAt": "GetUnassignedPod",
+        "States": {
+          "GetUnassignedPod": {
+            "Next": "IsPodAvailable",
+            "ResultPath": "$.Data",
+            "Type": "Task",
+            "Comment": "Retrieves first unassigned and running pipeline pod.",
+            "Resource": "arn:aws:states:::eks:call",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "mock-endpoint",
+              "Method": "GET",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+              "QueryParameters": {
+                "labelSelector": [
+                  "!activityId,type=pipeline"
+                ],
+                "fieldSelector": [
+                  "status.phase=Running"
+                ]
+              }
+            }
+          },
+          "IsPodAvailable": {
+            "Type": "Choice",
+            "Comment": "Redirects to an error state if there are no available pods.",
+            "Choices": [
+              {
+                "Variable": "$.Data.ResponseBody.items[0]",
+                "IsPresent": false,
+                "Next": "NoPodsAvailable"
+              }
+            ],
+            "Default": "AssignPodToPipeline"
+          },
+          "NoPodsAvailable": {
+            "Type": "Fail",
+            "Cause": "No available and running pipeline pods.",
+            "Error": "NoPodsAvailable"
+          },
+          "AssignPodToPipeline": {
+            "End": true,
+            "ResultPath": "$.PatchResult",
+            "Type": "Task",
+            "Comment": "Patch pod to set the activity ID label.",
+            "Resource": "arn:aws:states:::eks:call",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "mock-endpoint",
+              "Method": "PATCH",
+              "Path.$": "$.Data.ResponseBody.items[0].metadata.selfLink",
+              "RequestBody": {
+                "metadata": {
+                  "labels": {}
+                }
+              }
+            }
           }
         }
       }
-    },
-    "IsPatchSuccessful": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Not": {
-            "Variable": "$.PatchResult.StatusCode",
-            "NumericEquals": 200
-          },
-          "Next": "GetUnassignedPod"
-        }
-      ],
-      "Default": "ClassifierFilterMap"
     },
     "ClassifierFilterMap": {
       "Type": "Map",

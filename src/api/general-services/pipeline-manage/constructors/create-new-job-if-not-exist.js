@@ -1,7 +1,6 @@
 const createNewJobIfNotExist = (context, step) => {
   const { accountId, activityArn, processName } = context;
 
-
   return {
     ...step,
     Type: 'Task',

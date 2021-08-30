@@ -11,46 +11,11 @@ const createLocalPipeline = (nextStep) => ({
   },
 });
 
-const assignWorkToPod = (nextStep) => ({
-  GetUnassignedPod: {
-    XStepType: 'get-unassigned-pod',
-    Next: 'IsPodAvailable',
-    ResultPath: '$.Data',
-  },
-  IsPodAvailable: {
-    Type: 'Choice',
-    Choices: [
-      {
-        Variable: '$.Data.ResponseBody.items[0]',
-        IsPresent: false,
-        Next: 'Wait',
-      },
-    ],
-    Default: 'AssignPodToPipeline',
-  },
-  Wait: {
-    Type: 'Wait',
-    Seconds: 2,
-    Next: 'GetUnassignedPod',
-  },
-  AssignPodToPipeline: {
+const assignPipelineToPod = (nextStep) => ({
+  AssignPipelineToPod: {
     XStepType: 'assign-pod-to-pipeline',
-    Next: 'IsPatchSuccessful',
-    ResultPath: '$.PatchResult',
-  },
-  IsPatchSuccessful: {
-    Type: 'Choice',
-    Choices: [
-      {
-        Not: {
-          // probably check here if an activty ARN has been assigned
-          Variable: '$.PatchResult.StatusCode',
-          NumericEquals: 200,
-        },
-        Next: 'GetUnassignedPod',
-      },
-    ],
-    Default: nextStep,
+    Next: nextStep,
+    ResultPath: 'null',
   },
 });
 
@@ -61,7 +26,7 @@ const buildInitialSteps = (clusterEnv, nextStep) => {
     return createLocalPipeline(nextStep);
   }
   // if we are in staging / production wait for an activity to be assigned
-  return assignWorkToPod(nextStep);
+  return assignPipelineToPod(nextStep);
 };
 
 const firstStep = (clusterEnv) => {
@@ -69,7 +34,7 @@ const firstStep = (clusterEnv) => {
     return 'DeleteCompletedPipelineWorker';
   }
 
-  return 'GetUnassignedPod';
+  return 'AssignPipelineToPod';
 };
 
 module.exports = { firstStep, buildInitialSteps };
