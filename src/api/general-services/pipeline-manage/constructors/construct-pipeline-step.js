@@ -16,7 +16,7 @@ const constructPipelineStep = (context, step) => {
       return createNewJobIfNotExist(context, step, args);
     }
     // assigning the pipeline to a running pod (staging/production)
-    case 'assign-pod-to-pipeline': {
+    case 'initialize-infra': {
       return assignPodToPipeline(context, step, args);
     }
     case 'create-new-step': {

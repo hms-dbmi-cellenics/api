@@ -20,81 +20,142 @@ const assignPodToPipeline = (context, step) => {
     clusterInfo, activityArn, experimentId, processName,
   } = context;
 
-
+  const { Next } = step;
   return {
-    ...step,
-    Type: 'Map',
-    ResultPath: null,
-    ItemsPath: '$.retries',
-    MaxConcurrency: 1,
-    // retry waits up to 226 seconds, fargate takes from 1 to 3 minutes to spawn a new pod
-    Retry: [{
-      ErrorEquals: ['NoPodsAvailable'],
-      IntervalSeconds: 2,
-      MaxAttempts: 11,
-      BackoffRate: 1.5,
-    }],
-    Iterator: {
-      StartAt: 'GetUnassignedPod',
-      States: {
-        GetUnassignedPod: {
-          Next: 'IsPodAvailable',
-          Type: 'Task',
-          Comment: 'Retrieves first unassigned and running pipeline pod.',
-          Resource: 'arn:aws:states:::eks:call',
-          Parameters: {
-            ClusterName: clusterInfo.name,
-            CertificateAuthority: clusterInfo.certAuthority,
-            Endpoint: clusterInfo.endpoint,
-            Method: 'GET',
-            Path: `/api/v1/namespaces/${config.pipelineNamespace}/pods`,
-            QueryParameters: {
-              labelSelector: [
-                '!activityId,type=pipeline',
-              ],
-              fieldSelector: [
-                'status.phase=Running',
-              ],
+    GetExperimentRunningPods: {
+      Type: 'Task',
+      Comment: 'Retrieves running pods assigned to the experiment ID.',
+      Next: 'DeletePreviousPods',
+      Resource: 'arn:aws:states:::eks:call',
+      ResultPath: '$.runningPods',
+      Parameters: {
+        ClusterName: clusterInfo.name,
+        CertificateAuthority: clusterInfo.certAuthority,
+        Endpoint: clusterInfo.endpoint,
+        Method: 'GET',
+        Path: `/api/v1/namespaces/${config.pipelineNamespace}/pods`,
+        QueryParameters: {
+          labelSelector: [
+            `experimentId=${experimentId},type=pipeline`,
+          ],
+          fieldSelector: [
+            'status.phase=Running',
+          ],
+        },
+      },
+    },
+    DeletePreviousPods: {
+      Next: 'AssignPipelineToPod',
+      Type: 'Map',
+      ItemsPath: '$.runningPods.ResponseBody.items',
+      ResultPath: null,
+      MaxConcurrency: 0,
+      Iterator: {
+        StartAt: 'DeletePod',
+        States: {
+          DeletePod: {
+            Type: 'Task',
+            End: true,
+            Comment: 'Patch pod to set the activity ID label.',
+            Resource: 'arn:aws:states:::eks:call',
+            Parameters: {
+              ClusterName: clusterInfo.name,
+              CertificateAuthority: clusterInfo.certAuthority,
+              Endpoint: clusterInfo.endpoint,
+              Method: 'DELETE',
+              'Path.$': '$.metadata.selfLink',
             },
+            Catch: [
+              {
+                ErrorEquals: [
+                  'EKS.404',
+                ],
+                Next: 'Ignore404',
+              },
+            ],
+          },
+          Ignore404: {
+            Type: 'Pass',
+            End: true,
           },
         },
-        IsPodAvailable: {
-          Type: 'Choice',
-          Comment: 'Redirects to an error state if there are no available pods.',
-          Choices: [
-            {
-              Variable: '$.ResponseBody.items[0]',
-              IsPresent: false,
-              Next: 'NoPodsAvailable',
+      },
+    },
+    AssignPipelineToPod: {
+      Next,
+      ResultPath: null,
+      Type: 'Map',
+      ItemsPath: '$.retries',
+      MaxConcurrency: 1,
+      // retry waits up to 226 seconds, fargate takes from 1 to 3 minutes to spawn a new pod
+      Retry: [{
+        ErrorEquals: ['NoPodsAvailable'],
+        IntervalSeconds: 2,
+        MaxAttempts: 11,
+        BackoffRate: 1.5,
+      }],
+      Iterator: {
+        StartAt: 'GetUnassignedPod',
+        States: {
+          GetUnassignedPod: {
+            Next: 'IsPodAvailable',
+            Type: 'Task',
+            Comment: 'Retrieves first unassigned and running pipeline pod.',
+            Resource: 'arn:aws:states:::eks:call',
+            Parameters: {
+              ClusterName: clusterInfo.name,
+              CertificateAuthority: clusterInfo.certAuthority,
+              Endpoint: clusterInfo.endpoint,
+              Method: 'GET',
+              Path: `/api/v1/namespaces/${config.pipelineNamespace}/pods`,
+              QueryParameters: {
+                labelSelector: [
+                  '!activityId,type=pipeline',
+                ],
+                fieldSelector: [
+                  'status.phase=Running',
+                ],
+              },
             },
-          ],
-          Default: 'AssignPodToPipeline',
-        },
-        NoPodsAvailable: {
-          Type: 'Fail',
-          Cause: 'No available and running pipeline pods.',
-          Error: 'NoPodsAvailable',
-        },
-        AssignPodToPipeline: {
-          End: true,
-          ResultPath: '$.PatchResult',
-          Type: 'Task',
-          Comment: 'Patch pod to set the activity ID label.',
-          Resource: 'arn:aws:states:::eks:call',
-          Parameters: {
-            ClusterName: clusterInfo.name,
-            CertificateAuthority: clusterInfo.certAuthority,
-            Endpoint: clusterInfo.endpoint,
-            Method: 'PATCH',
-            'Path.$': '$.ResponseBody.items[0].metadata.selfLink',
-            RequestBody: {
-              metadata: {
-                labels: {
-                  activityId: getActivityId(activityArn),
-                  experimentId,
-                  processName,
-                },
+          },
+          IsPodAvailable: {
+            Type: 'Choice',
+            Comment: 'Redirects to an error state if there are no available pods.',
+            Choices: [
+              {
+                Variable: '$.ResponseBody.items[0]',
+                IsPresent: false,
+                Next: 'NoPodsAvailable',
+              },
+            ],
+            Default: 'AssignPodToPipeline',
+          },
+          NoPodsAvailable: {
+            Type: 'Fail',
+            Cause: 'No available and running pipeline pods.',
+            Error: 'NoPodsAvailable',
+          },
+          AssignPodToPipeline: {
+            End: true,
+            ResultPath: '$.PatchResult',
+            Type: 'Task',
+            Comment: 'Patch pod to set the activity ID label.',
+            Resource: 'arn:aws:states:::eks:call',
+            Parameters: {
+              ClusterName: clusterInfo.name,
+              CertificateAuthority: clusterInfo.certAuthority,
+              Endpoint: clusterInfo.endpoint,
+              Method: 'PATCH',
+              'Path.$': '$.ResponseBody.items[0].metadata.selfLink',
+              RequestBody: {
+                metadata: {
+                  labels: {
+                    activityId: getActivityId(activityArn),
+                    experimentId,
+                    processName,
+                  },
 
+                },
               },
             },
           },

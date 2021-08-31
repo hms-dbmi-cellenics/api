@@ -8,7 +8,8 @@ const pipelineConstants = require('./pipeline-manage/constants');
 const privateSteps = [
   'DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker',
   'AssignPipelineToPod', 'GetUnassignedPod', 'IsPodAvailable',
-  'NoPodsAvailable', 'AssignPodToPipeline',
+  'NoPodsAvailable', 'AssignPodToPipeline', 'GetExperimentRunningPods',
+  'DeletePreviousPods', 'DeletePod', 'Ignore404',
 ];
 
 

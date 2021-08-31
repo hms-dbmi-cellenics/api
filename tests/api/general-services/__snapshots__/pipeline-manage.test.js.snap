@@ -207,91 +207,8 @@ Array [
     "type": "return",
     "value": Object {
       "Comment": "Pipeline for clusterEnv 'test'",
-      "StartAt": "AssignPipelineToPod",
+      "StartAt": "GetExperimentRunningPods",
       "States": Object {
-        "AssignPipelineToPod": Object {
-          "ItemsPath": "$.retries",
-          "Iterator": Object {
-            "StartAt": "GetUnassignedPod",
-            "States": Object {
-              "AssignPodToPipeline": Object {
-                "Comment": "Patch pod to set the activity ID label.",
-                "End": true,
-                "Parameters": Object {
-                  "CertificateAuthority": "AAAAAAAAAAA",
-                  "ClusterName": "biomage-test",
-                  "Endpoint": "https://test-endpoint.me/fgh",
-                  "Method": "PATCH",
-                  "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
-                  "RequestBody": Object {
-                    "metadata": Object {
-                      "labels": Object {
-                        "activityId": "pipeline-test-mock-uuid",
-                        "experimentId": "testExperimentId",
-                        "processName": "qc",
-                      },
-                    },
-                  },
-                },
-                "Resource": "arn:aws:states:::eks:call",
-                "ResultPath": "$.PatchResult",
-                "Type": "Task",
-              },
-              "GetUnassignedPod": Object {
-                "Comment": "Retrieves first unassigned and running pipeline pod.",
-                "Next": "IsPodAvailable",
-                "Parameters": Object {
-                  "CertificateAuthority": "AAAAAAAAAAA",
-                  "ClusterName": "biomage-test",
-                  "Endpoint": "https://test-endpoint.me/fgh",
-                  "Method": "GET",
-                  "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-                  "QueryParameters": Object {
-                    "fieldSelector": Array [
-                      "status.phase=Running",
-                    ],
-                    "labelSelector": Array [
-                      "!activityId,type=pipeline",
-                    ],
-                  },
-                },
-                "Resource": "arn:aws:states:::eks:call",
-                "Type": "Task",
-              },
-              "IsPodAvailable": Object {
-                "Choices": Array [
-                  Object {
-                    "IsPresent": false,
-                    "Next": "NoPodsAvailable",
-                    "Variable": "$.ResponseBody.items[0]",
-                  },
-                ],
-                "Comment": "Redirects to an error state if there are no available pods.",
-                "Default": "AssignPodToPipeline",
-                "Type": "Choice",
-              },
-              "NoPodsAvailable": Object {
-                "Cause": "No available and running pipeline pods.",
-                "Error": "NoPodsAvailable",
-                "Type": "Fail",
-              },
-            },
-          },
-          "MaxConcurrency": 1,
-          "Next": "ClassifierFilterMap",
-          "ResultPath": null,
-          "Retry": Array [
-            Object {
-              "BackoffRate": 1.5,
-              "ErrorEquals": Array [
-                "NoPodsAvailable",
-              ],
-              "IntervalSeconds": 2,
-              "MaxAttempts": 11,
-            },
-          ],
-          "Type": "Map",
-        },
         "CellSizeDistributionFilterMap": Object {
           "ItemsPath": "$.samples",
           "Iterator": Object {
@@ -424,6 +341,150 @@ Array [
         "EndOfPipeline": Object {
           "End": true,
           "Type": "Pass",
+        },
+        "InitializeInfra": Object {
+          "AssignPipelineToPod": Object {
+            "ItemsPath": "$.retries",
+            "Iterator": Object {
+              "StartAt": "GetUnassignedPod",
+              "States": Object {
+                "AssignPodToPipeline": Object {
+                  "Comment": "Patch pod to set the activity ID label.",
+                  "End": true,
+                  "Parameters": Object {
+                    "CertificateAuthority": "AAAAAAAAAAA",
+                    "ClusterName": "biomage-test",
+                    "Endpoint": "https://test-endpoint.me/fgh",
+                    "Method": "PATCH",
+                    "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
+                    "RequestBody": Object {
+                      "metadata": Object {
+                        "labels": Object {
+                          "activityId": "pipeline-test-mock-uuid",
+                          "experimentId": "testExperimentId",
+                          "processName": "qc",
+                        },
+                      },
+                    },
+                  },
+                  "Resource": "arn:aws:states:::eks:call",
+                  "ResultPath": "$.PatchResult",
+                  "Type": "Task",
+                },
+                "GetUnassignedPod": Object {
+                  "Comment": "Retrieves first unassigned and running pipeline pod.",
+                  "Next": "IsPodAvailable",
+                  "Parameters": Object {
+                    "CertificateAuthority": "AAAAAAAAAAA",
+                    "ClusterName": "biomage-test",
+                    "Endpoint": "https://test-endpoint.me/fgh",
+                    "Method": "GET",
+                    "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+                    "QueryParameters": Object {
+                      "fieldSelector": Array [
+                        "status.phase=Running",
+                      ],
+                      "labelSelector": Array [
+                        "!activityId,type=pipeline",
+                      ],
+                    },
+                  },
+                  "Resource": "arn:aws:states:::eks:call",
+                  "Type": "Task",
+                },
+                "IsPodAvailable": Object {
+                  "Choices": Array [
+                    Object {
+                      "IsPresent": false,
+                      "Next": "NoPodsAvailable",
+                      "Variable": "$.ResponseBody.items[0]",
+                    },
+                  ],
+                  "Comment": "Redirects to an error state if there are no available pods.",
+                  "Default": "AssignPodToPipeline",
+                  "Type": "Choice",
+                },
+                "NoPodsAvailable": Object {
+                  "Cause": "No available and running pipeline pods.",
+                  "Error": "NoPodsAvailable",
+                  "Type": "Fail",
+                },
+              },
+            },
+            "MaxConcurrency": 1,
+            "Next": "ClassifierFilterMap",
+            "ResultPath": null,
+            "Retry": Array [
+              Object {
+                "BackoffRate": 1.5,
+                "ErrorEquals": Array [
+                  "NoPodsAvailable",
+                ],
+                "IntervalSeconds": 2,
+                "MaxAttempts": 11,
+              },
+            ],
+            "Type": "Map",
+          },
+          "DeletePreviousPods": Object {
+            "ItemsPath": "$.runningPods.ResponseBody.items",
+            "Iterator": Object {
+              "StartAt": "DeletePod",
+              "States": Object {
+                "DeletePod": Object {
+                  "Catch": Array [
+                    Object {
+                      "ErrorEquals": Array [
+                        "EKS.404",
+                      ],
+                      "Next": "Ignore404",
+                    },
+                  ],
+                  "Comment": "Patch pod to set the activity ID label.",
+                  "End": true,
+                  "Parameters": Object {
+                    "CertificateAuthority": "AAAAAAAAAAA",
+                    "ClusterName": "biomage-test",
+                    "Endpoint": "https://test-endpoint.me/fgh",
+                    "Method": "DELETE",
+                    "Path.$": "$.metadata.selfLink",
+                  },
+                  "Resource": "arn:aws:states:::eks:call",
+                  "Type": "Task",
+                },
+                "Ignore404": Object {
+                  "End": true,
+                  "Type": "Pass",
+                },
+              },
+            },
+            "MaxConcurrency": 0,
+            "Next": "AssignPipelineToPod",
+            "ResultPath": null,
+            "Type": "Map",
+          },
+          "GetExperimentRunningPods": Object {
+            "Comment": "Retrieves running pods assigned to the experiment ID.",
+            "Next": "DeletePreviousPods",
+            "Parameters": Object {
+              "CertificateAuthority": "AAAAAAAAAAA",
+              "ClusterName": "biomage-test",
+              "Endpoint": "https://test-endpoint.me/fgh",
+              "Method": "GET",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+              "QueryParameters": Object {
+                "fieldSelector": Array [
+                  "status.phase=Running",
+                ],
+                "labelSelector": Array [
+                  "experimentId=testExperimentId,type=pipeline",
+                ],
+              },
+            },
+            "Resource": "arn:aws:states:::eks:call",
+            "ResultPath": "$.runningPods",
+            "Type": "Task",
+          },
         },
         "MitochondrialContentFilterMap": Object {
           "ItemsPath": "$.samples",

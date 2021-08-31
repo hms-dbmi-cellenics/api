@@ -12,10 +12,9 @@ const createLocalPipeline = (nextStep) => ({
 });
 
 const assignPipelineToPod = (nextStep) => ({
-  AssignPipelineToPod: {
-    XStepType: 'assign-pod-to-pipeline',
+  InitializeInfra: {
+    XStepType: 'initialize-infra',
     Next: nextStep,
-    ResultPath: 'null',
   },
 });
 
@@ -34,7 +33,7 @@ const firstStep = (clusterEnv) => {
     return 'DeleteCompletedPipelineWorker';
   }
 
-  return 'AssignPipelineToPod';
+  return 'GetExperimentRunningPods';
 };
 
 module.exports = { firstStep, buildInitialSteps };
