@@ -4,17 +4,14 @@ const validateRequest = require('../../utils/schema-validator');
 const logger = require('../../utils/logging');
 
 const constants = require('../general-services/pipeline-manage/constants');
+const getPipelineStatus = require('../general-services/pipeline-status');
 
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
-const PipelineHook = require('../../utils/hookRunner');
 
 const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
 
-const getPipelineStatus = require('../general-services/pipeline-status');
-
-const pipelineHook = new PipelineHook();
 
 const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');
@@ -105,12 +102,6 @@ const pipelineResponse = async (io, message) => {
       },
     ]);
   }
-
-  await pipelineHook.run(taskName, {
-    experimentId,
-    output,
-    statusRes: statusResToSend,
-  });
 
   // Concatenate into a proper response.
   const response = {
