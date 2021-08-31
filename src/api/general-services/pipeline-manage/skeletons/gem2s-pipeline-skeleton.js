@@ -1,7 +1,7 @@
 const { firstStep, buildInitialSteps } = require('./initialization');
 
 const getGem2sPipelineSkeleton = (clusterEnv) => ({
-  Comment: `Gem2s for clusterEnv '${clusterEnv}'`,
+  Comment: `Gem2s Pipeline for clusterEnv '${clusterEnv}'`,
   StartAt: firstStep(clusterEnv),
   States: {
     ...buildInitialSteps(clusterEnv, 'DownloadGem'),

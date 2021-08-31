@@ -234,6 +234,8 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
   logger.log('Skeleton constructed, now building state machine definition...');
   const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
 
+  console.log(`QC State Machine:\n${stateMachine}`);
+
   logger.log('State machine definition built, now creating activity if not already present...');
   const activityArn = await createActivity(context); // the context contains the activityArn
 
@@ -272,6 +274,8 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
 
   logger.log('Skeleton constructed, now building state machine definition...');
   const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
+
+  console.log(`Gem2S State Machine:\n${stateMachine}`);
 
   logger.log('State machine definition built, now creating activity if not already present...');
   const activityArn = await createActivity(context);

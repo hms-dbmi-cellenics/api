@@ -1,7 +1,7 @@
 const { firstStep, buildInitialSteps } = require('./initialization');
 
 const getQcPipelineSkeleton = (clusterEnv) => ({
-  Comment: `Pipeline for clusterEnv '${clusterEnv}'`,
+  Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
   StartAt: firstStep(clusterEnv),
   States: {
     ...buildInitialSteps(clusterEnv, 'ClassifierFilterMap'),

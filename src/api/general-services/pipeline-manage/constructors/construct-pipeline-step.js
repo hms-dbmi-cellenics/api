@@ -1,24 +1,31 @@
 const deleteCompletedJobs = require('./delete-complete-jobs');
 const createNewStep = require('./create-new-step');
 const createNewJobIfNotExist = require('./create-new-job-if-not-exist');
-const assignPodToPipeline = require('./assign-pod-to-pipeline');
+const { getRunningPods, deleteRunningPods, assignPodToPipeline } = require('./assign-pod-to-pipeline');
 
 const constructPipelineStep = (context, step) => {
   const { XStepType: stepType, XConstructorArgs: args } = step;
 
   switch (stepType) {
-    // deletes completed jobs when running locally
+    // Local steps
     case 'delete-completed-jobs': {
       return deleteCompletedJobs(context, step, args);
     }
-    // used to create a new job when running locally
     case 'create-new-job-if-not-exist': {
       return createNewJobIfNotExist(context, step, args);
     }
-    // assigning the pipeline to a running pod (staging/production)
-    case 'initialize-infra': {
+
+    // Remote (aws) steps
+    case 'get-running-pods': {
+      return getRunningPods(context, step, args);
+    }
+    case 'delete-running-pods': {
+      return deleteRunningPods(context, step, args);
+    }
+    case 'assign-pipeline-to-pod': {
       return assignPodToPipeline(context, step, args);
     }
+    // used both locally and in aws
     case 'create-new-step': {
       return createNewStep(context, step, args);
     }

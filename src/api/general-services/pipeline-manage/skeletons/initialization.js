@@ -12,8 +12,19 @@ const createLocalPipeline = (nextStep) => ({
 });
 
 const assignPipelineToPod = (nextStep) => ({
-  InitializeInfra: {
-    XStepType: 'initialize-infra',
+  GetExperimentRunningPods: {
+    XStepType: 'get-running-pods',
+    Next: 'DeletePreviousPods',
+    ResultPath: '$.runningPods',
+  },
+  DeletePreviousPods: {
+    XStepType: 'delete-running-pods',
+    ResultPath: null,
+    Next: 'AssignPipelineToPod',
+  },
+  AssignPipelineToPod: {
+    XStepType: 'assign-pipeline-to-pod',
+    ResultPath: null,
     Next: nextStep,
   },
 });

@@ -59,6 +59,7 @@ const getStepsFromExecutionHistory = (events) => {
       this.completedTasks = [];
       this.branches = {};
       this.branchCount = 0;
+      this.lastIndex = 0;
       this.updateCurrentState(event);
       if (makeRoot) {
         this.visited.push(event.previousEventId);
@@ -98,6 +99,7 @@ const getStepsFromExecutionHistory = (events) => {
     consume(event) {
       if (event.type === 'MapIterationStarted') {
         this.branches[event.mapIterationStartedEventDetails.index] = new Branch(event);
+        this.lastIndex = event.mapIterationStartedEventDetails.index;
       } else {
         this.visited.push(event.id);
         this.updateCurrentState(event);
@@ -106,7 +108,8 @@ const getStepsFromExecutionHistory = (events) => {
         } else if (event.type === 'MapStateStarted') {
           this.branchCount = event.mapStateStartedEventDetails.length;
         } else if (event.type === 'MapStateExited') {
-          this.completedTasks = this.completedTasks.concat(this.branches[0].completedTasks);
+          const completedTasks = this.branches[this.lastIndex];
+          this.completedTasks = this.completedTasks.concat(completedTasks);
           this.branches = {};
           this.branchCount = 0;
         }
