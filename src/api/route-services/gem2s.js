@@ -130,7 +130,7 @@ class Gem2sService {
 
     logger.log('Running new gem2s pipeline');
 
-    const newHandle = await createGem2SPipeline(experimentId, taskParams, paramsHash);
+    const newHandle = await createGem2SPipeline(experimentId, taskParams);
 
     const experimentService = new ExperimentService();
     await experimentService.saveGem2sHandle(

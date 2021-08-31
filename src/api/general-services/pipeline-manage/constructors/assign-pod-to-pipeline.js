@@ -27,11 +27,11 @@ const assignPodToPipeline = (context, step) => {
     ResultPath: null,
     ItemsPath: '$.retries',
     MaxConcurrency: 1,
-    // retry waits up to 150 seconds, fargate takes from 1 to 3 minutes to spawn a new pod
+    // retry waits up to 226 seconds, fargate takes from 1 to 3 minutes to spawn a new pod
     Retry: [{
       ErrorEquals: ['NoPodsAvailable'],
       IntervalSeconds: 2,
-      MaxAttempts: 10,
+      MaxAttempts: 11,
       BackoffRate: 1.5,
     }],
     Iterator: {

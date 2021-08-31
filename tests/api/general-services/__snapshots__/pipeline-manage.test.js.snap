@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`test for pipeline services Create pipeline works 1`] = `
+exports[`test for pipeline services Create Gem2s pipeline works 1`] = `
 [MockFunction] {
   "calls": Array [
     Array [
@@ -20,7 +20,70 @@ exports[`test for pipeline services Create pipeline works 1`] = `
 }
 `;
 
-exports[`test for pipeline services Create pipeline works 2`] = `
+exports[`test for pipeline services Create Gem2s pipeline works 2`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "loggingConfiguration": Object {
+        "level": "OFF",
+      },
+      "name": "biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
+      "tags": Array [
+        Object {
+          "key": "experimentId",
+          "value": "testExperimentId",
+        },
+        Object {
+          "key": "clusterEnv",
+          "value": "test",
+        },
+        Object {
+          "key": "sandboxId",
+          "value": "default",
+        },
+      ],
+      "type": "STANDARD",
+    },
+  },
+]
+`;
+
+exports[`test for pipeline services Create Gem2s pipeline works 3`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "input": "{\\"retries\\":[\\"retry\\"]}",
+      "stateMachineArn": "test-machine",
+      "traceHeader": undefined,
+    },
+  },
+]
+`;
+
+exports[`test for pipeline services Create QC pipeline works 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "name": "biomage-test",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "name": "biomage-test",
+      },
+    },
+  ],
+}
+`;
+
+exports[`test for pipeline services Create QC pipeline works 2`] = `
 Array [
   Object {
     "type": "return",
@@ -50,7 +113,7 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Create pipeline works 3`] = `
+exports[`test for pipeline services Create QC pipeline works 3`] = `
 Array [
   Object {
     "type": "return",
@@ -63,7 +126,82 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Parses processingConfig correctly 1`] = `
+exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "name": "biomage-test",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "name": "biomage-test",
+      },
+    },
+  ],
+}
+`;
+
+exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 2`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "loggingConfiguration": Object {
+        "level": "OFF",
+      },
+      "name": "biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
+      "tags": Array [
+        Object {
+          "key": "experimentId",
+          "value": "testExperimentId",
+        },
+        Object {
+          "key": "clusterEnv",
+          "value": "test",
+        },
+        Object {
+          "key": "sandboxId",
+          "value": "default",
+        },
+      ],
+      "type": "STANDARD",
+    },
+  },
+]
+`;
+
+exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 3`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
+      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+    },
+  },
+]
+`;
+
+exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 4`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "input": "{\\"retries\\":[\\"retry\\"]}",
+      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "traceHeader": undefined,
+    },
+  },
+]
+`;
+
+exports[`test for pipeline services Parses QC processingConfig correctly 1`] = `
 Array [
   Object {
     "type": "return",
@@ -147,7 +285,7 @@ Array [
                 "NoPodsAvailable",
               ],
               "IntervalSeconds": 2,
-              "MaxAttempts": 10,
+              "MaxAttempts": 11,
             },
           ],
           "Type": "Map",
@@ -345,7 +483,7 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Pipeline is updated instead of created if an error is thrown. 1`] = `
+exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 1`] = `
 [MockFunction] {
   "calls": Array [
     Array [
@@ -365,7 +503,7 @@ exports[`test for pipeline services Pipeline is updated instead of created if an
 }
 `;
 
-exports[`test for pipeline services Pipeline is updated instead of created if an error is thrown. 2`] = `
+exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 2`] = `
 Array [
   Object {
     "type": "return",
@@ -395,7 +533,7 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Pipeline is updated instead of created if an error is thrown. 3`] = `
+exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 3`] = `
 Array [
   Object {
     "type": "return",
@@ -407,7 +545,7 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Pipeline is updated instead of created if an error is thrown. 4`] = `
+exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 4`] = `
 Array [
   Object {
     "type": "return",
