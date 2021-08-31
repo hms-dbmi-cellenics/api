@@ -149,7 +149,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "NoPodsAvailable"
           ],
           "IntervalSeconds": 2,
-          "MaxAttempts": 10,
+          "MaxAttempts": 11,
           "BackoffRate": 1.5
         }
       ],
@@ -208,7 +208,9 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
               "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
               "RequestBody": {
                 "metadata": {
-                  "labels": {}
+                  "labels": {
+                    "experimentId": "mock-experiment-id"
+                  }
                 }
               }
             }
@@ -326,7 +328,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "NoPodsAvailable"
           ],
           "IntervalSeconds": 2,
-          "MaxAttempts": 10,
+          "MaxAttempts": 11,
           "BackoffRate": 1.5
         }
       ],
@@ -385,7 +387,9 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
               "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
               "RequestBody": {
                 "metadata": {
-                  "labels": {}
+                  "labels": {
+                    "experimentId": "mock-experiment-id"
+                  }
                 }
               }
             }
@@ -689,7 +693,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "NoPodsAvailable"
           ],
           "IntervalSeconds": 2,
-          "MaxAttempts": 10,
+          "MaxAttempts": 11,
           "BackoffRate": 1.5
         }
       ],
@@ -748,7 +752,9 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
               "RequestBody": {
                 "metadata": {
-                  "labels": {}
+                  "labels": {
+                    "experimentId": "mock-experiment-id"
+                  }
                 }
               }
             }
@@ -921,7 +927,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "NoPodsAvailable"
           ],
           "IntervalSeconds": 2,
-          "MaxAttempts": 10,
+          "MaxAttempts": 11,
           "BackoffRate": 1.5
         }
       ],
@@ -980,7 +986,9 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
               "RequestBody": {
                 "metadata": {
-                  "labels": {}
+                  "labels": {
+                    "experimentId": "mock-experiment-id"
+                  }
                 }
               }
             }

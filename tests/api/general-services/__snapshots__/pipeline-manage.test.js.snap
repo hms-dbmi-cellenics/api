@@ -227,6 +227,8 @@ Array [
                     "metadata": Object {
                       "labels": Object {
                         "activityId": "pipeline-test-mock-uuid",
+                        "experimentId": "testExperimentId",
+                        "processName": "qc",
                       },
                     },
                   },

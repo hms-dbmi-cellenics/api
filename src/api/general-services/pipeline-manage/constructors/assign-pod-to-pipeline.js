@@ -17,7 +17,7 @@ const getActivityId = (activityArn) => {
 
 const assignPodToPipeline = (context, step) => {
   const {
-    clusterInfo, activityArn,
+    clusterInfo, activityArn, experimentId, processName,
   } = context;
 
 
@@ -89,7 +89,11 @@ const assignPodToPipeline = (context, step) => {
             'Path.$': '$.ResponseBody.items[0].metadata.selfLink',
             RequestBody: {
               metadata: {
-                labels: { activityId: getActivityId(activityArn) },
+                labels: {
+                  activityId: getActivityId(activityArn),
+                  experimentId,
+                  processName,
+                },
 
               },
             },
