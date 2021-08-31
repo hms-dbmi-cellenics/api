@@ -19,7 +19,6 @@ const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('./constants');
 
 const experimentService = new ExperimentService();
 
-
 const getPipelineArtifacts = async () => {
   const response = await fetch(
     config.pipelineInstanceConfigUrl,
@@ -134,7 +133,7 @@ const createNewStateMachine = async (context, stateMachine, processName) => {
 const executeStateMachine = async (stateMachineArn, execInput) => {
   // when running in aws the step functions use a map step to retry the process
   // of assigning the pipeline to an available pod
-  // this requires an array as input (the retries one) although we don't use the value
+  // map steps require an array as input so we declare one (it's value is not used)
   const input = execInput || {};
   input.retries = ['retry'];
 
@@ -142,7 +141,6 @@ const executeStateMachine = async (stateMachineArn, execInput) => {
     region: config.awsRegion,
   });
   const { trace_id: traceId } = AWSXRay.getSegment() || {};
-
 
   const { executionArn } = await stepFunctions.startExecution({
     stateMachineArn,

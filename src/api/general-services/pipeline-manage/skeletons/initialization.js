@@ -25,7 +25,7 @@ const buildInitialSteps = (clusterEnv, nextStep) => {
   if (clusterEnv === 'development') {
     return createLocalPipeline(nextStep);
   }
-  // if we are in staging / production wait for an activity to be assigned
+  // if we are in aws assign a pod to the pipeline
   return assignPipelineToPod(nextStep);
 };
 

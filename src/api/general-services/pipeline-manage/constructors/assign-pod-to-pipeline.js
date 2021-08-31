@@ -100,5 +100,4 @@ const assignPodToPipeline = (context, step) => {
   };
 };
 
-
 module.exports = assignPodToPipeline;
