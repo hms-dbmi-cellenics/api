@@ -6,7 +6,9 @@ const logger = require('../../utils/logging');
 const pipelineConstants = require('./pipeline-manage/constants');
 
 const privateSteps = [
-  'DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker', 'AssignPipelineToPod',
+  'DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker',
+  'AssignPipelineToPod', 'GetUnassignedPod', 'IsPodAvailable',
+  'NoPodsAvailable', 'AssignPodToPipeline',
 ];
 
 
