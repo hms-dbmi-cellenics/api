@@ -178,13 +178,12 @@ class SamplesService {
   }
 
   getS3UploadLink(projectUuid, sampleUuid, fileName, cellrangerVersion) {
-    const s3 = new AWS.S3();
+    const s3 = new AWS.S3({ apiVersion: '2006-03-01', signatureVersion: 'v4' });
 
     const params = {
       Bucket: this.sampleFilesBucketName,
       Key: `${projectUuid}/${sampleUuid}/${fileName}`,
       Expires: 360,
-      ContentType: 'text/plain',
     };
 
     if (cellrangerVersion) {
