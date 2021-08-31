@@ -17,6 +17,13 @@ const embeddingWorkRequest = async (payload) => {
     PipelineRunETag: statusRes[constants.OLD_QC_NAME_TO_BE_REMOVED].startDate,
   };
 
+  // Temporary: add very long timeout
+  const now = new Date();
+  const addTimeoutSeconds = 60;
+  const timeout = new Date(now.getTime() + 5 * addTimeoutSeconds * 1000);
+
+  embeddingWorkConfig.body.config.timeout = timeout;
+
   const workRequest = await workRequestBuilder('GetEmbedding', embeddingWorkConfig);
   workRequest.submitWork();
 };
