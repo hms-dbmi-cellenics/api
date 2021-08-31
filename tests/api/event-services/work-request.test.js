@@ -1,12 +1,10 @@
 const MockSocket = require('socket.io-mock');
 const handleWorkRequest = require('../../../src/api/event-services/work-request');
-const handlePagination = require('../../../src/utils/handlePagination');
 const CacheSingleton = require('../../../src/cache');
 const getPipelineStatus = require('../../../src/api/general-services/pipeline-status');
 const pipelineConstants = require('../../../src/api/general-services/pipeline-manage/constants');
 
 jest.mock('../../../src/api/general-services/pipeline-status');
-jest.mock('../../../src/utils/handlePagination');
 jest.mock('../../../src/cache');
 
 describe('handleWorkRequest', () => {
@@ -159,51 +157,5 @@ describe('handleWorkRequest', () => {
         'Work request can not be handled because pipeline is RUNNING',
       );
     }
-  });
-
-  it('Triggers pagination when pagination is specified and result is cached already.', async () => {
-    CacheSingleton.createMock({
-      '1030360683237eb6175194541f83d6f5': { // pragma: allowlist secret
-        results: [
-          {
-            body: JSON.stringify({
-              rows:
-                [
-                  {
-                    name: 'z',
-                  },
-                  {
-                    name: 'c',
-                  },
-                  {
-                    name: 'a',
-                  },
-                ],
-            }),
-          },
-        ],
-      },
-    });
-
-    const workRequest = {
-      ETag: '12345',
-      socketId: '6789',
-      experimentId: 'my-experiment',
-      timeout: '2099-01-01T00:00:00Z',
-      body: {
-        name: 'DifferentialExpression', cellSet: 'louvain-0', compareWith: 'rest', maxNum: 500,
-      },
-      pagination: {
-        orderBy: 'name',
-        orderDirection: 'ASC',
-        offset: 0,
-        limit: 5,
-        responseKey: 0,
-      },
-    };
-
-    await handleWorkRequest(workRequest, socket);
-    expect(CacheSingleton.get().get).toHaveBeenCalledTimes(1);
-    expect(handlePagination.handlePagination).toHaveBeenCalledTimes(1);
   });
 });

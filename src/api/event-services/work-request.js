@@ -3,14 +3,13 @@ const WorkSubmitService = require('../general-services/work-submit');
 const logger = require('../../utils/logging');
 const { cacheGetRequest } = require('../../utils/cache-request');
 const { CacheMissError } = require('../../cache/cache-utils');
-const { handlePagination } = require('../../utils/handlePagination');
 const validateRequest = require('../../utils/schema-validator');
 const getPipelineStatus = require('../general-services/pipeline-status');
 
 const pipelineConstants = require('../general-services/pipeline-manage/constants');
 
 const handleWorkRequest = async (workRequest, socket) => {
-  const { uuid, pagination, experimentId } = workRequest;
+  const { uuid, experimentId } = workRequest;
 
   // Check if pipeline is runnning
   const { qc: { status: qcPipelineStatus } } = await getPipelineStatus(
@@ -27,13 +26,6 @@ const handleWorkRequest = async (workRequest, socket) => {
   try {
     logger.log(`[REQ ${uuid}, SOCKET ${socket.id}] Trying to fetch response from cache...`);
     const cachedResponse = await cacheGetRequest(workRequest);
-
-    if (pagination) {
-      logger.log(`[REQ ${uuid}, SOCKET ${socket.id}] We found a cached response, pagination needed. Processing response...`);
-      cachedResponse.results = handlePagination(cachedResponse.results, pagination);
-    } else {
-      logger.log(`[REQ ${uuid}, SOCKET ${socket.id}] We found a cached response, no pagination needed.`);
-    }
 
     socket.emit(`WorkResponse-${uuid}`, cachedResponse);
     logger.log(`[REQ ${uuid}, SOCKET ${socket.id}] Response sent back from cache.`);
