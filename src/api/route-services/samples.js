@@ -184,7 +184,7 @@ class SamplesService {
       Bucket: this.sampleFilesBucketName,
       Key: `${projectUuid}/${sampleUuid}/${fileName}`,
       Expires: 360,
-      ContentType: 'application/x-www-form-urlencoded',
+      ContentType: 'text/plain',
     };
 
     if (cellrangerVersion) {
