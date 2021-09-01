@@ -113,9 +113,6 @@ if (config.clusterEnv === 'development') {
     s3ForcePathStyle: true,
   });
 
-  // TODO: remove this line when scaling work is merged and thus the production/pipeline.yaml is
-  // updated to new name pipelineRunner
-  config.pipelineInstanceConfigUrl = 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging-candidates/pipeline/refs-pull-145-merge.yaml';
   config.corsOriginUrl = 'http://localhost:5000';
   config.adminArn = '70c213d4-e7b6-4920-aefb-706ce8606ee2';
 }
