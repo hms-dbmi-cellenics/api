@@ -992,12 +992,12 @@ paths:
           application/json:
             schema:
               $ref: ./models/samples-bodies/SamplesRemoveBody.v1.yaml
-  '/projects/{projectUuid}/samples/{sampleUuid}/{fileName}/uploadLink':
+  '/projects/{projectUuid}/samples/{sampleUuid}/{fileName}/uploadUrl':
     get:
-      summary: Get file upload link
-      description: Get temporary s3 upload link for fileName
-      operationId: uploadSampleFileLink
-      x-eov-operation-id: samples#uploadSampleFileLink
+      summary: Get file upload url
+      description: Get temporary s3 upload url for fileName
+      operationId: uploadSampleFileUrl
+      x-eov-operation-id: samples#uploadSampleFileUrl
       x-eov-operation-handler: routes/samples
       parameters:
         - in: query

@@ -33,10 +33,10 @@ module.exports = {
     try {
       const { cellranger_version = undefined } = query;
 
-      const uploadLink = samplesService
-        .getS3UploadLink(projectUuid, sampleUuid, fileName, cellranger_version);
+      const uploadUrl = samplesService
+        .getS3UploadUrl(projectUuid, sampleUuid, fileName, cellranger_version);
 
-      res.json(uploadLink);
+      res.json(uploadUrl);
     } catch (e) {
       next(e);
     }

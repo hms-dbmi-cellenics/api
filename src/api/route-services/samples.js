@@ -177,7 +177,7 @@ class SamplesService {
     return OK();
   }
 
-  getS3UploadLink(projectUuid, sampleUuid, fileName, cellrangerVersion) {
+  getS3UploadUrl(projectUuid, sampleUuid, fileName, cellrangerVersion) {
     const s3 = new AWS.S3({ apiVersion: '2006-03-01', signatureVersion: 'v4' });
 
     const params = {
