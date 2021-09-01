@@ -52,8 +52,6 @@ const mockedCompletedStatus = {
 };
 
 const getStepsFromExecutionHistory = (events) => {
-  console.log('getStepsFromExecutionHistory');
-  console.log(events);
   class Branch {
     constructor(event, makeRoot) {
       this.visited = [event.id];
@@ -108,9 +106,13 @@ const getStepsFromExecutionHistory = (events) => {
         } else if (event.type === 'MapStateStarted') {
           this.branchCount = event.mapStateStartedEventDetails.length;
         } else if (event.type === 'MapStateExited') {
-          this.completedTasks = this.completedTasks.concat(this.branches[0].completedTasks);
-          this.branches = {};
-          this.branchCount = 0;
+          // a map state can have 0 iterations; e.g. trying to delete previous experiments'
+          // so MapIterationStared won't exist and thus branch won't either
+          if (this.branches[0] !== undefined) {
+            this.completedTasks = this.completedTasks.concat(this.branches[0].completedTasks);
+            this.branches = {};
+            this.branchCount = 0;
+          }
         }
       }
     }
