@@ -52,6 +52,8 @@ const mockedCompletedStatus = {
 };
 
 const getStepsFromExecutionHistory = (events) => {
+  console.log('getStepsFromExecutionHistory');
+  console.log(events);
   class Branch {
     constructor(event, makeRoot) {
       this.visited = [event.id];
@@ -190,8 +192,8 @@ const getPipelineStatus = async (experimentId, processName) => {
       || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
     ) {
       logger.log(
-        `Returning a mocked success ${processName}-pipeline status because ARN ${executionArn} `
-        + `does not exist and we are running in ${config.clusterEnv} so we are assuming the experiment was `
+        `Returning a mocked success ${processName} - pipeline status because ARN ${executionArn} `
+        + `does not exist and we are running in ${config.clusterEnv} so we are assuming the experiment was`
         + ' pulled from another env.',
       );
 
