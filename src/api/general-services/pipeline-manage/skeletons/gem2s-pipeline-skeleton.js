@@ -1,19 +1,10 @@
-const config = require('../../../../config');
+const { firstStep, buildInitialSteps } = require('./initialization');
 
-const gem2sPipelineSkeleton = {
-  Comment: `Gem2s for clusterEnv '${config.clusterEnv}'`,
-  StartAt: 'DeleteCompletedGem2SWorker',
+const getGem2sPipelineSkeleton = (clusterEnv) => ({
+  Comment: `Gem2s Pipeline for clusterEnv '${clusterEnv}'`,
+  StartAt: firstStep(clusterEnv),
   States: {
-    DeleteCompletedGem2SWorker: {
-      XStepType: 'delete-completed-jobs',
-      Next: 'LaunchNewGem2SWorker',
-      ResultPath: null,
-    },
-    LaunchNewGem2SWorker: {
-      XStepType: 'create-new-job-if-not-exist',
-      Next: 'DownloadGem',
-      ResultPath: null,
-    },
+    ...buildInitialSteps(clusterEnv, 'DownloadGem'),
     DownloadGem: {
       XStepType: 'create-new-step',
       XConstructorArgs: {
@@ -68,6 +59,6 @@ const gem2sPipelineSkeleton = {
       End: true,
     },
   },
-};
+});
 
-module.exports = { gem2sPipelineSkeleton };
+module.exports = { getGem2sPipelineSkeleton };

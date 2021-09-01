@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`test for pipeline services Create pipeline works 1`] = `
+exports[`test for pipeline services Create Gem2s pipeline works 1`] = `
 [MockFunction] {
   "calls": Array [
     Array [
@@ -20,7 +20,70 @@ exports[`test for pipeline services Create pipeline works 1`] = `
 }
 `;
 
-exports[`test for pipeline services Create pipeline works 2`] = `
+exports[`test for pipeline services Create Gem2s pipeline works 2`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "loggingConfiguration": Object {
+        "level": "OFF",
+      },
+      "name": "biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
+      "tags": Array [
+        Object {
+          "key": "experimentId",
+          "value": "testExperimentId",
+        },
+        Object {
+          "key": "clusterEnv",
+          "value": "test",
+        },
+        Object {
+          "key": "sandboxId",
+          "value": "default",
+        },
+      ],
+      "type": "STANDARD",
+    },
+  },
+]
+`;
+
+exports[`test for pipeline services Create Gem2s pipeline works 3`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "input": "{\\"retries\\":[\\"retry\\"]}",
+      "stateMachineArn": "test-machine",
+      "traceHeader": undefined,
+    },
+  },
+]
+`;
+
+exports[`test for pipeline services Create QC pipeline works 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "name": "biomage-test",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "name": "biomage-test",
+      },
+    },
+  ],
+}
+`;
+
+exports[`test for pipeline services Create QC pipeline works 2`] = `
 Array [
   Object {
     "type": "return",
@@ -50,12 +113,12 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Create pipeline works 3`] = `
+exports[`test for pipeline services Create QC pipeline works 3`] = `
 Array [
   Object {
     "type": "return",
     "value": Object {
-      "input": "{\\"samples\\":[{\\"sampleUuid\\":\\"oneSample\\",\\"index\\":0},{\\"sampleUuid\\":\\"otherSample\\",\\"index\\":1}]}",
+      "input": "{\\"samples\\":[{\\"sampleUuid\\":\\"oneSample\\",\\"index\\":0},{\\"sampleUuid\\":\\"otherSample\\",\\"index\\":1}],\\"retries\\":[\\"retry\\"]}",
       "stateMachineArn": "test-machine",
       "traceHeader": undefined,
     },
@@ -63,14 +126,172 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Parses processingConfig correctly 1`] = `
+exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "name": "biomage-test",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "name": "biomage-test",
+      },
+    },
+  ],
+}
+`;
+
+exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 2`] = `
 Array [
   Object {
     "type": "return",
     "value": Object {
-      "Comment": "Pipeline for clusterEnv 'test'",
-      "StartAt": "DeleteCompletedPipelineWorker",
+      "loggingConfiguration": Object {
+        "level": "OFF",
+      },
+      "name": "biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
+      "tags": Array [
+        Object {
+          "key": "experimentId",
+          "value": "testExperimentId",
+        },
+        Object {
+          "key": "clusterEnv",
+          "value": "test",
+        },
+        Object {
+          "key": "sandboxId",
+          "value": "default",
+        },
+      ],
+      "type": "STANDARD",
+    },
+  },
+]
+`;
+
+exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 3`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
+      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+    },
+  },
+]
+`;
+
+exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 4`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "input": "{\\"retries\\":[\\"retry\\"]}",
+      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "traceHeader": undefined,
+    },
+  },
+]
+`;
+
+exports[`test for pipeline services Parses QC processingConfig correctly 1`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "Comment": "QC Pipeline for clusterEnv 'test'",
+      "StartAt": "GetExperimentRunningPods",
       "States": Object {
+        "AssignPipelineToPod": Object {
+          "ItemsPath": "$.retries",
+          "Iterator": Object {
+            "StartAt": "GetUnassignedPod",
+            "States": Object {
+              "AssignPodToPipeline": Object {
+                "Comment": "Patch pod to set the activity ID label.",
+                "End": true,
+                "Parameters": Object {
+                  "CertificateAuthority": "AAAAAAAAAAA",
+                  "ClusterName": "biomage-test",
+                  "Endpoint": "https://test-endpoint.me/fgh",
+                  "Method": "PATCH",
+                  "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
+                  "RequestBody": Object {
+                    "metadata": Object {
+                      "labels": Object {
+                        "activityId": "pipeline-test-mock-uuid",
+                        "experimentId": "testExperimentId",
+                        "processName": "qc",
+                      },
+                    },
+                  },
+                },
+                "Resource": "arn:aws:states:::eks:call",
+                "ResultPath": "$.PatchResult",
+                "Type": "Task",
+              },
+              "GetUnassignedPod": Object {
+                "Comment": "Retrieves first unassigned and running pipeline pod.",
+                "Next": "IsPodAvailable",
+                "Parameters": Object {
+                  "CertificateAuthority": "AAAAAAAAAAA",
+                  "ClusterName": "biomage-test",
+                  "Endpoint": "https://test-endpoint.me/fgh",
+                  "Method": "GET",
+                  "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+                  "QueryParameters": Object {
+                    "fieldSelector": Array [
+                      "status.phase=Running",
+                    ],
+                    "labelSelector": Array [
+                      "!activityId,type=pipeline",
+                    ],
+                  },
+                },
+                "Resource": "arn:aws:states:::eks:call",
+                "Type": "Task",
+              },
+              "IsPodAvailable": Object {
+                "Choices": Array [
+                  Object {
+                    "IsPresent": false,
+                    "Next": "NoPodsAvailable",
+                    "Variable": "$.ResponseBody.items[0]",
+                  },
+                ],
+                "Comment": "Redirects to an error state if there are no available pods.",
+                "Default": "AssignPodToPipeline",
+                "Type": "Choice",
+              },
+              "NoPodsAvailable": Object {
+                "Cause": "No available and running pipeline pods.",
+                "Error": "NoPodsAvailable",
+                "Type": "Fail",
+              },
+            },
+          },
+          "MaxConcurrency": 1,
+          "Next": "ClassifierFilterMap",
+          "ResultPath": null,
+          "Retry": Array [
+            Object {
+              "BackoffRate": 1.5,
+              "ErrorEquals": Array [
+                "NoPodsAvailable",
+              ],
+              "IntervalSeconds": 2,
+              "MaxAttempts": 11,
+            },
+          ],
+          "Type": "Map",
+        },
         "CellSizeDistributionFilterMap": Object {
           "ItemsPath": "$.samples",
           "Iterator": Object {
@@ -87,7 +308,7 @@ Array [
                   "taskName": "cellSizeDistribution",
                   "uploadCountMatrix": false,
                 },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-mock-uuid",
+                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
                 "ResultPath": null,
                 "TimeoutSeconds": 10800,
                 "Type": "Task",
@@ -114,7 +335,7 @@ Array [
                   "taskName": "classifier",
                   "uploadCountMatrix": false,
                 },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-mock-uuid",
+                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
                 "ResultPath": null,
                 "TimeoutSeconds": 10800,
                 "Type": "Task",
@@ -136,7 +357,7 @@ Array [
             "taskName": "configureEmbedding",
             "uploadCountMatrix": false,
           },
-          "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-mock-uuid",
+          "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
           "ResultPath": null,
           "TimeoutSeconds": 10800,
           "Type": "Task",
@@ -152,29 +373,47 @@ Array [
             "taskName": "dataIntegration",
             "uploadCountMatrix": true,
           },
-          "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-mock-uuid",
+          "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
           "ResultPath": null,
           "TimeoutSeconds": 10800,
           "Type": "Task",
         },
-        "DeleteCompletedPipelineWorker": Object {
-          "Comment": "Deletes the previous server pipeline HelmRelease (Service+Job).",
-          "Next": "LaunchNewPipelineWorker",
-          "Parameters": Object {
-            "CertificateAuthority": "AAAAAAAAAAA",
-            "ClusterName": "biomage-test",
-            "Endpoint": "https://test-endpoint.me/fgh",
-            "Method": "DELETE",
-            "Path": "/apis/helm.fluxcd.io/v1/namespaces/pipeline-test-namespace/helmreleases",
-            "QueryParameters": Object {
-              "labelSelector": Array [
-                "type=pipeline,sandboxId=default,experimentId=testExperimentId",
-              ],
+        "DeletePreviousPods": Object {
+          "ItemsPath": "$.runningPods.ResponseBody.items",
+          "Iterator": Object {
+            "StartAt": "DeletePod",
+            "States": Object {
+              "DeletePod": Object {
+                "Catch": Array [
+                  Object {
+                    "ErrorEquals": Array [
+                      "EKS.404",
+                    ],
+                    "Next": "Ignore404",
+                  },
+                ],
+                "Comment": "Patch pod to set the activity ID label.",
+                "End": true,
+                "Parameters": Object {
+                  "CertificateAuthority": "AAAAAAAAAAA",
+                  "ClusterName": "biomage-test",
+                  "Endpoint": "https://test-endpoint.me/fgh",
+                  "Method": "DELETE",
+                  "Path.$": "$.metadata.selfLink",
+                },
+                "Resource": "arn:aws:states:::eks:call",
+                "Type": "Task",
+              },
+              "Ignore404": Object {
+                "End": true,
+                "Type": "Pass",
+              },
             },
           },
-          "Resource": "arn:aws:states:::eks:call",
+          "MaxConcurrency": 0,
+          "Next": "AssignPipelineToPod",
           "ResultPath": null,
-          "Type": "Task",
+          "Type": "Map",
         },
         "DoubletScoresFilterMap": Object {
           "ItemsPath": "$.samples",
@@ -208,7 +447,7 @@ Array [
                   "taskName": "doubletScores",
                   "uploadCountMatrix": false,
                 },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-mock-uuid",
+                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
                 "ResultPath": null,
                 "TimeoutSeconds": 10800,
                 "Type": "Task",
@@ -223,71 +462,26 @@ Array [
           "End": true,
           "Type": "Pass",
         },
-        "LaunchNewPipelineWorker": Object {
-          "Catch": Array [
-            Object {
-              "ErrorEquals": Array [
-                "EKS.409",
-              ],
-              "Next": "ClassifierFilterMap",
-              "ResultPath": "$.error-info",
-            },
-          ],
-          "Comment": "Attempts to create a Kubernetes Job+Service for the pipeline runner. Will swallow a 409 (already exists) error.",
-          "Next": "ClassifierFilterMap",
+        "GetExperimentRunningPods": Object {
+          "Comment": "Retrieves running pods assigned to the experiment ID.",
+          "Next": "DeletePreviousPods",
           "Parameters": Object {
             "CertificateAuthority": "AAAAAAAAAAA",
             "ClusterName": "biomage-test",
             "Endpoint": "https://test-endpoint.me/fgh",
-            "Method": "POST",
-            "Path": "/apis/helm.fluxcd.io/v1/namespaces/pipeline-test-namespace/helmreleases",
-            "RequestBody": Object {
-              "apiVersion": "helm.fluxcd.io/v1",
-              "kind": "HelmRelease",
-              "metadata": Object {
-                "annotations": Object {
-                  "fluxcd.io/automated": "true",
-                },
-                "labels": Object {
-                  "experimentId": "testExperimentId",
-                  "sandboxId": "default",
-                  "type": "pipeline",
-                },
-                "name": "qc-testExperimentId",
-                "namespace": "pipeline-test-namespace",
-              },
-              "spec": Object {
-                "chart": Object {
-                  "git": "git@github.com:biomage-ltd/pipeline",
-                  "path": "pipeline-runner/chart",
-                  "ref": "MOCK_REF_PATH",
-                },
-                "releaseName": "qc-testExperimentId",
-                "values": Object {
-                  "activityArn": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-mock-uuid",
-                  "awsAccountId": "test-account-id",
-                  "awsRegion": "eu-west-1",
-                  "clusterEnv": "test",
-                  "experimentId": "testExperimentId",
-                  "image": "MOCK_IMAGE_PATH",
-                  "namespace": "pipeline-test-namespace",
-                  "sandboxId": "default",
-                },
-              },
+            "Method": "GET",
+            "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+            "QueryParameters": Object {
+              "fieldSelector": Array [
+                "status.phase=Running",
+              ],
+              "labelSelector": Array [
+                "experimentId=testExperimentId,type=pipeline",
+              ],
             },
           },
           "Resource": "arn:aws:states:::eks:call",
-          "ResultPath": null,
-          "Retry": Array [
-            Object {
-              "BackoffRate": 2,
-              "ErrorEquals": Array [
-                "EKS.409",
-              ],
-              "IntervalSeconds": 1,
-              "MaxAttempts": 2,
-            },
-          ],
+          "ResultPath": "$.runningPods",
           "Type": "Task",
         },
         "MitochondrialContentFilterMap": Object {
@@ -306,7 +500,7 @@ Array [
                   "taskName": "mitochondrialContent",
                   "uploadCountMatrix": false,
                 },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-mock-uuid",
+                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
                 "ResultPath": null,
                 "TimeoutSeconds": 10800,
                 "Type": "Task",
@@ -333,7 +527,7 @@ Array [
                   "taskName": "numGenesVsNumUmis",
                   "uploadCountMatrix": false,
                 },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:biomage-qc-test-mock-uuid",
+                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
                 "ResultPath": null,
                 "TimeoutSeconds": 10800,
                 "Type": "Task",
@@ -350,7 +544,7 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Pipeline is updated instead of created if an error is thrown. 1`] = `
+exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 1`] = `
 [MockFunction] {
   "calls": Array [
     Array [
@@ -370,7 +564,7 @@ exports[`test for pipeline services Pipeline is updated instead of created if an
 }
 `;
 
-exports[`test for pipeline services Pipeline is updated instead of created if an error is thrown. 2`] = `
+exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 2`] = `
 Array [
   Object {
     "type": "return",
@@ -400,7 +594,7 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Pipeline is updated instead of created if an error is thrown. 3`] = `
+exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 3`] = `
 Array [
   Object {
     "type": "return",
@@ -412,12 +606,12 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Pipeline is updated instead of created if an error is thrown. 4`] = `
+exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 4`] = `
 Array [
   Object {
     "type": "return",
     "value": Object {
-      "input": "{\\"samples\\":[{\\"sampleUuid\\":\\"oneSample\\",\\"index\\":0},{\\"sampleUuid\\":\\"otherSample\\",\\"index\\":1}]}",
+      "input": "{\\"samples\\":[{\\"sampleUuid\\":\\"oneSample\\",\\"index\\":0},{\\"sampleUuid\\":\\"otherSample\\",\\"index\\":1}],\\"retries\\":[\\"retry\\"]}",
       "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
       "traceHeader": undefined,
     },
