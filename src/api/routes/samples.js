@@ -27,7 +27,7 @@ module.exports = {
       .then((data) => res.json(data))
       .catch(next);
   },
-  'samples#uploadSampleFileLink': (req, res, next) => {
+  'samples#uploadSampleFileUrl': (req, res, next) => {
     const { params: { projectUuid, sampleUuid, fileName }, query } = req;
 
     try {
