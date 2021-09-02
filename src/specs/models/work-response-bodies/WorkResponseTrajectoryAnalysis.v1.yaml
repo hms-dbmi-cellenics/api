@@ -1,0 +1,5 @@
+title: TrajectoryAnalysis
+type: array
+items:
+  type: number
+description: Response schema for Trajectory Analysis. Return value is sorted by CellID in ascending order.

@@ -1,0 +1,16 @@
+title: Get Trajectory Analysis
+description: Work request body for getting the Trajectory Analysis.
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the work. Must be `TrajectoryAnalysis`.
+    pattern: TrajectoryAnalysis
+  cellIds:
+    type: array
+    items:
+      type: number
+    description: cellIds in the root node
+required:
+  - name
+  - cellIds
