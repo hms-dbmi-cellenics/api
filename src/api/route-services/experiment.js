@@ -390,16 +390,15 @@ class ExperimentService {
       experimentId,
     });
 
-    const params = {
+    const dynamoParams = {
       TableName: this.experimentsTableName,
       Key: marshalledKey,
     };
 
-
     const dynamodb = createDynamoDbInstance();
 
     try {
-      await dynamodb.deleteItem(params).send();
+      await dynamodb.deleteItem(dynamoParams).send();
     } catch (e) {
       if (e.statusCode === 404) throw NotFoundError(`Experiment not found in ${this.experimentsTableName}`);
       throw e;

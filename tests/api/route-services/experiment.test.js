@@ -9,6 +9,7 @@ const {
   mockDynamoUpdateItem,
   mockS3GetObject,
   mockS3PutObject,
+  mockS3DeleteObject,
   mockDynamoBatchGetItem,
   mockDynamoDeleteItem,
   mockS3GetSignedUrl,
@@ -120,7 +121,8 @@ describe('tests for the experiment service', () => {
   });
 
   it('Delete experiment works', async (done) => {
-    const fnSpy = mockDynamoDeleteItem();
+    const dynamoDeleteFnSpy = mockDynamoDeleteItem();
+    const s3DeleteFnSpy = mockS3DeleteObject();
 
     const experimentId = '12345';
 
@@ -129,10 +131,16 @@ describe('tests for the experiment service', () => {
     (new ExperimentService()).deleteExperiment(experimentId)
       .then((returnValue) => {
         expect(returnValue).toEqual(OK());
-        expect(fnSpy).toHaveBeenCalledWith(
+        expect(dynamoDeleteFnSpy).toHaveBeenCalledWith(
           {
             TableName: 'experiments-test',
             Key: marshalledKey,
+          },
+        );
+        expect(s3DeleteFnSpy).toHaveBeenCalledWith(
+          {
+            Bucket: 'biomage-filtered-cells-test',
+            Key: experimentId,
           },
         );
       })

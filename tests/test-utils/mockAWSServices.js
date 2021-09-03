@@ -116,6 +116,19 @@ const mockS3PutObject = (payload = {}, error = null) => {
   return fnSpy;
 };
 
+const mockS3DeleteObject = (payload = {}, error = null) => {
+  const fnSpy = jest.fn((x) => x);
+  AWSMock.setSDKInstance(AWS);
+
+  AWSMock.mock('S3', 'deleteObject', (params, callback) => {
+    fnSpy(params);
+    callback(error, payload);
+  });
+
+  return fnSpy;
+};
+
+
 const mockS3DeleteObjects = (payload = {}, error = null) => {
   const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
@@ -149,6 +162,7 @@ module.exports = {
   mockDynamoDeleteItem,
   mockS3GetObject,
   mockS3PutObject,
+  mockS3DeleteObject,
   mockS3DeleteObjects,
   mockS3GetSignedUrl,
 };
