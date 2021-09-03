@@ -183,7 +183,8 @@ class SamplesService {
     const params = {
       Bucket: this.sampleFilesBucketName,
       Key: `${projectUuid}/${sampleUuid}/${fileName}`,
-      Expires: 360,
+      // 1 hour timeout of upload link
+      Expires: 3600,
     };
 
     if (cellrangerVersion) {
