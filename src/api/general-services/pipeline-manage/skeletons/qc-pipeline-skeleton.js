@@ -1,20 +1,10 @@
-const config = require('../../../../config');
+const { firstStep, buildInitialSteps } = require('./initialization');
 
-
-const qcPipelineSkeleton = {
-  Comment: `Pipeline for clusterEnv '${config.clusterEnv}'`,
-  StartAt: 'DeleteCompletedPipelineWorker',
+const getQcPipelineSkeleton = (clusterEnv) => ({
+  Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
+  StartAt: firstStep(clusterEnv),
   States: {
-    DeleteCompletedPipelineWorker: {
-      XStepType: 'delete-completed-jobs',
-      Next: 'LaunchNewPipelineWorker',
-      ResultPath: null,
-    },
-    LaunchNewPipelineWorker: {
-      XStepType: 'create-new-job-if-not-exist',
-      Next: 'ClassifierFilterMap',
-      ResultPath: null,
-    },
+    ...buildInitialSteps(clusterEnv, 'ClassifierFilterMap'),
     ClassifierFilterMap: {
       Type: 'Map',
       Next: 'CellSizeDistributionFilterMap',
@@ -132,6 +122,6 @@ const qcPipelineSkeleton = {
       End: true,
     },
   },
-};
+});
 
-module.exports = { qcPipelineSkeleton };
+module.exports = { getQcPipelineSkeleton };

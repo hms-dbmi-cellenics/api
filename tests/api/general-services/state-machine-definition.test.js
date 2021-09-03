@@ -1,7 +1,6 @@
-const config = require('../../../src/config');
 const { buildStateMachineDefinition } = require('../../../src/api/general-services/pipeline-manage');
-const { qcPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons/qc-pipeline-skeleton');
-const { gem2sPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons/gem2s-pipeline-skeleton');
+const { getQcPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons/qc-pipeline-skeleton');
+const { getGem2sPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons/gem2s-pipeline-skeleton');
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
@@ -39,24 +38,37 @@ describe('non-tests to document the State Machines', () => {
   };
 
   it('- qc local development', () => {
-    config.clusterEnv = 'development';
+    const qcPipelineSkeleton = getQcPipelineSkeleton('development');
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
-    config.clusterEnv = 'test';
     expect(stateMachine).toMatchSnapshot();
   });
 
-  it('- qc cloud', () => {
+  it('- qc staging', () => {
+    const qcPipelineSkeleton = getQcPipelineSkeleton('staging');
+    const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
+    expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('- qc production', () => {
+    const qcPipelineSkeleton = getQcPipelineSkeleton('production');
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
   it('- gem2s local development', () => {
-    config.clusterEnv = 'development';
+    const gem2sPipelineSkeleton = getGem2sPipelineSkeleton('development');
     const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
-    config.clusterEnv = 'test';
     expect(stateMachine).toMatchSnapshot();
   });
-  it('- gem2s cloud', () => {
+
+  it('- gem2s staging', () => {
+    const gem2sPipelineSkeleton = getGem2sPipelineSkeleton('staging');
+    const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
+    expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('- gem2s production', () => {
+    const gem2sPipelineSkeleton = getGem2sPipelineSkeleton('production');
     const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });

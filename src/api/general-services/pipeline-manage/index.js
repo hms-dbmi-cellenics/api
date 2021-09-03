@@ -10,8 +10,8 @@ const config = require('../../../config');
 const logger = require('../../../utils/logging');
 const ExperimentService = require('../../route-services/experiment');
 
-const { qcPipelineSkeleton } = require('./skeletons/qc-pipeline-skeleton');
-const { gem2sPipelineSkeleton } = require('./skeletons/gem2s-pipeline-skeleton');
+const { getQcPipelineSkeleton } = require('./skeletons/qc-pipeline-skeleton');
+const { getGem2sPipelineSkeleton } = require('./skeletons/gem2s-pipeline-skeleton');
 const constructPipelineStep = require('./constructors/construct-pipeline-step');
 const asyncTimer = require('../../../utils/asyncTimer');
 
@@ -40,7 +40,7 @@ const getPipelineArtifacts = async () => {
       },
     ),
     jq.run(
-      '..|objects|.["pipeline-runner"].image//empty',
+      '..|objects|.["pipelineRunner"].image//empty',
       manifest,
       {
         input: 'json',
@@ -51,7 +51,7 @@ const getPipelineArtifacts = async () => {
 
   return {
     chartRef,
-    'pipeline-runner': pipelineRunner,
+    pipelineRunner,
   };
 };
 
@@ -130,16 +130,21 @@ const createNewStateMachine = async (context, stateMachine, processName) => {
   return stateMachineArn;
 };
 
-const executeStateMachine = async (stateMachineArn, execInput) => {
+const executeStateMachine = async (stateMachineArn, execInput = {}) => {
+  // when running in aws the step functions use a map step to retry the process
+  // of assigning the pipeline to an available pod
+  // map steps require an array as input so we declare one (it's value is not used)
+  const input = execInput;
+  input.retries = ['retry'];
+
   const stepFunctions = new AWS.StepFunctions({
     region: config.awsRegion,
   });
   const { trace_id: traceId } = AWSXRay.getSegment() || {};
 
-
   const { executionArn } = await stepFunctions.startExecution({
     stateMachineArn,
-    input: JSON.stringify(execInput),
+    input: JSON.stringify(input),
     traceHeader: traceId,
   }).promise();
 
@@ -218,16 +223,20 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
     accountId,
     roleArn,
     processName: QC_PROCESS_NAME,
-    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:biomage-${QC_PROCESS_NAME}-${config.clusterEnv}-${uuidv4()}`,
+    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
     processingConfig: mergedProcessingConfig,
   };
 
+
+  const qcPipelineSkeleton = getQcPipelineSkeleton(config.clusterEnv);
+
+  logger.log('Skeleton constructed, now building state machine definition...');
   const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
 
-  logger.log('Skeleton constructed, now creating activity if not already present...');
-  const activityArn = await createActivity(context);
+  logger.log('State machine definition built, now creating activity if not already present...');
+  const activityArn = await createActivity(context); // the context contains the activityArn
 
   logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
   const stateMachineArn = await createNewStateMachine(context, stateMachine, QC_PROCESS_NAME);
@@ -254,21 +263,25 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
     accountId,
     roleArn,
     processName: GEM2S_PROCESS_NAME,
-    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:biomage-${GEM2S_PROCESS_NAME}-${config.clusterEnv}-${uuidv4()}`,
+    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
     processingConfig: {},
   };
 
+  const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv);
+
+  logger.log('Skeleton constructed, now building state machine definition...');
   const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
 
-  logger.log('Skeleton constructed, now creating activity if not already present...');
+  logger.log('State machine definition built, now creating activity if not already present...');
   const activityArn = await createActivity(context);
 
   logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
   const stateMachineArn = await createNewStateMachine(context, stateMachine, GEM2S_PROCESS_NAME);
 
   logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
+
 
   const executionArn = await executeStateMachine(stateMachineArn);
   logger.log(`Execution with ARN ${executionArn} created.`);
