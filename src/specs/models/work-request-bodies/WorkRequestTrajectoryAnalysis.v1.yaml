@@ -6,6 +6,9 @@ properties:
     type: string
     description: Name of the work. Must be `TrajectoryAnalysis`.
     pattern: TrajectoryAnalysis
+  method:
+    type: string
+    description: clustering method used to create the embedding
   cellIds:
     type: array
     items:

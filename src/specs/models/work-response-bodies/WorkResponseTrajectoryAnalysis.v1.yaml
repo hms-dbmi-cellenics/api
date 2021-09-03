@@ -1,5 +1,26 @@
 title: TrajectoryAnalysis
-type: array
-items:
-  type: number
-description: Response schema for Trajectory Analysis. Return value is sorted by CellID in ascending order.
+type: object
+properties:
+  pseudotime:
+    type: object
+    description: Whether there's been an error
+  graph:
+    type: array
+    description: Array of coordinae objects
+    items:
+      type: object
+      description: Object holding the coordinates to create trajectory graph
+      properties:
+        x1:
+          type: number
+          description: source X
+        x2:
+          type: number
+          description: target X
+        y1:
+          type: number
+          description: source Y
+        y2:
+          type: number
+          description: target Y
+description: Response schema for Trajectory Analysis
