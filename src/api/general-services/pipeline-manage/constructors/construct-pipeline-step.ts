@@ -1,9 +1,11 @@
+import { createNewJobIfNotExist } from './create-new-job-if-not-exist';
+
 const deleteCompletedJobs = require('./delete-complete-jobs');
 const createNewStep = require('./create-new-step');
-const createNewJobIfNotExist = require('./create-new-job-if-not-exist');
+// const createNewJobIfNotExist = require('./create-new-job-if-not-exist');
 const { getRunningPods, deleteRunningPods, assignPodToPipeline } = require('./assign-pod-to-pipeline');
-
-const constructPipelineStep = (context, step) => {
+// const createNewJobIfNotExist = require('./create-new-job-if-not-exist');
+export function constructPipelineStep (context: Context, step: MetaStep) {
   const { XStepType: stepType, XConstructorArgs: args } = step;
 
   switch (stepType) {
@@ -34,5 +36,3 @@ const constructPipelineStep = (context, step) => {
     }
   }
 };
-
-module.exports = constructPipelineStep;

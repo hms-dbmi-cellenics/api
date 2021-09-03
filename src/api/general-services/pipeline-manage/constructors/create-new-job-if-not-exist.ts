@@ -1,4 +1,5 @@
-const createNewJobIfNotExist = (context, step) => {
+
+export function createNewJobIfNotExist (context: Context, step: MetaStep): Step {
   const { accountId, activityArn, processName } = context;
 
   return {
@@ -23,5 +24,3 @@ const createNewJobIfNotExist = (context, step) => {
     ],
   };
 };
-
-module.exports = createNewJobIfNotExist;

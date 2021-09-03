@@ -1,3 +1,6 @@
+// const constructPipelineStep = require('./constructors/construct-pipeline-step.js');
+import { constructPipelineStep } from './constructors/construct-pipeline-step.ts';
+
 const crypto = require('crypto');
 const jq = require('node-jq');
 const YAML = require('yaml');
@@ -12,7 +15,7 @@ const ExperimentService = require('../../route-services/experiment');
 
 const { getQcPipelineSkeleton } = require('./skeletons/qc-pipeline-skeleton');
 const { getGem2sPipelineSkeleton } = require('./skeletons/gem2s-pipeline-skeleton');
-const constructPipelineStep = require('./constructors/construct-pipeline-step');
+
 const asyncTimer = require('../../../utils/asyncTimer');
 
 const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('./constants');
@@ -268,6 +271,8 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
     processingConfig: {},
   };
 
+  console.log('Context for gem2s');
+  console.log({ context });
   const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv);
 
   logger.log('Skeleton constructed, now building state machine definition...');

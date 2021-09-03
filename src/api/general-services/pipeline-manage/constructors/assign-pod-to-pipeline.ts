@@ -1,11 +1,11 @@
-const config = require('../../../../config');
+import config from '../../../../config';
 
 // the full activityArn is too long to be used as a tag (> 63 chars)
 // so we just send the last part of the arn as the rest can be constructed.
 //  E.g.
 // arn:aws:states:eu-west-1:242905224710:activity:pipeline-production-01037a63-a801-4ea4-a93e-...
 // => pipeline-production-01037a63-a801-4ea4-a93e-def76c1e5bd2
-const getActivityId = (activityArn) => {
+const getActivityId = (activityArn: string) => {
   if (activityArn === undefined) {
     return undefined;
   }
@@ -14,7 +14,7 @@ const getActivityId = (activityArn) => {
   return split[split.length - 1];
 };
 
-const getRunningPods = (context, step) => {
+const getRunningPods = (context: Context, step: MetaStep) => {
   const { clusterInfo, experimentId } = context;
 
   return {
