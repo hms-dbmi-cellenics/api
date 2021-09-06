@@ -7,7 +7,9 @@ const pipelineConstants = require('./pipeline-manage/constants');
 
 const privateSteps = [
   'DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker',
-  'DeleteCompletedGem2SWorker', 'LaunchNewGem2SWorker',
+  'AssignPipelineToPod', 'GetUnassignedPod', 'IsPodAvailable',
+  'NoPodsAvailable', 'AssignPodToPipeline', 'GetExperimentRunningPods',
+  'DeletePreviousPods', 'DeletePod', 'Ignore404',
 ];
 
 
@@ -104,9 +106,13 @@ const getStepsFromExecutionHistory = (events) => {
         } else if (event.type === 'MapStateStarted') {
           this.branchCount = event.mapStateStartedEventDetails.length;
         } else if (event.type === 'MapStateExited') {
-          this.completedTasks = this.completedTasks.concat(this.branches[0].completedTasks);
-          this.branches = {};
-          this.branchCount = 0;
+          // a map state can have 0 iterations; e.g. trying to delete previous experiments'
+          // so MapIterationStared won't exist and thus branch won't either
+          if (this.branches[0] !== undefined) {
+            this.completedTasks = this.completedTasks.concat(this.branches[0].completedTasks);
+            this.branches = {};
+            this.branchCount = 0;
+          }
         }
       }
     }
@@ -188,8 +194,8 @@ const getPipelineStatus = async (experimentId, processName) => {
       || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
     ) {
       logger.log(
-        `Returning a mocked success ${processName}-pipeline status because ARN ${executionArn} `
-        + `does not exist and we are running in ${config.clusterEnv} so we are assuming the experiment was `
+        `Returning a mocked success ${processName} - pipeline status because ARN ${executionArn} `
+        + `does not exist and we are running in ${config.clusterEnv} so we are assuming the experiment was`
         + ' pulled from another env.',
       );
 
