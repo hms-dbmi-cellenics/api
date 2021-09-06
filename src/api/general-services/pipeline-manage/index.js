@@ -7,7 +7,7 @@ const fetch = require('node-fetch');
 const { v4: uuidv4 } = require('uuid');
 const AWS = require('../../../utils/requireAWS');
 const config = require('../../../config');
-const logger = require('../../../utils/logging').defaultLogger;
+const getLogger = require('../../../utils/getLogger');
 const ExperimentService = require('../../route-services/experiment');
 
 const { getQcPipelineSkeleton } = require('./skeletons/qc-pipeline-skeleton');
@@ -16,6 +16,8 @@ const constructPipelineStep = require('./constructors/construct-pipeline-step');
 const asyncTimer = require('../../../utils/asyncTimer');
 
 const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('./constants');
+
+const logger = getLogger();
 
 const experimentService = new ExperimentService();
 

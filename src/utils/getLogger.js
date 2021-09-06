@@ -16,7 +16,4 @@ const getLogger = (prefix = '') => ({
   },
 });
 
-module.exports = {
-  getLogger,
-  defaultLogger: getLogger(),
-};
+module.exports = getLogger;

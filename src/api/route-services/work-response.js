@@ -1,10 +1,12 @@
 const AWSXRay = require('aws-xray-sdk');
 const AWS = require('../../utils/requireAWS');
 const validateRequest = require('../../utils/schema-validator');
-const logger = require('../../utils/logging').defaultLogger;
+const getLogger = require('../../utils/getLogger');
 const { cacheSetResponse } = require('../../utils/cache-request');
 const { handlePagination } = require('../../utils/handlePagination');
 const ExperimentService = require('./experiment');
+
+const logger = getLogger();
 
 const NEW = 'NEW';
 const WORKER_DATA_UPDATE = 'workerDataUpdate';

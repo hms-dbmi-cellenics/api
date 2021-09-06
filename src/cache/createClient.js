@@ -1,6 +1,8 @@
 const Redis = require('ioredis');
-const logger = require('../utils/logging').defaultLogger;
+const getLogger = require('../utils/getLogger');
 const config = require('../config');
+
+const logger = getLogger();
 
 const createClient = (options) => {
   const { host, port, endpoint } = options;

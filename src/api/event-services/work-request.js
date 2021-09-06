@@ -1,6 +1,6 @@
 const AWSXRay = require('aws-xray-sdk');
 const WorkSubmitService = require('../general-services/work-submit');
-const logger = require('../../utils/logging').defaultLogger;
+const getLogger = require('../../utils/getLogger');
 const { cacheGetRequest } = require('../../utils/cache-request');
 const { CacheMissError } = require('../../cache/cache-utils');
 const { handlePagination } = require('../../utils/handlePagination');
@@ -8,6 +8,8 @@ const validateRequest = require('../../utils/schema-validator');
 const getPipelineStatus = require('../general-services/pipeline-status');
 
 const pipelineConstants = require('../general-services/pipeline-manage/constants');
+
+const logger = getLogger();
 
 const handleWorkRequest = async (workRequest, socket) => {
   const { uuid, pagination, experimentId } = workRequest;

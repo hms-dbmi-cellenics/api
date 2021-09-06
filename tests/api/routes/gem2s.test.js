@@ -3,7 +3,7 @@ const request = require('supertest');
 const https = require('https');
 const _ = require('lodash');
 
-const logger = require('../../../src/utils/logging').defaultLogger;
+const getLogger = require('../../../src/utils/getLogger');
 const expressLoader = require('../../../src/loaders/express');
 const CacheSingleton = require('../../../src/cache');
 const { gem2sCreate, gem2sResponse } = require('../../../src/api/route-services/gem2s');
@@ -12,11 +12,13 @@ const { createGem2SPipeline } = require('../../../src/api/general-services/pipel
 jest.mock('sns-validator');
 jest.mock('aws-xray-sdk');
 jest.mock('../../../src/utils/authMiddlewares');
-jest.mock('../../../src/utils/logging').defaultLogger;
+jest.mock('../../../src/utils/getLogger');
 jest.mock('../../../src/cache');
 jest.mock('../../../src/api/route-services/gem2s');
 jest.mock('../../../src/api/general-services/pipeline-manage');
 jest.mock('../../../src/api/route-services/experiment');
+
+const logger = getLogger();
 
 const basicMsg = {
   MessageId: 'da8827d4-ffc2-5efb-82c1-70f929b2081d',

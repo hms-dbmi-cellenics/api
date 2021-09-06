@@ -2,13 +2,15 @@ const config = require('../../config');
 const {
   createDynamoDbInstance, convertToDynamoDbRecord, convertToJsObject,
 } = require('../../utils/dynamoDb');
-const logger = require('../../utils/logging').defaultLogger;
+const getLogger = require('../../utils/getLogger');
 
 const { OK, NotFoundError } = require('../../utils/responses');
 const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 
 const SamplesService = require('./samples');
 const ExperimentService = require('./experiment');
+
+const logger = getLogger();
 
 const samplesService = new SamplesService();
 const experimentService = new ExperimentService();

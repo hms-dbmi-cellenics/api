@@ -1,9 +1,11 @@
 const k8s = require('@kubernetes/client-node');
 const config = require('../../../config');
-const logger = require('../../../utils/logging').defaultLogger;
+const getLogger = require('../../../utils/getLogger');
 
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
+
+const logger = getLogger();
 
 const createWorkerResources = async (service) => {
   const { sandboxId } = config;

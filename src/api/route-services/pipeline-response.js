@@ -1,7 +1,7 @@
 const AWSXRay = require('aws-xray-sdk');
 const AWS = require('../../utils/requireAWS');
 const validateRequest = require('../../utils/schema-validator');
-const logger = require('../../utils/logging').defaultLogger;
+const getLogger = require('../../utils/getLogger');
 
 const constants = require('../general-services/pipeline-manage/constants');
 
@@ -16,6 +16,8 @@ const getPipelineStatus = require('../general-services/pipeline-status');
 
 const embeddingWorkRequest = require('../../utils/hooks/embeddingWorkRequest');
 const clusteringWorkRequest = require('../../utils/hooks/clusteringWorkRequest');
+
+const logger = getLogger();
 
 const pipelineHook = new PipelineHook();
 pipelineHook.register('configureEmbedding', embeddingWorkRequest);

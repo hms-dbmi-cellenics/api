@@ -2,14 +2,16 @@ const express = require('express');
 const request = require('supertest');
 const https = require('https');
 const _ = require('lodash');
-const logger = require('../../../src/utils/logging').defaultLogger;
+const getLogger = require('../../../src/utils/getLogger');
 const expressLoader = require('../../../src/loaders/express');
 const CacheSingleton = require('../../../src/cache');
 
 jest.mock('sns-validator');
 jest.mock('aws-xray-sdk');
-jest.mock('../../../src/utils/logging').defaultLogger;
+jest.mock('../../../src/utils/getLogger');
 jest.mock('../../../src/cache');
+
+const logger = getLogger();
 
 const basicMsg = {
   MessageId: 'da8827d4-ffc2-5efb-82c1-70f929b2081d',

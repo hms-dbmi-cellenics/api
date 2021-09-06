@@ -1,9 +1,11 @@
 const AWSXRay = require('aws-xray-sdk');
 const Gem2sService = require('../route-services/gem2s');
 const parseSNSMessage = require('../../utils/parse-sns-message');
-const logger = require('../../utils/logging').defaultLogger;
+const getLogger = require('../../utils/getLogger');
 
 const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
+
+const logger = getLogger();
 
 module.exports = {
   'gem2s#create': [

@@ -4,7 +4,7 @@ const config = require('../../config');
 const mockData = require('./mock-data.json');
 
 const AWS = require('../../utils/requireAWS');
-const logger = require('../../utils/logging').getLogger('ExperimentService] - ');
+const getLogger = require('../../utils/getLogger');
 const { OK, NotFoundError, BadRequestError } = require('../../utils/responses');
 const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 
@@ -23,6 +23,8 @@ const {
   convertToDynamoDbRecord,
   convertToDynamoUpdateParams,
 } = require('../../utils/dynamoDb');
+
+const logger = getLogger('ExperimentService] - ');
 
 class ExperimentService {
   constructor() {
