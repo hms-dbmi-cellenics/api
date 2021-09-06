@@ -27,4 +27,18 @@ module.exports = {
       .then((data) => res.json(data))
       .catch(next);
   },
+  'samples#uploadSampleFileUrl': (req, res, next) => {
+    const { params: { projectUuid, sampleUuid, fileName }, query } = req;
+
+    try {
+      const { cellranger_version = undefined } = query;
+
+      const uploadUrl = samplesService
+        .getS3UploadUrl(projectUuid, sampleUuid, fileName, cellranger_version);
+
+      res.json(uploadUrl);
+    } catch (e) {
+      next(e);
+    }
+  },
 };
