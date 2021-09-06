@@ -2,7 +2,7 @@ const _ = require('lodash');
 const AWS = require('../../utils/requireAWS');
 const ExperimentService = require('../route-services/experiment');
 const config = require('../../config');
-const logger = require('../../utils/logging');
+const logger = require('../../utils/logging').defaultLogger;
 const pipelineConstants = require('./pipeline-manage/constants');
 
 const privateSteps = [

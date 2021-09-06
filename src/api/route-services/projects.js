@@ -2,7 +2,7 @@ const config = require('../../config');
 const {
   createDynamoDbInstance, convertToDynamoDbRecord, convertToJsObject,
 } = require('../../utils/dynamoDb');
-const logger = require('../../utils/logging');
+const logger = require('../../utils/logging').defaultLogger;
 
 const { OK, NotFoundError } = require('../../utils/responses');
 const safeBatchGetItem = require('../../utils/safeBatchGetItem');

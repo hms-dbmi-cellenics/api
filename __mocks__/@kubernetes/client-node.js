@@ -1,5 +1,5 @@
 const k8s = jest.genMockFromModule('@kubernetes/client-node');
-const logger = require('../../src/utils/logging');
+const logger = require('../../src/utils/logging').defaultLogger;
 
 const mockApi = {
   createNamespacedJob: jest.fn(() => {

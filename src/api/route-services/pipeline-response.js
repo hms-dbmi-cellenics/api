@@ -1,7 +1,7 @@
 const AWSXRay = require('aws-xray-sdk');
 const AWS = require('../../utils/requireAWS');
 const validateRequest = require('../../utils/schema-validator');
-const logger = require('../../utils/logging');
+const logger = require('../../utils/logging').defaultLogger;
 
 const constants = require('../general-services/pipeline-manage/constants');
 

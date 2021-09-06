@@ -1,6 +1,6 @@
 const k8s = require('@kubernetes/client-node');
 const config = require('../../../config');
-const logger = require('../../../utils/logging');
+const logger = require('../../../utils/logging').defaultLogger;
 
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();

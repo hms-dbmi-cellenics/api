@@ -1,6 +1,6 @@
 // const { createAdapter } = require('socket.io-redis');
 
-const logger = require('../utils/logging');
+const logger = require('../utils/logging').defaultLogger;
 const { generateConfig } = require('../cache/generate-config');
 const CacheSingleton = require('../cache');
 

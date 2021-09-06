@@ -2,13 +2,13 @@ const express = require('express');
 const request = require('supertest');
 const https = require('https');
 const _ = require('lodash');
-const logger = require('../../../src/utils/logging');
+const logger = require('../../../src/utils/logging').defaultLogger;
 const expressLoader = require('../../../src/loaders/express');
 const CacheSingleton = require('../../../src/cache');
 
 jest.mock('sns-validator');
 jest.mock('aws-xray-sdk');
-jest.mock('../../../src/utils/logging');
+jest.mock('../../../src/utils/logging').defaultLogger;
 jest.mock('../../../src/cache');
 
 const basicMsg = {

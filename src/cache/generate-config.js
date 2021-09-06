@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
 const config = require('../config');
-const logger = require('../utils/logging');
+const logger = require('../utils/logging').defaultLogger;
 
 const BASE_CONFIG = {
   cacheDuration: 60,

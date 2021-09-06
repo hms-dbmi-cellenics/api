@@ -1,7 +1,7 @@
 const https = require('https');
 const MessageValidator = require('sns-validator');
 const { promisify } = require('util');
-const logger = require('./logging');
+const logger = require('./logging').defaultLogger;
 const config = require('../config');
 
 const validator = new MessageValidator();

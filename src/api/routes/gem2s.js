@@ -1,7 +1,7 @@
 const AWSXRay = require('aws-xray-sdk');
 const Gem2sService = require('../route-services/gem2s');
 const parseSNSMessage = require('../../utils/parse-sns-message');
-const logger = require('../../utils/logging');
+const logger = require('../../utils/logging').defaultLogger;
 
 const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
 

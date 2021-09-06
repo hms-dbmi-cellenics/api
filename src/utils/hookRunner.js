@@ -1,4 +1,4 @@
-const logger = require('./logging');
+const logger = require('./logging').defaultLogger;
 
 class hookRunner {
   constructor() {

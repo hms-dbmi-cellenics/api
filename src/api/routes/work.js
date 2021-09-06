@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const AWSXRay = require('aws-xray-sdk');
 const WorkResponseService = require('../route-services/work-response');
-const logger = require('../../utils/logging');
+const logger = require('../../utils/logging').defaultLogger;
 const parseSNSMessage = require('../../utils/parse-sns-message');
 
 module.exports = {

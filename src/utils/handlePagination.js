@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const mm = require('micromatch');
-const logger = require('./logging');
+const logger = require('./logging').defaultLogger;
 
 const handleTextFilter = (rows, filter) => {
   const { columnName, expression } = filter;

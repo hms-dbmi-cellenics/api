@@ -4,7 +4,7 @@ const express = require('express');
 const expressLoader = require('./loaders/express');
 const cacheLoader = require('./loaders/cache');
 const config = require('./config');
-const logger = require('./utils/logging');
+const logger = require('./utils/logging').defaultLogger;
 
 async function startServer() {
   const { app, server, socketIo: io } = await expressLoader(express());

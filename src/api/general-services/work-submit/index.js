@@ -4,7 +4,7 @@ const AWSXRay = require('aws-xray-sdk');
 const AWS = require('../../../utils/requireAWS');
 const createWorkerResources = require('./create-worker-k8s');
 const config = require('../../../config');
-const logger = require('../../../utils/logging');
+const logger = require('../../../utils/logging').defaultLogger;
 
 
 class WorkSubmitService {

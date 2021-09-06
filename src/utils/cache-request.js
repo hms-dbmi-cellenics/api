@@ -2,7 +2,7 @@ const hash = require('object-hash');
 const AWSXRay = require('aws-xray-sdk');
 const config = require('../config');
 const CacheSingleton = require('../cache');
-const logger = require('./logging');
+const logger = require('./logging').defaultLogger;
 
 
 const createObjectHash = (object) => hash.MD5(object);

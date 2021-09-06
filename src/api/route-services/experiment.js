@@ -4,7 +4,7 @@ const config = require('../../config');
 const mockData = require('./mock-data.json');
 
 const AWS = require('../../utils/requireAWS');
-const logger = require('../../utils/logging');
+const logger = require('../../utils/logging').getLogger('ExperimentService] - ');
 const { OK, NotFoundError, BadRequestError } = require('../../utils/responses');
 const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 
@@ -24,8 +24,6 @@ const {
   convertToDynamoUpdateParams,
 } = require('../../utils/dynamoDb');
 
-const experimentServiceLogValue = '[ExperimentService] - ';
-
 class ExperimentService {
   constructor() {
     this.experimentsTableName = `experiments-${config.clusterEnv}`;
@@ -39,7 +37,7 @@ class ExperimentService {
   }
 
   async getExperimentData(experimentId) {
-    logger.log(`${experimentServiceLogValue}GET experiment ${experimentId} data`);
+    logger.log(`GET experiment ${experimentId} data`);
 
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId,
       ['projectId', 'meta', 'experimentId', 'experimentName', 'sampleIds']);
@@ -47,7 +45,7 @@ class ExperimentService {
   }
 
   async getListOfExperiments(experimentIds) {
-    logger.log(`${experimentServiceLogValue}GET list of experiments ${experimentIds}`);
+    logger.log(`GET list of experiments ${experimentIds}`);
 
     const dynamodb = createDynamoDbInstance();
 
@@ -73,7 +71,7 @@ class ExperimentService {
 
 
   async createExperiment(experimentId, body, user) {
-    logger.log(`${experimentServiceLogValue}Creating experiment ${experimentId}`);
+    logger.log(`Creating experiment ${experimentId}`);
 
     const dynamodb = createDynamoDbInstance();
     const key = convertToDynamoDbRecord({ experimentId });
@@ -120,7 +118,7 @@ class ExperimentService {
   }
 
   async deleteExperiment(experimentId) {
-    logger.log(`${experimentServiceLogValue}DELETE experiment ${experimentId}`);
+    logger.log(`DELETE experiment ${experimentId}`);
 
     await Promise.all([
       this.deleteExperimentEntryFromDynamodb(experimentId),
@@ -131,7 +129,7 @@ class ExperimentService {
   }
 
   async updateExperiment(experimentId, body) {
-    logger.log(`${experimentServiceLogValue}UPDATE experiment ${experimentId} in dynamodb`);
+    logger.log(`UPDATE experiment ${experimentId} in dynamodb`);
 
     const dynamodb = createDynamoDbInstance();
 
@@ -169,21 +167,21 @@ class ExperimentService {
   }
 
   async getExperimentPermissions(experimentId) {
-    logger.log(`${experimentServiceLogValue}GET permissions for experiment ${experimentId}`);
+    logger.log(`GET permissions for experiment ${experimentId}`);
 
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['experimentId', 'rbac_can_write']);
     return data;
   }
 
   async getProcessingConfig(experimentId) {
-    logger.log(`${experimentServiceLogValue}GET processing config for experiment ${experimentId}`);
+    logger.log(`GET processing config for experiment ${experimentId}`);
 
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['processingConfig']);
     return data;
   }
 
   async getPipelinesHandles(experimentId) {
-    logger.log(`${experimentServiceLogValue}GET pipelines handles for experiment ${experimentId}`);
+    logger.log(`GET pipelines handles for experiment ${experimentId}`);
 
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['meta']);
 
@@ -207,7 +205,7 @@ class ExperimentService {
   }
 
   async getCellSets(experimentId) {
-    logger.log(`${experimentServiceLogValue}GET cell sets in s3 for experiment ${experimentId}`);
+    logger.log(`GET cell sets in s3 for experiment ${experimentId}`);
 
     const s3 = new AWS.S3();
 
@@ -232,7 +230,7 @@ class ExperimentService {
   }
 
   async updateLouvainCellSets(experimentId, cellSetsData) {
-    logger.log(`${experimentServiceLogValue}UPDATE louvain cell sets in s3 for experiment ${experimentId}`);
+    logger.log(`UPDATE louvain cell sets in s3 for experiment ${experimentId}`);
 
     const cellSetsObject = await this.getCellSets(experimentId);
 
@@ -251,7 +249,7 @@ class ExperimentService {
   }
 
   async updateCellSets(experimentId, cellSetData) {
-    logger.log(`${experimentServiceLogValue}UPDATE cell sets in s3 for experiment ${experimentId}`);
+    logger.log(`UPDATE cell sets in s3 for experiment ${experimentId}`);
 
     const cellSetsObject = JSON.stringify({ cellSets: cellSetData });
 
@@ -275,7 +273,7 @@ class ExperimentService {
   // Updates each sub attribute separately for
   // one particular attribute (of type object) of a dynamodb entry
   async updatePropertyFromDiff(experimentId, attributeKey, diff) {
-    logger.log(`${experimentServiceLogValue}UPDATE attribute ${attributeKey} for experiment ${experimentId} with diff ${diff}`);
+    logger.log(`UPDATE attribute ${attributeKey} for experiment ${experimentId} with diff ${diff}`);
 
     const dynamodb = createDynamoDbInstance();
 
@@ -314,7 +312,7 @@ class ExperimentService {
   }
 
   async saveHandle(experimentId, handle, service) {
-    logger.log(`${experimentServiceLogValue}Saving handle ${handle} for service ${service} for experiment ${experimentId}`);
+    logger.log(`Saving handle ${handle} for service ${service} for experiment ${experimentId}`);
 
     const dynamodb = createDynamoDbInstance();
     let key = { experimentId };
@@ -345,7 +343,7 @@ class ExperimentService {
   }
 
   async downloadData(experimentId, downloadType) {
-    logger.log(`${experimentServiceLogValue}Providing download link for download ${downloadType} for experiment ${experimentId}`);
+    logger.log(`Providing download link for download ${downloadType} for experiment ${experimentId}`);
 
     let objectKey = '';
     let bucket = '';

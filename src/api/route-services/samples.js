@@ -10,7 +10,7 @@ const {
 } = require('../../utils/dynamoDb');
 const AWS = require('../../utils/requireAWS');
 
-const logger = require('../../utils/logging');
+const logger = require('../../utils/logging').defaultLogger;
 
 class SamplesService {
   constructor() {

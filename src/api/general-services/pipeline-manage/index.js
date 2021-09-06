@@ -7,7 +7,7 @@ const fetch = require('node-fetch');
 const { v4: uuidv4 } = require('uuid');
 const AWS = require('../../../utils/requireAWS');
 const config = require('../../../config');
-const logger = require('../../../utils/logging');
+const logger = require('../../../utils/logging').defaultLogger;
 const ExperimentService = require('../../route-services/experiment');
 
 const { getQcPipelineSkeleton } = require('./skeletons/qc-pipeline-skeleton');

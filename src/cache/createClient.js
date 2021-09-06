@@ -1,5 +1,5 @@
 const Redis = require('ioredis');
-const logger = require('../utils/logging');
+const logger = require('../utils/logging').defaultLogger;
 const config = require('../config');
 
 const createClient = (options) => {

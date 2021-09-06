@@ -13,7 +13,7 @@ const runQCPipeline = require('../../utils/hooks/runQCPipeline');
 const validateRequest = require('../../utils/schema-validator');
 const PipelineHook = require('../../utils/hookRunner');
 const { OK } = require('../../utils/responses');
-const logger = require('../../utils/logging');
+const logger = require('../../utils/logging').defaultLogger;
 
 const ExperimentService = require('./experiment');
 const ProjectsService = require('./projects');

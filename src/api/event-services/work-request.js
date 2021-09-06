@@ -1,6 +1,6 @@
 const AWSXRay = require('aws-xray-sdk');
 const WorkSubmitService = require('../general-services/work-submit');
-const logger = require('../../utils/logging');
+const logger = require('../../utils/logging').defaultLogger;
 const { cacheGetRequest } = require('../../utils/cache-request');
 const { CacheMissError } = require('../../cache/cache-utils');
 const { handlePagination } = require('../../utils/handlePagination');

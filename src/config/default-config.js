@@ -1,6 +1,6 @@
 const dotenv = require('dotenv');
 const AWS = require('aws-sdk');
-const logger = require('../utils/logging');
+const logger = require('../utils/logging').defaultLogger;
 
 // If we are not deployed on GitLab (AWS/k8s), the environment is given by
 // NODE_ENV, or development if NODE_ENV is not set.

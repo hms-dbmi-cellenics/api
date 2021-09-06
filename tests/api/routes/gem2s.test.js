@@ -3,7 +3,7 @@ const request = require('supertest');
 const https = require('https');
 const _ = require('lodash');
 
-const logger = require('../../../src/utils/logging');
+const logger = require('../../../src/utils/logging').defaultLogger;
 const expressLoader = require('../../../src/loaders/express');
 const CacheSingleton = require('../../../src/cache');
 const { gem2sCreate, gem2sResponse } = require('../../../src/api/route-services/gem2s');
@@ -12,7 +12,7 @@ const { createGem2SPipeline } = require('../../../src/api/general-services/pipel
 jest.mock('sns-validator');
 jest.mock('aws-xray-sdk');
 jest.mock('../../../src/utils/authMiddlewares');
-jest.mock('../../../src/utils/logging');
+jest.mock('../../../src/utils/logging').defaultLogger;
 jest.mock('../../../src/cache');
 jest.mock('../../../src/api/route-services/gem2s');
 jest.mock('../../../src/api/general-services/pipeline-manage');
