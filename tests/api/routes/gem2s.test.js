@@ -3,11 +3,12 @@ const request = require('supertest');
 const https = require('https');
 const _ = require('lodash');
 
-const getLogger = require('../../../src/utils/getLogger');
 const expressLoader = require('../../../src/loaders/express');
 const CacheSingleton = require('../../../src/cache');
 const { gem2sCreate, gem2sResponse } = require('../../../src/api/route-services/gem2s');
 const { createGem2SPipeline } = require('../../../src/api/general-services/pipeline-manage');
+
+const getLogger = require('../../../src/utils/getLogger');
 
 jest.mock('sns-validator');
 jest.mock('aws-xray-sdk');
@@ -18,7 +19,17 @@ jest.mock('../../../src/api/route-services/gem2s');
 jest.mock('../../../src/api/general-services/pipeline-manage');
 jest.mock('../../../src/api/route-services/experiment');
 
-const logger = getLogger();
+const mockLogger = {
+  log: jest.fn(() => { }),
+  error: jest.fn(() => { }),
+  debug: jest.fn(() => { }),
+  trace: jest.fn(() => { }),
+  warn: jest.fn(() => { }),
+};
+
+getLogger.mockReturnValue(
+  mockLogger,
+);
 
 const basicMsg = {
   MessageId: 'da8827d4-ffc2-5efb-82c1-70f929b2081d',
@@ -47,8 +58,8 @@ describe('tests for gem2s route', () => {
   });
 
   afterEach(() => {
-    logger.log.mockClear();
-    logger.error.mockClear();
+    mockLogger.log.mockClear();
+    mockLogger.error.mockClear();
     jest.clearAllMocks();
   });
 
@@ -66,7 +77,7 @@ describe('tests for gem2s route', () => {
       .expect(200)
       .expect('ok');
 
-    expect(logger.error).toHaveBeenCalledTimes(0);
+    expect(mockLogger.error).toHaveBeenCalledTimes(0);
     expect(gem2sResponse).toHaveBeenCalledTimes(1);
   });
 
@@ -84,7 +95,7 @@ describe('tests for gem2s route', () => {
       .expect(200)
       .expect('nok');
 
-    expect(logger.error).toHaveBeenCalled();
+    expect(mockLogger.error).toHaveBeenCalled();
     expect(gem2sResponse).toHaveBeenCalledTimes(1);
   });
 
@@ -99,7 +110,7 @@ describe('tests for gem2s route', () => {
       .expect(200)
       .expect('nok');
 
-    expect(logger.error).toHaveBeenCalled();
+    expect(mockLogger.error).toHaveBeenCalled();
     expect(https.get).toHaveBeenCalledTimes(0);
   });
 
@@ -116,7 +127,7 @@ describe('tests for gem2s route', () => {
       .set('Content-type', 'text/plain')
       .expect(200);
 
-    expect(logger.error).toHaveBeenCalledTimes(0);
+    expect(mockLogger.error).toHaveBeenCalledTimes(0);
     expect(https.get).toHaveBeenCalledTimes(1);
   });
 
@@ -133,7 +144,7 @@ describe('tests for gem2s route', () => {
       .set('Content-type', 'text/plain')
       .expect(200);
 
-    expect(logger.error).toHaveBeenCalledTimes(0);
+    expect(mockLogger.error).toHaveBeenCalledTimes(0);
     expect(https.get).toHaveBeenCalledTimes(1);
   });
 
@@ -162,7 +173,7 @@ describe('tests for gem2s route', () => {
       .expect(200)
       .expect('nok');
 
-    expect(logger.error).toHaveBeenCalled();
+    expect(mockLogger.error).toHaveBeenCalled();
   });
 
   it('Creates a new pipeline for gem2s execution', async (done) => {

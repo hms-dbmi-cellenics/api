@@ -12,8 +12,6 @@ jest.mock('aws-xray-sdk');
 jest.mock('../../../src/utils/getLogger');
 jest.mock('../../../src/cache');
 
-const logger = getLogger();
-
 const basicMsg = JSON.stringify({
   MessageId: 'da8827d4-ffc2-5efb-82c1-70f929b2081d',
   ResponseMetadata: {
@@ -29,6 +27,17 @@ const basicMsg = JSON.stringify({
   },
 });
 
+const mockLogger = {
+  log: jest.fn(() => { }),
+  error: jest.fn(() => { }),
+  debug: jest.fn(() => { }),
+  trace: jest.fn(() => { }),
+  warn: jest.fn(() => { }),
+};
+
+getLogger.mockReturnValue(
+  mockLogger,
+);
 
 describe('WorkResults route', () => {
   let app = null;
@@ -40,8 +49,8 @@ describe('WorkResults route', () => {
     app = mockApp.app;
   });
   afterEach(() => {
-    logger.log.mockClear();
-    logger.error.mockClear();
+    mockLogger.log.mockClear();
+    mockLogger.error.mockClear();
   });
   it('Can handle notifications', async () => {
     let validMsg = _.cloneDeep(JSON.parse(basicMsg));
@@ -57,7 +66,7 @@ describe('WorkResults route', () => {
       .send(validMsg)
       .set('Content-type', 'text/plain')
       .expect(200);
-    expect(logger.error).toHaveBeenCalledTimes(0);
+    expect(mockLogger.error).toHaveBeenCalledTimes(0);
     expect(mockHandleResponse).toHaveBeenCalledTimes(1);
   });
   it('Validating the response throws an error', async () => {
@@ -70,7 +79,7 @@ describe('WorkResults route', () => {
       .set('Content-type', 'text/plain')
       .expect(200)
       .expect('nok');
-    expect(logger.error).toHaveBeenCalled();
+    expect(mockLogger.error).toHaveBeenCalled();
     expect(https.get).toHaveBeenCalledTimes(0);
   });
 
@@ -85,7 +94,7 @@ describe('WorkResults route', () => {
       .send(validMsg)
       .set('Content-type', 'text/plain')
       .expect(200);
-    expect(logger.error).toHaveBeenCalledTimes(0);
+    expect(mockLogger.error).toHaveBeenCalledTimes(0);
     expect(https.get).toHaveBeenCalledTimes(1);
   });
 
@@ -100,7 +109,7 @@ describe('WorkResults route', () => {
       .send(validMsg)
       .set('Content-type', 'text/plain')
       .expect(200);
-    expect(logger.error).toHaveBeenCalledTimes(0);
+    expect(mockLogger.error).toHaveBeenCalledTimes(0);
     expect(https.get).toHaveBeenCalledTimes(1);
   });
 
@@ -130,7 +139,7 @@ describe('WorkResults route', () => {
       .expect(200)
       .expect('nok');
 
-    expect(logger.error).toHaveBeenCalled();
+    expect(mockLogger.error).toHaveBeenCalled();
     expect(mockHandleResponse).toHaveBeenCalledTimes(0);
   });
 });

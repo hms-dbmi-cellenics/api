@@ -11,8 +11,6 @@ jest.mock('aws-xray-sdk');
 jest.mock('../../../src/utils/getLogger');
 jest.mock('../../../src/cache');
 
-const logger = getLogger();
-
 const basicMsg = {
   MessageId: 'da8827d4-ffc2-5efb-82c1-70f929b2081d',
   ResponseMetadata: {
@@ -28,6 +26,17 @@ const basicMsg = {
   },
 };
 
+const mockLogger = {
+  log: jest.fn(() => { }),
+  error: jest.fn(() => { }),
+  debug: jest.fn(() => { }),
+  trace: jest.fn(() => { }),
+  warn: jest.fn(() => { }),
+};
+
+getLogger.mockReturnValue(
+  mockLogger,
+);
 
 describe('PipelineResults route', () => {
   let app = null;
@@ -40,8 +49,8 @@ describe('PipelineResults route', () => {
   });
 
   afterEach(() => {
-    logger.log.mockClear();
-    logger.error.mockClear();
+    mockLogger.log.mockClear();
+    mockLogger.error.mockClear();
   });
 
   it('Can handle notifications', async () => {
@@ -58,7 +67,7 @@ describe('PipelineResults route', () => {
       .set('Content-type', 'text/plain')
       .expect(200);
 
-    expect(logger.error).toHaveBeenCalledTimes(0);
+    expect(mockLogger.error).toHaveBeenCalledTimes(0);
     expect(mockHandleResponse).toHaveBeenCalledTimes(1);
   });
 
@@ -73,7 +82,7 @@ describe('PipelineResults route', () => {
       .expect(200)
       .expect('nok');
 
-    expect(logger.error).toHaveBeenCalled();
+    expect(mockLogger.error).toHaveBeenCalled();
     expect(https.get).toHaveBeenCalledTimes(0);
   });
 
@@ -90,7 +99,7 @@ describe('PipelineResults route', () => {
       .set('Content-type', 'text/plain')
       .expect(200);
 
-    expect(logger.error).toHaveBeenCalledTimes(0);
+    expect(mockLogger.error).toHaveBeenCalledTimes(0);
     expect(https.get).toHaveBeenCalledTimes(1);
   });
 
@@ -107,7 +116,7 @@ describe('PipelineResults route', () => {
       .set('Content-type', 'text/plain')
       .expect(200);
 
-    expect(logger.error).toHaveBeenCalledTimes(0);
+    expect(mockLogger.error).toHaveBeenCalledTimes(0);
     expect(https.get).toHaveBeenCalledTimes(1);
   });
 
@@ -137,7 +146,7 @@ describe('PipelineResults route', () => {
       .expect(200)
       .expect('nok');
 
-    expect(logger.error).toHaveBeenCalled();
+    expect(mockLogger.error).toHaveBeenCalled();
     expect(mockHandleResponse).toHaveBeenCalledTimes(0);
   });
 });
