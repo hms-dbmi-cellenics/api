@@ -9,8 +9,6 @@ const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 const constants = require('../general-services/pipeline-manage/constants');
 const downloadTypes = require('../../utils/downloadTypes');
 
-const mockData = require('./mock-data.json');
-
 const {
   getExperimentAttributes,
   getDeepAttrsUpdateParams,
@@ -30,9 +28,6 @@ class ExperimentService {
     this.cellSetsBucketName = `cell-sets-${config.clusterEnv}`;
     this.processedMatrixBucketName = `processed-matrix-${config.clusterEnv}`;
     this.rawSeuratBucketName = `biomage-source-${config.clusterEnv}`;
-
-    mockData.matrixPath = mockData.matrixPath.replace('BUCKET_NAME', this.rawSeuratBucketName);
-    this.mockData = convertToDynamoDbRecord(mockData);
   }
 
   async getExperimentData(experimentId) {
@@ -255,13 +250,13 @@ class ExperimentService {
     /**
      * The $remove operation will replace the element in the array with an
      * undefined value. We will therefore remove this from the array.
+     *
+     * We use the $remove operation in the worker to update cell clusters,
+     * and we may end up using it in other places in the future.
      */
     const patchedArray = jsonMerger.mergeObjects(
       [cellSetsList, patch],
     ).filter((x) => x !== undefined);
-
-    console.log(patchedArray);
-    console.log(typeof patchedArray);
 
     const response = await this.updateCellSets(experimentId, patchedArray);
 
