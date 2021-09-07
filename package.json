@@ -43,6 +43,7 @@
     "github-download-directory": "^2.0.0",
     "ioredis": "^4.17.3",
     "js-yaml": "^3.13.1",
+    "json-merger": "^1.1.6",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.5",
     "lodash": "^4.17.21",

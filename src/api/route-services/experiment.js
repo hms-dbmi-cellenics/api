@@ -1,13 +1,11 @@
 const _ = require('lodash');
 
+const jsonMerger = require('json-merger');
 const config = require('../../config');
-const mockData = require('./mock-data.json');
-
 const AWS = require('../../utils/requireAWS');
 const logger = require('../../utils/logging');
 const { OK, NotFoundError, BadRequestError } = require('../../utils/responses');
 const safeBatchGetItem = require('../../utils/safeBatchGetItem');
-
 const constants = require('../general-services/pipeline-manage/constants');
 const downloadTypes = require('../../utils/downloadTypes');
 
@@ -30,9 +28,6 @@ class ExperimentService {
     this.cellSetsBucketName = `cell-sets-${config.clusterEnv}`;
     this.processedMatrixBucketName = `processed-matrix-${config.clusterEnv}`;
     this.rawSeuratBucketName = `biomage-source-${config.clusterEnv}`;
-
-    mockData.matrixPath = mockData.matrixPath.replace('BUCKET_NAME', this.rawSeuratBucketName);
-    this.mockData = convertToDynamoDbRecord(mockData);
   }
 
   async getExperimentData(experimentId) {
@@ -232,23 +227,6 @@ class ExperimentService {
     }
   }
 
-  async updateLouvainCellSets(experimentId, cellSetsData) {
-    const cellSetsObject = await this.getCellSets(experimentId);
-
-    const { cellSets: cellSetsList } = cellSetsObject;
-
-    const louvainIndex = _.findIndex(cellSetsList, { key: 'louvain' });
-    if (louvainIndex !== -1) {
-      // If louvain already exists replace
-      cellSetsList[louvainIndex] = cellSetsData;
-    } else {
-      // If not, insert in the front
-      cellSetsList.unshift(cellSetsData);
-    }
-
-    await this.updateCellSets(experimentId, cellSetsList);
-  }
-
   async updateCellSets(experimentId, cellSetData) {
     const cellSetsObject = JSON.stringify({ cellSets: cellSetData });
 
@@ -263,6 +241,26 @@ class ExperimentService {
     ).promise();
 
     return cellSetData;
+  }
+
+  async patchCellSets(experimentId, patch) {
+    const cellSetsObject = await this.getCellSets(experimentId);
+    const { cellSets: cellSetsList } = cellSetsObject;
+
+    /**
+     * The $remove operation will replace the element in the array with an
+     * undefined value. We will therefore remove this from the array.
+     *
+     * We use the $remove operation in the worker to update cell clusters,
+     * and we may end up using it in other places in the future.
+     */
+    const patchedArray = jsonMerger.mergeObjects(
+      [cellSetsList, patch],
+    ).filter((x) => x !== undefined);
+
+    const response = await this.updateCellSets(experimentId, patchedArray);
+
+    return response;
   }
 
   async updateProcessingConfig(experimentId, processingConfig) {

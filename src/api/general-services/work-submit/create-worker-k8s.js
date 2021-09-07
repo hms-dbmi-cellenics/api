@@ -13,17 +13,21 @@ const createWorkerResources = async (service) => {
 
   const [assignedPods, unassignedPods] = await Promise.all(
     [
-      k8sApi.listNamespacedPod(namespace, null, null, null, null, `experimentId=${experimentId}`),
+      k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', `experimentId=${experimentId}`),
 
       // Look for items without an experimentId or run label. Run is used by the cleanup operator
       // so this prevents us from scheduling it as a worker by accident.
-      k8sApi.listNamespacedPod(namespace, null, null, null, null, '!experimentId,!run'),
+      k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', '!experimentId,!run'),
     ],
   );
 
   if (assignedPods.body.items.length > 0) {
     logger.log(`Experiment ${experimentId} already assigned a worker, skipping creation...`);
     return;
+  }
+
+  if (unassignedPods.body.items.length === 0) {
+    throw new Error(`Experiment ${experimentId} cannot be launched as there are no available running workers.`);
   }
 
   const pods = unassignedPods.body.items;

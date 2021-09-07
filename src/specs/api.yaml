@@ -26,7 +26,7 @@ paths:
         - heartbeat
       summary: API health check
       operationId: checkHealth
-      x-eov-operation-id: health#check
+      x-eov-operation-id: 'health#check'
       x-eov-operation-handler: routes/health
       responses:
         '200':
@@ -58,53 +58,10 @@ paths:
                   - env
                   - clusterEnv
       description: Returns a status on the health of the API.
-  /workResults:
-    post:
-      operationId: receiveWork
-      x-eov-operation-id: work#response
-      x-eov-operation-handler: routes/work
-      requestBody:
-        description: 'The results from the execution of a work request, sent via SNS.'
-        required: true
-        content:
-          text/plain:
-            schema:
-              type: string
-            examples: {}
-          application/json:
-            schema:
-              type: object
-              properties: {}
-            examples: {}
-      responses:
-        '200':
-          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
-          content:
-            text/plain:
-              schema:
-                type: string
-                pattern: ok
-        '500':
-          description: The data sent by the server could not be parsed as JSON.
-          content:
-            text/plain:
-              schema:
-                type: string
-                pattern: nok
-      description: |-
-        Results from work performed by workers are relayed to the API through this endpoint.
-
-        Note that this endpoint is only exposed to AWS SNS, and since it has a specific communication protocol with limited feedback, the schema defined here is designed to be liberally enforceable. This endpoint is also used by SNS to handle subscribe/unsubscribe events.
-
-        The actual JSON passed by SNS is found in the `WorkResponse` model, which is to be validated by the API.
-      summary: Retrieve results from worker
-      tags:
-        - work
-    parameters: []
   /gem2sResults:
     post:
       operationId: receiveGem2sResponse
-      x-eov-operation-id: gem2s#response
+      x-eov-operation-id: 'gem2s#response'
       x-eov-operation-handler: routes/gem2s
       requestBody:
         description: 'The results from the execution of a pipeline step, sent via SNS.'
@@ -147,7 +104,7 @@ paths:
   /pipelineResults:
     post:
       operationId: receivePipelineResponse
-      x-eov-operation-id: pipelines#response
+      x-eov-operation-id: 'pipelines#response'
       x-eov-operation-handler: routes/pipelines
       requestBody:
         description: 'The results from the execution of a pipeline step, sent via SNS.'
@@ -194,7 +151,7 @@ paths:
       summary: Get experiment details
       description: Returns the main details of the experiment.
       operationId: getExperiment
-      x-eov-operation-id: experiment#getExperiment
+      x-eov-operation-id: 'experiment#getExperiment'
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
@@ -232,7 +189,7 @@ paths:
       summary: Create experiment
       description: Create a new experiment
       operationId: createExperiment
-      x-eov-operation-id: experiment#createExperiment
+      x-eov-operation-id: 'experiment#createExperiment'
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
@@ -256,7 +213,7 @@ paths:
     put:
       summary: ''
       operationId: updateExperiment
-      x-eov-operation-id: experiment#updateExperiment
+      x-eov-operation-id: 'experiment#updateExperiment'
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
@@ -291,7 +248,7 @@ paths:
       summary: Get cell sets for experiment
       description: Returns a hirearchical view of cell sets in the experiment.
       operationId: getExperimentCellSetsById
-      x-eov-operation-id: experiment#getCellSets
+      x-eov-operation-id: 'experiment#getCellSets'
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
@@ -333,7 +290,7 @@ paths:
     put:
       summary: ''
       operationId: updateExperimentCellSetsById
-      x-eov-operation-id: experiment#updateCellSets
+      x-eov-operation-id: 'experiment#updateCellSets'
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
@@ -368,12 +325,49 @@ paths:
                   - $ref: ./models/api-body-schemas/CellSets.v1.yaml
       tags:
         - experiments
+    patch:
+      summary: ''
+      operationId: patchExperimentCellSetsById
+      x-eov-operation-id: 'experiment#patchCellSets'
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: Update to object in response successful.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: ./models/api-body-schemas/CellSets.v1.yaml
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: "Performs a partial update on the experiment's cell sets."
+      requestBody:
+        content:
+          application/boschni-json-merger+json:
+            schema:
+              oneOf:
+                - type: array
+                  items: {}
+                - type: object
+        description: The patch in the format declared by boschni/json-merger. Note the explicit naming of the content subtype (boschni-json-merger+json) which must be used to explicitly acknowledge the format.
   '/experiments/{experimentId}/processingConfig':
     get:
       summary: Retrieve processing configuration
       description: Returns a hirearchical view of processing configuration used in the experiment.
       operationId: getExperimentProcessingConfigById
-      x-eov-operation-id: experiment#getProcessingConfig
+      x-eov-operation-id: 'experiment#getProcessingConfig'
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
@@ -412,7 +406,7 @@ paths:
     put:
       summary: ''
       operationId: updateExperimentProcessingConfigById
-      x-eov-operation-id: experiment#updateProcessingConfig
+      x-eov-operation-id: 'experiment#updateProcessingConfig'
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
@@ -459,7 +453,7 @@ paths:
     get:
       summary: Download data according to the requested type
       operationId: downloadExperimentData
-      x-eov-operation-id: experiment#downloadData
+      x-eov-operation-id: 'experiment#downloadData'
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
@@ -468,7 +462,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: 
+                properties:
                   signedUrl:
                     type: string
                     description: signed URL of the resource
@@ -534,7 +528,7 @@ paths:
     put:
       summary: ''
       operationId: updatePlotTable
-      x-eov-operation-id: plots-tables#update
+      x-eov-operation-id: 'plots-tables#update'
       x-eov-operation-handler: routes/plots-tables
       responses:
         '200':
@@ -573,7 +567,7 @@ paths:
     get:
       summary: ''
       operationId: getPlotTable
-      x-eov-operation-id: plots-tables#read
+      x-eov-operation-id: 'plots-tables#read'
       x-eov-operation-handler: routes/plots-tables
       responses:
         '200':
@@ -604,7 +598,7 @@ paths:
     delete:
       summary: ''
       operationId: deletePlotTable
-      x-eov-operation-id: plots-tables#delete
+      x-eov-operation-id: 'plots-tables#delete'
       x-eov-operation-handler: routes/plots-tables
       responses:
         '200':
@@ -632,7 +626,7 @@ paths:
     post:
       summary: Create a new pipeline for gem2s execution
       operationId: createNewGem2S
-      x-eov-operation-id: gem2s#create
+      x-eov-operation-id: 'gem2s#create'
       x-eov-operation-handler: routes/gem2s
       responses:
         '200':
@@ -653,7 +647,7 @@ paths:
     post:
       summary: Create a new pipeline for taks execution
       operationId: createNewPipeline
-      x-eov-operation-id: pipelines#create
+      x-eov-operation-id: 'pipelines#create'
       x-eov-operation-handler: routes/pipelines
       responses:
         '200':
@@ -681,7 +675,7 @@ paths:
       summary: Create new pipeline
       description: Endpoint to download files
       operationId: get-experiments-experimentId-pipelines
-      x-eov-operation-id: backend-status#get
+      x-eov-operation-id: 'backend-status#get'
       x-eov-operation-handler: routes/backend-status
       responses:
         '200':
@@ -726,7 +720,7 @@ paths:
     get:
       summary: Your GET endpoint
       operationId: getSamplesByExperimentId
-      x-eov-operation-id: samples#getSamplesByExperimentId
+      x-eov-operation-id: 'samples#getSamplesByExperimentId'
       x-eov-operation-handler: routes/samples
       tags: []
       responses:
@@ -765,7 +759,7 @@ paths:
     put:
       summary: Update project
       operationId: updateProject
-      x-eov-operation-id: projects#update
+      x-eov-operation-id: 'projects#update'
       x-eov-operation-handler: routes/projects
       responses:
         '200':
@@ -814,7 +808,7 @@ paths:
     delete:
       summary: Deletes the project
       operationId: deleteProject
-      x-eov-operation-id: projects#delete
+      x-eov-operation-id: 'projects#delete'
       x-eov-operation-handler: routes/projects
       responses:
         '200':
@@ -840,7 +834,7 @@ paths:
     get:
       summary: Get experiments under a project
       operationId: getProjectExperiments
-      x-eov-operation-id: projects#getExperiments
+      x-eov-operation-id: 'projects#getExperiments'
       x-eov-operation-handler: routes/projects
       responses:
         '200':
@@ -881,7 +875,7 @@ paths:
       summary: Get samples under a project
       description: Get all samples under a project
       operationId: getProjectSamples
-      x-eov-operation-id: samples#get
+      x-eov-operation-id: 'samples#get'
       x-eov-operation-handler: routes/samples
       responses:
         '200':
@@ -920,7 +914,7 @@ paths:
     put:
       summary: Update samples
       operationId: updateSamples
-      x-eov-operation-id: samples#update
+      x-eov-operation-id: 'samples#update'
       x-eov-operation-handler: routes/samples
       responses:
         '200':
@@ -959,7 +953,7 @@ paths:
     delete:
       summary: Remove samples
       operationId: removeSamples
-      x-eov-operation-id: samples#remove
+      x-eov-operation-id: 'samples#remove'
       x-eov-operation-handler: routes/samples
       responses:
         '200':
@@ -1016,7 +1010,7 @@ paths:
     get:
       summary: Get the list of projects
       operationId: getProjects
-      x-eov-operation-id: projects#get
+      x-eov-operation-id: 'projects#get'
       x-eov-operation-handler: routes/projects
       description: Get the projects
       responses:
