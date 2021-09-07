@@ -38,7 +38,7 @@ module.exports = (socket) => {
         }
         const jwtClaim = await authenticationMiddlewareSocketIO(Authorization, socket);
         await authorize(experimentId, jwtClaim);
-        await handleWorkRequest(data, socket);
+        await handleWorkRequest(data);
       } catch (e) {
         logger.log(`[REQ ??, SOCKET ${socket.id}] Error while processing WorkRequest event.`);
         logger.trace(e);

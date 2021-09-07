@@ -45,6 +45,15 @@ module.exports = {
         .catch(next);
     },
   ],
+  'experiment#patchCellSets': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => {
+      experimentService.patchCellSets(req.params.experimentId, req.body)
+        .then((data) => res.json(data))
+        .catch(next);
+    },
+  ],
+
   'experiment#getProcessingConfig': [
     expressAuthorizationMiddleware,
     (req, res, next) => {
