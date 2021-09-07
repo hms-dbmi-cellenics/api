@@ -179,6 +179,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
   const accountId = await config.awsAccountIdPromise;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
   logger.log(`Fetching processing settings for ${experimentId}`);
+
   const {
     processingConfig,
     sampleIds,
