@@ -30,6 +30,7 @@ class ExperimentService {
     this.cellSetsBucketName = `cell-sets-${config.clusterEnv}`;
     this.processedMatrixBucketName = `processed-matrix-${config.clusterEnv}`;
     this.rawSeuratBucketName = `biomage-source-${config.clusterEnv}`;
+    this.filteredCellsBucketName = `biomage-filtered-cells-${config.clusterEnv}`;
   }
 
   async getExperimentData(experimentId) {
