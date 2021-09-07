@@ -4,8 +4,10 @@ const getBackendStatus = require('../general-services/backend-status');
 const ExperimentService = require('../route-services/experiment');
 const pipelineResponse = require('../route-services/pipeline-response');
 const parseSNSMessage = require('../../utils/parse-sns-message');
-const logger = require('../../utils/logging');
+const getLogger = require('../../utils/getLogger');
 const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
+
+const logger = getLogger();
 
 module.exports = {
   'pipelines#get': [

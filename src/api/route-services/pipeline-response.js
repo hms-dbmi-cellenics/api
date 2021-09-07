@@ -1,7 +1,7 @@
 const AWSXRay = require('aws-xray-sdk');
 const AWS = require('../../utils/requireAWS');
 const validateRequest = require('../../utils/schema-validator');
-const logger = require('../../utils/logging');
+const getLogger = require('../../utils/getLogger');
 
 const constants = require('../general-services/pipeline-manage/constants');
 const getPipelineStatus = require('../general-services/pipeline-status');
@@ -12,6 +12,7 @@ const PlotsTablesService = require('./plots-tables');
 const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
 
+const logger = getLogger();
 
 const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');

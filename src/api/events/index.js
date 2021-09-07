@@ -1,8 +1,10 @@
 const AWSXRay = require('aws-xray-sdk');
 const handleWorkRequest = require('../event-services/work-request');
-const logger = require('../../utils/logging');
+const getLogger = require('../../utils/getLogger');
 const config = require('../../config');
 const { authenticationMiddlewareSocketIO, authorize } = require('../../utils/authMiddlewares');
+
+const logger = getLogger();
 
 module.exports = (socket) => {
   socket.on('WorkRequest', (data) => {

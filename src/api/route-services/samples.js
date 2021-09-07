@@ -9,7 +9,10 @@ const {
   createDynamoDbInstance, convertToJsObject, convertToDynamoDbRecord,
 } = require('../../utils/dynamoDb');
 const AWS = require('../../utils/requireAWS');
-const logger = require('../../utils/logging');
+
+const getLogger = require('../../utils/getLogger');
+
+const logger = getLogger();
 
 class SamplesService {
   constructor() {

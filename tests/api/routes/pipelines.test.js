@@ -2,13 +2,13 @@ const express = require('express');
 const request = require('supertest');
 const https = require('https');
 const _ = require('lodash');
-const logger = require('../../../src/utils/logging');
+const getLogger = require('../../../src/utils/getLogger');
 const expressLoader = require('../../../src/loaders/express');
 const CacheSingleton = require('../../../src/cache');
 
 jest.mock('sns-validator');
 jest.mock('aws-xray-sdk');
-jest.mock('../../../src/utils/logging');
+jest.mock('../../../src/utils/getLogger');
 jest.mock('../../../src/cache');
 
 const basicMsg = {
@@ -26,6 +26,17 @@ const basicMsg = {
   },
 };
 
+const mockLogger = {
+  log: jest.fn(() => { }),
+  error: jest.fn(() => { }),
+  debug: jest.fn(() => { }),
+  trace: jest.fn(() => { }),
+  warn: jest.fn(() => { }),
+};
+
+getLogger.mockReturnValue(
+  mockLogger,
+);
 
 describe('PipelineResults route', () => {
   let app = null;
@@ -38,8 +49,8 @@ describe('PipelineResults route', () => {
   });
 
   afterEach(() => {
-    logger.log.mockClear();
-    logger.error.mockClear();
+    mockLogger.log.mockClear();
+    mockLogger.error.mockClear();
   });
 
   it('Can handle notifications', async () => {
@@ -56,7 +67,7 @@ describe('PipelineResults route', () => {
       .set('Content-type', 'text/plain')
       .expect(200);
 
-    expect(logger.error).toHaveBeenCalledTimes(0);
+    expect(mockLogger.error).toHaveBeenCalledTimes(0);
     expect(mockHandleResponse).toHaveBeenCalledTimes(1);
   });
 
@@ -71,7 +82,7 @@ describe('PipelineResults route', () => {
       .expect(200)
       .expect('nok');
 
-    expect(logger.error).toHaveBeenCalled();
+    expect(mockLogger.error).toHaveBeenCalled();
     expect(https.get).toHaveBeenCalledTimes(0);
   });
 
@@ -88,7 +99,7 @@ describe('PipelineResults route', () => {
       .set('Content-type', 'text/plain')
       .expect(200);
 
-    expect(logger.error).toHaveBeenCalledTimes(0);
+    expect(mockLogger.error).toHaveBeenCalledTimes(0);
     expect(https.get).toHaveBeenCalledTimes(1);
   });
 
@@ -105,7 +116,7 @@ describe('PipelineResults route', () => {
       .set('Content-type', 'text/plain')
       .expect(200);
 
-    expect(logger.error).toHaveBeenCalledTimes(0);
+    expect(mockLogger.error).toHaveBeenCalledTimes(0);
     expect(https.get).toHaveBeenCalledTimes(1);
   });
 
@@ -135,7 +146,7 @@ describe('PipelineResults route', () => {
       .expect(200)
       .expect('nok');
 
-    expect(logger.error).toHaveBeenCalled();
+    expect(mockLogger.error).toHaveBeenCalled();
     expect(mockHandleResponse).toHaveBeenCalledTimes(0);
   });
 });
