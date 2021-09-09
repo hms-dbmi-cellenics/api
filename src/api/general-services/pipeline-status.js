@@ -3,7 +3,7 @@ const AWS = require('../../utils/requireAWS');
 const ExperimentService = require('../route-services/experiment');
 const config = require('../../config');
 const getLogger = require('../../utils/getLogger');
-const pipelineConstants = require('./pipeline-manage/constants');
+const constants = require('./pipeline-manage/constants');
 
 const logger = getLogger();
 
@@ -18,7 +18,7 @@ const privateSteps = [
 const notCreatedStatus = {
   startDate: null,
   stopDate: null,
-  status: pipelineConstants.NOT_CREATED,
+  status: constants.NOT_CREATED,
   error: false,
   completedSteps: [],
 };
@@ -183,7 +183,7 @@ const getPipelineStatus = async (experimentId, processName) => {
   } catch (e) {
     // state machines in staging are removed after some time, in this situation we return
     // NOT_CREATED status so that the pipeline can be run again
-    if (config.clusterEnv === 'staging' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST) {
+    if (config.clusterEnv === 'staging' && e.code === constants.EXECUTION_DOES_NOT_EXIST) {
       return {
         [processName]: notCreatedStatus,
       };
@@ -192,8 +192,8 @@ const getPipelineStatus = async (experimentId, processName) => {
     // if we get the execution does not exist it means we are using a pulled experiment so
     // just return a mock sucess status
     if (
-      (config.clusterEnv === 'development' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
-      || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
+      (config.clusterEnv === 'development' && e.code === constants.EXECUTION_DOES_NOT_EXIST)
+      || (config.clusterEnv === 'staging' && e.code === constants.ACCESS_DENIED)
     ) {
       logger.log(
         `Returning a mocked success ${processName} - pipeline status because ARN ${executionArn} `
@@ -240,6 +240,11 @@ const getPipelineStatus = async (experimentId, processName) => {
       completedSteps,
     },
   };
+
+  if (processName === constants.GEM2S_PROCESS_NAME) {
+    const { paramsHash } = pipelinesHandles[constants.GEM2S_PROCESS_NAME];
+    response[constants.GEM2S_PROCESS_NAME].paramsHash = paramsHash;
+  }
 
   return response;
 };
