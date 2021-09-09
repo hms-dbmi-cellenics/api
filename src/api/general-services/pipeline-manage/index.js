@@ -177,7 +177,7 @@ const buildStateMachineDefinition = (skeleton, context) => {
   return stateMachine;
 };
 
-const createQCPipeline = async (experimentId, processingConfigUpdates) => {
+const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) => {
   const accountId = await config.awsAccountIdPromise;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
   logger.log(`Fetching processing settings for ${experimentId}`);
@@ -229,6 +229,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates) => {
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
     processingConfig: mergedProcessingConfig,
+    authJWT,
   };
 
 

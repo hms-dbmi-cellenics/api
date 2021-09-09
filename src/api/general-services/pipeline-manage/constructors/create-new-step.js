@@ -23,12 +23,13 @@ const createTask = (taskName, context) => {
   return task;
 };
 
-const getQCParams = (task, stepArgs) => {
+const getQCParams = (task, context, stepArgs) => {
   const { perSample, uploadCountMatrix } = stepArgs;
   return {
     ...task,
     ...perSample ? { 'sampleUuid.$': '$.sampleUuid' } : { sampleUuid: '' },
     ...uploadCountMatrix ? { uploadCountMatrix: true } : { uploadCountMatrix: false },
+    authJWT: context.authJWT,
   };
 };
 
@@ -45,7 +46,7 @@ const buildParams = (task, context, stepArgs) => {
   let processParams;
 
   if (task.processName === QC_PROCESS_NAME) {
-    processParams = getQCParams(task, stepArgs);
+    processParams = getQCParams(task, context, stepArgs);
   } else if (task.processName === GEM2S_PROCESS_NAME) {
     processParams = getGem2SParams(task, context);
   }
@@ -61,7 +62,6 @@ const createNewStep = (context, step, stepArgs) => {
   const { taskName } = stepArgs;
   const task = createTask(taskName, context);
   const params = buildParams(task, context, stepArgs);
-
 
   return {
     ...step,
