@@ -84,7 +84,7 @@ const authenticationMiddlewareExpress = async (app) => {
 // eslint-disable-next-line no-useless-escape
 const INTERNAL_DOMAINS_REGEX = new RegExp('((\.compute\.internal)|(\.svc\.local))$');
 
-const checkAuthExpiredMiddleware = async (req, res, next) => {
+const checkAuthExpiredMiddleware = (req, res, next) => {
   const isReqFromLocalhost = async () => {
     const ip = req.connection.remoteAddress;
     const host = req.get('host');
@@ -112,9 +112,6 @@ const checkAuthExpiredMiddleware = async (req, res, next) => {
 
   // JWT `exp` returns seconds since UNIX epoch, conver to milliseconds for this
   const timeLeft = (req.user.exp * 1000) - Date.now();
-
-  console.log('timeLeftDebug');
-  console.log(timeLeft);
 
   // ignore if JWT is still valid
   if (timeLeft > 0) {
