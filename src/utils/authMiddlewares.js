@@ -1,12 +1,12 @@
 // See details at https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-verifying-a-jwt.html
 // for how JWT verification works with Cognito.
-
 const AWSXRay = require('aws-xray-sdk');
 const fetch = require('node-fetch');
 const jwt = require('jsonwebtoken');
 const jwtExpress = require('express-jwt');
 const jwkToPem = require('jwk-to-pem');
 const util = require('util');
+const dns = require('dns');
 
 const config = require('../config');
 
@@ -41,6 +41,7 @@ const authenticationMiddlewareExpress = async (app) => {
     // so during authorization we can check if the user parameter is actually present.
     // If not, the user was not authenticated.
     credentialsRequired: false,
+    ignoreExpiration: true,
     // JWT tokens are JSON files that are signed using a key.
     // We need to make sure that the issuer in the token is correct:
     // we verify that the signed JWT includes our own user pool.
@@ -77,6 +78,71 @@ const authenticationMiddlewareExpress = async (app) => {
       });
     },
   });
+};
+
+const allowedInternalMethods = [{ urlMatcher: /^\/v1\/experiments\/.{32}\/cellSets$/, method: 'PATCH' }];
+
+
+const runningOnLocalhost = (req) => {
+  const ip = req.connection.remoteAddress;
+  const host = req.get('host');
+
+  return ip === '127.0.0.1' || ip === '::ffff:127.0.0.1' || ip === '::1' || host.indexOf('localhost') !== -1;
+};
+
+const runningInsideCluster = async (req) => {
+  const insideCluster = await Promise.promisify(dns.reverse(req.ip));
+
+  return insideCluster;
+};
+
+// - if timeLeft is less than - 6 hours, return w / error(expired JWT is more than 6 hours old)
+// - return w / o error
+
+const checkAuthExpiredMiddleware = async (req, res, next) => {
+  // - if req.user does not exist, return w / o error
+  if (!req.user) {
+    next();
+    return;
+  }
+
+  const expirationDate = req.user.exp * 1000;
+
+  // - compute exp - now = timeLeft
+  const timeLeft = expirationDate - Date.now();
+
+  if (timeLeft > 0) {
+    next();
+    return;
+  }
+
+  const pointingAtValidEndpoint = allowedInternalMethods
+    .some(({ urlMatcher, method }) => req.method === method && urlMatcher.test(req.url));
+
+  if (!pointingAtValidEndpoint) {
+    next(new UnauthenticatedError('token expired debug'));
+    return;
+  }
+
+  if (runningOnLocalhost(req)) {
+    next(new UnauthenticatedError('token expired debug'));
+    return;
+  }
+
+  const hour = 1000 * 60 * 60;
+  const sixHours = 6 * hour;
+  if (timeLeft < -sixHours) {
+    next(new UnauthenticatedError('token expired debug'));
+    return;
+  }
+
+  const isRunningInsideCluster = await runningInsideCluster(req);
+  if (isRunningInsideCluster) {
+    next(new UnauthenticatedError('token expired debug'));
+    return;
+  }
+
+  next();
 };
 
 /**
@@ -195,5 +261,6 @@ module.exports = {
   authenticationMiddlewareSocketIO,
   expressAuthorizationMiddleware,
   expressAuthenticationOnlyMiddleware,
+  checkAuthExpiredMiddleware,
   authorize,
 };
