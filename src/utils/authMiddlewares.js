@@ -104,6 +104,9 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
     console.log('domainsDebug');
     console.log(domains);
 
+    console.log('reqUrlDebug');
+    console.log(req.url);
+
     if (!domains.some((domain) => INTERNAL_DOMAINS_REGEX.test(domain))) {
       throw new Error('ip address does not come from internal sources');
     }
@@ -149,9 +152,6 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
 
   console.log('reqmethodDebug');
   console.log(req.method.toLowerCase());
-
-  console.log('reqUrlDebug');
-  console.log(req.url);
 
   console.log('isEndpointIgnoredDebug');
   console.log(isEndpointIgnored);
