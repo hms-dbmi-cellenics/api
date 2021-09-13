@@ -48,7 +48,7 @@ class Gem2sService {
     io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
   }
 
-  static async generateGem2sParams(experimentId) {
+  static async generateGem2sParams(experimentId, authJWT) {
     const experiment = await (new ExperimentService()).getExperimentData(experimentId);
     const { samples } = await (new SamplesService()).getSamplesByExperimentId(experimentId);
     const {
@@ -66,6 +66,7 @@ class Gem2sService {
       input: { type: experiment.meta.type },
       sampleIds: experiment.sampleIds,
       sampleNames: experiment.sampleIds.map((sampleId) => samples[sampleId].name),
+      authJWT,
     };
 
     if (metadataKeys.length) {
@@ -115,8 +116,8 @@ class Gem2sService {
     return gem2sStatus !== RUNNING;
   }
 
-  static async gem2sCreate(experimentId) {
-    const { taskParams, hashParams } = await this.generateGem2sParams(experimentId);
+  static async gem2sCreate(experimentId, authJWT) {
+    const { taskParams, hashParams } = await this.generateGem2sParams(experimentId, authJWT);
 
     const paramsHash = crypto
       .createHash('sha1')
@@ -149,16 +150,21 @@ class Gem2sService {
     // Fail hard if there was an error.
     await validateRequest(message, 'GEM2SResponse.v1.yaml');
 
-    const messageForClient = _.cloneDeep(message);
-
     const {
-      experimentId, taskName, item,
-    } = messageForClient;
+      experimentId, taskName, item, authJWT,
+    } = message;
 
     await pipelineHook.run(taskName, {
       experimentId,
       item,
+      authJWT,
     });
+
+
+    const messageForClient = _.cloneDeep(message);
+
+    // Make sure authJWT doesn't get back to the client
+    delete messageForClient.authJWT;
 
     await this.sendUpdateToSubscribed(experimentId, messageForClient, io);
   }

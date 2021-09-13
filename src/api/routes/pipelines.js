@@ -22,7 +22,12 @@ module.exports = {
     async (req, res) => {
       const { processingConfig } = req.body;
 
-      const data = await createQCPipeline(req.params.experimentId, processingConfig || []);
+      const data = await createQCPipeline(
+        req.params.experimentId,
+        processingConfig || [],
+        req.headers.authorization,
+      );
+
       const experimentService = new ExperimentService();
       await experimentService.saveQCHandle(req.params.experimentId, data);
       res.json(data);
