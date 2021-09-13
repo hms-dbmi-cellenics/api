@@ -120,8 +120,8 @@ const checkAuthExpiredMiddleware = async (req, res, next) => {
     ),
   );
 
-  const sixHours = 7 * 1000 * 60 * 60;
-  const expiredByMoreThanSevenHours = timeLeft < -sixHours;
+  const sevenHours = 7 * 1000 * 60 * 60;
+  const expiredByMoreThanSevenHours = timeLeft < -sevenHours;
 
   if (runningOnLocalhost(req)) {
     next();
