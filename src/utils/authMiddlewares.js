@@ -1,5 +1,7 @@
 // See details at https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-verifying-a-jwt.html
 // for how JWT verification works with Cognito.
+const promiseAny = require('promise.any');
+
 const AWSXRay = require('aws-xray-sdk');
 const fetch = require('node-fetch');
 const jwt = require('jsonwebtoken');
@@ -136,7 +138,7 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
     return next(new UnauthenticatedError('token has expired'));
   }
 
-  Promise.any([isReqFromCluster(), isReqFromLocalhost()])
+  promiseAny([isReqFromCluster(), isReqFromLocalhost()])
     .then(() => {
       next();
     })
