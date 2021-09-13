@@ -80,8 +80,7 @@ const authenticationMiddlewareExpress = async (app) => {
   });
 };
 
-const allowedInternalMethods = [{ urlMatcher: /^\/v1\/experiments\/.{32}\/cellSets$/, method: 'PATCH' }];
-
+const longTimeoutEndpoints = [{ urlMatcher: /^\/v1\/experiments\/.{32}\/cellSets$/, method: 'PATCH' }];
 
 const runningOnLocalhost = (req) => {
   const ip = req.connection.remoteAddress;
@@ -96,11 +95,7 @@ const runningInsideCluster = async (req) => {
   return insideCluster;
 };
 
-// - if timeLeft is less than - 6 hours, return w / error(expired JWT is more than 6 hours old)
-// - return w / o error
-
 const checkAuthExpiredMiddleware = async (req, res, next) => {
-  // - if req.user does not exist, return w / o error
   if (!req.user) {
     next();
     return;
@@ -108,7 +103,6 @@ const checkAuthExpiredMiddleware = async (req, res, next) => {
 
   const expirationDate = req.user.exp * 1000;
 
-  // - compute exp - now = timeLeft
   const timeLeft = expirationDate - Date.now();
 
   if (timeLeft > 0) {
@@ -116,29 +110,22 @@ const checkAuthExpiredMiddleware = async (req, res, next) => {
     return;
   }
 
-  const pointingAtValidEndpoint = allowedInternalMethods
+  const pointingAtValidEndpoint = longTimeoutEndpoints
     .some(({ urlMatcher, method }) => req.method === method && urlMatcher.test(req.url));
-
-  if (!pointingAtValidEndpoint) {
-    next(new UnauthenticatedError('token expired debug'));
-    return;
-  }
-
-  if (runningOnLocalhost(req)) {
-    next(new UnauthenticatedError('token expired debug'));
-    return;
-  }
 
   const hour = 1000 * 60 * 60;
   const sixHours = 6 * hour;
-  if (timeLeft < -sixHours) {
-    next(new UnauthenticatedError('token expired debug'));
+  const overranLongExpiration = timeLeft < -sixHours;
+
+  if (!pointingAtValidEndpoint || runningOnLocalhost(req) || overranLongExpiration) {
+    next(new UnauthenticatedError('token has expired'));
     return;
   }
 
+  // This operation ran apart from the rest because it takes longer
   const isRunningInsideCluster = await runningInsideCluster(req);
   if (isRunningInsideCluster) {
-    next(new UnauthenticatedError('token expired debug'));
+    next(new UnauthenticatedError('token has expired'));
     return;
   }
 
