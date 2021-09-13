@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const jwtExpress = require('express-jwt');
 const jwkToPem = require('jwk-to-pem');
 const util = require('util');
-const dns = require('dns');
+const dns = require('dns').promises;
 
 const config = require('../config');
 
@@ -81,66 +81,73 @@ const authenticationMiddlewareExpress = async (app) => {
 };
 
 
-const checkAuthExpiredMiddleware = async (req, res, next) => {
-  const longTimeoutEndpoints = [{ urlMatcher: /^\/v1\/experiments\/.{32}\/cellSets$/, method: 'PATCH' }];
+// eslint-disable-next-line no-useless-escape
+const INTERNAL_DOMAINS_REGEX = new RegExp('((\.compute\.internal)|(\.svc\.local))$');
 
-  const runningOnLocalhost = () => {
+const checkAuthExpiredMiddleware = async (req, res, next) => {
+  const isReqFromLocalhost = async () => {
     const ip = req.connection.remoteAddress;
     const host = req.get('host');
 
-    return ip === '127.0.0.1' || ip === '::ffff:127.0.0.1' || ip === '::1' || host.indexOf('localhost') !== -1;
+    if (ip === '127.0.0.1' || ip === '::ffff:127.0.0.1' || ip === '::1' || host.indexOf('localhost') !== -1) {
+      return true;
+    }
+
+    throw new Error('ip address is not localhost');
   };
 
-  const runningInsideCluster = async () => {
-    const insideCluster = await Promise.promisify(dns.reverse(req.ip));
+  const isReqFromCluster = async () => {
+    const domains = await dns.reverse(req.ip);
 
-    return insideCluster;
+    if (!domains.some((domain) => INTERNAL_DOMAINS_REGEX.test(domain))) {
+      throw new Error('ip address does not come from internal sources');
+    }
+
+    return true;
   };
 
   if (!req.user) {
-    next();
-    return;
+    return next();
   }
 
-  const expirationDate = req.user.exp * 1000;
-
-  const timeLeft = expirationDate - Date.now();
+  // JWT `exp` returns seconds since UNIX epoch, conver to milliseconds for this
+  const timeLeft = (req.user.exp * 1000) - Date.now();
 
   console.log('timeLeftDebug');
   console.log(timeLeft);
 
+  // ignore if JWT is still valid
   if (timeLeft > 0) {
-    next();
-    return;
+    return next();
   }
 
-  const isLongTimeoutEndpoint = longTimeoutEndpoints.some(
+  // send error if JWT is older than the limit
+  if (timeLeft < -(7 * 1000 * 60 * 60)) {
+    return next(new UnauthenticatedError('token has expired'));
+  }
+
+  // check if we should ignore expired jwt token for this path and request type
+  const longTimeoutEndpoints = [{ urlMatcher: /^\/v1\/experiments\/.{32}\/cellSets$/, method: 'PATCH' }];
+  const isEndpointIgnored = longTimeoutEndpoints.some(
     ({ urlMatcher, method }) => (
       req.method.toLowerCase() === method.toLowerCase() && urlMatcher.test(req.url)
     ),
   );
 
-  const sevenHours = 7 * 1000 * 60 * 60;
-  const expiredByMoreThanSevenHours = timeLeft < -sevenHours;
-
-  if (runningOnLocalhost(req)) {
-    next();
-    return;
+  // if endpoint is not in ignore list, the JWT is too old, send an error accordingly
+  if (!isEndpointIgnored) {
+    return next(new UnauthenticatedError('token has expired'));
   }
 
-  if (!isLongTimeoutEndpoint || expiredByMoreThanSevenHours) {
-    next(new UnauthenticatedError('token has expired'));
-    return;
-  }
+  Promise.any([isReqFromCluster(), isReqFromLocalhost()])
+    .then(() => {
+      next();
+    })
+    .catch(() => {
+      next(new UnauthenticatedError('token has expired'));
+    });
 
-  // This operation runs apart from the rest because it takes longer
-  const isRunningInsideCluster = await runningInsideCluster(req);
-  if (!isRunningInsideCluster) {
-    next(new UnauthenticatedError('token has expired'));
-    return;
-  }
-
-  next();
+  return null;
 };
 
 /**
