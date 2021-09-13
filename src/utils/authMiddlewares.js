@@ -121,6 +121,7 @@ const checkAuthExpiredMiddleware = async (req, res, next) => {
 
   const sixHours = 6 * 1000 * 60 * 60;
   const overranLongExpiration = timeLeft < -sixHours;
+
   if (!runningOnLocalhost(req) || !longTimeoutEndpoint || overranLongExpiration) {
     next(new UnauthenticatedError('token has expired'));
     return;
