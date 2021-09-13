@@ -103,9 +103,9 @@ class Gem2sService {
     const statusPromise = getPipelineStatus(experimentId, GEM2S_PROCESS_NAME);
 
     const [handles, statusWrapper] = await Promise.all([handlesPromise, statusPromise]);
-
     const { [GEM2S_PROCESS_NAME]: gem2sHandle } = handles;
     const { [GEM2S_PROCESS_NAME]: { status: gem2sStatus } } = statusWrapper;
+    console.log('STATUS WRAPPER IS ', statusWrapper, ' gem status ', gem2sStatus);
 
     logger.log(`Gem2s status is ${gem2sStatus}. new hash: ${paramsHash}; old hash: ${gem2sHandle.paramsHash}`);
     if (gem2sStatus === SUCCEEDED) {
@@ -124,7 +124,7 @@ class Gem2sService {
       .digest('hex');
 
     const shouldRun = await this.gem2sShouldRun(experimentId, paramsHash);
-
+    console.log('SHOULD RUN ISSSSSS ', shouldRun);
     if (!shouldRun) {
       logger.log('Gem2s create call ignored');
       return OK();
