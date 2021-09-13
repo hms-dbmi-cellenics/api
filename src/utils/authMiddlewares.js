@@ -81,15 +81,16 @@ const authenticationMiddlewareExpress = async (app) => {
 };
 
 
-const checkAuthExpiredMiddleware = async (req, res, next) => {
+const checkAuthExpiredMiddleware = (req, res, next) => {
   const longTimeoutEndpoints = [{ urlMatcher: /^\/v1\/experiments\/.{32}\/cellSets$/, method: 'PATCH' }];
 
-  const runningOnLocalhost = () => {
-    const ip = req.connection.remoteAddress;
-    const host = req.get('host');
+  // const runningOnLocalhost = () => {
+  //   const ip = req.connection.remoteAddress;
+  //   const host = req.get('host');
 
-    return ip === '127.0.0.1' || ip === '::ffff:127.0.0.1' || ip === '::1' || host.indexOf('localhost') !== -1;
-  };
+  // eslint-disable-next-line max-len
+  //   return ip === '127.0.0.1' || ip === '::ffff:127.0.0.1' || ip === '::1' || host.indexOf('localhost') !== -1;
+  // };
 
   const runningInsideCluster = async () => {
     const insideCluster = await Promise.promisify(dns.reverse(req.ip));
@@ -120,21 +121,18 @@ const checkAuthExpiredMiddleware = async (req, res, next) => {
     ),
   );
 
-  const sevenHours = 7 * 1000 * 60 * 60;
-  const expiredByMoreThanSevenHours = timeLeft < -sevenHours;
-
-  if (runningOnLocalhost(req)) {
-    next();
+  if (timeLeft < -(7 * 1000 * 60 * 60)) {
+    next(new UnauthenticatedError('token has expired'));
     return;
   }
 
-  if (!isLongTimeoutEndpoint || expiredByMoreThanSevenHours) {
+  if (!isLongTimeoutEndpoint) {
     next(new UnauthenticatedError('token has expired'));
     return;
   }
 
   // This operation runs apart from the rest because it takes longer
-  const isRunningInsideCluster = await runningInsideCluster(req);
+  const isRunningInsideCluster = runningInsideCluster(req);
   if (!isRunningInsideCluster) {
     next(new UnauthenticatedError('token has expired'));
     return;
