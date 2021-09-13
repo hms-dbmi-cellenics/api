@@ -110,8 +110,11 @@ const checkAuthExpiredMiddleware = async (req, res, next) => {
     return;
   }
 
-  const pointingAtValidEndpoint = longTimeoutEndpoints
-    .some(({ urlMatcher, method }) => req.method === method && urlMatcher.test(req.url));
+  const pointingAtValidEndpoint = longTimeoutEndpoints.some(
+    ({ urlMatcher, method }) => (
+      req.method.toLowerCase() === method.toLowerCase() && urlMatcher.test(req.url)
+    ),
+  );
 
   const hour = 1000 * 60 * 60;
   const sixHours = 6 * hour;
