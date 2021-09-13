@@ -105,29 +105,30 @@ const checkAuthExpiredMiddleware = async (req, res, next) => {
 
   const timeLeft = expirationDate - Date.now();
 
+  console.log('timeLeftDebug');
+  console.log(timeLeft);
+
   if (timeLeft > 0) {
     next();
     return;
   }
 
-  const pointingAtValidEndpoint = longTimeoutEndpoints.some(
+  const longTimeoutEndpoint = longTimeoutEndpoints.some(
     ({ urlMatcher, method }) => (
       req.method.toLowerCase() === method.toLowerCase() && urlMatcher.test(req.url)
     ),
   );
 
-  const hour = 1000 * 60 * 60;
-  const sixHours = 6 * hour;
+  const sixHours = 6 * 1000 * 60 * 60;
   const overranLongExpiration = timeLeft < -sixHours;
-
-  if (!pointingAtValidEndpoint || runningOnLocalhost(req) || overranLongExpiration) {
+  if (!runningOnLocalhost(req) || !longTimeoutEndpoint || overranLongExpiration) {
     next(new UnauthenticatedError('token has expired'));
     return;
   }
 
-  // This operation ran apart from the rest because it takes longer
+  // This operation runs apart from the rest because it takes longer
   const isRunningInsideCluster = await runningInsideCluster(req);
-  if (isRunningInsideCluster) {
+  if (!isRunningInsideCluster) {
     next(new UnauthenticatedError('token has expired'));
     return;
   }
