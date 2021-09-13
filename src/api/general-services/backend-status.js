@@ -9,7 +9,7 @@ const getBackendStatus = async (experimentId) => {
       getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME),
       getWorkerStatus(experimentId)],
   );
-
+  console.log('returning gem2s status', gem2s);
   return {
     [constants.OLD_QC_NAME_TO_BE_REMOVED]: qc,
     gem2s,

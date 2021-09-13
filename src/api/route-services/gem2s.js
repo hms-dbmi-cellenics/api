@@ -123,12 +123,12 @@ class Gem2sService {
       .update(JSON.stringify(hashParams))
       .digest('hex');
 
-    const shouldRun = await this.gem2sShouldRun(experimentId, paramsHash);
+    // const shouldRun = await this.gem2sShouldRun(experimentId, paramsHash);
 
-    if (!shouldRun) {
-      logger.log('Gem2s create call ignored');
-      return OK();
-    }
+    // if (!shouldRun) {
+    //   logger.log('Gem2s create call ignored');
+    //   return OK();
+    // }
 
     logger.log('Running new gem2s pipeline');
 

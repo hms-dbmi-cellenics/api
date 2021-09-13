@@ -1,9 +1,11 @@
 const _ = require('lodash');
+const crypto = require('crypto');
 const AWS = require('../../utils/requireAWS');
 const ExperimentService = require('../route-services/experiment');
 const config = require('../../config');
 const getLogger = require('../../utils/getLogger');
 const pipelineConstants = require('./pipeline-manage/constants');
+const constants = require('./pipeline-manage/constants');
 
 const logger = getLogger();
 
@@ -159,7 +161,7 @@ const getPipelineStatus = async (experimentId, processName) => {
 
   const pipelinesHandles = await experimentService.getPipelinesHandles(experimentId);
 
-  const { executionArn } = pipelinesHandles[processName];
+  const { executionArn, paramsHash } = pipelinesHandles[processName];
 
   let execution = {};
   let completedSteps = [];
@@ -230,12 +232,25 @@ const getPipelineStatus = async (experimentId, processName) => {
   }
 
   completedSteps = getStepsFromExecutionHistory(events);
+  let { status } = execution;
+  console.log('STATUS HERE IS ', status);
+  if (processName === constants.GEM2S_PROCESS_NAME && status === constants.SUCCEEDED) {
+    const Gem2sService = require('../route-services/gem2s');
 
+    const params = await Gem2sService.generateGem2sParams(experimentId);
+    console.log('PARAMS HERE IS ', params);
+    const paramsHashNew = crypto
+      .createHash('sha1')
+      .update(JSON.stringify(params.hashParams))
+      .digest('hex');
+    status = paramsHashNew !== paramsHash ? constants.NOT_CREATED : constants.SUCCEEDED;
+  }
+  console.log('OUTSIDE ', status);
   const response = {
     [processName]: {
       startDate: execution.startDate,
       stopDate: execution.stopDate,
-      status: execution.status,
+      status,
       error,
       completedSteps,
     },
