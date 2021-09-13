@@ -113,7 +113,7 @@ const checkAuthExpiredMiddleware = async (req, res, next) => {
     return;
   }
 
-  const longTimeoutEndpoint = longTimeoutEndpoints.some(
+  const isLongTimeoutEndpoint = longTimeoutEndpoints.some(
     ({ urlMatcher, method }) => (
       req.method.toLowerCase() === method.toLowerCase() && urlMatcher.test(req.url)
     ),
@@ -122,7 +122,12 @@ const checkAuthExpiredMiddleware = async (req, res, next) => {
   const sixHours = 6 * 1000 * 60 * 60;
   const overranLongExpiration = timeLeft < -sixHours;
 
-  if (!runningOnLocalhost(req) || !longTimeoutEndpoint || overranLongExpiration) {
+  if (runningOnLocalhost(req)) {
+    next();
+    return;
+  }
+
+  if (!isLongTimeoutEndpoint || overranLongExpiration) {
     next(new UnauthenticatedError('token has expired'));
     return;
   }
