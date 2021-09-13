@@ -101,12 +101,20 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
   const isReqFromCluster = async () => {
     const domains = await dns.reverse(req.ip);
 
+    console.log('domainsDebug');
+    console.log(domains);
+
     if (!domains.some((domain) => INTERNAL_DOMAINS_REGEX.test(domain))) {
       throw new Error('ip address does not come from internal sources');
     }
 
+    console.log('passedreqfromclusterDebug');
+
     return true;
   };
+
+  console.log('requserDebug');
+  console.log(req.user);
 
   if (!req.user) {
     return next();
@@ -114,6 +122,12 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
 
   // JWT `exp` returns seconds since UNIX epoch, conver to milliseconds for this
   const timeLeft = (req.user.exp * 1000) - Date.now();
+
+  console.log('dateNowDebug');
+  console.log(Date.now());
+
+  console.log('timeLeftDebug');
+  console.log(timeLeft);
 
   // ignore if JWT is still valid
   if (timeLeft > 0) {
@@ -132,6 +146,15 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
       req.method.toLowerCase() === method.toLowerCase() && urlMatcher.test(req.url)
     ),
   );
+
+  console.log('reqmethodDebug');
+  console.log(req.method.toLowerCase());
+
+  console.log('reqUrlDebug');
+  console.log(req.url);
+
+  console.log('isEndpointIgnoredDebug');
+  console.log(isEndpointIgnored);
 
   // if endpoint is not in ignore list, the JWT is too old, send an error accordingly
   if (!isEndpointIgnored) {
