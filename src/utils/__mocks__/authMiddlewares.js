@@ -9,6 +9,10 @@ const expressAuthenticationOnlyMiddleware = async (req, res, next) => {
   next();
 };
 
+const checkAuthExpiredMiddleware = async (req, res, next) => {
+  next();
+};
+
 const authenticationMiddlewareSocketIO = async () => true;
 const authorize = async () => true;
 
@@ -17,5 +21,6 @@ module.exports = {
   authenticationMiddlewareSocketIO,
   expressAuthorizationMiddleware,
   expressAuthenticationOnlyMiddleware,
+  checkAuthExpiredMiddleware,
   authorize,
 };

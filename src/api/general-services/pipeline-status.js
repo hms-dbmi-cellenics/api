@@ -234,6 +234,7 @@ const getPipelineStatus = async (experimentId, processName) => {
   completedSteps = getStepsFromExecutionHistory(events);
   let { status } = execution;
   if (processName === constants.GEM2S_PROCESS_NAME && status === constants.SUCCEEDED) {
+    // eslint-disable-next-line global-require
     const Gem2sService = require('../route-services/gem2s');
 
     const params = await Gem2sService.generateGem2sParams(experimentId);
