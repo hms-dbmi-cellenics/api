@@ -44,6 +44,7 @@ describe('tests for the projects service', () => {
         expect(getFnSpy).toHaveBeenCalledWith({
           TableName: 'projects-test',
           Key: marshalledKey,
+          ConsistentRead: true,
         });
       })
       .then(() => done());
@@ -219,6 +220,7 @@ describe('tests for the projects service', () => {
         expect(fnSpy).toHaveBeenCalledWith({
           TableName: 'projects-test',
           Key: marshalledKey,
+          ConsistentRead: true,
         });
         expect(
           experimentsService.getListOfExperiments,
@@ -272,6 +274,7 @@ describe('tests for the projects service', () => {
         expect(getSpy).toHaveBeenCalledWith({
           TableName: 'projects-test',
           Key: marshalledKey,
+          ConsistentRead: true,
         });
       })
       .then(() => done());

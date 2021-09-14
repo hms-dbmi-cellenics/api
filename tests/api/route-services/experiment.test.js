@@ -41,6 +41,7 @@ describe('tests for the experiment service', () => {
           TableName: 'experiments-test',
           Key: { experimentId: { S: '12345' } },
           ProjectionExpression: 'projectId,meta,experimentId,experimentName,sampleIds',
+          ConsistentRead: true,
         });
       })
       .then(() => done());
@@ -207,6 +208,7 @@ describe('tests for the experiment service', () => {
             TableName: 'experiments-test',
             Key: { experimentId: { S: '12345' } },
             ProjectionExpression: 'processingConfig',
+            ConsistentRead: true,
           },
         );
       })
@@ -292,6 +294,7 @@ describe('tests for the experiment service', () => {
             TableName: 'experiments-test',
             Key: { experimentId: { S: '12345' } },
             ProjectionExpression: 'meta',
+            ConsistentRead: true,
           },
         );
       })

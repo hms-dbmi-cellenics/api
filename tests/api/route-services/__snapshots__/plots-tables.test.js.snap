@@ -64,6 +64,7 @@ exports[`Test Plot Config Service read operation, read data from database 1`] = 
   "calls": Array [
     Array [
       Object {
+        "ConsistentRead": true,
         "Key": Object {
           "experimentId": Object {
             "S": "1",
