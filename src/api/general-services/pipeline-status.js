@@ -233,19 +233,16 @@ const getPipelineStatus = async (experimentId, processName) => {
 
   completedSteps = getStepsFromExecutionHistory(events);
   let { status } = execution;
-  console.log('STATUS HERE IS ', status);
   if (processName === constants.GEM2S_PROCESS_NAME && status === constants.SUCCEEDED) {
     const Gem2sService = require('../route-services/gem2s');
 
     const params = await Gem2sService.generateGem2sParams(experimentId);
-    console.log('PARAMS HERE IS ', params);
     const paramsHashNew = crypto
       .createHash('sha1')
       .update(JSON.stringify(params.hashParams))
       .digest('hex');
     status = paramsHashNew !== paramsHash ? constants.NOT_CREATED : constants.SUCCEEDED;
   }
-  console.log('OUTSIDE ', status);
   const response = {
     [processName]: {
       startDate: execution.startDate,
