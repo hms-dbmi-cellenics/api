@@ -89,6 +89,7 @@ describe('tests for the projects service', () => {
           },
           FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
           ProjectionExpression: '#pid',
+          ConsistentRead: true,
         });
         expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(new Set(projectIdsArr));
       })
