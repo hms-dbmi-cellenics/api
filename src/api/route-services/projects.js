@@ -29,6 +29,7 @@ class ProjectsService {
     const params = {
       TableName: this.tableName,
       Key: marshalledKey,
+      ConsistentRead: true,
     };
 
     const dynamodb = createDynamoDbInstance();
@@ -180,6 +181,7 @@ class ProjectsService {
     const params = {
       TableName: this.tableName,
       Key: marshalledKey,
+      ConsistentRead: true,
     };
 
     try {

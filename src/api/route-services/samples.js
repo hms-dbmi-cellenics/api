@@ -30,6 +30,7 @@ class SamplesService {
       IndexName: 'gsiByProjectAndExperimentID',
       KeyConditionExpression: 'projectUuid = :projectUuid',
       ExpressionAttributeValues: marshalledData,
+      // Can't add eventual consistency due to GSI https://stackoverflow.com/a/35418331
     };
     const dynamodb = createDynamoDbInstance();
 
@@ -60,6 +61,7 @@ class SamplesService {
       TableName: this.tableName,
       Key: marshalledKey,
       ProjectionExpression: 'samples',
+      // Can't add eventual consistency due to GSI https://stackoverflow.com/a/35418331
     };
     const dynamodb = createDynamoDbInstance();
 

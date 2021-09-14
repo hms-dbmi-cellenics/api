@@ -14,6 +14,7 @@ const getExperimentAttributes = async (tableName, experimentId, attributes) => {
   const params = {
     TableName: tableName,
     Key: key,
+    ConsistentRead: true,
   };
 
   if (Array.isArray(attributes) && attributes.length > 0) {

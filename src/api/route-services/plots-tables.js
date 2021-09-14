@@ -69,6 +69,7 @@ class PlotsTablesService {
     const params = {
       TableName: this.tableName,
       Key: key,
+      ConsistentRead: true,
     };
 
     const dynamodb = createDynamoDbInstance();
