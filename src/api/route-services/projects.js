@@ -96,6 +96,9 @@ class ProjectsService {
 
     const response = await dynamodb.scan(params).promise();
 
+    console.log('Scan response :');
+    console.log(response);
+
     if (!response.Items.length) {
       return [];
     }
@@ -122,6 +125,9 @@ class ProjectsService {
         },
       },
     };
+
+    console.log('== PARAMS');
+    console.log(params);
 
     const data = await safeBatchGetItem(dynamodb, params);
 
