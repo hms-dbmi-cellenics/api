@@ -100,7 +100,7 @@ describe('gem2sShouldRun', () => {
       ),
     );
 
-    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', null);
+    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', null, NOT_CREATED);
 
     expect(shouldRun).toEqual(true);
   });
@@ -110,13 +110,7 @@ describe('gem2sShouldRun', () => {
       getPipelinesHandles: () => Promise.resolve(mockFilledHandles),
     }));
 
-    getPipelineStatus.mockImplementation(
-      () => Promise.resolve(
-        { [GEM2S_PROCESS_NAME]: { status: FAILED } },
-      ),
-    );
-
-    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'newHash');
+    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'newHash', FAILED);
 
     expect(shouldRun).toEqual(true);
   });
@@ -126,13 +120,7 @@ describe('gem2sShouldRun', () => {
       getPipelinesHandles: () => Promise.resolve(mockFilledHandles),
     }));
 
-    getPipelineStatus.mockImplementation(
-      () => Promise.resolve(
-        { [GEM2S_PROCESS_NAME]: { status: FAILED } },
-      ),
-    );
-
-    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'newHash');
+    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'newHash', FAILED);
 
     expect(shouldRun).toEqual(true);
   });
@@ -148,7 +136,7 @@ describe('gem2sShouldRun', () => {
       ),
     );
 
-    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'newHash');
+    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'newHash', TIMED_OUT);
 
     expect(shouldRun).toEqual(true);
   });
@@ -164,7 +152,7 @@ describe('gem2sShouldRun', () => {
       ),
     );
 
-    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'newHash');
+    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'newHash', TIMED_OUT);
 
     expect(shouldRun).toEqual(true);
   });
@@ -180,7 +168,7 @@ describe('gem2sShouldRun', () => {
       ),
     );
 
-    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'newHash');
+    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'newHash', TIMED_OUT);
 
     expect(shouldRun).toEqual(true);
   });
@@ -190,13 +178,7 @@ describe('gem2sShouldRun', () => {
       getPipelinesHandles: () => Promise.resolve(mockFilledHandles),
     }));
 
-    getPipelineStatus.mockImplementation(
-      () => Promise.resolve(
-        { [GEM2S_PROCESS_NAME]: { status: RUNNING } },
-      ),
-    );
-
-    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'newHash');
+    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'newHash', RUNNING);
 
     expect(shouldRun).toEqual(false);
   });
@@ -206,13 +188,7 @@ describe('gem2sShouldRun', () => {
       getPipelinesHandles: () => Promise.resolve(mockFilledHandles),
     }));
 
-    getPipelineStatus.mockImplementation(
-      () => Promise.resolve(
-        { [GEM2S_PROCESS_NAME]: { status: SUCCEEDED } },
-      ),
-    );
-
-    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'sameHash');
+    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'sameHash', SUCCEEDED);
 
     expect(shouldRun).toEqual(false);
   });
@@ -222,13 +198,7 @@ describe('gem2sShouldRun', () => {
       getPipelinesHandles: () => Promise.resolve(mockFilledHandles),
     }));
 
-    getPipelineStatus.mockImplementation(
-      () => Promise.resolve(
-        { [GEM2S_PROCESS_NAME]: { status: SUCCEEDED } },
-      ),
-    );
-
-    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'differentHash');
+    const shouldRun = await Gem2sService.gem2sShouldRun('experimentId', 'differentHash', SUCCEEDED);
 
     expect(shouldRun).toEqual(true);
   });
