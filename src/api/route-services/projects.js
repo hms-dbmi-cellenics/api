@@ -90,6 +90,7 @@ class ProjectsService {
         ':userId': { S: user.sub },
       },
       ProjectionExpression: '#pid',
+      ConsistentRead: true,
     };
 
     const dynamodb = createDynamoDbInstance();
