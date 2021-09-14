@@ -235,15 +235,13 @@ const getPipelineStatus = async (experimentId, processName) => {
 
   let { status } = execution;
   if (processName === constants.GEM2S_PROCESS_NAME && status === constants.SUCCEEDED) {
-    const gem2sService = new Gem2sService();
-    const params = await gem2sService.generateGem2sParams(experimentId);
+    const params = await Gem2sService().generateGem2sParams(experimentId);
     const paramsHashNew = crypto
       .createHash('sha1')
       .update(JSON.stringify(params))
       .digest('hex');
     status = paramsHashNew !== paramsHash ? constants.NOT_CREATED : status;
   }
-  console.log('RETURNING NEW STATUS FROM BACKEND STATUS ', status);
   const response = {
     [processName]: {
       startDate: execution.startDate,

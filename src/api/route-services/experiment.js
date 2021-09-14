@@ -181,7 +181,6 @@ class ExperimentService {
     logger.log(`GET pipelines handles for experiment ${experimentId}`);
 
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['meta']);
-    console.log('GEM2S INFO IS ', data.meta[constants.GEM2S_PROCESS_NAME]);
     return {
       [constants.QC_PROCESS_NAME]: {
         stateMachineArn: '',
