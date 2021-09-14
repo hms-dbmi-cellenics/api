@@ -94,18 +94,29 @@ class ProjectsService {
 
     const dynamodb = createDynamoDbInstance();
 
-    const response = await dynamodb.scan(params).promise();
-
-    console.log('Scan response :');
-    console.log(response);
+    let response = await dynamodb.scan(params).promise();
 
     if (!response.Items.length) {
       return [];
     }
 
-    const projectIds = response.Items.map(
+    const extractProjectIds = (resp) => resp.Items.map(
       (entry) => convertToJsObject(entry).projectId,
     ).filter((id) => id);
+
+    let projectIds = extractProjectIds(response);
+
+    // Check if query exceeds limit
+    while (response.LastEvaluatedKey) {
+      params.ExclusiveStartKey = response.LastEvaluatedKey;
+
+      // eslint-disable-next-line no-await-in-loop
+      response = await dynamodb.scan(params).promise();
+
+      const newProjectIds = extractProjectIds(response);
+
+      projectIds = projectIds.concat(newProjectIds);
+    }
 
     return this.getProjectsFromIds(new Set(projectIds));
   }
