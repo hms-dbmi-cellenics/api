@@ -1,4 +1,4 @@
-const constructDeleteCompletedJobs = (context, step) => {
+export function deleteCompletedJobs(context: Context, step: MetaStep) {
   const { accountId } = context;
 
   return {
@@ -12,4 +12,3 @@ const constructDeleteCompletedJobs = (context, step) => {
   };
 };
 
-module.exports = constructDeleteCompletedJobs;

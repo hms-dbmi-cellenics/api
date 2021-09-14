@@ -1,9 +1,9 @@
 import { createNewJobIfNotExist } from './create-new-job-if-not-exist';
 
-const deleteCompletedJobs = require('./delete-complete-jobs');
-const createNewStep = require('./create-new-step');
+import { deleteCompletedJobs }  from './delete-complete-jobs';
+import { createNewStep } from './create-new-step';
 // const createNewJobIfNotExist = require('./create-new-job-if-not-exist');
-const { getRunningPods, deleteRunningPods, assignPodToPipeline } = require('./assign-pod-to-pipeline');
+import { getRunningPods, deleteRunningPods, assignPodToPipeline } from './assign-pod-to-pipeline';
 // const createNewJobIfNotExist = require('./create-new-job-if-not-exist');
 export function constructPipelineStep (context: Context, step: MetaStep) {
   const { XStepType: stepType, XConstructorArgs: args } = step;
@@ -14,7 +14,7 @@ export function constructPipelineStep (context: Context, step: MetaStep) {
       return deleteCompletedJobs(context, step, args);
     }
     case 'create-new-job-if-not-exist': {
-      return createNewJobIfNotExist(context, step, args);
+      return createNewJobIfNotExist(context, step);
     }
 
     // Remote (aws) steps

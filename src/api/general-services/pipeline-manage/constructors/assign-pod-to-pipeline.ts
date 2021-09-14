@@ -5,7 +5,7 @@ import config from '../../../../config';
 //  E.g.
 // arn:aws:states:eu-west-1:242905224710:activity:pipeline-production-01037a63-a801-4ea4-a93e-...
 // => pipeline-production-01037a63-a801-4ea4-a93e-def76c1e5bd2
-const getActivityId = (activityArn: string) => {
+const getActivityId = (activityArn: string): String => {
   if (activityArn === undefined) {
     return undefined;
   }
@@ -40,7 +40,7 @@ const getRunningPods = (context: Context, step: MetaStep) => {
   };
 };
 
-const deleteRunningPods = (context, step) => {
+const deleteRunningPods = (context: Context, step: MetaStep): Step => {
   const { clusterInfo } = context;
 
   return {
@@ -81,7 +81,7 @@ const deleteRunningPods = (context, step) => {
   };
 };
 
-const assignPodToPipeline = (context, step) => {
+const assignPodToPipeline = (context: Context, step: MetaStep) => {
   const {
     clusterInfo, activityArn, experimentId, processName,
   } = context;
@@ -168,4 +168,4 @@ const assignPodToPipeline = (context, step) => {
   };
 };
 
-module.exports = { getRunningPods, deleteRunningPods, assignPodToPipeline };
+export { getRunningPods, deleteRunningPods, assignPodToPipeline };

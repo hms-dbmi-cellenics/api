@@ -1,7 +1,7 @@
-const config = require('../../../../config');
+import config from '../../../../config';
 const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../constants');
 
-const createTask = (taskName, context) => {
+const createTask = (taskName: string, context: Context) => {
   const {
     projectId, processingConfig, experimentId, processName,
   } = context;
@@ -23,7 +23,7 @@ const createTask = (taskName, context) => {
   return task;
 };
 
-const getQCParams = (task, stepArgs) => {
+const getQCParams = (task: Task, stepArgs: StepArgs) => {
   const { perSample, uploadCountMatrix } = stepArgs;
   return {
     ...task,
@@ -32,7 +32,7 @@ const getQCParams = (task, stepArgs) => {
   };
 };
 
-const getGem2SParams = (task, context) => {
+const getGem2SParams = (task: Task, context: Context) => {
   const { taskParams } = context;
   return {
     ...task,
@@ -41,7 +41,7 @@ const getGem2SParams = (task, context) => {
 };
 
 
-const buildParams = (task, context, stepArgs) => {
+const buildParams = (task: Task, context: Context, stepArgs: StepArgs) => {
   let processParams;
 
   if (task.processName === QC_PROCESS_NAME) {
@@ -56,7 +56,7 @@ const buildParams = (task, context, stepArgs) => {
   };
 };
 
-const createNewStep = (context, step, stepArgs) => {
+const createNewStep = (context: Context, step: MetaStep, stepArgs: StepArgs) => {
   const { activityArn } = context;
   const { taskName } = stepArgs;
   const task = createTask(taskName, context);
@@ -74,4 +74,4 @@ const createNewStep = (context, step, stepArgs) => {
   };
 };
 
-module.exports = createNewStep;
+export { createNewStep };
