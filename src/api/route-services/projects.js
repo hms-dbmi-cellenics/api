@@ -137,9 +137,6 @@ class ProjectsService {
       },
     };
 
-    console.log('== PARAMS');
-    console.log(params);
-
     const data = await safeBatchGetItem(dynamodb, params);
 
     const existingProjectIds = new Set(data.Responses[this.tableName].map((entry) => {
