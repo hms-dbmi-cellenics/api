@@ -5,9 +5,9 @@ const { createQCPipeline } = require('../../api/general-services/pipeline-manage
 const experimentService = new ExperimentService();
 
 const runQCPipeline = async (payload) => {
-  const { experimentId } = payload;
+  const { experimentId, authJWT } = payload;
 
-  const qcHandle = await createQCPipeline(experimentId);
+  const qcHandle = await createQCPipeline(experimentId, [], authJWT);
   await experimentService.saveQCHandle(experimentId, qcHandle);
 };
 

@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const AWS = require('../../utils/requireAWS');
 const ExperimentService = require('../route-services/experiment');
-const Gem2sService = require('../route-services/gem2s');
 const config = require('../../config');
 const getLogger = require('../../utils/getLogger');
 const pipelineConstants = require('./pipeline-manage/constants');
@@ -235,6 +234,7 @@ const getPipelineStatus = async (experimentId, processName) => {
 
   let { status } = execution;
   if (processName === constants.GEM2S_PROCESS_NAME && status === constants.SUCCEEDED) {
+    const Gem2sService = require('../route-services/gem2s');
     const params = await Gem2sService().generateGem2sParams(experimentId);
     const paramsHashNew = crypto
       .createHash('sha1')
