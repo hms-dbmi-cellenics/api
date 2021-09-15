@@ -124,7 +124,7 @@ class ProjectsService {
   /**
    * Returns information about a group of projects.
    *
-   * @param {Array} projectIds An array of projectId values that are to be queried.
+   * @param {Array} projectIds A Array of projectId values that are to be queried.
    * @returns An object containing descriptions of projects.
    */
   async getProjectsFromIds(projectIds) {
@@ -136,7 +136,7 @@ class ProjectsService {
     const params = {
       RequestItems: {
         [this.tableName]: {
-          Keys: [...projectIds].map((projectUuid) => convertToDynamoDbRecord({ projectUuid })),
+          Keys: projectIds.map((projectUuid) => convertToDynamoDbRecord({ projectUuid })),
         },
       },
     };
@@ -149,7 +149,7 @@ class ProjectsService {
     }));
 
     // Build up projects that do not exist in Dynamo yet.
-    const projects = [...projectIds]
+    const projects = projectIds
       .filter((entry) => (
         !existingProjectIds.has(entry)
       ))
