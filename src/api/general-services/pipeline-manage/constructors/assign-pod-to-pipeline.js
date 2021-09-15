@@ -143,7 +143,7 @@ const assignPodToPipeline = (context, step) => {
           Error: 'NoPodsAvailable',
         },
         AssignPodToPipeline: {
-          Description: 'Send a message through SNS so that the API assigns a pod to the pipeline',
+          Comment: 'Send a message through SNS so that the API assigns a pod to the pipeline',
           Type: 'Task',
           Resource: 'arn:aws:states:::sns:publish',
           End: true,
