@@ -96,10 +96,6 @@ class ProjectsService {
 
     let response = await dynamodb.scan(params).promise();
 
-    if (!response.Items.length) {
-      return [];
-    }
-
     const extractProjectIds = (resp) => resp.Items.map(
       (entry) => convertToJsObject(entry).projectId,
     ).filter((id) => id);
@@ -116,6 +112,10 @@ class ProjectsService {
       const newProjectIds = extractProjectIds(response);
 
       projectIds = projectIds.concat(newProjectIds);
+    }
+
+    if (!projectIds.length) {
+      return [];
     }
 
     return this.getProjectsFromIds(new Set(projectIds));
