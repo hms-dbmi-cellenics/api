@@ -114,10 +114,6 @@ class ProjectsService {
       projectIds = projectIds.concat(newProjectIds);
     }
 
-    if (!projectIds.length) {
-      return [];
-    }
-
     return this.getProjectsFromIds(new Set(projectIds));
   }
 
@@ -128,6 +124,10 @@ class ProjectsService {
    * @returns An object containing descriptions of projects.
    */
   async getProjectsFromIds(projectIds) {
+    if (!projectIds.size) {
+      return [];
+    }
+
     const dynamodb = createDynamoDbInstance();
     const params = {
       RequestItems: {
@@ -143,7 +143,6 @@ class ProjectsService {
       const newData = convertToJsObject(entry);
       return newData.projects.uuid;
     }));
-
 
     // Build up projects that do not exist in Dynamo yet.
     const projects = [...projectIds]
