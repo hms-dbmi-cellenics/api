@@ -198,7 +198,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
     },
     "AssignPipelineToPod": {
       "ResultPath": null,
-      "Next": "DownloadGem",
+      "Next": "WaitForPod",
       "Type": "Map",
       "ItemsPath": "$.retries",
       "MaxConcurrency": 1,
@@ -254,22 +254,125 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "Error": "NoPodsAvailable"
           },
           "AssignPodToPipeline": {
-            "End": true,
-            "ResultPath": "$.PatchResult",
+            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
-            "Comment": "Patch pod to set the activity ID label.",
+            "Resource": "arn:aws:states:::sns:publish",
+            "End": true,
+            "Parameters": {
+              "TopicArn": "arn:aws:sns:us-east-1:123456789012:myTopic",
+              "MessageAttributes": {
+                "kind": {
+                  "DataType": "String",
+                  "StringValue.$": "assignPodToPipeline"
+                },
+                "sandboxId": {
+                  "DataType": "String"
+                },
+                "experimentId": {
+                  "DataType": "String",
+                  "StringValue.$": "mock-experiment-id"
+                },
+                "activityId": {
+                  "DataType": "String"
+                },
+                "processName": {
+                  "DataType": "String"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "WaitForPod": {
+      "ResultPath": null,
+      "Type": "Map",
+      "ItemsPath": "$.retries",
+      "MaxConcurrency": 1,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "NoPodsAvailable"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 11,
+          "BackoffRate": 1.5
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "AssignPipelineToPod"
+        }
+      ],
+      "Next": "DownloadGem",
+      "Iterator": {
+        "StartAt": "GetUnassignedPod",
+        "States": {
+          "GetUnassignedPod": {
+            "Next": "IsPodAvailable",
+            "Type": "Task",
+            "Comment": "Retrieves first unassigned and running pipeline pod.",
             "Resource": "arn:aws:states:::eks:call",
             "Parameters": {
               "ClusterName": "mock-cluster-name",
               "CertificateAuthority": "mock-ca",
               "Endpoint": "mock-endpoint",
-              "Method": "PATCH",
-              "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
-              "RequestBody": {
-                "metadata": {
-                  "labels": {
-                    "experimentId": "mock-experiment-id"
-                  }
+              "Method": "GET",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+              "QueryParameters": {
+                "labelSelector": [
+                  "!activityId,type=pipeline"
+                ],
+                "fieldSelector": [
+                  "status.phase=Running"
+                ]
+              }
+            }
+          },
+          "IsPodAvailable": {
+            "Type": "Choice",
+            "Comment": "Redirects to an error state if there are no available pods.",
+            "Choices": [
+              {
+                "Variable": "$.ResponseBody.items[0]",
+                "IsPresent": false,
+                "Next": "NoPodsAvailable"
+              }
+            ],
+            "Default": "AssignPodToPipeline"
+          },
+          "NoPodsAvailable": {
+            "Type": "Fail",
+            "Cause": "No available and running pipeline pods.",
+            "Error": "NoPodsAvailable"
+          },
+          "AssignPodToPipeline": {
+            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sns:publish",
+            "End": true,
+            "Parameters": {
+              "TopicArn": "arn:aws:sns:us-east-1:123456789012:myTopic",
+              "MessageAttributes": {
+                "kind": {
+                  "DataType": "String",
+                  "StringValue.$": "assignPodToPipeline"
+                },
+                "sandboxId": {
+                  "DataType": "String"
+                },
+                "experimentId": {
+                  "DataType": "String",
+                  "StringValue.$": "mock-experiment-id"
+                },
+                "activityId": {
+                  "DataType": "String"
+                },
+                "processName": {
+                  "DataType": "String"
                 }
               }
             }
@@ -436,7 +539,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
     },
     "AssignPipelineToPod": {
       "ResultPath": null,
-      "Next": "DownloadGem",
+      "Next": "WaitForPod",
       "Type": "Map",
       "ItemsPath": "$.retries",
       "MaxConcurrency": 1,
@@ -492,22 +595,125 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "Error": "NoPodsAvailable"
           },
           "AssignPodToPipeline": {
-            "End": true,
-            "ResultPath": "$.PatchResult",
+            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
-            "Comment": "Patch pod to set the activity ID label.",
+            "Resource": "arn:aws:states:::sns:publish",
+            "End": true,
+            "Parameters": {
+              "TopicArn": "arn:aws:sns:us-east-1:123456789012:myTopic",
+              "MessageAttributes": {
+                "kind": {
+                  "DataType": "String",
+                  "StringValue.$": "assignPodToPipeline"
+                },
+                "sandboxId": {
+                  "DataType": "String"
+                },
+                "experimentId": {
+                  "DataType": "String",
+                  "StringValue.$": "mock-experiment-id"
+                },
+                "activityId": {
+                  "DataType": "String"
+                },
+                "processName": {
+                  "DataType": "String"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "WaitForPod": {
+      "ResultPath": null,
+      "Type": "Map",
+      "ItemsPath": "$.retries",
+      "MaxConcurrency": 1,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "NoPodsAvailable"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 11,
+          "BackoffRate": 1.5
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "AssignPipelineToPod"
+        }
+      ],
+      "Next": "DownloadGem",
+      "Iterator": {
+        "StartAt": "GetUnassignedPod",
+        "States": {
+          "GetUnassignedPod": {
+            "Next": "IsPodAvailable",
+            "Type": "Task",
+            "Comment": "Retrieves first unassigned and running pipeline pod.",
             "Resource": "arn:aws:states:::eks:call",
             "Parameters": {
               "ClusterName": "mock-cluster-name",
               "CertificateAuthority": "mock-ca",
               "Endpoint": "mock-endpoint",
-              "Method": "PATCH",
-              "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
-              "RequestBody": {
-                "metadata": {
-                  "labels": {
-                    "experimentId": "mock-experiment-id"
-                  }
+              "Method": "GET",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+              "QueryParameters": {
+                "labelSelector": [
+                  "!activityId,type=pipeline"
+                ],
+                "fieldSelector": [
+                  "status.phase=Running"
+                ]
+              }
+            }
+          },
+          "IsPodAvailable": {
+            "Type": "Choice",
+            "Comment": "Redirects to an error state if there are no available pods.",
+            "Choices": [
+              {
+                "Variable": "$.ResponseBody.items[0]",
+                "IsPresent": false,
+                "Next": "NoPodsAvailable"
+              }
+            ],
+            "Default": "AssignPodToPipeline"
+          },
+          "NoPodsAvailable": {
+            "Type": "Fail",
+            "Cause": "No available and running pipeline pods.",
+            "Error": "NoPodsAvailable"
+          },
+          "AssignPodToPipeline": {
+            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sns:publish",
+            "End": true,
+            "Parameters": {
+              "TopicArn": "arn:aws:sns:us-east-1:123456789012:myTopic",
+              "MessageAttributes": {
+                "kind": {
+                  "DataType": "String",
+                  "StringValue.$": "assignPodToPipeline"
+                },
+                "sandboxId": {
+                  "DataType": "String"
+                },
+                "experimentId": {
+                  "DataType": "String",
+                  "StringValue.$": "mock-experiment-id"
+                },
+                "activityId": {
+                  "DataType": "String"
+                },
+                "processName": {
+                  "DataType": "String"
                 }
               }
             }
@@ -860,7 +1066,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
     },
     "AssignPipelineToPod": {
       "ResultPath": null,
-      "Next": "ClassifierFilterMap",
+      "Next": "WaitForPod",
       "Type": "Map",
       "ItemsPath": "$.retries",
       "MaxConcurrency": 1,
@@ -916,22 +1122,125 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "Error": "NoPodsAvailable"
           },
           "AssignPodToPipeline": {
-            "End": true,
-            "ResultPath": "$.PatchResult",
+            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
-            "Comment": "Patch pod to set the activity ID label.",
+            "Resource": "arn:aws:states:::sns:publish",
+            "End": true,
+            "Parameters": {
+              "TopicArn": "arn:aws:sns:us-east-1:123456789012:myTopic",
+              "MessageAttributes": {
+                "kind": {
+                  "DataType": "String",
+                  "StringValue.$": "assignPodToPipeline"
+                },
+                "sandboxId": {
+                  "DataType": "String"
+                },
+                "experimentId": {
+                  "DataType": "String",
+                  "StringValue.$": "mock-experiment-id"
+                },
+                "activityId": {
+                  "DataType": "String"
+                },
+                "processName": {
+                  "DataType": "String"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "WaitForPod": {
+      "ResultPath": null,
+      "Type": "Map",
+      "ItemsPath": "$.retries",
+      "MaxConcurrency": 1,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "NoPodsAvailable"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 11,
+          "BackoffRate": 1.5
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "AssignPipelineToPod"
+        }
+      ],
+      "Next": "ClassifierFilterMap",
+      "Iterator": {
+        "StartAt": "GetUnassignedPod",
+        "States": {
+          "GetUnassignedPod": {
+            "Next": "IsPodAvailable",
+            "Type": "Task",
+            "Comment": "Retrieves first unassigned and running pipeline pod.",
             "Resource": "arn:aws:states:::eks:call",
             "Parameters": {
               "ClusterName": "mock-cluster-name",
               "CertificateAuthority": "mock-ca",
               "Endpoint": "mock-endpoint",
-              "Method": "PATCH",
-              "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
-              "RequestBody": {
-                "metadata": {
-                  "labels": {
-                    "experimentId": "mock-experiment-id"
-                  }
+              "Method": "GET",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+              "QueryParameters": {
+                "labelSelector": [
+                  "!activityId,type=pipeline"
+                ],
+                "fieldSelector": [
+                  "status.phase=Running"
+                ]
+              }
+            }
+          },
+          "IsPodAvailable": {
+            "Type": "Choice",
+            "Comment": "Redirects to an error state if there are no available pods.",
+            "Choices": [
+              {
+                "Variable": "$.ResponseBody.items[0]",
+                "IsPresent": false,
+                "Next": "NoPodsAvailable"
+              }
+            ],
+            "Default": "AssignPodToPipeline"
+          },
+          "NoPodsAvailable": {
+            "Type": "Fail",
+            "Cause": "No available and running pipeline pods.",
+            "Error": "NoPodsAvailable"
+          },
+          "AssignPodToPipeline": {
+            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sns:publish",
+            "End": true,
+            "Parameters": {
+              "TopicArn": "arn:aws:sns:us-east-1:123456789012:myTopic",
+              "MessageAttributes": {
+                "kind": {
+                  "DataType": "String",
+                  "StringValue.$": "assignPodToPipeline"
+                },
+                "sandboxId": {
+                  "DataType": "String"
+                },
+                "experimentId": {
+                  "DataType": "String",
+                  "StringValue.$": "mock-experiment-id"
+                },
+                "activityId": {
+                  "DataType": "String"
+                },
+                "processName": {
+                  "DataType": "String"
                 }
               }
             }
@@ -1153,7 +1462,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
     },
     "AssignPipelineToPod": {
       "ResultPath": null,
-      "Next": "ClassifierFilterMap",
+      "Next": "WaitForPod",
       "Type": "Map",
       "ItemsPath": "$.retries",
       "MaxConcurrency": 1,
@@ -1209,22 +1518,125 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "Error": "NoPodsAvailable"
           },
           "AssignPodToPipeline": {
-            "End": true,
-            "ResultPath": "$.PatchResult",
+            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
-            "Comment": "Patch pod to set the activity ID label.",
+            "Resource": "arn:aws:states:::sns:publish",
+            "End": true,
+            "Parameters": {
+              "TopicArn": "arn:aws:sns:us-east-1:123456789012:myTopic",
+              "MessageAttributes": {
+                "kind": {
+                  "DataType": "String",
+                  "StringValue.$": "assignPodToPipeline"
+                },
+                "sandboxId": {
+                  "DataType": "String"
+                },
+                "experimentId": {
+                  "DataType": "String",
+                  "StringValue.$": "mock-experiment-id"
+                },
+                "activityId": {
+                  "DataType": "String"
+                },
+                "processName": {
+                  "DataType": "String"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "WaitForPod": {
+      "ResultPath": null,
+      "Type": "Map",
+      "ItemsPath": "$.retries",
+      "MaxConcurrency": 1,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "NoPodsAvailable"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 11,
+          "BackoffRate": 1.5
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "AssignPipelineToPod"
+        }
+      ],
+      "Next": "ClassifierFilterMap",
+      "Iterator": {
+        "StartAt": "GetUnassignedPod",
+        "States": {
+          "GetUnassignedPod": {
+            "Next": "IsPodAvailable",
+            "Type": "Task",
+            "Comment": "Retrieves first unassigned and running pipeline pod.",
             "Resource": "arn:aws:states:::eks:call",
             "Parameters": {
               "ClusterName": "mock-cluster-name",
               "CertificateAuthority": "mock-ca",
               "Endpoint": "mock-endpoint",
-              "Method": "PATCH",
-              "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
-              "RequestBody": {
-                "metadata": {
-                  "labels": {
-                    "experimentId": "mock-experiment-id"
-                  }
+              "Method": "GET",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+              "QueryParameters": {
+                "labelSelector": [
+                  "!activityId,type=pipeline"
+                ],
+                "fieldSelector": [
+                  "status.phase=Running"
+                ]
+              }
+            }
+          },
+          "IsPodAvailable": {
+            "Type": "Choice",
+            "Comment": "Redirects to an error state if there are no available pods.",
+            "Choices": [
+              {
+                "Variable": "$.ResponseBody.items[0]",
+                "IsPresent": false,
+                "Next": "NoPodsAvailable"
+              }
+            ],
+            "Default": "AssignPodToPipeline"
+          },
+          "NoPodsAvailable": {
+            "Type": "Fail",
+            "Cause": "No available and running pipeline pods.",
+            "Error": "NoPodsAvailable"
+          },
+          "AssignPodToPipeline": {
+            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sns:publish",
+            "End": true,
+            "Parameters": {
+              "TopicArn": "arn:aws:sns:us-east-1:123456789012:myTopic",
+              "MessageAttributes": {
+                "kind": {
+                  "DataType": "String",
+                  "StringValue.$": "assignPodToPipeline"
+                },
+                "sandboxId": {
+                  "DataType": "String"
+                },
+                "experimentId": {
+                  "DataType": "String",
+                  "StringValue.$": "mock-experiment-id"
+                },
+                "activityId": {
+                  "DataType": "String"
+                },
+                "processName": {
+                  "DataType": "String"
                 }
               }
             }
