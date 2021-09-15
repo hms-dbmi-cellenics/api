@@ -215,7 +215,7 @@ Array [
             "StartAt": "GetUnassignedPod",
             "States": Object {
               "AssignPodToPipeline": Object {
-                "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
+                "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
                 "End": true,
                 "Parameters": Object {
                   "MessageAttributes": Object {
@@ -560,7 +560,7 @@ Array [
             "StartAt": "GetUnassignedPod",
             "States": Object {
               "AssignPodToPipeline": Object {
-                "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
+                "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
                 "End": true,
                 "Parameters": Object {
                   "MessageAttributes": Object {

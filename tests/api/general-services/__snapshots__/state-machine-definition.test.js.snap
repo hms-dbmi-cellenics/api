@@ -254,7 +254,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "Error": "NoPodsAvailable"
           },
           "AssignPodToPipeline": {
-            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
+            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
             "Resource": "arn:aws:states:::sns:publish",
             "End": true,
@@ -350,7 +350,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "Error": "NoPodsAvailable"
           },
           "AssignPodToPipeline": {
-            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
+            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
             "Resource": "arn:aws:states:::sns:publish",
             "End": true,
@@ -595,7 +595,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "Error": "NoPodsAvailable"
           },
           "AssignPodToPipeline": {
-            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
+            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
             "Resource": "arn:aws:states:::sns:publish",
             "End": true,
@@ -691,7 +691,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "Error": "NoPodsAvailable"
           },
           "AssignPodToPipeline": {
-            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
+            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
             "Resource": "arn:aws:states:::sns:publish",
             "End": true,
@@ -1122,7 +1122,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "Error": "NoPodsAvailable"
           },
           "AssignPodToPipeline": {
-            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
+            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
             "Resource": "arn:aws:states:::sns:publish",
             "End": true,
@@ -1218,7 +1218,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "Error": "NoPodsAvailable"
           },
           "AssignPodToPipeline": {
-            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
+            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
             "Resource": "arn:aws:states:::sns:publish",
             "End": true,
@@ -1518,7 +1518,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "Error": "NoPodsAvailable"
           },
           "AssignPodToPipeline": {
-            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
+            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
             "Resource": "arn:aws:states:::sns:publish",
             "End": true,
@@ -1614,7 +1614,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "Error": "NoPodsAvailable"
           },
           "AssignPodToPipeline": {
-            "Description": "Send a message through SNS so that the API assigns a pod to the pipeline",
+            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
             "Resource": "arn:aws:states:::sns:publish",
             "End": true,
