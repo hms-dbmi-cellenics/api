@@ -95,16 +95,9 @@ class Gem2sService {
 
   static async gem2sShouldRun(experimentId, paramsHash, status) {
     logger.log('Checking if gem2s should actually be re run');
-
     const experimentService = new ExperimentService();
-
     const handles = await experimentService.getPipelinesHandles(experimentId);
-    // const statusPromise = getPipelineStatus(experimentId, GEM2S_PROCESS_NAME);
-
-    // const [handles, statusWrapper] = await Promise.all([handlesPromise, statusPromise]);
     const { [GEM2S_PROCESS_NAME]: gem2sHandle } = handles;
-    // const { [GEM2S_PROCESS_NAME]: { status: gem2sStatus } } = statusWrapper;
-
     logger.log(`Gem2s status is ${status}. new hash: ${paramsHash}; old hash: ${gem2sHandle.paramsHash}`);
     if (status === SUCCEEDED) {
       return paramsHash !== gem2sHandle.paramsHash;
