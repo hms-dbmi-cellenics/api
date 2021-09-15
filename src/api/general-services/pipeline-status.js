@@ -6,7 +6,6 @@ const config = require('../../config');
 const getLogger = require('../../utils/getLogger');
 const pipelineConstants = require('./pipeline-manage/constants');
 const constants = require('./pipeline-manage/constants');
-const Gem2sService = require('../route-services/gem2s');
 
 const logger = getLogger();
 
@@ -235,14 +234,19 @@ const getPipelineStatus = async (experimentId, processName) => {
   completedSteps = getStepsFromExecutionHistory(events);
 
   let { status } = execution;
-  if (processName === constants.GEM2S_PROCESS_NAME && status === constants.SUCCEEDED) {
+  if (processName === constants.GEM2S_PROCESS_NAME && status === pipelineConstants.SUCCEEDED) {
+    const Gem2sService = require('../route-services/gem2s');
     const params = await Gem2sService.generateGem2sParams(experimentId);
     const paramsHashNew = crypto
       .createHash('sha1')
       .update(JSON.stringify(params))
       .digest('hex');
     const shouldRun = await Gem2sService.gem2sShouldRun(experimentId, paramsHashNew, status);
-    status = shouldRun ? pipelineConstants.NOT_CREATED : status;
+    console.log('SHOULD RUN IS ', shouldRun, 'PARAMS IS ', params);
+    if (shouldRun) {
+      status = constants.RUNNING;
+      completedSteps = [];
+    }
   }
   const response = {
     [processName]: {

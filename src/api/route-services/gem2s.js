@@ -99,6 +99,7 @@ class Gem2sService {
     const handles = await experimentService.getPipelinesHandles(experimentId);
     const { [GEM2S_PROCESS_NAME]: gem2sHandle } = handles;
     logger.log(`Gem2s status is ${status}. new hash: ${paramsHash}; old hash: ${gem2sHandle.paramsHash}`);
+    console.log('THISSS - ', gem2sHandle);
     if (status === SUCCEEDED) {
       return paramsHash !== gem2sHandle.paramsHash;
     }
@@ -106,8 +107,8 @@ class Gem2sService {
     return status !== RUNNING;
   }
 
-  static async gem2sCreate(experimentId) {
-    const { taskParams, hashParams } = await this.generateGem2sParams(experimentId);
+  static async gem2sCreate(experimentId, authJWT) {
+    const { taskParams, hashParams } = await this.generateGem2sParams(experimentId, authJWT);
 
     const paramsHash = crypto
       .createHash('sha1')
@@ -133,16 +134,20 @@ class Gem2sService {
     // Fail hard if there was an error.
     await validateRequest(message, 'GEM2SResponse.v1.yaml');
 
-    const messageForClient = _.cloneDeep(message);
 
     const {
-      experimentId, taskName, item,
-    } = messageForClient;
+      experimentId, taskName, item, authJWT,
+    } = message;
 
     await pipelineHook.run(taskName, {
       experimentId,
       item,
+      authJWT,
     });
+    const messageForClient = _.cloneDeep(message);
+
+    // Make sure authJWT doesn't get back to the client
+    delete messageForClient.authJWT;
 
     await this.sendUpdateToSubscribed(experimentId, messageForClient, io);
   }
