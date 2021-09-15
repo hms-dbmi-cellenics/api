@@ -28,7 +28,7 @@ describe('tests for the projects service', () => {
   };
 
   afterEach(() => {
-    AWSMock.restore();
+    AWSMock.restore('DynamoDB');
   });
 
   it('GetProject gets project and samples properly', async (done) => {
@@ -49,51 +49,51 @@ describe('tests for the projects service', () => {
       .then(() => done());
   });
 
-  // it('GetProjects gets all the projects', async (done) => {
-  //   const fnResult = [
-  //     {
-  //       uuid: 'project-1',
-  //       name: 'Project 1',
-  //     },
-  //     {
-  //       uuid: 'project-2',
-  //       name: 'Project 2',
-  //     },
-  //     {
-  //       uuid: 'project-3',
-  //       name: 'Project 3',
-  //     },
-  //   ];
+  it('GetProjects gets all the projects', async (done) => {
+    const fnResult = [
+      {
+        uuid: 'project-1',
+        name: 'Project 1',
+      },
+      {
+        uuid: 'project-2',
+        name: 'Project 2',
+      },
+      {
+        uuid: 'project-3',
+        name: 'Project 3',
+      },
+    ];
 
-  //   const projectIds = fnResult.map((project) => ({ projectId: project.uuid }));
-  //   const projectIdsArr = Object.values(projectIds).map((project) => project.projectId);
+    const projectIds = fnResult.map((project) => ({ projectId: project.uuid }));
+    const projectIdsArr = Object.values(projectIds).map((project) => project.projectId);
 
-  //   const fnSpy = mockDynamoScan([projectIds]);
+    const fnSpy = mockDynamoScan([projectIds]);
 
-  //   const projectService = new ProjectsService();
-  //   const user = { sub: 'mockSubject' };
+    const projectService = new ProjectsService();
+    const user = { sub: 'mockSubject' };
 
-  //   projectService.getProjectsFromIds = jest.fn().mockImplementation(() => fnResult);
+    projectService.getProjectsFromIds = jest.fn().mockImplementation(() => fnResult);
 
-  //   projectService.getProjects(user)
-  //     .then((res) => {
-  //       expect(res).toEqual(fnResult);
-  //       expect(fnSpy).toHaveBeenCalledWith({
-  //         TableName: 'experiments-test',
-  //         ExpressionAttributeNames: {
-  //           '#pid': 'projectId',
-  //           '#rbac_can_write': 'rbac_can_write',
-  //         },
-  //         ExpressionAttributeValues: {
-  //           ':userId': { S: user.sub },
-  //         },
-  //         FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
-  //         ProjectionExpression: '#pid',
-  //       });
-  //       expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(projectIdsArr);
-  //     })
-  //     .then(() => done());
-  // });
+    projectService.getProjects(user)
+      .then((res) => {
+        expect(res).toEqual(fnResult);
+        expect(fnSpy).toHaveBeenCalledWith({
+          TableName: 'experiments-test',
+          ExpressionAttributeNames: {
+            '#pid': 'projectId',
+            '#rbac_can_write': 'rbac_can_write',
+          },
+          ExpressionAttributeValues: {
+            ':userId': { S: user.sub },
+          },
+          FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
+          ProjectionExpression: '#pid',
+        });
+        expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(projectIdsArr);
+      })
+      .then(() => done());
+  });
 
   it('GetProjects gets all the projects across many pages of scan results', async (done) => {
     const projectIds1 = [
