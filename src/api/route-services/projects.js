@@ -124,7 +124,7 @@ class ProjectsService {
   /**
    * Returns information about a group of projects.
    *
-   * @param {Array} projectIds A Set of projectId values that are to be queried.
+   * @param {Array} projectIds An array of projectId values that are to be queried.
    * @returns An object containing descriptions of projects.
    */
   async getProjectsFromIds(projectIds) {
