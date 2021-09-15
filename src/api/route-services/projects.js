@@ -124,7 +124,7 @@ class ProjectsService {
    * @returns An object containing descriptions of projects.
    */
   async getProjectsFromIds(projectIds) {
-    if (!projectIds.size) {
+    if (projectIds.size === 0) {
       return [];
     }
 
