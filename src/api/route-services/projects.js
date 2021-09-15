@@ -96,10 +96,6 @@ class ProjectsService {
 
     let response = await dynamodb.scan(params).promise();
 
-    if (!response.Items.length) {
-      return [];
-    }
-
     const extractProjectIds = (resp) => resp.Items.map(
       (entry) => convertToJsObject(entry).projectId,
     ).filter((id) => id);
@@ -118,21 +114,29 @@ class ProjectsService {
       projectIds = projectIds.concat(newProjectIds);
     }
 
-    return this.getProjectsFromIds(new Set(projectIds));
+    // Remove duplicates (when we support multi experiment projects
+    // we might have repeated projectId's)
+    projectIds = [...new Set(projectIds)];
+
+    return this.getProjectsFromIds(projectIds);
   }
 
   /**
    * Returns information about a group of projects.
    *
-   * @param {Set} projectIds A Set of projectId values that are to be queried.
+   * @param {Array} projectIds A Array of projectId values that are to be queried.
    * @returns An object containing descriptions of projects.
    */
   async getProjectsFromIds(projectIds) {
+    if (projectIds.length === 0) {
+      return [];
+    }
+
     const dynamodb = createDynamoDbInstance();
     const params = {
       RequestItems: {
         [this.tableName]: {
-          Keys: [...projectIds].map((projectUuid) => convertToDynamoDbRecord({ projectUuid })),
+          Keys: projectIds.map((projectUuid) => convertToDynamoDbRecord({ projectUuid })),
         },
       },
     };
@@ -144,9 +148,8 @@ class ProjectsService {
       return newData.projects.uuid;
     }));
 
-
     // Build up projects that do not exist in Dynamo yet.
-    const projects = [...projectIds]
+    const projects = projectIds
       .filter((entry) => (
         !existingProjectIds.has(entry)
       ))
