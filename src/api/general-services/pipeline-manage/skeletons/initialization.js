@@ -25,6 +25,25 @@ const assignPipelineToPod = (nextStep) => ({
   AssignPipelineToPod: {
     XStepType: 'assign-pipeline-to-pod',
     ResultPath: null,
+    Next: 'WaitForPod',
+  },
+  WaitForPod: {
+    XStepType: 'assign-pipeline-to-pod',
+    ResultPath: null,
+    Type: 'Map',
+    ItemsPath: '$.retries',
+    MaxConcurrency: 1,
+    // retry waits up to 74 seconds for the pod to be assigned
+    Retry: [{
+      ErrorEquals: ['NoPodAvailable'],
+      IntervalSeconds: 1,
+      MaxAttempts: 10,
+      BackoffRate: 1.5,
+    }],
+    Catch: [{
+      ErrorEquals: ['States.ALL'],
+      Next: 'AssignPipelineToPod',
+    }],
     Next: nextStep,
   },
 });

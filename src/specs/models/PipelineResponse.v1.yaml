@@ -17,6 +17,9 @@ properties:
     input:
       type: object
       properties:
+        kind:
+          type: string
+          description: whether it's a normal or assignation message
         experimentId:
           type: string
           description: The experiment ID for which the step was completed.
@@ -36,7 +39,7 @@ properties:
           oneOf:
             - type: string
             - type: boolean
-        required: 
+        required:
           - error
     required:
       - output

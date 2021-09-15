@@ -228,6 +228,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
+    sandboxId: config.sandboxId,
     processingConfig: mergedProcessingConfig,
     authJWT,
   };
@@ -269,6 +270,7 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
     activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
+    sandboxId: config.sandboxId,
     processingConfig: {},
   };
 

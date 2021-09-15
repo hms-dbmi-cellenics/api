@@ -1,5 +1,5 @@
 # pull official base image
-FROM node:13.12.0-alpine
+FROM node:13.12.0-alpine AS api
 
 # set working directory
 WORKDIR /app
@@ -23,3 +23,13 @@ COPY . ./
 # run
 EXPOSE 3000
 CMD ["npm", "start"]
+
+
+FROM amazon/aws-lambda-nodejs:14 AS lambda
+
+# set working directory
+COPY --from=api /app/src/lambda /app/package*.json ./
+
+RUN npm install
+
+CMD [ "app.lambdaHandler" ]

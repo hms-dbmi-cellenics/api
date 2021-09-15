@@ -2,6 +2,7 @@ const AWSXRay = require('aws-xray-sdk');
 const AWS = require('../../utils/requireAWS');
 const validateRequest = require('../../utils/schema-validator');
 const getLogger = require('../../utils/getLogger');
+const pipelineAssign = require('./pipeline-assign');
 
 const constants = require('../general-services/pipeline-manage/constants');
 const getPipelineStatus = require('../general-services/pipeline-status');
@@ -16,6 +17,12 @@ const logger = getLogger();
 
 const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');
+
+  // TODO: refactor this into a new hook
+  if (message.input.kind === constants.ASSIGN_POD_TO_PIPELINE) {
+    await pipelineAssign(io, message.input);
+    return;
+  }
 
   AWSXRay.getSegment().addMetadata('message', message);
 
@@ -40,10 +47,11 @@ const pipelineResponse = async (io, message) => {
     io.sockets.emit(`ExperimentUpdates-${experimentId}`, errorResponse);
     return;
   }
-
-  // Download output from S3.
-  const s3 = new AWS.S3();
+  // if output exists then run the next steps
   const { input: { taskName, sampleUuid }, output: { bucket, key } } = message;
+
+  // Step 1 Download output from S3.
+  const s3 = new AWS.S3();
 
   const outputObject = await s3.getObject(
     {
@@ -57,6 +65,7 @@ const pipelineResponse = async (io, message) => {
     await validateRequest(output.config, 'ProcessingConfigBodies.v1.yaml');
   }
 
+  // Step 2 plot data
   if (output.plotDataKeys) {
     const plotConfigUploads = Object.entries(output.plotDataKeys).map(([plotUuid, objKey]) => (
       plotsTableService.updatePlotDataKey(
@@ -74,6 +83,7 @@ const pipelineResponse = async (io, message) => {
     Promise.all(plotConfigUploads.map((p) => p.catch((e) => e)));
   }
 
+  // Step 3 processing config
   const {
     processingConfig: previousConfig,
   } = await experimentService.getProcessingConfig(experimentId);

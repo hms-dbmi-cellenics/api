@@ -1,4 +1,5 @@
 const config = require('../../../../config');
+const constants = require('../constants');
 
 // the full activityArn is too long to be used as a tag (> 63 chars)
 // so we just send the last part of the arn as the rest can be constructed.
@@ -83,8 +84,10 @@ const deleteRunningPods = (context, step) => {
 
 const assignPodToPipeline = (context, step) => {
   const {
-    clusterInfo, activityArn, experimentId, processName,
+    clusterInfo, sandboxId, activityArn, experimentId, processName,
   } = context;
+
+  const activityId = getActivityId(activityArn);
 
   return {
     ...step,
@@ -140,25 +143,32 @@ const assignPodToPipeline = (context, step) => {
           Error: 'NoPodsAvailable',
         },
         AssignPodToPipeline: {
-          End: true,
-          ResultPath: '$.PatchResult',
+          Description: 'Send a message through SNS so that the API assigns a pod to the pipeline',
           Type: 'Task',
-          Comment: 'Patch pod to set the activity ID label.',
-          Resource: 'arn:aws:states:::eks:call',
+          Resource: 'arn:aws:states:::sns:publish',
+          End: true,
           Parameters: {
-            ClusterName: clusterInfo.name,
-            CertificateAuthority: clusterInfo.certAuthority,
-            Endpoint: clusterInfo.endpoint,
-            Method: 'PATCH',
-            'Path.$': '$.ResponseBody.items[0].metadata.selfLink',
-            RequestBody: {
-              metadata: {
-                labels: {
-                  activityId: getActivityId(activityArn),
-                  experimentId,
-                  processName,
-                },
-
+            TopicArn: 'arn:aws:sns:us-east-1:123456789012:myTopic',
+            MessageAttributes: {
+              kind: {
+                DataType: 'String',
+                'StringValue.$': constants.ASSIGN_POD_TO_PIPELINE,
+              },
+              sandboxId: {
+                DataType: 'String',
+                'StringValue.$': sandboxId,
+              },
+              experimentId: {
+                DataType: 'String',
+                'StringValue.$': experimentId,
+              },
+              activityId: {
+                DataType: 'String',
+                'StringValue.$': activityId,
+              },
+              processName: {
+                DataType: 'String',
+                'StringValue.$': processName,
               },
             },
           },
@@ -168,4 +178,104 @@ const assignPodToPipeline = (context, step) => {
   };
 };
 
-module.exports = { getRunningPods, deleteRunningPods, assignPodToPipeline };
+
+const waitForPod = (context, step) => {
+  const {
+    clusterInfo, sandboxId, activityArn, experimentId, processName,
+  } = context;
+
+  const activityId = getActivityId(activityArn);
+
+  return {
+    ...step,
+    // Type: 'Map',
+    // ItemsPath: '$.retries',
+    // MaxConcurrency: 1,
+    // // retry waits up to 74 seconds for the pod to be assigned
+    // Retry: [{
+    //   ErrorEquals: ['NoPodAvailable'],
+    //   IntervalSeconds: 1,
+    //   MaxAttempts: 10,
+    //   BackoffRate: 1.5,
+    // }],
+    // "Catch": [{
+    //   "ErrorEquals": ["States.ALL"],
+    //   "Next": "AssignPipelineToPod"
+    // }],
+    Iterator: {
+      StartAt: 'GetAssignedPod',
+      States: {
+        GetUnassignedPod: {
+          Next: 'IsPodAvailable',
+          Type: 'Task',
+          Comment: 'Retrieves first unassigned and running pipeline pod.',
+          Resource: 'arn:aws:states:::eks:call',
+          Parameters: {
+            ClusterName: clusterInfo.name,
+            CertificateAuthority: clusterInfo.certAuthority,
+            Endpoint: clusterInfo.endpoint,
+            Method: 'GET',
+            Path: `/api/v1/namespaces/${config.pipelineNamespace}/pods`,
+            QueryParameters: {
+              labelSelector: [
+                `type=pipeline,activityId=${activityId}`,
+              ],
+            },
+          },
+        },
+        IsPodAvailable: {
+          Type: 'Choice',
+          Comment: 'Redirects to an error state if there are no available pods.',
+          Choices: [
+            {
+              Variable: '$.ResponseBody.items[0]',
+              IsPresent: false,
+              Next: 'NoPodAvailable',
+            },
+          ],
+          Default: 'AssignPodToPipeline',
+        },
+        NoPodAvailable: {
+          Type: 'Fail',
+          Cause: 'No available and running pipeline pods.',
+          Error: 'NoPodAvailable',
+        },
+        RequestPodAssignation: {
+          Descriptiion: 'Send a message through SNS so that the API assigns a pod to the pipeline',
+          Type: 'Task',
+          End: true,
+          Resource: 'arn:aws:states:::sns:publish',
+          Parameters: {
+            TopicArn: 'arn:aws:sns:us-east-1:123456789012:myTopic',
+            MessageAttributes: {
+              kind: {
+                DataType: 'String',
+                'StringValue.$': constants.ASSIGN_POD_TO_PIPELINE,
+              },
+              sandboxId: {
+                DataType: 'String',
+                'StringValue.$': sandboxId,
+              },
+              experimentId: {
+                DataType: 'String',
+                'StringValue.$': experimentId,
+              },
+              activityId: {
+                DataType: 'String',
+                'StringValue.$': activityId,
+              },
+              processName: {
+                DataType: 'String',
+                'StringValue.$': processName,
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+};
+
+module.exports = {
+  getRunningPods, deleteRunningPods, assignPodToPipeline, waitForPod,
+};

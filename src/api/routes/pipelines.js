@@ -52,7 +52,7 @@ module.exports = {
         await pipelineResponse(io, parsedMessage);
       } catch (e) {
         logger.error(
-          'qc pipeline response handler failed with error: ', e,
+          'pipeline response handler failed with error: ', e,
         );
 
         AWSXRay.getSegment().addError(e);
