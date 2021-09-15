@@ -28,7 +28,7 @@ describe('tests for the projects service', () => {
   };
 
   afterEach(() => {
-    AWSMock.restore('DynamoDB');
+    AWSMock.restore();
   });
 
   it('GetProject gets project and samples properly', async (done) => {
@@ -49,48 +49,141 @@ describe('tests for the projects service', () => {
       .then(() => done());
   });
 
-  it('GetProjects gets all the projects', async (done) => {
-    const fnResult = [
+  // it('GetProjects gets all the projects', async (done) => {
+  //   const fnResult = [
+  //     {
+  //       uuid: 'project-1',
+  //       name: 'Project 1',
+  //     },
+  //     {
+  //       uuid: 'project-2',
+  //       name: 'Project 2',
+  //     },
+  //     {
+  //       uuid: 'project-3',
+  //       name: 'Project 3',
+  //     },
+  //   ];
+
+  //   const projectIds = fnResult.map((project) => ({ projectId: project.uuid }));
+  //   const projectIdsArr = Object.values(projectIds).map((project) => project.projectId);
+
+  //   const fnSpy = mockDynamoScan([projectIds]);
+
+  //   const projectService = new ProjectsService();
+  //   const user = { sub: 'mockSubject' };
+
+  //   projectService.getProjectsFromIds = jest.fn().mockImplementation(() => fnResult);
+
+  //   projectService.getProjects(user)
+  //     .then((res) => {
+  //       expect(res).toEqual(fnResult);
+  //       expect(fnSpy).toHaveBeenCalledWith({
+  //         TableName: 'experiments-test',
+  //         ExpressionAttributeNames: {
+  //           '#pid': 'projectId',
+  //           '#rbac_can_write': 'rbac_can_write',
+  //         },
+  //         ExpressionAttributeValues: {
+  //           ':userId': { S: user.sub },
+  //         },
+  //         FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
+  //         ProjectionExpression: '#pid',
+  //       });
+  //       expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(projectIdsArr);
+  //     })
+  //     .then(() => done());
+  // });
+
+  it('GetProjects gets all the projects across many pages of scan results', async (done) => {
+    const projectIds1 = [
       {
-        uuid: 'project-1',
-        name: 'Project 1',
+        projectId: 'project-1',
       },
       {
-        uuid: 'project-2',
-        name: 'Project 2',
+        projectId: 'project-2',
       },
       {
-        uuid: 'project-3',
-        name: 'Project 3',
+        projectId: 'project-3',
       },
     ];
 
-    const projectIds = fnResult.map((project) => ({ projectId: project.uuid }));
-    const projectIdsArr = Object.values(projectIds).map((project) => project.projectId);
+    const projectIds2 = [
+      {
+        projectId: 'project-4',
+      },
+      {
+        projectId: 'project-5',
+      },
+      {
+        projectId: 'project-6',
+      },
+    ];
 
-    const fnSpy = mockDynamoScan(projectIds);
+    mockDynamoScan([projectIds1, projectIds2]);
+
+    const expectedResult = [...projectIds1, ...projectIds2].map(({ projectId }) => projectId);
 
     const projectService = new ProjectsService();
     const user = { sub: 'mockSubject' };
 
-    projectService.getProjectsFromIds = jest.fn().mockImplementation(() => fnResult);
+    projectService.getProjectsFromIds = jest.fn().mockImplementation((x) => x);
 
     projectService.getProjects(user)
       .then((res) => {
-        expect(res).toEqual(fnResult);
-        expect(fnSpy).toHaveBeenCalledWith({
-          TableName: 'experiments-test',
-          ExpressionAttributeNames: {
-            '#pid': 'projectId',
-            '#rbac_can_write': 'rbac_can_write',
-          },
-          ExpressionAttributeValues: {
-            ':userId': { S: user.sub },
-          },
-          FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
-          ProjectionExpression: '#pid',
-        });
-        expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(projectIdsArr);
+        expect(res).toEqual(expectedResult);
+
+        expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(expectedResult);
+      })
+      .then(() => done());
+  });
+
+  test('GetProjects removes duplicate projectIds from the call it makes to getProjectsFromIds', async (done) => {
+    const projectIds1 = [
+      {
+        projectId: 'project-1',
+      },
+      {
+        projectId: 'project-2',
+      },
+      {
+        projectId: 'project-3',
+      },
+      {
+        projectId: 'project-4',
+      },
+      {
+        projectId: 'project-1',
+      },
+    ];
+
+    const projectIds2 = [
+      {
+        projectId: 'project-4',
+      },
+      {
+        projectId: 'project-5',
+      },
+      {
+        projectId: 'project-6',
+      },
+    ];
+
+    mockDynamoScan([projectIds1, projectIds2]);
+
+    const allProjectIds = [...projectIds1, ...projectIds2].map(({ projectId }) => projectId);
+    const expectedResult = [...new Set(allProjectIds)];
+
+    const projectService = new ProjectsService();
+    const user = { sub: 'mockSubject' };
+
+    projectService.getProjectsFromIds = jest.fn().mockImplementation((x) => x);
+
+    projectService.getProjects(user)
+      .then((res) => {
+        expect(res).toEqual(expectedResult);
+
+        expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(expectedResult);
       })
       .then(() => done());
   });
@@ -203,7 +296,7 @@ describe('tests for the projects service', () => {
       .then(() => done());
   });
 
-  it('GetExperiments gets projects', async (done) => {
+  test('GetExperiments gets projects', async (done) => {
     const fnSpy = mockDynamoGetItem({ projects: mockProject });
 
     const experimentsService = new ExperimentsService();
@@ -250,7 +343,7 @@ describe('tests for the projects service', () => {
       .then(() => done());
   });
 
-  it('DeleteProject deletes project and samples properly', async (done) => {
+  test('DeleteProject deletes project and samples properly', async (done) => {
     const experiments = ['project-1'];
     const samples = [];
 
