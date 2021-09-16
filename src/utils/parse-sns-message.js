@@ -1,13 +1,16 @@
 const https = require('https');
 const MessageValidator = require('sns-validator');
 const { promisify } = require('util');
-const logger = require('./logging');
+const getLogger = require('./getLogger');
 const config = require('../config');
+
+const logger = getLogger();
 
 const validator = new MessageValidator();
 
 const parseSNSMessage = async (req) => {
   let msg;
+
   logger.log('[MSG ??] SNS message of length', req.body.length, 'arrived.');
 
   // First let's try parsing the body. It should be JSON.

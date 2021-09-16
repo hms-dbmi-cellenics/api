@@ -4,8 +4,10 @@ const getBackendStatus = require('../general-services/backend-status');
 const ExperimentService = require('../route-services/experiment');
 const pipelineResponse = require('../route-services/pipeline-response');
 const parseSNSMessage = require('../../utils/parse-sns-message');
-const logger = require('../../utils/logging');
+const getLogger = require('../../utils/getLogger');
 const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
+
+const logger = getLogger();
 
 module.exports = {
   'pipelines#get': [
@@ -20,7 +22,12 @@ module.exports = {
     async (req, res) => {
       const { processingConfig } = req.body;
 
-      const data = await createQCPipeline(req.params.experimentId, processingConfig || []);
+      const data = await createQCPipeline(
+        req.params.experimentId,
+        processingConfig || [],
+        req.headers.authorization,
+      );
+
       const experimentService = new ExperimentService();
       await experimentService.saveQCHandle(req.params.experimentId, data);
       res.json(data);

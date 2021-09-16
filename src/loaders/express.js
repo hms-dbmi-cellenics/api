@@ -6,8 +6,7 @@ const http = require('http');
 const AWSXRay = require('aws-xray-sdk');
 const _ = require('lodash');
 const config = require('../config');
-const { authenticationMiddlewareExpress } = require('../utils/authMiddlewares');
-
+const { authenticationMiddlewareExpress, checkAuthExpiredMiddleware } = require('../utils/authMiddlewares');
 
 module.exports = async (app) => {
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
@@ -26,7 +25,18 @@ module.exports = async (app) => {
   // up to the size of the max SNS topic limit (256k), it defaults to 100kb.
   app.use(bodyParser.urlencoded({ extended: false, limit: '1mb', parameterLimit: 300000 }));
   app.use(bodyParser.text({ extended: false, limit: '1mb', parameterLimit: 300000 }));
-  app.use(bodyParser.json({ extended: false, limit: '10mb', parameterLimit: 300000 }));
+  app.use(bodyParser.json({
+    extended: false,
+    limit: '10mb',
+    parameterLimit: 300000,
+    type: 'application/json',
+  }));
+  app.use(bodyParser.json({
+    extended: false,
+    limit: '10mb',
+    parameterLimit: 300000,
+    type: 'application/*+json',
+  }));
 
   // Enable AWS XRay
   // eslint-disable-next-line global-require
@@ -97,6 +107,8 @@ module.exports = async (app) => {
   const authMw = await authenticationMiddlewareExpress(app);
 
   app.use(authMw);
+
+  app.use(checkAuthExpiredMiddleware);
 
   app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),

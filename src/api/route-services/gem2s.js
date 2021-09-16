@@ -13,11 +13,13 @@ const runQCPipeline = require('../../utils/hooks/runQCPipeline');
 const validateRequest = require('../../utils/schema-validator');
 const PipelineHook = require('../../utils/hookRunner');
 const { OK } = require('../../utils/responses');
-const logger = require('../../utils/logging');
+const getLogger = require('../../utils/getLogger');
 
 const ExperimentService = require('./experiment');
 const ProjectsService = require('./projects');
 const SamplesService = require('./samples');
+
+const logger = getLogger();
 
 const pipelineHook = new PipelineHook();
 
@@ -46,7 +48,7 @@ class Gem2sService {
     io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
   }
 
-  static async generateGem2sParams(experimentId) {
+  static async generateGem2sParams(experimentId, authJWT) {
     const experiment = await (new ExperimentService()).getExperimentData(experimentId);
     const { samples } = await (new SamplesService()).getSamplesByExperimentId(experimentId);
     const {
@@ -64,6 +66,7 @@ class Gem2sService {
       input: { type: experiment.meta.type },
       sampleIds: experiment.sampleIds,
       sampleNames: experiment.sampleIds.map((sampleId) => samples[sampleId].name),
+      authJWT,
     };
 
     if (metadataKeys.length) {
@@ -105,7 +108,7 @@ class Gem2sService {
     const { [GEM2S_PROCESS_NAME]: gem2sHandle } = handles;
     const { [GEM2S_PROCESS_NAME]: { status: gem2sStatus } } = statusWrapper;
 
-    logger.log(`Gem2s status is ${gem2sStatus}.\nNew hash: ${paramsHash}\nOld hash: ${gem2sHandle.paramsHash}`);
+    logger.log(`Gem2s status is ${gem2sStatus}. new hash: ${paramsHash}; old hash: ${gem2sHandle.paramsHash}`);
     if (gem2sStatus === SUCCEEDED) {
       return paramsHash !== gem2sHandle.paramsHash;
     }
@@ -113,8 +116,8 @@ class Gem2sService {
     return gem2sStatus !== RUNNING;
   }
 
-  static async gem2sCreate(experimentId) {
-    const { taskParams, hashParams } = await this.generateGem2sParams(experimentId);
+  static async gem2sCreate(experimentId, authJWT) {
+    const { taskParams, hashParams } = await this.generateGem2sParams(experimentId, authJWT);
 
     const paramsHash = crypto
       .createHash('sha1')
@@ -130,7 +133,7 @@ class Gem2sService {
 
     logger.log('Running new gem2s pipeline');
 
-    const newHandle = await createGem2SPipeline(experimentId, taskParams, paramsHash);
+    const newHandle = await createGem2SPipeline(experimentId, taskParams);
 
     const experimentService = new ExperimentService();
     await experimentService.saveGem2sHandle(
@@ -147,16 +150,21 @@ class Gem2sService {
     // Fail hard if there was an error.
     await validateRequest(message, 'GEM2SResponse.v1.yaml');
 
-    const messageForClient = _.cloneDeep(message);
-
     const {
-      experimentId, taskName, item,
-    } = messageForClient;
+      experimentId, taskName, item, authJWT,
+    } = message;
 
     await pipelineHook.run(taskName, {
       experimentId,
       item,
+      authJWT,
     });
+
+
+    const messageForClient = _.cloneDeep(message);
+
+    // Make sure authJWT doesn't get back to the client
+    delete messageForClient.authJWT;
 
     await this.sendUpdateToSubscribed(experimentId, messageForClient, io);
   }

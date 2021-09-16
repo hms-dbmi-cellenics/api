@@ -1,25 +1,18 @@
 const AWSXRay = require('aws-xray-sdk');
 const AWS = require('../../utils/requireAWS');
 const validateRequest = require('../../utils/schema-validator');
-const logger = require('../../utils/logging');
+const getLogger = require('../../utils/getLogger');
 
 const constants = require('../general-services/pipeline-manage/constants');
+const getPipelineStatus = require('../general-services/pipeline-status');
 
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
-const PipelineHook = require('../../utils/hookRunner');
 
 const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
 
-const getPipelineStatus = require('../general-services/pipeline-status');
-
-const embeddingWorkRequest = require('../../utils/hooks/embeddingWorkRequest');
-const clusteringWorkRequest = require('../../utils/hooks/clusteringWorkRequest');
-
-const pipelineHook = new PipelineHook();
-pipelineHook.register('configureEmbedding', embeddingWorkRequest);
-pipelineHook.register('configureEmbedding', clusteringWorkRequest);
+const logger = getLogger();
 
 const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');
@@ -110,12 +103,6 @@ const pipelineResponse = async (io, message) => {
       },
     ]);
   }
-
-  await pipelineHook.run(taskName, {
-    experimentId,
-    output,
-    statusRes: statusResToSend,
-  });
 
   // Concatenate into a proper response.
   const response = {

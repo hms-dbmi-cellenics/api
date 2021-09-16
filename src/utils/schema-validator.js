@@ -6,7 +6,9 @@ const Validator = require('swagger-model-validator');
 const yaml = require('js-yaml');
 const _ = require('lodash');
 
-const logger = require('./logging');
+const getLogger = require('./getLogger');
+
+const logger = getLogger();
 
 const validateRequest = async (request, schemaPath) => {
   const specPath = path.resolve(__dirname, '..', 'specs', 'models', schemaPath);

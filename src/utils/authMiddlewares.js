@@ -1,5 +1,6 @@
 // See details at https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-verifying-a-jwt.html
 // for how JWT verification works with Cognito.
+const promiseAny = require('promise.any');
 
 const AWSXRay = require('aws-xray-sdk');
 const fetch = require('node-fetch');
@@ -7,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const jwtExpress = require('express-jwt');
 const jwkToPem = require('jwk-to-pem');
 const util = require('util');
+const dns = require('dns').promises;
 
 const config = require('../config');
 
@@ -41,6 +43,7 @@ const authenticationMiddlewareExpress = async (app) => {
     // so during authorization we can check if the user parameter is actually present.
     // If not, the user was not authenticated.
     credentialsRequired: false,
+    ignoreExpiration: true,
     // JWT tokens are JSON files that are signed using a key.
     // We need to make sure that the issuer in the token is correct:
     // we verify that the signed JWT includes our own user pool.
@@ -77,6 +80,73 @@ const authenticationMiddlewareExpress = async (app) => {
       });
     },
   });
+};
+
+
+// eslint-disable-next-line no-useless-escape
+const INTERNAL_DOMAINS_REGEX = new RegExp('((\.compute\.internal)|(\.svc\.local))$');
+
+const checkAuthExpiredMiddleware = (req, res, next) => {
+  const isReqFromLocalhost = async () => {
+    const ip = req.connection.remoteAddress;
+    const host = req.get('host');
+
+    if (ip === '127.0.0.1' || ip === '::ffff:127.0.0.1' || ip === '::1' || host.indexOf('localhost') !== -1) {
+      return true;
+    }
+
+    throw new Error('ip address is not localhost');
+  };
+
+  const isReqFromCluster = async () => {
+    const domains = await dns.reverse(req.ip);
+
+    if (!domains.some((domain) => INTERNAL_DOMAINS_REGEX.test(domain))) {
+      throw new Error('ip address does not come from internal sources');
+    }
+
+    return true;
+  };
+
+  if (!req.user) {
+    return next();
+  }
+
+  // JWT `exp` returns seconds since UNIX epoch, conver to milliseconds for this
+  const timeLeft = (req.user.exp * 1000) - Date.now();
+
+  // ignore if JWT is still valid
+  if (timeLeft > 0) {
+    return next();
+  }
+
+  // send error if JWT is older than the limit
+  if (timeLeft < -(7 * 1000 * 60 * 60)) {
+    return next(new UnauthenticatedError('token has expired'));
+  }
+
+  // check if we should ignore expired jwt token for this path and request type
+  const longTimeoutEndpoints = [{ urlMatcher: /^\/v1\/experiments\/.{32}\/cellSets$/, method: 'PATCH' }];
+  const isEndpointIgnored = longTimeoutEndpoints.some(
+    ({ urlMatcher, method }) => (
+      req.method.toLowerCase() === method.toLowerCase() && urlMatcher.test(req.url)
+    ),
+  );
+
+  // if endpoint is not in ignore list, the JWT is too old, send an error accordingly
+  if (!isEndpointIgnored) {
+    return next(new UnauthenticatedError('token has expired'));
+  }
+
+  promiseAny([isReqFromCluster(), isReqFromLocalhost()])
+    .then(() => {
+      next();
+    })
+    .catch(() => {
+      next(new UnauthenticatedError('token has expired'));
+    });
+
+  return null;
 };
 
 /**
@@ -195,5 +265,6 @@ module.exports = {
   authenticationMiddlewareSocketIO,
   expressAuthorizationMiddleware,
   expressAuthenticationOnlyMiddleware,
+  checkAuthExpiredMiddleware,
   authorize,
 };

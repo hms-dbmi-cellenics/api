@@ -1,6 +1,8 @@
 const dotenv = require('dotenv');
 const AWS = require('aws-sdk');
-const logger = require('../utils/logging');
+const getLogger = require('../utils/getLogger');
+
+const logger = getLogger();
 
 // If we are not deployed on GitLab (AWS/k8s), the environment is given by
 // NODE_ENV, or development if NODE_ENV is not set.
@@ -113,9 +115,6 @@ if (config.clusterEnv === 'development') {
     s3ForcePathStyle: true,
   });
 
-  // remove this line when the new gem2s-endpoint is merged and thus the production/pipeline.yaml is
-  // updated to new name pipeline-runner
-  config.pipelineInstanceConfigUrl = 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/pipeline.yaml';
   config.corsOriginUrl = 'http://localhost:5000';
   config.adminArn = '70c213d4-e7b6-4920-aefb-706ce8606ee2';
 }

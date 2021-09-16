@@ -1,13 +1,11 @@
 const _ = require('lodash');
 
+const jsonMerger = require('json-merger');
 const config = require('../../config');
-const mockData = require('./mock-data.json');
-
 const AWS = require('../../utils/requireAWS');
-const logger = require('../../utils/logging');
+const getLogger = require('../../utils/getLogger');
 const { OK, NotFoundError, BadRequestError } = require('../../utils/responses');
 const safeBatchGetItem = require('../../utils/safeBatchGetItem');
-
 const constants = require('../general-services/pipeline-manage/constants');
 const downloadTypes = require('../../utils/downloadTypes');
 
@@ -24,24 +22,28 @@ const {
   convertToDynamoUpdateParams,
 } = require('../../utils/dynamoDb');
 
+const logger = getLogger('[ExperimentService] - ');
+
 class ExperimentService {
   constructor() {
     this.experimentsTableName = `experiments-${config.clusterEnv}`;
     this.cellSetsBucketName = `cell-sets-${config.clusterEnv}`;
     this.processedMatrixBucketName = `processed-matrix-${config.clusterEnv}`;
     this.rawSeuratBucketName = `biomage-source-${config.clusterEnv}`;
-
-    mockData.matrixPath = mockData.matrixPath.replace('BUCKET_NAME', this.rawSeuratBucketName);
-    this.mockData = convertToDynamoDbRecord(mockData);
+    this.filteredCellsBucketName = `biomage-filtered-cells-${config.clusterEnv}`;
   }
 
   async getExperimentData(experimentId) {
+    logger.log(`GET experiment ${experimentId} data`);
+
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId,
       ['projectId', 'meta', 'experimentId', 'experimentName', 'sampleIds']);
     return data;
   }
 
   async getListOfExperiments(experimentIds) {
+    logger.log(`GET list of experiments ${experimentIds}`);
+
     const dynamodb = createDynamoDbInstance();
 
     const params = {
@@ -66,6 +68,8 @@ class ExperimentService {
 
 
   async createExperiment(experimentId, body, user) {
+    logger.log(`Creating experiment ${experimentId}`);
+
     const dynamodb = createDynamoDbInstance();
     const key = convertToDynamoDbRecord({ experimentId });
 
@@ -111,29 +115,19 @@ class ExperimentService {
   }
 
   async deleteExperiment(experimentId) {
-    logger.log(`Deleting experiment ${experimentId}`);
+    logger.log(`DELETE experiment ${experimentId}`);
 
-    const marshalledKey = convertToDynamoDbRecord({
-      experimentId,
-    });
+    await Promise.all([
+      this.deleteExperimentEntryFromDynamodb(experimentId),
+      this.deleteFilteredCellsEntryFromS3(experimentId),
+    ]);
 
-    const params = {
-      TableName: this.experimentsTableName,
-      Key: marshalledKey,
-    };
-
-    const dynamodb = createDynamoDbInstance();
-
-    try {
-      await dynamodb.deleteItem(params).send();
-      return OK();
-    } catch (e) {
-      if (e.statusCode === 404) throw NotFoundError('Experiment not found');
-      throw e;
-    }
+    return OK();
   }
 
   async updateExperiment(experimentId, body) {
+    logger.log(`UPDATE experiment ${experimentId} in dynamodb`);
+
     const dynamodb = createDynamoDbInstance();
 
     const {
@@ -170,16 +164,22 @@ class ExperimentService {
   }
 
   async getExperimentPermissions(experimentId) {
+    logger.log(`GET permissions for experiment ${experimentId}`);
+
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['experimentId', 'rbac_can_write']);
     return data;
   }
 
   async getProcessingConfig(experimentId) {
+    logger.log(`GET processing config for experiment ${experimentId}`);
+
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['processingConfig']);
     return data;
   }
 
   async getPipelinesHandles(experimentId) {
+    logger.log(`GET pipelines handles for experiment ${experimentId}`);
+
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['meta']);
 
     return {
@@ -202,6 +202,8 @@ class ExperimentService {
   }
 
   async getCellSets(experimentId) {
+    logger.log(`GET cell sets in s3 for experiment ${experimentId}`);
+
     const s3 = new AWS.S3();
 
     try {
@@ -217,39 +219,16 @@ class ExperimentService {
       return data;
     } catch (e) {
       if (e.code === 'NoSuchKey') {
-        logger.log(`ERROR: Couldn't find s3 cell sets bucket with key: ${experimentId}`);
-
-        const actualData = await getExperimentAttributes(this.experimentsTableName, experimentId, ['cellSets']);
-
-        if (actualData) {
-          logger.log('Found the cell sets in dynamodb, this means this experiment has an OUTDATED structure and its cell sets should be moved to s3');
-        }
-
-        return actualData;
+        throw new NotFoundError(`Couldn't find s3 cell sets bucket with key: ${experimentId}`);
       }
 
       throw e;
     }
   }
 
-  async updateLouvainCellSets(experimentId, cellSetsData) {
-    const cellSetsObject = await this.getCellSets(experimentId);
-
-    const { cellSets: cellSetsList } = cellSetsObject;
-
-    const louvainIndex = _.findIndex(cellSetsList, { key: 'louvain' });
-    if (louvainIndex !== -1) {
-      // If louvain already exists replace
-      cellSetsList[louvainIndex] = cellSetsData;
-    } else {
-      // If not, insert in the front
-      cellSetsList.unshift(cellSetsData);
-    }
-
-    await this.updateCellSets(experimentId, cellSetsList);
-  }
-
   async updateCellSets(experimentId, cellSetData) {
+    logger.log(`UPDATE cell sets in s3 for experiment ${experimentId}`);
+
     const cellSetsObject = JSON.stringify({ cellSets: cellSetData });
 
     const s3 = new AWS.S3();
@@ -265,6 +244,26 @@ class ExperimentService {
     return cellSetData;
   }
 
+  async patchCellSets(experimentId, patch) {
+    const cellSetsObject = await this.getCellSets(experimentId);
+    const { cellSets: cellSetsList } = cellSetsObject;
+
+    /**
+     * The $remove operation will replace the element in the array with an
+     * undefined value. We will therefore remove this from the array.
+     *
+     * We use the $remove operation in the worker to update cell clusters,
+     * and we may end up using it in other places in the future.
+     */
+    const patchedArray = jsonMerger.mergeObjects(
+      [cellSetsList, patch],
+    ).filter((x) => x !== undefined);
+
+    const response = await this.updateCellSets(experimentId, patchedArray);
+
+    return response;
+  }
+
   async updateProcessingConfig(experimentId, processingConfig) {
     return this.updatePropertyFromDiff(experimentId, 'processingConfig', processingConfig);
   }
@@ -272,6 +271,8 @@ class ExperimentService {
   // Updates each sub attribute separately for
   // one particular attribute (of type object) of a dynamodb entry
   async updatePropertyFromDiff(experimentId, attributeKey, diff) {
+    logger.log(`UPDATE attribute ${attributeKey} for experiment ${experimentId} with diff ${diff}`);
+
     const dynamodb = createDynamoDbInstance();
 
     let key = { experimentId };
@@ -309,6 +310,8 @@ class ExperimentService {
   }
 
   async saveHandle(experimentId, handle, service) {
+    logger.log(`Saving handle ${handle} for service ${service} for experiment ${experimentId}`);
+
     const dynamodb = createDynamoDbInstance();
     let key = { experimentId };
 
@@ -338,6 +341,8 @@ class ExperimentService {
   }
 
   async downloadData(experimentId, downloadType) {
+    logger.log(`Providing download link for download ${downloadType} for experiment ${experimentId}`);
+
     let objectKey = '';
     let bucket = '';
     let downloadedFileName = '';
@@ -374,6 +379,41 @@ class ExperimentService {
 
     const signedUrl = s3.getSignedUrl('getObject', params);
     return { signedUrl };
+  }
+
+  async deleteExperimentEntryFromDynamodb(experimentId) {
+    const marshalledKey = convertToDynamoDbRecord({
+      experimentId,
+    });
+
+    const dynamoParams = {
+      TableName: this.experimentsTableName,
+      Key: marshalledKey,
+    };
+
+    const dynamodb = createDynamoDbInstance();
+
+    try {
+      await dynamodb.deleteItem(dynamoParams).send();
+    } catch (e) {
+      if (e.statusCode === 404) throw NotFoundError(`Experiment not found in ${this.experimentsTableName}`);
+      throw e;
+    }
+  }
+
+  async deleteFilteredCellsEntryFromS3(experimentId) {
+    const s3 = new AWS.S3();
+
+    const s3Params = {
+      Bucket: this.filteredCellsBucketName,
+      Key: experimentId,
+    };
+
+    const result = await s3.deleteObject(s3Params).promise();
+
+    if (result.Errors && result.Errors.length) {
+      throw Error(`Delete S3 object errors: ${JSON.stringify(result.Errors)}`);
+    }
   }
 }
 

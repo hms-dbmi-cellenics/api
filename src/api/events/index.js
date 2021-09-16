@@ -1,8 +1,10 @@
 const AWSXRay = require('aws-xray-sdk');
 const handleWorkRequest = require('../event-services/work-request');
-const logger = require('../../utils/logging');
+const getLogger = require('../../utils/getLogger');
 const config = require('../../config');
 const { authenticationMiddlewareSocketIO, authorize } = require('../../utils/authMiddlewares');
+
+const logger = getLogger();
 
 module.exports = (socket) => {
   socket.on('WorkRequest', (data) => {
@@ -36,7 +38,7 @@ module.exports = (socket) => {
         }
         const jwtClaim = await authenticationMiddlewareSocketIO(Authorization, socket);
         await authorize(experimentId, jwtClaim);
-        await handleWorkRequest(data, socket);
+        await handleWorkRequest(data);
       } catch (e) {
         logger.log(`[REQ ??, SOCKET ${socket.id}] Error while processing WorkRequest event.`);
         logger.trace(e);

@@ -4,7 +4,9 @@ const createMemCache = require('./mem-cache');
 const createClient = require('./createClient');
 const timeout = require('./timeout');
 const { CacheMissError, bypassCache } = require('./cache-utils');
-const logger = require('../utils/logging');
+const getLogger = require('../utils/getLogger');
+
+const logger = getLogger();
 
 class Cache {
   constructor(conf) {
