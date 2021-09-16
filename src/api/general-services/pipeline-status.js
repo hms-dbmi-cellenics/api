@@ -7,11 +7,12 @@ const pipelineConstants = require('./pipeline-manage/constants');
 
 const logger = getLogger();
 
+// TODO add more private steps here
 const privateSteps = [
   'DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker',
   'AssignPipelineToPod', 'GetUnassignedPod', 'IsPodAvailable',
   'NoPodsAvailable', 'AssignPodToPipeline', 'GetExperimentRunningPods',
-  'DeletePreviousPods', 'DeletePod', 'Ignore404',
+  'DeletePreviousPods', 'DeletePod', 'Ignore404', 'WaitForPod',
 ];
 
 

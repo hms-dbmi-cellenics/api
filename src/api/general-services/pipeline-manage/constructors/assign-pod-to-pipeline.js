@@ -84,7 +84,7 @@ const deleteRunningPods = (context, step) => {
 
 const assignPodToPipeline = (context, step) => {
   const {
-    clusterInfo, sandboxId, activityArn, experimentId, processName,
+    clusterInfo, accountId, sandboxId, activityArn, experimentId, processName,
   } = context;
 
   const activityId = getActivityId(activityArn);
@@ -135,40 +135,41 @@ const assignPodToPipeline = (context, step) => {
               Next: 'NoPodsAvailable',
             },
           ],
-          Default: 'AssignPodToPipeline',
+          Default: 'RequestPod',
         },
         NoPodsAvailable: {
           Type: 'Fail',
           Cause: 'No available and running pipeline pods.',
           Error: 'NoPodsAvailable',
         },
-        AssignPodToPipeline: {
+        RequestPod: {
           Comment: 'Send a message through SNS so that the API assigns a pod to the pipeline',
           Type: 'Task',
           Resource: 'arn:aws:states:::sns:publish',
           End: true,
           Parameters: {
-            TopicArn: 'arn:aws:sns:us-east-1:123456789012:myTopic',
+            TopicArn: `arn:aws:sns:${config.awsRegion}:${accountId}:work-results-${sandboxId}`,
+            Message: `pod request for ${sandboxId}/${experimentId}/${processName} `,
             MessageAttributes: {
               kind: {
                 DataType: 'String',
-                'StringValue.$': constants.ASSIGN_POD_TO_PIPELINE,
+                StringValue: constants.ASSIGN_POD_TO_PIPELINE,
               },
               sandboxId: {
                 DataType: 'String',
-                'StringValue.$': sandboxId,
+                StringValue: sandboxId,
               },
               experimentId: {
                 DataType: 'String',
-                'StringValue.$': experimentId,
+                StringValue: experimentId,
               },
               activityId: {
                 DataType: 'String',
-                'StringValue.$': activityId,
+                StringValue: activityId,
               },
               processName: {
                 DataType: 'String',
-                'StringValue.$': processName,
+                StringValue: processName,
               },
             },
           },
@@ -180,33 +181,31 @@ const assignPodToPipeline = (context, step) => {
 
 
 const waitForPod = (context, step) => {
-  const {
-    clusterInfo, sandboxId, activityArn, experimentId, processName,
-  } = context;
+  const { clusterInfo, activityArn } = context;
 
   const activityId = getActivityId(activityArn);
 
   return {
     ...step,
-    // Type: 'Map',
-    // ItemsPath: '$.retries',
-    // MaxConcurrency: 1,
-    // // retry waits up to 74 seconds for the pod to be assigned
-    // Retry: [{
-    //   ErrorEquals: ['NoPodAvailable'],
-    //   IntervalSeconds: 1,
-    //   MaxAttempts: 10,
-    //   BackoffRate: 1.5,
-    // }],
-    // "Catch": [{
-    //   "ErrorEquals": ["States.ALL"],
-    //   "Next": "AssignPipelineToPod"
-    // }],
+    Type: 'Map',
+    ItemsPath: '$.retries',
+    MaxConcurrency: 1,
+    // retry waits up to 74 seconds for the pod to be assigned
+    Retry: [{
+      ErrorEquals: ['NoPodAssigned'],
+      IntervalSeconds: 1,
+      MaxAttempts: 10,
+      BackoffRate: 1.5,
+    }],
+    Catch: [{
+      ErrorEquals: ['States.ALL'],
+      Next: 'AssignPipelineToPod',
+    }],
     Iterator: {
       StartAt: 'GetAssignedPod',
       States: {
-        GetUnassignedPod: {
-          Next: 'IsPodAvailable',
+        GetAssignedPod: {
+          Next: 'IsPodAssigned',
           Type: 'Task',
           Comment: 'Retrieves first unassigned and running pipeline pod.',
           Resource: 'arn:aws:states:::eks:call',
@@ -215,7 +214,7 @@ const waitForPod = (context, step) => {
             CertificateAuthority: clusterInfo.certAuthority,
             Endpoint: clusterInfo.endpoint,
             Method: 'GET',
-            Path: `/api/v1/namespaces/${config.pipelineNamespace}/pods`,
+            Path: `/ api / v1 / namespaces / ${config.pipelineNamespace} /pods`,
             QueryParameters: {
               labelSelector: [
                 `type=pipeline,activityId=${activityId}`,
@@ -223,53 +222,26 @@ const waitForPod = (context, step) => {
             },
           },
         },
-        IsPodAvailable: {
+        IsPodAssigned: {
           Type: 'Choice',
-          Comment: 'Redirects to an error state if there are no available pods.',
+          Comment: 'Redirects to an error state if the pipeline pod is not assigned yet.',
           Choices: [
             {
               Variable: '$.ResponseBody.items[0]',
               IsPresent: false,
-              Next: 'NoPodAvailable',
+              Next: 'NoPodAssigned',
             },
           ],
-          Default: 'AssignPodToPipeline',
+          Default: 'ReadyToRun',
         },
-        NoPodAvailable: {
+        NoPodAssigned: {
           Type: 'Fail',
           Cause: 'No available and running pipeline pods.',
-          Error: 'NoPodAvailable',
+          Error: 'NoPodAssigned',
         },
-        RequestPodAssignation: {
-          Descriptiion: 'Send a message through SNS so that the API assigns a pod to the pipeline',
-          Type: 'Task',
+        ReadyToRun: {
+          Type: 'Pass',
           End: true,
-          Resource: 'arn:aws:states:::sns:publish',
-          Parameters: {
-            TopicArn: 'arn:aws:sns:us-east-1:123456789012:myTopic',
-            MessageAttributes: {
-              kind: {
-                DataType: 'String',
-                'StringValue.$': constants.ASSIGN_POD_TO_PIPELINE,
-              },
-              sandboxId: {
-                DataType: 'String',
-                'StringValue.$': sandboxId,
-              },
-              experimentId: {
-                DataType: 'String',
-                'StringValue.$': experimentId,
-              },
-              activityId: {
-                DataType: 'String',
-                'StringValue.$': activityId,
-              },
-              processName: {
-                DataType: 'String',
-                'StringValue.$': processName,
-              },
-            },
-          },
         },
       },
     },
