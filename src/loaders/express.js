@@ -6,8 +6,7 @@ const http = require('http');
 const AWSXRay = require('aws-xray-sdk');
 const _ = require('lodash');
 const config = require('../config');
-const { authenticationMiddlewareExpress } = require('../utils/authMiddlewares');
-
+const { authenticationMiddlewareExpress, checkAuthExpiredMiddleware } = require('../utils/authMiddlewares');
 
 module.exports = async (app) => {
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
@@ -108,6 +107,8 @@ module.exports = async (app) => {
   const authMw = await authenticationMiddlewareExpress(app);
 
   app.use(authMw);
+
+  app.use(checkAuthExpiredMiddleware);
 
   app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
