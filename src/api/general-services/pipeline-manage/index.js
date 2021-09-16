@@ -230,6 +230,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     clusterInfo: await getClusterInfo(),
     sandboxId: config.sandboxId,
     processingConfig: mergedProcessingConfig,
+    environment: config.clusterEnv,
     authJWT,
   };
 
@@ -275,6 +276,7 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
     clusterInfo: await getClusterInfo(),
     sandboxId: config.sandboxId,
     processingConfig: {},
+    environment: config.clusterEnv,
   };
 
   const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv);

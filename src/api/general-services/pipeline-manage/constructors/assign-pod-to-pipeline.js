@@ -84,7 +84,7 @@ const deleteRunningPods = (context, step) => {
 
 const assignPodToPipeline = (context, step) => {
   const {
-    clusterInfo, accountId, sandboxId, activityArn, experimentId, processName,
+    clusterInfo, environment, accountId, sandboxId, activityArn, experimentId, processName,
   } = context;
 
   const activityId = getActivityId(activityArn);
@@ -148,7 +148,7 @@ const assignPodToPipeline = (context, step) => {
           Resource: 'arn:aws:states:::sns:publish',
           End: true,
           Parameters: {
-            TopicArn: `arn:aws:sns:${config.awsRegion}:${accountId}:work-results-${sandboxId}`,
+            TopicArn: `arn:aws:sns:${config.awsRegion}:${accountId}:work-results-${environment}-${sandboxId}`,
             Message: `pod request for ${sandboxId}/${experimentId}/${processName} `,
             MessageAttributes: {
               kind: {

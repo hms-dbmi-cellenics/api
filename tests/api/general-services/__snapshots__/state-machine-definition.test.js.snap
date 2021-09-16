@@ -274,7 +274,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "Resource": "arn:aws:states:::sns:publish",
             "End": true,
             "Parameters": {
-              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-pipeline-assignation",
+              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
               "Message": "pod request for pipeline-assignation/mock-experiment-id/gem2s ",
               "MessageAttributes": {
                 "kind": {
@@ -606,7 +606,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "Resource": "arn:aws:states:::sns:publish",
             "End": true,
             "Parameters": {
-              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-pipeline-assignation",
+              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
               "Message": "pod request for pipeline-assignation/mock-experiment-id/gem2s ",
               "MessageAttributes": {
                 "kind": {
@@ -1139,7 +1139,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "Resource": "arn:aws:states:::sns:publish",
             "End": true,
             "Parameters": {
-              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-pipeline-assignation",
+              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
               "Message": "pod request for pipeline-assignation/mock-experiment-id/gem2s ",
               "MessageAttributes": {
                 "kind": {
@@ -1526,7 +1526,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "Resource": "arn:aws:states:::sns:publish",
             "End": true,
             "Parameters": {
-              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-pipeline-assignation",
+              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
               "Message": "pod request for pipeline-assignation/mock-experiment-id/gem2s ",
               "MessageAttributes": {
                 "kind": {

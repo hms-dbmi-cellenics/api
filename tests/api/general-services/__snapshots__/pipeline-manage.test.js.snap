@@ -279,7 +279,7 @@ Array [
                       "StringValue": "default",
                     },
                   },
-                  "TopicArn": "arn:aws:sns:eu-west-1:test-account-id:work-results-default",
+                  "TopicArn": "arn:aws:sns:eu-west-1:test-account-id:work-results-test-default",
                 },
                 "Resource": "arn:aws:states:::sns:publish",
                 "Type": "Task",

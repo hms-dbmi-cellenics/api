@@ -42,7 +42,6 @@ const pipelineAssign = async (io, message) => {
     ],
   );
 
-
   assignedPods.body.items.forEach((pod) => {
     const { name } = pod.metadata;
     logger.log(`Found pipeline running pod ${name}, removing...`);
