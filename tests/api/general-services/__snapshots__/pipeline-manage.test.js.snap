@@ -209,7 +209,98 @@ Array [
       "Comment": "QC Pipeline for clusterEnv 'test'",
       "StartAt": "GetExperimentRunningPods",
       "States": Object {
-        "AssignPipelineToPod": Object {},
+        "AssignPipelineToPod": Object {
+          "ItemsPath": "$.retries",
+          "Iterator": Object {
+            "StartAt": "GetUnassignedPod",
+            "States": Object {
+              "GetUnassignedPod": Object {
+                "Comment": "Retrieves first unassigned and running pipeline pod.",
+                "Next": "IsPodAvailable",
+                "Parameters": Object {
+                  "CertificateAuthority": "AAAAAAAAAAA",
+                  "ClusterName": "biomage-test",
+                  "Endpoint": "https://test-endpoint.me/fgh",
+                  "Method": "GET",
+                  "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+                  "QueryParameters": Object {
+                    "fieldSelector": Array [
+                      "status.phase=Running",
+                    ],
+                    "labelSelector": Array [
+                      "!activityId,type=pipeline",
+                    ],
+                  },
+                },
+                "Resource": "arn:aws:states:::eks:call",
+                "Type": "Task",
+              },
+              "IsPodAvailable": Object {
+                "Choices": Array [
+                  Object {
+                    "IsPresent": false,
+                    "Next": "NoPodsAvailable",
+                    "Variable": "$.ResponseBody.items[0]",
+                  },
+                ],
+                "Comment": "Redirects to an error state if there are no available pods.",
+                "Default": "RequestPod",
+                "Type": "Choice",
+              },
+              "NoPodsAvailable": Object {
+                "Cause": "No available and running pipeline pods.",
+                "Error": "NoPodsAvailable",
+                "Type": "Fail",
+              },
+              "RequestPod": Object {
+                "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
+                "End": true,
+                "Parameters": Object {
+                  "Message": "pod request for default/testExperimentId/qc ",
+                  "MessageAttributes": Object {
+                    "activityId": Object {
+                      "DataType": "String",
+                      "StringValue": "pipeline-test-mock-uuid",
+                    },
+                    "experimentId": Object {
+                      "DataType": "String",
+                      "StringValue": "testExperimentId",
+                    },
+                    "kind": Object {
+                      "DataType": "String",
+                      "StringValue": "assignPodToPipeline",
+                    },
+                    "processName": Object {
+                      "DataType": "String",
+                      "StringValue": "qc",
+                    },
+                    "sandboxId": Object {
+                      "DataType": "String",
+                      "StringValue": "default",
+                    },
+                  },
+                  "TopicArn": "arn:aws:sns:eu-west-1:test-account-id:work-results-default",
+                },
+                "Resource": "arn:aws:states:::sns:publish",
+                "Type": "Task",
+              },
+            },
+          },
+          "MaxConcurrency": 1,
+          "Next": "WaitForPod",
+          "ResultPath": null,
+          "Retry": Array [
+            Object {
+              "BackoffRate": 1.5,
+              "ErrorEquals": Array [
+                "NoPodsAvailable",
+              ],
+              "IntervalSeconds": 2,
+              "MaxAttempts": 11,
+            },
+          ],
+          "Type": "Map",
+        },
         "CellSizeDistributionFilterMap": Object {
           "ItemsPath": "$.samples",
           "Iterator": Object {
