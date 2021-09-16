@@ -1,3 +1,6 @@
+const { qcPipelineSteps } = require('./qc-pipeline-skeleton');
+const { gem2SPipelineSteps } = require('./gem2s-pipeline-skeleton');
+
 const createLocalPipeline = (nextStep) => ({
   DeleteCompletedPipelineWorker: {
     XStepType: 'delete-completed-jobs',
@@ -35,6 +38,27 @@ const assignPipelineToPod = (nextStep) => ({
 });
 
 
+const getSkeletonStepNames = (skeleton) => {
+  const steps = Object.keys(skeleton);
+  // we need to add too the substep keys
+  Object.values(skeleton).forEach((step) => {
+    if ('Iterator' in step) {
+      steps.push(...Object.keys(step.Iterator.States));
+    }
+  });
+
+  return steps;
+};
+
+// getSkeletonStepNames returns the names of the pipeline steps
+// if there are map states with nested substeps it returns those sub-steps too
+const getPipelineStepNames = () => {
+  const gem2sStepNames = getSkeletonStepNames(gem2SPipelineSteps);
+  const qcStepNames = getSkeletonStepNames(qcPipelineSteps);
+
+  return gem2sStepNames.concat(qcStepNames);
+};
+
 const buildInitialSteps = (clusterEnv, nextStep) => {
   // if we are running locally launch a pipeline job
   if (clusterEnv === 'development') {
@@ -52,4 +76,4 @@ const firstStep = (clusterEnv) => {
   return 'GetExperimentRunningPods';
 };
 
-module.exports = { firstStep, buildInitialSteps };
+module.exports = { firstStep, getPipelineStepNames, buildInitialSteps };
