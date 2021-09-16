@@ -45,13 +45,10 @@ const mockDynamoDeleteItem = (payload = {}, error = null) => {
 };
 
 const mockDynamoQuery = (payload = [], error = null) => {
-  if (!Array.isArray(payload)) {
-    // eslint-disable-next-line no-param-reassign
-    payload = [payload];
-  }
+  const payloadToReturn = !Array.isArray(payload) ? [payload] : payload;
 
   const dynamodbData = {
-    Items: payload.map((entry) => AWS.DynamoDB.Converter.marshall(entry)),
+    Items: payloadToReturn.map((entry) => AWS.DynamoDB.Converter.marshall(entry)),
   };
   const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
@@ -62,21 +59,42 @@ const mockDynamoQuery = (payload = [], error = null) => {
   return fnSpy;
 };
 
-const mockDynamoScan = (payload = {}, error = null) => {
-  if (!Array.isArray(payload)) {
-    // eslint-disable-next-line no-param-reassign
-    payload = [payload];
-  }
+/**
+ * Mocks the scan operation in dynamodb
+ *
+ * @param {Array} payloadPages the payloads to return in each scan operation in order
+ *    (for pagination, also returns the LastEvaluatedKey if it has more than one page)
+ * @returns An object containing descriptions of projects.
+ */
+const mockDynamoScan = (payloadPages, error = null) => {
+  const pagesLength = payloadPages.length;
+  const dynamodbDbDataPages = payloadPages.map((page, i) => {
+    const isLastPage = pagesLength === i + 1;
 
-  const dynamodbData = {
-    Items: payload.map((entry) => AWS.DynamoDB.Converter.marshall(entry)),
-  };
+    const lastKey = isLastPage ? null : AWS.DynamoDB.Converter.marshall(_.first(payloadPages[i + 1]));
+    const items = page.map((entry) => AWS.DynamoDB.Converter.marshall(entry));
+
+    const response = { Items: items };
+
+    if (!isLastPage) {
+      response.LastEvaluatedKey = lastKey;
+    }
+
+    return response;
+  });
+
   const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
+
+  let callNumber = 0;
   AWSMock.mock('DynamoDB', 'scan', (params, callback) => {
     fnSpy(params);
-    callback(error, dynamodbData);
+
+    callback(error, dynamodbDbDataPages[callNumber]);
+
+    callNumber += 1;
   });
+
   return fnSpy;
 };
 
