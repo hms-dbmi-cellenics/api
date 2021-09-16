@@ -138,6 +138,42 @@ describe('tests for the projects service', () => {
       .then(() => done());
   });
 
+  it('GetProjects gets all the projects across many pages of scan results when the first page is empty', async (done) => {
+    const emptyProjectIds = [];
+
+    const projectIds2 = [
+      {
+        projectId: 'project-3',
+      },
+      {
+        projectId: 'project-4',
+      },
+      {
+        projectId: 'project-5',
+      },
+      {
+        projectId: 'project-6',
+      },
+    ];
+
+    mockDynamoScan([emptyProjectIds, projectIds2]);
+
+    const expectedResult = [...emptyProjectIds, ...projectIds2].map(({ projectId }) => projectId);
+
+    const projectService = new ProjectsService();
+    const user = { sub: 'mockSubject' };
+
+    projectService.getProjectsFromIds = jest.fn().mockImplementation((x) => x);
+
+    projectService.getProjects(user)
+      .then((res) => {
+        expect(res).toEqual(expectedResult);
+
+        expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(expectedResult);
+      })
+      .then(() => done());
+  });
+
   test('GetProjects removes duplicate projectIds from the call it makes to getProjectsFromIds', async (done) => {
     const projectIds1 = [
       {

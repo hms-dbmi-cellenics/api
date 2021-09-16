@@ -71,7 +71,7 @@ const mockDynamoScan = (payloadPages, error = null) => {
   const dynamodbDbDataPages = payloadPages.map((page, i) => {
     const isLastPage = pagesLength === i + 1;
 
-    const lastKey = isLastPage ? null : AWS.DynamoDB.Converter.marshall(_.last(page));
+    const lastKey = isLastPage ? null : AWS.DynamoDB.Converter.marshall(_.first(payloadPages[i + 1]));
     const items = page.map((entry) => AWS.DynamoDB.Converter.marshall(entry));
 
     const response = { Items: items };
