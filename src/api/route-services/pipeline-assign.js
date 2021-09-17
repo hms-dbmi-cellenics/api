@@ -34,8 +34,8 @@ const pipelineAssign = async (io, message) => {
 
   const [assignedPods, unassignedPods] = await Promise.all(
     [
-      k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', `activityId=${activityId}`),
-      k8sApi.listNamespacedPod(namespace, null, null, null, null, '!activityId'),
+      k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', `activityId=${activityId},type=pipeline`),
+      k8sApi.listNamespacedPod(namespace, null, null, null, null, '!activityId,type=pipeline'),
     ],
   );
 
@@ -49,10 +49,7 @@ const pipelineAssign = async (io, message) => {
   logger.log(pods.length, 'unassigned candidate pods found. Selecting one...');
 
   // Select a pod to run this experiment on.
-  console.log(pods);
   const selectedPod = parseInt(activityId, 16) % pods.length;
-  console.log(`selected pod ${selectedPod}`);
-  console.log(pods[selectedPod]);
   const { name } = pods[selectedPod].metadata;
   logger.log('Pod number', selectedPod, ' with name', name, 'chosen');
 
