@@ -568,7 +568,7 @@ Array [
                   "ClusterName": "biomage-test",
                   "Endpoint": "https://test-endpoint.me/fgh",
                   "Method": "GET",
-                  "Path": "/ api / v1 / namespaces / pipeline-test-namespace /pods",
+                  "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
                   "QueryParameters": Object {
                     "labelSelector": Array [
                       "type=pipeline,activityId=pipeline-test-mock-uuid",

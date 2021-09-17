@@ -1,6 +1,3 @@
-const { firstStep, buildInitialSteps } = require('./utils');
-
-
 const qcPipelineSteps = {
   ClassifierFilterMap: {
     Type: 'Map',
@@ -120,13 +117,5 @@ const qcPipelineSteps = {
   },
 };
 
-const getQcPipelineSkeleton = (clusterEnv) => ({
-  Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
-  StartAt: firstStep(clusterEnv),
-  States: {
-    ...buildInitialSteps(clusterEnv, 'ClassifierFilterMap'),
-    ...qcPipelineSteps,
-  },
-});
 
-module.exports = { qcPipelineSteps, getQcPipelineSkeleton };
+module.exports = { qcPipelineSteps };

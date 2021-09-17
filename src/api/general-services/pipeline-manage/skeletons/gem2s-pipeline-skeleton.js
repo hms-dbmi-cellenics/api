@@ -1,5 +1,3 @@
-const { firstStep, buildInitialSteps } = require('./utils');
-
 const gem2SPipelineSteps = {
   DownloadGem: {
     XStepType: 'create-new-step',
@@ -56,13 +54,4 @@ const gem2SPipelineSteps = {
   },
 };
 
-const getGem2sPipelineSkeleton = (clusterEnv) => ({
-  Comment: `Gem2s Pipeline for clusterEnv '${clusterEnv}'`,
-  StartAt: firstStep(clusterEnv),
-  States: {
-    ...buildInitialSteps(clusterEnv, 'DownloadGem'),
-    ...getGem2sPipelineSkeleton,
-  },
-});
-
-module.exports = { gem2SPipelineSteps, getGem2sPipelineSkeleton };
+module.exports = { gem2SPipelineSteps };

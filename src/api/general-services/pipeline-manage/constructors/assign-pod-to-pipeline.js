@@ -214,7 +214,7 @@ const waitForPod = (context, step) => {
             CertificateAuthority: clusterInfo.certAuthority,
             Endpoint: clusterInfo.endpoint,
             Method: 'GET',
-            Path: `/ api / v1 / namespaces / ${config.pipelineNamespace} /pods`,
+            Path: `/api/v1/namespaces/${config.pipelineNamespace}/pods`,
             QueryParameters: {
               labelSelector: [
                 `type=pipeline,activityId=${activityId}`,

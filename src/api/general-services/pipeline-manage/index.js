@@ -10,8 +10,7 @@ const config = require('../../../config');
 const getLogger = require('../../../utils/getLogger');
 const ExperimentService = require('../../route-services/experiment');
 
-const { getQcPipelineSkeleton } = require('./skeletons/qc-pipeline-skeleton');
-const { getGem2sPipelineSkeleton } = require('./skeletons/gem2s-pipeline-skeleton');
+const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('./skeletons');
 const constructPipelineStep = require('./constructors/construct-pipeline-step');
 const asyncTimer = require('../../../utils/asyncTimer');
 

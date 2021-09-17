@@ -76,4 +76,23 @@ const firstStep = (clusterEnv) => {
   return 'GetExperimentRunningPods';
 };
 
-module.exports = { firstStep, getPipelineStepNames, buildInitialSteps };
+const getGem2sPipelineSkeleton = (clusterEnv) => ({
+  Comment: `Gem2s Pipeline for clusterEnv '${clusterEnv}'`,
+  StartAt: firstStep(clusterEnv),
+  States: {
+    ...buildInitialSteps(clusterEnv, 'DownloadGem'),
+    ...gem2SPipelineSteps,
+  },
+});
+
+const getQcPipelineSkeleton = (clusterEnv) => ({
+  Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
+  StartAt: firstStep(clusterEnv),
+  States: {
+    ...buildInitialSteps(clusterEnv, 'ClassifierFilterMap'),
+    ...qcPipelineSteps,
+  },
+});
+
+
+module.exports = { getPipelineStepNames, getGem2sPipelineSkeleton, getQcPipelineSkeleton };

@@ -340,7 +340,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
               "CertificateAuthority": "mock-ca",
               "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "GET",
-              "Path": "/ api / v1 / namespaces / pipeline-test-namespace /pods",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
               "QueryParameters": {
                 "labelSelector": [
                   "type=pipeline,activityId=biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
@@ -672,7 +672,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
               "CertificateAuthority": "mock-ca",
               "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "GET",
-              "Path": "/ api / v1 / namespaces / pipeline-test-namespace /pods",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
               "QueryParameters": {
                 "labelSelector": [
                   "type=pipeline,activityId=biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
@@ -1205,7 +1205,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "CertificateAuthority": "mock-ca",
               "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "GET",
-              "Path": "/ api / v1 / namespaces / pipeline-test-namespace /pods",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
               "QueryParameters": {
                 "labelSelector": [
                   "type=pipeline,activityId=biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
@@ -1592,7 +1592,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "CertificateAuthority": "mock-ca",
               "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "GET",
-              "Path": "/ api / v1 / namespaces / pipeline-test-namespace /pods",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
               "QueryParameters": {
                 "labelSelector": [
                   "type=pipeline,activityId=biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"

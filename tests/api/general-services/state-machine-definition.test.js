@@ -1,6 +1,5 @@
 const { buildStateMachineDefinition } = require('../../../src/api/general-services/pipeline-manage');
-const { getQcPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons/qc-pipeline-skeleton');
-const { getGem2sPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons/gem2s-pipeline-skeleton');
+const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons');
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
