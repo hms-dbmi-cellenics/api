@@ -256,7 +256,7 @@ Array [
                 "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
                 "End": true,
                 "Parameters": Object {
-                  "Message": "{\\"action\\":\\"assignPodToPipeline\\",\\"sandboxId\\":\\"default\\",\\"experimentId\\":\\"testExperimentId\\",\\"activityId\\":\\"pipeline-test-mock-uuid\\",\\"processName\\":\\"qc\\"}",
+                  "Message": "{\\"input\\":{\\"taskName\\":\\"assignPodToPipeline\\",\\"sandboxId\\":\\"default\\",\\"experimentId\\":\\"testExperimentId\\",\\"activityId\\":\\"pipeline-test-mock-uuid\\",\\"processName\\":\\"qc\\"}}",
                   "MessageAttributes": Object {
                     "type": Object {
                       "DataType": "String",

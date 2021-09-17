@@ -90,11 +90,13 @@ const assignPodToPipeline = (context, step) => {
   const activityId = getActivityId(activityArn);
 
   const requestPodMessage = {
-    action: constants.ASSIGN_POD_TO_PIPELINE,
-    sandboxId,
-    experimentId,
-    activityId,
-    processName,
+    input: {
+      taskName: constants.ASSIGN_POD_TO_PIPELINE,
+      sandboxId,
+      experimentId,
+      activityId,
+      processName,
+    },
   };
 
   return {

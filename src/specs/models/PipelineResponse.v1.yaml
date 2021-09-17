@@ -17,9 +17,6 @@ properties:
     input:
       type: object
       properties:
-        action:
-          type: string
-          description: extra metadata about the message (intended to be used by hooks)
         experimentId:
           type: string
           description: The experiment ID for which the step was completed.

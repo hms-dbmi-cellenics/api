@@ -104,6 +104,7 @@ const createNewStateMachine = async (context, stateMachine, processName) => {
   try {
     const response = await stepFunctions.createStateMachine(params).promise();
     stateMachineArn = response.stateMachineArn;
+    logger.log('Created state machine...');
   } catch (e) {
     if (e.code !== 'StateMachineAlreadyExists') {
       throw e;

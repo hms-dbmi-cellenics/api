@@ -1,6 +1,5 @@
 const k8s = require('@kubernetes/client-node');
 const AWSXRay = require('aws-xray-sdk');
-const validateRequest = require('../../utils/schema-validator');
 const getLogger = require('../../utils/getLogger');
 
 const logger = getLogger();
@@ -22,9 +21,6 @@ const getActivityId = (activityArn) => {
 };
 
 const pipelineAssign = async (io, message) => {
-  logger.log('validating incoming pipeline request');
-  await validateRequest(message, 'PipelineAssignation.v1.yaml');
-
   AWSXRay.getSegment().addMetadata('message', message);
 
   const {
