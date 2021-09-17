@@ -50,7 +50,7 @@ const pipelineAssign = async (io, message) => {
 
   // Select a pod to run this experiment on.
   console.log(pods);
-  const selectedPod = parseInt(activityId, 16) % pods.length;
+  const selectedPod = parseInt(experimentId, 16) % pods.length;
   console.log(`selected pod ${selectedPod}`);
   console.log(pods[selectedPod]);
   const { name } = pods[selectedPod].metadata;
