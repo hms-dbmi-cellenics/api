@@ -6,28 +6,15 @@ const logger = getLogger();
 
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
-// the full activityArn is too long to be used as a tag (> 63 chars)
-// so we just send the last part of the arn as the rest can be constructed.
-//  E.g.
-// arn:aws:states:eu-west-1:242905224710:activity:pipeline-production-01037a63-a801-4ea4-a93e-...
-// => pipeline-production-01037a63-a801-4ea4-a93e-def76c1e5bd2
-const getActivityId = (activityArn) => {
-  if (activityArn === undefined) {
-    return undefined;
-  }
 
-  const split = activityArn.split(':');
-  return split[split.length - 1];
-};
 
 const pipelineAssign = async (io, message) => {
   AWSXRay.getSegment().addMetadata('message', message);
 
   const {
-    sandboxId, experimentId, activityArn, processName,
+    sandboxId, experimentId, activityId, processName,
   } = message;
 
-  const activityId = getActivityId(activityArn);
 
   const namespace = `pipeline-${sandboxId}`;
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
