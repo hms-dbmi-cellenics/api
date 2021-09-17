@@ -89,6 +89,14 @@ const assignPodToPipeline = (context, step) => {
 
   const activityId = getActivityId(activityArn);
 
+  const requestPodMessage = {
+    action: constants.ASSIGN_POD_TO_PIPELINE,
+    sandboxId,
+    experimentId,
+    activityId,
+    processName,
+  };
+
   return {
     ...step,
     Type: 'Map',
@@ -149,32 +157,32 @@ const assignPodToPipeline = (context, step) => {
           End: true,
           Parameters: {
             TopicArn: `arn:aws:sns:${config.awsRegion}:${accountId}:work-results-${environment}-${sandboxId}`,
-            Message: `pod request for ${sandboxId}/${experimentId}/${processName} `,
+            Message: JSON.stringify(requestPodMessage),
             MessageAttributes: {
               type: {
                 DataType: 'String',
                 StringValue: 'PipelineResponse',
               },
-              action: {
-                DataType: 'String',
-                StringValue: constants.ASSIGN_POD_TO_PIPELINE,
-              },
-              sandboxId: {
-                DataType: 'String',
-                StringValue: sandboxId,
-              },
-              experimentId: {
-                DataType: 'String',
-                StringValue: experimentId,
-              },
-              activityId: {
-                DataType: 'String',
-                StringValue: activityId,
-              },
-              processName: {
-                DataType: 'String',
-                StringValue: processName,
-              },
+              // action: {
+              //   DataType: 'String',
+              //   StringValue: constants.ASSIGN_POD_TO_PIPELINE,
+              // },
+              // sandboxId: {
+              //   DataType: 'String',
+              //   StringValue: sandboxId,
+              // },
+              // experimentId: {
+              //   DataType: 'String',
+              //   StringValue: experimentId,
+              // },
+              // activityId: {
+              //   DataType: 'String',
+              //   StringValue: activityId,
+              // },
+              // processName: {
+              //   DataType: 'String',
+              //   StringValue: processName,
+              // },
             },
           },
         },

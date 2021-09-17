@@ -256,28 +256,8 @@ Array [
                 "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
                 "End": true,
                 "Parameters": Object {
-                  "Message": "pod request for default/testExperimentId/qc ",
+                  "Message": "{\\"action\\":\\"assignPodToPipeline\\",\\"sandboxId\\":\\"default\\",\\"experimentId\\":\\"testExperimentId\\",\\"activityId\\":\\"pipeline-test-mock-uuid\\",\\"processName\\":\\"qc\\"}",
                   "MessageAttributes": Object {
-                    "action": Object {
-                      "DataType": "String",
-                      "StringValue": "assignPodToPipeline",
-                    },
-                    "activityId": Object {
-                      "DataType": "String",
-                      "StringValue": "pipeline-test-mock-uuid",
-                    },
-                    "experimentId": Object {
-                      "DataType": "String",
-                      "StringValue": "testExperimentId",
-                    },
-                    "processName": Object {
-                      "DataType": "String",
-                      "StringValue": "qc",
-                    },
-                    "sandboxId": Object {
-                      "DataType": "String",
-                      "StringValue": "default",
-                    },
                     "type": Object {
                       "DataType": "String",
                       "StringValue": "PipelineResponse",
