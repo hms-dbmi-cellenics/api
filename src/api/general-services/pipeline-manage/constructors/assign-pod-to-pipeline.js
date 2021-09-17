@@ -151,7 +151,11 @@ const assignPodToPipeline = (context, step) => {
             TopicArn: `arn:aws:sns:${config.awsRegion}:${accountId}:work-results-${environment}-${sandboxId}`,
             Message: `pod request for ${sandboxId}/${experimentId}/${processName} `,
             MessageAttributes: {
-              kind: {
+              type: {
+                DataType: 'String',
+                StringValue: 'PipelineResponse',
+              },
+              action: {
                 DataType: 'String',
                 StringValue: constants.ASSIGN_POD_TO_PIPELINE,
               },
@@ -200,6 +204,7 @@ const waitForPod = (context, step) => {
     Catch: [{
       ErrorEquals: ['States.ALL'],
       Next: 'AssignPipelineToPod',
+      ResultPath: null,
     }],
     Iterator: {
       StartAt: 'GetAssignedPod',

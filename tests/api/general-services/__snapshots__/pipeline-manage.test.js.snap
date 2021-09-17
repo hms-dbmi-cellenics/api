@@ -258,6 +258,10 @@ Array [
                 "Parameters": Object {
                   "Message": "pod request for default/testExperimentId/qc ",
                   "MessageAttributes": Object {
+                    "action": Object {
+                      "DataType": "String",
+                      "StringValue": "assignPodToPipeline",
+                    },
                     "activityId": Object {
                       "DataType": "String",
                       "StringValue": "pipeline-test-mock-uuid",
@@ -266,10 +270,6 @@ Array [
                       "DataType": "String",
                       "StringValue": "testExperimentId",
                     },
-                    "kind": Object {
-                      "DataType": "String",
-                      "StringValue": "assignPodToPipeline",
-                    },
                     "processName": Object {
                       "DataType": "String",
                       "StringValue": "qc",
@@ -277,6 +277,10 @@ Array [
                     "sandboxId": Object {
                       "DataType": "String",
                       "StringValue": "default",
+                    },
+                    "type": Object {
+                      "DataType": "String",
+                      "StringValue": "PipelineResponse",
                     },
                   },
                   "TopicArn": "arn:aws:sns:eu-west-1:test-account-id:work-results-test-default",
@@ -554,6 +558,7 @@ Array [
                 "States.ALL",
               ],
               "Next": "AssignPipelineToPod",
+              "ResultPath": null,
             },
           ],
           "ItemsPath": "$.retries",

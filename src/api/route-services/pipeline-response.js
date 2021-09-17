@@ -19,7 +19,7 @@ const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');
 
   // TODO: refactor this into a new hook
-  if (message.input.kind === constants.ASSIGN_POD_TO_PIPELINE) {
+  if (message.input.action === constants.ASSIGN_POD_TO_PIPELINE) {
     await pipelineAssign(io, message.input);
     return;
   }

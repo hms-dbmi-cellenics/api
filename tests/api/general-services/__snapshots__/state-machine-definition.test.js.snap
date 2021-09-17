@@ -277,7 +277,11 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
               "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
               "Message": "pod request for pipeline-assignation/mock-experiment-id/gem2s ",
               "MessageAttributes": {
-                "kind": {
+                "type": {
+                  "DataType": "String",
+                  "StringValue": "PipelineResponse"
+                },
+                "action": {
                   "DataType": "String",
                   "StringValue": "assignPodToPipeline"
                 },
@@ -324,7 +328,8 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
           "ErrorEquals": [
             "States.ALL"
           ],
-          "Next": "AssignPipelineToPod"
+          "Next": "AssignPipelineToPod",
+          "ResultPath": null
         }
       ],
       "Iterator": {
@@ -609,7 +614,11 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
               "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
               "Message": "pod request for pipeline-assignation/mock-experiment-id/gem2s ",
               "MessageAttributes": {
-                "kind": {
+                "type": {
+                  "DataType": "String",
+                  "StringValue": "PipelineResponse"
+                },
+                "action": {
                   "DataType": "String",
                   "StringValue": "assignPodToPipeline"
                 },
@@ -656,7 +665,8 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
           "ErrorEquals": [
             "States.ALL"
           ],
-          "Next": "AssignPipelineToPod"
+          "Next": "AssignPipelineToPod",
+          "ResultPath": null
         }
       ],
       "Iterator": {
@@ -1142,7 +1152,11 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
               "Message": "pod request for pipeline-assignation/mock-experiment-id/gem2s ",
               "MessageAttributes": {
-                "kind": {
+                "type": {
+                  "DataType": "String",
+                  "StringValue": "PipelineResponse"
+                },
+                "action": {
                   "DataType": "String",
                   "StringValue": "assignPodToPipeline"
                 },
@@ -1189,7 +1203,8 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
           "ErrorEquals": [
             "States.ALL"
           ],
-          "Next": "AssignPipelineToPod"
+          "Next": "AssignPipelineToPod",
+          "ResultPath": null
         }
       ],
       "Iterator": {
@@ -1529,7 +1544,11 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
               "Message": "pod request for pipeline-assignation/mock-experiment-id/gem2s ",
               "MessageAttributes": {
-                "kind": {
+                "type": {
+                  "DataType": "String",
+                  "StringValue": "PipelineResponse"
+                },
+                "action": {
                   "DataType": "String",
                   "StringValue": "assignPodToPipeline"
                 },
@@ -1576,7 +1595,8 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
           "ErrorEquals": [
             "States.ALL"
           ],
-          "Next": "AssignPipelineToPod"
+          "Next": "AssignPipelineToPod",
+          "ResultPath": null
         }
       ],
       "Iterator": {

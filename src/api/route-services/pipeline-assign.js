@@ -22,6 +22,7 @@ const getActivityId = (activityArn) => {
 };
 
 const pipelineAssign = async (io, message) => {
+  logger.log('validating incoming pipeline request');
   await validateRequest(message, 'PipelineAssignation.v1.yaml');
 
   AWSXRay.getSegment().addMetadata('message', message);
