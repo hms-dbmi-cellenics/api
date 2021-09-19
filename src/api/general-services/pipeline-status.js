@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const crypto = require('crypto');
 const AWS = require('../../utils/requireAWS');
 const ExperimentService = require('../route-services/experiment');
 const config = require('../../config');
