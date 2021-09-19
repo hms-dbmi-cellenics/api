@@ -10,6 +10,7 @@ const FAILED = 'FAILED';
 const TIMED_OUT = 'TIMED_OUT';
 const ABORTED = 'ABORTED';
 const SUCCEEDED = 'SUCCEEDED';
+const NEEDS_RERUN = 'NEEDS_RERUN';
 
 // Custom defined statuses defined in the API
 const NOT_CREATED = 'NOT_CREATED';
@@ -22,6 +23,7 @@ const EXECUTION_DOES_NOT_EXIST = 'ExecutionDoesNotExist';
 const ACCESS_DENIED = 'AccessDeniedException';
 
 module.exports = {
+  NEEDS_RERUN,
   QC_PROCESS_NAME,
   GEM2S_PROCESS_NAME,
   OLD_QC_NAME_TO_BE_REMOVED,

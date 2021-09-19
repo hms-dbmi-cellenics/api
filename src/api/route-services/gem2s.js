@@ -12,7 +12,6 @@ const saveProcessingConfigFromGem2s = require('../../utils/hooks/saveProcessingC
 const runQCPipeline = require('../../utils/hooks/runQCPipeline');
 const validateRequest = require('../../utils/schema-validator');
 const PipelineHook = require('../../utils/hookRunner');
-const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 
 const ExperimentService = require('./experiment');
@@ -95,41 +94,26 @@ class Gem2sService {
     return { taskParams, hashParams };
   }
 
-  static async gem2sShouldRun(experimentId, paramsHash) {
+  static async gem2sShouldRun(experimentId, paramsHash, status) {
     logger.log('Checking if gem2s should actually be re run');
-
     const experimentService = new ExperimentService();
-
-    const handlesPromise = experimentService.getPipelinesHandles(experimentId);
-    const statusPromise = getPipelineStatus(experimentId, GEM2S_PROCESS_NAME);
-
-    const [handles, statusWrapper] = await Promise.all([handlesPromise, statusPromise]);
-
+    const handles = await experimentService.getPipelinesHandles(experimentId);
     const { [GEM2S_PROCESS_NAME]: gem2sHandle } = handles;
-    const { [GEM2S_PROCESS_NAME]: { status: gem2sStatus } } = statusWrapper;
-
-    logger.log(`Gem2s status is ${gem2sStatus}. new hash: ${paramsHash}; old hash: ${gem2sHandle.paramsHash}`);
-    if (gem2sStatus === SUCCEEDED) {
+    logger.log(`Gem2s status is ${status}. new hash: ${paramsHash}; old hash: ${gem2sHandle.paramsHash}`);
+    if (status === SUCCEEDED) {
       return paramsHash !== gem2sHandle.paramsHash;
     }
 
-    return gem2sStatus !== RUNNING;
+    return status !== RUNNING;
   }
+
 
   static async gem2sCreate(experimentId, authJWT) {
     const { taskParams, hashParams } = await this.generateGem2sParams(experimentId, authJWT);
-
     const paramsHash = crypto
       .createHash('sha1')
       .update(JSON.stringify(hashParams))
       .digest('hex');
-
-    const shouldRun = await this.gem2sShouldRun(experimentId, paramsHash);
-
-    if (!shouldRun) {
-      logger.log('Gem2s create call ignored');
-      return OK();
-    }
 
     logger.log('Running new gem2s pipeline');
 
