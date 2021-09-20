@@ -36,7 +36,6 @@ pipelineHook.register(constants.ASSIGN_POD_TO_PIPELINE, [pipelineAssign]);
 
 const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');
-
   // TODO: refactor this into a new hook
   // if (message.input.taskName === constants.ASSIGN_POD_TO_PIPELINE) {
   //   await pipelineAssign(io, message.input);
