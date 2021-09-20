@@ -950,6 +950,45 @@ paths:
               properties:
                 samples:
                   $ref: ./models/api-body-schemas/Samples.v1.yaml
+    post:
+      summary: Add sample
+      description: Adds a new sample to a samples entry
+      operationId: addSample
+      x-eov-operation-id: 'samples#add'
+      x-eov-operation-handler: routes/samples
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                samples:
+                  $ref: ./models/samples-bodies/Sample.v1.yaml
     delete:
       summary: Remove samples
       operationId: removeSamples
