@@ -1,5 +1,4 @@
 const k8s = require('@kubernetes/client-node');
-const AWSXRay = require('aws-xray-sdk');
 const getLogger = require('../../utils/getLogger');
 
 const logger = getLogger();
@@ -8,12 +7,10 @@ const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
 
 
-const pipelineAssign = async (io, message) => {
-  AWSXRay.getSegment().addMetadata('message', message);
-
+const pipelineAssign = async (payload) => {
   const {
     sandboxId, experimentId, activityId, processName,
-  } = message;
+  } = payload;
 
 
   const namespace = `pipeline-${sandboxId}`;

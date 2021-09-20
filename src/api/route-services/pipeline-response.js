@@ -9,24 +9,45 @@ const getPipelineStatus = require('../general-services/pipeline-status');
 
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
+const PipelineHook = require('../../utils/hookRunner');
 
 const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
 
 const logger = getLogger();
 
+
+const pipelineHook = new PipelineHook();
+
+pipelineHook.register(constants.ASSIGN_POD_TO_PIPELINE, [pipelineAssign]);
+
+// class QcService {
+//   static async qcResponse(io, message) {
+//     AWSXRay.getSegment().addMetadata('message', message);
+
+//     await validateRequest(message, 'PipelineResponse.v1.yaml');
+
+//     const { experimentId } = message;
+
+
+//   }
+// }
+
+
 const pipelineResponse = async (io, message) => {
   await validateRequest(message, 'PipelineResponse.v1.yaml');
 
   // TODO: refactor this into a new hook
-  if (message.input.taskName === constants.ASSIGN_POD_TO_PIPELINE) {
-    await pipelineAssign(io, message.input);
-    return;
-  }
+  // if (message.input.taskName === constants.ASSIGN_POD_TO_PIPELINE) {
+  //   await pipelineAssign(io, message.input);
+  //   return;
+  // }
+  // const { experimentId, taskName } = message;
+
+  await pipelineHook.run(message);
+  const { experimentId } = message;
 
   AWSXRay.getSegment().addMetadata('message', message);
-
-  const { experimentId } = message;
 
   const statusRes = await getPipelineStatus(experimentId, constants.QC_PROCESS_NAME);
   const statusResToSend = { pipeline: statusRes[constants.QC_PROCESS_NAME] };

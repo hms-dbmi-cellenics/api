@@ -150,16 +150,9 @@ class Gem2sService {
     // Fail hard if there was an error.
     await validateRequest(message, 'GEM2SResponse.v1.yaml');
 
-    const {
-      experimentId, taskName, item, authJWT,
-    } = message;
+    await pipelineHook.run(message);
 
-    await pipelineHook.run(taskName, {
-      experimentId,
-      item,
-      authJWT,
-    });
-
+    const { experimentId } = message;
 
     const messageForClient = _.cloneDeep(message);
 
