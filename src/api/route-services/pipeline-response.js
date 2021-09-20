@@ -44,8 +44,8 @@ const pipelineResponse = async (io, message) => {
   // }
   // const { experimentId, taskName } = message;
 
-  await pipelineHook.run(message);
-  const { experimentId } = message;
+  await pipelineHook.run(message.input);
+  const { experimentId } = message.input;
 
   AWSXRay.getSegment().addMetadata('message', message);
 

@@ -39,5 +39,6 @@ properties:
         required:
           - error
     required:
+      - input
       - output
       - response
