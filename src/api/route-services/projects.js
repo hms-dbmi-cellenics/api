@@ -62,8 +62,6 @@ class ProjectsService {
     const dynamodb = createDynamoDbInstance();
 
     try {
-      console.log('marshalledDataDebug');
-      console.log(JSON.stringify(marshalledData));
       await dynamodb.updateItem(params).send();
       return OK();
     } catch (e) {

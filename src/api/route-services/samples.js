@@ -16,8 +16,9 @@ const logger = getLogger();
 
 class SamplesService {
   constructor() {
-    this.tableName = `samples-${config.clusterEnv}`;
+    this.samplesTableName = `samples-${config.clusterEnv}`;
     this.sampleFilesBucketName = `biomage-originals-${config.clusterEnv}`;
+    this.projectsTableName = `projects-${config.clusterEnv}`;
   }
 
   async getSamples(projectUuid) {
@@ -26,7 +27,7 @@ class SamplesService {
     });
 
     const params = {
-      TableName: this.tableName,
+      TableName: this.samplesTableName,
       IndexName: 'gsiByProjectAndExperimentID',
       KeyConditionExpression: 'projectUuid = :projectUuid',
       ExpressionAttributeValues: marshalledData,
@@ -57,7 +58,7 @@ class SamplesService {
     });
 
     const params = {
-      TableName: this.tableName,
+      TableName: this.samplesTableName,
       Key: marshalledKey,
       ProjectionExpression: 'samples',
     };
@@ -90,7 +91,7 @@ class SamplesService {
 
     // Update samples
     const params = {
-      TableName: this.tableName,
+      TableName: this.samplesTableName,
       Key: marshalledKey,
       UpdateExpression: 'SET samples = :samples, projectUuid = :projectUuid',
       ExpressionAttributeValues: marshalledData,
@@ -121,7 +122,7 @@ class SamplesService {
     }, {});
 
     const params = {
-      TableName: this.tableName,
+      TableName: this.samplesTableName,
       Key: marshalledKey,
       UpdateExpression: `REMOVE ${updateExpressionList.join(', ')}`,
       ExpressionAttributeNames: expressionAttributeNames,
@@ -144,6 +145,69 @@ class SamplesService {
     return OK();
   }
 
+  async addSamples(projectUuid, newSample) {
+    logger.log(`Adding samples ${JSON.stringify(newSample)} to project with id ${projectUuid}`);
+
+    const addSampleToSamples = async () => {
+      const marshalledKey = convertToDynamoDbRecord({
+        projectUuid,
+      });
+
+      const marshalledNewSample = convertToDynamoDbRecord(newSample);
+      const params = {
+        TableName: this.samplesTableName,
+        Key: marshalledKey,
+        UpdateExpression: 'SET #samples.#sampleId = :newSamples',
+        ExpressionAttributeNames: {
+          '#samples': 'samples',
+          '#sampleId': newSample.uuid,
+        },
+        ExpressionAttributeValues: {
+          ':newSamples': marshalledNewSample,
+        },
+      };
+
+      const dynamodb = createDynamoDbInstance();
+
+      await dynamodb.updateItem(params).send();
+    };
+
+    const addSampleIdToProjects = async () => {
+      const marshalledKey = convertToDynamoDbRecord({
+        projectUuid,
+      });
+
+      const newSampleUuidInList = [newSample.uuid];
+
+      const marshalledNewSampleUuid = convertToDynamoDbRecord(newSampleUuidInList);
+      const params = {
+        TableName: this.projectsTableName,
+        Key: marshalledKey,
+        UpdateExpression: 'SET #projects.#samples = list_append(#projects.#samples, :newSamples)',
+        ExpressionAttributeNames: {
+          '#projects': 'projects',
+          '#samples': 'samples',
+        },
+        ExpressionAttributeValues: {
+          ':newSamples': marshalledNewSampleUuid,
+        },
+      };
+
+      const dynamodb = createDynamoDbInstance();
+
+      await dynamodb.updateItem(params).send();
+    };
+
+    try {
+      await addSampleToSamples();
+      await addSampleIdToProjects();
+      return OK();
+    } catch (e) {
+      if (e.statusCode === 400) throw new NotFoundError('Project not found');
+      throw e;
+    }
+  }
+
   async deleteSamplesEntry(projectUuid, experimentId, sampleUuids) {
     logger.log(`Deleting samples entry for project ${projectUuid} and expId ${experimentId}`);
 
@@ -156,7 +220,7 @@ class SamplesService {
     });
 
     const dynamodbParams = {
-      TableName: this.tableName,
+      TableName: this.samplesTableName,
       Key: marshalledKey,
     };
 
