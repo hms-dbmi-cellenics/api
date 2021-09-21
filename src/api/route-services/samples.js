@@ -145,31 +145,43 @@ class SamplesService {
     return OK();
   }
 
-  async addSamples(projectUuid, newSample) {
+  async addSample(projectUuid, experimentId, newSample) {
     logger.log(`Adding samples ${JSON.stringify(newSample)} to project with id ${projectUuid}`);
 
     const addSampleToSamples = async () => {
+      const dynamodb = createDynamoDbInstance();
+
+      const emptyAttributeParams = {
+        TableName: this.samplesTableName,
+        Key: convertToDynamoDbRecord({ experimentId }),
+        UpdateExpression: 'SET samples = if_not_exists(samples, :emptySamples)',
+        ExpressionAttributeValues: { ':emptySamples': { M: {} } },
+        ReturnValues: 'UPDATED_NEW',
+      };
+
+      await dynamodb.updateItem(emptyAttributeParams).promise();
+
       const marshalledKey = convertToDynamoDbRecord({
-        projectUuid,
+        experimentId,
       });
 
-      const marshalledNewSample = convertToDynamoDbRecord(newSample);
+      const marshalledData = convertToDynamoDbRecord({
+        ':newSample': [newSample],
+        ':projectUuid': projectUuid,
+      });
+
       const params = {
         TableName: this.samplesTableName,
         Key: marshalledKey,
-        UpdateExpression: 'SET #samples.#sampleId = :newSamples',
+        UpdateExpression: 'SET samples.#newSampleId = :newSample, projectUuid = :projectUuid',
         ExpressionAttributeNames: {
-          '#samples': 'samples',
-          '#sampleId': newSample.uuid,
+          '#newSampleId': newSample.uuid,
         },
-        ExpressionAttributeValues: {
-          ':newSamples': marshalledNewSample,
-        },
+        ExpressionAttributeValues: marshalledData,
+        ReturnValues: 'UPDATED_NEW',
       };
 
-      const dynamodb = createDynamoDbInstance();
-
-      await dynamodb.updateItem(params).send();
+      await dynamodb.updateItem(params).promise();
     };
 
     const addSampleIdToProjects = async () => {
@@ -177,30 +189,29 @@ class SamplesService {
         projectUuid,
       });
 
-      const newSampleUuidInList = [newSample.uuid];
+      const marshalledData = convertToDynamoDbRecord({
+        ':newSampleId': [newSample.uuid],
+      });
 
-      const marshalledNewSampleUuid = convertToDynamoDbRecord(newSampleUuidInList);
       const params = {
         TableName: this.projectsTableName,
         Key: marshalledKey,
-        UpdateExpression: 'SET #projects.#samples = list_append(#projects.#samples, :newSamples)',
-        ExpressionAttributeNames: {
-          '#projects': 'projects',
-          '#samples': 'samples',
-        },
-        ExpressionAttributeValues: {
-          ':newSamples': marshalledNewSampleUuid,
-        },
+        UpdateExpression: 'SET projects.samples = list_append(projects.samples, :newSampleId)',
+        ExpressionAttributeValues: marshalledData,
+        ReturnValues: 'UPDATED_NEW',
       };
 
       const dynamodb = createDynamoDbInstance();
 
-      await dynamodb.updateItem(params).send();
+      await dynamodb.updateItem(params).promise();
     };
 
     try {
-      await addSampleToSamples();
-      await addSampleIdToProjects();
+      await Promise.all([
+        addSampleIdToProjects(),
+        addSampleToSamples(),
+      ]);
+
       return OK();
     } catch (e) {
       if (e.statusCode === 400) throw new NotFoundError('Project not found');
