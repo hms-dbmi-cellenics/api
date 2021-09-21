@@ -756,6 +756,57 @@ paths:
         name: projectUuid
         in: path
         required: true
+        
+    post:
+      summary: Create project
+      description: Create a new project
+      operationId: createProject
+      x-eov-operation-id: 'projects#create'
+      x-eov-operation-handler: routes/projects
+      responses:
+        '200':
+          description: Create new project
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/api-body-schemas/Project.v1.yaml
+        description: The new project to set.
+    
     put:
       summary: Update project
       operationId: updateProject
@@ -763,7 +814,7 @@ paths:
       x-eov-operation-handler: routes/projects
       responses:
         '200':
-          description: Update sample object
+          description: Update project object
           content:
             application/json:
               schema:
