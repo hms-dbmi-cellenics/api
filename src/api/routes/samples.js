@@ -41,7 +41,7 @@ module.exports = {
   'samples#add': [
     expressAuthorizationMiddleware,
     (req, res, next) => {
-      samplesService.addSamples(req.params.projectUuid, req.body)
+      samplesService.addSample(req.params.projectUuid, req.params.experimentId, req.body)
         .then((data) => res.json(data))
         .catch(next);
     },
