@@ -151,16 +151,6 @@ class SamplesService {
     const addSampleToSamples = async () => {
       const dynamodb = createDynamoDbInstance();
 
-      const emptyAttributeParams = {
-        TableName: this.samplesTableName,
-        Key: convertToDynamoDbRecord({ experimentId }),
-        UpdateExpression: 'SET samples = if_not_exists(samples, :emptySamples)',
-        ExpressionAttributeValues: { ':emptySamples': { M: {} } },
-        ReturnValues: 'UPDATED_NEW',
-      };
-
-      await dynamodb.updateItem(emptyAttributeParams).promise();
-
       const marshalledKey = convertToDynamoDbRecord({
         experimentId,
       });
@@ -206,17 +196,12 @@ class SamplesService {
       await dynamodb.updateItem(params).promise();
     };
 
-    try {
-      await Promise.all([
-        addSampleIdToProjects(),
-        addSampleToSamples(),
-      ]);
+    await Promise.all([
+      addSampleIdToProjects(),
+      addSampleToSamples(),
+    ]);
 
-      return OK();
-    } catch (e) {
-      if (e.statusCode === 400) throw new NotFoundError('Project not found');
-      throw e;
-    }
+    return OK();
   }
 
   async deleteSamplesEntry(projectUuid, experimentId, sampleUuids) {

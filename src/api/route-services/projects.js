@@ -18,6 +18,7 @@ const experimentService = new ExperimentService();
 class ProjectsService {
   constructor() {
     this.tableName = `projects-${config.clusterEnv}`;
+    this.samplesTableName = `samples-${config.clusterEnv}`;
   }
 
   async getProject(projectUuid) {
@@ -42,6 +43,19 @@ class ProjectsService {
     return response;
   }
 
+  async createProject(projectUuid, project) {
+    logger.log(`Creating project with id ${projectUuid}`);
+
+    const experimentId = project.experiments[0];
+
+    await Promise.all([
+      this.createEmptySamplesEntry(projectUuid, experimentId),
+      this.updateProject(projectUuid, project),
+    ]);
+
+    return OK();
+  }
+
   async updateProject(projectUuid, project) {
     logger.log(`Updating project with id ${projectUuid}`);
     const marshalledKey = convertToDynamoDbRecord({
@@ -61,13 +75,8 @@ class ProjectsService {
 
     const dynamodb = createDynamoDbInstance();
 
-    try {
-      await dynamodb.updateItem(params).send();
-      return OK();
-    } catch (e) {
-      if (e.statusCode === 400) throw new NotFoundError('Project not found');
-      throw e;
-    }
+    await dynamodb.updateItem(params).send();
+    return OK();
   }
 
   /**
@@ -231,6 +240,25 @@ class ProjectsService {
       if (e.statusCode === 400) throw new NotFoundError('Project not found');
       throw e;
     }
+  }
+
+  async createEmptySamplesEntry(projectUuid, experimentId) {
+    const dynamodb = createDynamoDbInstance();
+
+    const marshalledData = convertToDynamoDbRecord({
+      ':emptySamples': {},
+      ':projectUuid': projectUuid,
+    });
+
+    const emptyAttributeParams = {
+      TableName: this.samplesTableName,
+      Key: convertToDynamoDbRecord({ experimentId }),
+      UpdateExpression: 'SET samples = :emptySamples, projectUuid = :projectUuid',
+      ExpressionAttributeValues: marshalledData,
+      ReturnValues: 'UPDATED_NEW',
+    };
+
+    await dynamodb.updateItem(emptyAttributeParams).promise();
   }
 }
 
