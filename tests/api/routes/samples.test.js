@@ -3,6 +3,7 @@ const request = require('supertest');
 const expressLoader = require('../../../src/loaders/express');
 
 jest.mock('../../../src/api/route-services/samples');
+jest.mock('../../../src/utils/authMiddlewares');
 
 describe('tests for samples route', () => {
   let app = null;
