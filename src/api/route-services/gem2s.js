@@ -1,12 +1,9 @@
 const _ = require('lodash');
 const AWSXRay = require('aws-xray-sdk');
 
-const crypto = require('crypto');
 const constants = require('../general-services/pipeline-manage/constants');
 const getPipelineStatus = require('../general-services/pipeline-status');
 const { createGem2SPipeline } = require('../general-services/pipeline-manage');
-
-const { GEM2S_PROCESS_NAME, RUNNING, SUCCEEDED } = require('../general-services/pipeline-manage/constants');
 
 const saveProcessingConfigFromGem2s = require('../../utils/hooks/saveProcessingConfigFromGem2s');
 const runQCPipeline = require('../../utils/hooks/runQCPipeline');
@@ -81,57 +78,18 @@ class Gem2sService {
       }, {});
     }
 
-    // Different sample order should not change the hash.
-    const orderInvariantSampleIds = [...experiment.sampleIds].sort();
-
-    const hashParams = {
-      organism: experiment.meta.organism,
-      input: { type: experiment.meta.type },
-      sampleIds: orderInvariantSampleIds,
-      sampleNames: orderInvariantSampleIds.map((sampleId) => samples[sampleId].name),
-      metadata: taskParams.metadata,
-    };
-
-    return { taskParams, hashParams };
+    return taskParams;
   }
 
-  static async gem2sShouldRun(experimentId, paramsHash) {
-    logger.log('Checking if gem2s should actually be re run');
-
-    const experimentService = new ExperimentService();
-
-    const handlesPromise = experimentService.getPipelinesHandles(experimentId);
-    const statusPromise = getPipelineStatus(experimentId, GEM2S_PROCESS_NAME);
-
-    const [handles, statusWrapper] = await Promise.all([handlesPromise, statusPromise]);
-
-    const { [GEM2S_PROCESS_NAME]: gem2sHandle } = handles;
-    const { [GEM2S_PROCESS_NAME]: { status: gem2sStatus } } = statusWrapper;
-
-    logger.log(`Gem2s status is ${gem2sStatus}. new hash: ${paramsHash}; old hash: ${gem2sHandle.paramsHash}`);
-    if (gem2sStatus === SUCCEEDED) {
-      return paramsHash !== gem2sHandle.paramsHash;
-    }
-
-    return gem2sStatus !== RUNNING;
-  }
-
-  static async gem2sCreate(experimentId, authJWT) {
-    const { taskParams, hashParams } = await this.generateGem2sParams(experimentId, authJWT);
-
-    const paramsHash = crypto
-      .createHash('sha1')
-      .update(JSON.stringify(hashParams))
-      .digest('hex');
-
-    const shouldRun = await this.gem2sShouldRun(experimentId, paramsHash);
+  static async gem2sCreate(experimentId, body, authJWT) {
+    const { shouldRun, gem2sHash: paramsHash } = body;
 
     if (!shouldRun) {
       logger.log('Gem2s create call ignored');
       return OK();
     }
 
-    logger.log('Running new gem2s pipeline');
+    const taskParams = await this.generateGem2sParams(experimentId, authJWT);
 
     const newHandle = await createGem2SPipeline(experimentId, taskParams);
 
