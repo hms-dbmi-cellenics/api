@@ -79,29 +79,6 @@ describe('gem2sCreate', () => {
     jest.resetModules();
   });
 
-  it('GEM2S should run when passed shouldRun is true', async () => {
-    mockGem2sParamsBackendCall();
-
-    const requestBody = {
-      gem2sHash: 'gem2sHash1234',
-      shouldRun: true,
-    };
-
-    const newHandle = await Gem2sService.gem2sCreate(experimentId, requestBody);
-    expect(newHandle).toEqual(newGem2sHandle);
-  });
-
-  it('GEM2S should not run when passed shouldRun is false', async () => {
-    const requestBody = {
-      gem2sHash: 'gem2sHash1234',
-      shouldRun: false,
-    };
-
-    const response = await Gem2sService.gem2sCreate(experimentId, requestBody);
-
-    expect(response).toEqual(OK());
-  });
-
   it('Should generate GEM2S taskParams correctly', async () => {
     mockGem2sParamsBackendCall();
 

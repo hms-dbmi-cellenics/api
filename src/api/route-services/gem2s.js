@@ -9,7 +9,6 @@ const saveProcessingConfigFromGem2s = require('../../utils/hooks/saveProcessingC
 const runQCPipeline = require('../../utils/hooks/runQCPipeline');
 const validateRequest = require('../../utils/schema-validator');
 const PipelineHook = require('../../utils/hookRunner');
-const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 
 const ExperimentService = require('./experiment');
@@ -82,12 +81,7 @@ class Gem2sService {
   }
 
   static async gem2sCreate(experimentId, body, authJWT) {
-    const { shouldRun, gem2sHash: paramsHash } = body;
-
-    if (!shouldRun) {
-      logger.log('Gem2s create call ignored');
-      return OK();
-    }
+    const { paramsHash } = body;
 
     const taskParams = await this.generateGem2sParams(experimentId, authJWT);
 
