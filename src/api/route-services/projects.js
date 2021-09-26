@@ -77,6 +77,7 @@ class ProjectsService {
     if (!user) {
       return [];
     }
+
     // Get project data from the experiments table. Only return
     // those tables that have a project ID associated with them.
     const params = {
