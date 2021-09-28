@@ -429,8 +429,8 @@ describe('tests for the projects service', () => {
       .then((res) => {
         expect(res).toEqual(OK());
 
-        expect(updateItemSpy).toHaveBeenNthCalledWith(1, expectedSamplesUpdate);
-        expect(updateItemSpy).toHaveBeenNthCalledWith(2, expectedProjectsUpdate);
+        expect(updateItemSpy.mock.calls).toContainEqual([expectedSamplesUpdate]);
+        expect(updateItemSpy.mock.calls).toContainEqual([expectedProjectsUpdate]);
       })
       .then(() => done());
   });
