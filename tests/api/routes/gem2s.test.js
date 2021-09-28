@@ -5,13 +5,12 @@ const _ = require('lodash');
 
 const expressLoader = require('../../../src/loaders/express');
 const CacheSingleton = require('../../../src/cache');
-const { gem2sCreate, gem2sResponse } = require('../../../src/api/route-services/gem2s');
 const { createGem2SPipeline } = require('../../../src/api/general-services/pipeline-manage');
 
 const getLogger = require('../../../src/utils/getLogger');
 
-jest.mock('sns-validator');
 jest.mock('aws-xray-sdk');
+jest.mock('../../../src/utils/authMiddlewares');
 jest.mock('../../../src/utils/authMiddlewares');
 jest.mock('../../../src/utils/getLogger');
 jest.mock('../../../src/cache');
@@ -68,8 +67,6 @@ describe('tests for gem2s route', () => {
     validMsg.Type = 'Notification';
     validMsg = JSON.stringify(validMsg);
 
-    gem2sResponse.mockImplementation(() => { });
-
     await request(app)
       .post('/v1/gem2sResults')
       .send(validMsg)
@@ -78,25 +75,21 @@ describe('tests for gem2s route', () => {
       .expect('ok');
 
     expect(mockLogger.error).toHaveBeenCalledTimes(0);
-    expect(gem2sResponse).toHaveBeenCalledTimes(1);
   });
 
   it('Returns nok for invalid notifications', async () => {
-    let validMsg = _.cloneDeep(basicMsg);
-    validMsg.Type = 'Notification';
-    validMsg = JSON.stringify(validMsg);
-
-    gem2sResponse.mockImplementation(() => { throw new Error(); });
+    let invalidMsg = _.cloneDeep(basicMsg);
+    invalidMsg.Type = 'InvalidNotification';
+    invalidMsg = JSON.stringify(invalidMsg);
 
     await request(app)
       .post('/v1/gem2sResults')
-      .send(validMsg)
+      .send(invalidMsg)
       .set('Content-type', 'text/plain')
       .expect(200)
       .expect('nok');
 
     expect(mockLogger.error).toHaveBeenCalled();
-    expect(gem2sResponse).toHaveBeenCalledTimes(1);
   });
 
   it('Validating the response throws an error', async () => {
@@ -160,15 +153,13 @@ describe('tests for gem2s route', () => {
   });
 
   it('Returns an error when message in sns is malformed', async () => {
-    let validMsg = _.cloneDeep(basicMsg);
-    validMsg.Type = 'NotificationMalformed';
-    validMsg = JSON.stringify(validMsg);
-
-    gem2sResponse.mockImplementation(() => { });
+    let invalidMsg = _.cloneDeep(basicMsg);
+    invalidMsg.Type = 'NotificationMalformed';
+    invalidMsg = JSON.stringify(invalidMsg);
 
     await request(app)
       .post('/v1/gem2sResults')
-      .send(validMsg)
+      .send(invalidMsg)
       .set('Content-type', 'text/plain')
       .expect(200)
       .expect('nok');
@@ -178,11 +169,40 @@ describe('tests for gem2s route', () => {
 
   it('Creates a new pipeline for gem2s execution', async (done) => {
     createGem2SPipeline.mockReturnValue({});
-    gem2sCreate.mockImplementation(() => Promise.resolve({}));
 
     request(app)
       .post('/v1/experiments/someId/gem2s')
+      .send({ paramsHash: 'new-params-hash' })
       .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Gem2s creation endpoint returns error if not given the correct params', async (done) => {
+    createGem2SPipeline.mockReturnValue({});
+
+    request(app)
+      .post('/v1/experiments/someId/gem2s')
+      .send({ wrongKey: 'wong-value' })
+      .expect(400)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Gem2s creation endpoint returns error if not given a payload', async (done) => {
+    createGem2SPipeline.mockReturnValue({});
+
+    request(app)
+      .post('/v1/experiments/someId/gem2s')
+      .expect(415)
       .end((err) => {
         if (err) {
           return done(err);
