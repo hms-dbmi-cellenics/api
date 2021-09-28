@@ -1,8 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`gem2s gem2sResponse - Should return message if message is valid 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "ExperimentUpdates-1234",
+      Object {
+        "experimentId": "1234",
+        "status": Object {
+          "gem2s": Object {
+            "completedSteps": Array [],
+            "startDate": null,
+            "status": "SUCCEEDED",
+            "stopDate": null,
+          },
+        },
+        "taskName": "downloadGem",
+        "type": "gem2s",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
 exports[`gem2s generateGem2sParams - Should generate GEM2S taskParams correctly 1`] = `
 Object {
-  "authJWT": "mockAuthJwt",
+  "authJWT": "mockAuthJwtToken",
   "experimentName": "New experiment",
   "input": Object {
     "type": "10x",
@@ -16,6 +45,36 @@ Object {
   "sampleNames": Array [
     "Sample 1",
     "Sample 2",
+  ],
+}
+`;
+
+exports[`gem2s sendUpdateToSubscribed - Should send update if payloads are correct 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "ExperimentUpdates-1234",
+      Object {
+        "authJWT": "Bearer mockAuthJwtToken",
+        "experimentId": "experimentId",
+        "status": Object {
+          "gem2s": Object {
+            "completedSteps": Array [],
+            "startDate": null,
+            "status": "SUCCEEDED",
+            "stopDate": null,
+          },
+        },
+        "taskName": "downloadGem",
+        "type": "gem2s",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
   ],
 }
 `;

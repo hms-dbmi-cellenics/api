@@ -65,48 +65,20 @@ const mockGem2sParamsBackendCall = (
 };
 
 const experimentId = '1234';
-const mockAuthJwt = 'mockAuthJwt';
+const mockAuthJwt = 'mockAuthJwtToken';
 
 describe('gem2s', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.resetModules();
+    jest.clearAllMocks();
   });
 
   it('gem2sCreate - Creates new GEM2S handles and save them to database', async () => {
     const { mockSaveGem2sHandle } = mockGem2sParamsBackendCall();
 
-
     const mockBody = {
       paramsHash: 'gem2s-params-hash',
     };
-
-    // jest.mock('../../../src/api/route-services/gem2s', () => {
-    //   const OriginalClass = jest.requireActual('../../../src/api/route-services/gem2s');
-    //   OriginalClass.prototype.generateGem2sParams = jest.fn(() => ({}));
-    //   const originalClass = new OriginalClass();
-
-    //   return function () {
-    //     return originalClass;
-    //   };
-    // });
-
-    // const mockSaveGem2sHandle = jest.fn();
-
-    // jest.mock('../../../src/api/route-services/experiment', () => {
-    //   return jest.fn().mockImplementation(() => {
-    //     return { saveGem2sHandle: mockSaveGem2sHandle };
-    //   });
-    // });
-
-    // ExperimentService.mockImplementation(() => {
-    //   return function () {
-    //     return {
-    //       saveGem2sHandle: mockSaveGem2sHandle,
-    //     };
-    //   };
-    // });
-
-    // const MockedGem2sService = require('../../../src/api/route-services/gem2s');
 
     const gem2sService = new Gem2sService();
 
@@ -125,5 +97,57 @@ describe('gem2s', () => {
     const taskParams = await Gem2sService.generateGem2sParams(experimentId, mockAuthJwt);
 
     expect(taskParams).toMatchSnapshot();
+  });
+
+  it('sendUpdateToSubscribed - Should send update if payloads are correct', async () => {
+    const gem2sService = new Gem2sService();
+
+    const mockedSocketsEmit = jest.fn();
+    const mockIo = {
+      sockets: {
+        emit: mockedSocketsEmit,
+      },
+    };
+
+    const parsedMessage = {
+      taskName: 'downloadGem',
+      experimentId: 'experimentId',
+      authJWT: 'Bearer mockAuthJwtToken',
+    };
+
+    await gem2sService.constructor.sendUpdateToSubscribed(experimentId, parsedMessage, mockIo);
+
+    const emitParamsChannel = mockedSocketsEmit.mock.calls[0][0];
+    expect(mockedSocketsEmit).toHaveBeenCalled();
+
+    // Emitted to the correct channel
+    expect(emitParamsChannel).toMatch(experimentId);
+    expect(mockedSocketsEmit).toMatchSnapshot();
+  });
+
+  it('gem2sResponse - Should return message if message is valid', async () => {
+    const gem2sService = new Gem2sService();
+
+    const mockedSocketsEmit = jest.fn();
+    const mockIo = {
+      sockets: {
+        emit: mockedSocketsEmit,
+      },
+    };
+
+    const validMessageNoTaskName = {
+      taskName: 'downloadGem',
+      experimentId,
+      authJWT: 'Bearer mockAuthJwtToken',
+    };
+
+    await gem2sService.gem2sResponse(mockIo, validMessageNoTaskName);
+
+    const emitParamsChannel = mockedSocketsEmit.mock.calls[0][0];
+    expect(mockedSocketsEmit).toHaveBeenCalled();
+
+    // Emitted to the correct channel
+    expect(emitParamsChannel).toMatch(experimentId);
+    expect(mockedSocketsEmit).toMatchSnapshot();
   });
 });
