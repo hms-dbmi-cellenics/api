@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`gem2sCreate Should generate GEM2S taskParams correctly 1`] = `
+exports[`gem2s generateGem2sParams - Should generate GEM2S taskParams correctly 1`] = `
 Object {
   "authJWT": "mockAuthJwt",
   "experimentName": "New experiment",

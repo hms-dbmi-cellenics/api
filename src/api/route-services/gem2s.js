@@ -55,6 +55,8 @@ class Gem2sService {
 
     const samplesEntries = Object.entries(samples);
 
+    logger.log('Generating task params');
+
     const taskParams = {
       projectId: experiment.projectId,
       experimentName: experiment.experimentName,
@@ -66,6 +68,8 @@ class Gem2sService {
     };
 
     if (metadataKeys.length) {
+      logger.log('Adding metadatakeys to task params');
+
       taskParams.metadata = metadataKeys.reduce((acc, key) => {
         // Make sure the key does not contain '-' as it will cause failure in GEM2S
         const sanitizedKey = key.replace(/-+/g, '_');
@@ -77,26 +81,34 @@ class Gem2sService {
       }, {});
     }
 
+    logger.log('Task params generated');
+
     return taskParams;
   }
 
-  static async gem2sCreate(experimentId, body, authJWT) {
+  async gem2sCreate(experimentId, body, authJWT) {
+    logger.log('Creating GEM2S params...');
     const { paramsHash } = body;
 
     const taskParams = await this.generateGem2sParams(experimentId, authJWT);
 
     const newHandle = await createGem2SPipeline(experimentId, taskParams);
 
+    logger.log('GEM2S params created.');
+
     const experimentService = new ExperimentService();
+
     await experimentService.saveGem2sHandle(
       experimentId,
       { paramsHash, ...newHandle },
     );
 
+    logger.log('GEM2S params saved.');
+
     return newHandle;
   }
 
-  static async gem2sResponse(io, message) {
+  async gem2sResponse(io, message) {
     AWSXRay.getSegment().addMetadata('message', message);
 
     // Fail hard if there was an error.
