@@ -93,4 +93,43 @@ describe('tests for samples route', () => {
         return done();
       });
   });
+
+  test('Adding a sample with correctly shaped project returns 200', async (done) => {
+    const payload = {
+      projectUuid: 'project-uuid',
+      experimentId: 'experiment-id',
+      uuid: 'sampleUuid',
+      name: 'sample-1',
+    };
+
+    request(app)
+      .post('/v1/projects/someId/experimentId/samples')
+      .send(payload)
+      .expect(200)
+      .end((err) => {
+        console.log('errDebug');
+        console.log(err);
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  test('Adding a sample with invalid shape returns 400', async (done) => {
+    const payload = {
+      invalid: 'invalid',
+    };
+
+    request(app)
+      .post('/v1/projects/someId/experimentId/samples')
+      .send(payload)
+      .expect(400)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
 });

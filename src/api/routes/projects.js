@@ -7,6 +7,9 @@ const {
 
 const projectsService = new ProjectsService();
 
+console.log('projectsServiceDebug124e');
+console.log(projectsService);
+
 module.exports = {
   'projects#create': [
     expressAuthenticationOnlyMiddleware,
