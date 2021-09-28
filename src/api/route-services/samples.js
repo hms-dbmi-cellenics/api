@@ -156,7 +156,7 @@ class SamplesService {
       });
 
       const marshalledData = convertToDynamoDbRecord({
-        ':newSample': [newSample],
+        ':newSample': newSample,
         ':projectUuid': projectUuid,
       });
 
