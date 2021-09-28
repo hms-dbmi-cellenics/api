@@ -61,7 +61,7 @@ const deleteRunningPods = (context, step) => {
             CertificateAuthority: clusterInfo.certAuthority,
             Endpoint: clusterInfo.endpoint,
             Method: 'DELETE',
-            'Path.$': '$.metadata.selfLink',
+            'Path.$': "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)",
           },
           Catch: [
             {
@@ -150,7 +150,7 @@ const assignPodToPipeline = (context, step) => {
             CertificateAuthority: clusterInfo.certAuthority,
             Endpoint: clusterInfo.endpoint,
             Method: 'PATCH',
-            'Path.$': '$.ResponseBody.items[0].metadata.selfLink',
+            'Path.$': "States.Format('/api/v1/namespaces/{}/pods/{}', $.ResponseBody.items[0].metadata.namespace, $.ResponseBody.items[0].metadata.name)",
             RequestBody: {
               metadata: {
                 labels: {

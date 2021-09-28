@@ -222,7 +222,7 @@ Array [
                   "ClusterName": "biomage-test",
                   "Endpoint": "https://test-endpoint.me/fgh",
                   "Method": "PATCH",
-                  "Path.$": "$.ResponseBody.items[0].metadata.selfLink",
+                  "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.ResponseBody.items[0].metadata.namespace, $.ResponseBody.items[0].metadata.name)",
                   "RequestBody": Object {
                     "metadata": Object {
                       "labels": Object {
@@ -399,7 +399,7 @@ Array [
                   "ClusterName": "biomage-test",
                   "Endpoint": "https://test-endpoint.me/fgh",
                   "Method": "DELETE",
-                  "Path.$": "$.metadata.selfLink",
+                  "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)",
                 },
                 "Resource": "arn:aws:states:::eks:call",
                 "Type": "Task",
