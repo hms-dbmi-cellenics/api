@@ -71,11 +71,13 @@ class ProjectsService {
       Key: marshalledKey,
       UpdateExpression: 'SET projects = :project',
       ExpressionAttributeValues: marshalledData,
+      ReturnValues: 'UPDATED_NEW',
     };
 
     const dynamodb = createDynamoDbInstance();
 
-    await dynamodb.updateItem(params).send();
+    await dynamodb.updateItem(params).promise();
+
     return OK();
   }
 
@@ -233,7 +235,7 @@ class ProjectsService {
         await Promise.all(deletePromises);
       }
 
-      await dynamodb.deleteItem(params).send();
+      await dynamodb.deleteItem(params).promise();
 
       return OK();
     } catch (e) {

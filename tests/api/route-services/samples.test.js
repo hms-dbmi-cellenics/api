@@ -169,11 +169,7 @@ describe('tests for the samples service', () => {
 
     const expectedProjectsUpdate = {
       TableName: 'projects-test',
-      Key: {
-        projectUuid: {
-          S: 'projectUuid',
-        },
-      },
+      Key: { projectUuid: { S: 'projectUuid' } },
       UpdateExpression: 'SET projects.samples = list_append(projects.samples, :newSampleId)',
       ExpressionAttributeValues: AWS.DynamoDB.Converter.marshall({ ':newSampleId': ['sampleUuid'] }),
       ReturnValues: 'UPDATED_NEW',
@@ -198,8 +194,8 @@ describe('tests for the samples service', () => {
     };
 
     (new SamplesService()).addSample('projectUuid', 'experimentId', mockSampleToAdd)
-      .then((data) => {
-        expect(data).toEqual(OK());
+      .then((res) => {
+        expect(res).toEqual(OK());
 
         expect(updateItemSpy).toHaveBeenNthCalledWith(1, expectedProjectsUpdate);
         expect(updateItemSpy).toHaveBeenNthCalledWith(2, expectedSamplesUpdate);

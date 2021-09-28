@@ -31,7 +31,7 @@ describe('tests for the projects service', () => {
     AWSMock.restore('DynamoDB');
   });
 
-  it('GetProject gets project and samples properly', async (done) => {
+  it('GetProject gets project and samples properly', (done) => {
     const marshalledKey = AWS.DynamoDB.Converter.marshall({
       projectUuid: 'project-1',
     });
@@ -49,7 +49,7 @@ describe('tests for the projects service', () => {
       .then(() => done());
   });
 
-  it('GetProjects gets all the projects', async (done) => {
+  it('GetProjects gets all the projects', (done) => {
     const fnResult = [
       {
         uuid: 'project-1',
@@ -95,7 +95,7 @@ describe('tests for the projects service', () => {
       .then(() => done());
   });
 
-  it('GetProjects gets all the projects across many pages of scan results', async (done) => {
+  it('GetProjects gets all the projects across many pages of scan results', (done) => {
     const projectIds1 = [
       {
         projectId: 'project-1',
@@ -138,7 +138,7 @@ describe('tests for the projects service', () => {
       .then(() => done());
   });
 
-  it('GetProjects gets all the projects across many pages of scan results when the first page is empty', async (done) => {
+  it('GetProjects gets all the projects across many pages of scan results when the first page is empty', (done) => {
     const emptyProjectIds = [];
 
     const projectIds2 = [
@@ -174,7 +174,7 @@ describe('tests for the projects service', () => {
       .then(() => done());
   });
 
-  test('GetProjects removes duplicate projectIds from the call it makes to getProjectsFromIds', async (done) => {
+  test('GetProjects removes duplicate projectIds from the call it makes to getProjectsFromIds', (done) => {
     const projectIds1 = [
       {
         projectId: 'project-1',
@@ -225,7 +225,7 @@ describe('tests for the projects service', () => {
   });
 
 
-  it('getProjectsFromIds gets all the projects from ids', async (done) => {
+  it('getProjectsFromIds gets all the projects from ids', (done) => {
     const requestResult = {
       Responses: {
         'projects-test': [
@@ -277,7 +277,7 @@ describe('tests for the projects service', () => {
       .then(() => done());
   });
 
-  it('getProjectsFromIds create non existing projects', async (done) => {
+  it('getProjectsFromIds create non existing projects', (done) => {
     const requestResult = {
       Responses: {
         'projects-test': [
@@ -332,7 +332,7 @@ describe('tests for the projects service', () => {
       .then(() => done());
   });
 
-  test('GetExperiments gets projects', async (done) => {
+  test('GetExperiments gets projects', (done) => {
     const fnSpy = mockDynamoGetItem({ projects: mockProject });
 
     const experimentsService = new ExperimentsService();
@@ -355,7 +355,7 @@ describe('tests for the projects service', () => {
       .then(() => done());
   });
 
-  it('UpdateProject updates project properly', async (done) => {
+  it('UpdateProject updates project properly', (done) => {
     const marshalledKey = AWS.DynamoDB.Converter.marshall({
       projectUuid: 'project-1',
     });
@@ -374,12 +374,13 @@ describe('tests for the projects service', () => {
           Key: marshalledKey,
           UpdateExpression: 'SET projects = :project',
           ExpressionAttributeValues: marshalledData,
+          ReturnValues: 'UPDATED_NEW',
         });
       })
       .then(() => done());
   });
 
-  test('DeleteProject deletes project and samples properly', async (done) => {
+  test('DeleteProject deletes project and samples properly', (done) => {
     const experiments = ['project-1'];
     const samples = [];
 
@@ -401,6 +402,35 @@ describe('tests for the projects service', () => {
           TableName: 'projects-test',
           Key: marshalledKey,
         });
+      })
+      .then(() => done());
+  });
+
+  test('createProject creates entries in projects and samples correctly', (done) => {
+    const updateItemSpy = mockDynamoUpdateItem({});
+
+    const expectedSamplesUpdate = {
+      TableName: 'samples-test',
+      Key: AWS.DynamoDB.Converter.marshall({ experimentId: 'experiment-1' }),
+      UpdateExpression: 'SET samples = :emptySamples, projectUuid = :projectUuid',
+      ExpressionAttributeValues: AWS.DynamoDB.Converter.marshall({ ':emptySamples': {}, ':projectUuid': 'project-1' }),
+      ReturnValues: 'UPDATED_NEW',
+    };
+
+    const expectedProjectsUpdate = {
+      TableName: 'projects-test',
+      Key: AWS.DynamoDB.Converter.marshall({ projectUuid: 'project-1' }),
+      UpdateExpression: 'SET projects = :project',
+      ExpressionAttributeValues: AWS.DynamoDB.Converter.marshall({ ':project': mockProject }),
+      ReturnValues: 'UPDATED_NEW',
+    };
+
+    (new ProjectsService()).createProject('project-1', mockProject)
+      .then((res) => {
+        expect(res).toEqual(OK());
+
+        expect(updateItemSpy).toHaveBeenNthCalledWith(1, expectedSamplesUpdate);
+        expect(updateItemSpy).toHaveBeenNthCalledWith(2, expectedProjectsUpdate);
       })
       .then(() => done());
   });
