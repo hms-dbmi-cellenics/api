@@ -635,9 +635,8 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  paramsHash:
-                    type: string
+                properties: {}
+
       description: This path will create a new pipeline that can run a state machine with gem2s tasks.
       requestBody:
         content:

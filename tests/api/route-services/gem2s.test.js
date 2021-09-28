@@ -64,7 +64,7 @@ const mockGem2sParamsBackendCall = (
   };
 };
 
-const experimentId = '1234';
+const experimentId = 'abcd1234';
 const mockAuthJwt = 'mockAuthJwtToken';
 
 describe('gem2s', () => {
@@ -135,19 +135,97 @@ describe('gem2s', () => {
       },
     };
 
-    const validMessageNoTaskName = {
+    const validMessage = {
       taskName: 'downloadGem',
       experimentId,
-      authJWT: 'Bearer mockAuthJwtToken',
     };
 
-    await gem2sService.gem2sResponse(mockIo, validMessageNoTaskName);
+    await gem2sService.gem2sResponse(mockIo, validMessage);
 
     const emitParamsChannel = mockedSocketsEmit.mock.calls[0][0];
     expect(mockedSocketsEmit).toHaveBeenCalled();
 
     // Emitted to the correct channel
     expect(emitParamsChannel).toMatch(experimentId);
+    expect(mockedSocketsEmit).toMatchSnapshot();
+  });
+
+
+  it('gem2sResponse - Should return message if message is valid', async () => {
+    const gem2sService = new Gem2sService();
+
+    const mockedSocketsEmit = jest.fn();
+    const mockIo = {
+      sockets: {
+        emit: mockedSocketsEmit,
+      },
+    };
+
+    const validMessage = {
+      taskName: 'downloadGem',
+      experimentId,
+    };
+
+    await gem2sService.gem2sResponse(mockIo, validMessage);
+
+    const emitParamsChannel = mockedSocketsEmit.mock.calls[0][0];
+    expect(mockedSocketsEmit).toHaveBeenCalled();
+
+    // Emitted to the correct channel
+    expect(emitParamsChannel).toMatch(experimentId);
+    expect(mockedSocketsEmit).toMatchSnapshot();
+  });
+
+
+  it('gem2sResponse - Should throw an error if message is invalid', async () => {
+    const gem2sService = new Gem2sService();
+
+    const mockedSocketsEmit = jest.fn();
+    const mockIo = {
+      sockets: {
+        emit: mockedSocketsEmit,
+      },
+    };
+
+    const InvalidMessage = {
+      taskName: 'downloadGem',
+    };
+
+    await expect(gem2sService.gem2sResponse(mockIo, InvalidMessage)).rejects.toBeInstanceOf(Error);
+
+    expect(mockedSocketsEmit).not.toHaveBeenCalled();
+  });
+
+  it('gem2sReponse - Pass on error message properly', async () => {
+    const gem2sService = new Gem2sService();
+
+    const mockedSocketsEmit = jest.fn();
+    const mockIo = {
+      sockets: {
+        emit: mockedSocketsEmit,
+      },
+    };
+
+    const errorText = 'some unknwon error';
+
+    const errorMessage = {
+      experimentId,
+      response: {
+        error: errorText,
+      },
+    };
+
+    await gem2sService.gem2sResponse(mockIo, errorMessage);
+
+    const emitParamsChannel = mockedSocketsEmit.mock.calls[0][0];
+    const errorMessge = mockedSocketsEmit.mock.calls[0][1].response.error;
+
+    expect(mockedSocketsEmit).toHaveBeenCalled();
+
+    // Emitted to the correct channel
+    expect(emitParamsChannel).toMatch(experimentId);
+    expect(errorMessge).toEqual(errorText);
+
     expect(mockedSocketsEmit).toMatchSnapshot();
   });
 });
