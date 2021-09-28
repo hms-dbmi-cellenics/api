@@ -16,7 +16,6 @@ describe('tests for the samples service', () => {
     AWSMock.restore('DynamoDB');
   });
 
-
   it('Get samples by projectUuid works', async (done) => {
     const jsData = {
       samples: {
@@ -146,6 +145,67 @@ describe('tests for the samples service', () => {
           Key: marshalledKey,
         });
         expect(deleteS3FnSpy).toHaveBeenCalledWith(s3DeleteParams);
+      })
+      .then(() => done());
+  });
+
+  it('addSample works', async (done) => {
+    const projectUuid = 'projectUuid';
+    const experimentId = 'experimentId';
+
+    const mockSampleToAdd = {
+      name: 'WT1',
+      projectUuid,
+      uuid: 'sampleUuid',
+      type: '10X Chromium',
+      species: null,
+      createdDate: '4242-42-42T18:58:49.131Z',
+      lastModified: '4242-42-42T18:58:49.131Z',
+      complete: false,
+      error: false,
+      fileNames: [],
+      files: {},
+      metadata: {},
+    };
+
+    const updateItemSpy = mockDynamoUpdateItem({});
+
+    const expectedProjectsUpdate = {
+      TableName: 'projects-test',
+      Key: {
+        projectUuid: {
+          S: 'projectUuid',
+        },
+      },
+      UpdateExpression: 'SET projects.samples = list_append(projects.samples, :newSampleId)',
+      ExpressionAttributeValues: AWS.DynamoDB.Converter.marshall({ ':newSampleId': ['sampleUuid'] }),
+      ReturnValues: 'UPDATED_NEW',
+    };
+
+    const expectedSamplesUpdate = {
+      TableName: 'samples-test',
+      Key: {
+        experimentId: {
+          S: 'experimentId',
+        },
+      },
+      UpdateExpression: 'SET samples.#newSampleId = :newSample, projectUuid = :projectUuid',
+      ExpressionAttributeNames: {
+        '#newSampleId': 'sampleUuid',
+      },
+      ExpressionAttributeValues: AWS.DynamoDB.Converter.marshall({
+        ':newSample': mockSampleToAdd,
+        ':projectUuid': projectUuid,
+      }),
+      ReturnValues: 'UPDATED_NEW',
+    };
+
+    (new SamplesService()).addSample(projectUuid, experimentId, mockSampleToAdd)
+      .then((data) => {
+        expect(data).toEqual(OK());
+
+        expect(updateItemSpy).toHaveBeenNthCalledWith(1, expectedProjectsUpdate);
+        expect(updateItemSpy).toHaveBeenNthCalledWith(2, expectedSamplesUpdate);
       })
       .then(() => done());
   });
