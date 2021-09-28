@@ -1,5 +1,9 @@
 const { NotFoundError, OK } = require('../../../utils/responses');
 
+const mockCreateProject = jest.fn(() => new Promise((resolve) => {
+  resolve(OK());
+}));
+
 const mockGetProject = jest.fn((projectUuid) => new Promise((resolve) => {
   if (projectUuid === 'unknown-project') {
     throw new NotFoundError('Project not found');
@@ -56,6 +60,7 @@ const mockDeleteProject = jest.fn((projectUuid) => new Promise((resolve) => {
 }));
 
 const mock = jest.fn().mockImplementation(() => ({
+  createProject: mockCreateProject,
   getExperiments: mockGetExperiments,
   getProject: mockGetProject,
   getProjects: mockGetProjects,

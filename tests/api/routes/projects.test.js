@@ -54,6 +54,55 @@ describe('tests for projects route', () => {
       });
   });
 
+  test('Creating project with correctly shaped project returns 200', async (done) => {
+    const payload = {
+      name: 'Test project',
+      description: '',
+      createdDate: '',
+      lastModified: '',
+      uuid: 'project-1',
+      experiments: [],
+      lastAnalyzed: null,
+      samples: [],
+    };
+
+    request(app)
+      .post('/v1/projects/someId')
+      .send(payload)
+      .expect(200)
+      .end((err) => {
+        console.log('errDebug');
+        console.log(err);
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  test('Creating project with invalid shape project returns 400', async (done) => {
+    const payload = {
+      name: 'Test project',
+      description: '',
+      createdDate: '',
+      lastModified: '',
+      uuid: 'project-1',
+      experiments: [],
+      lastAnalyzed: null,
+    };
+
+    request(app)
+      .post('/v1/projects/someId')
+      .send(payload)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
   it('Updating project send 200', async (done) => {
     const payload = {
       name: 'Test project',
