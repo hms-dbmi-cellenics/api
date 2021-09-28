@@ -16,7 +16,7 @@ describe('tests for the samples service', () => {
     AWSMock.restore('DynamoDB');
   });
 
-  it('Get samples by projectUuid works', async (done) => {
+  it('Get samples by projectUuid works', (done) => {
     const jsData = {
       samples: {
         'sample-1': {
@@ -44,7 +44,7 @@ describe('tests for the samples service', () => {
       .then(() => done());
   });
 
-  it('Get sample by experimentId works', async (done) => {
+  it('Get sample by experimentId works', (done) => {
     const jsData = {
       samples: {
         'sample-1': { name: 'sample-1' },
@@ -70,7 +70,7 @@ describe('tests for the samples service', () => {
       .then(() => done());
   });
 
-  it('updateSamples work', async (done) => {
+  it('updateSamples work', (done) => {
     const jsData = {
       projectUuid: 'project-1',
       experimentId: 'experiment-1',
@@ -104,7 +104,7 @@ describe('tests for the samples service', () => {
       .then(() => done());
   });
 
-  it('delete sample works', async (done) => {
+  it('delete sample works', (done) => {
     const marshalledKey = AWS.DynamoDB.Converter.marshall({
       experimentId: 'experiment-1',
     });
@@ -149,13 +149,10 @@ describe('tests for the samples service', () => {
       .then(() => done());
   });
 
-  it('addSample works', async (done) => {
-    const projectUuid = 'projectUuid';
-    const experimentId = 'experimentId';
-
+  it('addSample works', (done) => {
     const mockSampleToAdd = {
       name: 'WT1',
-      projectUuid,
+      projectUuid: 'projectUuid',
       uuid: 'sampleUuid',
       type: '10X Chromium',
       species: null,
@@ -195,12 +192,12 @@ describe('tests for the samples service', () => {
       },
       ExpressionAttributeValues: AWS.DynamoDB.Converter.marshall({
         ':newSample': mockSampleToAdd,
-        ':projectUuid': projectUuid,
+        ':projectUuid': 'projectUuid',
       }),
       ReturnValues: 'UPDATED_NEW',
     };
 
-    (new SamplesService()).addSample(projectUuid, experimentId, mockSampleToAdd)
+    (new SamplesService()).addSample('projectUuid', 'experimentId', mockSampleToAdd)
       .then((data) => {
         expect(data).toEqual(OK());
 
