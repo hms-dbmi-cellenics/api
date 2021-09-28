@@ -197,8 +197,8 @@ describe('tests for the samples service', () => {
       .then((res) => {
         expect(res).toEqual(OK());
 
-        expect(updateItemSpy).toHaveBeenNthCalledWith(1, expectedProjectsUpdate);
-        expect(updateItemSpy).toHaveBeenNthCalledWith(2, expectedSamplesUpdate);
+        expect(updateItemSpy.mock.calls).toContainEqual([expectedSamplesUpdate]);
+        expect(updateItemSpy.mock.calls).toContainEqual([expectedProjectsUpdate]);
       })
       .then(() => done());
   });
