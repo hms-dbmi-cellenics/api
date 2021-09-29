@@ -7,10 +7,10 @@ const mockGem2sResponse = jest.fn(() => Promise.resolve({}));
 
 const mockGenerateGem2sParams = jest.fn(() => {});
 
-const mock = jest.fn().mockImplementation(() => ({
+const mock = {
   gem2sCreate: mockGem2sCreate,
   gem2sResponse: mockGem2sResponse,
   generateGem2sParams: mockGenerateGem2sParams,
-}));
+};
 
 module.exports = mock;

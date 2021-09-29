@@ -7,15 +7,13 @@ const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares'
 
 const logger = getLogger();
 
-const gem2sService = new Gem2sService();
-
 module.exports = {
   'gem2s#create': [
     expressAuthorizationMiddleware,
     async (req, res, next) => {
       const { experimentId } = req.params;
 
-      gem2sService.gem2sCreate(experimentId, req.body, req.headers.authorization)
+      Gem2sService.gem2sCreate(experimentId, req.body, req.headers.authorization)
         .then((response) => res.json(response))
         .catch(next);
     },
@@ -37,7 +35,7 @@ module.exports = {
     const isSnsNotification = parsedMessage !== undefined;
     if (isSnsNotification) {
       try {
-        await gem2sService.gem2sResponse(io, parsedMessage);
+        await Gem2sService.gem2sResponse(io, parsedMessage);
       } catch (e) {
         logger.error(
           'gem2s pipeline response handler failed with error: ', e,
