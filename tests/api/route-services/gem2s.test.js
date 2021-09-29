@@ -80,9 +80,7 @@ describe('gem2s', () => {
       paramsHash: 'gem2s-params-hash',
     };
 
-    const gem2sService = new Gem2sService();
-
-    await gem2sService.gem2sCreate(experimentId, mockBody, mockAuthJwt);
+    await Gem2sService.gem2sCreate(experimentId, mockBody, mockAuthJwt);
 
     // Create new handles
     expect(createGem2SPipeline).toHaveBeenCalled();
@@ -100,8 +98,6 @@ describe('gem2s', () => {
   });
 
   it('sendUpdateToSubscribed - Should send update if payloads are correct', async () => {
-    const gem2sService = new Gem2sService();
-
     const mockedSocketsEmit = jest.fn();
     const mockIo = {
       sockets: {
@@ -115,7 +111,7 @@ describe('gem2s', () => {
       authJWT: 'Bearer mockAuthJwtToken',
     };
 
-    await gem2sService.constructor.sendUpdateToSubscribed(experimentId, parsedMessage, mockIo);
+    await Gem2sService.sendUpdateToSubscribed(experimentId, parsedMessage, mockIo);
 
     const emitParamsChannel = mockedSocketsEmit.mock.calls[0][0];
     expect(mockedSocketsEmit).toHaveBeenCalled();
@@ -126,8 +122,6 @@ describe('gem2s', () => {
   });
 
   it('gem2sResponse - Should return message if message is valid', async () => {
-    const gem2sService = new Gem2sService();
-
     const mockedSocketsEmit = jest.fn();
     const mockIo = {
       sockets: {
@@ -140,7 +134,7 @@ describe('gem2s', () => {
       experimentId,
     };
 
-    await gem2sService.gem2sResponse(mockIo, validMessage);
+    await Gem2sService.gem2sResponse(mockIo, validMessage);
 
     const emitParamsChannel = mockedSocketsEmit.mock.calls[0][0];
     expect(mockedSocketsEmit).toHaveBeenCalled();
@@ -152,8 +146,6 @@ describe('gem2s', () => {
 
 
   it('gem2sResponse - Should return message if message is valid', async () => {
-    const gem2sService = new Gem2sService();
-
     const mockedSocketsEmit = jest.fn();
     const mockIo = {
       sockets: {
@@ -166,7 +158,7 @@ describe('gem2s', () => {
       experimentId,
     };
 
-    await gem2sService.gem2sResponse(mockIo, validMessage);
+    await Gem2sService.gem2sResponse(mockIo, validMessage);
 
     const emitParamsChannel = mockedSocketsEmit.mock.calls[0][0];
     expect(mockedSocketsEmit).toHaveBeenCalled();
@@ -178,8 +170,6 @@ describe('gem2s', () => {
 
 
   it('gem2sResponse - Should throw an error if message is invalid', async () => {
-    const gem2sService = new Gem2sService();
-
     const mockedSocketsEmit = jest.fn();
     const mockIo = {
       sockets: {
@@ -191,14 +181,12 @@ describe('gem2s', () => {
       taskName: 'downloadGem',
     };
 
-    await expect(gem2sService.gem2sResponse(mockIo, InvalidMessage)).rejects.toBeInstanceOf(Error);
+    await expect(Gem2sService.gem2sResponse(mockIo, InvalidMessage)).rejects.toBeInstanceOf(Error);
 
     expect(mockedSocketsEmit).not.toHaveBeenCalled();
   });
 
   it('gem2sReponse - Pass on error message properly', async () => {
-    const gem2sService = new Gem2sService();
-
     const mockedSocketsEmit = jest.fn();
     const mockIo = {
       sockets: {
@@ -215,7 +203,7 @@ describe('gem2s', () => {
       },
     };
 
-    await gem2sService.gem2sResponse(mockIo, errorMessage);
+    await Gem2sService.gem2sResponse(mockIo, errorMessage);
 
     const emitParamsChannel = mockedSocketsEmit.mock.calls[0][0];
     const errorMessge = mockedSocketsEmit.mock.calls[0][1].response.error;

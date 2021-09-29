@@ -86,13 +86,11 @@ class Gem2sService {
     return taskParams;
   }
 
-  async gem2sCreate(experimentId, body, authJWT) {
+  static async gem2sCreate(experimentId, body, authJWT) {
     logger.log('Creating GEM2S params...');
     const { paramsHash } = body;
 
-    // Accessing a static param from an instance method, you need to use this.constructor
-    // https://stackoverflow.com/questions/28627908/call-static-methods-from-regular-es6-class-methods
-    const taskParams = await this.constructor.generateGem2sParams(experimentId, authJWT);
+    const taskParams = await Gem2sService.generateGem2sParams(experimentId, authJWT);
 
     const newHandle = await createGem2SPipeline(experimentId, taskParams);
 
@@ -110,7 +108,7 @@ class Gem2sService {
     return newHandle;
   }
 
-  async gem2sResponse(io, message) {
+  static async gem2sResponse(io, message) {
     AWSXRay.getSegment().addMetadata('message', message);
 
     // Fail hard if there was an error.
@@ -132,7 +130,7 @@ class Gem2sService {
     // Make sure authJWT doesn't get back to the client
     delete messageForClient.authJWT;
 
-    await this.constructor.sendUpdateToSubscribed(experimentId, messageForClient, io);
+    await Gem2sService.sendUpdateToSubscribed(experimentId, messageForClient, io);
   }
 }
 
