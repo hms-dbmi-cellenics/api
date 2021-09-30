@@ -13,7 +13,7 @@ module.exports = {
     async (req, res, next) => {
       const { experimentId } = req.params;
 
-      Gem2sService.gem2sCreate(experimentId, req.headers.authorization)
+      Gem2sService.gem2sCreate(experimentId, req.body, req.headers.authorization)
         .then((response) => res.json(response))
         .catch(next);
     },
