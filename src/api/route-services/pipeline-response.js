@@ -104,7 +104,7 @@ const pipelineResponse = async (io, message) => {
       },
     ]);
   }
-  const { status } = statusResToSend.pipeline;
+  const { status } = statusResToSend.pipeline || false;
   if ([FAILED, SUCCEEDED].includes(status)) {
     sendNotificationEmailIfNecessary('QC pipeline', status, experimentId);
   }
