@@ -8,6 +8,7 @@ const getPipelineStatus = require('../general-services/pipeline-status');
 
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
+const sendNotificationEmailIfNecessary = require('../../utils/sendNotificationEmailsendNotificationEmailIfNecessary');
 
 const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
@@ -23,7 +24,7 @@ const pipelineResponse = async (io, message) => {
 
   const statusRes = await getPipelineStatus(experimentId, constants.QC_PROCESS_NAME);
   const statusResToSend = { pipeline: statusRes[constants.QC_PROCESS_NAME] };
-
+  const { SUCCEEDED, FAILED } = constants;
   const { error = null } = message.response;
 
   // Fail hard if there was an error.
@@ -103,7 +104,10 @@ const pipelineResponse = async (io, message) => {
       },
     ]);
   }
-
+  const { status } = statusResToSend.pipeline;
+  if ([FAILED, SUCCEEDED].includes(status)) {
+    sendNotificationEmailIfNecessary('QC pipeline', status, experimentId);
+  }
   // Concatenate into a proper response.
   const response = {
     ...message,
@@ -111,9 +115,7 @@ const pipelineResponse = async (io, message) => {
     status: statusResToSend,
     type: 'qc',
   };
-
   logger.log('Sending to all clients subscribed to experiment', experimentId);
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
-
 module.exports = pipelineResponse;

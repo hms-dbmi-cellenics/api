@@ -6,7 +6,9 @@ const constants = require('../general-services/pipeline-manage/constants');
 const getPipelineStatus = require('../general-services/pipeline-status');
 const { createGem2SPipeline } = require('../general-services/pipeline-manage');
 
-const { GEM2S_PROCESS_NAME, RUNNING, SUCCEEDED } = require('../general-services/pipeline-manage/constants');
+const {
+  GEM2S_PROCESS_NAME, RUNNING, SUCCEEDED, FAILED,
+} = require('../general-services/pipeline-manage/constants');
 
 const saveProcessingConfigFromGem2s = require('../../utils/hooks/saveProcessingConfigFromGem2s');
 const runQCPipeline = require('../../utils/hooks/runQCPipeline');
@@ -18,6 +20,7 @@ const getLogger = require('../../utils/getLogger');
 const ExperimentService = require('./experiment');
 const ProjectsService = require('./projects');
 const SamplesService = require('./samples');
+const sendNotificationEmailIfNecessary = require('../../utils/sendNotificationEmailsendNotificationEmailIfNecessary');
 
 const logger = getLogger();
 
@@ -28,7 +31,10 @@ pipelineHook.register('uploadToAWS', [saveProcessingConfigFromGem2s, runQCPipeli
 class Gem2sService {
   static async sendUpdateToSubscribed(experimentId, message, io) {
     const statusRes = await getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME);
-
+    const { status } = statusRes.gem2s;
+    if ([FAILED].includes(status)) {
+      sendNotificationEmailIfNecessary('gem2s', status, experimentId);
+    }
     // Concatenate into a proper response.
     const response = {
       ...message,
@@ -43,7 +49,6 @@ class Gem2sService {
 
       AWSXRay.getSegment().addError(error);
     }
-
     logger.log('Sending to all clients subscribed to experiment', experimentId);
     io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
   }
@@ -118,7 +123,6 @@ class Gem2sService {
 
   static async gem2sCreate(experimentId, authJWT) {
     const { taskParams, hashParams } = await this.generateGem2sParams(experimentId, authJWT);
-
     const paramsHash = crypto
       .createHash('sha1')
       .update(JSON.stringify(hashParams))

@@ -71,6 +71,7 @@ const getShallowAttrsUpdateParams = (body) => {
     projectId: body.projectUuid || body.projectId,
     description: body.description,
     sampleIds: body.sampleIds,
+    notifyByEmail: body.notifyByEmail,
   };
 
   const objectToMarshall = {};

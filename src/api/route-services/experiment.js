@@ -37,7 +37,7 @@ class ExperimentService {
     logger.log(`GET experiment ${experimentId} data`);
 
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId,
-      ['projectId', 'meta', 'experimentId', 'experimentName', 'sampleIds']);
+      ['projectId', 'meta', 'experimentId', 'experimentName', 'sampleIds', 'notifyByEmail']);
     return data;
   }
 
@@ -143,7 +143,6 @@ class ExperimentService {
 
     const updateExpression = [...deepPropsUpdateExprList, ...shallowPropsUpdateExprList];
     const expressionAttributeValues = _.merge(deepPropsAttrValues, shallowPropsAttrValues);
-
     const params = {
       TableName: this.experimentsTableName,
       Key: convertToDynamoDbRecord({ experimentId }),
