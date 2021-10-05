@@ -193,7 +193,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
               "CertificateAuthority": "mock-ca",
               "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "DELETE",
-              "Path.$": "$.metadata.selfLink"
+              "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)"
             },
             "Catch": [
               {
@@ -510,7 +510,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
               "CertificateAuthority": "mock-ca",
               "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "DELETE",
-              "Path.$": "$.metadata.selfLink"
+              "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)"
             },
             "Catch": [
               {
@@ -1028,7 +1028,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "CertificateAuthority": "mock-ca",
               "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "DELETE",
-              "Path.$": "$.metadata.selfLink"
+              "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)"
             },
             "Catch": [
               {
@@ -1400,7 +1400,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "CertificateAuthority": "mock-ca",
               "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "DELETE",
-              "Path.$": "$.metadata.selfLink"
+              "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)"
             },
             "Catch": [
               {

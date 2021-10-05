@@ -70,7 +70,7 @@ const deleteRunningPods = (context, step) => {
             CertificateAuthority: clusterInfo.certAuthority,
             Endpoint: clusterInfo.endpoint,
             Method: 'DELETE',
-            'Path.$': '$.metadata.selfLink',
+            'Path.$': "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)",
           },
           Catch: [
             {
