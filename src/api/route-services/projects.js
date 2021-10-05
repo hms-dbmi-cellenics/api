@@ -17,7 +17,7 @@ const experimentService = new ExperimentService();
 
 class ProjectsService {
   constructor() {
-    this.tableName = `projects-${config.clusterEnv}`;
+    this.projectsTableName = `projects-${config.clusterEnv}`;
     this.samplesTableName = `samples-${config.clusterEnv}`;
   }
 
@@ -28,7 +28,7 @@ class ProjectsService {
     });
 
     const params = {
-      TableName: this.tableName,
+      TableName: this.projectsTableName,
       Key: marshalledKey,
     };
 
@@ -67,7 +67,7 @@ class ProjectsService {
     });
 
     const params = {
-      TableName: this.tableName,
+      TableName: this.projectsTableName,
       Key: marshalledKey,
       UpdateExpression: 'SET projects = :project',
       ExpressionAttributeValues: marshalledData,
@@ -147,7 +147,7 @@ class ProjectsService {
     const dynamodb = createDynamoDbInstance();
     const params = {
       RequestItems: {
-        [this.tableName]: {
+        [this.projectsTableName]: {
           Keys: projectIds.map((projectUuid) => convertToDynamoDbRecord({ projectUuid })),
         },
       },
@@ -155,7 +155,7 @@ class ProjectsService {
 
     const data = await safeBatchGetItem(dynamodb, params);
 
-    const existingProjectIds = new Set(data.Responses[this.tableName].map((entry) => {
+    const existingProjectIds = new Set(data.Responses[this.projectsTableName].map((entry) => {
       const newData = convertToJsObject(entry);
       return newData.projects.uuid;
     }));
@@ -178,7 +178,7 @@ class ProjectsService {
         return newProject;
       });
 
-    data.Responses[this.tableName].forEach((entry) => {
+    data.Responses[this.projectsTableName].forEach((entry) => {
       const newData = convertToJsObject(entry);
       projects.push(newData.projects);
     });
@@ -192,7 +192,7 @@ class ProjectsService {
     const marshalledKey = convertToDynamoDbRecord({ projectUuid });
 
     const params = {
-      TableName: this.tableName,
+      TableName: this.projectsTableName,
       Key: marshalledKey,
     };
 
@@ -216,7 +216,7 @@ class ProjectsService {
     });
 
     const params = {
-      TableName: this.tableName,
+      TableName: this.projectsTableName,
       Key: marshalledKey,
     };
 
