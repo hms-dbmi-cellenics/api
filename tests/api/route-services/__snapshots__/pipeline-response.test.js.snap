@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Test Pipeline Response Service functions propely with correct input (custom sample UUID given) 1`] = `
+exports[`Test Pipeline Response Service fails when output config is not valid 1`] = `
 [MockFunction] {
   "calls": Array [
     Array [
@@ -12,7 +12,7 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
         },
         "Key": Object {
           "experimentId": Object {
-            "S": "1234",
+            "S": "experimentid11111111111111111111",
           },
         },
         "ReturnValues": "UPDATED_NEW",
@@ -23,37 +23,24 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
     Array [
       Object {
         "ExpressionAttributeNames": Object {
-          "#key1": "cellSizeDistribution",
+          "#key1": undefined,
         },
         "ExpressionAttributeValues": Object {
           ":val1": Object {
             "M": Object {
-              "control": Object {
+              "aaaaaaaa-bbbb-3333-4444-999999999999": Object {
                 "M": Object {
-                  "enabled": Object {
+                  "auto": Object {
                     "BOOL": true,
                   },
-                  "filterSettings": Object {
-                    "M": Object {
-                      "binStep": Object {
-                        "N": "200",
-                      },
-                      "minCellSize": Object {
-                        "N": "10800",
-                      },
-                    },
-                  },
                 },
-              },
-              "enabled": Object {
-                "BOOL": true,
               },
             },
           },
         },
         "Key": Object {
           "experimentId": Object {
-            "S": "1234",
+            "S": "experimentid11111111111111111111",
           },
         },
         "ReturnValues": "UPDATED_NEW",
@@ -73,7 +60,7 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
         },
         "Key": Object {
           "experimentId": Object {
-            "S": "1234",
+            "S": "experimentid11111111111111111111",
           },
         },
         "ReturnValues": "UPDATED_NEW",
@@ -85,37 +72,24 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
       "type": "return",
       "value": Object {
         "ExpressionAttributeNames": Object {
-          "#key1": "cellSizeDistribution",
+          "#key1": undefined,
         },
         "ExpressionAttributeValues": Object {
           ":val1": Object {
             "M": Object {
-              "control": Object {
+              "aaaaaaaa-bbbb-3333-4444-999999999999": Object {
                 "M": Object {
-                  "enabled": Object {
+                  "auto": Object {
                     "BOOL": true,
                   },
-                  "filterSettings": Object {
-                    "M": Object {
-                      "binStep": Object {
-                        "N": "200",
-                      },
-                      "minCellSize": Object {
-                        "N": "10800",
-                      },
-                    },
-                  },
                 },
-              },
-              "enabled": Object {
-                "BOOL": true,
               },
             },
           },
         },
         "Key": Object {
           "experimentId": Object {
-            "S": "1234",
+            "S": "experimentid11111111111111111111",
           },
         },
         "ReturnValues": "UPDATED_NEW",
@@ -127,9 +101,32 @@ exports[`Test Pipeline Response Service functions propely with correct input (cu
 }
 `;
 
-exports[`Test Pipeline Response Service functions propely with correct input (no sample UUID given) 1`] = `
+exports[`Test Pipeline Response Service updates processing config when output contains a valid config 1`] = `
 [MockFunction] {
   "calls": Array [
+    Array [
+      Object {
+        "ExpressionAttributeValues": Object {
+          ":config": Object {
+            "M": Object {},
+          },
+          ":plotDataKey": Object {
+            "S": "11111111-2222-3333-4444-5555555555555",
+          },
+        },
+        "Key": Object {
+          "experimentId": Object {
+            "S": "experimentid11111111111111111111",
+          },
+          "plotUuid": Object {
+            "S": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee-doubletScores-0",
+          },
+        },
+        "ReturnValues": "UPDATED_NEW",
+        "TableName": "plots-tables-test",
+        "UpdateExpression": "SET plotDataKey = :plotDataKey, config = if_not_exists(config, :config)",
+      },
+    ],
     Array [
       Object {
         "ExpressionAttributeValues": Object {
@@ -139,7 +136,7 @@ exports[`Test Pipeline Response Service functions propely with correct input (no
         },
         "Key": Object {
           "experimentId": Object {
-            "S": "1234",
+            "S": "experimentid11111111111111111111",
           },
         },
         "ReturnValues": "UPDATED_NEW",
@@ -150,26 +147,42 @@ exports[`Test Pipeline Response Service functions propely with correct input (no
     Array [
       Object {
         "ExpressionAttributeNames": Object {
-          "#key1": "cellSizeDistribution",
+          "#key1": undefined,
         },
         "ExpressionAttributeValues": Object {
           ":val1": Object {
             "M": Object {
-              "enabled": Object {
-                "BOOL": true,
-              },
-              "sampleId": Object {
+              "aaaaaaaa-bbbb-3333-4444-999999999999": Object {
                 "M": Object {
+                  "api_url": Object {
+                    "S": "http://api-url-to-our-url.api-to.etc.local:3000",
+                  },
+                  "auth_JWT": Object {
+                    "S": "Bearer Im your token man",
+                  },
+                  "auto": Object {
+                    "BOOL": true,
+                  },
+                  "defaultFilterSettings": Object {
+                    "M": Object {
+                      "binStep": Object {
+                        "N": "0.05",
+                      },
+                      "probabilityThreshold": Object {
+                        "N": "0.7622447",
+                      },
+                    },
+                  },
                   "enabled": Object {
                     "BOOL": true,
                   },
                   "filterSettings": Object {
                     "M": Object {
                       "binStep": Object {
-                        "N": "200",
+                        "N": "0.05",
                       },
-                      "minCellSize": Object {
-                        "N": "10800",
+                      "probabilityThreshold": Object {
+                        "N": "0.7622447",
                       },
                     },
                   },
@@ -180,7 +193,7 @@ exports[`Test Pipeline Response Service functions propely with correct input (no
         },
         "Key": Object {
           "experimentId": Object {
-            "S": "1234",
+            "S": "experimentid11111111111111111111",
           },
         },
         "ReturnValues": "UPDATED_NEW",
@@ -194,13 +207,37 @@ exports[`Test Pipeline Response Service functions propely with correct input (no
       "type": "return",
       "value": Object {
         "ExpressionAttributeValues": Object {
+          ":config": Object {
+            "M": Object {},
+          },
+          ":plotDataKey": Object {
+            "S": "11111111-2222-3333-4444-5555555555555",
+          },
+        },
+        "Key": Object {
+          "experimentId": Object {
+            "S": "experimentid11111111111111111111",
+          },
+          "plotUuid": Object {
+            "S": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee-doubletScores-0",
+          },
+        },
+        "ReturnValues": "UPDATED_NEW",
+        "TableName": "plots-tables-test",
+        "UpdateExpression": "SET plotDataKey = :plotDataKey, config = if_not_exists(config, :config)",
+      },
+    },
+    Object {
+      "type": "return",
+      "value": Object {
+        "ExpressionAttributeValues": Object {
           ":updatedObject": Object {
             "M": Object {},
           },
         },
         "Key": Object {
           "experimentId": Object {
-            "S": "1234",
+            "S": "experimentid11111111111111111111",
           },
         },
         "ReturnValues": "UPDATED_NEW",
@@ -212,26 +249,42 @@ exports[`Test Pipeline Response Service functions propely with correct input (no
       "type": "return",
       "value": Object {
         "ExpressionAttributeNames": Object {
-          "#key1": "cellSizeDistribution",
+          "#key1": undefined,
         },
         "ExpressionAttributeValues": Object {
           ":val1": Object {
             "M": Object {
-              "enabled": Object {
-                "BOOL": true,
-              },
-              "sampleId": Object {
+              "aaaaaaaa-bbbb-3333-4444-999999999999": Object {
                 "M": Object {
+                  "api_url": Object {
+                    "S": "http://api-url-to-our-url.api-to.etc.local:3000",
+                  },
+                  "auth_JWT": Object {
+                    "S": "Bearer Im your token man",
+                  },
+                  "auto": Object {
+                    "BOOL": true,
+                  },
+                  "defaultFilterSettings": Object {
+                    "M": Object {
+                      "binStep": Object {
+                        "N": "0.05",
+                      },
+                      "probabilityThreshold": Object {
+                        "N": "0.7622447",
+                      },
+                    },
+                  },
                   "enabled": Object {
                     "BOOL": true,
                   },
                   "filterSettings": Object {
                     "M": Object {
                       "binStep": Object {
-                        "N": "200",
+                        "N": "0.05",
                       },
-                      "minCellSize": Object {
-                        "N": "10800",
+                      "probabilityThreshold": Object {
+                        "N": "0.7622447",
                       },
                     },
                   },
@@ -242,7 +295,7 @@ exports[`Test Pipeline Response Service functions propely with correct input (no
         },
         "Key": Object {
           "experimentId": Object {
-            "S": "1234",
+            "S": "experimentid11111111111111111111",
           },
         },
         "ReturnValues": "UPDATED_NEW",

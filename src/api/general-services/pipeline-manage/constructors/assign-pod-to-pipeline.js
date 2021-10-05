@@ -12,6 +12,17 @@ const getActivityId = (activityArn) => {
   return split[split.length - 1];
 };
 
+const buildPodRequest = (sandboxId, experimentId, taskName, processName, activityId) => ({
+  taskName,
+  experimentId,
+  input: {
+    experimentId, // remove once PipelineResponse.v1.yaml is refactored with gem2s one
+    sandboxId,
+    activityId,
+    processName,
+  },
+});
+
 const getRunningPods = (context, step) => {
   const { clusterInfo, experimentId } = context;
 
@@ -86,15 +97,11 @@ const assignPodToPipeline = (context, step) => {
 
   const activityId = getActivityId(activityArn);
 
-  const requestPodMessage = {
-    input: {
-      taskName: constants.ASSIGN_POD_TO_PIPELINE,
-      sandboxId,
-      experimentId,
-      activityId,
-      processName,
-    },
-  };
+  const requestPodMessage = buildPodRequest(sandboxId,
+    experimentId,
+    constants.ASSIGN_POD_TO_PIPELINE,
+    processName,
+    activityId);
 
   return {
     ...step,
@@ -261,5 +268,5 @@ const waitForPod = (context, step) => {
 };
 
 module.exports = {
-  getRunningPods, deleteRunningPods, assignPodToPipeline, waitForPod,
+  buildPodRequest, getRunningPods, deleteRunningPods, assignPodToPipeline, waitForPod,
 };

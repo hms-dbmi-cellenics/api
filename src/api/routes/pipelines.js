@@ -2,7 +2,7 @@ const AWSXRay = require('aws-xray-sdk');
 const { createQCPipeline } = require('../general-services/pipeline-manage');
 const getBackendStatus = require('../general-services/backend-status');
 const ExperimentService = require('../route-services/experiment');
-const pipelineResponse = require('../route-services/pipeline-response');
+const PipelineService = require('../route-services/pipeline-response');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 const getLogger = require('../../utils/getLogger');
 const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
@@ -49,7 +49,7 @@ module.exports = {
     const isSnsNotification = parsedMessage !== undefined;
     if (isSnsNotification) {
       try {
-        await pipelineResponse(io, parsedMessage);
+        await PipelineService.qcResponse(io, parsedMessage);
       } catch (e) {
         logger.error(
           'pipeline response handler failed with error: ', e,

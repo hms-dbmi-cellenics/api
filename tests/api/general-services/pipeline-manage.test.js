@@ -107,6 +107,10 @@ describe('test for pipeline services', () => {
 
   it('Create QC pipeline works', async () => {
     AWSMock.setSDKInstance(AWS);
+  });
+
+  it('Create QC pipeline works', async () => {
+    AWSMock.setSDKInstance(AWS);
 
     const describeClusterSpy = jest.fn((x) => x);
     AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
