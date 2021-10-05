@@ -146,7 +146,7 @@ class SamplesService {
   }
 
   async addSample(projectUuid, experimentId, newSample) {
-    logger.log(`Adding samples ${JSON.stringify(newSample)} to project with id ${projectUuid}`);
+    logger.log(`Adding sample ${newSample.uuid} to project with id ${projectUuid}`);
 
     const addSampleToSamples = async () => {
       const dynamodb = createDynamoDbInstance();
@@ -168,7 +168,6 @@ class SamplesService {
           '#newSampleId': newSample.uuid,
         },
         ExpressionAttributeValues: marshalledData,
-        ReturnValues: 'UPDATED_NEW',
       };
 
       await dynamodb.updateItem(params).promise();
@@ -188,7 +187,6 @@ class SamplesService {
         Key: marshalledKey,
         UpdateExpression: 'SET projects.samples = list_append(projects.samples, :newSampleId)',
         ExpressionAttributeValues: marshalledData,
-        ReturnValues: 'UPDATED_NEW',
       };
 
       const dynamodb = createDynamoDbInstance();
