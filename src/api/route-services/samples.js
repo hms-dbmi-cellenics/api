@@ -157,13 +157,12 @@ class SamplesService {
 
       const marshalledData = convertToDynamoDbRecord({
         ':newSample': newSample,
-        ':projectUuid': projectUuid,
       });
 
       const params = {
         TableName: this.samplesTableName,
         Key: marshalledKey,
-        UpdateExpression: 'SET samples.#newSampleId = :newSample, projectUuid = :projectUuid',
+        UpdateExpression: 'SET samples.#newSampleId = :newSample',
         ExpressionAttributeNames: {
           '#newSampleId': newSample.uuid,
         },
