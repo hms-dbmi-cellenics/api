@@ -14,7 +14,7 @@ const saveProcessingConfigFromGem2s = require('../../utils/hooks/saveProcessingC
 const runQCPipeline = require('../../utils/hooks/runQCPipeline');
 const validateRequest = require('../../utils/schema-validator');
 const PipelineHook = require('../../utils/hookRunner');
-const { OK } = require('../../utils/responses');
+// const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 
 const ExperimentService = require('./experiment');
@@ -32,7 +32,7 @@ class Gem2sService {
   static async sendUpdateToSubscribed(experimentId, message, io) {
     const statusRes = await getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME);
     const { status } = statusRes.gem2s;
-    if ([FAILED].includes(status)) {
+    if ([FAILED, SUCCEEDED].includes(status)) {
       sendNotificationEmailIfNecessary('gem2s', status, experimentId);
     }
     // Concatenate into a proper response.
@@ -122,30 +122,32 @@ class Gem2sService {
   }
 
   static async gem2sCreate(experimentId, authJWT) {
-    const { taskParams, hashParams } = await this.generateGem2sParams(experimentId, authJWT);
-    const paramsHash = crypto
-      .createHash('sha1')
-      .update(JSON.stringify(hashParams))
-      .digest('hex');
+    // const { taskParams, hashParams } = await this.generateGem2sParams(experimentId, authJWT);
+    // const paramsHash = crypto
+    //   .createHash('sha1')
+    //   .update(JSON.stringify(hashParams))
+    //   .digest('hex');
 
-    const shouldRun = await this.gem2sShouldRun(experimentId, paramsHash);
+    // const shouldRun = await this.gem2sShouldRun(experimentId, paramsHash);
 
-    if (!shouldRun) {
-      logger.log('Gem2s create call ignored');
-      return OK();
-    }
+    // if (!shouldRun) {
+    //   logger.log('Gem2s create call ignored');
+    //   return OK();
+    // }
 
-    logger.log('Running new gem2s pipeline');
+    // logger.log('Running new gem2s pipeline');
 
-    const newHandle = await createGem2SPipeline(experimentId, taskParams);
+    // const newHandle = await createGem2SPipeline(experimentId, taskParams);
 
-    const experimentService = new ExperimentService();
-    await experimentService.saveGem2sHandle(
-      experimentId,
-      { paramsHash, ...newHandle },
-    );
+    // const experimentService = new ExperimentService();
+    // await experimentService.saveGem2sHandle(
+    //   experimentId,
+    //   { paramsHash, ...newHandle },
+    // );
+    console.log('SENDING EMAIL NOW !!');
+    sendNotificationEmailIfNecessary('gem2s', 'lmaooooo', experimentId);
 
-    return newHandle;
+    // return newHandle;
   }
 
   static async gem2sResponse(io, message) {
