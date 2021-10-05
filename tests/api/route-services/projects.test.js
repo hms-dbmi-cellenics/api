@@ -374,7 +374,6 @@ describe('tests for the projects service', () => {
           Key: marshalledKey,
           UpdateExpression: 'SET projects = :project',
           ExpressionAttributeValues: marshalledData,
-          ReturnValues: 'UPDATED_NEW',
         });
       })
       .then(() => done());
@@ -414,7 +413,6 @@ describe('tests for the projects service', () => {
       Key: AWS.DynamoDB.Converter.marshall({ experimentId: 'experiment-1' }),
       UpdateExpression: 'SET samples = :emptySamples, projectUuid = :projectUuid',
       ExpressionAttributeValues: AWS.DynamoDB.Converter.marshall({ ':emptySamples': {}, ':projectUuid': 'project-1' }),
-      ReturnValues: 'UPDATED_NEW',
     };
 
     const expectedProjectsUpdate = {
@@ -422,7 +420,6 @@ describe('tests for the projects service', () => {
       Key: AWS.DynamoDB.Converter.marshall({ projectUuid: 'project-1' }),
       UpdateExpression: 'SET projects = :project',
       ExpressionAttributeValues: AWS.DynamoDB.Converter.marshall({ ':project': mockProject }),
-      ReturnValues: 'UPDATED_NEW',
     };
 
     (new ProjectsService()).createProject('project-1', mockProject)

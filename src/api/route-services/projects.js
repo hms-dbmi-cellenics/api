@@ -71,7 +71,6 @@ class ProjectsService {
       Key: marshalledKey,
       UpdateExpression: 'SET projects = :project',
       ExpressionAttributeValues: marshalledData,
-      ReturnValues: 'UPDATED_NEW',
     };
 
     const dynamodb = createDynamoDbInstance();
@@ -257,7 +256,6 @@ class ProjectsService {
       Key: convertToDynamoDbRecord({ experimentId }),
       UpdateExpression: 'SET samples = :emptySamples, projectUuid = :projectUuid',
       ExpressionAttributeValues: marshalledData,
-      ReturnValues: 'UPDATED_NEW',
     };
 
     await dynamodb.updateItem(emptyAttributeParams).promise();

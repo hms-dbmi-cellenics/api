@@ -172,7 +172,6 @@ describe('tests for the samples service', () => {
       Key: { projectUuid: { S: 'projectUuid' } },
       UpdateExpression: 'SET projects.samples = list_append(projects.samples, :newSampleId)',
       ExpressionAttributeValues: AWS.DynamoDB.Converter.marshall({ ':newSampleId': ['sampleUuid'] }),
-      ReturnValues: 'UPDATED_NEW',
     };
 
     const expectedSamplesUpdate = {
@@ -190,7 +189,6 @@ describe('tests for the samples service', () => {
         ':newSample': mockSampleToAdd,
         ':projectUuid': 'projectUuid',
       }),
-      ReturnValues: 'UPDATED_NEW',
     };
 
     (new SamplesService()).addSample('projectUuid', 'experimentId', mockSampleToAdd)
