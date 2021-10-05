@@ -31,25 +31,24 @@ describe('tests for the projects service', () => {
     AWSMock.restore('DynamoDB');
   });
 
-  it('GetProject gets project and samples properly', (done) => {
+  test('GetProject gets project and samples properly', async () => {
     const marshalledKey = AWS.DynamoDB.Converter.marshall({
       projectUuid: 'project-1',
     });
 
     const getFnSpy = mockDynamoGetItem({ projects: mockProject });
 
-    (new ProjectsService()).getProject('project-1')
-      .then((res) => {
-        expect(res).toEqual(mockProject);
-        expect(getFnSpy).toHaveBeenCalledWith({
-          TableName: 'projects-test',
-          Key: marshalledKey,
-        });
-      })
-      .then(() => done());
+    const res = await (new ProjectsService()).getProject('project-1');
+
+    expect(res).toEqual(mockProject);
+
+    expect(getFnSpy).toHaveBeenCalledWith({
+      TableName: 'projects-test',
+      Key: marshalledKey,
+    });
   });
 
-  it('GetProjects gets all the projects', (done) => {
+  test('GetProjects gets all the projects', async () => {
     const fnResult = [
       {
         uuid: 'project-1',
@@ -75,27 +74,27 @@ describe('tests for the projects service', () => {
 
     projectService.getProjectsFromIds = jest.fn().mockImplementation(() => fnResult);
 
-    projectService.getProjects(user)
-      .then((res) => {
-        expect(res).toEqual(fnResult);
-        expect(fnSpy).toHaveBeenCalledWith({
-          TableName: 'experiments-test',
-          ExpressionAttributeNames: {
-            '#pid': 'projectId',
-            '#rbac_can_write': 'rbac_can_write',
-          },
-          ExpressionAttributeValues: {
-            ':userId': { S: user.sub },
-          },
-          FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
-          ProjectionExpression: '#pid',
-        });
-        expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(projectIdsArr);
-      })
-      .then(() => done());
+    const res = await projectService.getProjects(user);
+
+    expect(res).toEqual(fnResult);
+
+    expect(fnSpy).toHaveBeenCalledWith({
+      TableName: 'experiments-test',
+      ExpressionAttributeNames: {
+        '#pid': 'projectId',
+        '#rbac_can_write': 'rbac_can_write',
+      },
+      ExpressionAttributeValues: {
+        ':userId': { S: user.sub },
+      },
+      FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
+      ProjectionExpression: '#pid',
+    });
+
+    expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(projectIdsArr);
   });
 
-  it('GetProjects gets all the projects across many pages of scan results', (done) => {
+  test('GetProjects gets all the projects across many pages of scan results', async () => {
     const projectIds1 = [
       {
         projectId: 'project-1',
@@ -129,16 +128,14 @@ describe('tests for the projects service', () => {
 
     projectService.getProjectsFromIds = jest.fn().mockImplementation((x) => x);
 
-    projectService.getProjects(user)
-      .then((res) => {
-        expect(res).toEqual(expectedResult);
+    const res = await projectService.getProjects(user);
 
-        expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(expectedResult);
-      })
-      .then(() => done());
+    expect(res).toEqual(expectedResult);
+
+    expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(expectedResult);
   });
 
-  it('GetProjects gets all the projects across many pages of scan results when the first page is empty', (done) => {
+  test('GetProjects gets all the projects across many pages of scan results when the first page is empty', async () => {
     const emptyProjectIds = [];
 
     const projectIds2 = [
@@ -165,16 +162,14 @@ describe('tests for the projects service', () => {
 
     projectService.getProjectsFromIds = jest.fn().mockImplementation((x) => x);
 
-    projectService.getProjects(user)
-      .then((res) => {
-        expect(res).toEqual(expectedResult);
+    const res = await projectService.getProjects(user);
 
-        expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(expectedResult);
-      })
-      .then(() => done());
+    expect(res).toEqual(expectedResult);
+
+    expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(expectedResult);
   });
 
-  test('GetProjects removes duplicate projectIds from the call it makes to getProjectsFromIds', (done) => {
+  test('GetProjects removes duplicate projectIds from the call it makes to getProjectsFromIds', async () => {
     const projectIds1 = [
       {
         projectId: 'project-1',
@@ -215,17 +210,15 @@ describe('tests for the projects service', () => {
 
     projectService.getProjectsFromIds = jest.fn().mockImplementation((x) => x);
 
-    projectService.getProjects(user)
-      .then((res) => {
-        expect(res).toEqual(expectedResult);
+    const res = await projectService.getProjects(user);
 
-        expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(expectedResult);
-      })
-      .then(() => done());
+    expect(res).toEqual(expectedResult);
+
+    expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(expectedResult);
   });
 
 
-  it('getProjectsFromIds gets all the projects from ids', (done) => {
+  it('getProjectsFromIds gets all the projects from ids', async () => {
     const requestResult = {
       Responses: {
         'projects-test': [
@@ -259,25 +252,23 @@ describe('tests for the projects service', () => {
 
     const fnSpy = mockDynamoBatchGetItem(requestResult);
 
-    (new ProjectsService()).getProjectsFromIds(projectIds)
-      .then((res) => {
-        expect(res).toEqual(fnResult);
-        expect(fnSpy).toHaveBeenCalledWith({
-          RequestItems: {
-            'projects-test': {
-              Keys: [
-                { projectUuid: { S: 'project-1' } },
-                { projectUuid: { S: 'project-2' } },
-                { projectUuid: { S: 'project-3' } },
-              ],
-            },
-          },
-        });
-      })
-      .then(() => done());
+    const res = await (new ProjectsService()).getProjectsFromIds(projectIds);
+
+    expect(res).toEqual(fnResult);
+    expect(fnSpy).toHaveBeenCalledWith({
+      RequestItems: {
+        'projects-test': {
+          Keys: [
+            { projectUuid: { S: 'project-1' } },
+            { projectUuid: { S: 'project-2' } },
+            { projectUuid: { S: 'project-3' } },
+          ],
+        },
+      },
+    });
   });
 
-  it('getProjectsFromIds create non existing projects', (done) => {
+  it('getProjectsFromIds create non existing projects', async () => {
     const requestResult = {
       Responses: {
         'projects-test': [
@@ -314,25 +305,24 @@ describe('tests for the projects service', () => {
 
     const fnSpy = mockDynamoBatchGetItem(requestResult);
 
-    (new ProjectsService()).getProjectsFromIds(projectIds)
-      .then((res) => {
-        expect(res).toEqual(fnResult);
-        expect(fnSpy).toHaveBeenCalledWith({
-          RequestItems: {
-            'projects-test': {
-              Keys: [
-                { projectUuid: { S: 'project-1' } },
-                { projectUuid: { S: 'project-2' } },
-                { projectUuid: { S: 'project-3' } },
-              ],
-            },
-          },
-        });
-      })
-      .then(() => done());
+    const res = await (new ProjectsService()).getProjectsFromIds(projectIds);
+
+    expect(res).toEqual(fnResult);
+
+    expect(fnSpy).toHaveBeenCalledWith({
+      RequestItems: {
+        'projects-test': {
+          Keys: [
+            { projectUuid: { S: 'project-1' } },
+            { projectUuid: { S: 'project-2' } },
+            { projectUuid: { S: 'project-3' } },
+          ],
+        },
+      },
+    });
   });
 
-  test('GetExperiments gets projects', (done) => {
+  test('GetExperiments gets projects', async () => {
     const fnSpy = mockDynamoGetItem({ projects: mockProject });
 
     const experimentsService = new ExperimentsService();
@@ -341,21 +331,21 @@ describe('tests for the projects service', () => {
       projectUuid: mockProject.projectUuid,
     });
 
-    (new ProjectsService()).getExperiments()
-      .then((res) => {
-        expect(res).toEqual([{ experimentId: mockProject.experiments[0] }]);
-        expect(fnSpy).toHaveBeenCalledWith({
-          TableName: 'projects-test',
-          Key: marshalledKey,
-        });
-        expect(
-          experimentsService.getListOfExperiments,
-        ).toHaveBeenCalledWith(mockProject.experiments);
-      })
-      .then(() => done());
+    const res = await (new ProjectsService()).getExperiments();
+
+    expect(res).toEqual([{ experimentId: mockProject.experiments[0] }]);
+
+    expect(fnSpy).toHaveBeenCalledWith({
+      TableName: 'projects-test',
+      Key: marshalledKey,
+    });
+
+    expect(
+      experimentsService.getListOfExperiments,
+    ).toHaveBeenCalledWith(mockProject.experiments);
   });
 
-  it('UpdateProject updates project properly', (done) => {
+  it('UpdateProject updates project properly', async () => {
     const marshalledKey = AWS.DynamoDB.Converter.marshall({
       projectUuid: 'project-1',
     });
@@ -366,17 +356,16 @@ describe('tests for the projects service', () => {
 
     const getItemSpy = mockDynamoUpdateItem({ projects: mockProject });
 
-    (new ProjectsService()).updateProject('project-1', mockProject)
-      .then((res) => {
-        expect(res).toEqual(OK());
-        expect(getItemSpy).toHaveBeenCalledWith({
-          TableName: 'projects-test',
-          Key: marshalledKey,
-          UpdateExpression: 'SET projects = :project',
-          ExpressionAttributeValues: marshalledData,
-        });
-      })
-      .then(() => done());
+    const res = await (new ProjectsService()).updateProject('project-1', mockProject);
+
+    expect(res).toEqual(OK());
+
+    expect(getItemSpy).toHaveBeenCalledWith({
+      TableName: 'projects-test',
+      Key: marshalledKey,
+      UpdateExpression: 'SET projects = :project',
+      ExpressionAttributeValues: marshalledData,
+    });
   });
 
   test('DeleteProject deletes project and samples properly', async () => {
@@ -393,10 +382,12 @@ describe('tests for the projects service', () => {
     const res = await (new ProjectsService()).deleteProject('project-1');
 
     expect(res).toEqual(OK());
+
     expect(deleteSpy).toHaveBeenCalledWith({
       TableName: 'projects-test',
       Key: marshalledKey,
     });
+
     expect(getSpy).toHaveBeenCalledWith({
       TableName: 'projects-test',
       Key: marshalledKey,
