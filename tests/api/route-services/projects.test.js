@@ -379,7 +379,7 @@ describe('tests for the projects service', () => {
       .then(() => done());
   });
 
-  test('DeleteProject deletes project and samples properly', (done) => {
+  test('DeleteProject deletes project and samples properly', async () => {
     const experiments = ['project-1'];
     const samples = [];
 
@@ -390,44 +390,31 @@ describe('tests for the projects service', () => {
     const deleteSpy = mockDynamoDeleteItem();
     const getSpy = mockDynamoGetItem({ projects: { experiments, samples }, samples });
 
-    (new ProjectsService()).deleteProject('project-1')
-      .then((res) => {
-        expect(res).toEqual(OK());
-        expect(deleteSpy).toHaveBeenCalledWith({
-          TableName: 'projects-test',
-          Key: marshalledKey,
-        });
-        expect(getSpy).toHaveBeenCalledWith({
-          TableName: 'projects-test',
-          Key: marshalledKey,
-        });
-      })
-      .then(() => done());
+    const res = await (new ProjectsService()).deleteProject('project-1');
+
+    expect(res).toEqual(OK());
+    expect(deleteSpy).toHaveBeenCalledWith({
+      TableName: 'projects-test',
+      Key: marshalledKey,
+    });
+    expect(getSpy).toHaveBeenCalledWith({
+      TableName: 'projects-test',
+      Key: marshalledKey,
+    });
   });
 
   test('createProject creates entries in projects and samples correctly', (done) => {
     const updateItemSpy = mockDynamoUpdateItem({});
 
-    const expectedSamplesUpdate = {
-      TableName: 'samples-test',
-      Key: AWS.DynamoDB.Converter.marshall({ experimentId: 'experiment-1' }),
-      UpdateExpression: 'SET samples = :emptySamples, projectUuid = :projectUuid',
-      ExpressionAttributeValues: AWS.DynamoDB.Converter.marshall({ ':emptySamples': {}, ':projectUuid': 'project-1' }),
-    };
-
-    const expectedProjectsUpdate = {
-      TableName: 'projects-test',
-      Key: AWS.DynamoDB.Converter.marshall({ projectUuid: 'project-1' }),
-      UpdateExpression: 'SET projects = :project',
-      ExpressionAttributeValues: AWS.DynamoDB.Converter.marshall({ ':project': mockProject }),
-    };
-
     (new ProjectsService()).createProject('project-1', mockProject)
       .then((res) => {
         expect(res).toEqual(OK());
 
-        expect(updateItemSpy.mock.calls).toContainEqual([expectedSamplesUpdate]);
-        expect(updateItemSpy.mock.calls).toContainEqual([expectedProjectsUpdate]);
+        expect(updateItemSpy.mock.calls[0]).toMatchSnapshot();
+        expect(updateItemSpy.mock.calls[1]).toMatchSnapshot();
+
+        // Only these two calls to dynamo were made
+        expect(updateItemSpy.mock.calls).toHaveLength(2);
       })
       .then(() => done());
   });

@@ -167,36 +167,15 @@ describe('tests for the samples service', () => {
 
     const updateItemSpy = mockDynamoUpdateItem({});
 
-    const expectedProjectsUpdate = {
-      TableName: 'projects-test',
-      Key: { projectUuid: { S: 'projectUuid' } },
-      UpdateExpression: 'SET projects.samples = list_append(projects.samples, :newSampleId)',
-      ExpressionAttributeValues: AWS.DynamoDB.Converter.marshall({ ':newSampleId': ['sampleUuid'] }),
-    };
-
-    const expectedSamplesUpdate = {
-      TableName: 'samples-test',
-      Key: {
-        experimentId: {
-          S: 'experimentId',
-        },
-      },
-      UpdateExpression: 'SET samples.#newSampleId = :newSample, projectUuid = :projectUuid',
-      ExpressionAttributeNames: {
-        '#newSampleId': 'sampleUuid',
-      },
-      ExpressionAttributeValues: AWS.DynamoDB.Converter.marshall({
-        ':newSample': mockSampleToAdd,
-        ':projectUuid': 'projectUuid',
-      }),
-    };
-
     (new SamplesService()).addSample('projectUuid', 'experimentId', mockSampleToAdd)
       .then((res) => {
         expect(res).toEqual(OK());
 
-        expect(updateItemSpy.mock.calls).toContainEqual([expectedSamplesUpdate]);
-        expect(updateItemSpy.mock.calls).toContainEqual([expectedProjectsUpdate]);
+        expect(updateItemSpy.mock.calls[0]).toMatchSnapshot();
+        expect(updateItemSpy.mock.calls[1]).toMatchSnapshot();
+
+        // Only these two calls to dynamo were made
+        expect(updateItemSpy.mock.calls).toHaveLength(2);
       })
       .then(() => done());
   });
