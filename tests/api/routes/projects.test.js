@@ -71,8 +71,6 @@ describe('tests for projects route', () => {
       .send(payload)
       .expect(200)
       .end((err) => {
-        console.log('errDebug');
-        console.log(err);
         if (err) {
           return done(err);
         }
