@@ -46,18 +46,20 @@ module.exports = {
         .catch(next);
     },
   ],
-  'samples#uploadSampleFileUrl': (req, res, next) => {
-    const { params: { projectUuid, sampleUuid, fileName }, query } = req;
+  'samples#uploadSampleFileUrl': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => {
+      const { params: { projectUuid, sampleUuid, fileName }, query } = req;
 
-    try {
-      const { cellranger_version = undefined } = query;
+      try {
+        const { cellranger_version = undefined } = query;
 
-      const uploadUrl = samplesService
-        .getS3UploadUrl(projectUuid, sampleUuid, fileName, cellranger_version);
+        const uploadUrl = samplesService
+          .getS3UploadUrl(projectUuid, sampleUuid, fileName, cellranger_version);
 
-      res.json(uploadUrl);
-    } catch (e) {
-      next(e);
-    }
-  },
+        res.json(uploadUrl);
+      } catch (e) {
+        next(e);
+      }
+    }],
 };
