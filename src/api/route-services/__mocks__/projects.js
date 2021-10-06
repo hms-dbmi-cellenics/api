@@ -1,6 +1,16 @@
 const { NotFoundError, OK } = require('../../../utils/responses');
 
-const mockCreateProject = jest.fn(() => new Promise((resolve) => {
+const mockCreateProject = jest.fn((projectUuid, body) => new Promise((resolve, reject) => {
+  if (!projectUuid
+    || !body
+    || !body.uuid
+  ) {
+    const err = new Error('Invalid body');
+    err.status = 400;
+
+    reject(err);
+  }
+
   resolve(OK());
 }));
 
