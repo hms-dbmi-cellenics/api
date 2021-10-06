@@ -9,6 +9,9 @@ const CELL_SIZE_PROCESSING_CONFIG = {
   },
 };
 
+// work result uploaded to S3 by the pipeline, note that the results are associated
+// to a specific sampleUuid when sent back to the API so the config in S3
+// isn't nested under samples IDs.
 const S3_WORKER_RESULT = {
   config: {
     auto: true,

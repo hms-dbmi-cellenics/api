@@ -2,6 +2,12 @@ title: Pipeline response
 type: object
 description: This is the format the pipeline clients communicate the results of the steps they completed back to the API. The API is then responsible for transforming this data and returning it back to the user.
 properties:
+    experimentId:
+      type: string
+      description: The ID of the experiment GEM2s was called against.
+    taskName:
+      type: string
+      description: The name of the task that was excecuted
     input:
       type: object
       properties:

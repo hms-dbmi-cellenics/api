@@ -1,4 +1,4 @@
-const _ = require('lodash');
+// const _ = require('lodash');
 const AWSXRay = require('aws-xray-sdk');
 
 const validateRequest = require('../../utils/schema-validator');
@@ -56,24 +56,11 @@ class PipelineService {
   }
 
   static async updateProcessingConfig(taskName, experimentId, output, sampleUuid) {
-    console.log(output.config);
-    if (!output.config) {
-      return;
-    }
-
-    await validateRequest(output.config, 'ProcessingConfigBodies.v1.yaml');
+    await validateRequest(output, 'ProcessingConfigBodies.v1.yaml');
 
     const {
       processingConfig: previousConfig,
     } = await experimentService.getProcessingConfig(experimentId);
-
-
-    // TODO check that this can indeed be removed
-    // const { auto } = output.config;
-    // This is a temporary fix to save defaultFilterSettings calculated in the QC pipeline
-    // to patch for old experiments with hardcoded defaultFilterSettings.
-    // Remove this once we're done migrating to the new experiment schema with defaultFilterSettings
-    // if (auto) output.config.defaultFilterSettings = output.config.filterSettings;
 
     await experimentService.updateProcessingConfig(experimentId, [
       {
@@ -86,7 +73,7 @@ class PipelineService {
     ]);
   }
 
-  static async sendUpdateToSubscribed(experimentId, message, output, io) {
+  static async sendUpdateToSubscribed(experimentId, message, output, error, io) {
     const statusRes = await getPipelineStatus(experimentId, constants.QC_PROCESS_NAME);
     const statusResToSend = { pipeline: statusRes[constants.QC_PROCESS_NAME] };
 
@@ -94,18 +81,15 @@ class PipelineService {
     const response = {
       ...message,
       status: statusResToSend,
-      type: constants.GEM2S_PROCESS_NAME,
+      type: constants.QC_PROCESS_NAME,
     };
 
     if (output !== null) {
       response.output = output;
     }
 
-    const { error = null } = message.response || {};
-
-    if (error) {
+    if (!error) {
       logger.log(`Error in ${constants.QC_PROCESS_NAME} received`);
-
       AWSXRay.getSegment().addError(error);
     }
 
@@ -121,24 +105,20 @@ class PipelineService {
     await pipelineHook.run(message);
 
     const { taskName, experimentId } = message;
+    const { error = null } = message.response || {};
 
     let output = null;
-
-    // if there is output to be uploaded to s3 and TODO
-    if ('output' in message) {
+    // if there aren't errors proceed with the updates
+    if (!error && 'output' in message) {
       const { input: { sampleUuid } } = message;
 
       output = await this.getS3Output(message);
-
       await this.updatePlotData(taskName, experimentId, output);
-
       await this.updateProcessingConfig(taskName, experimentId, output, sampleUuid);
     }
 
-    // Ask Martin why this deep clone
-    const messageForClient = _.cloneDeep(message);
-
-    await this.sendUpdateToSubscribed(experimentId, messageForClient, output, io);
+    // we want to send the update to the subscribed both in successful and error case
+    await this.sendUpdateToSubscribed(experimentId, message, output, error, io);
   }
 }
 
