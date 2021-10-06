@@ -80,19 +80,13 @@ describe('tests for projects route', () => {
 
   test('Creating project with invalid shape project returns 400', async (done) => {
     const payload = {
-      name: 'Test project',
-      description: '',
-      createdDate: '',
-      lastModified: '',
-      uuid: 'project-1',
-      experiments: [],
-      lastAnalyzed: null,
+      invalid: 'invalid',
     };
 
     request(app)
       .post('/v1/projects/someId')
       .send(payload)
-      .expect(200)
+      .expect(400)
       .end((err) => {
         if (err) {
           return done(err);
