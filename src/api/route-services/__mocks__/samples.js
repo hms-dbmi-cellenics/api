@@ -70,11 +70,30 @@ const mockDeleteSamples = jest.fn((projectUuid, sampleUuid) => new Promise((reso
   resolve(OK());
 }));
 
+const mockAddSample = jest.fn(
+  (projectUuid, experimentId, body) => new Promise((resolve, reject) => {
+    if (!projectUuid
+      || !body
+      || !experimentId
+      || !body.projectUuid
+      || !body.uuid
+    ) {
+      const err = new Error('Invalid body');
+      err.status = 400;
+
+      reject(err);
+    }
+
+    resolve({ data: { message: 'sucess', code: 200 } });
+  }),
+);
+
 const mock = jest.fn().mockImplementation(() => ({
   getSamples: mockGetSamples,
   getSamplesByExperimentId: mockGetByExperimentId,
   updateSamples: mockUpdateSamples,
   deleteSamplesEntry: mockDeleteSamples,
+  addSample: mockAddSample,
 }));
 
 module.exports = mock;
