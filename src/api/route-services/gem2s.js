@@ -6,7 +6,7 @@ const getPipelineStatus = require('../general-services/pipeline-status');
 const { createGem2SPipeline } = require('../general-services/pipeline-manage');
 
 const {
-  GEM2S_PROCESS_NAME, RUNNING, SUCCEEDED, FAILED,
+  GEM2S_PROCESS_NAME, FAILED,
 } = require('../general-services/pipeline-manage/constants');
 
 const saveProcessingConfigFromGem2s = require('../../utils/hooks/saveProcessingConfigFromGem2s');
@@ -30,8 +30,8 @@ class Gem2sService {
   static async sendUpdateToSubscribed(experimentId, message, io) {
     const statusRes = await getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME);
     const { status } = statusRes.gem2s;
-    if ([FAILED, SUCCEEDED].includes(status)) {
-      sendNotificationEmailIfNecessary('gem2s', status, experimentId);
+    if ([FAILED].includes(status)) {
+      sendNotificationEmailIfNecessary(GEM2S_PROCESS_NAME, status, experimentId);
     }
     // Concatenate into a proper response.
     const response = {
@@ -93,53 +93,29 @@ class Gem2sService {
     return taskParams;
   }
 
-  static async gem2sCreate(experimentId, authJWT) {
-    // const { taskParams, hashParams } = await this.generateGem2sParams(experimentId, authJWT);
-    // const paramsHash = crypto
-    //   .createHash('sha1')
-    //   .update(JSON.stringify(hashParams))
-    //   .digest('hex');
 
-    // const shouldRun = await this.gem2sShouldRun(experimentId, paramsHash);
-
-    // if (!shouldRun) {
-    //   logger.log('Gem2s create call ignored');
-    //   return OK();
-    // }
-
-    // logger.log('Running new gem2s pipeline');
-
-    // const newHandle = await createGem2SPipeline(experimentId, taskParams);
-
-    // const experimentService = new ExperimentService();
-    // await experimentService.saveGem2sHandle(
-    //   experimentId,
-    //   { paramsHash, ...newHandle },
-    // );
+  static async gem2sCreate(experimentId, body, authJWT) {
     console.log('SENDING EMAIL NOW !!');
     sendNotificationEmailIfNecessary('gem2s', 'lmaooooo', experimentId);
+    logger.log('Creating GEM2S params...');
+    const { paramsHash } = body;
 
-    // return newHandle;
-    // static async gem2sCreate(experimentId, body, authJWT) {
-    //   logger.log('Creating GEM2S params...');
-    //   const { paramsHash } = body;
+    const taskParams = await Gem2sService.generateGem2sParams(experimentId, authJWT);
 
-    //   const taskParams = await Gem2sService.generateGem2sParams(experimentId, authJWT);
+    const newHandle = await createGem2SPipeline(experimentId, taskParams);
 
-    //   const newHandle = await createGem2SPipeline(experimentId, taskParams);
+    logger.log('GEM2S params created.');
 
-    //   logger.log('GEM2S params created.');
+    const experimentService = new ExperimentService();
 
-    //   const experimentService = new ExperimentService();
+    await experimentService.saveGem2sHandle(
+      experimentId,
+      { paramsHash, ...newHandle },
+    );
 
-    //   await experimentService.saveGem2sHandle(
-    //     experimentId,
-    //     { paramsHash, ...newHandle },
-    //   );
+    logger.log('GEM2S params saved.');
 
-    //   logger.log('GEM2S params saved.');
-
-  //   return newHandle;
+    return newHandle;
   }
 
   static async gem2sResponse(io, message) {

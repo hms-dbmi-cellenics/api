@@ -83,10 +83,10 @@ describe('gem2s', () => {
     await Gem2sService.gem2sCreate(experimentId, mockBody, mockAuthJwt);
 
     // Create new handles
-    // expect(createGem2SPipeline).toHaveBeenCalled();
+    expect(createGem2SPipeline).toHaveBeenCalled();
 
     // // Create new handles
-    // expect(mockSaveGem2sHandle).toHaveBeenCalled();
+    expect(mockSaveGem2sHandle).toHaveBeenCalled();
   });
 
   it('generateGem2sParams - Should generate GEM2S taskParams correctly', async () => {
