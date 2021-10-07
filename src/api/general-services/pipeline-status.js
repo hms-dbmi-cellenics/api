@@ -241,6 +241,11 @@ const getPipelineStatus = async (experimentId, processName) => {
     },
   };
 
+  if (processName === pipelineConstants.GEM2S_PROCESS_NAME) {
+    const { paramsHash } = pipelinesHandles[pipelineConstants.GEM2S_PROCESS_NAME];
+    response[pipelineConstants.GEM2S_PROCESS_NAME].paramsHash = paramsHash;
+  }
+
   return response;
 };
 
