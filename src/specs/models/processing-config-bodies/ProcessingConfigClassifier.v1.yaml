@@ -6,6 +6,8 @@ properties:
     type: boolean
   auto:
     type: boolean
+  prefiltered:
+    type: boolean
   filterSettings:
     type: object
     properties:
