@@ -6,7 +6,7 @@ const getPipelineStatus = require('../general-services/pipeline-status');
 const { createGem2SPipeline } = require('../general-services/pipeline-manage');
 
 const {
-  GEM2S_PROCESS_NAME, FAILED,
+  GEM2S_PROCESS_NAME, SUCCEEDED, FAILED,
 } = require('../general-services/pipeline-manage/constants');
 
 const saveProcessingConfigFromGem2s = require('../../utils/hooks/saveProcessingConfigFromGem2s');
@@ -18,7 +18,7 @@ const getLogger = require('../../utils/getLogger');
 const ExperimentService = require('./experiment');
 const ProjectsService = require('./projects');
 const SamplesService = require('./samples');
-const sendNotificationEmailIfNecessary = require('../../utils/sendNotificationEmailsendNotificationEmailIfNecessary');
+const sendNotificationEmailIfNecessary = require('../../utils/sendNotificationIfNecessary');
 
 const logger = getLogger();
 
@@ -30,7 +30,7 @@ class Gem2sService {
   static async sendUpdateToSubscribed(experimentId, message, io) {
     const statusRes = await getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME);
     const { status } = statusRes.gem2s;
-    if ([FAILED].includes(status)) {
+    if ([FAILED, SUCCEEDED].includes(status)) {
       sendNotificationEmailIfNecessary(GEM2S_PROCESS_NAME, status, experimentId);
     }
     // Concatenate into a proper response.
@@ -95,9 +95,7 @@ class Gem2sService {
 
 
   static async gem2sCreate(experimentId, body, authJWT) {
-    console.log('SENDING EMAIL NOW !!');
     sendNotificationEmailIfNecessary('gem2s', 'lmaooooo', experimentId);
-    logger.log('Creating GEM2S params...');
     const { paramsHash } = body;
 
     const taskParams = await Gem2sService.generateGem2sParams(experimentId, authJWT);

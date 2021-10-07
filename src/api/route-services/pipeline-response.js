@@ -8,7 +8,7 @@ const getPipelineStatus = require('../general-services/pipeline-status');
 
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
-const sendNotificationEmailIfNecessary = require('../../utils/sendNotificationEmailsendNotificationEmailIfNecessary');
+const sendNotificationEmailIfNecessary = require('../../utils/sendNotificationIfNecessary');
 
 const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
