@@ -70,7 +70,7 @@ const mockUpdateProcessingConfig = jest.fn(
           enabled: true,
         },
         readAlignment: { filterSettings: { method: 'absolute_threshold', methodSettings: { absolute_threshold: { bandwidth: -1, filterThreshold: 0.5 } } }, enabled: true },
-        classifier: { filterSettings: { minProbabiliy: 0.8, filterThreshold: -1 }, enabled: true },
+        classifier: { filterSettings: { FDR: 0.05 }, enabled: true, prefiltered: false },
         mitochondrialContent: { filterSettings: { method: 'absolute_threshold', methodSettings: { absolute_threshold: { maxFraction: 0.1, binStep: 0.05 } } }, enabled: true },
         configureEmbedding: { embeddingSettings: { method: 'tsne', methodSettings: { tsne: { perplexity: 30, learningRate: 200 }, umap: { minimumDistance: 0.1, distanceMetric: 'euclidean' } } }, clusteringSettings: { method: 'louvain', methodSettings: { louvain: { resolution: 0.5 } } } },
         numGenesVsNumUmis: {
