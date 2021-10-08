@@ -1,4 +1,3 @@
-// const _ = require('lodash');
 const AWSXRay = require('aws-xray-sdk');
 
 const validateRequest = require('../../utils/schema-validator');

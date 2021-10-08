@@ -80,7 +80,8 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "src/**/*.js"
+      "**/*.js",
+      "!**/node_modules/**"
     ],
     "modulePathIgnorePatterns": [
       "<rootDir>/src/.*/__mocks__"

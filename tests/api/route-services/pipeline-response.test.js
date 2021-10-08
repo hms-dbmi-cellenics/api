@@ -75,6 +75,32 @@ describe('Test Pipeline Response Service', () => {
       }));
   });
 
+  it('calls assign pod functions with another valid input message', async () => {
+    const message = {
+      taskName: 'assignPodToPipeline',
+      experimentId: '1eca3ef755db1d130955581dfc71ba8b',
+      input: {
+        experimentId: '1eca3ef755db1d130955581dfc71ba8b',
+        sandboxId: 'sns-states',
+        activityId: 'pipeline-staging-5eedaa10-75a8-402a-bf2a-b072b3eb8464',
+        processName: 'gem2s',
+      },
+    };
+
+    await PipelineService.qcResponse(mockIO, message);
+
+    expect(pipelineAssign.assignPodToPipeline).toHaveBeenCalledTimes(1);
+
+    expect(pipelineAssign.assignPodToPipeline).toHaveBeenCalledWith(message);
+    expect(mockSocket.emit).toHaveBeenCalledTimes(1);
+    expect(mockSocket.emit).toHaveBeenCalledWith(`ExperimentUpdates-${fake.EXPERIMENT_ID}`,
+      expect.objectContaining({
+        type: constants.QC_PROCESS_NAME,
+        experimentId: fake.EXPERIMENT_ID,
+        taskName: constants.ASSIGN_POD_TO_PIPELINE,
+      }));
+  });
+
   it('updates processing config when output contains a valid config', async () => {
     const s3output = {
       Body: JSON.stringify(fake.S3_WORKER_RESULT),

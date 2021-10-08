@@ -1,11 +1,8 @@
 const k8s = jest.genMockFromModule('@kubernetes/client-node');
-const getLogger = require('../../src/utils/getLogger');
-
-const logger = getLogger();
 
 const mockApi = {
   createNamespacedJob: jest.fn(() => {
-    logger.debug('creating a fake namespace obj');
+    console.debug('creating a fake namespace obj');
     return new Promise((resolve) => {
       resolve({
         status: 200,
@@ -13,7 +10,7 @@ const mockApi = {
     });
   }),
   createNamespacedPersistentVolumeClaim: jest.fn(() => {
-    logger.debug('creating a fake namespace obj');
+    console.debug('creating a fake namespace obj');
     return new Promise((resolve) => {
       resolve({
         status: 200,
@@ -26,7 +23,7 @@ const mockApi = {
 };
 
 k8s.KubeConfig.mockImplementation(() => {
-  logger.debug('mocking the constructor');
+  console.debug('mocking the constructor');
   return {
     loadFromDefault: jest.fn(),
     makeApiClient: jest.fn(() => mockApi),
