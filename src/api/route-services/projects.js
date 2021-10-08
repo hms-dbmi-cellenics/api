@@ -201,7 +201,7 @@ class ProjectsService {
 
       if (!Object.prototype.hasOwnProperty.call(result, 'projects')) return [];
 
-      return experimentService.getListOfExperiments(result.projects.experiments);
+      return await experimentService.getListOfExperiments(result.projects.experiments);
     } catch (e) {
       if (e.statusCode === 400) throw new NotFoundError('Project not found');
       throw e;

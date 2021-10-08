@@ -23,5 +23,13 @@ properties:
     type: array
     items:
       type: string
+
 required:
+  - name
+  - description
+  - createdDate
+  - lastModified
   - uuid
+  - experiments
+  - lastAnalyzed
+  - samples
