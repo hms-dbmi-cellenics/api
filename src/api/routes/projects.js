@@ -8,6 +8,13 @@ const {
 const projectsService = new ProjectsService();
 
 module.exports = {
+  'projects#create': [
+    expressAuthenticationOnlyMiddleware,
+    (req, res, next) => {
+      projectsService.createProject(req.params.projectUuid, req.body)
+        .then((data) => res.json(data))
+        .catch(next);
+    }],
   'projects#update': [
     expressAuthenticationOnlyMiddleware,
     (req, res, next) => {

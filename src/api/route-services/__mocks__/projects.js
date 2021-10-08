@@ -1,5 +1,19 @@
 const { NotFoundError, OK } = require('../../../utils/responses');
 
+const mockCreateProject = jest.fn((projectUuid, body) => new Promise((resolve, reject) => {
+  if (!projectUuid
+    || !body
+    || !body.uuid
+  ) {
+    const err = new Error('Invalid body');
+    err.status = 400;
+
+    reject(err);
+  }
+
+  resolve(OK());
+}));
+
 const mockGetProject = jest.fn((projectUuid) => new Promise((resolve) => {
   if (projectUuid === 'unknown-project') {
     throw new NotFoundError('Project not found');
@@ -56,6 +70,7 @@ const mockDeleteProject = jest.fn((projectUuid) => new Promise((resolve) => {
 }));
 
 const mock = jest.fn().mockImplementation(() => ({
+  createProject: mockCreateProject,
   getExperiments: mockGetExperiments,
   getProject: mockGetProject,
   getProjects: mockGetProjects,
