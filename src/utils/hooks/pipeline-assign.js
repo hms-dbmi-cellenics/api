@@ -73,11 +73,13 @@ const assignPodToPipeline = async (message) => {
   // // try to choose a free pod and assign it to the current pipeline
   try {
     const [assignedPods, unassignedPods] = getPods(namespace, activityId);
+    console.log('assignedPods');
+    console.log(assignedPods);
     removeRunningPods(namespace, assignedPods);
     patchPod(namespace, unassignedPods, experimentId, activityId, processName);
   } catch (e) {
-    logger.log(`Could not assign pod to ${processName} pipeline for experiment ${experimentId} in
-    sandbox ${sandboxId} for activity ${activityId}.`);
+    logger.log(`Error assigning pod to ${processName} pipeline for experiment ${experimentId} in
+    sandbox ${sandboxId} for activity ${activityId}: `, e);
   }
 };
 
