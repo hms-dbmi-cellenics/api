@@ -39,6 +39,8 @@ module.exports = {
     expressAuthorizationMiddleware,
     (req, res, next) => {
       projectsService.getExperiments(req.params.projectUuid)
-        .then((response) => res.json(response)).catch(next);
+        .then(
+          (response) => { res.send(JSON.stringify(response)); },
+        ).catch(next);
     }],
 };

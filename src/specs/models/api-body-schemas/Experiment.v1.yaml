@@ -4,48 +4,39 @@ type: object
 properties:
   experimentId:
     type: string
+  experimentName:
+    type: string
+  projectId:
+    type: string
+  description:
+    type: string
+  createdDate:
+    type: string
+  lastViewed:
+    type: string
+    nullable: true
+  meta:
+    type: object
+  processingConfig:
+    type: object
+  apiVersion:
+    type: string
+  sampleIds:
+    type: array
+    items:
+      type: string
+  rbac_can_write:
+    type: array
+    items: 
+      type: string
 
-
-
-# title: Experiment
-# description: 'An experiment object as stored in dynamodb'
-# type: object
-# properties:
-#   experimentId:
-#     type: string
-#   experimentName:
-#     type: string
-#   projectId:
-#     type: string
-#   description:
-#     type: string
-#   createdDate:
-#     type: string
-#   lastViewed:
-#     type: string
-#     nullable: true
-#   meta:
-#     type: object
-#   processingConfig:
-#     type: object
-#   #   items:
-#   #     type: string
-#   apiVersion:
-#     type: string
-#   sampleIds:
-#     type: array
-#     items:
-#       type: string
-
-# required:
-#   # - experimentId
-#   # - experimentName
-#   # - projectId
-#   - description
-#   - createdDate
-#   - lastViewed
-#   # - meta
-#   - processingConfig
-#   # - sampleIds
-
-# additionalProperties: false
+required:
+  - experimentId
+  - experimentName
+  - projectId
+  - description
+  - createdDate
+  - lastViewed
+  - meta
+  - processingConfig
+  - sampleIds
