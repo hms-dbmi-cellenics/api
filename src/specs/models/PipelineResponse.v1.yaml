@@ -20,8 +20,9 @@ properties:
         taskName:
           type: string
           description: The name of the task that was executed.
-        config:
-          $ref: ./ProcessingConfigBodies.v1.yaml
+        # TODO the processing config bodies does not validate anything, needs refactoring
+        # config:
+        #   $ref: ./ProcessingConfigBodies.v1.yaml
     output:
       type: object
       required:

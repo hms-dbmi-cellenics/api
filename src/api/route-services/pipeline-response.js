@@ -17,7 +17,6 @@ const experimentService = new ExperimentService();
 
 const logger = getLogger();
 
-
 const pipelineHook = new PipelineHook();
 
 pipelineHook.register(constants.ASSIGN_POD_TO_PIPELINE, [assignPodToPipeline]);
@@ -56,7 +55,10 @@ class PipelineService {
   }
 
   static async updateProcessingConfig(taskName, experimentId, output, sampleUuid) {
-    await validateRequest(output, 'ProcessingConfigBodies.v1.yaml');
+    // TODO the processing config validation was not being enforced because the 'anyOf' requirement
+    // was not being correctly applied. This needs to be refactored together with the
+    // pipeline and ideally while unifying the qc & gem2s responses.
+    // await validateRequest(output, 'ProcessingConfigBodies.v1.yaml');
 
     const {
       processingConfig: previousConfig,
@@ -100,17 +102,19 @@ class PipelineService {
   static async qcResponse(io, message) {
     AWSXRay.getSegment().addMetadata('message', message);
 
+    console.log('message');
+    console.log(message);
     await validateRequest(message, 'PipelineResponse.v1.yaml');
 
     await pipelineHook.run(message);
 
-    const { taskName, experimentId } = message;
+    const { experimentId } = message;
     const { error = null } = message.response || {};
 
     let output = null;
     // if there aren't errors proceed with the updates
     if (!error && 'output' in message) {
-      const { input: { sampleUuid } } = message;
+      const { input: { sampleUuid, taskName } } = message;
 
       output = await this.getS3Output(message);
       await this.updatePlotData(taskName, experimentId, output);

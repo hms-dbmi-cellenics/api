@@ -10,21 +10,6 @@ jest.mock('sns-validator');
 jest.mock('aws-xray-sdk');
 jest.mock('../../../src/utils/getLogger');
 jest.mock('../../../src/cache');
-jest.mock('../../../src/api/route-services/pipeline-response');
-jest.mock('../../../src/api/general-services/pipeline-manage');
-jest.mock('../../../src/api/route-services/experiment');
-
-const mockLogger = {
-  log: jest.fn(() => { }),
-  error: jest.fn(() => { }),
-  debug: jest.fn(() => { }),
-  trace: jest.fn(() => { }),
-  warn: jest.fn(() => { }),
-};
-
-getLogger.mockReturnValue(
-  mockLogger,
-);
 
 const basicMsg = {
   MessageId: 'da8827d4-ffc2-5efb-82c1-70f929b2081d',
@@ -40,6 +25,18 @@ const basicMsg = {
     RetryAttempts: 0,
   },
 };
+
+const mockLogger = {
+  log: jest.fn(() => { }),
+  error: jest.fn(() => { }),
+  debug: jest.fn(() => { }),
+  trace: jest.fn(() => { }),
+  warn: jest.fn(() => { }),
+};
+
+getLogger.mockReturnValue(
+  mockLogger,
+);
 
 describe('PipelineResults route', () => {
   let app = null;
@@ -61,24 +58,17 @@ describe('PipelineResults route', () => {
     validMsg.Type = 'Notification';
     validMsg = JSON.stringify(validMsg);
 
-    // const mockHandleResponse = jest.fn(() => {});
-
-    // jest.mock('../../../src/api/route-services/pipeline-response', () => (() => ({
-    //   qcResponse: mockHandleResponse,
-    // })));
-
-    // jest.mock('../../../src/api/route-services/pipeline-response', () => mockHandleResponse);
+    const mockHandleResponse = jest.fn(() => { });
+    jest.mock('../../../src/api/route-services/pipeline-response', () => ({ qcResponse: mockHandleResponse }));
 
     await request(app)
       .post('/v1/pipelineResults')
       .send(validMsg)
       .set('Content-type', 'text/plain')
       .expect(200);
-    // .expect('ok');
 
-    console.log(mockLogger.error.mock);
     expect(mockLogger.error).toHaveBeenCalledTimes(0);
-    // expect(mockHandleResponse).toHaveBeenCalledTimes(1);
+    expect(mockHandleResponse).toHaveBeenCalledTimes(1);
   });
 
   it('Validating the response throws an error', async () => {
@@ -92,7 +82,7 @@ describe('PipelineResults route', () => {
       .expect(200)
       .expect('nok');
 
-    expect(mockLogger.error).toHaveBeenCalledTimes(1);
+    expect(mockLogger.error).toHaveBeenCalled();
     expect(https.get).toHaveBeenCalledTimes(0);
   });
 

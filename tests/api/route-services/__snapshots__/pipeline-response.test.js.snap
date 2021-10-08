@@ -1,106 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Test Pipeline Response Service fails when output config is not valid 1`] = `
-[MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
-        "ExpressionAttributeValues": Object {
-          ":updatedObject": Object {
-            "M": Object {},
-          },
-        },
-        "Key": Object {
-          "experimentId": Object {
-            "S": "experimentid11111111111111111111",
-          },
-        },
-        "ReturnValues": "UPDATED_NEW",
-        "TableName": "experiments-test",
-        "UpdateExpression": "SET processingConfig = if_not_exists(processingConfig, :updatedObject)",
-      },
-    ],
-    Array [
-      Object {
-        "ExpressionAttributeNames": Object {
-          "#key1": undefined,
-        },
-        "ExpressionAttributeValues": Object {
-          ":val1": Object {
-            "M": Object {
-              "aaaaaaaa-bbbb-3333-4444-999999999999": Object {
-                "M": Object {
-                  "auto": Object {
-                    "BOOL": true,
-                  },
-                },
-              },
-            },
-          },
-        },
-        "Key": Object {
-          "experimentId": Object {
-            "S": "experimentid11111111111111111111",
-          },
-        },
-        "ReturnValues": "UPDATED_NEW",
-        "TableName": "experiments-test",
-        "UpdateExpression": "SET processingConfig.#key1 = :val1",
-      },
-    ],
-  ],
-  "results": Array [
-    Object {
-      "type": "return",
-      "value": Object {
-        "ExpressionAttributeValues": Object {
-          ":updatedObject": Object {
-            "M": Object {},
-          },
-        },
-        "Key": Object {
-          "experimentId": Object {
-            "S": "experimentid11111111111111111111",
-          },
-        },
-        "ReturnValues": "UPDATED_NEW",
-        "TableName": "experiments-test",
-        "UpdateExpression": "SET processingConfig = if_not_exists(processingConfig, :updatedObject)",
-      },
-    },
-    Object {
-      "type": "return",
-      "value": Object {
-        "ExpressionAttributeNames": Object {
-          "#key1": undefined,
-        },
-        "ExpressionAttributeValues": Object {
-          ":val1": Object {
-            "M": Object {
-              "aaaaaaaa-bbbb-3333-4444-999999999999": Object {
-                "M": Object {
-                  "auto": Object {
-                    "BOOL": true,
-                  },
-                },
-              },
-            },
-          },
-        },
-        "Key": Object {
-          "experimentId": Object {
-            "S": "experimentid11111111111111111111",
-          },
-        },
-        "ReturnValues": "UPDATED_NEW",
-        "TableName": "experiments-test",
-        "UpdateExpression": "SET processingConfig.#key1 = :val1",
-      },
-    },
-  ],
-}
-`;
-
 exports[`Test Pipeline Response Service updates processing config when output contains a valid config 1`] = `
 [MockFunction] {
   "calls": Array [
@@ -147,7 +46,7 @@ exports[`Test Pipeline Response Service updates processing config when output co
     Array [
       Object {
         "ExpressionAttributeNames": Object {
-          "#key1": undefined,
+          "#key1": "classifier",
         },
         "ExpressionAttributeValues": Object {
           ":val1": Object {
@@ -249,7 +148,7 @@ exports[`Test Pipeline Response Service updates processing config when output co
       "type": "return",
       "value": Object {
         "ExpressionAttributeNames": Object {
-          "#key1": undefined,
+          "#key1": "classifier",
         },
         "ExpressionAttributeValues": Object {
           ":val1": Object {
