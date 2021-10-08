@@ -13,9 +13,13 @@ const getPods = async (namespace, activityId) => {
   const [assignedPods, unassignedPods] = await Promise.all(
     [
       k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', `activityId=${activityId},type=pipeline`),
-      k8sApi.listNamespacedPod(namespace, null, null, null, null, '!activityId,type=pipeline'),
+      k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', '!activityId,type=pipeline'),
     ],
   );
+  console.log('assignedPods');
+  console.log(assignedPods);
+  console.log('unassignedPods');
+  console.log(unassignedPods);
 
   return [assignedPods, unassignedPods];
 };
