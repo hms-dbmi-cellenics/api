@@ -25,11 +25,11 @@ const getPods = async (namespace, activityId) => {
 };
 
 const removeRunningPods = async (namespace, assignedPods) => {
-  assignedPods.body.items.forEach((pod) => {
+  await Promise.all(assignedPods.body.items.map((pod) => {
     const { name } = pod.metadata;
     logger.log(`Found pipeline running pod ${name}, removing...`);
-    k8sApi.removeNamespacedPod(name, namespace);
-  });
+    return k8sApi.removeNamespacedPod(name, namespace);
+  }));
 };
 
 const patchPod = async (namespace,
@@ -76,11 +76,11 @@ const assignPodToPipeline = async (message) => {
 
   // // try to choose a free pod and assign it to the current pipeline
   try {
-    const [assignedPods, unassignedPods] = getPods(namespace, activityId);
+    const [assignedPods, unassignedPods] = await getPods(namespace, activityId);
     console.log('assignedPods');
     console.log(assignedPods);
-    removeRunningPods(namespace, assignedPods);
-    patchPod(namespace, unassignedPods, experimentId, activityId, processName);
+    await removeRunningPods(namespace, assignedPods);
+    await patchPod(namespace, unassignedPods, experimentId, activityId, processName);
   } catch (e) {
     logger.log(`Error assigning pod to ${processName} pipeline for experiment ${experimentId} in
     sandbox ${sandboxId} for activity ${activityId}: `, e);
