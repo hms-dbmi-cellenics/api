@@ -16,10 +16,6 @@ const getPods = async (namespace, activityId) => {
       k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', '!activityId,type=pipeline'),
     ],
   );
-  console.log('assignedPods');
-  console.log(assignedPods);
-  console.log('unassignedPods');
-  console.log(unassignedPods);
 
   return [assignedPods, unassignedPods];
 };
@@ -74,7 +70,7 @@ const assignPodToPipeline = async (message) => {
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
   const namespace = `pipeline-${sandboxId}`;
 
-  // // try to choose a free pod and assign it to the current pipeline
+  // try to choose a free pod and assign it to the current pipeline
   try {
     const [assignedPods, unassignedPods] = await getPods(namespace, activityId);
     console.log('assignedPods');

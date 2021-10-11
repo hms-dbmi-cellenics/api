@@ -50,7 +50,7 @@ const getSkeletonStepNames = (skeleton) => {
   return steps;
 };
 
-// getSkeletonStepNames returns the names of the pipeline steps
+// getPipelineStepNames returns the names of the pipeline steps
 // if there are map states with nested substeps it returns those sub-steps too
 const getPipelineStepNames = () => {
   const gem2sStepNames = getSkeletonStepNames(gem2SPipelineSteps);

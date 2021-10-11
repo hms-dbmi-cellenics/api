@@ -22,8 +22,7 @@ const {
   convertToDynamoUpdateParams,
 } = require('../../utils/dynamoDb');
 
-// const logger = getLogger('[ExperimentService] - ');
-const logger = getLogger();
+const logger = getLogger('[ExperimentService] - ');
 
 class ExperimentService {
   constructor() {
