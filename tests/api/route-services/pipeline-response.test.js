@@ -39,8 +39,7 @@ describe('Test Pipeline Response Service', () => {
   let mockIO;
 
   beforeEach(() => {
-    const ENDPOINT = 'localhost:5000';
-    mockSocket = io(ENDPOINT);
+    mockSocket = io(fake.SOCKET_ENDPOINT);
     mockIO = { sockets: mockSocket };
   });
 

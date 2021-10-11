@@ -55,6 +55,7 @@ const S3_WORKER_RESULT = {
 
 // Try to use realistic values but DO NOT USE real ones.
 module.exports = Object.freeze({
+  SOCKET_ENDPOINT: 'localhost:5000',
   EXPERIMENT_ID: 'experimentid11111111111111111111',
   S3_BUCKET: 'worker-results-test',
   S3_KEY: '11111122222233333344444455555555',
