@@ -7,7 +7,7 @@ properties:
       description: The ID of the experiment GEM2s was called against.
     taskName:
       type: string
-      description: The name of the task that was excecuted
+      description: The name of the task that was executed
     input:
       type: object
       properties:

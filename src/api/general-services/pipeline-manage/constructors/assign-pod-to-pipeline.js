@@ -169,26 +169,6 @@ const assignPodToPipeline = (context, step) => {
                 DataType: 'String',
                 StringValue: 'PipelineResponse',
               },
-              // action: {
-              //   DataType: 'String',
-              //   StringValue: constants.ASSIGN_POD_TO_PIPELINE,
-              // },
-              // sandboxId: {
-              //   DataType: 'String',
-              //   StringValue: sandboxId,
-              // },
-              // experimentId: {
-              //   DataType: 'String',
-              //   StringValue: experimentId,
-              // },
-              // activityId: {
-              //   DataType: 'String',
-              //   StringValue: activityId,
-              // },
-              // processName: {
-              //   DataType: 'String',
-              //   StringValue: processName,
-              // },
             },
           },
         },

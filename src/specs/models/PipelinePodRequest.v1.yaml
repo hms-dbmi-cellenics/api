@@ -7,24 +7,24 @@ properties:
         description: The experiment ID.
     taskName:
         type: string
-        description: The taskNamez used to request a pipeline pod assignation.
+        description: The taskName used to request a pipeline pod assignation.
     input:
       type: object
       properties:
         sandboxId:
           type: string
-          description: The sandbox ID of the environment..
+          description: The sandbox ID of the environment.
         activityId:
           type: string
           description: The activity ID associated to the pipeline state machine.
         processName:
           type: string
           description: The process name of the pipeline (qc / gem2s).
-        required:
-          - sandboxId
-          - actvitiyId
-          - processName
-    required:
-      - experimentId
-      - taskName
-      - input
+      required:
+        - sandboxId
+        - activityId
+        - processName
+required:
+  - experimentId
+  - taskName
+  - input

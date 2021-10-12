@@ -1,6 +1,7 @@
 const k8s = require('@kubernetes/client-node');
 const getLogger = require('../getLogger');
 const validateRequest = require('../schema-validator');
+const constants = require('../../api/general-services/pipeline-manage/constants');
 
 const logger = getLogger();
 
@@ -64,6 +65,13 @@ const patchPod = async (namespace,
 };
 
 const assignPodToPipeline = async (message) => {
+  // this checks should be refactored and cleaned once the gem2s / qc spec refactors are done
+  // and we can be sure that taskName is always present at the top-level of all the message
+  // instead of inside input
+  if (message && message.taskName !== constants.ASSIGN_POD_TO_PIPELINE) {
+    return;
+  }
+
   // validate that the message contains input
   await validateRequest(message, 'PipelinePodRequest.v1.yaml');
 
@@ -75,8 +83,6 @@ const assignPodToPipeline = async (message) => {
   // try to choose a free pod and assign it to the current pipeline
   try {
     const [assignedPods, unassignedPods] = await getPods(namespace, activityId);
-    console.log('assignedPods');
-    console.log(assignedPods);
     await removeRunningPods(namespace, assignedPods);
     await patchPod(namespace, unassignedPods, experimentId, activityId, processName);
   } catch (e) {
