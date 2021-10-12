@@ -67,9 +67,20 @@ describe('tests for the pipeline-assign service', () => {
     expect(removeNamespacedPod).toHaveBeenCalledTimes(2);
   });
 
-  afterEach(() => {
-    // AWSMock.restore('SQS');
-    // jest.resetModules();
-    // jest.restoreAllMocks();
+
+  it('ignores message because it is not a pod request', async () => {
+    const message = {};
+
+    await pipelineAssign.assignPodToPipeline(message);
+
+    expect(listNamespacedPod).toHaveBeenCalledTimes(0);
+    expect(removeNamespacedPod).toHaveBeenCalledTimes(0);
+    expect(patchNamespacedPod).toHaveBeenCalledTimes(0);
+  });
+
+  it('throws exception on invalid message', async () => {
+    const message = { taskName: constants.ASSIGN_POD_TO_PIPELINE };
+
+    await expect(pipelineAssign.assignPodToPipeline(message)).rejects.toThrow();
   });
 });
