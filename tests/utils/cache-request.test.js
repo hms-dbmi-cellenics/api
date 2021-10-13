@@ -1,4 +1,3 @@
-const MockSocket = require('socket.io-mock');
 const { cacheSetResponse, cacheGetRequest } = require('../../src/utils/cache-request');
 const { CacheMissError } = require('../../src/cache/cache-utils');
 
@@ -28,7 +27,6 @@ describe('cache(Get/Set)Request', () => {
   };
 
   let cache;
-  let socket;
 
   beforeAll(() => {
     CacheSingleton.createMock({
@@ -38,17 +36,13 @@ describe('cache(Get/Set)Request', () => {
     cache = CacheSingleton.get();
   });
 
-  beforeEach(() => {
-    socket = new MockSocket();
-  });
-
   it('cacheGetRequest, cache miss', async () => {
     expect.assertions(3);
 
     let result;
 
     try {
-      result = await cacheGetRequest(request, () => null, socket);
+      result = await cacheGetRequest(request);
     } catch (e) {
       expect(e).toBeInstanceOf(CacheMissError);
     }
@@ -59,7 +53,7 @@ describe('cache(Get/Set)Request', () => {
 
   it('cacheGetRequest, cache hit', async () => {
     const newRequest = { ...request, experimentId: 'newExperimentId' };
-    const result = await cacheGetRequest(newRequest, () => null, socket);
+    const result = await cacheGetRequest(newRequest);
 
     expect(result).toEqual({ result: 'valueInL1' });
     expect(cache.get).toHaveBeenCalledWith('d7c612d3d09f3977130241c744b5baba'); // pragma: allowlist secret

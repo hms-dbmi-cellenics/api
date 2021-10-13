@@ -59,7 +59,7 @@ describe('PipelineResults route', () => {
     validMsg = JSON.stringify(validMsg);
 
     const mockHandleResponse = jest.fn(() => { });
-    jest.mock('../../../src/api/route-services/pipeline-response', () => mockHandleResponse);
+    jest.mock('../../../src/api/route-services/pipeline-response', () => ({ qcResponse: mockHandleResponse }));
 
     await request(app)
       .post('/v1/pipelineResults')
