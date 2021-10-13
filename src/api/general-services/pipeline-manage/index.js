@@ -236,20 +236,16 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
 
 
   const qcPipelineSkeleton = getQcPipelineSkeleton(config.clusterEnv);
-
   logger.log('Skeleton constructed, now building state machine definition...');
+
   const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
-
   logger.log('State machine definition built, now creating activity if not already present...');
+
   const activityArn = await createActivity(context); // the context contains the activityArn
-
   logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
+
   const stateMachineArn = await createNewStateMachine(context, stateMachine, QC_PROCESS_NAME);
-
   logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
-
-  logger.log('State machine definition');
-  console.log(stateMachine);
 
   const execInput = {
     samples: sampleIds.map((sampleUuid, index) => ({ sampleUuid, index })),
@@ -280,21 +276,16 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
   };
 
   const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv);
-
   logger.log('Skeleton constructed, now building state machine definition...');
+
   const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
-
   logger.log('State machine definition built, now creating activity if not already present...');
+
   const activityArn = await createActivity(context);
-
   logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
+
   const stateMachineArn = await createNewStateMachine(context, stateMachine, GEM2S_PROCESS_NAME);
-
   logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
-
-  logger.log('State machine definition');
-  console.log(stateMachine);
-
 
   const executionArn = await executeStateMachine(stateMachineArn);
   logger.log(`Execution with ARN ${executionArn} created.`);

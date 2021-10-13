@@ -119,8 +119,6 @@ class PipelineService {
   static async qcResponse(io, message) {
     AWSXRay.getSegment().addMetadata('message', message);
 
-    console.log('message');
-    console.log(message);
     await validateRequest(message, 'PipelineResponse.v1.yaml');
 
     await pipelineHook.run(message);
