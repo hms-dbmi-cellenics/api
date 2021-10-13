@@ -1,0 +1,33 @@
+title: Experiment attributes update
+description: A diff of new attributes to set in an experiment entry
+type: object
+properties:
+  experimentId:
+    type: string
+  experimentName:
+    type: string
+  projectId:
+    type: string
+  description:
+    type: string
+  createdDate:
+    type: string
+  lastViewed:
+    type: string
+    nullable: true
+  meta:
+    type: object
+  processingConfig:
+    $ref: '../ProcessingConfig.v1.yaml'
+  apiVersion:
+    type: string
+  sampleIds:
+    type: array
+    items:
+      type: string
+  rbac_can_write:
+    type: array
+    items: 
+      type: string
+
+additionalProperties: false
