@@ -109,10 +109,11 @@ const assignPodToPipeline = (context, step) => {
     ItemsPath: '$.retries',
     MaxConcurrency: 1,
     // retry waits up to 226 seconds, fargate takes from 1 to 3 minutes to spawn a new pod
+    // total wait time = IntervalSeconds[(1 - BackoffRate^(MaxAttempts))/(1-BackoffRate)]
     Retry: [{
       ErrorEquals: ['NoPodsAvailable'],
       IntervalSeconds: 2,
-      MaxAttempts: 11,
+      MaxAttempts: 10,
       BackoffRate: 1.5,
     }],
     Iterator: {
@@ -189,10 +190,11 @@ const waitForPod = (context, step) => {
     ItemsPath: '$.retries',
     MaxConcurrency: 1,
     // retry waits up to 74 seconds for the pod to be assigned
+    // total wait time = IntervalSeconds[(1 - BackoffRate^(MaxAttempts))/(1-BackoffRate)]
     Retry: [{
       ErrorEquals: ['NoPodAssigned'],
       IntervalSeconds: 1,
-      MaxAttempts: 10,
+      MaxAttempts: 9,
       BackoffRate: 1.5,
     }],
     Catch: [{

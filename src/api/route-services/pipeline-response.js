@@ -1,5 +1,4 @@
 const AWSXRay = require('aws-xray-sdk');
-
 const validateRequest = require('../../utils/schema-validator');
 const AWS = require('../../utils/requireAWS');
 const getLogger = require('../../utils/getLogger');
@@ -63,15 +62,34 @@ class PipelineService {
       processingConfig: previousConfig,
     } = await experimentService.getProcessingConfig(experimentId);
 
-    await experimentService.updateProcessingConfig(experimentId, [
-      {
-        name: taskName,
-        body: {
-          ...previousConfig[taskName],
-          [sampleUuid]: { ...output.config },
+    if (sampleUuid !== '') {
+      const { auto } = output.config;
+
+      // This is a temporary fix to save defaultFilterSettings calculated in the QC pipeline
+      // to patch for old experiments with hardcoded defaultFilterSettings.
+      // Remove this once we're done migrating to the new experiment schema with
+      // defaultFilterSettings
+      const sampleOutput = output;
+
+      if (auto) sampleOutput.config.defaultFilterSettings = output.config.filterSettings;
+
+      await experimentService.updateProcessingConfig(experimentId, [
+        {
+          name: taskName,
+          body: {
+            ...previousConfig[taskName],
+            [sampleUuid]: { ...sampleOutput.config },
+          },
         },
-      },
-    ]);
+      ]);
+    } else {
+      await experimentService.updateProcessingConfig(experimentId, [
+        {
+          name: taskName,
+          body: output.config,
+        },
+      ]);
+    }
   }
 
   static async sendUpdateToSubscribed(experimentId, message, output, error, io) {
@@ -108,7 +126,8 @@ class PipelineService {
     await pipelineHook.run(message);
 
     const { experimentId } = message;
-    const { error = null } = message.response || {};
+    let error = false;
+    if (message.response && message.response.error) error = message.response.error;
 
     let output = null;
     // if there aren't errors proceed with the updates

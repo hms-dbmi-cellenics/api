@@ -43,8 +43,5 @@ properties:
           oneOf:
             - type: string
             - type: boolean
-        required:
-          - error
-    required:
-      - output
-      - response
+      required:
+        - error
