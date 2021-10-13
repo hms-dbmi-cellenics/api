@@ -223,7 +223,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "NoPodsAvailable"
           ],
           "IntervalSeconds": 2,
-          "MaxAttempts": 11,
+          "MaxAttempts": 10,
           "BackoffRate": 1.5
         }
       ],
@@ -299,7 +299,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "NoPodAssigned"
           ],
           "IntervalSeconds": 1,
-          "MaxAttempts": 10,
+          "MaxAttempts": 9,
           "BackoffRate": 1.5
         }
       ],
@@ -540,7 +540,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "NoPodsAvailable"
           ],
           "IntervalSeconds": 2,
-          "MaxAttempts": 11,
+          "MaxAttempts": 10,
           "BackoffRate": 1.5
         }
       ],
@@ -616,7 +616,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "NoPodAssigned"
           ],
           "IntervalSeconds": 1,
-          "MaxAttempts": 10,
+          "MaxAttempts": 9,
           "BackoffRate": 1.5
         }
       ],
@@ -1058,7 +1058,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "NoPodsAvailable"
           ],
           "IntervalSeconds": 2,
-          "MaxAttempts": 11,
+          "MaxAttempts": 10,
           "BackoffRate": 1.5
         }
       ],
@@ -1134,7 +1134,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "NoPodAssigned"
           ],
           "IntervalSeconds": 1,
-          "MaxAttempts": 10,
+          "MaxAttempts": 9,
           "BackoffRate": 1.5
         }
       ],
@@ -1430,7 +1430,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "NoPodsAvailable"
           ],
           "IntervalSeconds": 2,
-          "MaxAttempts": 11,
+          "MaxAttempts": 10,
           "BackoffRate": 1.5
         }
       ],
@@ -1506,7 +1506,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "NoPodAssigned"
           ],
           "IntervalSeconds": 1,
-          "MaxAttempts": 10,
+          "MaxAttempts": 9,
           "BackoffRate": 1.5
         }
       ],

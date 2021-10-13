@@ -107,7 +107,7 @@ class PipelineService {
       response.output = output;
     }
 
-    if (!error) {
+    if (error) {
       logger.log(`Error in ${constants.QC_PROCESS_NAME} received`);
       AWSXRay.getSegment().addError(error);
     }
@@ -126,8 +126,7 @@ class PipelineService {
     await pipelineHook.run(message);
 
     const { experimentId } = message;
-    let error = false;
-    if (message.response && message.response.error) error = message.response.error;
+    const { error = false } = message.response || {};
 
     let output = null;
     // if there aren't errors proceed with the updates
