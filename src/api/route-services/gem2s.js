@@ -9,8 +9,8 @@ const {
   GEM2S_PROCESS_NAME,
 } = require('../general-services/pipeline-manage/constants');
 
-const saveProcessingConfigFromGem2s = require('../../utils/hooks/saveProcessingConfigFromGem2s');
-const runQCPipeline = require('../../utils/hooks/runQCPipeline');
+const saveProcessingConfigFromGem2s = require('../../utils/hooks/save-gem2s-processing-config');
+const runQCPipeline = require('../../utils/hooks/run-qc-pipeline');
 const validateRequest = require('../../utils/schema-validator');
 const PipelineHook = require('../../utils/hookRunner');
 const getLogger = require('../../utils/getLogger');
@@ -35,13 +35,13 @@ class Gem2sService {
     const response = {
       ...message,
       status: statusRes,
-      type: 'gem2s',
+      type: constants.GEM2S_PROCESS_NAME,
     };
 
     const { error = null } = message.response || {};
 
     if (error) {
-      logger.log('Error in gem2s received');
+      logger.log(`Error in ${constants.GEM2S_PROCESS_NAME} received`);
       const user = await authenticationMiddlewareSocketIO(message.input.authJWT);
       if (user.email) {
         await sendEmailIfNecessary(GEM2S_PROCESS_NAME, status, experimentId, user);
@@ -121,16 +121,9 @@ class Gem2sService {
     // Fail hard if there was an error.
     await validateRequest(message, 'GEM2SResponse.v1.yaml');
 
-    const {
-      experimentId, taskName, item, authJWT,
-    } = message;
+    await pipelineHook.run(message);
 
-    await pipelineHook.run(taskName, {
-      experimentId,
-      item,
-      authJWT,
-    });
-
+    const { experimentId } = message;
 
     const messageForClient = _.cloneDeep(message);
 

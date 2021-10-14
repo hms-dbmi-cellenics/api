@@ -125,7 +125,6 @@ const mockS3GetObject = (payload = {}, error = null) => {
 const mockS3PutObject = (payload = {}, error = null) => {
   const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
-
   AWSMock.mock('S3', 'putObject', (params, callback) => {
     fnSpy(params);
     callback(error, payload);
@@ -137,7 +136,6 @@ const mockS3PutObject = (payload = {}, error = null) => {
 const mockS3DeleteObject = (payload = {}, error = null) => {
   const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
-
   AWSMock.mock('S3', 'deleteObject', (params, callback) => {
     fnSpy(params);
     callback(error, payload);
@@ -150,7 +148,6 @@ const mockS3DeleteObject = (payload = {}, error = null) => {
 const mockS3DeleteObjects = (payload = {}, error = null) => {
   const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
-
   AWSMock.mock('S3', 'deleteObjects', (params, callback) => {
     fnSpy(params);
     callback(error, payload);
@@ -162,7 +159,6 @@ const mockS3DeleteObjects = (payload = {}, error = null) => {
 const mockS3GetSignedUrl = (payload = {}, error = null) => {
   const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
-
   AWSMock.mock('S3', 'getSignedUrl', (command, params, callback) => {
     fnSpy(command, params);
     callback(error, payload);

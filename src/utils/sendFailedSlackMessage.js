@@ -4,10 +4,9 @@ const ExperimentService = require('../api/route-services/experiment');
 const sendFailedSlackMessage = async (message, user) => {
   const { experimentId } = message;
   // this needs to change once we change the name to qc in experiments/meta
-  const process = message.input.processName === 'qc' ? 'pipeline' : message.input.processName;
+  const process = message.input.processName;
   const experiment = await (new ExperimentService()).getExperimentData(experimentId);
   const stateMachineArn = process === 'qc' ? experiment.meta.pipeline.stateMachineArn : experiment.meta[process].stateMachineArn;
-
   const userContext = [
     {
       type: 'mrkdwn',

@@ -20,7 +20,9 @@ class hookRunner {
     this.results[taskName] = [];
   }
 
-  async run(taskName, payload) {
+  // run requires taskName to be present as a key in the payload
+  async run(payload) {
+    const { taskName } = payload;
     if (this.hooks[taskName] === undefined
       || this.hooks[taskName].length === 0
     ) { return null; }

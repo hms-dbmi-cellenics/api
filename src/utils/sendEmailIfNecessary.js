@@ -17,7 +17,7 @@ const sendEmailIfNecessary = async (process, status, experimentId, user) => {
       Happy analysing!`;
 
   const failMessage = `
-  Unfortunately, when trying to run the analysis the pre-processing step has failed for your experiment: <br/>
+  Unfortunately, when trying to run the analysis the process for ${process} failed for your experiment: <br/>
   <a href="${link}">${link}</a> <br/>
   Try running the process one more time. <br/>
   We are working hard to identify and fix the issue. We will let you know as soon as your data is ready to explore. <br/>
