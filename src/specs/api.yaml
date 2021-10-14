@@ -746,6 +746,9 @@ paths:
                 properties:
                   samples: 
                     $ref: ./models/api-body-schemas/Samples.v1.yaml
+                required:
+                  - samples
+                additionalProperties: false
         '401':
           description: The request lacks authentication credentials.
           content:
