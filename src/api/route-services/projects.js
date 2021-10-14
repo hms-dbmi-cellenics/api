@@ -185,7 +185,7 @@ class ProjectsService {
     return projects;
   }
 
-  async getExperiments(projectUuid) {
+  async getExperiments(projectUuid, withWritePermissions = false) {
     const dynamodb = createDynamoDbInstance();
 
     const marshalledKey = convertToDynamoDbRecord({ projectUuid });
@@ -201,7 +201,19 @@ class ProjectsService {
 
       if (!Object.prototype.hasOwnProperty.call(result, 'projects')) return [];
 
-      return await experimentService.getListOfExperiments(result.projects.experiments);
+      let exps = await experimentService.getListOfExperiments(result.projects.experiments);
+
+      if (!withWritePermissions) {
+        exps = exps.map((exp) => {
+          // eslint-disable-next-line camelcase
+          const { rbac_can_write, ...restOfExp } = exp;
+
+          return restOfExp;
+        });
+      }
+
+
+      return exps;
     } catch (e) {
       if (e.statusCode === 400) throw new NotFoundError('Project not found');
       throw e;

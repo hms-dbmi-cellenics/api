@@ -1,5 +1,5 @@
-title: Experiment
-description: 'An experiment object as stored in dynamodb'
+title: Experiment attributes
+description: All attributes that can be set in an experiment entry, without any of them being required
 type: object
 properties:
   experimentId:
@@ -18,7 +18,7 @@ properties:
   meta:
     type: object
   processingConfig:
-    type: object
+    $ref: '../ProcessingConfig.v1.yaml'
   apiVersion:
     type: string
   sampleIds:
@@ -26,13 +26,4 @@ properties:
     items:
       type: string
 
-required:
-  - experimentId
-  - experimentName
-  - projectId
-  - description
-  - createdDate
-  - lastViewed
-  - meta
-  - processingConfig
-  - sampleIds
+additionalProperties: false
