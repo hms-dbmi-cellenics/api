@@ -959,6 +959,12 @@ paths:
                       type: string
                     samples:
                       $ref: ./models/api-body-schemas/Samples.v1.yaml
+                  required:
+                    - experimentId
+                    - projectUuid
+                    - samples
+                  
+                  additionalProperties: false
         '404':
           description: Not Found
           content:
