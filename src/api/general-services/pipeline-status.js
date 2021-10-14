@@ -181,14 +181,6 @@ const getPipelineStatus = async (experimentId, processName) => {
       executionArn,
     }).promise();
   } catch (e) {
-    // state machines in staging are removed after some time, in this situation we return
-    // NOT_CREATED status so that the pipeline can be run again
-    if (config.clusterEnv === 'staging' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST) {
-      return {
-        [processName]: notCreatedStatus,
-      };
-    }
-
     // if we get the execution does not exist it means we are using a pulled experiment so
     // just return a mock sucess status
     // TODO: state machines in production are deleted after 90 days, return a successful execution
@@ -197,8 +189,9 @@ const getPipelineStatus = async (experimentId, processName) => {
     // processed files exist in S3 to avoid allowing users to move onwards when the pipeline was not
     // actually run.
     if ((config.clusterEnv === 'development' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
-    || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
-    || (config.clusterEnv === 'production' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)) {
+      || (config.clusterEnv === 'staging' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
+      || (config.clusterEnv === 'production' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
+      || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)) {
       logger.log(
         `Returning a mocked success ${processName} - pipeline status because ARN ${executionArn} `
         + `does not exist and we are running in ${config.clusterEnv} so it means it's either a `
