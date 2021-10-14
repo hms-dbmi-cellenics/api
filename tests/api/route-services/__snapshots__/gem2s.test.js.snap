@@ -7,6 +7,9 @@ exports[`gem2s gem2sReponse - Pass on error message properly 1`] = `
       "ExperimentUpdates-abcd1234",
       Object {
         "experimentId": "abcd1234",
+        "input": Object {
+          "authJWT": "Bearer ayyylmaoxd",
+        },
         "response": Object {
           "error": "some unknwon error",
         },

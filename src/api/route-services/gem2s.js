@@ -4,9 +4,9 @@ const AWSXRay = require('aws-xray-sdk');
 const constants = require('../general-services/pipeline-manage/constants');
 const getPipelineStatus = require('../general-services/pipeline-status');
 const { createGem2SPipeline } = require('../general-services/pipeline-manage');
-
+const { authenticationMiddlewareSocketIO } = require('../../utils/authMiddlewares');
 const {
-  GEM2S_PROCESS_NAME, SUCCEEDED, FAILED,
+  GEM2S_PROCESS_NAME,
 } = require('../general-services/pipeline-manage/constants');
 
 const saveProcessingConfigFromGem2s = require('../../utils/hooks/saveProcessingConfigFromGem2s');
@@ -18,7 +18,8 @@ const getLogger = require('../../utils/getLogger');
 const ExperimentService = require('./experiment');
 const ProjectsService = require('./projects');
 const SamplesService = require('./samples');
-const sendNotificationEmailIfNecessary = require('../../utils/sendNotificationIfNecessary');
+const sendEmailIfNecessary = require('../../utils/sendEmailIfNecessary');
+const sendFailedSlackMessage = require('../../utils/sendFailedSlackMessage');
 
 const logger = getLogger();
 
@@ -30,9 +31,6 @@ class Gem2sService {
   static async sendUpdateToSubscribed(experimentId, message, io) {
     const statusRes = await getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME);
     const { status } = statusRes.gem2s;
-    if ([FAILED, SUCCEEDED].includes(status)) {
-      sendNotificationEmailIfNecessary(GEM2S_PROCESS_NAME, status, experimentId);
-    }
     // Concatenate into a proper response.
     const response = {
       ...message,
@@ -44,7 +42,11 @@ class Gem2sService {
 
     if (error) {
       logger.log('Error in gem2s received');
-
+      const user = await authenticationMiddlewareSocketIO(message.input.authJWT);
+      if (user.email) {
+        await sendEmailIfNecessary(GEM2S_PROCESS_NAME, status, experimentId, user);
+        await sendFailedSlackMessage(message, user);
+      }
       AWSXRay.getSegment().addError(error);
     }
     logger.log('Sending to all clients subscribed to experiment', experimentId);
@@ -95,9 +97,7 @@ class Gem2sService {
 
 
   static async gem2sCreate(experimentId, body, authJWT) {
-    sendNotificationEmailIfNecessary('gem2s', 'lmaooooo', experimentId);
     const { paramsHash } = body;
-
     const taskParams = await Gem2sService.generateGem2sParams(experimentId, authJWT);
 
     const newHandle = await createGem2SPipeline(experimentId, taskParams);
@@ -118,7 +118,6 @@ class Gem2sService {
 
   static async gem2sResponse(io, message) {
     AWSXRay.getSegment().addMetadata('message', message);
-
     // Fail hard if there was an error.
     await validateRequest(message, 'GEM2SResponse.v1.yaml');
 

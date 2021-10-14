@@ -13,7 +13,7 @@ module.exports = {
     async (req, res, next) => {
       const { experimentId } = req.params;
 
-      Gem2sService.gem2sCreate(experimentId, req.body, req.headers.authorization)
+      Gem2sService.gem2sCreate(experimentId, req.body, req.headers.authorization, req.user)
         .then((response) => res.json(response))
         .catch(next);
     },
@@ -35,7 +35,7 @@ module.exports = {
     const isSnsNotification = parsedMessage !== undefined;
     if (isSnsNotification) {
       try {
-        await Gem2sService.gem2sResponse(io, parsedMessage);
+        await Gem2sService.gem2sResponse(io, parsedMessage, req.user);
       } catch (e) {
         logger.error(
           'gem2s pipeline response handler failed with error: ', e,

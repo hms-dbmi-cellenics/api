@@ -89,6 +89,7 @@ class ExperimentService {
       ':meta': body.meta || {},
       ':processingConfig': {},
       ':sampleIds': body.sampleIds,
+      ':notifyByEmail': false,
     });
 
     const params = {
@@ -102,7 +103,8 @@ class ExperimentService {
                           meta = :meta,
                           processingConfig = :processingConfig,
                           sampleIds = :sampleIds,
-                          rbac_can_write = :rbac_can_write`,
+                          rbac_can_write = :rbac_can_write,
+                          notifyByEmail = :notifyByEmail`,
       ExpressionAttributeValues: marshalledData,
       ConditionExpression: 'attribute_not_exists(#experimentId)',
       ExpressionAttributeNames: { '#experimentId': 'experimentId' },
@@ -129,7 +131,6 @@ class ExperimentService {
     logger.log(`UPDATE experiment ${experimentId} in dynamodb`);
 
     const dynamodb = createDynamoDbInstance();
-
     const {
       updateExpressionList: deepPropsUpdateExprList,
       attributeValues: deepPropsAttrValues,

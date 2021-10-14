@@ -11,6 +11,7 @@ jest.mock('../../../src/api/route-services/samples');
 jest.mock('../../../src/api/route-services/projects');
 jest.mock('../../../src/api/general-services/pipeline-status');
 jest.mock('../../../src/api/general-services/pipeline-manage');
+jest.mock('../../../src/utils/authMiddlewares');
 
 const mockGem2sParamsBackendCall = (
   customProjectResponse = {},
@@ -200,6 +201,9 @@ describe('gem2s', () => {
       experimentId,
       response: {
         error: errorText,
+      },
+      input: {
+        authJWT: 'Bearer ayyylmaoxd',
       },
     };
 

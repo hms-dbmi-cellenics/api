@@ -9,6 +9,7 @@ const pipelineResponse = require('../../../src/api/route-services/pipeline-respo
 jest.mock('../../../src/api/general-services/pipeline-status', () => jest.fn().mockImplementation(() => ({
   pipelineStatus: () => ({}),
 })));
+jest.mock('../../../src/utils/authMiddlewares');
 
 const {
   mockDynamoGetItem, mockS3GetObject, mockDynamoUpdateItem,

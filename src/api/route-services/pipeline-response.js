@@ -8,7 +8,9 @@ const getPipelineStatus = require('../general-services/pipeline-status');
 
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
-const sendNotificationEmailIfNecessary = require('../../utils/sendNotificationIfNecessary');
+const sendEmailIfNecessary = require('../../utils/sendEmailIfNecessary');
+const sendFailedSlackMessage = require('../../utils/sendFailedSlackMessage');
+const { authenticationMiddlewareSocketIO } = require('../../utils/authMiddlewares');
 
 const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
@@ -31,7 +33,10 @@ const pipelineResponse = async (io, message) => {
   if (error) {
     logger.log('Error in qc received');
     AWSXRay.getSegment().addError(error);
-
+    const user = await authenticationMiddlewareSocketIO(message.input.authJWT);
+    if (user.email) {
+      await sendFailedSlackMessage(message, user);
+    }
     const errorResponse = {
       type: 'qc',
       status: statusResToSend,
@@ -106,7 +111,7 @@ const pipelineResponse = async (io, message) => {
   }
   const { status } = statusResToSend.pipeline || false;
   if ([FAILED, SUCCEEDED].includes(status)) {
-    sendNotificationEmailIfNecessary(constants.QC_PROCESS_NAME, status, experimentId);
+    sendEmailIfNecessary(constants.QC_PROCESS_NAME, status, experimentId);
   }
   // Concatenate into a proper response.
   const response = {

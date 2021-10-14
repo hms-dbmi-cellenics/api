@@ -71,7 +71,6 @@ const getShallowAttrsUpdateParams = (body) => {
     projectId: body.projectUuid || body.projectId,
     description: body.description,
     sampleIds: body.sampleIds,
-    notifyByEmail: body.notifyByEmail,
   };
 
   const objectToMarshall = {};
@@ -89,6 +88,9 @@ const getShallowAttrsUpdateParams = (body) => {
   );
 
   const attributeValues = convertToDynamoDbRecord(objectToMarshall);
+  // notifyByEmail is already converted to dynamo record
+  updateExpressionList.push('notifyByEmail = :notifyByEmail');
+  attributeValues[':notifyByEmail'] = { BOOL: body.notifyByEmail || false };
 
   return { updateExpressionList, attributeValues };
 };
