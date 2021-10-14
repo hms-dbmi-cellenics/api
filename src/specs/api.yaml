@@ -819,7 +819,6 @@ paths:
             schema:
               $ref: ./models/api-body-schemas/Project.v1.yaml
         description: The new project to set.
-    
     put:
       summary: Update project
       operationId: updateProject

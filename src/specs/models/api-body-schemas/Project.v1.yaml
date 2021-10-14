@@ -23,6 +23,10 @@ properties:
     type: array
     items:
       type: string
+  metadataKeys:
+    type: array
+    items:
+      type: string
 
 required:
   - name
@@ -33,3 +37,6 @@ required:
   - experiments
   - lastAnalyzed
   - samples
+  - metadataKeys
+
+additionalProperties: false

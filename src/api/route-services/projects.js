@@ -129,7 +129,7 @@ class ProjectsService {
     // we might have repeated projectId's)
     projectIds = [...new Set(projectIds)];
 
-    return this.getProjectsFromIds(projectIds);
+    return await this.getProjectsFromIds(projectIds);
   }
 
   /**
