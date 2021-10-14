@@ -22,8 +22,8 @@ const notCreatedStatus = {
   completedSteps: [],
 };
 
-const date = (new Date()).toISOString();
-const mockedCompletedStatus = {
+// const date = (new Date()).toISOString();
+const buildCompletedStatus = (date) => ({
   qc: {
     startDate: date,
     stopDate: date,
@@ -50,7 +50,8 @@ const mockedCompletedStatus = {
       'PrepareExperiment',
       'UploadToAWS'],
   },
-};
+});
+
 
 const getStepsFromExecutionHistory = (events) => {
   class Branch {
@@ -165,7 +166,7 @@ const getPipelineStatus = async (experimentId, processName) => {
   let error = false;
 
   // if there aren't ARNs just return NOT_CREATED status
-  if (!executionArn.length) {
+  if (executionArn === '') {
     return {
       [processName]: notCreatedStatus,
     };
@@ -190,18 +191,26 @@ const getPipelineStatus = async (experimentId, processName) => {
 
     // if we get the execution does not exist it means we are using a pulled experiment so
     // just return a mock sucess status
-    if (
-      (config.clusterEnv === 'development' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
-      || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
-    ) {
+    // TODO: state machines in production are deleted after 90 days, return a successful execution
+    // if the execution does not exist in production so the user will not be forced to re-run
+    // the pipeline losing annotations. This will be addressed checking if the
+    // processed files exist in S3 to avoid allowing users to move onwards when the pipeline was not
+    // actually run.
+    if ((config.clusterEnv === 'development' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
+    || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
+    || (config.clusterEnv === 'production' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)) {
       logger.log(
         `Returning a mocked success ${processName} - pipeline status because ARN ${executionArn} `
-        + `does not exist and we are running in ${config.clusterEnv} so we are assuming the experiment was`
-        + ' pulled from another env.',
+        + `does not exist and we are running in ${config.clusterEnv} so it means it's either a `
+        + ' a pulled experiment or that the production state machine expired and was deleted by aws.',
       );
 
+      // we set as date 90 days ago which is when the state machine expire in production, in
+      // staging dev we don't care about this
+      const ninetyDaysAgo = new Date(new Date().setDate(new Date().getDate() - 90));
+
       return {
-        [processName]: mockedCompletedStatus[processName],
+        [processName]: buildCompletedStatus(ninetyDaysAgo)[processName],
       };
     }
 
