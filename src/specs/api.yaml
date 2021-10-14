@@ -742,7 +742,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/api-body-schemas/Samples.v1.yaml
+                type: object
+                properties:
+                  samples: 
+                    $ref: ./models/api-body-schemas/Samples.v1.yaml
         '401':
           description: The request lacks authentication credentials.
           content:

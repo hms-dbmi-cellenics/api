@@ -71,6 +71,7 @@ class SamplesService {
 
       // Remove ids property from old sample entries that still have it
       delete prettyResponse.samples.ids;
+
       return prettyResponse;
     }
 

@@ -12,3 +12,5 @@ required:
   - meta
   - processingConfig
   - sampleIds
+
+additionalProperties: false

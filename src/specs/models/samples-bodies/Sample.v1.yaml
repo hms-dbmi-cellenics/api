@@ -2,15 +2,18 @@ title: Sample
 description: A single sample
 type: object
 properties:
+  uuid:
+    type: string
   name:
     type: string
   projectUuid:
     type: string
-  uuid:
-    type: string
   species:
     nullable: true
     type: string
+  type:
+    type: string
+    pattern: 10X Chromium
   createdDate:
     type: string
   lastModified:
@@ -26,3 +29,19 @@ properties:
       type: string
   files:
     type: object
+  metadata:
+    type: object
+
+required:
+  - name
+  - projectUuid
+  - uuid
+  - species
+  - createdDate
+  - lastModified
+  - complete
+  - error
+  - fileNames
+  - files
+  
+additionalProperties: false
