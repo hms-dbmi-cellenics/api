@@ -119,6 +119,16 @@ describe('tests for experiment route', () => {
   it('Updating processing config with a valid data set results in a successful response', async (done) => {
     const newData = [
       {
+        name: 'classifier',
+        body: {
+          enabled: true,
+          prefiltered: false,
+          filterSettings: {
+            FDR: 0.05,
+          },
+        },
+      },
+      {
         name: 'cellSizeDistribution',
         body: {
           enabled: false,

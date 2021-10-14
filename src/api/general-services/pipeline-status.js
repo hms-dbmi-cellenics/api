@@ -4,15 +4,14 @@ const ExperimentService = require('../route-services/experiment');
 const config = require('../../config');
 const getLogger = require('../../utils/getLogger');
 const pipelineConstants = require('./pipeline-manage/constants');
+const { getPipelineStepNames } = require('./pipeline-manage/skeletons');
 
 const logger = getLogger();
 
-const privateSteps = [
-  'DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker',
-  'AssignPipelineToPod', 'GetUnassignedPod', 'IsPodAvailable',
-  'NoPodsAvailable', 'AssignPodToPipeline', 'GetExperimentRunningPods',
-  'DeletePreviousPods', 'DeletePod', 'Ignore404',
-];
+// pipelineStepNames are the names of pipeline steps for which we
+// want to report the progress back to the user
+// does not include steps used to initialize the infrastructure (like pod deletion assignation)
+const pipelineSteps = getPipelineStepNames();
 
 
 const notCreatedStatus = {
@@ -143,7 +142,7 @@ const getStepsFromExecutionHistory = (events) => {
 
   shortestCompleted = (shortestCompleted || []).concat(main.completedTasks);
 
-  const shortestCompletedToReport = _.difference(shortestCompleted, privateSteps);
+  const shortestCompletedToReport = _.filter(shortestCompleted, (s) => pipelineSteps.includes(s));
 
   return shortestCompletedToReport || [];
 };
