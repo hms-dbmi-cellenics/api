@@ -201,19 +201,17 @@ class ProjectsService {
 
       if (!Object.prototype.hasOwnProperty.call(result, 'projects')) return [];
 
-      let exps = await experimentService.getListOfExperiments(result.projects.experiments);
+      const experiments = await experimentService.getListOfExperiments(result.projects.experiments);
 
       if (!withWritePermissions) {
-        exps = exps.map((exp) => {
-          // eslint-disable-next-line camelcase
-          const { rbac_can_write, ...restOfExp } = exp;
-
-          return restOfExp;
+        experiments.forEach((experiment) => {
+          // eslint-disable-next-line no-param-reassign
+          delete experiment.rbac_can_write;
         });
       }
 
 
-      return exps;
+      return experiments;
     } catch (e) {
       if (e.statusCode === 400) throw new NotFoundError('Project not found');
       throw e;
