@@ -7,10 +7,9 @@ const logger = getLogger();
 
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
-const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
 
-const getPods = async (namespace, activityId) => {
+const getPods = async (k8sApi, namespace, activityId) => {
   const [assignedPods, unassignedPods] = await Promise.all(
     [
       k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', `activityId=${activityId},type=pipeline`),
@@ -21,7 +20,7 @@ const getPods = async (namespace, activityId) => {
   return [assignedPods, unassignedPods];
 };
 
-const removeRunningPods = async (namespace, assignedPods) => {
+const removeRunningPods = async (k8sApi, namespace, assignedPods) => {
   await Promise.all(assignedPods.body.items.map((pod) => {
     const { name } = pod.metadata;
     logger.log(`Found pipeline running pod ${name}, removing...`);
@@ -29,7 +28,8 @@ const removeRunningPods = async (namespace, assignedPods) => {
   }));
 };
 
-const patchPod = async (namespace,
+const patchPod = async (k8sApi,
+  namespace,
   unassignedPods,
   experimentId,
   activityId,
@@ -75,15 +75,17 @@ const assignPodToPipeline = async (message) => {
   // validate that the message contains input
   await validateRequest(message, 'PipelinePodRequest.v1.yaml');
 
+  const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
   const namespace = `pipeline-${sandboxId}`;
 
   logger.log(`Assigning pod to ${processName} pipeline for experiment ${experimentId} in sandbox ${sandboxId} for activity ${activityId}`);
   // try to choose a free pod and assign it to the current pipeline
   try {
-    const [assignedPods, unassignedPods] = await getPods(namespace, activityId);
-    await removeRunningPods(namespace, assignedPods);
-    await patchPod(namespace, unassignedPods, experimentId, activityId, processName);
+    const [assignedPods, unassignedPods] = await getPods(k8sApi, namespace, activityId);
+    await removeRunningPods(k8sApi, namespace, assignedPods);
+    await patchPod(k8sApi, namespace, unassignedPods, experimentId, activityId, processName);
   } catch (e) {
     logger.log('Error assigning pod: ', e);
   }
