@@ -1,4 +1,4 @@
-const getLogger = require('./getLogger');
+const getLogger = require('../getLogger');
 
 const logger = getLogger();
 
