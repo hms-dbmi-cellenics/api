@@ -8,7 +8,7 @@ const getPipelineStatus = require('../general-services/pipeline-status');
 
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
-const PipelineHook = require('../../utils/hookRunner');
+const PipelineHook = require('../../utils/hooks/hookRunner');
 
 const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();

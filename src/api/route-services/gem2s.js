@@ -8,7 +8,7 @@ const { createGem2SPipeline } = require('../general-services/pipeline-manage');
 const saveProcessingConfigFromGem2s = require('../../utils/hooks/save-gem2s-processing-config');
 const runQCPipeline = require('../../utils/hooks/run-qc-pipeline');
 const validateRequest = require('../../utils/schema-validator');
-const PipelineHook = require('../../utils/hookRunner');
+const PipelineHook = require('../../utils/hooks/hookRunner');
 const getLogger = require('../../utils/getLogger');
 
 const ExperimentService = require('./experiment');
