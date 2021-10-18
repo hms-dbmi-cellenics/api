@@ -266,7 +266,8 @@ const getPipelineStatus = async (experimentId, processName) => {
     throw e;
   }
 
-  const events = getExecutionHistory(stepFunctions, executionArn);
+  const events = await getExecutionHistory(stepFunctions, executionArn);
+
   error = checkError(events);
   completedSteps = getStepsFromExecutionHistory(events);
 
