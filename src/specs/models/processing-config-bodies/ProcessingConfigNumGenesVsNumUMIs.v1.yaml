@@ -15,7 +15,12 @@ properties:
       regressionTypeSettings:
         type: object
         properties:
-          gam:
+          linear:
+            type: object
+            properties:
+              p.level:
+                type: number
+          spline:
             type: object
             properties:
               p.level:
