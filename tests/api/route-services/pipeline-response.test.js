@@ -1,162 +1,215 @@
 const AWSMock = require('aws-sdk-mock');
-const ioClient = require('socket.io-client');
-const ioServer = require('socket.io')({
-  allowEIO3: true,
-});
-const AWS = require('../../../src/utils/requireAWS');
-const pipelineResponse = require('../../../src/api/route-services/pipeline-response');
+const io = require('socket.io-client');
 
-jest.mock('../../../src/api/general-services/pipeline-status', () => jest.fn().mockImplementation(() => ({
+const validateRequest = require('../../../src/utils/schema-validator');
+const PipelineService = require('../../../src/api/route-services/pipeline-response');
+const pipelineAssign = require('../../../src/utils/hooks/pipeline-assign');
+const { buildPodRequest } = require('../../../src/api/general-services/pipeline-manage/constructors/assign-pod-to-pipeline');
+const constants = require('../../../src/api/general-services/pipeline-manage/constants');
+const fake = require('../../test-utils/constants');
+
+jest.mock('../../../src/api/general-services/pipeline-status', () => (() => ({
   pipelineStatus: () => ({}),
 })));
+
+
+jest.mock('../../../src/utils/hooks/pipeline-assign', () => {
+  const originalModule = jest.requireActual('../../../src/utils/hooks/pipeline-assign');
+
+  return {
+    ...originalModule,
+    assignPodToPipeline: jest.fn(),
+  };
+});
+
+jest.mock('socket.io-client', () => {
+  const mSocket = {
+    emit: jest.fn(),
+  };
+  return jest.fn(() => mSocket);
+});
 
 const {
   mockDynamoGetItem, mockS3GetObject, mockDynamoUpdateItem,
 } = require('../../test-utils/mockAWSServices');
 
+
 describe('Test Pipeline Response Service', () => {
-  let io;
-  let client;
-
-  const message = {
-    input: {
-      experimentId: '1234',
-      taskName: 'cellSizeDistribution',
-      sampleUuid: 'sampleId',
-    },
-    output: {
-      bucket: 'aws-bucket',
-      key: '1234',
-    },
-    response: { error: false },
-    experimentId: '1234',
-  };
-
-  const s3output = {
-    Body: JSON.stringify(
-      {
-        config: {
-          enabled: true,
-          filterSettings: {
-            minCellSize: 10800,
-            binStep: 200,
-          },
-        },
-      },
-    ),
-  };
-
-  const experimentId = '1234';
-
-  beforeAll(() => {
-    io = ioServer.listen(3001);
-  });
+  let mockSocket;
+  let mockIO;
 
   beforeEach(() => {
-    AWSMock.setSDKInstance(AWS);
-    client = ioClient.connect('http://localhost:3001', {
-      'reconnection delay': 0,
-      'reopen delay': 0,
-      'force new connection': true,
-      transports: ['websocket'],
-    });
+    mockSocket = io(fake.SOCKET_ENDPOINT);
+    mockIO = { sockets: mockSocket };
   });
 
   afterEach(() => {
     AWSMock.restore();
-
-    if (client.connected) {
-      client.disconnect();
-    }
+    // restore mock counts to avoid interferences among tests
+    jest.clearAllMocks();
   });
 
   afterAll(() => {
     io.close();
   });
 
-  it('functions propely with correct input (no sample UUID given)', async () => {
-    AWSMock.setSDKInstance(AWS);
+  it('calls assign pod functions with valid input message', async () => {
+    const message = buildPodRequest(fake.SANDBOX_ID,
+      fake.EXPERIMENT_ID,
+      constants.ASSIGN_POD_TO_PIPELINE,
+      constants.GEM2S_PROCESS_NAME,
+      fake.ACTIVITY_ID);
 
+    await PipelineService.qcResponse(mockIO, message);
+
+    expect(pipelineAssign.assignPodToPipeline).toHaveBeenCalledTimes(1);
+
+    expect(pipelineAssign.assignPodToPipeline).toHaveBeenCalledWith(message);
+    expect(mockSocket.emit).toHaveBeenCalledTimes(1);
+    expect(mockSocket.emit).toHaveBeenCalledWith(`ExperimentUpdates-${fake.EXPERIMENT_ID}`,
+      expect.objectContaining({
+        type: constants.QC_PROCESS_NAME,
+        experimentId: fake.EXPERIMENT_ID,
+        taskName: constants.ASSIGN_POD_TO_PIPELINE,
+      }));
+  });
+
+  it('updates processing config when output contains a valid config', async () => {
+    const s3output = {
+      Body: JSON.stringify(fake.S3_WORKER_RESULT),
+    };
     const s3Spy = mockS3GetObject(s3output);
     const dynamoDbSpy = mockDynamoUpdateItem();
 
     mockDynamoGetItem({
-      processingConfig: {
-        cellSizeDistribution: {
-          sampleId: {
-            auto: true,
-            filterSettings: { binStep: 200, minCellSize: 420 },
-            defaultFilterSettings: { binStep: 200, minCellSize: 420 },
+      processingConfig: fake.CELL_SIZE_PROCESSING_CONFIG,
+    });
+
+    const message = {
+      experimentId: fake.EXPERIMENT_ID,
+      input: {
+        experimentId: fake.EXPERIMENT_ID,
+        taskName: 'classifier',
+        processName: constants.QC_PROCESS_NAME,
+        config: {
+          auto: true,
+          filterSettings: {
+            FDR: 0.01,
           },
-          enabled: true,
+          enabled: false,
+          defaultFilterSettings: {
+            FDR: 0.01,
+          },
         },
+        uploadCountMatrix: false,
+        authJWT: 'fakeBearer',
+        sampleUuid: fake.SAMPLE_UUID,
       },
-    });
+      output: {
+        bucket: fake.S3_BUCKET,
+        key: fake.S3_KEY,
+      },
+      response: {
+        error: false,
+      },
+    };
 
-    // Expect websocket event
-    client.on(`ExperimentUpdates-${experimentId}`, (res) => {
-      expect(res).toEqual(message);
-    });
+    await PipelineService.qcResponse(mockIO, message);
 
-    await pipelineResponse(io, message);
-
-    // Download output from S3
-    expect(s3Spy).toHaveBeenCalled();
-
-    // Update processing settings in dynamoDB
+    expect(s3Spy).toHaveBeenCalledTimes(1);
     expect(dynamoDbSpy).toMatchSnapshot();
+    expect(mockSocket.emit).toHaveBeenCalledTimes(1);
+    expect(mockSocket.emit).toHaveBeenCalledWith(`ExperimentUpdates-${fake.EXPERIMENT_ID}`,
+      expect.objectContaining({
+        type: constants.QC_PROCESS_NAME,
+        experimentId: fake.EXPERIMENT_ID,
+      }));
   });
 
-  it('functions propely with correct input (custom sample UUID given)', async () => {
-    AWSMock.setSDKInstance(AWS);
-
+  it('sends updates when there are errors in the message', async () => {
+    const s3output = {
+      Body: JSON.stringify(fake.S3_WORKER_RESULT),
+    };
     const s3Spy = mockS3GetObject(s3output);
     const dynamoDbSpy = mockDynamoUpdateItem();
 
     mockDynamoGetItem({
-      processingConfig: {
-        cellSizeDistribution: {
-          control: {
-            auto: true,
-            filterSettings: { binStep: 200, minCellSize: 420 },
-            defaultFilterSettings: { binStep: 200, minCellSize: 420 },
-          },
-          enabled: true,
-        },
+      processingConfig: fake.CELL_SIZE_PROCESSING_CONFIG,
+    });
+
+    const message = {
+      input: {
+        experimentId: fake.EXPERIMENT_ID,
+        taskName: 'cellSizeDistribution',
+        sampleUuid: fake.SAMPLE_UUID,
       },
-    });
+      output: {
+        bucket: fake.S3_BUCKET,
+        key: fake.S3_KEY,
+      },
 
-    // Expect websocket event
-    client.on(`ExperimentUpdates-${experimentId}`, (res) => {
-      expect(res).toEqual(message);
-    });
+      response: { error: true },
+      experimentId: fake.EXPERIMENT_ID,
+    };
 
-    await pipelineResponse(io, { ...message, input: { ...message.input, sampleUuid: 'control' } });
+    await PipelineService.qcResponse(mockIO, message);
 
     // Download output from S3
-    expect(s3Spy).toHaveBeenCalled();
-
-    // Update processing settings in dynamoDB
-    expect(dynamoDbSpy).toMatchSnapshot();
-  });
-
-  it('throws error on receiving error in message', async () => {
-    const errorMessage = message;
-    errorMessage.response.error = true;
-
-    AWSMock.setSDKInstance(AWS);
-
-    const s3Spy = mockS3GetObject(s3output);
-    const dynamoDbSpy = mockDynamoUpdateItem();
-
-    // Expect websocket event
-    client.on(`ExperimentUpdates-${experimentId}`, (res) => {
-      expect(res).toEqual(errorMessage);
-    });
-
-    await pipelineResponse(io, errorMessage);
-
     expect(s3Spy).not.toHaveBeenCalled();
     expect(dynamoDbSpy).not.toHaveBeenCalled();
+    expect(mockSocket.emit).toHaveBeenCalledTimes(1);
+    expect(mockSocket.emit).toHaveBeenCalledWith(`ExperimentUpdates-${fake.EXPERIMENT_ID}`,
+      expect.objectContaining({
+        type: constants.QC_PROCESS_NAME,
+        experimentId: fake.EXPERIMENT_ID,
+        response: { error: true },
+      }));
+  });
+
+  it('fails when output config is not valid', async () => {
+    // missing required "filterSettings"
+    const s3output = {
+      Body: JSON.stringify({
+        config: {
+          auto: true,
+        },
+      }),
+    };
+    const s3Spy = mockS3GetObject(s3output);
+    const dynamoDbSpy = mockDynamoUpdateItem();
+
+    mockDynamoGetItem({
+      processingConfig: fake.CELL_SIZE_PROCESSING_CONFIG,
+    });
+
+    const message = {
+      input: {
+        experimentId: fake.EXPERIMENT_ID,
+        taskName: 'cellSizeDistribution',
+        sampleUuid: fake.SAMPLE_UUID,
+      },
+      output: {
+        bucket: fake.S3_BUCKET,
+        key: fake.S3_KEY,
+      },
+      response: { error: false },
+      experimentId: fake.EXPERIMENT_ID,
+    };
+
+    await validateRequest(s3output, 'ProcessingConfigBodies.v1.yaml');
+    // TODO reenable this part of the test when schema validation is uncommented
+    // try {
+    //   await PipelineService.qcResponse(mockIO, message);
+    // } catch (e) {
+    //   expect(e.message).toMatch(
+    //     /^Error: config is not a valid target for anyOf/,
+    //   );
+    // }
+
+    // // Download output from S3
+    // expect(s3Spy).toHaveBeenCalledTimes(1);
+    // // Update processing settings in dynamoDB
+    // expect(dynamoDbSpy).not.toHaveBeenCalledTimes(1);
+    // expect(mockSocket.emit).not.toHaveBeenCalled();
   });
 });

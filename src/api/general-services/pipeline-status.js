@@ -4,53 +4,112 @@ const ExperimentService = require('../route-services/experiment');
 const config = require('../../config');
 const getLogger = require('../../utils/getLogger');
 const pipelineConstants = require('./pipeline-manage/constants');
+const { getPipelineStepNames } = require('./pipeline-manage/skeletons');
 
 const logger = getLogger();
 
-const privateSteps = [
-  'DeleteCompletedPipelineWorker', 'LaunchNewPipelineWorker',
-  'AssignPipelineToPod', 'GetUnassignedPod', 'IsPodAvailable',
-  'NoPodsAvailable', 'AssignPodToPipeline', 'GetExperimentRunningPods',
-  'DeletePreviousPods', 'DeletePod', 'Ignore404',
-];
+// TODO: this lists should be computed from the actual state machines skeletons
+const qcPipelineSteps = [
+  'ClassifierFilter',
+  'CellSizeDistributionFilter',
+  'MitochondrialContentFilter',
+  'NumGenesVsNumUmisFilter',
+  'DoubletScoresFilter',
+  'DataIntegration',
+  'ConfigureEmbedding'];
 
+const gem2sPipelineSteps = [
+  'DownloadGem',
+  'PreProcessing',
+  'EmptyDrops',
+  'DoubletScores',
+  'CreateSeurat',
+  'PrepareExperiment',
+  'UploadToAWS'];
 
-const notCreatedStatus = {
-  startDate: null,
-  stopDate: null,
-  status: pipelineConstants.NOT_CREATED,
-  error: false,
-  completedSteps: [],
+// pipelineStepNames are the names of pipeline steps for which we
+// want to report the progress back to the user
+// does not include steps used to initialize the infrastructure (like pod deletion assignation)
+const pipelineSteps = getPipelineStepNames();
+
+// buildResponse function is wrapper function to ensure that all pipeline-status
+// responses contain the same information and parameters
+// more specific building response should rely on calling this one
+const buildResponse = (processName, execution, paramsHash, error, completedSteps) => {
+  const response = {
+    [processName]: {
+      startDate: execution.startDate,
+      stopDate: execution.stopDate,
+      status: execution.status,
+      error,
+      completedSteps,
+      paramsHash,
+    },
+  };
+  return response;
 };
 
-const date = (new Date()).toISOString();
-const mockedCompletedStatus = {
-  qc: {
+const buildNotCreatedStatus = (processName) => {
+  const execution = {
+    startDate: null,
+    stopDate: null,
+    status: pipelineConstants.NOT_CREATED,
+  };
+  const paramsHash = undefined;
+  const error = false;
+  const completedSteps = [];
+  return buildResponse(processName, execution, paramsHash, error, completedSteps);
+};
+
+const buildCompletedStatus = (processName, date, paramsHash) => {
+  const execution = {
     startDate: date,
     stopDate: date,
-    status: 'SUCCEEDED',
-    completedSteps: [
-      'ClassifierFilter',
-      'CellSizeDistributionFilter',
-      'MitochondrialContentFilter',
-      'NumGenesVsNumUmisFilter',
-      'DoubletScoresFilter',
-      'DataIntegration',
-      'ConfigureEmbedding'],
-  },
-  gem2s: {
-    startDate: date,
-    stopDate: date,
-    status: 'SUCCEEDED',
-    completedSteps: [
-      'DownloadGem',
-      'PreProcessing',
-      'EmptyDrops',
-      'DoubletScores',
-      'CreateSeurat',
-      'PrepareExperiment',
-      'UploadToAWS'],
-  },
+    status: pipelineConstants.SUCCEEDED,
+  };
+  const error = false;
+  let completedSteps;
+
+  switch (processName) {
+    case pipelineConstants.GEM2S_PROCESS_NAME:
+      completedSteps = gem2sPipelineSteps;
+      break;
+    case pipelineConstants.QC_PROCESS_NAME:
+      completedSteps = qcPipelineSteps;
+      break;
+    default:
+      throw new Error(`Unknown processName ${processName}`);
+  }
+  return buildResponse(processName, execution, paramsHash, error, completedSteps);
+};
+
+
+const getExecutionHistory = async (stepFunctions, executionArn) => {
+  let events = [];
+  let nextToken;
+  do {
+    // eslint-disable-next-line no-await-in-loop
+    const history = await stepFunctions.getExecutionHistory({
+      executionArn,
+      includeExecutionData: false,
+      nextToken,
+    }).promise();
+
+    events = [...events, ...history.events];
+    nextToken = history.nextToken;
+  } while (nextToken);
+
+  return events;
+};
+
+const checkError = (events) => {
+  const error = _.findLast(events, (elem) => elem.type === 'ExecutionFailed');
+
+  if (error) {
+    return error.executionFailedEventDetails;
+  }
+
+  return false;
 };
 
 const getStepsFromExecutionHistory = (events) => {
@@ -143,10 +202,11 @@ const getStepsFromExecutionHistory = (events) => {
 
   shortestCompleted = (shortestCompleted || []).concat(main.completedTasks);
 
-  const shortestCompletedToReport = _.difference(shortestCompleted, privateSteps);
+  const shortestCompletedToReport = _.filter(shortestCompleted, (s) => pipelineSteps.includes(s));
 
   return shortestCompletedToReport || [];
 };
+
 
 /*
      * Return `completedSteps` of the state machine (SM) associated to the `experimentId`'s pipeline
@@ -164,12 +224,12 @@ const getPipelineStatus = async (experimentId, processName) => {
   let execution = {};
   let completedSteps = [];
   let error = false;
+  // only used in gem2s, will just be undefined for qc
+  const { paramsHash } = pipelinesHandles[processName] || {};
 
   // if there aren't ARNs just return NOT_CREATED status
-  if (!executionArn.length) {
-    return {
-      [processName]: notCreatedStatus,
-    };
+  if (executionArn === '') {
+    return buildNotCreatedStatus(processName);
   }
 
   const stepFunctions = new AWS.StepFunctions({
@@ -181,69 +241,41 @@ const getPipelineStatus = async (experimentId, processName) => {
       executionArn,
     }).promise();
   } catch (e) {
-    // state machines in staging are removed after some time, in this situation we return
-    // NOT_CREATED status so that the pipeline can be run again
-    if (config.clusterEnv === 'staging' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST) {
-      return {
-        [processName]: notCreatedStatus,
-      };
-    }
-
     // if we get the execution does not exist it means we are using a pulled experiment so
     // just return a mock sucess status
-    if (
-      (config.clusterEnv === 'development' && e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
-      || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
-    ) {
+    // TODO: state machines in production are deleted after 90 days, return a successful execution
+    // if the execution does not exist in production so the user will not be forced to re-run
+    // the pipeline losing annotations. This will be addressed checking if the
+    // processed files exist in S3 to avoid allowing users to move onwards when the pipeline was not
+    // actually run.
+    if ((e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
+      || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)) {
       logger.log(
         `Returning a mocked success ${processName} - pipeline status because ARN ${executionArn} `
-        + `does not exist and we are running in ${config.clusterEnv} so we are assuming the experiment was`
-        + ' pulled from another env.',
+        + `does not exist and we are running in ${config.clusterEnv} so it means it's either a `
+        + ' a pulled experiment or that the production state machine expired and was deleted by aws.',
       );
 
-      return {
-        [processName]: mockedCompletedStatus[processName],
-      };
+      // we set as date 90 days ago which is when the state machine expire in production, in
+      // staging dev we don't care about this
+      const ninetyDaysAgo = new Date(new Date().setDate(new Date().getDate() - 90));
+
+      return buildCompletedStatus(processName, ninetyDaysAgo, paramsHash);
     }
 
     throw e;
   }
 
-  /* eslint-disable no-await-in-loop */
-  let events = [];
-  let nextToken;
-  do {
-    const history = await stepFunctions.getExecutionHistory({
-      executionArn,
-      includeExecutionData: false,
-      nextToken,
-    }).promise();
+  const events = await getExecutionHistory(stepFunctions, executionArn);
 
-    events = [...events, ...history.events];
-    nextToken = history.nextToken;
-  } while (nextToken);
-
-  error = _.findLast(events, (elem) => elem.type === 'ExecutionFailed');
-
-  if (error) {
-    error = error.executionFailedEventDetails;
-  }
-
+  error = checkError(events);
   completedSteps = getStepsFromExecutionHistory(events);
 
-  const response = {
-    [processName]: {
-      startDate: execution.startDate,
-      stopDate: execution.stopDate,
-      status: execution.status,
-      error,
-      completedSteps,
-    },
-  };
-
-  return response;
+  return buildResponse(processName, execution, paramsHash, error, completedSteps);
 };
 
 module.exports = getPipelineStatus;
 
 module.exports.getStepsFromExecutionHistory = getStepsFromExecutionHistory;
+module.exports.buildCompletedStatus = buildCompletedStatus;
+module.exports.checkError = checkError;

@@ -3,6 +3,8 @@ const QC_PROCESS_NAME = 'qc';
 const GEM2S_PROCESS_NAME = 'gem2s';
 const OLD_QC_NAME_TO_BE_REMOVED = 'pipeline';
 
+const ASSIGN_POD_TO_PIPELINE = 'assignPodToPipeline';
+
 // Pipeline states as defined in
 // https://docs.aws.amazon.com/step-functions/latest/apireference/API_DescribeExecution.html
 const RUNNING = 'RUNNING';
@@ -33,4 +35,5 @@ module.exports = {
   NOT_CREATED,
   EXECUTION_DOES_NOT_EXIST,
   ACCESS_DENIED,
+  ASSIGN_POD_TO_PIPELINE,
 };

@@ -1,0 +1,30 @@
+title: Pipeline pod request
+type: object
+description: Parameters needed by the API to assign a pod to a given pipeline activity.
+properties:
+    experimentId:
+        type: string
+        description: The experiment ID.
+    taskName:
+        type: string
+        description: The taskName used to request a pipeline pod assignation.
+    input:
+      type: object
+      properties:
+        sandboxId:
+          type: string
+          description: The sandbox ID of the environment.
+        activityId:
+          type: string
+          description: The activity ID associated to the pipeline state machine.
+        processName:
+          type: string
+          description: The process name of the pipeline (qc / gem2s).
+      required:
+        - sandboxId
+        - activityId
+        - processName
+required:
+  - experimentId
+  - taskName
+  - input

@@ -1,7 +1,9 @@
 const deleteCompletedJobs = require('./delete-complete-jobs');
 const createNewStep = require('./create-new-step');
 const createNewJobIfNotExist = require('./create-new-job-if-not-exist');
-const { getRunningPods, deleteRunningPods, assignPodToPipeline } = require('./assign-pod-to-pipeline');
+const {
+  getRunningPods, deleteRunningPods, assignPodToPipeline, waitForPod,
+} = require('./assign-pod-to-pipeline');
 
 const constructPipelineStep = (context, step) => {
   const { XStepType: stepType, XConstructorArgs: args } = step;
@@ -24,6 +26,9 @@ const constructPipelineStep = (context, step) => {
     }
     case 'assign-pipeline-to-pod': {
       return assignPodToPipeline(context, step, args);
+    }
+    case 'wait-for-pod': {
+      return waitForPod(context, step, args);
     }
     // used both locally and in aws
     case 'create-new-step': {
