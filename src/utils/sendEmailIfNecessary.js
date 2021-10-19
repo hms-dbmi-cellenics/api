@@ -6,11 +6,13 @@ const {
 const ExperimentService = require('../api/route-services/experiment');
 
 const sendEmailIfNecessary = async (process, status, experimentId, user) => {
-  AWS.config.update({ region: config.awsRegion });
+  const ses = new AWS.SES({
+    region: config.awsRegion,
+    apiVersion: '2010-12-01',
+  });
   const experiment = await (new ExperimentService()).getExperimentData(experimentId);
   const firstname = user.name.split(' ')[0];
   const link = `scp.biomage.net/experiments/${experimentId}/data-processing`;
-
   const successMessage = `
       The data processing pipeline has completed successfully and your data is now ready to explore:<br/>
       <a href="${link}">${link}</a>
@@ -59,7 +61,7 @@ const sendEmailIfNecessary = async (process, status, experimentId, user) => {
       },
       Source: 'notification@biomage.net',
     };
-    const sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
+    const sendPromise = ses.sendEmail(params).promise();
 
     sendPromise.then(
       (data) => {

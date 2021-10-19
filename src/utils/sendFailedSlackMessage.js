@@ -64,7 +64,6 @@ const sendFailedSlackMessage = async (message, user) => {
       method: 'POST',
       body: JSON.stringify(feedbackData),
     });
-
     if (!r.ok) {
       throw new Error('Invalid status code returned.');
     }

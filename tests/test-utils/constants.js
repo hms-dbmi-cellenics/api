@@ -52,7 +52,11 @@ const S3_WORKER_RESULT = {
     },
   },
 };
-
+const USER = {
+  name: 'John Cena',
+  email: 'johncena@gmail.com',
+  sub: 'useridayylmao',
+};
 // Try to use realistic values but DO NOT USE real ones.
 module.exports = Object.freeze({
   SOCKET_ENDPOINT: 'localhost:5000',
@@ -66,4 +70,5 @@ module.exports = Object.freeze({
   ACTIVITY_ID: 'arn:aws:states:eu-east-9:111111111111:activity:biomage-gem2s-production-39249897-cfce-632b-a617-e58fbf251733',
   CELL_SIZE_PROCESSING_CONFIG,
   S3_WORKER_RESULT,
+  USER,
 });

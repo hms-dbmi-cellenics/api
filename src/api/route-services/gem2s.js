@@ -40,6 +40,9 @@ class Gem2sService {
 
     const { error = null } = message.response || {};
 
+    logger.log('Sending to all clients subscribed to experiment', experimentId);
+    io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
+
     if (error) {
       logger.log(`Error in ${constants.GEM2S_PROCESS_NAME} received`);
       const user = await authenticationMiddlewareSocketIO(message.input.authJWT);
@@ -49,8 +52,6 @@ class Gem2sService {
       }
       AWSXRay.getSegment().addError(error);
     }
-    logger.log('Sending to all clients subscribed to experiment', experimentId);
-    io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
   }
 
   static async generateGem2sParams(experimentId, authJWT) {
