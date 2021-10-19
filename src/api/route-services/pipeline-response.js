@@ -13,7 +13,7 @@ const PlotsTablesService = require('./plots-tables');
 const sendEmailIfNecessary = require('../../utils/sendEmailIfNecessary');
 const sendFailedSlackMessage = require('../../utils/sendFailedSlackMessage');
 const { authenticationMiddlewareSocketIO } = require('../../utils/authMiddlewares');
-const PipelineHook = require('../../utils/hookRunner');
+const PipelineHook = require('../../utils/hooks/hookRunner');
 
 const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
