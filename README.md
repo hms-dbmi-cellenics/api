@@ -36,7 +36,7 @@ To run the API, you can install the dependencies with:
 
 And then run it with:
 
-        make run 
+        make run
 
 You should see the following output on your terminal:
 

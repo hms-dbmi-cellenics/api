@@ -1,6 +1,5 @@
 const { buildStateMachineDefinition } = require('../../../src/api/general-services/pipeline-manage');
-const { getQcPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons/qc-pipeline-skeleton');
-const { getGem2sPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons/gem2s-pipeline-skeleton');
+const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons');
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
@@ -19,24 +18,27 @@ const snapshotPlainJsonSerializer = {
 };
 expect.addSnapshotSerializer(snapshotPlainJsonSerializer);
 
+const getContext = (processName) => ({
+  experimentId: 'mock-experiment-id',
+  accountId: 'mock-account-id',
+  roleArn: 'mock-role-arn',
+  processName,
+  sandboxId: 'pipeline-assignation',
+  activityArn: `arn:aws:states:eu-west-1:28592648592:activity:biomage-${processName}-production-39249897-cfce-402b-a617-e58fbf251713`,
+  pipelineArtifacts: {
+    'remoter-server': 'mock-remoter-server-image',
+    'remoter-client': 'mock-remoter-client-image',
+  },
+  clusterInfo: {
+    name: 'mock-cluster-name',
+    endpoint: 'https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com',
+    certAuthority: 'mock-ca',
+  },
+  processingConfig: {},
+});
 
 describe('non-tests to document the State Machines', () => {
-  const context = {
-    experimentId: 'mock-experiment-id',
-    accountId: 'mock-account-id',
-    roleArn: 'mock-role-arn',
-    pipelineArtifacts: {
-      'remoter-server': 'mock-remoter-server-image',
-      'remoter-client': 'mock-remoter-client-image',
-    },
-    clusterInfo: {
-      name: 'mock-cluster-name',
-      endpoint: 'mock-endpoint',
-      certAuthority: 'mock-ca',
-    },
-    processingConfig: {},
-  };
-
+  let context = getContext('qc');
   it('- qc local development', () => {
     const qcPipelineSkeleton = getQcPipelineSkeleton('development');
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
@@ -55,6 +57,7 @@ describe('non-tests to document the State Machines', () => {
     expect(stateMachine).toMatchSnapshot();
   });
 
+  context = getContext('gem2s');
   it('- gem2s local development', () => {
     const gem2sPipelineSkeleton = getGem2sPipelineSkeleton('development');
     const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);

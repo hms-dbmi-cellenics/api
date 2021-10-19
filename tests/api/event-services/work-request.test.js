@@ -1,4 +1,3 @@
-const MockSocket = require('socket.io-mock');
 const handleWorkRequest = require('../../../src/api/event-services/work-request');
 const CacheSingleton = require('../../../src/cache');
 const getPipelineStatus = require('../../../src/api/general-services/pipeline-status');
@@ -8,12 +7,6 @@ jest.mock('../../../src/api/general-services/pipeline-status');
 jest.mock('../../../src/cache');
 
 describe('handleWorkRequest', () => {
-  let socket;
-
-  beforeEach(() => {
-    socket = new MockSocket();
-  });
-
   afterEach(() => {
     jest.resetModules();
     jest.restoreAllMocks();
@@ -34,7 +27,7 @@ describe('handleWorkRequest', () => {
     };
 
     try {
-      await handleWorkRequest(workRequest, socket);
+      await handleWorkRequest(workRequest);
     } catch (e) {
       expect(e.message).toMatch(
         /^Request timed out at/,
@@ -56,7 +49,7 @@ describe('handleWorkRequest', () => {
     };
 
     try {
-      await handleWorkRequest(workRequest, socket);
+      await handleWorkRequest(workRequest);
     } catch (e) {
       expect(e.message).toMatch(
         /^Error: type does not match the pattern/,
@@ -78,7 +71,7 @@ describe('handleWorkRequest', () => {
     };
 
     try {
-      await handleWorkRequest(workRequest, socket);
+      await handleWorkRequest(workRequest);
     } catch (e) {
       expect(e.message).toMatch(
         /^Error: distanceMetric is not set to an allowed value/,
@@ -100,7 +93,7 @@ describe('handleWorkRequest', () => {
     };
 
     try {
-      await handleWorkRequest(workRequest, socket);
+      await handleWorkRequest(workRequest);
     } catch (e) {
       expect(e.message).toMatch(
         /^Error: minimumDistance must be at least 0/,
@@ -122,7 +115,7 @@ describe('handleWorkRequest', () => {
     };
 
     try {
-      await handleWorkRequest(workRequest, socket);
+      await handleWorkRequest(workRequest);
     } catch (e) {
       expect(e.message).toMatch(
         /^Error: minimumDistance is a required field/,
@@ -151,7 +144,7 @@ describe('handleWorkRequest', () => {
     }));
 
     try {
-      await handleWorkRequest(workRequest, socket);
+      await handleWorkRequest(workRequest);
     } catch (e) {
       expect(e.message).toMatch(
         'Work request can not be handled because pipeline is RUNNING',

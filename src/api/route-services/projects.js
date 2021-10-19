@@ -17,7 +17,8 @@ const experimentService = new ExperimentService();
 
 class ProjectsService {
   constructor() {
-    this.tableName = `projects-${config.clusterEnv}`;
+    this.projectsTableName = `projects-${config.clusterEnv}`;
+    this.samplesTableName = `samples-${config.clusterEnv}`;
   }
 
   async getProject(projectUuid) {
@@ -27,7 +28,7 @@ class ProjectsService {
     });
 
     const params = {
-      TableName: this.tableName,
+      TableName: this.projectsTableName,
       Key: marshalledKey,
     };
 
@@ -42,6 +43,19 @@ class ProjectsService {
     return response;
   }
 
+  async createProject(projectUuid, project) {
+    logger.log(`Creating project with id ${projectUuid}`);
+
+    const experimentId = project.experiments[0];
+
+    await Promise.all([
+      this.createEmptySamplesEntry(projectUuid, experimentId),
+      this.updateProject(projectUuid, project),
+    ]);
+
+    return OK();
+  }
+
   async updateProject(projectUuid, project) {
     logger.log(`Updating project with id ${projectUuid}`);
     const marshalledKey = convertToDynamoDbRecord({
@@ -53,7 +67,7 @@ class ProjectsService {
     });
 
     const params = {
-      TableName: this.tableName,
+      TableName: this.projectsTableName,
       Key: marshalledKey,
       UpdateExpression: 'SET projects = :project',
       ExpressionAttributeValues: marshalledData,
@@ -61,13 +75,9 @@ class ProjectsService {
 
     const dynamodb = createDynamoDbInstance();
 
-    try {
-      await dynamodb.updateItem(params).send();
-      return OK();
-    } catch (e) {
-      if (e.statusCode === 400) throw new NotFoundError('Project not found');
-      throw e;
-    }
+    await dynamodb.updateItem(params).promise();
+
+    return OK();
   }
 
   /**
@@ -136,7 +146,7 @@ class ProjectsService {
     const dynamodb = createDynamoDbInstance();
     const params = {
       RequestItems: {
-        [this.tableName]: {
+        [this.projectsTableName]: {
           Keys: projectIds.map((projectUuid) => convertToDynamoDbRecord({ projectUuid })),
         },
       },
@@ -144,7 +154,7 @@ class ProjectsService {
 
     const data = await safeBatchGetItem(dynamodb, params);
 
-    const existingProjectIds = new Set(data.Responses[this.tableName].map((entry) => {
+    const existingProjectIds = new Set(data.Responses[this.projectsTableName].map((entry) => {
       const newData = convertToJsObject(entry);
       return newData.projects.uuid;
     }));
@@ -167,7 +177,7 @@ class ProjectsService {
         return newProject;
       });
 
-    data.Responses[this.tableName].forEach((entry) => {
+    data.Responses[this.projectsTableName].forEach((entry) => {
       const newData = convertToJsObject(entry);
       projects.push(newData.projects);
     });
@@ -181,7 +191,7 @@ class ProjectsService {
     const marshalledKey = convertToDynamoDbRecord({ projectUuid });
 
     const params = {
-      TableName: this.tableName,
+      TableName: this.projectsTableName,
       Key: marshalledKey,
     };
 
@@ -205,7 +215,7 @@ class ProjectsService {
     });
 
     const params = {
-      TableName: this.tableName,
+      TableName: this.projectsTableName,
       Key: marshalledKey,
     };
 
@@ -224,13 +234,31 @@ class ProjectsService {
         await Promise.all(deletePromises);
       }
 
-      await dynamodb.deleteItem(params).send();
+      await dynamodb.deleteItem(params).promise();
 
       return OK();
     } catch (e) {
       if (e.statusCode === 400) throw new NotFoundError('Project not found');
       throw e;
     }
+  }
+
+  async createEmptySamplesEntry(projectUuid, experimentId) {
+    const dynamodb = createDynamoDbInstance();
+
+    const marshalledData = convertToDynamoDbRecord({
+      ':emptySamples': {},
+      ':projectUuid': projectUuid,
+    });
+
+    const emptyAttributeParams = {
+      TableName: this.samplesTableName,
+      Key: convertToDynamoDbRecord({ experimentId }),
+      UpdateExpression: 'SET samples = :emptySamples, projectUuid = :projectUuid',
+      ExpressionAttributeValues: marshalledData,
+    };
+
+    await dynamodb.updateItem(emptyAttributeParams).promise();
   }
 }
 

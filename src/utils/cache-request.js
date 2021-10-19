@@ -8,9 +8,7 @@ const logger = getLogger();
 
 const createObjectHash = (object) => hash.MD5(object);
 
-const cacheGetRequest = async (
-  data,
-) => {
+const cacheGetRequest = async (data) => {
   const { sandboxId } = config;
 
   const key = createObjectHash({

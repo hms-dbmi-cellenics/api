@@ -1,4 +1,4 @@
-const HookRunner = require('../../src/utils/hookRunner');
+const HookRunner = require('../../src/utils/hooks/hookRunner');
 
 describe('HookRunner', () => {
   it('initialize with an empty hooks list', () => {
@@ -41,10 +41,10 @@ describe('HookRunner', () => {
     runner.register('event1', fn1);
     runner.register('event2', fn2);
 
-    await runner.run('event1');
+    await runner.run({ taskName: 'event1' });
     expect(runner.results.event1).toEqual([fn1()]);
 
-    await runner.run('event2');
+    await runner.run({ taskName: 'event2' });
     expect(runner.results.event2).toEqual([fn2()]);
 
     expect(Object.keys(runner.results).length).toEqual(2);
@@ -59,7 +59,7 @@ describe('HookRunner', () => {
     runner.register('event', fn1);
     runner.register('event', fn2);
 
-    await runner.run('event');
+    await runner.run({ taskName: 'event' });
 
     expect(runner.results.event).toEqual([fn1(), fn2()]);
   });
