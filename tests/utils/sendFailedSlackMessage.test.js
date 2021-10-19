@@ -31,7 +31,7 @@ describe('sendFailedSlackMessage', () => {
     };
 
     await sendFailedSlackMessage(message, USER);
-    expect(fetch).toMatchSnapshot();
+    expect(fetch.mock.calls).toMatchSnapshot();
   });
 
   it('Sends slack message with correct fields for Gem2s', async () => {
@@ -43,6 +43,6 @@ describe('sendFailedSlackMessage', () => {
       experimentId: 'anotherExpId',
     };
     await sendFailedSlackMessage(message, USER);
-    expect(fetch).toMatchSnapshot();
+    expect(fetch.mock.calls).toMatchSnapshot();
   });
 });
