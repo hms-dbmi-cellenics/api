@@ -1,4 +1,4 @@
-const HookRunner = require('../../src/utils/hookRunner');
+const HookRunner = require('../../src/utils/hooks/hookRunner');
 
 describe('HookRunner', () => {
   it('initialize with an empty hooks list', () => {
