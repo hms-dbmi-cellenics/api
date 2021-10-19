@@ -15,10 +15,7 @@ properties:
       regressionTypeSettings:
         type: object
         properties:
-          gam:
-            type: object
-            properties:
-              p.level:
-                type: number
+          p.level:
+            type: number
 required:
   - filterSettings
