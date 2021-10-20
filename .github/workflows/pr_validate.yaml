@@ -19,7 +19,7 @@ jobs:
           } 2> /dev/null | tee pr_body.md
 
           #JIRA_REGEX="#### URL to JIRA issue\n(https:\/\/biomage\.atlassian\.net\/browse\/BIOMAGE-[0-9]+|N\/A)$"
-          JIRA_REGEX="#### URL to JIRA issue\n"
+          JIRA_REGEX="#### URL to JIRA issue\nN/A"
 
           echo "REGEX to test against:"
           echo $JIRA_REGEX
