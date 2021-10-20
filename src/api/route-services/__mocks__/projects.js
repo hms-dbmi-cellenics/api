@@ -8,12 +8,15 @@ const mockGetProject = jest.fn((projectUuid) => new Promise((resolve) => {
     throw new NotFoundError('Project not found');
   }
   const dataFactory = new MockDataFactory({ projectId: projectUuid });
+
   resolve(dataFactory.getProject());
 }));
 
 const mockGetProjects = jest.fn(() => new Promise((resolve) => {
   const dataFactory = new MockDataFactory();
-  resolve([dataFactory.getProject()]);
+  const projects = [dataFactory.getProject()];
+
+  resolve(projects);
 }));
 
 const mockGetExperiments = jest.fn((projectUuid) => new Promise((resolve) => {

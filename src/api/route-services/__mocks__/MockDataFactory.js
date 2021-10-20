@@ -1,5 +1,11 @@
 class MockDataFactory {
-  constructor({ experimentId = 'experimentId', projectId = 'projectId', sampleId = 'sampleId' }) {
+  constructor(values = {}) {
+    const {
+      experimentId = 'experimentId',
+      projectId = 'projectId',
+      sampleId = 'sampleId',
+    } = values;
+
     this.experimentId = experimentId;
     this.projectId = projectId;
     this.sampleIds = [sampleId];

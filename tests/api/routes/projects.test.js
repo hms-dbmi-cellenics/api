@@ -18,7 +18,7 @@ describe('tests for projects route', () => {
     jest.restoreAllMocks();
   });
 
-  it('Getting list of projects via /projects return 200', async (done) => {
+  it.only('Getting list of projects via /projects return 200', async (done) => {
     request(app)
       .get('/v1/projects')
       .expect(200)
