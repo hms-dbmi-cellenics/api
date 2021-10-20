@@ -19,4 +19,4 @@ jobs:
           } 2> /dev/null | tee pr_body.md
 
           JIRA_REGEX="#### URL to JIRA issue\n(https:\/\/biomage\.atlassian\.net\/browse\/BIOMAGE-[0-9]+|N\/A)$"
-          pcregrep -M $JIRA_REGEX pr_body.md
+          pcregrep -M "$JIRA_REGEX" pr_body.md
