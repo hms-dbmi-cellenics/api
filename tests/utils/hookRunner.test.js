@@ -5,18 +5,13 @@ describe('HookRunner', () => {
     const runner = new HookRunner();
 
     expect(runner.hooks).toEqual({});
+    expect(runner.results).toEqual({});
   });
 
-  it('should register single hooks properly', () => {
-    const testFn = () => true;
-
+  it('should fail when parameter is not a list', async () => {
     const runner = new HookRunner();
 
-    runner.register('test', testFn);
-    runner.register('test', testFn);
-
-    expect(Object.keys(runner.hooks).length).toEqual(1);
-    expect(runner.hooks.test.length).toEqual(2);
+    expect(() => { runner.register('test', jest.fn()); }).toThrow();
   });
 
   it('should register array of hooks properly', () => {
@@ -31,15 +26,14 @@ describe('HookRunner', () => {
     expect(runner.hooks.test.length).toEqual(2);
   });
 
-
   it('should run hooks registered to the right event', async () => {
     const fn1 = () => 1;
     const fn2 = () => 2;
 
     const runner = new HookRunner();
 
-    runner.register('event1', fn1);
-    runner.register('event2', fn2);
+    runner.register('event1', [fn1]);
+    runner.register('event2', [fn2]);
 
     await runner.run({ taskName: 'event1' });
     expect(runner.results.event1).toEqual([fn1()]);
@@ -56,8 +50,8 @@ describe('HookRunner', () => {
 
     const runner = new HookRunner();
 
-    runner.register('event', fn1);
-    runner.register('event', fn2);
+    runner.register('event', [fn1]);
+    runner.register('event', [fn2]);
 
     await runner.run({ taskName: 'event' });
 
@@ -71,9 +65,9 @@ describe('HookRunner', () => {
 
     const runner = new HookRunner();
 
-    runner.register('event1', fn1);
-    runner.register('event2', fn3);
-    runner.registerAll(fn2);
+    runner.register('event1', [fn1]);
+    runner.register('event2', [fn3]);
+    runner.registerAll([fn2]);
 
     await runner.run({ taskName: 'event1' });
     await runner.run({ taskName: 'event2' });
