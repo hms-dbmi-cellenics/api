@@ -18,7 +18,7 @@ describe('tests for projects route', () => {
     jest.restoreAllMocks();
   });
 
-  it.only('Getting list of projects via /projects return 200', async (done) => {
+  it('Getting list of projects via /projects return 200', async (done) => {
     request(app)
       .get('/v1/projects')
       .expect(200)
@@ -124,30 +124,6 @@ describe('tests for projects route', () => {
       });
   });
 
-  it('Updating project with unknown project sends error 404', async (done) => {
-    const payload = {
-      name: 'Test project',
-      description: '',
-      createdDate: '',
-      lastModified: '',
-      uuid: 'project-1',
-      experiments: [],
-      lastAnalyzed: null,
-      samples: [],
-    };
-
-    request(app)
-      .put('/v1/projects/unknown-project')
-      .send(payload)
-      .expect(404)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        return done();
-      });
-  });
-
   it('Updating project send error 415 if body does not contain data', async (done) => {
     request(app)
       .put('/v1/projects/someId')
@@ -164,18 +140,6 @@ describe('tests for projects route', () => {
     request(app)
       .delete('/v1/projects/someId')
       .expect(200)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        return done();
-      });
-  });
-
-  it('Deleting project with unknown project sends error 404', async (done) => {
-    request(app)
-      .delete('/v1/projects/unknown-project')
-      .expect(404)
       .end((err) => {
         if (err) {
           return done(err);
