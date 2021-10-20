@@ -20,73 +20,32 @@ const mockSamples = {
   },
 };
 
-const mockGetSamples = jest.fn(() => new Promise((resolve) => {
-  resolve(mockSamples);
-}));
+const mockGetSamples = jest.fn(() => (
+  new Promise((resolve) => {
+    resolve(mockSamples);
+  })
+));
 
 
-const mockGetByExperimentId = jest.fn((experimentId) => new Promise((resolve, reject) => {
-  if (experimentId === 'nonExistentId') {
-    const err = new Error('ID does not exists');
-    err.status = 404;
+const mockGetByExperimentId = jest.fn(() => (
+  new Promise((resolve) => resolve(mockSamples))
+));
 
-    reject(err);
-  }
-
-  return resolve(mockSamples);
-}));
-
-const mockUpdateSamples = jest.fn((projectUuid, body) => new Promise((resolve, reject) => {
-  if (!projectUuid
-    || !body
-    || !body.experimentId
-    || !body.projectUuid
-    || !body.samples
-  ) {
-    const err = new Error('Invalid body');
-    err.status = 400;
-
-    reject(err);
-  }
-
+const mockUpdateSamples = jest.fn(() => new Promise((resolve) => {
   resolve({ data: { message: 'sucess', code: 200 } });
 }));
 
-const mockDeleteSamples = jest.fn((projectUuid, sampleUuid) => new Promise((resolve, reject) => {
-  if (projectUuid === 'unknown-project' || sampleUuid === 'unknown-sample') {
-    const err = new Error('Unkonwn project or sample');
-    err.status = 404;
+const mockDeleteSamples = jest.fn(() => (
+  new Promise((resolve) => {
+    resolve(OK());
+  })
+));
 
-    reject(err);
-  }
-
-  if (!projectUuid || !sampleUuid) {
-    const err = new Error('invalid body');
-    err.status = 400;
-
-    reject(err);
-  }
-
-  resolve(OK());
-}));
-
-const mockAddSample = jest.fn(
-  (projectUuid, experimentId, body) => new Promise((resolve, reject) => {
-    if (!projectUuid
-      || !body
-      || !experimentId
-      || !body.projectUuid
-      || !body.uuid
-    ) {
-      const err = new Error('Invalid body');
-      err.status = 400;
-
-      reject(err);
-    }
-
+const mockAddSample = jest.fn(() => (
+  new Promise((resolve) => {
     resolve({ data: { message: 'sucess', code: 200 } });
-  }),
-);
+  })
+));
 
 const mock = jest.fn().mockImplementation(() => ({
   getSamples: mockGetSamples,
