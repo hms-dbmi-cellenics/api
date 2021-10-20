@@ -1,6 +1,6 @@
-type: object
-title: ''
+title: 'A project object'
 description: Schema for a project object
+type: object
 properties:
   name:
     type: string

@@ -42,7 +42,7 @@ describe('tests for projects route', () => {
       });
   });
 
-  test('Creating project with correctly shaped project returns 200', async (done) => {
+  it('Creating project with correctly shaped project returns 200', async (done) => {
     const payload = {
       name: 'Test project',
       description: '',
@@ -66,14 +66,14 @@ describe('tests for projects route', () => {
       });
   });
 
-  test('Creating project with invalid shape project returns 400', async (done) => {
-    const payload = {
+  it.only('Creating project with invalid shape project returns 400', async (done) => {
+    const invalidPayload = {
       invalid: 'invalid',
     };
 
     request(app)
       .post('/v1/projects/someId')
-      .send(payload)
+      .send(invalidPayload)
       .expect(400)
       .end((err) => {
         if (err) {
@@ -107,7 +107,7 @@ describe('tests for projects route', () => {
       });
   });
 
-  it('Updating project send error 400 if body is invalid', async (done) => {
+  it.only('Updating project send error 400 if body is invalid', async (done) => {
     const invalidPayload = {
       invalid: 'payload',
     };

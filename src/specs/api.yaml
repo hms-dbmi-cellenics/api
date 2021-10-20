@@ -636,7 +636,6 @@ paths:
               schema:
                 type: object
                 properties: {}
-
       description: This path will create a new pipeline that can run a state machine with gem2s tasks.
       requestBody:
         content:
@@ -744,7 +743,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  samples: 
+                  samples:
                     $ref: ./models/api-body-schemas/Samples.v1.yaml
                 required:
                   - samples
@@ -775,12 +774,10 @@ paths:
         name: projectUuid
         in: path
         required: true
-        
     post:
       summary: Create project
       description: Create a new project
-      operationId: createProject
-      x-eov-operation-id: 'projects#create'
+      x-eov-operation-id: projects#create
       x-eov-operation-handler: routes/projects
       responses:
         '200':
@@ -823,7 +820,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ./models/api-body-schemas/Project.v1.yaml
+              $ref: '#/components/schemas/Project'
         description: The new project to set.
     put:
       summary: Update project
@@ -872,7 +869,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ./models/api-body-schemas/Project.v1.yaml
+              $ref: '#/components/schemas/Project'
         description: The new configuration to update the old one by.
     delete:
       summary: Deletes the project
@@ -966,7 +963,6 @@ paths:
                     - experimentId
                     - projectUuid
                     - samples
-                  
                   additionalProperties: false
         '404':
           description: Not Found
@@ -1033,14 +1029,12 @@ paths:
                 - experimentId
                 - projectUuid
                 - samples
-              
               additionalProperties: false
-
     post:
       summary: Add sample
       description: Adds a new sample to a samples entry
       operationId: addSample
-      x-eov-operation-id: 'samples#add'
+      x-eov-operation-id: samples#add
       x-eov-operation-handler: routes/samples
       responses:
         '200':
@@ -1146,10 +1140,14 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: ./models/api-body-schemas/Project.v1.yaml
+                  $ref: '#/components/schemas/Project'
         '401':
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+components:
+  schemas:
+    Project:
+      $ref: './models/api-body-schemas/Project.v1.yaml'

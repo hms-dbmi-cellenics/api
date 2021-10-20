@@ -1,7 +1,11 @@
 const { OK } = require('../../../utils/responses');
 const MockDataFactory = require('./MockDataFactory');
 
-const mockCreateProject = jest.fn(() => Promise.resolve(OK()));
+const mockCreateProject = jest.fn(() => (
+  new Promise((resolve) => {
+    resolve(OK());
+  })
+));
 
 const mockGetProject = jest.fn((projectUuid) => new Promise((resolve) => {
   const dataFactory = new MockDataFactory({ projectId: projectUuid });
