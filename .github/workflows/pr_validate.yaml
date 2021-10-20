@@ -10,8 +10,8 @@ jobs:
       - id: check-jira-url
         name: Check JIRA URL
         run: |-
-          apt-get update -y
-          apt-get install -y pcregrep
+          sudo apt-get update -y
+          sudo apt-get install -y pcregrep
 
           {
             ${{ github.event.pull_request.body }}
