@@ -1,0 +1,17 @@
+name: Pull Request Workflow
+on:
+  pull_request:
+    types: [ opened, reopened, edited ]
+jobs:
+  check-pr-template:
+    name: Check pull request template
+    runs-on: ubuntu-20.04
+    steps:
+      - id: check-jira-url
+        name: Check JIRA URL
+        run: |-
+          PR_BODY=${{ github.event.pull_request.body }}
+          JIRA_REGEX="#### URL to JIRA issue\n(https:\/\/biomage\.atlassian\.net\/browse\/BIOMAGE-[0-9]+|N\/A)$"
+
+
+          echo "${{ github.event.pull_request.body }}" | pcregrep -M $JIRA_REGEX
