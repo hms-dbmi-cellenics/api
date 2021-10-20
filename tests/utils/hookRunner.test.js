@@ -63,4 +63,46 @@ describe('HookRunner', () => {
 
     expect(runner.results.event).toEqual([fn1(), fn2()]);
   });
+
+  it('should run multiple hooks with a global one', async () => {
+    const fn1 = jest.fn(() => 1);
+    const fn2 = jest.fn(() => 2);
+    const fn3 = jest.fn(() => 3);
+
+    const runner = new HookRunner();
+
+    runner.register('event1', fn1);
+    runner.register('event2', fn3);
+    runner.registerAll(fn2);
+
+    await runner.run({ taskName: 'event1' });
+    await runner.run({ taskName: 'event2' });
+    await runner.run({ taskName: 'event3' });
+
+    expect(fn1).toHaveBeenCalledTimes(1);
+    expect(fn2).toHaveBeenCalledTimes(3);
+    expect(fn3).toHaveBeenCalledTimes(1);
+
+    expect(runner.results.event1).toEqual([fn1(), fn2()]);
+    expect(runner.results.event2).toEqual([fn3(), fn2()]);
+    expect(runner.results.event3).toEqual([fn2()]);
+  });
+
+
+  it('should run multiple times a global hook', async () => {
+    const fn1 = jest.fn(() => 1);
+
+    const runner = new HookRunner();
+
+    runner.registerAll([fn1]);
+
+    await runner.run({ taskName: 'event-1' });
+    await runner.run({ taskName: 'event-2' });
+    await runner.run({ taskName: 'event-3' });
+
+    expect(fn1).toHaveBeenCalledTimes(3);
+    expect(runner.results['event-1']).toEqual([fn1()]);
+    expect(runner.results['event-2']).toEqual([fn1()]);
+    expect(runner.results['event-3']).toEqual([fn1()]);
+  });
 });
