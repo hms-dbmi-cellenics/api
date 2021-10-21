@@ -1019,15 +1019,9 @@ paths:
             schema:
               type: object
               properties:
-                experimentId:
-                  type: string
-                projectUuid:
-                  type: string
                 samples:
                   $ref: ./models/api-body-schemas/Samples.v1.yaml
               required:
-                - experimentId
-                - projectUuid
                 - samples
               additionalProperties: false
     post:

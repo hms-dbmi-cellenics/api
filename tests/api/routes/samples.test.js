@@ -6,6 +6,26 @@ jest.mock('../../../src/api/route-services/samples');
 jest.mock('../../../src/utils/authMiddlewares');
 
 describe('tests for samples route', () => {
+  const correctSample = {
+    'sample-1': {
+      name: 'sample-1',
+      projectUuid: 'project-1',
+      uuid: 'sample-1',
+      type: '10X Chromium',
+      species: 'hsapies',
+      createdDate: '2020-01-01T00:00:00.000Z',
+      lastModified: null,
+      complete: true,
+      error: false,
+      fileNames: ['test-1'],
+      files: {
+        'file-1': {
+          name: 'file-1',
+        },
+      },
+    },
+  };
+
   let app = null;
 
   beforeEach(async () => {
@@ -30,20 +50,10 @@ describe('tests for samples route', () => {
       });
   });
 
-  it('Updating correct samples return 200 ', async (done) => {
-    const payload = {
-      projectUuid: 'project-uuid',
-      experimentId: 'experiment-id',
-      samples: {
-        'sample-1': {
-          name: 'sample-1',
-        },
-      },
-    };
-
+  it.only('Updating correct samples return 200 ', async (done) => {
     request(app)
-      .put('/v1/projects/someId/experimentId/samples')
-      .send(payload)
+      .put('/v1/projects/projectId/experimentId/samples')
+      .send({ samples: correctSample })
       .expect(200)
       .end((err) => {
         if (err) {
