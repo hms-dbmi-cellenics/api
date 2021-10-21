@@ -6,6 +6,23 @@ jest.mock('../../../src/api/route-services/projects');
 jest.mock('../../../src/utils/authMiddlewares');
 
 describe('tests for projects route', () => {
+  const correctProject = {
+    metadataKeys: [],
+    createdDate: '2021-10-20T17:03:18.893Z',
+    experiments: [
+      'experimentId',
+    ],
+    name: 'asdsadsad',
+    description: '',
+    lastAnalyzed: null,
+    lastModified: '2021-10-20T17:03:18.893Z',
+    uuid: 'projectUuid',
+    samples: [
+      'sampleId1',
+      'sampleId2',
+    ],
+  };
+
   let app = null;
 
   beforeEach(async () => {
@@ -43,20 +60,9 @@ describe('tests for projects route', () => {
   });
 
   it('Creating project with correctly shaped project returns 200', async (done) => {
-    const payload = {
-      name: 'Test project',
-      description: '',
-      createdDate: '',
-      lastModified: '',
-      uuid: 'project-1',
-      experiments: [],
-      lastAnalyzed: null,
-      samples: [],
-    };
-
     request(app)
       .post('/v1/projects/someId')
-      .send(payload)
+      .send(correctProject)
       .expect(200)
       .end((err) => {
         if (err) {
@@ -66,14 +72,27 @@ describe('tests for projects route', () => {
       });
   });
 
-  it.only('Creating project with invalid shape project returns 400', async (done) => {
-    const invalidPayload = {
-      invalid: 'invalid',
-    };
+  it('Creating project lacking required properties returns 400', async (done) => {
+    const { metadataKeys, ...restOfProject } = correctProject;
 
     request(app)
       .post('/v1/projects/someId')
-      .send(invalidPayload)
+      .send(restOfProject)
+      .expect(400)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Creating project with unexpected extra properties returns 400', async (done) => {
+    const invalidProject = { invalid: 'invalid', ...correctProject };
+
+    request(app)
+      .post('/v1/projects/someId')
+      .send(invalidProject)
       .expect(400)
       .end((err) => {
         if (err) {
@@ -84,20 +103,9 @@ describe('tests for projects route', () => {
   });
 
   it('Updating project send 200', async (done) => {
-    const payload = {
-      name: 'Test project',
-      description: '',
-      createdDate: '',
-      lastModified: '',
-      uuid: 'project-1',
-      experiments: [],
-      lastAnalyzed: null,
-      samples: [],
-    };
-
     request(app)
       .put('/v1/projects/someId')
-      .send(payload)
+      .send(correctProject)
       .expect(200)
       .end((err) => {
         if (err) {
@@ -107,14 +115,27 @@ describe('tests for projects route', () => {
       });
   });
 
-  it.only('Updating project send error 400 if body is invalid', async (done) => {
-    const invalidPayload = {
-      invalid: 'payload',
-    };
+  it('Updating project lacking required properties returns 400', async (done) => {
+    const { metadataKeys, ...restOfProject } = correctProject;
 
     request(app)
       .put('/v1/projects/someId')
-      .send(invalidPayload)
+      .send(restOfProject)
+      .expect(400)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Updating project with unexpected extra properties returns 400', async (done) => {
+    const invalidProject = { invalid: 'invalid', ...correctProject };
+
+    request(app)
+      .post('/v1/projects/someId')
+      .send(invalidProject)
       .expect(400)
       .end((err) => {
         if (err) {
