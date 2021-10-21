@@ -943,21 +943,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    experimentId:
-                      type: string
-                    projectUuid:
-                      type: string
-                    samples:
-                      $ref: ./models/api-body-schemas/Samples.v1.yaml
-                  required:
-                    - samples
-                    - experimentId
-                    - projectUuid
-                  additionalProperties: false
+                $ref: ./models/samples-bodies/SamplesByExperiment.v1.yaml
         '404':
           description: Not Found
           content:
