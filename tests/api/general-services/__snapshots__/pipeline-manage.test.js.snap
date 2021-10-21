@@ -414,15 +414,6 @@ Array [
           "Type": "Task",
         },
         "WaitForPod": Object {
-          "Catch": Array [
-            Object {
-              "ErrorEquals": Array [
-                "States.ALL",
-              ],
-              "Next": "AssignPipelineToPod",
-              "ResultPath": null,
-            },
-          ],
           "ItemsPath": "$.retries",
           "Iterator": Object {
             "StartAt": "GetAssignedPod",

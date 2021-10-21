@@ -141,11 +141,6 @@ const waitForPod = (context, step) => {
       MaxAttempts: 12,
       BackoffRate: 1.5,
     }],
-    Catch: [{
-      ErrorEquals: ['States.ALL'],
-      Next: 'AssignPipelineToPod',
-      ResultPath: null,
-    }],
     Iterator: {
       StartAt: 'GetAssignedPod',
       States: {

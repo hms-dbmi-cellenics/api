@@ -185,15 +185,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
           "BackoffRate": 1.5
         }
       ],
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "AssignPipelineToPod",
-          "ResultPath": null
-        }
-      ],
       "Iterator": {
         "StartAt": "GetAssignedPod",
         "States": {
@@ -382,15 +373,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
           "IntervalSeconds": 1,
           "MaxAttempts": 12,
           "BackoffRate": 1.5
-        }
-      ],
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "AssignPipelineToPod",
-          "ResultPath": null
         }
       ],
       "Iterator": {
@@ -784,15 +766,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
           "BackoffRate": 1.5
         }
       ],
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "AssignPipelineToPod",
-          "ResultPath": null
-        }
-      ],
       "Iterator": {
         "StartAt": "GetAssignedPod",
         "States": {
@@ -1036,15 +1009,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
           "IntervalSeconds": 1,
           "MaxAttempts": 12,
           "BackoffRate": 1.5
-        }
-      ],
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "AssignPipelineToPod",
-          "ResultPath": null
         }
       ],
       "Iterator": {
