@@ -26,7 +26,6 @@ const mockGetSamples = jest.fn(() => (
   })
 ));
 
-
 const mockGetSamplesByExperimentId = jest.fn(() => (
   new Promise((resolve) => resolve({ samples: mockSamples }))
 ));

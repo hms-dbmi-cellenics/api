@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const express = require('express');
 const request = require('supertest');
 const expressLoader = require('../../../src/loaders/express');
@@ -50,7 +51,7 @@ describe('tests for samples route', () => {
       });
   });
 
-  it.only('Updating correct samples return 200 ', async (done) => {
+  it('Updating correct samples return 200 ', async (done) => {
     request(app)
       .put('/v1/projects/projectId/experimentId/samples')
       .send({ samples: correctSample })
@@ -63,15 +64,79 @@ describe('tests for samples route', () => {
       });
   });
 
-  it('Updating samples with invalid body returns error 400', async (done) => {
-    const invalidPayload = {
-      invalid: 'payload',
-    };
+  it('Updating with invalid sample body returns error 400', async (done) => {
+    const invalidBodySample = _.cloneDeep(correctSample);
+
+    delete invalidBodySample['sample-1'].species;
 
     request(app)
       .put('/v1/projects/someId/experimentId/samples')
       .expect(400)
-      .send(invalidPayload)
+      .send({ samples: invalidBodySample })
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Updating with extra properties returns error 400', async (done) => {
+    const extraPropertiesBodySample = _.cloneDeep(correctSample);
+
+    extraPropertiesBodySample['sample-1'].invalid = 'invalid';
+
+    request(app)
+      .put('/v1/projects/someId/experimentId/samples')
+      .expect(400)
+      .send({ samples: extraPropertiesBodySample })
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Creating correct shape samples return 200 ', async (done) => {
+    request(app)
+      .post('/v1/projects/projectId/experimentId/samples')
+      .send({ samples: correctSample })
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Creating with invalid sample body returns error 400', async (done) => {
+    const invalidBodySample = _.cloneDeep(correctSample);
+
+    delete invalidBodySample['sample-1'].species;
+
+    request(app)
+      .post('/v1/projects/someId/experimentId/samples')
+      .expect(400)
+      .send({ samples: invalidBodySample })
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Creating with extra properties returns error 400', async (done) => {
+    const extraPropertiesBodySample = _.cloneDeep(correctSample);
+
+    extraPropertiesBodySample['sample-1'].invalid = 'invalid';
+
+    request(app)
+      .post('/v1/projects/someId/experimentId/samples')
+      .expect(400)
+      .send({ samples: extraPropertiesBodySample })
       .end((err) => {
         if (err) {
           return done(err);
