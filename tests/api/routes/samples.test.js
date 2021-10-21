@@ -18,7 +18,7 @@ describe('tests for samples route', () => {
     jest.restoreAllMocks();
   });
 
-  it('Get samples by experimentId returns 200', async (done) => {
+  it.only('Get samples by experimentId returns 200', async (done) => {
     request(app)
       .get('/v1/experiments/someId/samples')
       .expect(200)
