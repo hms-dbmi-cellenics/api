@@ -11,11 +11,11 @@ const mockEmptyPodsList = {
   },
 };
 
-const removeNamespacedPod = jest.fn();
+const deleteNamespacedPod = jest.fn();
 const patchNamespacedPod = jest.fn();
 const listNamespacedPod = jest.fn(() => mockEmptyPodsList);
 const mockApi = {
-  removeNamespacedPod,
+  deleteNamespacedPod,
   patchNamespacedPod,
   listNamespacedPod,
 };
@@ -40,8 +40,8 @@ describe('tests for the pipeline-assign service', () => {
 
     await pipelineAssign.assignPodToPipeline(message);
 
-    expect(listNamespacedPod).toHaveBeenCalledTimes(2);
-    expect(removeNamespacedPod).toHaveBeenCalledTimes(0);
+    expect(listNamespacedPod).toHaveBeenCalledTimes(24);
+    expect(deleteNamespacedPod).toHaveBeenCalledTimes(0);
     expect(patchNamespacedPod).toHaveBeenCalledTimes(0);
   });
 });

@@ -207,7 +207,7 @@ Array [
     "type": "return",
     "value": Object {
       "Comment": "QC Pipeline for clusterEnv 'test'",
-      "StartAt": "GetExperimentRunningPods",
+      "StartAt": "RequestPod",
       "States": Object {
         "CellSizeDistributionFilterMap": Object {
           "ItemsPath": "$.samples",
@@ -397,32 +397,21 @@ Array [
           "Type": "Map",
         },
         "RequestPod": Object {
-          "ItemsPath": "$.runningPods.ResponseBody.items",
-          "Iterator": Object {
-            "StartAt": "DeletePod",
-            "States": Object {
-              "RequestPod": Object {
-                "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
-                "End": true,
-                "Parameters": Object {
-                  "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"testExperimentId\\",\\"input\\":{\\"experimentId\\":\\"testExperimentId\\",\\"sandboxId\\":\\"default\\",\\"activityId\\":\\"pipeline-test-mock-uuid\\",\\"processName\\":\\"qc\\"}}",
-                  "MessageAttributes": Object {
-                    "type": Object {
-                      "DataType": "String",
-                      "StringValue": "PipelineResponse",
-                    },
-                  },
-                  "TopicArn": "arn:aws:sns:eu-west-1:test-account-id:work-results-test-default",
-                },
-                "Resource": "arn:aws:states:::sns:publish",
-                "Type": "Task",
+          "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
+          "Next": "WaitForPod",
+          "Parameters": Object {
+            "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"testExperimentId\\",\\"input\\":{\\"experimentId\\":\\"testExperimentId\\",\\"sandboxId\\":\\"default\\",\\"activityId\\":\\"pipeline-test-mock-uuid\\",\\"processName\\":\\"qc\\"}}",
+            "MessageAttributes": Object {
+              "type": Object {
+                "DataType": "String",
+                "StringValue": "PipelineResponse",
               },
             },
+            "TopicArn": "arn:aws:sns:eu-west-1:test-account-id:work-results-test-default",
           },
-          "MaxConcurrency": 0,
-          "Next": "WaitForPod",
+          "Resource": "arn:aws:states:::sns:publish",
           "ResultPath": null,
-          "Type": "Map",
+          "Type": "Task",
         },
         "WaitForPod": Object {
           "Catch": Array [

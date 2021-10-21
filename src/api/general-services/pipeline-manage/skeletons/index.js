@@ -63,7 +63,7 @@ const firstStep = (clusterEnv) => {
     return 'DeleteCompletedPipelineWorker';
   }
 
-  return 'GetExperimentRunningPods';
+  return 'RequestPod';
 };
 
 const getGem2sPipelineSkeleton = (clusterEnv) => ({

@@ -150,32 +150,21 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
 
 {
   "Comment": "Gem2s Pipeline for clusterEnv 'production'",
-  "StartAt": "GetExperimentRunningPods",
+  "StartAt": "RequestPod",
   "States": {
     "RequestPod": {
       "ResultPath": null,
       "Next": "WaitForPod",
-      "Type": "Map",
-      "ItemsPath": "$.runningPods.ResponseBody.items",
-      "MaxConcurrency": 0,
-      "Iterator": {
-        "StartAt": "DeletePod",
-        "States": {
-          "RequestPod": {
-            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
-            "Type": "Task",
-            "Resource": "arn:aws:states:::sns:publish",
-            "End": true,
-            "Parameters": {
-              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
-              "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
-              "MessageAttributes": {
-                "type": {
-                  "DataType": "String",
-                  "StringValue": "PipelineResponse"
-                }
-              }
-            }
+      "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
+        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
           }
         }
       }
@@ -360,32 +349,21 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
 
 {
   "Comment": "Gem2s Pipeline for clusterEnv 'staging'",
-  "StartAt": "GetExperimentRunningPods",
+  "StartAt": "RequestPod",
   "States": {
     "RequestPod": {
       "ResultPath": null,
       "Next": "WaitForPod",
-      "Type": "Map",
-      "ItemsPath": "$.runningPods.ResponseBody.items",
-      "MaxConcurrency": 0,
-      "Iterator": {
-        "StartAt": "DeletePod",
-        "States": {
-          "RequestPod": {
-            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
-            "Type": "Task",
-            "Resource": "arn:aws:states:::sns:publish",
-            "End": true,
-            "Parameters": {
-              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
-              "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
-              "MessageAttributes": {
-                "type": {
-                  "DataType": "String",
-                  "StringValue": "PipelineResponse"
-                }
-              }
-            }
+      "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
+        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
           }
         }
       }
@@ -771,32 +749,21 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
 
 {
   "Comment": "QC Pipeline for clusterEnv 'production'",
-  "StartAt": "GetExperimentRunningPods",
+  "StartAt": "RequestPod",
   "States": {
     "RequestPod": {
       "ResultPath": null,
       "Next": "WaitForPod",
-      "Type": "Map",
-      "ItemsPath": "$.runningPods.ResponseBody.items",
-      "MaxConcurrency": 0,
-      "Iterator": {
-        "StartAt": "DeletePod",
-        "States": {
-          "RequestPod": {
-            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
-            "Type": "Task",
-            "Resource": "arn:aws:states:::sns:publish",
-            "End": true,
-            "Parameters": {
-              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
-              "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
-              "MessageAttributes": {
-                "type": {
-                  "DataType": "String",
-                  "StringValue": "PipelineResponse"
-                }
-              }
-            }
+      "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
+        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
           }
         }
       }
@@ -1036,32 +1003,21 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
 
 {
   "Comment": "QC Pipeline for clusterEnv 'staging'",
-  "StartAt": "GetExperimentRunningPods",
+  "StartAt": "RequestPod",
   "States": {
     "RequestPod": {
       "ResultPath": null,
       "Next": "WaitForPod",
-      "Type": "Map",
-      "ItemsPath": "$.runningPods.ResponseBody.items",
-      "MaxConcurrency": 0,
-      "Iterator": {
-        "StartAt": "DeletePod",
-        "States": {
-          "RequestPod": {
-            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
-            "Type": "Task",
-            "Resource": "arn:aws:states:::sns:publish",
-            "End": true,
-            "Parameters": {
-              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
-              "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
-              "MessageAttributes": {
-                "type": {
-                  "DataType": "String",
-                  "StringValue": "PipelineResponse"
-                }
-              }
-            }
+      "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
+        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
           }
         }
       }

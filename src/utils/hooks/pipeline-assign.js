@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 const k8s = require('@kubernetes/client-node');
 const getLogger = require('../getLogger');
 const validateRequest = require('../schema-validator');
@@ -24,7 +25,7 @@ const removeRunningPods = async (k8sApi, namespace, assignedPods) => {
   await Promise.all(assignedPods.body.items.map((pod) => {
     const { name } = pod.metadata;
     logger.log(`Found pipeline running pod ${name}, removing...`);
-    return k8sApi.removeNamespacedPod(name, namespace);
+    return k8sApi.deleteNamespacedPod(name, namespace);
   }));
 };
 
@@ -80,14 +81,25 @@ const assignPodToPipeline = async (message) => {
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
   const namespace = `pipeline-${sandboxId}`;
 
+  const maxAttempts = 12;
+  const backoffRate = 1.5;
+  let isPodAssigned = false;
+
   logger.log(`Assigning pod to ${processName} pipeline for experiment ${experimentId} in sandbox ${sandboxId} for activity ${activityId}`);
   // try to choose a free pod and assign it to the current pipeline
-  try {
+  for (let i = 0; !isPodAssigned && i < maxAttempts; i += 1) {
     const [assignedPods, unassignedPods] = await getPods(k8sApi, namespace, activityId);
     await removeRunningPods(k8sApi, namespace, assignedPods);
-    await patchPod(k8sApi, namespace, unassignedPods, experimentId, activityId, processName);
-  } catch (e) {
-    logger.log('Error assigning pod: ', e);
+    try {
+      await patchPod(k8sApi, namespace, unassignedPods, experimentId, activityId, processName);
+      isPodAssigned = true;
+    } catch (e) {
+      const timeout = backoffRate ** (i + 1);
+      logger.log(`[${i}] Error patching pod: ${e}. Waiting for ${timeout} seconds before trying again. `);
+      await new Promise((resolve) => setTimeout(() => {
+        resolve();
+      }, timeout));
+    }
   }
 };
 

@@ -63,30 +63,20 @@ const requestPod = (context, step) => {
 
   return {
     ...step,
-    Type: 'Map',
-    ItemsPath: '$.runningPods.ResponseBody.items',
-    MaxConcurrency: 0,
-    Iterator: {
-      StartAt: 'DeletePod',
-      States: {
-        RequestPod: {
-          Comment: 'Send a message through SNS so that the API assigns a pod to the pipeline',
-          Type: 'Task',
-          Resource: 'arn:aws:states:::sns:publish',
-          End: true,
-          Parameters: {
-            TopicArn: `arn:aws:sns:${config.awsRegion}:${accountId}:work-results-${environment}-${sandboxId}`,
-            Message: JSON.stringify(requestPodMessage),
-            MessageAttributes: {
-              type: {
-                DataType: 'String',
-                StringValue: 'PipelineResponse',
-              },
-            },
-          },
+    Comment: 'Send a message through SNS so that the API assigns a pod to the pipeline',
+    Type: 'Task',
+    Resource: 'arn:aws:states:::sns:publish',
+    Parameters: {
+      TopicArn: `arn:aws:sns:${config.awsRegion}:${accountId}:work-results-${environment}-${sandboxId}`,
+      Message: JSON.stringify(requestPodMessage),
+      MessageAttributes: {
+        type: {
+          DataType: 'String',
+          StringValue: 'PipelineResponse',
         },
       },
     },
+
   };
 };
 
