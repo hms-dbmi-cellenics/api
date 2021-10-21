@@ -23,31 +23,6 @@ const buildPodRequest = (sandboxId, experimentId, taskName, processName, activit
   },
 });
 
-// const getRunningPods = (context, step) => {
-//   const { clusterInfo, experimentId } = context;
-
-//   return {
-//     ...step,
-//     Type: 'Task',
-//     Comment: 'Retrieves running pods assigned to the experiment ID.',
-//     Resource: 'arn:aws:states:::eks:call',
-//     Parameters: {
-//       ClusterName: clusterInfo.name,
-//       CertificateAuthority: clusterInfo.certAuthority,
-//       Endpoint: clusterInfo.endpoint,
-//       Method: 'GET',
-//       Path: `/api/v1/namespaces/${config.pipelineNamespace}/pods`,
-//       QueryParameters: {
-//         labelSelector: [
-//           `experimentId=${experimentId},type=pipeline`,
-//         ],
-//         fieldSelector: [
-//           'status.phase=Running',
-//         ],
-//       },
-//     },
-//   };
-// };
 
 const requestPod = (context, step) => {
   const {
@@ -80,48 +55,6 @@ const requestPod = (context, step) => {
   };
 };
 
-// const assignPodToPipeline = (context, step) => {
-//   const activityId = getActivityId(activityArn);
-
-
-//   return {
-//     ...step,
-//     Type: 'Map',
-//     ItemsPath: '$.retries',
-//     MaxConcurrency: 1,
-//     // retry waits up to 226 seconds, fargate takes from 1 to 3 minutes to spawn a new pod
-//     // total wait time = IntervalSeconds[(1 - BackoffRate^(MaxAttempts))/(1-BackoffRate)]
-//     Retry: [{
-//       ErrorEquals: ['NoPodsAvailable'],
-//       IntervalSeconds: 2,
-//       MaxAttempts: 10,
-//       BackoffRate: 1.5,
-//     }],
-//     Iterator: {
-//       StartAt: 'RequestPod',
-//       States: {
-//         RequestPod: {
-//           Comment: 'Send a message through SNS so that the API assigns a pod to the pipeline',
-//           Type: 'Task',
-//           Resource: 'arn:aws:states:::sns:publish',
-//           End: true,
-//           Parameters: {
-//             TopicArn:
-// `arn:aws:sns:${config.awsRegion}:${accountId}:work-results-${environment}-${sandboxId}`,
-//             Message: JSON.stringify(requestPodMessage),
-//             MessageAttributes: {
-//               type: {
-//                 DataType: 'String',
-//                 StringValue: 'PipelineResponse',
-//               },
-//             },
-//           },
-//         },
-//       },
-//     },
-//   };
-// };
-
 
 const waitForPod = (context, step) => {
   const { clusterInfo, activityArn } = context;
@@ -133,8 +66,8 @@ const waitForPod = (context, step) => {
     Type: 'Map',
     ItemsPath: '$.retries',
     MaxConcurrency: 1,
-    // retry waits up to 74 seconds for the pod to be assigned
-    // total wait time = IntervalSeconds[(1 - BackoffRate^(MaxAttempts))/(1-BackoffRate)]
+    // retry waits up to 226 seconds, fargate takes from 1 to 3 minutes to spawn a new pod
+    // total wait time = IntervalSeconds*[(1 - BackoffRate^(MaxAttempts))/(1-BackoffRate)]
     Retry: [{
       ErrorEquals: ['NoPodAssigned'],
       IntervalSeconds: 1,

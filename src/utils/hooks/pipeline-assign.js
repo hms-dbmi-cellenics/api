@@ -94,7 +94,10 @@ const assignPodToPipeline = async (message) => {
       await patchPod(k8sApi, namespace, unassignedPods, experimentId, activityId, processName);
       isPodAssigned = true;
     } catch (e) {
-      const timeout = backoffRate ** (i + 1);
+      // retry waits up to 226 seconds, fargate takes from 1 to 3 minutes to spawn a new pod
+      // total wait time = IntervalSeconds*[(1 - BackoffRate^(MaxAttempts))/(1-BackoffRate)]
+      // using IntervalSeconds = 1
+      const timeout = (backoffRate ** (i + 1)) * 1000; // in ms
       logger.log(`[${i}] Error patching pod: ${e}. Waiting for ${timeout} seconds before trying again. `);
       await new Promise((resolve) => setTimeout(() => {
         resolve();
