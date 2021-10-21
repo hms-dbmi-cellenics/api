@@ -741,13 +741,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  samples:
-                    $ref: ./models/api-body-schemas/Samples.v1.yaml
-                required:
-                  - samples
-                additionalProperties: false
+                $ref: ./models/api-body-schemas/Samples.v1.yaml
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -949,21 +943,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    experimentId:
-                      type: string
-                    projectUuid:
-                      type: string
-                    samples:
-                      $ref: ./models/api-body-schemas/Samples.v1.yaml
-                  required:
-                    - experimentId
-                    - projectUuid
-                    - samples
-                  additionalProperties: false
+                $ref: ./models/api-body-schemas/Samples.v1.yaml
         '404':
           description: Not Found
           content:
