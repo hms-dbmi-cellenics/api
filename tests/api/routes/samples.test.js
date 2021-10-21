@@ -18,22 +18,10 @@ describe('tests for samples route', () => {
     jest.restoreAllMocks();
   });
 
-  it.only('Get samples by experimentId returns 200', async (done) => {
+  it('Get samples by experimentId returns 200', async (done) => {
     request(app)
       .get('/v1/experiments/someId/samples')
       .expect(200)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        return done();
-      });
-  });
-
-  it('Requesting sample for a non-existing experimentId returns 404', async (done) => {
-    request(app)
-      .get('/v1/experiments/nonExistentId/samples')
-      .expect(404)
       .end((err) => {
         if (err) {
           return done(err);
