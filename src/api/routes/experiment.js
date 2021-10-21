@@ -9,7 +9,7 @@ module.exports = {
     expressAuthorizationMiddleware,
     (req, res, next) => {
       experimentService.getExperimentData(req.params.experimentId)
-        .then((data) => res.json(data))
+        .then((data) => { console.log(JSON.stringify(data)); return res.json(data); })
         .catch(next);
     },
   ],
