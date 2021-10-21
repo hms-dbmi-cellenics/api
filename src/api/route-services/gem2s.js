@@ -5,10 +5,10 @@ const constants = require('../general-services/pipeline-manage/constants');
 const getPipelineStatus = require('../general-services/pipeline-status');
 const { createGem2SPipeline } = require('../general-services/pipeline-manage');
 
-const saveProcessingConfigFromGem2s = require('../../utils/hooks/saveProcessingConfigFromGem2s');
-const runQCPipeline = require('../../utils/hooks/runQCPipeline');
+const saveProcessingConfigFromGem2s = require('../../utils/hooks/save-gem2s-processing-config');
+const runQCPipeline = require('../../utils/hooks/run-qc-pipeline');
 const validateRequest = require('../../utils/schema-validator');
-const PipelineHook = require('../../utils/hookRunner');
+const PipelineHook = require('../../utils/hooks/hookRunner');
 const getLogger = require('../../utils/getLogger');
 
 const ExperimentService = require('./experiment');
@@ -29,13 +29,13 @@ class Gem2sService {
     const response = {
       ...message,
       status: statusRes,
-      type: 'gem2s',
+      type: constants.GEM2S_PROCESS_NAME,
     };
 
     const { error = null } = message.response || {};
 
     if (error) {
-      logger.log('Error in gem2s received');
+      logger.log(`Error in ${constants.GEM2S_PROCESS_NAME} received`);
 
       AWSXRay.getSegment().addError(error);
     }
@@ -114,16 +114,9 @@ class Gem2sService {
     // Fail hard if there was an error.
     await validateRequest(message, 'GEM2SResponse.v1.yaml');
 
-    const {
-      experimentId, taskName, item, authJWT,
-    } = message;
+    await pipelineHook.run(message);
 
-    await pipelineHook.run(taskName, {
-      experimentId,
-      item,
-      authJWT,
-    });
-
+    const { experimentId } = message;
 
     const messageForClient = _.cloneDeep(message);
 

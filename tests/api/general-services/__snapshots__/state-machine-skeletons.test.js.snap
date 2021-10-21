@@ -25,8 +25,9 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
         "Payload": {
           "image": "biomage-pipeline-runner",
-          "name": "undefined-runner",
-          "detached": true
+          "name": "gem2s-runner",
+          "detached": true,
+          "activityArn": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
         }
       },
       "Catch": [
@@ -42,11 +43,13 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
     "DownloadGem": {
       "Next": "PreProcessing",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -54,11 +57,13 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
     "PreProcessing": {
       "Next": "EmptyDrops",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -66,11 +71,13 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
     "EmptyDrops": {
       "Next": "DoubletScores",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -78,11 +85,13 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
     "DoubletScores": {
       "Next": "CreateSeurat",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -90,11 +99,13 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
     "CreateSeurat": {
       "Next": "PrepareExperiment",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -102,11 +113,13 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
     "PrepareExperiment": {
       "Next": "UploadToAWS",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -114,11 +127,13 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
     "UploadToAWS": {
       "Next": "EndOfGem2S",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -146,7 +161,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Parameters": {
         "ClusterName": "mock-cluster-name",
         "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
+        "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
         "Method": "GET",
         "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
         "QueryParameters": {
@@ -176,7 +191,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "Parameters": {
               "ClusterName": "mock-cluster-name",
               "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
+              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "DELETE",
               "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)"
             },
@@ -198,7 +213,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
     },
     "AssignPipelineToPod": {
       "ResultPath": null,
-      "Next": "DownloadGem",
+      "Next": "WaitForPod",
       "Type": "Map",
       "ItemsPath": "$.retries",
       "MaxConcurrency": 1,
@@ -208,7 +223,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "NoPodsAvailable"
           ],
           "IntervalSeconds": 2,
-          "MaxAttempts": 11,
+          "MaxAttempts": 10,
           "BackoffRate": 1.5
         }
       ],
@@ -223,7 +238,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "Parameters": {
               "ClusterName": "mock-cluster-name",
               "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
+              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "GET",
               "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
               "QueryParameters": {
@@ -246,30 +261,25 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
                 "Next": "NoPodsAvailable"
               }
             ],
-            "Default": "AssignPodToPipeline"
+            "Default": "RequestPod"
           },
           "NoPodsAvailable": {
             "Type": "Fail",
             "Cause": "No available and running pipeline pods.",
             "Error": "NoPodsAvailable"
           },
-          "AssignPodToPipeline": {
-            "End": true,
-            "ResultPath": "$.PatchResult",
+          "RequestPod": {
+            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
-            "Comment": "Patch pod to set the activity ID label.",
-            "Resource": "arn:aws:states:::eks:call",
+            "Resource": "arn:aws:states:::sns:publish",
+            "End": true,
             "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
-              "Method": "PATCH",
-              "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.ResponseBody.items[0].metadata.namespace, $.ResponseBody.items[0].metadata.name)",
-              "RequestBody": {
-                "metadata": {
-                  "labels": {
-                    "experimentId": "mock-experiment-id"
-                  }
+              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
+              "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+              "MessageAttributes": {
+                "type": {
+                  "DataType": "String",
+                  "StringValue": "PipelineResponse"
                 }
               }
             }
@@ -277,14 +287,86 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         }
       }
     },
+    "WaitForPod": {
+      "ResultPath": null,
+      "Next": "DownloadGem",
+      "Type": "Map",
+      "ItemsPath": "$.retries",
+      "MaxConcurrency": 1,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "NoPodAssigned"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 9,
+          "BackoffRate": 1.5
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "AssignPipelineToPod",
+          "ResultPath": null
+        }
+      ],
+      "Iterator": {
+        "StartAt": "GetAssignedPod",
+        "States": {
+          "GetAssignedPod": {
+            "Next": "IsPodAssigned",
+            "Type": "Task",
+            "Comment": "Retrieves first unassigned and running pipeline pod.",
+            "Resource": "arn:aws:states:::eks:call",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
+              "Method": "GET",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+              "QueryParameters": {
+                "labelSelector": [
+                  "type=pipeline,activityId=biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
+                ]
+              }
+            }
+          },
+          "IsPodAssigned": {
+            "Type": "Choice",
+            "Comment": "Redirects to an error state if the pipeline pod is not assigned yet.",
+            "Choices": [
+              {
+                "Variable": "$.ResponseBody.items[0]",
+                "IsPresent": false,
+                "Next": "NoPodAssigned"
+              }
+            ],
+            "Default": "ReadyToRun"
+          },
+          "NoPodAssigned": {
+            "Type": "Fail",
+            "Cause": "No available and running pipeline pods.",
+            "Error": "NoPodAssigned"
+          },
+          "ReadyToRun": {
+            "Type": "Pass",
+            "End": true
+          }
+        }
+      }
+    },
     "DownloadGem": {
       "Next": "PreProcessing",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -292,11 +374,13 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
     "PreProcessing": {
       "Next": "EmptyDrops",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -304,11 +388,13 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
     "EmptyDrops": {
       "Next": "DoubletScores",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -316,11 +402,13 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
     "DoubletScores": {
       "Next": "CreateSeurat",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -328,11 +416,13 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
     "CreateSeurat": {
       "Next": "PrepareExperiment",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -340,11 +430,13 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
     "PrepareExperiment": {
       "Next": "UploadToAWS",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -352,11 +444,13 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
     "UploadToAWS": {
       "Next": "EndOfGem2S",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -384,7 +478,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Parameters": {
         "ClusterName": "mock-cluster-name",
         "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
+        "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
         "Method": "GET",
         "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
         "QueryParameters": {
@@ -414,7 +508,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "Parameters": {
               "ClusterName": "mock-cluster-name",
               "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
+              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "DELETE",
               "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)"
             },
@@ -436,7 +530,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
     },
     "AssignPipelineToPod": {
       "ResultPath": null,
-      "Next": "DownloadGem",
+      "Next": "WaitForPod",
       "Type": "Map",
       "ItemsPath": "$.retries",
       "MaxConcurrency": 1,
@@ -446,7 +540,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "NoPodsAvailable"
           ],
           "IntervalSeconds": 2,
-          "MaxAttempts": 11,
+          "MaxAttempts": 10,
           "BackoffRate": 1.5
         }
       ],
@@ -461,7 +555,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "Parameters": {
               "ClusterName": "mock-cluster-name",
               "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
+              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "GET",
               "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
               "QueryParameters": {
@@ -484,30 +578,25 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
                 "Next": "NoPodsAvailable"
               }
             ],
-            "Default": "AssignPodToPipeline"
+            "Default": "RequestPod"
           },
           "NoPodsAvailable": {
             "Type": "Fail",
             "Cause": "No available and running pipeline pods.",
             "Error": "NoPodsAvailable"
           },
-          "AssignPodToPipeline": {
-            "End": true,
-            "ResultPath": "$.PatchResult",
+          "RequestPod": {
+            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
-            "Comment": "Patch pod to set the activity ID label.",
-            "Resource": "arn:aws:states:::eks:call",
+            "Resource": "arn:aws:states:::sns:publish",
+            "End": true,
             "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
-              "Method": "PATCH",
-              "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.ResponseBody.items[0].metadata.namespace, $.ResponseBody.items[0].metadata.name)",
-              "RequestBody": {
-                "metadata": {
-                  "labels": {
-                    "experimentId": "mock-experiment-id"
-                  }
+              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
+              "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+              "MessageAttributes": {
+                "type": {
+                  "DataType": "String",
+                  "StringValue": "PipelineResponse"
                 }
               }
             }
@@ -515,14 +604,86 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         }
       }
     },
+    "WaitForPod": {
+      "ResultPath": null,
+      "Next": "DownloadGem",
+      "Type": "Map",
+      "ItemsPath": "$.retries",
+      "MaxConcurrency": 1,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "NoPodAssigned"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 9,
+          "BackoffRate": 1.5
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "AssignPipelineToPod",
+          "ResultPath": null
+        }
+      ],
+      "Iterator": {
+        "StartAt": "GetAssignedPod",
+        "States": {
+          "GetAssignedPod": {
+            "Next": "IsPodAssigned",
+            "Type": "Task",
+            "Comment": "Retrieves first unassigned and running pipeline pod.",
+            "Resource": "arn:aws:states:::eks:call",
+            "Parameters": {
+              "ClusterName": "mock-cluster-name",
+              "CertificateAuthority": "mock-ca",
+              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
+              "Method": "GET",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+              "QueryParameters": {
+                "labelSelector": [
+                  "type=pipeline,activityId=biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
+                ]
+              }
+            }
+          },
+          "IsPodAssigned": {
+            "Type": "Choice",
+            "Comment": "Redirects to an error state if the pipeline pod is not assigned yet.",
+            "Choices": [
+              {
+                "Variable": "$.ResponseBody.items[0]",
+                "IsPresent": false,
+                "Next": "NoPodAssigned"
+              }
+            ],
+            "Default": "ReadyToRun"
+          },
+          "NoPodAssigned": {
+            "Type": "Fail",
+            "Cause": "No available and running pipeline pods.",
+            "Error": "NoPodAssigned"
+          },
+          "ReadyToRun": {
+            "Type": "Pass",
+            "End": true
+          }
+        }
+      }
+    },
     "DownloadGem": {
       "Next": "PreProcessing",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -530,11 +691,13 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
     "PreProcessing": {
       "Next": "EmptyDrops",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -542,11 +705,13 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
     "EmptyDrops": {
       "Next": "DoubletScores",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -554,11 +719,13 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
     "DoubletScores": {
       "Next": "CreateSeurat",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -566,11 +733,13 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
     "CreateSeurat": {
       "Next": "PrepareExperiment",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -578,11 +747,13 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
     "PrepareExperiment": {
       "Next": "UploadToAWS",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -590,11 +761,13 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
     "UploadToAWS": {
       "Next": "EndOfGem2S",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -632,8 +805,9 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
         "Payload": {
           "image": "biomage-pipeline-runner",
-          "name": "undefined-runner",
-          "detached": true
+          "name": "gem2s-runner",
+          "detached": true,
+          "activityArn": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
         }
       },
       "Catch": [
@@ -657,11 +831,13 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           "ClassifierFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -680,11 +856,13 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           "CellSizeDistributionFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -703,11 +881,13 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           "MitochondrialContentFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -726,11 +906,13 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           "NumGenesVsNumUmisFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -749,11 +931,13 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           "DoubletScoresFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -764,11 +948,13 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -776,11 +962,13 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -808,7 +996,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
       "Parameters": {
         "ClusterName": "mock-cluster-name",
         "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
+        "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
         "Method": "GET",
         "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
         "QueryParameters": {
@@ -838,7 +1026,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "Parameters": {
               "ClusterName": "mock-cluster-name",
               "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
+              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "DELETE",
               "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)"
             },
@@ -860,7 +1048,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
     },
     "AssignPipelineToPod": {
       "ResultPath": null,
-      "Next": "ClassifierFilterMap",
+      "Next": "WaitForPod",
       "Type": "Map",
       "ItemsPath": "$.retries",
       "MaxConcurrency": 1,
@@ -870,7 +1058,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "NoPodsAvailable"
           ],
           "IntervalSeconds": 2,
-          "MaxAttempts": 11,
+          "MaxAttempts": 10,
           "BackoffRate": 1.5
         }
       ],
@@ -885,7 +1073,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "Parameters": {
               "ClusterName": "mock-cluster-name",
               "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
+              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "GET",
               "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
               "QueryParameters": {
@@ -908,33 +1096,98 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
                 "Next": "NoPodsAvailable"
               }
             ],
-            "Default": "AssignPodToPipeline"
+            "Default": "RequestPod"
           },
           "NoPodsAvailable": {
             "Type": "Fail",
             "Cause": "No available and running pipeline pods.",
             "Error": "NoPodsAvailable"
           },
-          "AssignPodToPipeline": {
-            "End": true,
-            "ResultPath": "$.PatchResult",
+          "RequestPod": {
+            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
-            "Comment": "Patch pod to set the activity ID label.",
+            "Resource": "arn:aws:states:::sns:publish",
+            "End": true,
+            "Parameters": {
+              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
+              "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+              "MessageAttributes": {
+                "type": {
+                  "DataType": "String",
+                  "StringValue": "PipelineResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "WaitForPod": {
+      "ResultPath": null,
+      "Next": "ClassifierFilterMap",
+      "Type": "Map",
+      "ItemsPath": "$.retries",
+      "MaxConcurrency": 1,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "NoPodAssigned"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 9,
+          "BackoffRate": 1.5
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "AssignPipelineToPod",
+          "ResultPath": null
+        }
+      ],
+      "Iterator": {
+        "StartAt": "GetAssignedPod",
+        "States": {
+          "GetAssignedPod": {
+            "Next": "IsPodAssigned",
+            "Type": "Task",
+            "Comment": "Retrieves first unassigned and running pipeline pod.",
             "Resource": "arn:aws:states:::eks:call",
             "Parameters": {
               "ClusterName": "mock-cluster-name",
               "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
-              "Method": "PATCH",
-              "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.ResponseBody.items[0].metadata.namespace, $.ResponseBody.items[0].metadata.name)",
-              "RequestBody": {
-                "metadata": {
-                  "labels": {
-                    "experimentId": "mock-experiment-id"
-                  }
-                }
+              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
+              "Method": "GET",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+              "QueryParameters": {
+                "labelSelector": [
+                  "type=pipeline,activityId=biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
+                ]
               }
             }
+          },
+          "IsPodAssigned": {
+            "Type": "Choice",
+            "Comment": "Redirects to an error state if the pipeline pod is not assigned yet.",
+            "Choices": [
+              {
+                "Variable": "$.ResponseBody.items[0]",
+                "IsPresent": false,
+                "Next": "NoPodAssigned"
+              }
+            ],
+            "Default": "ReadyToRun"
+          },
+          "NoPodAssigned": {
+            "Type": "Fail",
+            "Cause": "No available and running pipeline pods.",
+            "Error": "NoPodAssigned"
+          },
+          "ReadyToRun": {
+            "Type": "Pass",
+            "End": true
           }
         }
       }
@@ -950,11 +1203,13 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
           "ClassifierFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -973,11 +1228,13 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
           "CellSizeDistributionFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -996,11 +1253,13 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
           "MitochondrialContentFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -1019,11 +1278,13 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
           "NumGenesVsNumUmisFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -1042,11 +1303,13 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
           "DoubletScoresFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -1057,11 +1320,13 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -1069,11 +1334,13 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -1101,7 +1368,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
       "Parameters": {
         "ClusterName": "mock-cluster-name",
         "CertificateAuthority": "mock-ca",
-        "Endpoint": "mock-endpoint",
+        "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
         "Method": "GET",
         "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
         "QueryParameters": {
@@ -1131,7 +1398,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "Parameters": {
               "ClusterName": "mock-cluster-name",
               "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
+              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "DELETE",
               "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)"
             },
@@ -1153,7 +1420,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
     },
     "AssignPipelineToPod": {
       "ResultPath": null,
-      "Next": "ClassifierFilterMap",
+      "Next": "WaitForPod",
       "Type": "Map",
       "ItemsPath": "$.retries",
       "MaxConcurrency": 1,
@@ -1163,7 +1430,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "NoPodsAvailable"
           ],
           "IntervalSeconds": 2,
-          "MaxAttempts": 11,
+          "MaxAttempts": 10,
           "BackoffRate": 1.5
         }
       ],
@@ -1178,7 +1445,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "Parameters": {
               "ClusterName": "mock-cluster-name",
               "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
+              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
               "Method": "GET",
               "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
               "QueryParameters": {
@@ -1201,33 +1468,98 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
                 "Next": "NoPodsAvailable"
               }
             ],
-            "Default": "AssignPodToPipeline"
+            "Default": "RequestPod"
           },
           "NoPodsAvailable": {
             "Type": "Fail",
             "Cause": "No available and running pipeline pods.",
             "Error": "NoPodsAvailable"
           },
-          "AssignPodToPipeline": {
-            "End": true,
-            "ResultPath": "$.PatchResult",
+          "RequestPod": {
+            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
             "Type": "Task",
-            "Comment": "Patch pod to set the activity ID label.",
+            "Resource": "arn:aws:states:::sns:publish",
+            "End": true,
+            "Parameters": {
+              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
+              "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+              "MessageAttributes": {
+                "type": {
+                  "DataType": "String",
+                  "StringValue": "PipelineResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "WaitForPod": {
+      "ResultPath": null,
+      "Next": "ClassifierFilterMap",
+      "Type": "Map",
+      "ItemsPath": "$.retries",
+      "MaxConcurrency": 1,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "NoPodAssigned"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 9,
+          "BackoffRate": 1.5
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "AssignPipelineToPod",
+          "ResultPath": null
+        }
+      ],
+      "Iterator": {
+        "StartAt": "GetAssignedPod",
+        "States": {
+          "GetAssignedPod": {
+            "Next": "IsPodAssigned",
+            "Type": "Task",
+            "Comment": "Retrieves first unassigned and running pipeline pod.",
             "Resource": "arn:aws:states:::eks:call",
             "Parameters": {
               "ClusterName": "mock-cluster-name",
               "CertificateAuthority": "mock-ca",
-              "Endpoint": "mock-endpoint",
-              "Method": "PATCH",
-              "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.ResponseBody.items[0].metadata.namespace, $.ResponseBody.items[0].metadata.name)",
-              "RequestBody": {
-                "metadata": {
-                  "labels": {
-                    "experimentId": "mock-experiment-id"
-                  }
-                }
+              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
+              "Method": "GET",
+              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+              "QueryParameters": {
+                "labelSelector": [
+                  "type=pipeline,activityId=biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
+                ]
               }
             }
+          },
+          "IsPodAssigned": {
+            "Type": "Choice",
+            "Comment": "Redirects to an error state if the pipeline pod is not assigned yet.",
+            "Choices": [
+              {
+                "Variable": "$.ResponseBody.items[0]",
+                "IsPresent": false,
+                "Next": "NoPodAssigned"
+              }
+            ],
+            "Default": "ReadyToRun"
+          },
+          "NoPodAssigned": {
+            "Type": "Fail",
+            "Cause": "No available and running pipeline pods.",
+            "Error": "NoPodAssigned"
+          },
+          "ReadyToRun": {
+            "Type": "Pass",
+            "End": true
           }
         }
       }
@@ -1243,11 +1575,13 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
           "ClassifierFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -1266,11 +1600,13 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
           "CellSizeDistributionFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -1289,11 +1625,13 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
           "MitochondrialContentFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -1312,11 +1650,13 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
           "NumGenesVsNumUmisFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -1335,11 +1675,13 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
           "DoubletScoresFilter": {
             "End": true,
             "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
+              "processName": "gem2s",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
             }
@@ -1350,11 +1692,13 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
@@ -1362,11 +1706,13 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
       "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
+        "processName": "gem2s",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }

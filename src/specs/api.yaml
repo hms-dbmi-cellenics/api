@@ -441,7 +441,7 @@ paths:
                     type: string
                     description: Name of the configuration that wants to be changed
                   body:
-                    $ref: ./models/ProcessingConfigBodies.v1.yaml
+                    $ref: ./models/ProcessingConfig.v1.yaml
                 required:
                   - name
                   - body

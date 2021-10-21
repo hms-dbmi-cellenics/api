@@ -214,29 +214,6 @@ Array [
           "Iterator": Object {
             "StartAt": "GetUnassignedPod",
             "States": Object {
-              "AssignPodToPipeline": Object {
-                "Comment": "Patch pod to set the activity ID label.",
-                "End": true,
-                "Parameters": Object {
-                  "CertificateAuthority": "AAAAAAAAAAA",
-                  "ClusterName": "biomage-test",
-                  "Endpoint": "https://test-endpoint.me/fgh",
-                  "Method": "PATCH",
-                  "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.ResponseBody.items[0].metadata.namespace, $.ResponseBody.items[0].metadata.name)",
-                  "RequestBody": Object {
-                    "metadata": Object {
-                      "labels": Object {
-                        "activityId": "pipeline-test-mock-uuid",
-                        "experimentId": "testExperimentId",
-                        "processName": "qc",
-                      },
-                    },
-                  },
-                },
-                "Resource": "arn:aws:states:::eks:call",
-                "ResultPath": "$.PatchResult",
-                "Type": "Task",
-              },
               "GetUnassignedPod": Object {
                 "Comment": "Retrieves first unassigned and running pipeline pod.",
                 "Next": "IsPodAvailable",
@@ -267,7 +244,7 @@ Array [
                   },
                 ],
                 "Comment": "Redirects to an error state if there are no available pods.",
-                "Default": "AssignPodToPipeline",
+                "Default": "RequestPod",
                 "Type": "Choice",
               },
               "NoPodsAvailable": Object {
@@ -275,10 +252,26 @@ Array [
                 "Error": "NoPodsAvailable",
                 "Type": "Fail",
               },
+              "RequestPod": Object {
+                "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
+                "End": true,
+                "Parameters": Object {
+                  "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"testExperimentId\\",\\"input\\":{\\"experimentId\\":\\"testExperimentId\\",\\"sandboxId\\":\\"default\\",\\"activityId\\":\\"pipeline-test-mock-uuid\\",\\"processName\\":\\"qc\\"}}",
+                  "MessageAttributes": Object {
+                    "type": Object {
+                      "DataType": "String",
+                      "StringValue": "PipelineResponse",
+                    },
+                  },
+                  "TopicArn": "arn:aws:sns:eu-west-1:test-account-id:work-results-test-default",
+                },
+                "Resource": "arn:aws:states:::sns:publish",
+                "Type": "Task",
+              },
             },
           },
           "MaxConcurrency": 1,
-          "Next": "ClassifierFilterMap",
+          "Next": "WaitForPod",
           "ResultPath": null,
           "Retry": Array [
             Object {
@@ -287,7 +280,7 @@ Array [
                 "NoPodsAvailable",
               ],
               "IntervalSeconds": 2,
-              "MaxAttempts": 11,
+              "MaxAttempts": 10,
             },
           ],
           "Type": "Map",
@@ -536,6 +529,76 @@ Array [
           },
           "Next": "DoubletScoresFilterMap",
           "ResultPath": null,
+          "Type": "Map",
+        },
+        "WaitForPod": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "AssignPipelineToPod",
+              "ResultPath": null,
+            },
+          ],
+          "ItemsPath": "$.retries",
+          "Iterator": Object {
+            "StartAt": "GetAssignedPod",
+            "States": Object {
+              "GetAssignedPod": Object {
+                "Comment": "Retrieves first unassigned and running pipeline pod.",
+                "Next": "IsPodAssigned",
+                "Parameters": Object {
+                  "CertificateAuthority": "AAAAAAAAAAA",
+                  "ClusterName": "biomage-test",
+                  "Endpoint": "https://test-endpoint.me/fgh",
+                  "Method": "GET",
+                  "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+                  "QueryParameters": Object {
+                    "labelSelector": Array [
+                      "type=pipeline,activityId=pipeline-test-mock-uuid",
+                    ],
+                  },
+                },
+                "Resource": "arn:aws:states:::eks:call",
+                "Type": "Task",
+              },
+              "IsPodAssigned": Object {
+                "Choices": Array [
+                  Object {
+                    "IsPresent": false,
+                    "Next": "NoPodAssigned",
+                    "Variable": "$.ResponseBody.items[0]",
+                  },
+                ],
+                "Comment": "Redirects to an error state if the pipeline pod is not assigned yet.",
+                "Default": "ReadyToRun",
+                "Type": "Choice",
+              },
+              "NoPodAssigned": Object {
+                "Cause": "No available and running pipeline pods.",
+                "Error": "NoPodAssigned",
+                "Type": "Fail",
+              },
+              "ReadyToRun": Object {
+                "End": true,
+                "Type": "Pass",
+              },
+            },
+          },
+          "MaxConcurrency": 1,
+          "Next": "ClassifierFilterMap",
+          "ResultPath": null,
+          "Retry": Array [
+            Object {
+              "BackoffRate": 1.5,
+              "ErrorEquals": Array [
+                "NoPodAssigned",
+              ],
+              "IntervalSeconds": 1,
+              "MaxAttempts": 9,
+            },
+          ],
           "Type": "Map",
         },
       },
