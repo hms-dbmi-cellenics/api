@@ -159,7 +159,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/api-body-schemas/ExperimentDetails.v1.yaml
+                $ref: '#/components/schemas/ExperimentDetails'
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -261,7 +261,7 @@ paths:
                   cellSets:
                     type: array
                     items:
-                      $ref: ./models/api-body-schemas/CellSets.v1.yaml
+                      $ref: '#/components/schemas/CellSets'
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -301,7 +301,7 @@ paths:
                 type: array
                 items:
                   allOf:
-                    - $ref: ./models/api-body-schemas/CellSets.v1.yaml
+                    - $ref: '#/components/schemas/CellSets'
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -322,7 +322,7 @@ paths:
               type: array
               items:
                 allOf:
-                  - $ref: ./models/api-body-schemas/CellSets.v1.yaml
+                  - $ref: '#/components/schemas/CellSets'
       tags:
         - experiments
     patch:
@@ -339,7 +339,7 @@ paths:
                 type: array
                 items:
                   allOf:
-                    - $ref: ./models/api-body-schemas/CellSets.v1.yaml
+                    - $ref: '#/components/schemas/CellSets'
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -375,7 +375,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/ProcessingConfig.v1.yaml
+                $ref: '#/components/schemas/ProcessingConfig'
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -414,7 +414,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/ProcessingConfig.v1.yaml
+                $ref: '#/components/schemas/ProcessingConfig'
               examples: {}
         '401':
           description: The request lacks authentication credentials.
@@ -441,7 +441,7 @@ paths:
                     type: string
                     description: Name of the configuration that wants to be changed
                   body:
-                    $ref: ./models/ProcessingConfig.v1.yaml
+                    $ref: '#/components/schemas/ProcessingConfig'
                 required:
                   - name
                   - body
@@ -536,13 +536,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
+                $ref: '#/components/schemas/PlotTableConfig'
         '201':
           description: New resource created.
           content:
             application/json:
               schema:
-                $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
+                $ref: '#/components/schemas/PlotTableConfig'
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -562,7 +562,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
+              $ref: '#/components/schemas/PlotTableConfig'
         description: The new configuration to update the old one by.
     get:
       summary: ''
@@ -575,7 +575,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
+                $ref: '#/components/schemas/PlotTableConfig'
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -741,7 +741,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/api-body-schemas/Samples.v1.yaml
+                $ref: '#/components/schemas/Samples'
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -904,7 +904,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: ./models/api-body-schemas/Experiment.v1.yaml
+                  $ref: '#/components/schemas/Experiment'
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -943,7 +943,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/samples-bodies/SamplesByExperiment.v1.yaml
+                $ref: '#/components/schemas/SamplesByExperiment'
         '404':
           description: Not Found
           content:
@@ -997,7 +997,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ./models/api-body-schemas/Samples.v1.yaml
+              $ref: '#/components/schemas/Samples'
     post:
       summary: Add sample
       description: Adds a new sample to a samples entry
@@ -1033,7 +1033,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ./models/samples-bodies/Sample.v1.yaml
+              $ref: '#/components/schemas/Sample'
     delete:
       summary: Remove samples
       operationId: removeSamples
@@ -1069,7 +1069,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ./models/samples-bodies/SamplesRemoveBody.v1.yaml
+              $ref: '#/components/schemas/SamplesRemoveBody'
   '/projects/{projectUuid}/samples/{sampleUuid}/{fileName}/uploadUrl':
     get:
       summary: Get file upload url
@@ -1116,3 +1116,21 @@ components:
   schemas:
     Project:
       $ref: './models/api-body-schemas/Project.v1.yaml'
+    Samples:
+      $ref: './models/api-body-schemas/Samples.v1.yaml'
+    Sample:
+      $ref: './models/samples-bodies/Sample.v1.yaml'
+    SamplesRemoveBody:
+      $ref: './models/samples-bodies/SamplesRemoveBody.v1.yaml'
+    Experiment:
+      $ref: './models/api-body-schemas/Experiment.v1.yaml'
+    ExperimentDetails:
+      $ref: './models/api-body-schemas/ExperimentDetails.v1.yaml'
+    ProcessingConfig:
+      $ref: './models/ProcessingConfig.v1.yaml'
+    CellSets:
+      $ref: './models/api-body-schemas/CellSets.v1.yaml'
+    PlotTableConfig:
+      $ref: './models/api-body-schemas/PlotTableConfig.v1.yaml'
+    SamplesByExperiment:
+      $ref: './models/samples-bodies/SamplesByExperiment.v1.yaml'
