@@ -943,7 +943,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/api-body-schemas/Samples.v1.yaml
+                type: array
+                items:
+                  type: object
+                  properties:
+                    experimentId:
+                      type: string
+                    projectUuid:
+                      type: string
+                    samples:
+                      $ref: ./models/api-body-schemas/Samples.v1.yaml
+                  required:
+                    - samples
+                    - experimentId
+                    - projectUuid
+                  additionalProperties: false
         '404':
           description: Not Found
           content:
@@ -997,13 +1011,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                samples:
-                  $ref: ./models/api-body-schemas/Samples.v1.yaml
-              required:
-                - samples
-              additionalProperties: false
+              $ref: ./models/api-body-schemas/Samples.v1.yaml
     post:
       summary: Add sample
       description: Adds a new sample to a samples entry

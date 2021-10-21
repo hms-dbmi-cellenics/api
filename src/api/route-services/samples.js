@@ -51,7 +51,6 @@ class SamplesService {
     });
   }
 
-
   async getSamplesByExperimentId(experimentId) {
     const marshalledKey = convertToDynamoDbRecord({
       experimentId,
