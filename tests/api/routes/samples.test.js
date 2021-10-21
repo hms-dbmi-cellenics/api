@@ -54,7 +54,7 @@ describe('tests for samples route', () => {
   it('Updating correct samples return 200 ', async (done) => {
     request(app)
       .put('/v1/projects/projectId/experimentId/samples')
-      .send({ samples: correctSample })
+      .send(correctSample)
       .expect(200)
       .end((err) => {
         if (err) {
@@ -72,7 +72,7 @@ describe('tests for samples route', () => {
     request(app)
       .put('/v1/projects/someId/experimentId/samples')
       .expect(400)
-      .send({ samples: invalidBodySample })
+      .send(invalidBodySample)
       .end((err) => {
         if (err) {
           return done(err);
@@ -89,7 +89,7 @@ describe('tests for samples route', () => {
     request(app)
       .put('/v1/projects/someId/experimentId/samples')
       .expect(400)
-      .send({ samples: extraPropertiesBodySample })
+      .send(extraPropertiesBodySample)
       .end((err) => {
         if (err) {
           return done(err);
@@ -101,7 +101,7 @@ describe('tests for samples route', () => {
   it('Creating correct shape samples return 200 ', async (done) => {
     request(app)
       .post('/v1/projects/projectId/experimentId/samples')
-      .send({ samples: correctSample })
+      .send(correctSample['sample-1'])
       .expect(200)
       .end((err) => {
         if (err) {
@@ -119,7 +119,7 @@ describe('tests for samples route', () => {
     request(app)
       .post('/v1/projects/someId/experimentId/samples')
       .expect(400)
-      .send({ samples: invalidBodySample })
+      .send(invalidBodySample['sample-1'])
       .end((err) => {
         if (err) {
           return done(err);
@@ -136,7 +136,7 @@ describe('tests for samples route', () => {
     request(app)
       .post('/v1/projects/someId/experimentId/samples')
       .expect(400)
-      .send({ samples: extraPropertiesBodySample })
+      .send(extraPropertiesBodySample['sample-1'])
       .end((err) => {
         if (err) {
           return done(err);

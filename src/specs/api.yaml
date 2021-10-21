@@ -1059,10 +1059,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                samples:
-                  $ref: ./models/samples-bodies/Sample.v1.yaml
+              $ref: ./models/samples-bodies/Sample.v1.yaml
     delete:
       summary: Remove samples
       operationId: removeSamples
