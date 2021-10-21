@@ -52,11 +52,7 @@ const mockRemoveSamples = jest.fn(() => (
   })
 ));
 
-const mockGetS3UploadUrl = jest.fn(() => (
-  new Promise((resolve) => {
-    resolve({ data: { message: 'sucess', code: 200 } });
-  })
-));
+const mockGetS3UploadUrl = jest.fn(() => 'mockedS3UploadUrl');
 
 const mock = jest.fn().mockImplementation(() => ({
   getSamples: mockGetSamples,
@@ -64,7 +60,7 @@ const mock = jest.fn().mockImplementation(() => ({
   updateSamples: mockUpdateSamples,
   deleteSamplesEntry: mockDeleteSamples,
   addSample: mockAddSample,
-  removeSamples: mockRemoveSamples,
+  removeSamples: mockRemoveSamples, // Missing tests
   getS3UploadUrl: mockGetS3UploadUrl,
 }));
 

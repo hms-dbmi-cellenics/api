@@ -145,6 +145,18 @@ describe('tests for samples route', () => {
       });
   });
 
+  it('Getting an s3FileUploadUrl returns 200 correctly', async (done) => {
+    request(app)
+      .get('/v1/projects/projectUuid/samples/sampleUuid/fileName/uploadUrl')
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
   it('Updating samples with body without data returns error 415', async (done) => {
     request(app)
       .put('/v1/projects/someId/experimentId/samples')
