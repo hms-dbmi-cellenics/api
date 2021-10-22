@@ -7,6 +7,46 @@ jest.mock('../../../src/api/route-services/samples');
 jest.mock('../../../src/utils/authMiddlewares');
 
 describe('tests for samples route', () => {
+  const filesObject = {
+    lastModified: '2021-10-22T12:39:41.117Z',
+    'matrix.mtx.gz': {
+      valid: true,
+      path: '9b5d23ef-b447-4239-8e17-714aa9a4d06e/matrix.mtx.gz',
+      upload: {},
+      name: 'matrix.mtx.gz',
+      compressed: true,
+      lastModified: '2021-10-22T12:39:41.033Z',
+      bundle: {
+        path: '/WT1/matrix.mtx.gz',
+      },
+      errors: '',
+    },
+    'features.tsv.gz': {
+      valid: true,
+      path: '9b5d23ef-b447-4239-8e17-714aa9a4d06e/matrix.mtx.gz',
+      upload: {},
+      name: 'matrix.mtx.gz',
+      compressed: true,
+      lastModified: '2021-10-22T12:39:41.033Z',
+      bundle: {
+        path: '/WT1/matrix.mtx.gz',
+      },
+      errors: '',
+    },
+    'barcodes.tsv.gz': {
+      valid: true,
+      path: '9b5d23ef-b447-4239-8e17-714aa9a4d06e/matrix.mtx.gz',
+      upload: {},
+      name: 'matrix.mtx.gz',
+      compressed: true,
+      lastModified: '2021-10-22T12:39:41.033Z',
+      bundle: {
+        path: '/WT1/matrix.mtx.gz',
+      },
+      errors: '',
+    },
+  };
+
   const correctSample = {
     'sample-1': {
       name: 'sample-1',
@@ -19,11 +59,7 @@ describe('tests for samples route', () => {
       complete: true,
       error: false,
       fileNames: ['test-1'],
-      files: {
-        'file-1': {
-          name: 'file-1',
-        },
-      },
+      files: filesObject,
     },
   };
 
@@ -137,6 +173,51 @@ describe('tests for samples route', () => {
       .post('/v1/projects/someId/experimentId/samples')
       .expect(400)
       .send(extraPropertiesBodySample['sample-1'])
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Deleting a sample returns 200 correctly with correct body', async (done) => {
+    const correctDeleteBody = { ids: ['sample1Id'] };
+
+    request(app)
+      .delete('/v1/projects/projectUuid/experimentId/samples')
+      .send(correctDeleteBody)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Deleting a samples returns 400 with invalid body (lacking ids)', async (done) => {
+    const lackingIdsBoy = {};
+
+    request(app)
+      .delete('/v1/projects/projectUuid/experimentId/samples')
+      .send(lackingIdsBoy)
+      .expect(400)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Deleting a samples returns 400 with invalid body (unexpected extra properties)', async (done) => {
+    const extraPropertiesBody = { ids: ['sample1Id'], invalid: 'invalid' };
+
+    request(app)
+      .delete('/v1/projects/projectUuid/experimentId/samples')
+      .send(extraPropertiesBody)
+      .expect(400)
       .end((err) => {
         if (err) {
           return done(err);
