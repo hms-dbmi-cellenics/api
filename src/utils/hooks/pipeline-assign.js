@@ -64,20 +64,18 @@ const patchPod = async (k8sApi,
     });
 };
 
+// patchPodWithRetries tries to assign an available pod the the pipeline defined by message
+// total wait time = IntervalSeconds*[(1 - BackoffRate^(MaxAttempts))/(1-BackoffRate)]
 const patchPodWithRetries = async (k8sApi, maxAttempts, backoffRate, message) => {
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
   const namespace = `pipeline-${sandboxId}`;
 
-  for (let retry = 0; retry < maxAttempts; retry += 1) {
+  for (let retry = 0; retry <= maxAttempts; retry += 1) {
     try {
       const unassignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', '!activityId,type=pipeline');
       await patchPod(k8sApi, namespace, unassignedPods, experimentId, activityId, processName);
       return;
     } catch (e) {
-      // retry waits up to 226 seconds, fargate takes from 1 to 3 minutes to spawn a new pod
-      // total wait time = IntervalSeconds*[(1 - BackoffRate^(MaxAttempts))/(1-BackoffRate)]
-      // using IntervalSeconds = 1
-
       if (retry < maxAttempts) {
         const timeout = (backoffRate ** (retry + 1)) * 1000; // in ms
         logger.log(`Failed to patch pod: ${e}. Retry [${retry}]. Waiting for ${timeout} ms before trying again. `);
@@ -109,6 +107,7 @@ const assignPodToPipeline = async (message) => {
   await removeRunningPods(k8sApi, message);
 
   // try to choose a free pod and assign it to the current pipeline
+  // the retry mechanism waits up to 226 seconds for 12 attempts, 1.5 backoff rate
   const maxAttempts = 12;
   const backoffRate = 1.5;
   await patchPodWithRetries(k8sApi, maxAttempts, backoffRate, message);

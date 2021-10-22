@@ -51,7 +51,7 @@ describe('tests for the pipeline-assign service', () => {
     jest.clearAllMocks();
   });
 
-  it('calls delete for every assigned pod and patches the selected one', async () => {
+  it('calls delete & patch when there are already running pods', async () => {
     const message = buildPodRequest(fake.SANDBOX_ID,
       fake.EXPERIMENT_ID,
       constants.ASSIGN_POD_TO_PIPELINE,
@@ -61,8 +61,20 @@ describe('tests for the pipeline-assign service', () => {
     await pipelineAssign.assignPodToPipeline(message);
 
     expect(listNamespacedPod).toHaveBeenCalledTimes(2);
+    // check that sandbox ID, activity & selector are correctly passed into k8s
+    expect(listNamespacedPod.mock.calls[0][0]).toContain(fake.SANDBOX_ID);
+    expect(listNamespacedPod.mock.calls[0][4]).toEqual('status.phase=Running');
+    expect(listNamespacedPod.mock.calls[0][5]).toContain(fake.ACTIVITY_ID);
+
     expect(deleteNamespacedPod).toHaveBeenCalledTimes(2);
+    // check that pod name & sandbox ID are correctly passed into k8s
+    expect(deleteNamespacedPod.mock.calls[0][0]).toEqual('pipeline-X1');
+    expect(deleteNamespacedPod.mock.calls[0][1]).toContain(fake.SANDBOX_ID);
+
     expect(patchNamespacedPod).toHaveBeenCalledTimes(1);
+    // check that pod name & sandbox ID are correctly passed into k8s
+    expect(patchNamespacedPod.mock.calls[0][0]).toEqual('pipeline-X1');
+    expect(patchNamespacedPod.mock.calls[0][1]).toContain(fake.SANDBOX_ID);
   });
 
 

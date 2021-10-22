@@ -37,7 +37,6 @@ k8s.KubeConfig.mockImplementation(() => {
 });
 
 const pipelineAssign = require('../../../../src/utils/hooks/pipeline-assign');
-// const util = require('../../../../__mocks__/utils');
 
 describe('tests for the pipeline-assign service', () => {
   it('does not call delete because there are not assigned pods', async () => {
@@ -47,11 +46,10 @@ describe('tests for the pipeline-assign service', () => {
       constants.GEM2S_PROCESS_NAME,
       fake.ACTIVITY_ID);
 
-    // jest.useFakeTimers();
 
     await pipelineAssign.assignPodToPipeline(message);
 
-    expect(listNamespacedPod).toHaveBeenCalledTimes(13);
+    expect(listNamespacedPod).toHaveBeenCalledTimes(14);
     expect(deleteNamespacedPod).toHaveBeenCalledTimes(0);
     expect(patchNamespacedPod).toHaveBeenCalledTimes(0);
 
