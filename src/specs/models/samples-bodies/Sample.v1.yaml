@@ -28,7 +28,15 @@ properties:
     items:
       type: string
   files:
+    description: Container of data for files that together represent the sample
     type: object
+    additionalProperties:
+      $ref: ./SampleFile.v1.yaml
+    properties:
+      lastModified:
+        type: string
+    required: 
+      - lastModified
   metadata:
     type: object
 
