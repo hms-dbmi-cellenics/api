@@ -11,7 +11,9 @@ const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
 
 
-const removeRunningPods = async (k8sApi, namespace, activityId) => {
+const removeRunningPods = async (k8sApi, message) => {
+  const { input: { sandboxId, activityId } } = message;
+  const namespace = `pipeline-${sandboxId}`;
   const assignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', `activityId=${activityId},type=pipeline`);
 
   await Promise.all(assignedPods.body.items.map((pod) => {
