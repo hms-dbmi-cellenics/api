@@ -11,26 +11,22 @@ class hookRunner {
 
   // register will run callback function when the taskName matches the payload
   // received by by run
-  register(taskName, callback) {
-    if (this.hooks[taskName] === undefined) this.hooks[taskName] = [];
+  register(taskName, callbackFnList) {
+    if (!Array.isArray(callbackFnList)) {
+      throw new Error(`expected callbackFnList to be an array but got ${typeof (callbackFnList)}`);
+    }
 
-    if (Array.isArray(callback)) {
-      this.hooks[taskName].push(...callback);
+    if (this.hooks[taskName] === undefined) {
+      this.hooks[taskName] = callbackFnList;
     } else {
-      this.hooks[taskName].push(callback);
+      this.hooks[taskName].push(...callbackFnList);
     }
   }
 
   // registerAll will run the callback function for any payload received
   // the results will be assigned to each specific task though.
-  registerAll(callback) {
-    if (this.hooks[ALL] === undefined) this.hooks[ALL] = [];
-
-    if (Array.isArray(callback)) {
-      this.hooks[ALL].push(...callback);
-    } else {
-      this.hooks[ALL].push(callback);
-    }
+  registerAll(callbackFnList) {
+    this.register(ALL, callbackFnList);
   }
 
   // run requires taskName to be present as a key in the payload
