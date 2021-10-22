@@ -3,67 +3,15 @@ const express = require('express');
 const request = require('supertest');
 const expressLoader = require('../../../src/loaders/express');
 
+const MockDataFactory = require('../../../src/api/route-services/__mocks__/MockDataFactory');
+
 jest.mock('../../../src/api/route-services/samples');
 jest.mock('../../../src/utils/authMiddlewares');
 
 describe('tests for samples route', () => {
-  const filesObject = {
-    lastModified: '2021-10-22T12:39:41.117Z',
-    'matrix.mtx.gz': {
-      valid: true,
-      path: '9b5d23ef-b447-4239-8e17-714aa9a4d06e/matrix.mtx.gz',
-      upload: {},
-      name: 'matrix.mtx.gz',
-      compressed: true,
-      lastModified: '2021-10-22T12:39:41.033Z',
-      bundle: {
-        path: '/WT1/matrix.mtx.gz',
-      },
-      errors: '',
-    },
-    'features.tsv.gz': {
-      valid: true,
-      path: '9b5d23ef-b447-4239-8e17-714aa9a4d06e/matrix.mtx.gz',
-      upload: {},
-      name: 'matrix.mtx.gz',
-      compressed: true,
-      lastModified: '2021-10-22T12:39:41.033Z',
-      bundle: {
-        path: '/WT1/matrix.mtx.gz',
-      },
-      errors: '',
-    },
-    'barcodes.tsv.gz': {
-      valid: true,
-      path: '9b5d23ef-b447-4239-8e17-714aa9a4d06e/matrix.mtx.gz',
-      upload: {},
-      name: 'matrix.mtx.gz',
-      compressed: true,
-      lastModified: '2021-10-22T12:39:41.033Z',
-      bundle: {
-        path: '/WT1/matrix.mtx.gz',
-      },
-      errors: '',
-    },
-  };
-
-  const correctSample = {
-    'sample-1': {
-      name: 'sample-1',
-      projectUuid: 'project-1',
-      uuid: 'sample-1',
-      type: '10X Chromium',
-      species: 'hsapies',
-      createdDate: '2020-01-01T00:00:00.000Z',
-      lastModified: null,
-      complete: true,
-      error: false,
-      fileNames: ['test-1'],
-      files: filesObject,
-    },
-  };
-
   let app = null;
+
+  const dataFactory = new MockDataFactory({ projectId: 'projectId', experimentId: 'experimentId', sampleId: 'sample-1' });
 
   beforeEach(async () => {
     const mockApp = await expressLoader(express());
@@ -88,6 +36,8 @@ describe('tests for samples route', () => {
   });
 
   it('Updating correct samples return 200 ', async (done) => {
+    const correctSample = dataFactory.getSamplesEntry();
+
     request(app)
       .put('/v1/projects/projectId/experimentId/samples')
       .send(correctSample)
@@ -101,6 +51,8 @@ describe('tests for samples route', () => {
   });
 
   it('Updating with invalid sample body returns error 400', async (done) => {
+    const correctSample = dataFactory.getSamplesEntry();
+
     const invalidBodySample = _.cloneDeep(correctSample);
 
     delete invalidBodySample['sample-1'].species;
@@ -118,6 +70,8 @@ describe('tests for samples route', () => {
   });
 
   it('Updating with extra properties returns error 400', async (done) => {
+    const correctSample = dataFactory.getSamplesEntry();
+
     const extraPropertiesBodySample = _.cloneDeep(correctSample);
 
     extraPropertiesBodySample['sample-1'].invalid = 'invalid';
@@ -135,6 +89,8 @@ describe('tests for samples route', () => {
   });
 
   it('Creating correct shape samples return 200 ', async (done) => {
+    const correctSample = dataFactory.getSamplesEntry();
+
     request(app)
       .post('/v1/projects/projectId/experimentId/samples')
       .send(correctSample['sample-1'])
@@ -148,6 +104,8 @@ describe('tests for samples route', () => {
   });
 
   it('Creating with invalid sample body returns error 400', async (done) => {
+    const correctSample = dataFactory.getSamplesEntry();
+
     const invalidBodySample = _.cloneDeep(correctSample);
 
     delete invalidBodySample['sample-1'].species;
@@ -165,6 +123,8 @@ describe('tests for samples route', () => {
   });
 
   it('Creating with extra properties returns error 400', async (done) => {
+    const correctSample = dataFactory.getSamplesEntry();
+
     const extraPropertiesBodySample = _.cloneDeep(correctSample);
 
     extraPropertiesBodySample['sample-1'].invalid = 'invalid';
