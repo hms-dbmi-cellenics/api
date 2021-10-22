@@ -11,7 +11,7 @@ module.exports = {
     expressAuthorizationMiddleware,
     (req, res, next) => {
       samplesService.getSamples(req.params.projectUuid)
-        .then((data) => { console.log('dataDebug'); console.log(JSON.stringify(data)); return res.json(data); })
+        .then((data) => res.json(data))
         .catch(next);
     }],
   'samples#getSamplesByExperimentId': [
