@@ -35,8 +35,6 @@ properties:
     properties:
       lastModified:
         type: string
-    required: 
-      - lastModified
   metadata:
     type: object
 

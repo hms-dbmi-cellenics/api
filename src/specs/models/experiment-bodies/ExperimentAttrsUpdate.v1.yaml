@@ -25,9 +25,5 @@ properties:
     type: array
     items:
       type: string
-  rbac_can_write:
-    type: array
-    items: 
-      type: string
 
 additionalProperties: false
