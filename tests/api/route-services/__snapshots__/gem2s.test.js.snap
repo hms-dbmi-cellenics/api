@@ -9,6 +9,7 @@ exports[`gem2s gem2sReponse - Pass on error message properly 1`] = `
         "experimentId": "abcd1234",
         "input": Object {
           "authJWT": "Bearer ayyylmaoxd",
+          "processName": "gem2s",
         },
         "response": Object {
           "error": "some unknwon error",
@@ -41,35 +42,10 @@ exports[`gem2s gem2sResponse - Should return message if message is valid 1`] = `
       "ExperimentUpdates-abcd1234",
       Object {
         "experimentId": "abcd1234",
-        "status": Object {
-          "gem2s": Object {
-            "completedSteps": Array [],
-            "startDate": null,
-            "status": "SUCCEEDED",
-            "stopDate": null,
-          },
+        "input": Object {
+          "authJWT": "samplejwt",
+          "processName": "gem2s",
         },
-        "taskName": "downloadGem",
-        "type": "gem2s",
-      },
-    ],
-  ],
-  "results": Array [
-    Object {
-      "type": "return",
-      "value": undefined,
-    },
-  ],
-}
-`;
-
-exports[`gem2s gem2sResponse - Should return message if message is valid 2`] = `
-[MockFunction] {
-  "calls": Array [
-    Array [
-      "ExperimentUpdates-abcd1234",
-      Object {
-        "experimentId": "abcd1234",
         "status": Object {
           "gem2s": Object {
             "completedSteps": Array [],

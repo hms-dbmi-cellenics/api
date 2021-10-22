@@ -129,7 +129,7 @@ class ExperimentService {
 
   async updateExperiment(experimentId, body) {
     logger.log(`UPDATE experiment ${experimentId} in dynamodb`);
-
+    console.log('UPDATING EXPERIMENT WITH BODY ', body);
     const dynamodb = createDynamoDbInstance();
     const {
       updateExpressionList: deepPropsUpdateExprList,

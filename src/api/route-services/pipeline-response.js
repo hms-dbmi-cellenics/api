@@ -5,15 +5,10 @@ const getLogger = require('../../utils/getLogger');
 const { assignPodToPipeline } = require('../../utils/hooks/pipeline-assign');
 const constants = require('../general-services/pipeline-manage/constants');
 const getPipelineStatus = require('../general-services/pipeline-status');
-const {
-  FAILED, SUCCEEDED,
-} = require('../general-services/pipeline-manage/constants');
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
-const sendEmailIfNecessary = require('../../utils/sendEmailIfNecessary');
-const sendFailedSlackMessage = require('../../utils/sendFailedSlackMessage');
-const { authenticationMiddlewareSocketIO } = require('../../utils/authMiddlewares');
 const PipelineHook = require('../../utils/hooks/hookRunner');
+const sendNotification = require('../../utils/hooks/send-notification');
 
 const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
@@ -23,7 +18,7 @@ const logger = getLogger();
 const pipelineHook = new PipelineHook();
 
 pipelineHook.register(constants.ASSIGN_POD_TO_PIPELINE, [assignPodToPipeline]);
-
+pipelineHook.registerAll(sendNotification);
 class PipelineService {
   static async getS3Output(message) {
     const { output: { bucket, key } } = message;
@@ -111,18 +106,9 @@ class PipelineService {
     if (output !== null) {
       response.output = output;
     }
-    const user = await authenticationMiddlewareSocketIO(message.input.authJWT);
-
     if (error) {
       logger.log(`Error in ${constants.QC_PROCESS_NAME} received`);
-      if (user.email) {
-        await sendFailedSlackMessage(message, user);
-      }
       AWSXRay.getSegment().addError(error);
-    }
-    const { status } = statusResToSend.pipeline || false;
-    if ([FAILED, SUCCEEDED].includes(status)) {
-      sendEmailIfNecessary(constants.QC_PROCESS_NAME, status, experimentId, user);
     }
     logger.log('Sending to all clients subscribed to experiment', experimentId);
     io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
@@ -130,7 +116,6 @@ class PipelineService {
 
   static async qcResponse(io, message) {
     AWSXRay.getSegment().addMetadata('message', message);
-
     await validateRequest(message, 'PipelineResponse.v1.yaml');
 
     await pipelineHook.run(message);
@@ -147,7 +132,6 @@ class PipelineService {
       await this.updatePlotData(taskName, experimentId, output);
       await this.updateProcessingConfig(taskName, experimentId, output, sampleUuid);
     }
-
     // we want to send the update to the subscribed both in successful and error case
     await this.sendUpdateToSubscribed(experimentId, message, output, error, io);
   }

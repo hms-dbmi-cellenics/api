@@ -4,11 +4,7 @@ const AWSXRay = require('aws-xray-sdk');
 const constants = require('../general-services/pipeline-manage/constants');
 const getPipelineStatus = require('../general-services/pipeline-status');
 const { createGem2SPipeline } = require('../general-services/pipeline-manage');
-const { authenticationMiddlewareSocketIO } = require('../../utils/authMiddlewares');
-const {
-  GEM2S_PROCESS_NAME,
-} = require('../general-services/pipeline-manage/constants');
-
+const sendNotification = require('../../utils/hooks/send-notification');
 const saveProcessingConfigFromGem2s = require('../../utils/hooks/save-gem2s-processing-config');
 const runQCPipeline = require('../../utils/hooks/run-qc-pipeline');
 const validateRequest = require('../../utils/schema-validator');
@@ -18,19 +14,17 @@ const getLogger = require('../../utils/getLogger');
 const ExperimentService = require('./experiment');
 const ProjectsService = require('./projects');
 const SamplesService = require('./samples');
-const sendEmailIfNecessary = require('../../utils/sendEmailIfNecessary');
-const sendFailedSlackMessage = require('../../utils/sendFailedSlackMessage');
 
 const logger = getLogger();
 
 const pipelineHook = new PipelineHook();
 
 pipelineHook.register('uploadToAWS', [saveProcessingConfigFromGem2s, runQCPipeline]);
+pipelineHook.registerAll(sendNotification);
 
 class Gem2sService {
   static async sendUpdateToSubscribed(experimentId, message, io) {
     const statusRes = await getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME);
-    const { status } = statusRes.gem2s;
     // Concatenate into a proper response.
     const response = {
       ...message,
@@ -39,19 +33,12 @@ class Gem2sService {
     };
 
     const { error = null } = message.response || {};
-
-    logger.log('Sending to all clients subscribed to experiment', experimentId);
-    io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
-
     if (error) {
       logger.log(`Error in ${constants.GEM2S_PROCESS_NAME} received`);
-      const user = await authenticationMiddlewareSocketIO(message.input.authJWT);
-      if (user.email) {
-        await sendEmailIfNecessary(GEM2S_PROCESS_NAME, status, experimentId, user);
-        await sendFailedSlackMessage(message, user);
-      }
       AWSXRay.getSegment().addError(error);
     }
+    logger.log('Sending to all clients subscribed to experiment', experimentId);
+    io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
   }
 
   static async generateGem2sParams(experimentId, authJWT) {
@@ -127,7 +114,6 @@ class Gem2sService {
     const { experimentId } = message;
 
     const messageForClient = _.cloneDeep(message);
-
     // Make sure authJWT doesn't get back to the client
     delete messageForClient.authJWT;
 

@@ -1,20 +1,18 @@
 // const fetchMock = require('jest-fetch-mock');
 // const fetch = require('node-fetch');
-const sendFailedSlackMessage = require('../../src/utils/sendFailedSlackMessage');
+const sendFailedSlackMessage = require('../../src/utils/send-failed-slack-message');
 const { USER } = require('../test-utils/constants');
 
-jest.mock('../../src/api/route-services/experiment', () => jest.fn().mockImplementation(() => ({
-  getExperimentData: () => ({
-    meta: {
-      pipeline: {
-        stateMachineArn: 'qcArn',
-      },
-      gem2s: {
-        stateMachineArn: 'gem2sArn',
-      },
+const experiment = {
+  meta: {
+    pipeline: {
+      stateMachineArn: 'qcArn',
     },
-  }),
-})));
+    gem2s: {
+      stateMachineArn: 'gem2sArn',
+    },
+  },
+};
 global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
 describe('sendFailedSlackMessage', () => {
   beforeEach(() => {
@@ -26,11 +24,12 @@ describe('sendFailedSlackMessage', () => {
       input: {
         processName: 'qc',
         taskName: 'Task 1',
+        authJWT: 'lmao',
       },
       experimentId: 'asd123',
     };
 
-    await sendFailedSlackMessage(message, USER);
+    await sendFailedSlackMessage(message, USER, experiment);
     expect(fetch.mock.calls).toMatchSnapshot();
   });
 
@@ -39,10 +38,11 @@ describe('sendFailedSlackMessage', () => {
       input: {
         processName: 'gem2s',
         taskName: 'someStep',
+        authJWT: 'lmao',
       },
       experimentId: 'anotherExpId',
     };
-    await sendFailedSlackMessage(message, USER);
+    await sendFailedSlackMessage(message, USER, experiment);
     expect(fetch.mock.calls).toMatchSnapshot();
   });
 });

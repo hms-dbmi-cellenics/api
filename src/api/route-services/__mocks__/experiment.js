@@ -4,6 +4,14 @@ const mockExperimentData = jest.fn((experimentId) => new Promise((resolve) => {
   resolve({
     experimentId,
     experimentName: 'my mocky name',
+    meta: {
+      pipeline: {
+        stateMachineArn: 'qwerty',
+      },
+      gem2s: {
+        stateMachineArn: 'asdfgh',
+      },
+    },
   });
 }));
 
