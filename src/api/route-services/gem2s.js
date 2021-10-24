@@ -20,7 +20,7 @@ const logger = getLogger();
 const pipelineHook = new PipelineHook();
 
 pipelineHook.register('uploadToAWS', [saveProcessingConfigFromGem2s, runQCPipeline]);
-pipelineHook.registerAll(sendNotification);
+pipelineHook.registerAll([sendNotification]);
 
 class Gem2sService {
   static async sendUpdateToSubscribed(experimentId, message, io) {

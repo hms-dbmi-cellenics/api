@@ -61,17 +61,7 @@ const sendEmail = async (experimentId, status, user) => {
     },
     Source: 'notification@biomage.net',
   };
-  const sendPromise = ses.sendEmail(params).promise();
-
-  sendPromise.then(
-    (data) => {
-      console.log('Email sent successfuly', data.MessageId);
-    },
-  ).catch(
-    (err) => {
-      console.error('Error sending email', err, err.stack);
-    },
-  );
+  await ses.sendEmail(params);
 };
 
 module.exports = sendEmail;

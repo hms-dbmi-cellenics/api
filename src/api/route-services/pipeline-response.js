@@ -18,7 +18,7 @@ const logger = getLogger();
 const pipelineHook = new PipelineHook();
 
 pipelineHook.register(constants.ASSIGN_POD_TO_PIPELINE, [assignPodToPipeline]);
-pipelineHook.registerAll(sendNotification);
+pipelineHook.registerAll([sendNotification]);
 class PipelineService {
   static async getS3Output(message) {
     const { output: { bucket, key } } = message;
