@@ -5,7 +5,7 @@ const {
 } = require('../api/general-services/pipeline-manage/constants');
 // const ExperimentService = require('../api/route-services/experiment');
 
-const sendEmail = async (experimentId, status, user) => {
+const sendEmail = (experimentId, status, user) => {
   const ses = new AWS.SES({
     region: config.awsRegion,
     apiVersion: '2010-12-01',

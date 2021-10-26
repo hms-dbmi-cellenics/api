@@ -29,7 +29,7 @@ const sendNotification = async (message) => {
       }
       if (experiment.notifyByEmail && (process === QC_PROCESS_NAME || status === FAILED)) {
         try {
-          await sendEmail(message.experimentId, status, user);
+          sendEmail(message.experimentId, status, user);
         } catch (e) {
           console.error('Error sending email ', e);
         }

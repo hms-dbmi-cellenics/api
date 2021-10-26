@@ -18,13 +18,13 @@ describe('sendEmail', () => {
 
   it('sends success email', async () => {
     const message = { experiment: experimentId };
-    await sendEmail(message, SUCCEEDED, USER);
+    sendEmail(message, SUCCEEDED, USER);
     expect(sendEmailSpy).toHaveBeenCalledTimes(1);
     expect(sendEmailSpy.mock.calls).toMatchSnapshot();
   });
   it('sends failure email', async () => {
     const message = { experiment: experimentId };
-    await sendEmail(message, FAILED, USER);
+    sendEmail(message, FAILED, USER);
     expect(sendEmailSpy).toHaveBeenCalledTimes(1);
     expect(sendEmailSpy.mock.calls).toMatchSnapshot();
   });
