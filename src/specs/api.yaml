@@ -240,7 +240,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ./models/experiment-bodies/ExperimentAttrsUpdate.v1.yaml
+              $ref: '#/components/schemas/ExperimentAttrs'
   '/experiments/{experimentId}/cellSets':
     get:
       tags:
@@ -1126,6 +1126,8 @@ components:
       $ref: './models/api-body-schemas/Experiment.v1.yaml'
     ExperimentDetails:
       $ref: './models/api-body-schemas/ExperimentDetails.v1.yaml'
+    ExperimentAttrs:
+       $ref: './models/experiment-bodies/ExperimentAttrs.v1.yaml'
     ProcessingConfig:
       $ref: './models/ProcessingConfig.v1.yaml'
     CellSets:
