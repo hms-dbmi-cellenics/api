@@ -17,6 +17,7 @@ const sendNotification = async (message) => {
     const experiment = await (new ExperimentService()).getExperimentData(experimentId);
     console.log('EXPERIMENT IS ', experiment, 'status res is ', statusRes.getPipelineStatus);
     const { status } = statusRes[process];
+
     console.log(user.email, [SUCCEEDED, FAILED].includes(status), 'env is - ', config.clusterEnv);
     if ([SUCCEEDED, FAILED].includes(status)) {
       if (status === FAILED && ['production', 'staging', 'development', 'test'].includes(config.clusterEnv)) { // && ['production'].includes(config.clusterEnv)) {
