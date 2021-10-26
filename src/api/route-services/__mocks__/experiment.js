@@ -19,7 +19,7 @@ const experimentData = (experimentId = 'experimentId') => ({
     organism: null,
     type: '10x',
   },
-  experimentName: 'ExperimentName',
+  experimentName: 'my mocky name',
 });
 
 const mockExperimentData = jest.fn((experimentId) => new Promise((resolve) => {

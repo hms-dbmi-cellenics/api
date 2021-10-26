@@ -3,7 +3,7 @@
 exports[`tests for experiment route Find experiment by id works 1`] = `
 Object {
   "experimentId": "someId",
-  "experimentName": "ExperimentName",
+  "experimentName": "my mocky name",
   "meta": Object {
     "gem2s": Object {
       "executionArn": "",
