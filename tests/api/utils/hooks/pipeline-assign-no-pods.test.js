@@ -51,7 +51,7 @@ describe('tests for the pipeline-assign service', () => {
 
     // expect(timerSpy).toBeCalled();
 
-    expect(listNamespacedPod).toHaveBeenCalledTimes(14);
+    expect(listNamespacedPod).toHaveBeenCalledTimes(26);
     expect(deleteNamespacedPod).toHaveBeenCalledTimes(0);
     expect(patchNamespacedPod).toHaveBeenCalledTimes(0);
 

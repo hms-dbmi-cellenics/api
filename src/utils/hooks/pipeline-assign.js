@@ -74,15 +74,18 @@ const patchPodWithRetries = async (k8sApi, message, maxAttempts = 12, backoffRat
   for (let retry = 0; retry <= maxAttempts; retry += 1) {
     try {
       const unassignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', '!activityId,type=pipeline');
+      // remove pipeline pods already assigned to this experiment
+      await removeRunningPods(k8sApi, message);
+
       await patchPod(k8sApi, namespace, unassignedPods, experimentId, activityId, processName);
       return;
     } catch (e) {
       if (retry < maxAttempts) {
         const timeout = (backoffRate ** (retry + 1)) * 1000; // in ms
-        logger.log(`Failed to patch pod: ${e}. Retry [${retry}]. Waiting for ${timeout} ms before trying again. `);
+        logger.log(`Failed to patch pod for experiment ${experimentId}: ${e}. Retry [${retry}]. Waiting for ${timeout} ms before trying again. `);
         await asyncTimer(timeout);
       } else {
-        logger.log(`Failed to patch pod after ${maxAttempts} retries.`);
+        throw new Error(`Failed to patch pod after ${maxAttempts} retries.`);
       }
     }
   }
@@ -104,11 +107,15 @@ const assignPodToPipeline = async (message) => {
 
   logger.log(`Trying to assign pod to ${processName} pipeline for experiment ${experimentId} in sandbox ${sandboxId} for activity ${activityId}`);
 
-  // remove pipeline pods already assigned to this experiment
-  await removeRunningPods(k8sApi, message);
+  // // remove pipeline pods already assigned to this experiment
+  // await removeRunningPods(k8sApi, message);
 
   // try to choose a free pod and assign it to the current pipeline
-  await patchPodWithRetries(k8sApi, message);
+  try {
+    await patchPodWithRetries(k8sApi, message);
+  } catch (e) {
+    logger.error(`Failed to assign pipeline pod to experiment ${experimentId}: ${e}`);
+  }
 };
 
 module.exports = { assignPodToPipeline };
