@@ -23,12 +23,12 @@ const removeRunningPods = async (k8sApi, message) => {
   }));
 };
 
-const patchPod = async (k8sApi,
-  namespace,
-  unassignedPods,
-  experimentId,
-  activityId,
-  processName) => {
+const patchPod = async (k8sApi, message) => {
+  const { experimentId, input: { sandboxId, activityId, processName } } = message;
+  const namespace = `pipeline-${sandboxId}`;
+
+  const unassignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', '!activityId,type=pipeline');
+
   const pods = unassignedPods.body.items;
 
   if (pods.length < 1) {
@@ -68,16 +68,14 @@ const patchPod = async (k8sApi,
 // total wait time = IntervalSeconds*[(1 - BackoffRate^(MaxAttempts))/(1-BackoffRate)]
 // default params wait up to 226 seconds for 12 attempts, 1.5 backoff rate
 const patchPodWithRetries = async (k8sApi, message, maxAttempts = 12, backoffRate = 1.5) => {
-  const { experimentId, input: { sandboxId, activityId, processName } } = message;
-  const namespace = `pipeline-${sandboxId}`;
+  const { experimentId } = message;
 
   for (let retry = 0; retry <= maxAttempts; retry += 1) {
-    try {
-      const unassignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', '!activityId,type=pipeline');
-      // remove pipeline pods already assigned to this experiment
-      await removeRunningPods(k8sApi, message);
+    // remove pipeline pods already assigned to this experiment
+    await removeRunningPods(k8sApi, message);
 
-      await patchPod(k8sApi, namespace, unassignedPods, experimentId, activityId, processName);
+    try {
+      await patchPod(k8sApi, message);
       return;
     } catch (e) {
       if (retry < maxAttempts) {
@@ -106,9 +104,6 @@ const assignPodToPipeline = async (message) => {
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
 
   logger.log(`Trying to assign pod to ${processName} pipeline for experiment ${experimentId} in sandbox ${sandboxId} for activity ${activityId}`);
-
-  // // remove pipeline pods already assigned to this experiment
-  // await removeRunningPods(k8sApi, message);
 
   // try to choose a free pod and assign it to the current pipeline
   try {
