@@ -62,19 +62,25 @@ describe('tests for the pipeline-assign service', () => {
 
     expect(listNamespacedPod).toHaveBeenCalledTimes(2);
     // check that sandbox ID, activity & selector are correctly passed into k8s
-    expect(listNamespacedPod.mock.calls[0][0]).toContain(fake.SANDBOX_ID);
-    expect(listNamespacedPod.mock.calls[0][4]).toEqual('status.phase=Running');
-    expect(listNamespacedPod.mock.calls[0][5]).toContain(fake.ACTIVITY_ID);
+    expect(listNamespacedPod).toHaveBeenNthCalledWith(1,
+      expect.stringContaining(fake.SANDBOX_ID), null, null, null,
+      expect.stringContaining('status.phase=Running'),
+      expect.stringContaining(fake.ACTIVITY_ID));
 
     expect(deleteNamespacedPod).toHaveBeenCalledTimes(2);
     // check that pod name & sandbox ID are correctly passed into k8s
-    expect(deleteNamespacedPod.mock.calls[0][0]).toEqual('pipeline-X1');
-    expect(deleteNamespacedPod.mock.calls[0][1]).toContain(fake.SANDBOX_ID);
+    expect(deleteNamespacedPod).toHaveBeenNthCalledWith(1,
+      expect.stringContaining('pipeline-X1'),
+      expect.stringContaining(fake.SANDBOX_ID));
 
     expect(patchNamespacedPod).toHaveBeenCalledTimes(1);
     // check that pod name & sandbox ID are correctly passed into k8s
-    expect(patchNamespacedPod.mock.calls[0][0]).toEqual('pipeline-X1');
-    expect(patchNamespacedPod.mock.calls[0][1]).toContain(fake.SANDBOX_ID);
+    expect(patchNamespacedPod).toHaveBeenNthCalledWith(1,
+      expect.stringContaining('pipeline-X1'),
+      expect.stringContaining(fake.SANDBOX_ID),
+      expect.anything(),
+      undefined, undefined, undefined, undefined,
+      expect.anything());
   });
 
 

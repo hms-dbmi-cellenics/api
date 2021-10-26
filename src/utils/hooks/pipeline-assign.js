@@ -1,9 +1,9 @@
 /* eslint-disable no-await-in-loop */
 const k8s = require('@kubernetes/client-node');
-const sleep = require('util').promisify(setTimeout);
 const getLogger = require('../getLogger');
 const validateRequest = require('../schema-validator');
 const constants = require('../../api/general-services/pipeline-manage/constants');
+const asyncTimer = require('../asyncTimer');
 
 const logger = getLogger();
 
@@ -66,7 +66,8 @@ const patchPod = async (k8sApi,
 
 // patchPodWithRetries tries to assign an available pod the the pipeline defined by message
 // total wait time = IntervalSeconds*[(1 - BackoffRate^(MaxAttempts))/(1-BackoffRate)]
-const patchPodWithRetries = async (k8sApi, maxAttempts, backoffRate, message) => {
+// default params wait up to 226 seconds for 12 attempts, 1.5 backoff rate
+const patchPodWithRetries = async (k8sApi, message, maxAttempts = 12, backoffRate = 1.5) => {
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
   const namespace = `pipeline-${sandboxId}`;
 
@@ -79,7 +80,7 @@ const patchPodWithRetries = async (k8sApi, maxAttempts, backoffRate, message) =>
       if (retry < maxAttempts) {
         const timeout = (backoffRate ** (retry + 1)) * 1000; // in ms
         logger.log(`Failed to patch pod: ${e}. Retry [${retry}]. Waiting for ${timeout} ms before trying again. `);
-        await sleep(timeout);
+        await asyncTimer(timeout);
       } else {
         logger.log(`Failed to patch pod after ${maxAttempts} retries.`);
       }
@@ -107,10 +108,7 @@ const assignPodToPipeline = async (message) => {
   await removeRunningPods(k8sApi, message);
 
   // try to choose a free pod and assign it to the current pipeline
-  // the retry mechanism waits up to 226 seconds for 12 attempts, 1.5 backoff rate
-  const maxAttempts = 12;
-  const backoffRate = 1.5;
-  await patchPodWithRetries(k8sApi, maxAttempts, backoffRate, message);
+  await patchPodWithRetries(k8sApi, message);
 };
 
 module.exports = { assignPodToPipeline };
