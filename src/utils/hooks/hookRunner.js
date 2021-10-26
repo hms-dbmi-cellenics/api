@@ -39,18 +39,18 @@ class hookRunner {
 
     // Runs task specific hooks
     for (let i = 0; this.hooks[taskName] !== undefined && i < this.hooks[taskName].length; i += 1) {
+      // calling the hooks sequentially since they may depend on each other
       // eslint-disable-next-line no-await-in-loop
-      this.results[taskName].push(this.hooks[taskName][i](payload));
+      this.results[taskName].push(await this.hooks[taskName][i](payload));
     }
 
     // Runs hooks that apply to all tasks (assigning the results to current task)
 
     for (let i = 0; this.hooks[ALL] !== undefined && i < this.hooks[ALL].length; i += 1) {
-      this.results[taskName].push(this.hooks[ALL][i](payload));
+      // eslint-disable-next-line no-await-in-loop
+      this.results[taskName].push(await this.hooks[ALL][i](payload));
     }
 
-    // Wait for the resolution of all hooks at the same time
-    this.results[taskName] = await Promise.all(this.results[taskName]);
     logger.log(`Completed ${this.results[taskName].length} hooks for pipeline task ${taskName}`);
 
     return this.results;

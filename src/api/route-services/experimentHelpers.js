@@ -87,7 +87,6 @@ const getShallowAttrsUpdateParams = (body) => {
       return [...acc, `${key} = ${expressionKey}`];
     }, [],
   );
-  console.log('BODY IS ', body, body.notifyByEmail);
   const attributeValues = convertToDynamoDbRecord(objectToMarshall);
   // notifyByEmail is already converted to dynamo record
   // updateExpressionList.push('notifyByEmail = :notifyByEmail');
