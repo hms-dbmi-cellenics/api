@@ -30,4 +30,4 @@ jobs:
           echo $JIRA_REGEX
           echo "Now looking at regex result:"
 
-          pcregrep -M $JIRA_REGEX pr_body.md
+          pcregrep -M "$JIRA_REGEX" pr_body.md
