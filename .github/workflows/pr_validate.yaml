@@ -21,7 +21,7 @@ jobs:
         name: Check JIRA URL
         run: |-
           #JIRA_REGEX="#### URL to JIRA issue\n(https:\/\/biomage\.atlassian\.net\/browse\/BIOMAGE-[0-9]+|N\/A)$"
-          JIRA_REGEX="#### URL to JIRA issue\nN\/A"
+          JIRA_REGEX="#### URL to JIRA issue"
 
           echo "PR body:"
           cat pr_body.md
@@ -30,4 +30,4 @@ jobs:
           echo $JIRA_REGEX
           echo "Now looking at regex result:"
 
-          pcregrep -M "$JIRA_REGEX" pr_body.md
+          pcregrep -M $JIRA_REGEX pr_body.md
