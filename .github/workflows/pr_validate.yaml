@@ -22,12 +22,9 @@ jobs:
         run: |-
           #JIRA_REGEX="#### URL to JIRA issue\n(https:\/\/biomage\.atlassian\.net\/browse\/BIOMAGE-[0-9]+|N\/A)$"
 
-          nl='
-          '
-          JIRA_REGEX="#### URL to JIRA issue${nl}"
 
           echo "REGEX to test against:"
           echo $JIRA_REGEX
           echo "Now looking at regex result:"
 
-          pcregrep -M "$JIRA_REGEX" pr_body.md
+          pcregrep -M "#### URL to JIRA issue\n(https:\/\/biomage\.atlassian\.net\/browse\/BIOMAGE-[0-9]+|N\/A)$" pr_body.md
