@@ -7,19 +7,21 @@ jobs:
     name: Check pull request template
     runs-on: ubuntu-20.04
     steps:
-      - id: check-jira-url
-        name: Check JIRA URL
+      - id: copy-pr-body
+        name: Copy PR body to file
         run: |-
           sudo apt-get update -y
           sudo apt-get install -y pcregrep
-
           {
             echo "${{ github.event.pull_request.body }}"
           EOF
           } 2> /dev/null | tee pr_body.md
 
+      - id: check-jira-url
+        name: Check JIRA URL
+        run: |-
           #JIRA_REGEX="#### URL to JIRA issue\n(https:\/\/biomage\.atlassian\.net\/browse\/BIOMAGE-[0-9]+|N\/A)$"
-          JIRA_REGEX="#### URL to JIRA issue\nN/A"
+          JIRA_REGEX="#### URL to JIRA issue\n(.*|N/A)"
 
           echo "REGEX to test against:"
           echo $JIRA_REGEX
