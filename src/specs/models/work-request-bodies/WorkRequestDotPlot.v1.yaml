@@ -1,0 +1,38 @@
+title: Get Dot Plot Data
+description: Work request body to get data for the Dot Plot.
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the work. Must be `DotPlot`.
+    pattern: DotPlot
+  markerGenes:
+    type: boolean
+    description: Amount of marker genes to get
+  input:
+    type: object
+    required:
+      - nGenes
+      - genes
+    properties:
+      nGenes:
+        type: number
+      genes:
+        type: array
+        items:
+          type: string
+  subset:
+    type: object
+    required:
+      - cellClassKey
+      - cellSetKey
+    properties:
+      cellClassKey:
+        type: string
+      cellSetKey:
+        type: string
+required:
+  - name
+  - markerGenes
+  - input
+  - subset
