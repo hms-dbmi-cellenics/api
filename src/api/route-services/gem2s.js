@@ -85,7 +85,9 @@ class Gem2sService {
 
 
   static async gem2sCreate(experimentId, body, authJWT) {
+    logger.log('Creating GEM2S params...');
     const { paramsHash } = body;
+
     const taskParams = await Gem2sService.generateGem2sParams(experimentId, authJWT);
 
     const newHandle = await createGem2SPipeline(experimentId, taskParams);

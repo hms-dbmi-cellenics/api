@@ -56,7 +56,6 @@ const sendFailedSlackMessage = async (message, user, experiment) => {
   };
   // feedback channel
   const HOOK_URL = 'aHR0cHM6Ly9ob29rcy5zbGFjay5jb20vc2VydmljZXMvVDAxNTVEWkZWTTAvQjAxOVlCQVJYSjkvTWNwRnF5RGtHSmE1WTd0dGFSZHpoQXNQ'; // pragma: allowlist secret
-  console.log('WE SHOULD FETCH NOW WITH DATA ', feedbackData.blocks[0], feedbackData.blocks[1].elements);
 
   const r = await fetch(atob(HOOK_URL), {
     method: 'POST',

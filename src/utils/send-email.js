@@ -18,7 +18,6 @@ const sendEmail = (experimentId, status, user) => {
       The data processing pipeline has completed successfully and your data is now ready to explore:<br/>
       <a href="${link}">${link}</a>
       Happy analysing!`;
-  console.log('STATUS IS ', status);
   const failMessage = `
   Unfortunately, when trying to run the analysis the data processing failed for your experiment: <br/>
   <a href="${link}">${link}</a> <br/>
@@ -30,9 +29,9 @@ const sendEmail = (experimentId, status, user) => {
         <head>
         </head>
         <body>
-            <h1>Hello ${firstname},</h1>
+            <h3>Hello ${firstname},</h3>
             <p>Thanks for uploading a dataset to Cellscope! <br/>
-              ${status === SUCCEEDED ? successMessage : failMessage}
+              ${status === SUCCEEDED ? successMessage : failMessage}<br/><br/>
                 The Biomage Team 
             <p/>
         </body>

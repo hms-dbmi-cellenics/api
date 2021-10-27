@@ -18,14 +18,14 @@ Array [
         <head>
         </head>
         <body>
-            <h1>Hello John,</h1>
+            <h3>Hello John,</h3>
             <p>Thanks for uploading a dataset to Cellscope! <br/>
               
   Unfortunately, when trying to run the analysis the data processing failed for your experiment: <br/>
   <a href=\\"scp.biomage.net/experiments/[object Object]/data-processing\\">scp.biomage.net/experiments/[object Object]/data-processing</a> <br/>
   Try running the process one more time. <br/>
   We are working hard to identify and fix the issue. We will let you know as soon as your data is ready to explore. <br/>
-  
+  <br/><br/>
                 The Biomage Team 
             <p/>
         </body>
@@ -38,14 +38,14 @@ Array [
         <head>
         </head>
         <body>
-            <h1>Hello John,</h1>
+            <h3>Hello John,</h3>
             <p>Thanks for uploading a dataset to Cellscope! <br/>
               
   Unfortunately, when trying to run the analysis the data processing failed for your experiment: <br/>
   <a href=\\"scp.biomage.net/experiments/[object Object]/data-processing\\">scp.biomage.net/experiments/[object Object]/data-processing</a> <br/>
   Try running the process one more time. <br/>
   We are working hard to identify and fix the issue. We will let you know as soon as your data is ready to explore. <br/>
-  
+  <br/><br/>
                 The Biomage Team 
             <p/>
         </body>
@@ -82,12 +82,12 @@ Array [
         <head>
         </head>
         <body>
-            <h1>Hello John,</h1>
+            <h3>Hello John,</h3>
             <p>Thanks for uploading a dataset to Cellscope! <br/>
               
       The data processing pipeline has completed successfully and your data is now ready to explore:<br/>
       <a href=\\"scp.biomage.net/experiments/[object Object]/data-processing\\">scp.biomage.net/experiments/[object Object]/data-processing</a>
-      Happy analysing!
+      Happy analysing!<br/><br/>
                 The Biomage Team 
             <p/>
         </body>
@@ -100,12 +100,12 @@ Array [
         <head>
         </head>
         <body>
-            <h1>Hello John,</h1>
+            <h3>Hello John,</h3>
             <p>Thanks for uploading a dataset to Cellscope! <br/>
               
       The data processing pipeline has completed successfully and your data is now ready to explore:<br/>
       <a href=\\"scp.biomage.net/experiments/[object Object]/data-processing\\">scp.biomage.net/experiments/[object Object]/data-processing</a>
-      Happy analysing!
+      Happy analysing!<br/><br/>
                 The Biomage Team 
             <p/>
         </body>

@@ -8,19 +8,16 @@ const config = require('../../config');
 
 const sendNotification = async (message) => {
   const { authJWT, processName: process } = message.input;
-  console.log('process is ', process, 'message  is ', message);
   if (authJWT) {
     const user = await authenticationMiddlewareSocketIO(authJWT);
 
     const { experimentId } = message;
     const statusRes = await getPipelineStatus(experimentId, process);
     const experiment = await (new ExperimentService()).getExperimentData(experimentId);
-    console.log('EXPERIMENT IS ', experiment, 'status res is ', statusRes.getPipelineStatus);
     const { status } = statusRes[process];
 
-    console.log(user.email, [SUCCEEDED, FAILED].includes(status), 'env is - ', config.clusterEnv);
     if ([SUCCEEDED, FAILED].includes(status)) {
-      if (status === FAILED && ['production', 'staging', 'development', 'test'].includes(config.clusterEnv)) { // && ['production'].includes(config.clusterEnv)) {
+      if (status === FAILED && ['production', 'staging', 'development', 'test'].includes(config.clusterEnv)) {
         try {
           await sendFailedSlackMessage(message, user, experiment);
         } catch (e) {
