@@ -181,7 +181,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "NoPodAssigned"
           ],
           "IntervalSeconds": 1,
-          "MaxAttempts": 12,
+          "MaxAttempts": 13,
           "BackoffRate": 1.5
         }
       ],
@@ -371,7 +371,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "NoPodAssigned"
           ],
           "IntervalSeconds": 1,
-          "MaxAttempts": 12,
+          "MaxAttempts": 13,
           "BackoffRate": 1.5
         }
       ],
@@ -762,7 +762,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "NoPodAssigned"
           ],
           "IntervalSeconds": 1,
-          "MaxAttempts": 12,
+          "MaxAttempts": 13,
           "BackoffRate": 1.5
         }
       ],
@@ -1007,7 +1007,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "NoPodAssigned"
           ],
           "IntervalSeconds": 1,
-          "MaxAttempts": 12,
+          "MaxAttempts": 13,
           "BackoffRate": 1.5
         }
       ],

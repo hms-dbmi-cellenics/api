@@ -469,7 +469,7 @@ Array [
                 "NoPodAssigned",
               ],
               "IntervalSeconds": 1,
-              "MaxAttempts": 12,
+              "MaxAttempts": 13,
             },
           ],
           "Type": "Map",
