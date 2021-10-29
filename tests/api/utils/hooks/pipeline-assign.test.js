@@ -60,12 +60,12 @@ describe('tests for the pipeline-assign service', () => {
 
     await pipelineAssign.assignPodToPipeline(message);
 
-    // expect(listNamespacedPod).toHaveBeenCalledTimes(2);
+    expect(listNamespacedPod).toHaveBeenCalledTimes(2);
     // check that sandbox ID, activity & selector are correctly passed into k8s
-    // expect(listNamespacedPod).toHaveBeenNthCalledWith(1,
-    //   expect.stringContaining(fake.SANDBOX_ID), null, null, null,
-    //   expect.stringContaining('status.phase=Running'),
-    //   expect.stringContaining(fake.ACTIVITY_ID));
+    expect(listNamespacedPod).toHaveBeenNthCalledWith(1,
+      expect.stringContaining(fake.SANDBOX_ID), null, null, null,
+      expect.stringContaining('status.phase!=Succeeded,status.phase!=Failed'),
+      expect.stringContaining(fake.EXPERIMENT_ID));
 
     expect(deleteNamespacedPod).toHaveBeenCalledTimes(2);
     // check that pod name & sandbox ID are correctly passed into k8s
@@ -89,7 +89,7 @@ describe('tests for the pipeline-assign service', () => {
 
     await pipelineAssign.assignPodToPipeline(message);
 
-    // expect(listNamespacedPod).toHaveBeenCalledTimes(0);
+    expect(listNamespacedPod).toHaveBeenCalledTimes(0);
     expect(deleteNamespacedPod).toHaveBeenCalledTimes(0);
     expect(patchNamespacedPod).toHaveBeenCalledTimes(0);
   });

@@ -42,8 +42,7 @@ describe('tests for the pipeline-assign service', () => {
 
     await pipelineAssign.assignPodToPipeline(message);
 
-    // TODO reenable before merging
-    // expect(listNamespacedPod).toHaveBeenCalledTimes(2);
+    expect(listNamespacedPod).toHaveBeenCalledTimes(2);
     expect(deleteNamespacedPod).toHaveBeenCalledTimes(0);
     expect(patchNamespacedPod).toHaveBeenCalledTimes(0);
   });

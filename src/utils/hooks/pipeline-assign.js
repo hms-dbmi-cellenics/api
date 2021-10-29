@@ -25,9 +25,6 @@ const removeRunningPods = async (k8sApi, message) => {
 const patchPod = async (k8sApi, message) => {
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
   const namespace = `pipeline-${sandboxId}`;
-  const ps = await k8sApi.listNamespacedPod(namespace, null, null, null, null, '!activityId,type=pipeline');
-  console.log('pods');
-  console.log(ps);
   const unassignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase!=Succeeded,status.phase!=Failed ', '!activityId,type=pipeline');
 
   const pods = unassignedPods.body.items;
