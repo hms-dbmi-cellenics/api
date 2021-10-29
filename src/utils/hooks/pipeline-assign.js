@@ -9,6 +9,10 @@ const logger = getLogger();
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
 
+const getAvailablePods = async (k8sApi, namespace, statusSelector) => {
+  const unassignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, statusSelector, '!activityId,type=pipeline');
+  return unassignedPods.body.items;
+};
 
 const removeRunningPods = async (k8sApi, message) => {
   const { experimentId, input: { sandboxId } } = message;
@@ -25,9 +29,13 @@ const removeRunningPods = async (k8sApi, message) => {
 const patchPod = async (k8sApi, message) => {
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
   const namespace = `pipeline-${sandboxId}`;
-  const unassignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase!=Succeeded,status.phase!=Failed ', '!activityId,type=pipeline');
 
-  const pods = unassignedPods.body.items;
+  // try to get an available pod which is already running
+  let pods = await getAvailablePods(k8sApi, namespace, 'status.phase=Running');
+  if (pods.length < 1) {
+    logger.info('no running pods available, trying to select pods still being created');
+    pods = await getAvailablePods(k8sApi, namespace, 'status.phase!=Succeeded,status.phase!=Failed');
+  }
 
   if (pods.length < 1) {
     throw new Error('no unassigned pods available');
