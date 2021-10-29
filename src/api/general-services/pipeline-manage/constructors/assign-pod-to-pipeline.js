@@ -71,7 +71,7 @@ const waitForPod = (context, step) => {
     Retry: [{
       ErrorEquals: ['NoPodAssigned'],
       IntervalSeconds: 1,
-      MaxAttempts: 12,
+      MaxAttempts: 13,
       BackoffRate: 1.5,
     }],
     Iterator: {
