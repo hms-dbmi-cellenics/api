@@ -1,8 +1,4 @@
 
-const asyncTimer = require('../../../../src/utils/asyncTimer');
-
-jest.mock('../../../../src/utils/asyncTimer', () => jest.fn());
-
 const k8s = require('@kubernetes/client-node');
 const constants = require('../../../../src/api/general-services/pipeline-manage/constants');
 const fake = require('../../../test-utils/constants');
@@ -44,18 +40,10 @@ describe('tests for the pipeline-assign service', () => {
       constants.GEM2S_PROCESS_NAME,
       fake.ACTIVITY_ID);
 
-    const timerMock = jest.fn();
-    asyncTimer.mockImplementation(() => timerMock);
-
     await pipelineAssign.assignPodToPipeline(message);
-
-    // expect(timerSpy).toBeCalled();
 
     expect(listNamespacedPod).toHaveBeenCalledTimes(2);
     expect(deleteNamespacedPod).toHaveBeenCalledTimes(0);
     expect(patchNamespacedPod).toHaveBeenCalledTimes(0);
-
-    // expect(asyncTimer).toHaveBeenCalledTimes(12);
-    // expect(asyncTimer).toHaveBeenLastCalledWith(129746.337890625);
   });
 });

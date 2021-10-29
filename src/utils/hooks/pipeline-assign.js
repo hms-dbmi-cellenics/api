@@ -13,7 +13,7 @@ kc.loadFromDefault();
 const removeRunningPods = async (k8sApi, message) => {
   const { experimentId, input: { sandboxId } } = message;
   const namespace = `pipeline-${sandboxId}`;
-  const assignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running,status.phase=ContainerCreating', `experimentId=${experimentId},type=pipeline`);
+  const assignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running,status.phase=ContainerCreating,status.phase=Pending', `experimentId=${experimentId},type=pipeline`);
 
   await Promise.all(assignedPods.body.items.map((pod) => {
     const { name } = pod.metadata;
@@ -26,7 +26,7 @@ const patchPod = async (k8sApi, message) => {
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
   const namespace = `pipeline-${sandboxId}`;
 
-  const unassignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running,status.phase=ContainerCreating', '!activityId,type=pipeline');
+  const unassignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running,status.phase=ContainerCreating,status.phase=Pending', '!activityId,type=pipeline');
 
   const pods = unassignedPods.body.items;
 
