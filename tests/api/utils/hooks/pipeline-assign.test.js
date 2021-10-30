@@ -63,8 +63,7 @@ describe('tests for the pipeline-assign service', () => {
     expect(listNamespacedPod).toHaveBeenCalledTimes(2);
     // check that sandbox ID, activity & selector are correctly passed into k8s
     expect(listNamespacedPod).toHaveBeenNthCalledWith(1,
-      expect.stringContaining(fake.SANDBOX_ID), null, null, null,
-      expect.stringContaining('status.phase!=Succeeded,status.phase!=Failed'),
+      expect.stringContaining(fake.SANDBOX_ID), null, null, null, null,
       expect.stringContaining(fake.EXPERIMENT_ID));
 
     expect(deleteNamespacedPod).toHaveBeenCalledTimes(2);

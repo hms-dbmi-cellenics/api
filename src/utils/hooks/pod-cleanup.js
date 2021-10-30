@@ -9,7 +9,9 @@ const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
 
 
-const removeRunningPods = async (k8sApi, message) => {
+const removeRunningPods = async (message) => {
+  const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+
   const { experimentId } = message;
   const namespace = `pipeline-${config.sandboxId}`;
   const assignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, null, `experimentId=${experimentId},type=pipeline`);
@@ -25,13 +27,11 @@ const removeRunningPods = async (k8sApi, message) => {
 const cleanupPods = async (message) => {
   const { experimentId } = message;
   if (config.clusterEnv !== 'development') {
-    const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
-
     logger.log(`Removing pipeline pods for experiment ${experimentId} in sandbox ${config.sandboxId}`);
-    await removeRunningPods(k8sApi, message);
+    await removeRunningPods(message);
   } else {
     logger.log(`Ignoring pod cleanup for ${experimentId} in ${config.clusterEnv} env.`);
   }
 };
 
-module.exports = { cleanupPods };
+module.exports = { cleanupPods, removeRunningPods };
