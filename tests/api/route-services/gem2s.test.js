@@ -109,7 +109,7 @@ describe('gem2s', () => {
     const parsedMessage = {
       taskName: 'downloadGem',
       experimentId: 'experimentId',
-      authJWT: 'Bearer mockAuthJwtToken',
+      authJWT: 'Bearer eyJraWQiOiJ2TytRZ1lud0lnOU5pT2Y3azJTNEFEY2xvaDBwVlNUbkNNd',
     };
 
     await Gem2sService.sendUpdateToSubscribed(experimentId, parsedMessage, mockIo);
@@ -183,7 +183,7 @@ describe('gem2s', () => {
         error: errorText,
       },
       input: {
-        authJWT: 'Bearer ayyylmaoxd',
+        authJWT: 'Bearer eyJraWQiOiJ2TytRZ1lud0lnOU5pT2Y3azJTNEFEY2xvaDBwVlNUbkNNd',
         processName: 'gem2s',
       },
     };

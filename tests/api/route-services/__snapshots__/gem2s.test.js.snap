@@ -8,7 +8,7 @@ exports[`gem2s gem2sReponse - Pass on error message properly 1`] = `
       Object {
         "experimentId": "abcd1234",
         "input": Object {
-          "authJWT": "Bearer ayyylmaoxd",
+          "authJWT": "Bearer eyJraWQiOiJ2TytRZ1lud0lnOU5pT2Y3azJTNEFEY2xvaDBwVlNUbkNNd",
           "processName": "gem2s",
         },
         "response": Object {
@@ -94,7 +94,7 @@ exports[`gem2s sendUpdateToSubscribed - Should send update if payloads are corre
     Array [
       "ExperimentUpdates-abcd1234",
       Object {
-        "authJWT": "Bearer mockAuthJwtToken",
+        "authJWT": "Bearer eyJraWQiOiJ2TytRZ1lud0lnOU5pT2Y3azJTNEFEY2xvaDBwVlNUbkNNd",
         "experimentId": "experimentId",
         "status": Object {
           "gem2s": Object {

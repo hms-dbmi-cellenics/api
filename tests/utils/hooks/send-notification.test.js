@@ -40,7 +40,7 @@ describe('send-notification ', () => {
     expect(sendEmail).toHaveBeenCalledTimes(0);
   });
 
-  it('Sends email if user toggled notifications on failed process', async () => {
+  it('Sends email and slack message if user toggled notifications on failed process', async () => {
     experimentsService.getExperimentData.mockReturnValue({
       notifyByEmail: true,
     });

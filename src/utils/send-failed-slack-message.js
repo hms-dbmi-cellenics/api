@@ -2,7 +2,8 @@ const atob = require('atob');
 
 const sendFailedSlackMessage = async (message, user, experiment) => {
   const { experimentId } = message;
-  // this needs to change once we change the name to qc in experiments/meta
+  // THIS NEEDS TO CHANGE ONCE WE CHANGE THE NAMAE TO QC IN EXPERIMENTS/META
+
   const process = message.input.processName;
   const stateMachineArn = process === 'qc' ? experiment.meta.pipeline.stateMachineArn : experiment.meta[process].stateMachineArn;
   const userContext = [
@@ -61,8 +62,9 @@ const sendFailedSlackMessage = async (message, user, experiment) => {
     method: 'POST',
     body: JSON.stringify(feedbackData),
   });
+  console.log('RESP[ONSE IS ', r);
   if (!r.ok) {
-    throw new Error('Invalid status code returned.');
+    throw new Error('Invalid status code returned.', r);
   }
 };
 

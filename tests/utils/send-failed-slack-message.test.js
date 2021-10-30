@@ -1,5 +1,3 @@
-// const fetchMock = require('jest-fetch-mock');
-// const fetch = require('node-fetch');
 const sendFailedSlackMessage = require('../../src/utils/send-failed-slack-message');
 const { USER } = require('../test-utils/constants');
 

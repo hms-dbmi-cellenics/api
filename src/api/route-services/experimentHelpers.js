@@ -77,7 +77,7 @@ const getShallowAttrsUpdateParams = (body) => {
   const objectToMarshall = {};
   const updateExpressionList = Object.entries(dataToUpdate).reduce(
     (acc, [key, val]) => {
-      if (val === undefined) {
+      if (!val && val !== false) {
         return acc;
       }
 
