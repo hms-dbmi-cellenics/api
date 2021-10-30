@@ -58,6 +58,41 @@ paths:
                   - env
                   - clusterEnv
       description: Returns a status on the health of the API.
+  /kubernetesEvents:
+    post:
+      operationId: receiveKubernetesEvent
+      x-eov-operation-id: kubernetes#event
+      x-eov-operation-handler: routes/kubernetes
+      # requestBody:
+      #   description: 'The results from the execution of a pipeline step, sent via SNS.'
+      #   required: false
+      #   content:
+      #     text/plain:
+      #       schema:
+      #         type: string
+      #       examples: {}
+      #     application/json:
+      #       schema:
+      #         type: object
+      #         properties: {}
+      #       examples: {}
+      responses:
+        '200':
+          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: ok
+        '500':
+          description: The data sent by the server could not be parsed as JSON.
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: nok
+      description: Events from Kubernetes Event Exporter relayed to the API through this endpoint.
+      summary: Retrieve events from kubernetes from pipeline step functions
   /gem2sResults:
     post:
       operationId: receiveGem2sResponse
@@ -636,7 +671,6 @@ paths:
               schema:
                 type: object
                 properties: {}
-
       description: This path will create a new pipeline that can run a state machine with gem2s tasks.
       requestBody:
         content:
@@ -769,12 +803,11 @@ paths:
         name: projectUuid
         in: path
         required: true
-        
     post:
       summary: Create project
       description: Create a new project
       operationId: createProject
-      x-eov-operation-id: 'projects#create'
+      x-eov-operation-id: projects#create
       x-eov-operation-handler: routes/projects
       responses:
         '200':
@@ -819,7 +852,6 @@ paths:
             schema:
               $ref: ./models/api-body-schemas/Project.v1.yaml
         description: The new project to set.
-    
     put:
       summary: Update project
       operationId: updateProject
@@ -1018,7 +1050,7 @@ paths:
       summary: Add sample
       description: Adds a new sample to a samples entry
       operationId: addSample
-      x-eov-operation-id: 'samples#add'
+      x-eov-operation-id: samples#add
       x-eov-operation-handler: routes/samples
       responses:
         '200':
