@@ -1,7 +1,12 @@
 // const AWSXRay = require('aws-xray-sdk');
 // const Gem2sService = require('../route-services/gem2s');
 // const parseSNSMessage = require('../../utils/parse-sns-message');
+const k8s = require('@kubernetes/client-node');
 const getLogger = require('../../utils/getLogger');
+const config = require('../../config');
+
+const kc = new k8s.KubeConfig();
+kc.loadFromDefault();
 
 // const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
 
@@ -11,17 +16,18 @@ module.exports = {
   'kubernetes#event': [
     // expressAuthorizationMiddleware,
     async (req) => {
-      logger.log('Received kubernetes event');
-      // logger.log(req);
-      // logger.log(res);
-      // logger.log(next);
-      logger.log('========================');
-      logger.log(req.body);
-      // const { experimentId } = req.params;
+      logger.log('received kubernetes event');
+      const { reason, message, metadata: { name, namespace } } = req.Body;
+      logger.log(`[${reason}]received kubernetes event: ${message} ${name} in ${namespace}`);
 
-      // Gem2sService.gem2sCreate(experimentId, req.body, req.headers.authorization)
-      //   .then((response) => res.json(response))
-      //   .catch(next);
+      if (config.clusterEnv === 'development') {
+        logger.log(`should not receive crash loops in  ${config.clusterEnv} env.`);
+        return;
+      }
+
+      const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+      logger.log(`removing pod ${name} in ${namespace}`);
+      await k8sApi.deleteNamespacedPod(name, namespace);
     },
   ],
 };

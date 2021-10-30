@@ -3,7 +3,7 @@ const k8s = require('@kubernetes/client-node');
 const getLogger = require('../getLogger');
 const validateRequest = require('../schema-validator');
 const constants = require('../../api/general-services/pipeline-manage/constants');
-const { removeRunningPods } = require('./pod-cleanup');
+const { deleteExperimentPods } = require('./pod-cleanup');
 
 const logger = getLogger();
 
@@ -85,7 +85,7 @@ const assignPodToPipeline = async (message) => {
 
 
   // remove pipeline pods already assigned to this experiment
-  await removeRunningPods(message);
+  await deleteExperimentPods(experimentId);
 
   try {
     // try to choose a free pod and assign it to the current pipeline
