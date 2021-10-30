@@ -42,7 +42,7 @@ describe('tests for the pipeline-assign service', () => {
 
     await pipelineAssign.assignPodToPipeline(message);
 
-    expect(listNamespacedPod).toHaveBeenCalledTimes(3);
+    expect(listNamespacedPod).toHaveBeenCalledTimes(4);
     expect(deleteNamespacedPod).toHaveBeenCalledTimes(0);
     expect(patchNamespacedPod).toHaveBeenCalledTimes(0);
   });

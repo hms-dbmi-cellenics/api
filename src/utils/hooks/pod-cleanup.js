@@ -23,11 +23,15 @@ const removeRunningPods = async (k8sApi, message) => {
 
 
 const cleanupPods = async (message) => {
-  const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
   const { experimentId } = message;
+  if (config.clusterEnv !== 'development') {
+    const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
-  logger.log(`Removing pipeline pods for experiment ${experimentId} in sandbox ${config.sandboxId}`);
-  await removeRunningPods(k8sApi, message);
+    logger.log(`Removing pipeline pods for experiment ${experimentId} in sandbox ${config.sandboxId}`);
+    await removeRunningPods(k8sApi, message);
+  } else {
+    logger.log(`Ignoring pod cleanup for ${experimentId} in ${config.clusterEnv} env.`);
+  }
 };
 
 module.exports = { cleanupPods };
