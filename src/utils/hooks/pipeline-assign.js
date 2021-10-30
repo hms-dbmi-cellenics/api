@@ -34,7 +34,11 @@ const patchPod = async (k8sApi, message) => {
   let pods = await getAvailablePods(k8sApi, namespace, 'status.phase=Running');
   if (pods.length < 1) {
     logger.log('no running pods available, trying to select pods still being created');
-    pods = await getAvailablePods(k8sApi, namespace, 'status.phase!=Succeeded,status.phase!=Failed');
+    pods = await getAvailablePods(k8sApi, namespace, 'status.phase=ContainerCreating');
+  }
+  if (pods.length < 1) {
+    logger.log('no creating pods available, trying to select pods still pending');
+    pods = await getAvailablePods(k8sApi, namespace, 'status.phase=Pending');
   }
 
   if (pods.length < 1) {
