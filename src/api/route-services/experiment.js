@@ -89,7 +89,7 @@ class ExperimentService {
       ':meta': body.meta || {},
       ':processingConfig': {},
       ':sampleIds': body.sampleIds,
-      ':notifyByEmail': false,
+      ':notifyByEmail': true,
     });
 
     const params = {
