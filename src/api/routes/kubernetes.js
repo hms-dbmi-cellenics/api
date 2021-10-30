@@ -1,6 +1,4 @@
-// const AWSXRay = require('aws-xray-sdk');
-// const Gem2sService = require('../route-services/gem2s');
-// const parseSNSMessage = require('../../utils/parse-sns-message');
+const AWSXRay = require('aws-xray-sdk');
 const k8s = require('@kubernetes/client-node');
 const getLogger = require('../../utils/getLogger');
 const config = require('../../config');
@@ -13,21 +11,38 @@ kc.loadFromDefault();
 const logger = getLogger();
 
 module.exports = {
-  'kubernetes#event': [
-    // expressAuthorizationMiddleware,
-    async (req) => {
-      logger.log('received kubernetes event');
-      const { reason, message, metadata: { name, namespace } } = req.Body;
+  // 'kubernetes#event': [
+  // expressAuthorizationMiddleware,
+  'kubernetes#event': async (req, res) => {
+    logger.log('received kubernetes event');
+
+    try {
+      const { reason, message, metadata: { name, namespace } } = req.body;
       logger.log(`[${reason}]received kubernetes event: ${message} ${name} in ${namespace}`);
 
-      if (config.clusterEnv === 'development') {
-        logger.log(`should not receive crash loops in  ${config.clusterEnv} env.`);
+      if (namespace !== `pipeline-${config.sandboxId}`) {
+        logger.log(`ignoring event from namespace ${namespace}.`);
+        return;
+      }
+
+      if (reason !== 'BackOff' || config.clusterEnv === 'development') {
+        logger.log(`ignoring event ${reason} in  ${config.clusterEnv} env.`);
         return;
       }
 
       const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
       logger.log(`removing pod ${name} in ${namespace}`);
       await k8sApi.deleteNamespacedPod(name, namespace);
-    },
-  ],
+    } catch (e) {
+      logger.error('error processing k8s event');
+      logger.log(req.body);
+      logger.error(e);
+      AWSXRay.getSegment().addError(e);
+      res.status(200).send('nok');
+      return;
+    }
+
+    res.status(200).send('ok');
+  },
+  // ],
 };
