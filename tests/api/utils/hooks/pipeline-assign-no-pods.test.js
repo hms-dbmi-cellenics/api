@@ -1,6 +1,8 @@
+
 const k8s = require('@kubernetes/client-node');
 const constants = require('../../../../src/api/general-services/pipeline-manage/constants');
 const fake = require('../../../test-utils/constants');
+
 const { buildPodRequest } = require('../../../../src/api/general-services/pipeline-manage/constructors/assign-pod-to-pipeline');
 
 jest.mock('@kubernetes/client-node');
@@ -11,11 +13,11 @@ const mockEmptyPodsList = {
   },
 };
 
-const removeNamespacedPod = jest.fn();
+const deleteNamespacedPod = jest.fn();
 const patchNamespacedPod = jest.fn();
 const listNamespacedPod = jest.fn(() => mockEmptyPodsList);
 const mockApi = {
-  removeNamespacedPod,
+  deleteNamespacedPod,
   patchNamespacedPod,
   listNamespacedPod,
 };
@@ -40,8 +42,8 @@ describe('tests for the pipeline-assign service', () => {
 
     await pipelineAssign.assignPodToPipeline(message);
 
-    expect(listNamespacedPod).toHaveBeenCalledTimes(2);
-    expect(removeNamespacedPod).toHaveBeenCalledTimes(0);
+    expect(listNamespacedPod).toHaveBeenCalledTimes(4);
+    expect(deleteNamespacedPod).toHaveBeenCalledTimes(0);
     expect(patchNamespacedPod).toHaveBeenCalledTimes(0);
   });
 });
