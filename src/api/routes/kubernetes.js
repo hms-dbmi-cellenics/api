@@ -22,11 +22,14 @@ module.exports = {
 
       if (namespace !== `pipeline-${config.sandboxId}`) {
         logger.log(`ignoring event from namespace ${namespace}.`);
+        res.status(200).send('ok');
+
         return;
       }
 
       if (reason !== 'BackOff' || config.clusterEnv === 'development') {
         logger.log(`ignoring event ${reason} in  ${config.clusterEnv} env.`);
+        res.status(200).send('ok');
         return;
       }
 
@@ -35,7 +38,7 @@ module.exports = {
       await k8sApi.deleteNamespacedPod(name, namespace);
     } catch (e) {
       logger.error('error processing k8s event');
-      logger.log(req);
+      // logger.log(req);
       logger.error(e);
       AWSXRay.getSegment().addError(e);
       res.status(200).send('nok');
