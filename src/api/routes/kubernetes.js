@@ -17,7 +17,7 @@ module.exports = {
     logger.log('received kubernetes event');
 
     try {
-      const { reason, message, metadata: { name, namespace } } = req.body;
+      const { reason, message, involvedObject: { name, namespace } } = req.body;
       logger.log(`[${reason}]received kubernetes event: ${message} ${name} in ${namespace}`);
 
       if (namespace !== `pipeline-${config.sandboxId}`) {
@@ -35,12 +35,13 @@ module.exports = {
       await k8sApi.deleteNamespacedPod(name, namespace);
     } catch (e) {
       logger.error('error processing k8s event');
-      logger.log(req.body);
+      logger.log(req);
       logger.error(e);
       AWSXRay.getSegment().addError(e);
       res.status(200).send('nok');
       return;
     }
+    logger.log(req);
 
     res.status(200).send('ok');
   },
