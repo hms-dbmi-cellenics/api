@@ -123,7 +123,6 @@ class PipelineService {
 
     await validateRequest(message, 'PipelineResponse.v1.yaml');
 
-    console.log('hook.run');
     await pipelineHook.run(message);
 
     const { experimentId } = message;

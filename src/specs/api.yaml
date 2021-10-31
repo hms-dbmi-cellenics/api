@@ -63,19 +63,6 @@ paths:
       operationId: receiveKubernetesEvent
       x-eov-operation-id: kubernetes#event
       x-eov-operation-handler: routes/kubernetes
-      # requestBody:
-      #   description: 'The results from the execution of a pipeline step, sent via SNS.'
-      #   required: false
-      #   content:
-      #     text/plain:
-      #       schema:
-      #         type: string
-      #       examples: {}
-      #     application/json:
-      #       schema:
-      #         type: object
-      #         properties: {}
-      #       examples: {}
       responses:
         '200':
           description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'

@@ -10,11 +10,12 @@ const logger = getLogger();
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
 
+// getAvailablePods retrieves pods not assigned already to an activityID given a selector
 const getAvailablePods = async (namespace, statusSelector) => {
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
-  const unassignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, statusSelector, '!activityId,type=pipeline');
-  return unassignedPods.body.items;
+  const pods = await k8sApi.listNamespacedPod(namespace, null, null, null, statusSelector, '!activityId,type=pipeline');
+  return pods.body.items;
 };
 
 
@@ -84,8 +85,12 @@ const assignPodToPipeline = async (message) => {
   logger.log(`Trying to assign pod to ${processName} pipeline for experiment ${experimentId} in sandbox ${sandboxId} for activity ${activityId}`);
 
 
+  try {
   // remove pipeline pods already assigned to this experiment
-  await deleteExperimentPods(experimentId);
+    await deleteExperimentPods(experimentId);
+  } catch (e) {
+    logger.error(`Failed to remove pods for experiment ${experimentId}: ${e}`);
+  }
 
   try {
     // try to choose a free pod and assign it to the current pipeline
