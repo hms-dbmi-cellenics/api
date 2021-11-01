@@ -6,31 +6,43 @@ properties:
     type: string
     description: Name of the work. Must be `DotPlot`.
     pattern: DotPlot
+    example: DotPlot
   markerGenes:
     type: boolean
-    description: Amount of marker genes to get
+    description: Flag to use marker genes or custom genes
   input:
     type: object
     required:
       - nGenes
       - genes
+    description: Object containing input
     properties:
       nGenes:
         type: number
+        description: 'Number of marker genes to use, if using markerGenes'
+        example: 5
+        minimum: 0
       genes:
         type: array
+        description: List of genes to calculate the values of the DotPlot
         items:
           type: string
+          example: '["Gzma", "Lyz2"]'
   subset:
     type: object
     required:
       - cellClassKey
       - cellSetKey
+    description: Subet of cells to be used to calculate the DotPlot
     properties:
       cellClassKey:
         type: string
+        description: Cellset class key of the cell subset
+        example: louvain
       cellSetKey:
         type: string
+        description: Cellset key of the subset
+        example: louvain/louvain-0
 required:
   - name
   - markerGenes
