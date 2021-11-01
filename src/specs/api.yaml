@@ -58,6 +58,28 @@ paths:
                   - env
                   - clusterEnv
       description: Returns a status on the health of the API.
+  /kubernetesEvents:
+    post:
+      operationId: receiveKubernetesEvent
+      x-eov-operation-id: kubernetes#event
+      x-eov-operation-handler: routes/kubernetes
+      responses:
+        '200':
+          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: ok
+        '500':
+          description: The data sent by the server could not be parsed as JSON.
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: nok
+      description: Events from Kubernetes Event Exporter relayed to the API through this endpoint.
+      summary: Retrieve events from kubernetes from pipeline step functions
   /gem2sResults:
     post:
       operationId: receiveGem2sResponse
@@ -771,6 +793,7 @@ paths:
     post:
       summary: Create project
       description: Create a new project
+      operationId: createProject
       x-eov-operation-id: projects#create
       x-eov-operation-handler: routes/projects
       responses:

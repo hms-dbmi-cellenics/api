@@ -18,7 +18,7 @@ const EMPTY_ID = 'empty_id';
 const EXECUTION_DOES_NOT_EXIST = 'EXECUTION_DOES_NOT_EXIST';
 const RANDOM_EXCEPTION = 'RANDOM_EXCEPTION';
 
-const paramsHash = '44c4c6e190e54c4b2740d37a861bb6954921730c'; // `pragma: allowlist secret`
+const paramsHash = '44c4c6e190e54c4b2740d37a861bb6954921730cnotASecret';
 
 const mockNotRunResponse = {
   Item: {
@@ -310,6 +310,12 @@ describe('pipelineStatus', () => {
   AWSMock.mock('StepFunctions', 'getExecutionHistory', (params, callback) => {
     callback(null, { events: [] });
   });
+
+  beforeAll(() => {
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date(2020, 3, 1));
+  });
+
 
   it('handles properly a gem2s empty dynamodb record', async () => {
     const status = await pipelineStatus(EMPTY_ID, GEM2S_PROCESS_NAME);

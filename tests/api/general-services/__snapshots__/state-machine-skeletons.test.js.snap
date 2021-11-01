@@ -150,139 +150,21 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
 
 {
   "Comment": "Gem2s Pipeline for clusterEnv 'production'",
-  "StartAt": "GetExperimentRunningPods",
+  "StartAt": "RequestPod",
   "States": {
-    "GetExperimentRunningPods": {
-      "Next": "DeletePreviousPods",
-      "ResultPath": "$.runningPods",
-      "Type": "Task",
-      "Comment": "Retrieves running pods assigned to the experiment ID.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
-        "Method": "GET",
-        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-        "QueryParameters": {
-          "labelSelector": [
-            "experimentId=mock-experiment-id,type=pipeline"
-          ],
-          "fieldSelector": [
-            "status.phase=Running"
-          ]
-        }
-      }
-    },
-    "DeletePreviousPods": {
-      "ResultPath": null,
-      "Next": "AssignPipelineToPod",
-      "Type": "Map",
-      "ItemsPath": "$.runningPods.ResponseBody.items",
-      "MaxConcurrency": 0,
-      "Iterator": {
-        "StartAt": "DeletePod",
-        "States": {
-          "DeletePod": {
-            "Type": "Task",
-            "End": true,
-            "Comment": "Patch pod to set the activity ID label.",
-            "Resource": "arn:aws:states:::eks:call",
-            "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
-              "Method": "DELETE",
-              "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)"
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "EKS.404"
-                ],
-                "Next": "Ignore404"
-              }
-            ]
-          },
-          "Ignore404": {
-            "Type": "Pass",
-            "End": true
-          }
-        }
-      }
-    },
-    "AssignPipelineToPod": {
+    "RequestPod": {
       "ResultPath": null,
       "Next": "WaitForPod",
-      "Type": "Map",
-      "ItemsPath": "$.retries",
-      "MaxConcurrency": 1,
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "NoPodsAvailable"
-          ],
-          "IntervalSeconds": 2,
-          "MaxAttempts": 10,
-          "BackoffRate": 1.5
-        }
-      ],
-      "Iterator": {
-        "StartAt": "GetUnassignedPod",
-        "States": {
-          "GetUnassignedPod": {
-            "Next": "IsPodAvailable",
-            "Type": "Task",
-            "Comment": "Retrieves first unassigned and running pipeline pod.",
-            "Resource": "arn:aws:states:::eks:call",
-            "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
-              "Method": "GET",
-              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-              "QueryParameters": {
-                "labelSelector": [
-                  "!activityId,type=pipeline"
-                ],
-                "fieldSelector": [
-                  "status.phase=Running"
-                ]
-              }
-            }
-          },
-          "IsPodAvailable": {
-            "Type": "Choice",
-            "Comment": "Redirects to an error state if there are no available pods.",
-            "Choices": [
-              {
-                "Variable": "$.ResponseBody.items[0]",
-                "IsPresent": false,
-                "Next": "NoPodsAvailable"
-              }
-            ],
-            "Default": "RequestPod"
-          },
-          "NoPodsAvailable": {
-            "Type": "Fail",
-            "Cause": "No available and running pipeline pods.",
-            "Error": "NoPodsAvailable"
-          },
-          "RequestPod": {
-            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
-            "Type": "Task",
-            "Resource": "arn:aws:states:::sns:publish",
-            "End": true,
-            "Parameters": {
-              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
-              "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
-              "MessageAttributes": {
-                "type": {
-                  "DataType": "String",
-                  "StringValue": "PipelineResponse"
-                }
-              }
-            }
+      "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
+        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
           }
         }
       }
@@ -299,17 +181,8 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "NoPodAssigned"
           ],
           "IntervalSeconds": 1,
-          "MaxAttempts": 9,
+          "MaxAttempts": 13,
           "BackoffRate": 1.5
-        }
-      ],
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "AssignPipelineToPod",
-          "ResultPath": null
         }
       ],
       "Iterator": {
@@ -467,139 +340,21 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
 
 {
   "Comment": "Gem2s Pipeline for clusterEnv 'staging'",
-  "StartAt": "GetExperimentRunningPods",
+  "StartAt": "RequestPod",
   "States": {
-    "GetExperimentRunningPods": {
-      "Next": "DeletePreviousPods",
-      "ResultPath": "$.runningPods",
-      "Type": "Task",
-      "Comment": "Retrieves running pods assigned to the experiment ID.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
-        "Method": "GET",
-        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-        "QueryParameters": {
-          "labelSelector": [
-            "experimentId=mock-experiment-id,type=pipeline"
-          ],
-          "fieldSelector": [
-            "status.phase=Running"
-          ]
-        }
-      }
-    },
-    "DeletePreviousPods": {
-      "ResultPath": null,
-      "Next": "AssignPipelineToPod",
-      "Type": "Map",
-      "ItemsPath": "$.runningPods.ResponseBody.items",
-      "MaxConcurrency": 0,
-      "Iterator": {
-        "StartAt": "DeletePod",
-        "States": {
-          "DeletePod": {
-            "Type": "Task",
-            "End": true,
-            "Comment": "Patch pod to set the activity ID label.",
-            "Resource": "arn:aws:states:::eks:call",
-            "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
-              "Method": "DELETE",
-              "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)"
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "EKS.404"
-                ],
-                "Next": "Ignore404"
-              }
-            ]
-          },
-          "Ignore404": {
-            "Type": "Pass",
-            "End": true
-          }
-        }
-      }
-    },
-    "AssignPipelineToPod": {
+    "RequestPod": {
       "ResultPath": null,
       "Next": "WaitForPod",
-      "Type": "Map",
-      "ItemsPath": "$.retries",
-      "MaxConcurrency": 1,
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "NoPodsAvailable"
-          ],
-          "IntervalSeconds": 2,
-          "MaxAttempts": 10,
-          "BackoffRate": 1.5
-        }
-      ],
-      "Iterator": {
-        "StartAt": "GetUnassignedPod",
-        "States": {
-          "GetUnassignedPod": {
-            "Next": "IsPodAvailable",
-            "Type": "Task",
-            "Comment": "Retrieves first unassigned and running pipeline pod.",
-            "Resource": "arn:aws:states:::eks:call",
-            "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
-              "Method": "GET",
-              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-              "QueryParameters": {
-                "labelSelector": [
-                  "!activityId,type=pipeline"
-                ],
-                "fieldSelector": [
-                  "status.phase=Running"
-                ]
-              }
-            }
-          },
-          "IsPodAvailable": {
-            "Type": "Choice",
-            "Comment": "Redirects to an error state if there are no available pods.",
-            "Choices": [
-              {
-                "Variable": "$.ResponseBody.items[0]",
-                "IsPresent": false,
-                "Next": "NoPodsAvailable"
-              }
-            ],
-            "Default": "RequestPod"
-          },
-          "NoPodsAvailable": {
-            "Type": "Fail",
-            "Cause": "No available and running pipeline pods.",
-            "Error": "NoPodsAvailable"
-          },
-          "RequestPod": {
-            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
-            "Type": "Task",
-            "Resource": "arn:aws:states:::sns:publish",
-            "End": true,
-            "Parameters": {
-              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
-              "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
-              "MessageAttributes": {
-                "type": {
-                  "DataType": "String",
-                  "StringValue": "PipelineResponse"
-                }
-              }
-            }
+      "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
+        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
           }
         }
       }
@@ -616,17 +371,8 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "NoPodAssigned"
           ],
           "IntervalSeconds": 1,
-          "MaxAttempts": 9,
+          "MaxAttempts": 13,
           "BackoffRate": 1.5
-        }
-      ],
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "AssignPipelineToPod",
-          "ResultPath": null
         }
       ],
       "Iterator": {
@@ -985,139 +731,21 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
 
 {
   "Comment": "QC Pipeline for clusterEnv 'production'",
-  "StartAt": "GetExperimentRunningPods",
+  "StartAt": "RequestPod",
   "States": {
-    "GetExperimentRunningPods": {
-      "Next": "DeletePreviousPods",
-      "ResultPath": "$.runningPods",
-      "Type": "Task",
-      "Comment": "Retrieves running pods assigned to the experiment ID.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
-        "Method": "GET",
-        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-        "QueryParameters": {
-          "labelSelector": [
-            "experimentId=mock-experiment-id,type=pipeline"
-          ],
-          "fieldSelector": [
-            "status.phase=Running"
-          ]
-        }
-      }
-    },
-    "DeletePreviousPods": {
-      "ResultPath": null,
-      "Next": "AssignPipelineToPod",
-      "Type": "Map",
-      "ItemsPath": "$.runningPods.ResponseBody.items",
-      "MaxConcurrency": 0,
-      "Iterator": {
-        "StartAt": "DeletePod",
-        "States": {
-          "DeletePod": {
-            "Type": "Task",
-            "End": true,
-            "Comment": "Patch pod to set the activity ID label.",
-            "Resource": "arn:aws:states:::eks:call",
-            "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
-              "Method": "DELETE",
-              "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)"
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "EKS.404"
-                ],
-                "Next": "Ignore404"
-              }
-            ]
-          },
-          "Ignore404": {
-            "Type": "Pass",
-            "End": true
-          }
-        }
-      }
-    },
-    "AssignPipelineToPod": {
+    "RequestPod": {
       "ResultPath": null,
       "Next": "WaitForPod",
-      "Type": "Map",
-      "ItemsPath": "$.retries",
-      "MaxConcurrency": 1,
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "NoPodsAvailable"
-          ],
-          "IntervalSeconds": 2,
-          "MaxAttempts": 10,
-          "BackoffRate": 1.5
-        }
-      ],
-      "Iterator": {
-        "StartAt": "GetUnassignedPod",
-        "States": {
-          "GetUnassignedPod": {
-            "Next": "IsPodAvailable",
-            "Type": "Task",
-            "Comment": "Retrieves first unassigned and running pipeline pod.",
-            "Resource": "arn:aws:states:::eks:call",
-            "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
-              "Method": "GET",
-              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-              "QueryParameters": {
-                "labelSelector": [
-                  "!activityId,type=pipeline"
-                ],
-                "fieldSelector": [
-                  "status.phase=Running"
-                ]
-              }
-            }
-          },
-          "IsPodAvailable": {
-            "Type": "Choice",
-            "Comment": "Redirects to an error state if there are no available pods.",
-            "Choices": [
-              {
-                "Variable": "$.ResponseBody.items[0]",
-                "IsPresent": false,
-                "Next": "NoPodsAvailable"
-              }
-            ],
-            "Default": "RequestPod"
-          },
-          "NoPodsAvailable": {
-            "Type": "Fail",
-            "Cause": "No available and running pipeline pods.",
-            "Error": "NoPodsAvailable"
-          },
-          "RequestPod": {
-            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
-            "Type": "Task",
-            "Resource": "arn:aws:states:::sns:publish",
-            "End": true,
-            "Parameters": {
-              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
-              "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
-              "MessageAttributes": {
-                "type": {
-                  "DataType": "String",
-                  "StringValue": "PipelineResponse"
-                }
-              }
-            }
+      "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
+        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
           }
         }
       }
@@ -1134,17 +762,8 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "NoPodAssigned"
           ],
           "IntervalSeconds": 1,
-          "MaxAttempts": 9,
+          "MaxAttempts": 13,
           "BackoffRate": 1.5
-        }
-      ],
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "AssignPipelineToPod",
-          "ResultPath": null
         }
       ],
       "Iterator": {
@@ -1357,139 +976,21 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
 
 {
   "Comment": "QC Pipeline for clusterEnv 'staging'",
-  "StartAt": "GetExperimentRunningPods",
+  "StartAt": "RequestPod",
   "States": {
-    "GetExperimentRunningPods": {
-      "Next": "DeletePreviousPods",
-      "ResultPath": "$.runningPods",
-      "Type": "Task",
-      "Comment": "Retrieves running pods assigned to the experiment ID.",
-      "Resource": "arn:aws:states:::eks:call",
-      "Parameters": {
-        "ClusterName": "mock-cluster-name",
-        "CertificateAuthority": "mock-ca",
-        "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
-        "Method": "GET",
-        "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-        "QueryParameters": {
-          "labelSelector": [
-            "experimentId=mock-experiment-id,type=pipeline"
-          ],
-          "fieldSelector": [
-            "status.phase=Running"
-          ]
-        }
-      }
-    },
-    "DeletePreviousPods": {
-      "ResultPath": null,
-      "Next": "AssignPipelineToPod",
-      "Type": "Map",
-      "ItemsPath": "$.runningPods.ResponseBody.items",
-      "MaxConcurrency": 0,
-      "Iterator": {
-        "StartAt": "DeletePod",
-        "States": {
-          "DeletePod": {
-            "Type": "Task",
-            "End": true,
-            "Comment": "Patch pod to set the activity ID label.",
-            "Resource": "arn:aws:states:::eks:call",
-            "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
-              "Method": "DELETE",
-              "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)"
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "EKS.404"
-                ],
-                "Next": "Ignore404"
-              }
-            ]
-          },
-          "Ignore404": {
-            "Type": "Pass",
-            "End": true
-          }
-        }
-      }
-    },
-    "AssignPipelineToPod": {
+    "RequestPod": {
       "ResultPath": null,
       "Next": "WaitForPod",
-      "Type": "Map",
-      "ItemsPath": "$.retries",
-      "MaxConcurrency": 1,
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "NoPodsAvailable"
-          ],
-          "IntervalSeconds": 2,
-          "MaxAttempts": 10,
-          "BackoffRate": 1.5
-        }
-      ],
-      "Iterator": {
-        "StartAt": "GetUnassignedPod",
-        "States": {
-          "GetUnassignedPod": {
-            "Next": "IsPodAvailable",
-            "Type": "Task",
-            "Comment": "Retrieves first unassigned and running pipeline pod.",
-            "Resource": "arn:aws:states:::eks:call",
-            "Parameters": {
-              "ClusterName": "mock-cluster-name",
-              "CertificateAuthority": "mock-ca",
-              "Endpoint": "https://RANDOMSTRING.gr7.eu-west-1.eks.amazonaws.com",
-              "Method": "GET",
-              "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-              "QueryParameters": {
-                "labelSelector": [
-                  "!activityId,type=pipeline"
-                ],
-                "fieldSelector": [
-                  "status.phase=Running"
-                ]
-              }
-            }
-          },
-          "IsPodAvailable": {
-            "Type": "Choice",
-            "Comment": "Redirects to an error state if there are no available pods.",
-            "Choices": [
-              {
-                "Variable": "$.ResponseBody.items[0]",
-                "IsPresent": false,
-                "Next": "NoPodsAvailable"
-              }
-            ],
-            "Default": "RequestPod"
-          },
-          "NoPodsAvailable": {
-            "Type": "Fail",
-            "Cause": "No available and running pipeline pods.",
-            "Error": "NoPodsAvailable"
-          },
-          "RequestPod": {
-            "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
-            "Type": "Task",
-            "Resource": "arn:aws:states:::sns:publish",
-            "End": true,
-            "Parameters": {
-              "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
-              "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
-              "MessageAttributes": {
-                "type": {
-                  "DataType": "String",
-                  "StringValue": "PipelineResponse"
-                }
-              }
-            }
+      "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
+        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
           }
         }
       }
@@ -1506,17 +1007,8 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "NoPodAssigned"
           ],
           "IntervalSeconds": 1,
-          "MaxAttempts": 9,
+          "MaxAttempts": 13,
           "BackoffRate": 1.5
-        }
-      ],
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Next": "AssignPipelineToPod",
-          "ResultPath": null
         }
       ],
       "Iterator": {
