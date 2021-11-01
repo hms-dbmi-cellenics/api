@@ -308,6 +308,12 @@ describe('pipelineStatus', () => {
     callback(null, { events: [] });
   });
 
+  beforeAll(() => {
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date(2020, 3, 1));
+  });
+
+
   it('handles properly a gem2s empty dynamodb record', async () => {
     const status = await pipelineStatus(EMPTY_ID, GEM2S_PROCESS_NAME);
 

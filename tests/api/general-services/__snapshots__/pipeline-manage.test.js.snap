@@ -207,84 +207,8 @@ Array [
     "type": "return",
     "value": Object {
       "Comment": "QC Pipeline for clusterEnv 'test'",
-      "StartAt": "GetExperimentRunningPods",
+      "StartAt": "RequestPod",
       "States": Object {
-        "AssignPipelineToPod": Object {
-          "ItemsPath": "$.retries",
-          "Iterator": Object {
-            "StartAt": "GetUnassignedPod",
-            "States": Object {
-              "GetUnassignedPod": Object {
-                "Comment": "Retrieves first unassigned and running pipeline pod.",
-                "Next": "IsPodAvailable",
-                "Parameters": Object {
-                  "CertificateAuthority": "AAAAAAAAAAA",
-                  "ClusterName": "biomage-test",
-                  "Endpoint": "https://test-endpoint.me/fgh",
-                  "Method": "GET",
-                  "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-                  "QueryParameters": Object {
-                    "fieldSelector": Array [
-                      "status.phase=Running",
-                    ],
-                    "labelSelector": Array [
-                      "!activityId,type=pipeline",
-                    ],
-                  },
-                },
-                "Resource": "arn:aws:states:::eks:call",
-                "Type": "Task",
-              },
-              "IsPodAvailable": Object {
-                "Choices": Array [
-                  Object {
-                    "IsPresent": false,
-                    "Next": "NoPodsAvailable",
-                    "Variable": "$.ResponseBody.items[0]",
-                  },
-                ],
-                "Comment": "Redirects to an error state if there are no available pods.",
-                "Default": "RequestPod",
-                "Type": "Choice",
-              },
-              "NoPodsAvailable": Object {
-                "Cause": "No available and running pipeline pods.",
-                "Error": "NoPodsAvailable",
-                "Type": "Fail",
-              },
-              "RequestPod": Object {
-                "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
-                "End": true,
-                "Parameters": Object {
-                  "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"testExperimentId\\",\\"input\\":{\\"experimentId\\":\\"testExperimentId\\",\\"sandboxId\\":\\"default\\",\\"activityId\\":\\"pipeline-test-mock-uuid\\",\\"processName\\":\\"qc\\"}}",
-                  "MessageAttributes": Object {
-                    "type": Object {
-                      "DataType": "String",
-                      "StringValue": "PipelineResponse",
-                    },
-                  },
-                  "TopicArn": "arn:aws:sns:eu-west-1:test-account-id:work-results-test-default",
-                },
-                "Resource": "arn:aws:states:::sns:publish",
-                "Type": "Task",
-              },
-            },
-          },
-          "MaxConcurrency": 1,
-          "Next": "WaitForPod",
-          "ResultPath": null,
-          "Retry": Array [
-            Object {
-              "BackoffRate": 1.5,
-              "ErrorEquals": Array [
-                "NoPodsAvailable",
-              ],
-              "IntervalSeconds": 2,
-              "MaxAttempts": 10,
-            },
-          ],
-          "Type": "Map",
-        },
         "CellSizeDistributionFilterMap": Object {
           "ItemsPath": "$.samples",
           "Iterator": Object {
@@ -371,43 +295,6 @@ Array [
           "TimeoutSeconds": 10800,
           "Type": "Task",
         },
-        "DeletePreviousPods": Object {
-          "ItemsPath": "$.runningPods.ResponseBody.items",
-          "Iterator": Object {
-            "StartAt": "DeletePod",
-            "States": Object {
-              "DeletePod": Object {
-                "Catch": Array [
-                  Object {
-                    "ErrorEquals": Array [
-                      "EKS.404",
-                    ],
-                    "Next": "Ignore404",
-                  },
-                ],
-                "Comment": "Patch pod to set the activity ID label.",
-                "End": true,
-                "Parameters": Object {
-                  "CertificateAuthority": "AAAAAAAAAAA",
-                  "ClusterName": "biomage-test",
-                  "Endpoint": "https://test-endpoint.me/fgh",
-                  "Method": "DELETE",
-                  "Path.$": "States.Format('/api/v1/namespaces/{}/pods/{}', $.metadata.namespace, $.metadata.name)",
-                },
-                "Resource": "arn:aws:states:::eks:call",
-                "Type": "Task",
-              },
-              "Ignore404": Object {
-                "End": true,
-                "Type": "Pass",
-              },
-            },
-          },
-          "MaxConcurrency": 0,
-          "Next": "AssignPipelineToPod",
-          "ResultPath": null,
-          "Type": "Map",
-        },
         "DoubletScoresFilterMap": Object {
           "ItemsPath": "$.samples",
           "Iterator": Object {
@@ -454,28 +341,6 @@ Array [
         "EndOfPipeline": Object {
           "End": true,
           "Type": "Pass",
-        },
-        "GetExperimentRunningPods": Object {
-          "Comment": "Retrieves running pods assigned to the experiment ID.",
-          "Next": "DeletePreviousPods",
-          "Parameters": Object {
-            "CertificateAuthority": "AAAAAAAAAAA",
-            "ClusterName": "biomage-test",
-            "Endpoint": "https://test-endpoint.me/fgh",
-            "Method": "GET",
-            "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
-            "QueryParameters": Object {
-              "fieldSelector": Array [
-                "status.phase=Running",
-              ],
-              "labelSelector": Array [
-                "experimentId=testExperimentId,type=pipeline",
-              ],
-            },
-          },
-          "Resource": "arn:aws:states:::eks:call",
-          "ResultPath": "$.runningPods",
-          "Type": "Task",
         },
         "MitochondrialContentFilterMap": Object {
           "ItemsPath": "$.samples",
@@ -531,16 +396,24 @@ Array [
           "ResultPath": null,
           "Type": "Map",
         },
-        "WaitForPod": Object {
-          "Catch": Array [
-            Object {
-              "ErrorEquals": Array [
-                "States.ALL",
-              ],
-              "Next": "AssignPipelineToPod",
-              "ResultPath": null,
+        "RequestPod": Object {
+          "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
+          "Next": "WaitForPod",
+          "Parameters": Object {
+            "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"testExperimentId\\",\\"input\\":{\\"experimentId\\":\\"testExperimentId\\",\\"sandboxId\\":\\"default\\",\\"activityId\\":\\"pipeline-test-mock-uuid\\",\\"processName\\":\\"qc\\"}}",
+            "MessageAttributes": Object {
+              "type": Object {
+                "DataType": "String",
+                "StringValue": "PipelineResponse",
+              },
             },
-          ],
+            "TopicArn": "arn:aws:sns:eu-west-1:test-account-id:work-results-test-default",
+          },
+          "Resource": "arn:aws:states:::sns:publish",
+          "ResultPath": null,
+          "Type": "Task",
+        },
+        "WaitForPod": Object {
           "ItemsPath": "$.retries",
           "Iterator": Object {
             "StartAt": "GetAssignedPod",
@@ -596,7 +469,7 @@ Array [
                 "NoPodAssigned",
               ],
               "IntervalSeconds": 1,
-              "MaxAttempts": 9,
+              "MaxAttempts": 13,
             },
           ],
           "Type": "Map",

@@ -15,18 +15,8 @@ const createLocalPipeline = (nextStep) => ({
 });
 
 const assignPipelineToPod = (nextStep) => ({
-  GetExperimentRunningPods: {
-    XStepType: 'get-running-pods',
-    Next: 'DeletePreviousPods',
-    ResultPath: '$.runningPods',
-  },
-  DeletePreviousPods: {
-    XStepType: 'delete-running-pods',
-    ResultPath: null,
-    Next: 'AssignPipelineToPod',
-  },
-  AssignPipelineToPod: {
-    XStepType: 'assign-pipeline-to-pod',
+  RequestPod: {
+    XStepType: 'request-pod',
     ResultPath: null,
     Next: 'WaitForPod',
   },
@@ -73,7 +63,7 @@ const firstStep = (clusterEnv) => {
     return 'DeleteCompletedPipelineWorker';
   }
 
-  return 'GetExperimentRunningPods';
+  return 'RequestPod';
 };
 
 const getGem2sPipelineSkeleton = (clusterEnv) => ({
