@@ -1,10 +1,10 @@
-const atob = require('atob');
+const { getWebhookUrl } = require('./crypt');
 
 const sendFailedSlackMessage = async (message, user, experiment) => {
   const { experimentId } = message;
-  // THIS NEEDS TO CHANGE ONCE WE CHANGE THE NAMAE TO QC IN EXPERIMENTS/META
 
   const process = message.input.processName;
+  // THIS NEEDS TO CHANGE ONCE WE CHANGE THE NAME TO QC IN EXPERIMENTS/META
   const stateMachineArn = process === 'qc' ? experiment.meta.pipeline.stateMachineArn : experiment.meta[process].stateMachineArn;
   const userContext = [
     {
@@ -55,14 +55,11 @@ const sendFailedSlackMessage = async (message, user, experiment) => {
       },
     ],
   };
-  // feedback channel
-  const HOOK_URL = 'aHR0cHM6Ly9ob29rcy5zbGFjay5jb20vc2VydmljZXMvVDAxNTVEWkZWTTAvQjAxOVlCQVJYSjkvTWNwRnF5RGtHSmE1WTd0dGFSZHpoQXNQ'; // pragma: allowlist secret
 
-  const r = await fetch(atob(HOOK_URL), {
+  const r = await fetch(getWebhookUrl(), {
     method: 'POST',
     body: JSON.stringify(feedbackData),
   });
-  console.log('RESP[ONSE IS ', r);
   if (!r.ok) {
     throw new Error('Invalid status code returned.', r);
   }
