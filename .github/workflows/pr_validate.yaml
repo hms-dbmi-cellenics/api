@@ -22,7 +22,7 @@ jobs:
       - id: check-jira-url
         name: Check JIRA URL
         run: |-
-          REGEX="#### URL to JIRA issue\r\n(https:\/\/biomage\.atlassian\.net\/browse\/BIOMAGE-[0-9]+|N\/A)"
+          REGEX="#### URL to JIRA issue\s?\r\n(https:\/\/biomage\.atlassian\.net\/browse\/BIOMAGE-[0-9]+|N\/A)"
 
           echo "REGEX to test against:"
           echo $REGEX
@@ -35,7 +35,7 @@ jobs:
       - id: check-staging-url
         name: Check staging URL
         run: |-
-          REGEX="#### Link to staging deployment URL\r\n(https:\/\/.+\.scp-staging\.biomage\.net|N\/A)"
+          REGEX="#### Link to staging deployment URL\s?\r\n(https:\/\/.+\.scp-staging\.biomage\.net|N\/A)"
 
           echo "REGEX to test against:"
           echo $REGEX
