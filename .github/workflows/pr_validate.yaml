@@ -24,5 +24,5 @@ jobs:
           echo "Now looking at regex result:"
 
           pcregrep -M "#### URL to JIRA issue\\nN/A" <<\EOF
-            ${{ github.event.pull_request.body }}
+          ${{ github.event.pull_request.body }}
           EOF
