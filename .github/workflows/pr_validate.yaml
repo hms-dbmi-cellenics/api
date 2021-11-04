@@ -1,15 +1,34 @@
-name: Pull Request bug demonstration
+name: Pull Request Workflow
 on:
   pull_request:
     types: [ opened, reopened, edited ]
 jobs:
+  
+  # BEWARE: GitHub uses Microsoft-style line endings (CRLF)
+  # instead of Unix-style (LF) interally for things like PR text.
+  #
+  # You MUST check for `\r\n` as the line separator instead of `\n`
+  # in this workflow.
   check-pr-template:
     name: Check pull request template
     runs-on: ubuntu-20.04
     steps:
-      - id: verify-bug
-        name: Verify bug
+      - id: copy-pr-body
+        name: Copy PR body to file
         run: |-
-          hexdump -C <<\EOF
+          sudo apt-get update -y
+          sudo apt-get install -y pcregrep
+
+      - id: check-jira-url
+        name: Check JIRA URL
+        run: |-
+          JIRA_REGEX="#### URL to JIRA issue\r\n(https:\/\/biomage\.atlassian\.net\/browse\/BIOMAGE-[0-9]+|N\/A)$"
+
+
+          echo "REGEX to test against:"
+          echo $JIRA_REGEX
+          echo "Now looking at regex result:"
+
+          pcregrep -M "$JIRA_REGEX" <<\EOF
           ${{ github.event.pull_request.body }}
           EOF
