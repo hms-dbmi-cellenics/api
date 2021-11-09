@@ -59,7 +59,7 @@ describe('tests for the samples service', () => {
 
     const res = await (new SamplesService()).getSamplesByExperimentId('project-1');
 
-    expect(res).toEqual(jsData.samples);
+    expect(res).toEqual(jsData);
     expect(getItemSpy).toHaveBeenCalledWith({
       TableName: 'samples-test',
       Key: marshalledKey,
@@ -68,26 +68,27 @@ describe('tests for the samples service', () => {
   });
 
   it('updateSamples work', async () => {
-    const projectUuid = 'project-1';
-    const experimentId = 'experiment-1';
-
     const jsData = {
-      'sample-1': { name: 'sample-1' },
-      'sample-2': { name: 'sample-2' },
+      projectUuid: 'project-1',
+      experimentId: 'experiment-1',
+      samples: {
+        'sample-1': { name: 'sample-1' },
+        'sample-2': { name: 'sample-2' },
+      },
     };
 
     const marshalledKey = AWS.DynamoDB.Converter.marshall({
-      experimentId,
+      experimentId: 'experiment-1',
     });
 
     const marshalledData = AWS.DynamoDB.Converter.marshall({
-      ':samples': jsData,
-      ':projectUuid': projectUuid,
+      ':samples': jsData.samples,
+      ':projectUuid': jsData.projectUuid,
     });
 
     const getItemSpy = mockDynamoUpdateItem(jsData);
 
-    const res = await (new SamplesService()).updateSamples(projectUuid, experimentId, jsData);
+    const res = await (new SamplesService()).updateSamples('project-1', jsData);
 
     expect(res).toEqual(OK());
 

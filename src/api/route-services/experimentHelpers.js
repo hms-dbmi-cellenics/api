@@ -64,11 +64,11 @@ const getDeepAttrsUpdateParams = (body) => {
  */
 const getShallowAttrsUpdateParams = (body) => {
   const dataToUpdate = {
-    experimentName: body.experimentName,
+    experimentName: body.name || body.experimentName,
     apiVersion: body.apiVersion,
     createdDate: body.createdDate,
     lastViewed: body.lastViewed,
-    projectId: body.projectId,
+    projectId: body.projectUuid || body.projectId,
     description: body.description,
     sampleIds: body.sampleIds,
   };

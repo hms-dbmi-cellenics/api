@@ -1,29 +1,10 @@
 const { BadRequestError } = require('../../../utils/responses');
 
-const experimentData = (experimentId = 'experimentId') => ({
-  sampleIds: [
-    'sampleId1',
-  ],
-  experimentId,
-  projectId: 'projectUuid',
-  meta: {
-    pipeline: {
-      stateMachineArn: '',
-      executionArn: '',
-    },
-    gem2s: {
-      paramsHash: '',
-      stateMachineArn: '',
-      executionArn: '',
-    },
-    organism: null,
-    type: '10x',
-  },
-  experimentName: 'my mocky name',
-});
-
 const mockExperimentData = jest.fn((experimentId) => new Promise((resolve) => {
-  resolve(experimentData(experimentId));
+  resolve({
+    experimentId,
+    experimentName: 'my mocky name',
+  });
 }));
 
 const mockDeleteExperiment = jest.fn(() => new Promise((resolve) => {
@@ -135,7 +116,7 @@ const mockUpdateProcessingConfig = jest.fn(
   }),
 );
 
-const mockSaveGem2sHandle = jest.fn(() => { });
+const mockSaveGem2sHandle = jest.fn(() => {});
 
 const mockDownloadData = jest.fn((experimentId, downloadType) => new Promise((resolve, reject) => {
   if (downloadType !== 'correct_type') reject(new BadRequestError('wrong type'));

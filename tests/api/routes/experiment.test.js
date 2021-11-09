@@ -30,7 +30,7 @@ describe('tests for experiment route', () => {
           return done(err);
         }
         expect(res.body.experimentId).toBe('someId');
-        expect(res.body).toMatchSnapshot();
+        expect(res.body.experimentName).toBe('my mocky name');
         return done();
       });
   });
