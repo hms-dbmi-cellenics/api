@@ -16,8 +16,6 @@ module.exports = {
     ecmaVersion: 2018,
   },
   rules: {
-    "no-console": "off",
-    // no-return-await disabled because of https://stackoverflow.com/a/44806230
-    "no-return-await": "off"
+    "no-console": "off"
   },
 };

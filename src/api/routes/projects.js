@@ -32,9 +32,7 @@ module.exports = {
   'projects#get': [
     expressAuthenticationOnlyMiddleware,
     (req, res, next) => {
-      projectsService.getProjects(req.user).then((response) => {
-        res.json(response);
-      }).catch(next);
+      projectsService.getProjects(req.user).then((response) => res.json(response)).catch(next);
     },
   ],
   'projects#getExperiments': [
