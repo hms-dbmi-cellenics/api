@@ -1,40 +1,45 @@
+/* eslint-disable no-await-in-loop */
 const k8s = require('@kubernetes/client-node');
 const getLogger = require('../getLogger');
 const validateRequest = require('../schema-validator');
 const constants = require('../../api/general-services/pipeline-manage/constants');
+const { deleteExperimentPods } = require('./pod-cleanup');
 
 const logger = getLogger();
 
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
-const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
+// getAvailablePods retrieves pods not assigned already to an activityID given a selector
+const getAvailablePods = async (namespace, statusSelector) => {
+  const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
-const getPods = async (namespace, activityId) => {
-  const [assignedPods, unassignedPods] = await Promise.all(
-    [
-      k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', `activityId=${activityId},type=pipeline`),
-      k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', '!activityId,type=pipeline'),
-    ],
-  );
-
-  return [assignedPods, unassignedPods];
+  const pods = await k8sApi.listNamespacedPod(namespace, null, null, null, statusSelector, '!activityId,type=pipeline');
+  return pods.body.items;
 };
 
-const removeRunningPods = async (namespace, assignedPods) => {
-  await Promise.all(assignedPods.body.items.map((pod) => {
-    const { name } = pod.metadata;
-    logger.log(`Found pipeline running pod ${name}, removing...`);
-    return k8sApi.removeNamespacedPod(name, namespace);
-  }));
-};
 
-const patchPod = async (namespace,
-  unassignedPods,
-  experimentId,
-  activityId,
-  processName) => {
-  const pods = unassignedPods.body.items;
+const patchPod = async (message) => {
+  const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+
+  const { experimentId, input: { sandboxId, activityId, processName } } = message;
+  const namespace = `pipeline-${sandboxId}`;
+
+  // try to get an available pod which is already running
+  let pods = await getAvailablePods(namespace, 'status.phase=Running');
+  if (pods.length < 1) {
+    logger.log('no running pods available, trying to select pods still being created');
+    pods = await getAvailablePods(namespace, 'status.phase=ContainerCreating');
+  }
+  if (pods.length < 1) {
+    logger.log('no creating pods available, trying to select pods still pending');
+    pods = await getAvailablePods(namespace, 'status.phase=Pending');
+  }
+
+  if (pods.length < 1) {
+    throw new Error('no unassigned pods available');
+  }
+
   logger.log(pods.length, 'unassigned candidate pods found. Selecting one...');
 
   // Select a pod to run this experiment on.
@@ -76,16 +81,22 @@ const assignPodToPipeline = async (message) => {
   await validateRequest(message, 'PipelinePodRequest.v1.yaml');
 
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
-  const namespace = `pipeline-${sandboxId}`;
 
-  logger.log(`Assigning pod to ${processName} pipeline for experiment ${experimentId} in sandbox ${sandboxId} for activity ${activityId}`);
-  // try to choose a free pod and assign it to the current pipeline
+  logger.log(`Trying to assign pod to ${processName} pipeline for experiment ${experimentId} in sandbox ${sandboxId} for activity ${activityId}`);
+
+
   try {
-    const [assignedPods, unassignedPods] = await getPods(namespace, activityId);
-    await removeRunningPods(namespace, assignedPods);
-    await patchPod(namespace, unassignedPods, experimentId, activityId, processName);
+  // remove pipeline pods already assigned to this experiment
+    await deleteExperimentPods(experimentId);
   } catch (e) {
-    logger.log('Error assigning pod: ', e);
+    logger.error(`Failed to remove pods for experiment ${experimentId}: ${e}`);
+  }
+
+  try {
+    // try to choose a free pod and assign it to the current pipeline
+    await patchPod(message);
+  } catch (e) {
+    logger.error(`Failed to assign pipeline pod to experiment ${experimentId}: ${e}`);
   }
 };
 

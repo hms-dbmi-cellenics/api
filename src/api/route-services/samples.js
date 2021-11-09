@@ -51,7 +51,6 @@ class SamplesService {
     });
   }
 
-
   async getSamplesByExperimentId(experimentId) {
     const marshalledKey = convertToDynamoDbRecord({
       experimentId,
@@ -71,21 +70,22 @@ class SamplesService {
 
       // Remove ids property from old sample entries that still have it
       delete prettyResponse.samples.ids;
-      return prettyResponse;
+
+      return prettyResponse.samples;
     }
 
     throw new NotFoundError('Samples not found');
   }
 
-  async updateSamples(projectUuid, body) {
-    logger.log(`Updating samples for project ${projectUuid} and expId ${body.experimentId}`);
+  async updateSamples(projectUuid, experimentId, body) {
+    logger.log(`Updating samples for project ${projectUuid} and expId ${experimentId}`);
 
     const marshalledKey = convertToDynamoDbRecord({
-      experimentId: body.experimentId,
+      experimentId,
     });
 
     const marshalledData = convertToDynamoDbRecord({
-      ':samples': body.samples,
+      ':samples': body,
       ':projectUuid': projectUuid,
     });
 
@@ -129,11 +129,9 @@ class SamplesService {
       ReturnValues: 'ALL_NEW',
     };
 
-    const a = await undefinedIfNotFound(
+    const allSamples = await undefinedIfNotFound(
       this.getSamplesByExperimentId(experimentId),
     ) || {};
-
-    const { samples: allSamples = {} } = a;
 
     const promises = [
       createDynamoDbInstance().updateItem(params).promise(),
@@ -204,7 +202,7 @@ class SamplesService {
   async deleteSamplesEntry(projectUuid, experimentId, sampleUuids) {
     logger.log(`Deleting samples entry for project ${projectUuid} and expId ${experimentId}`);
 
-    const { samples: allSamples = {} } = await undefinedIfNotFound(
+    const allSamples = await undefinedIfNotFound(
       this.getSamplesByExperimentId(experimentId),
     ) || {};
 

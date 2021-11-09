@@ -3,12 +3,13 @@ const validateRequest = require('../../utils/schema-validator');
 const AWS = require('../../utils/requireAWS');
 const getLogger = require('../../utils/getLogger');
 const { assignPodToPipeline } = require('../../utils/hooks/pipeline-assign');
+const { cleanupPods } = require('../../utils/hooks/pod-cleanup');
 const constants = require('../general-services/pipeline-manage/constants');
 const getPipelineStatus = require('../general-services/pipeline-status');
 
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
-const PipelineHook = require('../../utils/hookRunner');
+const PipelineHook = require('../../utils/hooks/hookRunner');
 
 const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
@@ -18,6 +19,7 @@ const logger = getLogger();
 const pipelineHook = new PipelineHook();
 
 pipelineHook.register(constants.ASSIGN_POD_TO_PIPELINE, [assignPodToPipeline]);
+pipelineHook.register('configureEmbedding', [cleanupPods]);
 
 class PipelineService {
   static async getS3Output(message) {
