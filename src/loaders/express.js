@@ -113,7 +113,18 @@ module.exports = async (app) => {
   app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
     validateRequests: true,
-    validateResponses: true,
+    validateResponses: {
+      onError: (error, body, req) => {
+        console.log('Response body fails validation: ', error);
+        console.log('Emitted from:', req.originalUrl);
+
+        console.log('reqDebug');
+        console.log(req);
+
+        console.log('bodyDebug');
+        console.log(body);
+      },
+    },
     operationHandlers: path.join(__dirname, '..', 'api'),
   }));
 
