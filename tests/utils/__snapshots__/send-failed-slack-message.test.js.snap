@@ -3,7 +3,7 @@
 exports[`sendFailedSlackMessage Sends slack message with correct fields for Gem2s 1`] = `
 Array [
   Array [
-    "https://hooks.slack.com/services/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",
+    "https://hooks.slack.com/services/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",
     Object {
       "body": "{\\"blocks\\":[{\\"type\\":\\"section\\",\\"text\\":{\\"type\\":\\"plain_text\\",\\"text\\":\\"\\\\n          The process for gem2s has failed for experiment anotherExpId \\\\n          Step: someStep \\\\n          State machine arn: gem2sArn \\\\n          \\"}},{\\"type\\":\\"context\\",\\"elements\\":[{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User email:*\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"johncena@gmail.com\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User name:*\\"},{\\"type\\":\\"plain_text\\",\\"text\\":\\"John Cena\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User UUID:*\\"},{\\"type\\":\\"plain_text\\",\\"text\\":\\"useridayylmao\\"}]}]}",
       "method": "POST",
@@ -15,7 +15,7 @@ Array [
 exports[`sendFailedSlackMessage Sends slack message with correct fields for QC 1`] = `
 Array [
   Array [
-    "https://hooks.slack.com/services/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",
+    "https://hooks.slack.com/services/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",
     Object {
       "body": "{\\"blocks\\":[{\\"type\\":\\"section\\",\\"text\\":{\\"type\\":\\"plain_text\\",\\"text\\":\\"\\\\n          The process for qc has failed for experiment asd123 \\\\n          Step: Task 1 \\\\n          State machine arn: qcArn \\\\n          \\"}},{\\"type\\":\\"context\\",\\"elements\\":[{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User email:*\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"johncena@gmail.com\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User name:*\\"},{\\"type\\":\\"plain_text\\",\\"text\\":\\"John Cena\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User UUID:*\\"},{\\"type\\":\\"plain_text\\",\\"text\\":\\"useridayylmao\\"}]}]}",
       "method": "POST",

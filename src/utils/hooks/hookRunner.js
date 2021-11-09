@@ -33,6 +33,9 @@ class hookRunner {
   async run(payload) {
     const { taskName } = payload;
     this.results[taskName] = [];
+    console.log(`running payload ${taskName}`);
+    console.log(payload);
+
 
     // Manual looping is done to prevent passing function in hooks[taskName] into a callback,
     // which might cause scoping issues

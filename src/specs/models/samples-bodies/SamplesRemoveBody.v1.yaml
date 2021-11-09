@@ -9,3 +9,5 @@ properties:
       type: string
 required: 
 - ids
+
+additionalProperties: false

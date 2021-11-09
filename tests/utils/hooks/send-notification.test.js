@@ -1,3 +1,4 @@
+const fetchMock = require('jest-fetch-mock');
 const sendNotification = require('../../../src/utils/hooks/send-notification');
 const getPipelineStatus = require('../../../src/api/general-services/pipeline-status');
 const { FAILED, SUCCEEDED } = require('../../../src/api/general-services/pipeline-manage/constants');
@@ -12,6 +13,8 @@ jest.mock('../../../src/utils/send-failed-slack-message', () => jest.fn());
 jest.mock('../../../src/utils/send-email', () => jest.fn());
 
 const experimentsService = new ExperimentService();
+fetchMock.enableFetchMocks();
+
 describe('send-notification ', () => {
   const message = {
     experimentId: 'mockexp',
@@ -22,9 +25,10 @@ describe('send-notification ', () => {
     },
   };
 
-  global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
+  // global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
 
   beforeEach(() => {
+    fetchMock.mockResponse(JSON.stringify({ ok: true }));
     sendFailedSlackMessage.mockReset();
     sendEmail.mockReset();
   });

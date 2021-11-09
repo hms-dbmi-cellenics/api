@@ -1,18 +1,29 @@
 const { BadRequestError } = require('../../../utils/responses');
 
-const mockExperimentData = jest.fn((experimentId) => new Promise((resolve) => {
-  resolve({
-    experimentId,
-    experimentName: 'my mocky name',
-    meta: {
-      pipeline: {
-        stateMachineArn: 'arn:aws:states:us-east-1:111122223333:stateMachine:qc-StateMachine',
-      },
-      gem2s: {
-        stateMachineArn: 'arn:aws:states:us-east-1:111122223333:stateMachine:gem2s-StateMachine',
-      },
+const experimentData = (experimentId = 'experimentId') => ({
+  sampleIds: [
+    'sampleId1',
+  ],
+  experimentId,
+  projectId: 'projectUuid',
+  meta: {
+    pipeline: {
+      stateMachineArn: 'arn:aws:states:us-east-1:111122223333:stateMachine:qc-StateMachine',
+      executionArn: '',
     },
-  });
+    gem2s: {
+      paramsHash: '',
+      stateMachineArn: 'arn:aws:states:us-east-1:111122223333:stateMachine:gem2s-StateMachine',
+      executionArn: '',
+    },
+    organism: null,
+    type: '10x',
+  },
+  experimentName: 'my mocky name',
+});
+
+const mockExperimentData = jest.fn((experimentId) => new Promise((resolve) => {
+  resolve(experimentData(experimentId));
 }));
 
 const mockDeleteExperiment = jest.fn(() => new Promise((resolve) => {
@@ -124,7 +135,7 @@ const mockUpdateProcessingConfig = jest.fn(
   }),
 );
 
-const mockSaveGem2sHandle = jest.fn(() => {});
+const mockSaveGem2sHandle = jest.fn(() => { });
 
 const mockDownloadData = jest.fn((experimentId, downloadType) => new Promise((resolve, reject) => {
   if (downloadType !== 'correct_type') reject(new BadRequestError('wrong type'));

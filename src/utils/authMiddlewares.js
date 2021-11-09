@@ -213,7 +213,7 @@ const authorize = async (authResource, claim, authByExperiment = true) => {
     const experiment = await experimentService.getExperimentPermissions(authResource);
     if (experiment) canWrite = experiment.rbac_can_write;
   } else {
-    const experiment = await projectService.getExperiments(authResource);
+    const experiment = await projectService.getExperiments(authResource, true);
     // experiment[0] because there is only 1 experiment per project
     if (experiment.length > 0) canWrite = experiment[0].rbac_can_write;
   }
@@ -245,6 +245,7 @@ const expressAuthorizationMiddleware = async (req, res, next) => {
 
   try {
     await authorize(authResource, req.user, authByExperiment);
+
     next();
     return;
   } catch (e) {

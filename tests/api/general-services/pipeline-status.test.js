@@ -146,6 +146,8 @@ const mockRandomExceptionResponse = {
   },
 };
 
+jest.useFakeTimers('modern').setSystemTime(new Date('2020-01-01').getTime());
+
 describe('getStepsFromExecutionHistory', () => {
   const truncateHistory = (lastEventId) => {
     const lastEventIndex = fullHistory.findIndex((element) => element.id === lastEventId);
@@ -307,6 +309,12 @@ describe('pipelineStatus', () => {
   AWSMock.mock('StepFunctions', 'getExecutionHistory', (params, callback) => {
     callback(null, { events: [] });
   });
+
+  beforeAll(() => {
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date(2020, 3, 1));
+  });
+
 
   it('handles properly a gem2s empty dynamodb record', async () => {
     const status = await pipelineStatus(EMPTY_ID, GEM2S_PROCESS_NAME);
