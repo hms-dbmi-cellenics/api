@@ -17,7 +17,8 @@ const EMPTY_ID = 'empty_id';
 // experimentID used to trigger an execution does not exist
 const EXECUTION_DOES_NOT_EXIST = 'EXECUTION_DOES_NOT_EXIST';
 const RANDOM_EXCEPTION = 'RANDOM_EXCEPTION';
-const paramsHash = '44c4c6e190e54c4b2740d37a861bb6954921730c';// pragma: allowlist secret
+
+const paramsHash = '44c4c6e190e54c4b2740d37a861bb6954921730cnotASecret';
 
 const mockNotRunResponse = {
   Item: {
@@ -145,6 +146,8 @@ const mockRandomExceptionResponse = {
     },
   },
 };
+
+jest.useFakeTimers('modern').setSystemTime(new Date('2020-01-01').getTime());
 
 describe('getStepsFromExecutionHistory', () => {
   const truncateHistory = (lastEventId) => {
@@ -307,6 +310,12 @@ describe('pipelineStatus', () => {
   AWSMock.mock('StepFunctions', 'getExecutionHistory', (params, callback) => {
     callback(null, { events: [] });
   });
+
+  beforeAll(() => {
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date(2020, 3, 1));
+  });
+
 
   it('handles properly a gem2s empty dynamodb record', async () => {
     const status = await pipelineStatus(EMPTY_ID, GEM2S_PROCESS_NAME);

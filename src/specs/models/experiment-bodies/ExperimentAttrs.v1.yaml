@@ -1,0 +1,29 @@
+title: Experiment attributes
+description: All attributes that can be set in an experiment entry, without any of them being required
+type: object
+properties:
+  experimentId:
+    type: string
+  experimentName:
+    type: string
+  projectId:
+    type: string
+  description:
+    type: string
+  createdDate:
+    type: string
+  lastViewed:
+    type: string
+    nullable: true
+  meta:
+    type: object
+  processingConfig:
+    $ref: '../ProcessingConfig.v1.yaml'
+  apiVersion:
+    type: string
+  sampleIds:
+    type: array
+    items:
+      type: string
+
+additionalProperties: false

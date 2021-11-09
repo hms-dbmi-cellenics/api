@@ -6,7 +6,7 @@ const experimentService = new ExperimentService();
 
 module.exports = {
   'experiment#getExperiment': [
-    // expressAuthorizationMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => {
       experimentService.getExperimentData(req.params.experimentId)
         .then((data) => res.json(data))
