@@ -25,8 +25,6 @@ describe('send-notification ', () => {
     },
   };
 
-  // global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
-
   beforeEach(() => {
     fetchMock.mockResponse(JSON.stringify({ ok: true }));
     sendFailedSlackMessage.mockReset();

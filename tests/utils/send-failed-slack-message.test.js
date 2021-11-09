@@ -1,6 +1,12 @@
+const fetchMock = require('jest-fetch-mock');
 const sendFailedSlackMessage = require('../../src/utils/send-failed-slack-message');
 const { USER } = require('../test-utils/constants');
 
+fetchMock.enableFetchMocks();
+
+jest.mock('../../src/utils/crypt', () => ({
+  getWebhookUrl: () => 'http://mockSlackHook.com/asdasd',
+}));
 const experiment = {
   meta: {
     pipeline: {
@@ -11,10 +17,11 @@ const experiment = {
     },
   },
 };
-global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
+
 describe('sendFailedSlackMessage', () => {
   beforeEach(() => {
     fetch.mockClear();
+    fetchMock.mockResponse(JSON.stringify({ ok: true }));
   });
 
   it('Sends slack message with correct fields for QC', async () => {
