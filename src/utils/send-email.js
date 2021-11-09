@@ -16,7 +16,7 @@ const sendEmail = (experimentId, status, user) => {
     const successMessage = `
       The data processing pipeline has completed successfully and your data is now ready to explore:<br/>
       <a href="${link}">${link}</a>
-      Happy analysing!`;
+      Happy analysing! <br/>`;
     const failMessage = `
       Unfortunately, when trying to run the analysis the data processing failed for your experiment: <br/>
       <a href="${link}">${link}</a> <br/>
@@ -32,6 +32,7 @@ const sendEmail = (experimentId, status, user) => {
             <p>Thanks for using Cellenics! <br/>
               ${status === SUCCEEDED ? successMessage : failMessage}<br/><br/>
                 The Biomage Team 
+              <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>
             <p/>
         </body>
       </html>`;

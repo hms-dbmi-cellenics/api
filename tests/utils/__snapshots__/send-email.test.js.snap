@@ -27,6 +27,7 @@ Array [
       We are working hard to identify and fix the issue. We will let you know as soon as your data is ready to explore. <br/>
       <br/><br/>
                 The Biomage Team 
+              <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>
             <p/>
         </body>
       </html>",
@@ -47,6 +48,7 @@ Array [
       We are working hard to identify and fix the issue. We will let you know as soon as your data is ready to explore. <br/>
       <br/><br/>
                 The Biomage Team 
+              <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>
             <p/>
         </body>
       </html>",
@@ -87,8 +89,9 @@ Array [
               
       The data processing pipeline has completed successfully and your data is now ready to explore:<br/>
       <a href=\\"scp.biomage.net/experiments/[object Object]/data-processing\\">scp.biomage.net/experiments/[object Object]/data-processing</a>
-      Happy analysing!<br/><br/>
+      Happy analysing! <br/><br/><br/>
                 The Biomage Team 
+              <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>
             <p/>
         </body>
       </html>",
@@ -105,8 +108,9 @@ Array [
               
       The data processing pipeline has completed successfully and your data is now ready to explore:<br/>
       <a href=\\"scp.biomage.net/experiments/[object Object]/data-processing\\">scp.biomage.net/experiments/[object Object]/data-processing</a>
-      Happy analysing!<br/><br/>
+      Happy analysing! <br/><br/><br/>
                 The Biomage Team 
+              <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>
             <p/>
         </body>
       </html>",
