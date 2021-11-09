@@ -1,53 +1,99 @@
 const { OK } = require('../../../utils/responses');
-const MockDataFactory = require('./MockDataFactory');
 
-const mockGetSamples = jest.fn((projectUuid) => (
-  new Promise((resolve) => {
-    const dataFactory = new MockDataFactory({ projectId: projectUuid });
+const mockSamples = {
+  'sample-1': {
+    name: 'sample-1',
+    projectUuid: 'project-1',
+    uuid: 'sample-1',
+    type: '10x',
+    species: 'hsapies',
+    createdDate: '2020-01-01T00:00:00.000Z',
+    lastModified: null,
+    complete: true,
+    error: false,
+    fileNames: ['test-1'],
+    files: {
+      'file-1': {
+        name: 'file-1',
+      },
+    },
+  },
+};
 
-    resolve(dataFactory.getSamplesEntry());
-  })
-));
+const mockGetSamples = jest.fn(() => new Promise((resolve) => {
+  resolve(mockSamples);
+}));
 
-const mockGetSamplesByExperimentId = jest.fn((experimentId) => (
-  new Promise((resolve) => {
-    const dataFactory = new MockDataFactory({ experimentId });
-    return resolve(dataFactory.getSamplesEntry());
-  })
-));
 
-const mockUpdateSamples = jest.fn(() => new Promise((resolve) => {
+const mockGetByExperimentId = jest.fn((experimentId) => new Promise((resolve, reject) => {
+  if (experimentId === 'nonExistentId') {
+    const err = new Error('ID does not exists');
+    err.status = 404;
+
+    reject(err);
+  }
+
+  return resolve(mockSamples);
+}));
+
+const mockUpdateSamples = jest.fn((projectUuid, body) => new Promise((resolve, reject) => {
+  if (!projectUuid
+    || !body
+    || !body.experimentId
+    || !body.projectUuid
+    || !body.samples
+  ) {
+    const err = new Error('Invalid body');
+    err.status = 400;
+
+    reject(err);
+  }
+
   resolve({ data: { message: 'sucess', code: 200 } });
 }));
 
-const mockDeleteSamples = jest.fn(() => (
-  new Promise((resolve) => {
-    resolve(OK());
-  })
-));
+const mockDeleteSamples = jest.fn((projectUuid, sampleUuid) => new Promise((resolve, reject) => {
+  if (projectUuid === 'unknown-project' || sampleUuid === 'unknown-sample') {
+    const err = new Error('Unkonwn project or sample');
+    err.status = 404;
 
-const mockAddSample = jest.fn(() => (
-  new Promise((resolve) => {
+    reject(err);
+  }
+
+  if (!projectUuid || !sampleUuid) {
+    const err = new Error('invalid body');
+    err.status = 400;
+
+    reject(err);
+  }
+
+  resolve(OK());
+}));
+
+const mockAddSample = jest.fn(
+  (projectUuid, experimentId, body) => new Promise((resolve, reject) => {
+    if (!projectUuid
+      || !body
+      || !experimentId
+      || !body.projectUuid
+      || !body.uuid
+    ) {
+      const err = new Error('Invalid body');
+      err.status = 400;
+
+      reject(err);
+    }
+
     resolve({ data: { message: 'sucess', code: 200 } });
-  })
-));
-
-const mockRemoveSamples = jest.fn(() => (
-  new Promise((resolve) => {
-    resolve({ data: { message: 'sucess', code: 200 } });
-  })
-));
-
-const mockGetS3UploadUrl = jest.fn(() => 'mockedS3UploadUrl');
+  }),
+);
 
 const mock = jest.fn().mockImplementation(() => ({
   getSamples: mockGetSamples,
-  getSamplesByExperimentId: mockGetSamplesByExperimentId,
+  getSamplesByExperimentId: mockGetByExperimentId,
   updateSamples: mockUpdateSamples,
   deleteSamplesEntry: mockDeleteSamples,
   addSample: mockAddSample,
-  removeSamples: mockRemoveSamples, // Missing tests
-  getS3UploadUrl: mockGetS3UploadUrl,
 }));
 
 module.exports = mock;

@@ -6,23 +6,6 @@ jest.mock('../../../src/api/route-services/projects');
 jest.mock('../../../src/utils/authMiddlewares');
 
 describe('tests for projects route', () => {
-  const correctProject = {
-    metadataKeys: [],
-    createdDate: '2021-10-20T17:03:18.893Z',
-    experiments: [
-      'experimentId',
-    ],
-    name: 'asdsadsad',
-    description: '',
-    lastAnalyzed: null,
-    lastModified: '2021-10-20T17:03:18.893Z',
-    uuid: 'projectUuid',
-    samples: [
-      'sampleId1',
-      'sampleId2',
-    ],
-  };
-
   let app = null;
 
   beforeEach(async () => {
@@ -59,10 +42,33 @@ describe('tests for projects route', () => {
       });
   });
 
-  it('Creating project with correctly shaped project returns 200', async (done) => {
+  it('Getting project experiments send 404 if id is not found', async (done) => {
+    request(app)
+      .get('/v1/projects/unknown-project/experiments')
+      .expect(404)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  test('Creating project with correctly shaped project returns 200', async (done) => {
+    const payload = {
+      name: 'Test project',
+      description: '',
+      createdDate: '',
+      lastModified: '',
+      uuid: 'project-1',
+      experiments: [],
+      lastAnalyzed: null,
+      samples: [],
+    };
+
     request(app)
       .post('/v1/projects/someId')
-      .send(correctProject)
+      .send(payload)
       .expect(200)
       .end((err) => {
         if (err) {
@@ -72,27 +78,14 @@ describe('tests for projects route', () => {
       });
   });
 
-  it('Creating project lacking required properties returns 400', async (done) => {
-    const { metadataKeys, ...restOfProject } = correctProject;
+  test('Creating project with invalid shape project returns 400', async (done) => {
+    const payload = {
+      invalid: 'invalid',
+    };
 
     request(app)
       .post('/v1/projects/someId')
-      .send(restOfProject)
-      .expect(400)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        return done();
-      });
-  });
-
-  it('Creating project with unexpected extra properties returns 400', async (done) => {
-    const invalidProject = { invalid: 'invalid', ...correctProject };
-
-    request(app)
-      .post('/v1/projects/someId')
-      .send(invalidProject)
+      .send(payload)
       .expect(400)
       .end((err) => {
         if (err) {
@@ -103,9 +96,20 @@ describe('tests for projects route', () => {
   });
 
   it('Updating project send 200', async (done) => {
+    const payload = {
+      name: 'Test project',
+      description: '',
+      createdDate: '',
+      lastModified: '',
+      uuid: 'project-1',
+      experiments: [],
+      lastAnalyzed: null,
+      samples: [],
+    };
+
     request(app)
       .put('/v1/projects/someId')
-      .send(correctProject)
+      .send(payload)
       .expect(200)
       .end((err) => {
         if (err) {
@@ -115,12 +119,14 @@ describe('tests for projects route', () => {
       });
   });
 
-  it('Updating project lacking required properties returns 400', async (done) => {
-    const { metadataKeys, ...restOfProject } = correctProject;
+  it('Updating project send error 400 if body is invalid', async (done) => {
+    const invalidPayload = {
+      invalid: 'payload',
+    };
 
     request(app)
       .put('/v1/projects/someId')
-      .send(restOfProject)
+      .send(invalidPayload)
       .expect(400)
       .end((err) => {
         if (err) {
@@ -130,13 +136,22 @@ describe('tests for projects route', () => {
       });
   });
 
-  it('Updating project with unexpected extra properties returns 400', async (done) => {
-    const invalidProject = { invalid: 'invalid', ...correctProject };
+  it('Updating project with unknown project sends error 404', async (done) => {
+    const payload = {
+      name: 'Test project',
+      description: '',
+      createdDate: '',
+      lastModified: '',
+      uuid: 'project-1',
+      experiments: [],
+      lastAnalyzed: null,
+      samples: [],
+    };
 
     request(app)
-      .post('/v1/projects/someId')
-      .send(invalidProject)
-      .expect(400)
+      .put('/v1/projects/unknown-project')
+      .send(payload)
+      .expect(404)
       .end((err) => {
         if (err) {
           return done(err);
@@ -161,6 +176,18 @@ describe('tests for projects route', () => {
     request(app)
       .delete('/v1/projects/someId')
       .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Deleting project with unknown project sends error 404', async (done) => {
+    request(app)
+      .delete('/v1/projects/unknown-project')
+      .expect(404)
       .end((err) => {
         if (err) {
           return done(err);

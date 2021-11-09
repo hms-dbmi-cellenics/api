@@ -1,6 +1,6 @@
-title: 'A project object'
-description: Schema for a project object
 type: object
+title: ''
+description: Schema for a project object
 properties:
   name:
     type: string
@@ -23,20 +23,5 @@ properties:
     type: array
     items:
       type: string
-  metadataKeys:
-    type: array
-    items:
-      type: string
-
 required:
-  - name
-  - description
-  - createdDate
-  - lastModified
   - uuid
-  - experiments
-  - lastAnalyzed
-  - samples
-  - metadataKeys
-
-additionalProperties: false
