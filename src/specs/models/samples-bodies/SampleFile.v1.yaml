@@ -1,0 +1,23 @@
+title: A file of a sample
+description: The metadata of a file that forms part of a sample.
+type: object
+properties: 
+  name:
+    type: string
+  path:
+    type: string
+  valid: 
+    type: boolean
+  compressed: 
+    type: boolean
+  lastModified: 
+    type: string
+  upload:
+    type: object
+  bundle:
+    type: object
+    properties:
+      path: 
+        type: string
+  errors:
+    type: string
