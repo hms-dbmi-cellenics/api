@@ -46,7 +46,8 @@ class Gem2sService {
 
   static async generateGem2sParams(experimentId, authJWT) {
     const experiment = await (new ExperimentService()).getExperimentData(experimentId);
-    const { samples } = await (new SamplesService()).getSamplesByExperimentId(experimentId);
+    const samples = await (new SamplesService()).getSamplesByExperimentId(experimentId);
+
     const {
       metadataKeys,
     } = await new ProjectsService().getProject(experiment.projectId);
