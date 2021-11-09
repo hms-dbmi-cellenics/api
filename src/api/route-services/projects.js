@@ -129,7 +129,7 @@ class ProjectsService {
     // we might have repeated projectId's)
     projectIds = [...new Set(projectIds)];
 
-    return await this.getProjectsFromIds(projectIds);
+    return this.getProjectsFromIds(projectIds);
   }
 
   /**
@@ -185,7 +185,7 @@ class ProjectsService {
     return projects;
   }
 
-  async getExperiments(projectUuid, withWritePermissions = false) {
+  async getExperiments(projectUuid) {
     const dynamodb = createDynamoDbInstance();
 
     const marshalledKey = convertToDynamoDbRecord({ projectUuid });
@@ -201,17 +201,7 @@ class ProjectsService {
 
       if (!Object.prototype.hasOwnProperty.call(result, 'projects')) return [];
 
-      const experiments = await experimentService.getListOfExperiments(result.projects.experiments);
-
-      if (!withWritePermissions) {
-        experiments.forEach((experiment) => {
-          // eslint-disable-next-line no-param-reassign
-          delete experiment.rbac_can_write;
-        });
-      }
-
-
-      return experiments;
+      return experimentService.getListOfExperiments(result.projects.experiments);
     } catch (e) {
       if (e.statusCode === 400) throw new NotFoundError('Project not found');
       throw e;

@@ -30,8 +30,10 @@ const mockGem2sParamsBackendCall = (
   };
 
   const samplesResponse = {
-    'sample-1': { name: 'Sample 1' },
-    'sample-2': { name: 'Sample 2' },
+    samples: {
+      'sample-1': { name: 'Sample 1' },
+      'sample-2': { name: 'Sample 2' },
+    },
     ...customSamplesResponse,
   };
 
