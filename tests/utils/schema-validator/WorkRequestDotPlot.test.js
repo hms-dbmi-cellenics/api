@@ -26,51 +26,41 @@ describe('Schema validator', () => {
 
     // It has to contain the correct name
     const wrongName = _.merge(validBody, { name: 'WrongName ' });
-
-    // It should throw if it doesn't have the correct name
-    expect(validateRequest(wrongName, schemaPath)).rejects.toThrow();
+    await expect(validateRequest(wrongName, schemaPath)).rejects.toThrow();
 
     // It has to contain markerGenes
     const noMarkerGenes = _.clone(validBody);
     delete noMarkerGenes.markerGenes;
-
-    // It should throw if it doesn't have the correct name
-    expect(validateRequest(noMarkerGenes, schemaPath)).rejects.toThrow();
+    await expect(validateRequest(noMarkerGenes, schemaPath)).rejects.toThrow();
 
     // It has to contain input
     const noInput = _.clone(validBody);
     delete noInput.input;
-
-    expect(validateRequest(noInput, schemaPath)).rejects.toThrow();
+    await expect(validateRequest(noInput, schemaPath)).rejects.toThrow();
 
     // Input has to contain nGenes
     const noInputNGenes = _.clone(validBody);
     delete noInputNGenes.subset.nGenes;
+    await expect(validateRequest(noInputNGenes, schemaPath)).rejects.toThrow();
 
-    expect(validateRequest(noInputNGenes, schemaPath)).rejects.toThrow();
-
-    // It has to contain input
+    // Input has to contain genes
     const noInputGenes = _.clone(validBody);
     delete noInputGenes.subset.genes;
-
-    expect(validateRequest(noInputGenes, schemaPath)).rejects.toThrow();
+    await expect(validateRequest(noInputGenes, schemaPath)).rejects.toThrow();
 
     // It has to contain subset
     const noSubset = _.clone(validBody);
     delete noSubset.subset;
+    await expect(validateRequest(noSubset, schemaPath)).rejects.toThrow();
 
-    expect(validateRequest(noSubset, schemaPath)).rejects.toThrow();
-
-    // It has to contain cellClassKey
+    // subset has to contain cellClassKey
     const noSubsetCellClassKey = _.clone(validBody);
     delete noSubsetCellClassKey.subset;
+    await expect(validateRequest(noSubsetCellClassKey, schemaPath)).rejects.toThrow();
 
-    expect(validateRequest(noSubsetCellClassKey, schemaPath)).rejects.toThrow();
-
-    // It has to contain cellSetKey
+    // subset has to contain cellSetKey
     const noSubsetCellSetKey = _.clone(validBody);
     delete noSubsetCellSetKey.subset;
-
-    expect(validateRequest(noSubsetCellSetKey, schemaPath)).rejects.toThrow();
+    await expect(validateRequest(noSubsetCellSetKey, schemaPath)).resolves.toEqual(undefined);
   });
 });
