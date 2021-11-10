@@ -35,7 +35,7 @@ jobs:
       - id: check-staging-url
         name: Check staging URL
         run: |-
-          REGEX="#### Link to staging deployment URL\s?\r\n(https:\/\/(.+)\.scp-staging\.biomage\.net|N\/A)"
+          REGEX="#### Link to staging deployment URL\s?\r\n(https:\/\/ui-(.+)\.scp-staging\.biomage\.net|N\/A)"
 
           echo "REGEX to test against:"
           echo $REGEX
