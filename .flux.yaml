@@ -18,7 +18,7 @@ metadata:
 spec:
   releaseName: FILLED_IN_BY_CI
   chart:
-    git: git@github.com:biomage-ltd/iac
+    git: git@github.com:kafkasl/iac
     path: charts/nodejs
     ref: FILLED_IN_BY_CI
   values:
@@ -37,7 +37,7 @@ spec:
       minReplicas: 1
       maxReplicas: 1
       targetCPUUtilizationPercentage: 80
-    
+
     ingress:
       annotations:
         alb.ingress.kubernetes.io/healthcheck-path: /v1/health
