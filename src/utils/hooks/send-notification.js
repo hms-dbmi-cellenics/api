@@ -6,6 +6,7 @@ const sendEmail = require('../send-email');
 const sendFailedSlackMessage = require('../send-failed-slack-message');
 const ExperimentService = require('../../api/route-services/experiment');
 const config = require('../../config');
+const buildPipelineStatusEmailBody = require('../emailTemplates/buildPipelineStatusEmailBody');
 
 const logger = getLogger();
 
@@ -33,7 +34,8 @@ const sendNotification = async (message) => {
       && ((process === QC_PROCESS_NAME && status === SUCCEEDED)
       || status === FAILED)) {
     try {
-      await sendEmail(message.experimentId, status, user);
+      const emailParams = buildPipelineStatusEmailBody(message.experimentId, status, user);
+      await sendEmail(emailParams);
     } catch (e) {
       console.error('Error sending email ', e);
     }

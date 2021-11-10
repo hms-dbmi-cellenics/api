@@ -6,7 +6,12 @@ const sendFailedSlackMessage = require('../../../src/utils/send-failed-slack-mes
 const sendEmail = require('../../../src/utils/send-email');
 const ExperimentService = require('../../../src/api/route-services/experiment');
 
-jest.mock('../../../src/utils/authMiddlewares');
+jest.mock('../../../src/utils/authMiddlewares', () => ({
+  authenticationMiddlewareSocketIO: () => ({
+    name: 'FirstName LastName',
+    email: 'mockEmail@email.lol',
+  }),
+}));
 jest.mock('../../../src/api/route-services/experiment');
 jest.mock('../../../src/api/general-services/pipeline-status');
 jest.mock('../../../src/utils/send-failed-slack-message', () => jest.fn());
