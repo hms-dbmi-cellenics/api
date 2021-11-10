@@ -35,12 +35,12 @@ jobs:
       - id: check-staging-url
         name: Check staging URL
         run: |-
-          REGEX="#### Link to staging deployment URL\s?\r\n(https:\/\/.+\.scp-staging\.biomage\.net|N\/A)"
+          REGEX="#### Link to staging deployment URL\s?\r\n(https:\/\/(.+)\.scp-staging\.biomage\.net|N\/A)"
 
           echo "REGEX to test against:"
           echo $REGEX
           echo "Now looking at regex result:"
 
-          pcregrep -o1 -M "$REGEX" <<\EOF
+          pcregrep -o2 -M "$REGEX" <<\EOF
           ${{ github.event.pull_request.body }}
           EOF
