@@ -6,8 +6,8 @@ const ALL = 'all';
 class hookRunner {
   constructor() {
     this.hooks = {};
+    // object in the format of <step name>: [<hooks>]
     this.results = {};
-    // list in the format of <step name>: [<hooks>]
     this.executedHooks = { [ALL]: [] };
   }
 
@@ -38,15 +38,12 @@ class hookRunner {
     console.log(`running payload ${taskName}`);
     console.log(payload);
 
-
-    // Manual looping is done to prevent passing function in hooks[taskName] into a callback,
-    // which might cause scoping issues
-
-    // Runs task specific hooks
     const executeHooks = async (task, all = false) => {
       const currentHooks = all ? ALL : task;
       if (this.hooks[currentHooks]) {
         this.executedHooks[task] = [];
+        // Manual looping is done to prevent passing function in hooks[taskName] into a callback,
+        // which might cause scoping issues
         for (let i = 0; i < this.hooks[currentHooks].length; i += 1) {
         // calling the hooks sequentially since they may depend on each other
           // eslint-disable-next-line no-await-in-loop
@@ -60,7 +57,8 @@ class hookRunner {
       }
     };
 
-    // check if the hooks already ran for this step
+    // checks if the hooks already ran for this step
+    // Runs task specific hooks
     if (!this.executedHooks[taskName]) {
       await executeHooks(taskName);
     }
