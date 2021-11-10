@@ -18,9 +18,9 @@ metadata:
 spec:
   releaseName: FILLED_IN_BY_CI
   chart:
-    git: git@github.com:kafkasl/iac
+    git: git@github.com:biomage-ltd/iac
     path: charts/nodejs
-    ref: FILLED_IN_BY_CI
+    ref: cluster-ee # TODO change before merging
   values:
     service:
       externalPort: 3000
