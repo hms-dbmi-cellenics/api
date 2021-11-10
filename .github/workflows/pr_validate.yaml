@@ -41,6 +41,16 @@ jobs:
           echo $REGEX
           echo "Now looking at regex result:"
 
-          pcregrep -o2 -M "$REGEX" <<\EOF
+          URL=$(pcregrep -o2 -M "$REGEX" <<\EOF
           ${{ github.event.pull_request.body }}
-          EOF
+          EOF)
+
+          SANDBOX=$(pcregrep -o1 -M "$REGEX" <<\EOF
+          ${{ github.event.pull_request.body }}
+          EOF)
+
+          echo "Full URL:"
+          echo $URL
+
+          echo "Sandbox:"
+          echo $SANDBOX
