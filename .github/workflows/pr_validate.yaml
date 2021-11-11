@@ -66,6 +66,6 @@ jobs:
           timeout_seconds: 30
           max_attempts: 5
           retry_on: error
-          command: curl -f ${{ steps.extract-staging.outputs.url }}
+          command: curl -f ${{ steps.extract-staging.outputs.url }}/fffffff
           # Add jitter to break up correlated events.
           on_retry_command: sleep $[($RANDOM % 10) + 5]s
