@@ -40,7 +40,7 @@ describe('tests for the experiment service', () => {
         expect(fnSpy).toHaveBeenCalledWith({
           TableName: 'experiments-test',
           Key: { experimentId: { S: '12345' } },
-          ProjectionExpression: 'projectId,meta,experimentId,experimentName,sampleIds',
+          ProjectionExpression: 'projectId,meta,experimentId,experimentName,sampleIds,notifyByEmail',
         });
       })
       .then(() => done());
