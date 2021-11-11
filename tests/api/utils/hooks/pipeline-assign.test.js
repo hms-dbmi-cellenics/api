@@ -84,7 +84,7 @@ describe('tests for the pipeline-assign service', () => {
 
 
   it('ignores message because it is not a pod request', async () => {
-    const message = {};
+    const message = { input: {} };
 
     await pipelineAssign.assignPodToPipeline(message);
 

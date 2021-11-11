@@ -73,6 +73,7 @@ const assignPodToPipeline = async (message) => {
   // this checks should be refactored and cleaned once the gem2s / qc spec refactors are done
   // and we can be sure that taskName is always present at the top-level of all the message
   // instead of inside input
+
   if (message && message.taskName !== constants.ASSIGN_POD_TO_PIPELINE) {
     return;
   }
