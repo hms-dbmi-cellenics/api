@@ -75,7 +75,14 @@ jobs:
           ${{ github.event.pull_request.body }}
           EOF)
 
-          echo "::set-output name=sandbox::$INTEGRATION_TEST_REF"
+          if [ "$INTEGRATION_TEST_REF" = "master" ]; then
+            echo "Ref given is $INTEGRATION_TEST_REF, setting it as is."
+          else
+            INTEGRATION_TEST_REF="refs/pull/$INTEGRATION_TEST_REF/merge"
+            echo "Ref given is a URL, creating ref of $INTEGRATION_TEST_REF"
+          fi
+
+          echo "::set-output name=ref::$INTEGRATION_TEST_REF"
 
       - id: reach-staging
         name: Attempt to reach staging environments
@@ -88,12 +95,12 @@ jobs:
           # Add jitter to break up correlated events.
           on_retry_command: sleep $[($RANDOM % 10) + 5]s
 
-      - id: run-integration-test
-        name: Run integration tests
-        uses: aurelien-baudet/workflow-dispatch@v2
-        with:
-          workflow: Run end-to-end tests
-          repo: biomage-ltd/testing
-          token: ${{ secrets.API_TOKEN_GITHUB }}
-          ref: master
-          inputs: '{ "environment": "staging", "ref": "${{ steps.extract-integration-test-ref.ref }}", "sandboxId": "${{ steps.extract-staging.outputs.sandbox }}" }'
+      # - id: run-integration-test
+      #   name: Run integration tests
+      #   uses: aurelien-baudet/workflow-dispatch@v2
+      #   with:
+      #     workflow: Run end-to-end tests
+      #     repo: biomage-ltd/testing
+      #     token: ${{ secrets.API_TOKEN_GITHUB }}
+      #     ref: master
+      #     inputs: '{ "environment": "staging", "ref": "${{ steps.extract-integration-test-ref.ref }}", "sandboxId": "${{ steps.extract-staging.outputs.sandbox }}" }'
