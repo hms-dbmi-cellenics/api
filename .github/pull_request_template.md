@@ -25,17 +25,15 @@ N/A
   Your pull request will not pass the required checks if this is not followed.
 -->
 
-
-#### Integration test ref
+#### Integration test branch
 master
 <!---
-  The git ref that the integration tests will be run against.
+  The branch that the integration tests will be run against.
 
   If you DID NOT modify the integration tests for this PR, this can be left as `master`.
 
-  If you DID modify the integration tests for this PR, include the URL of the pull request
-  that contains your integration test changes. For example:
-  https://github.com/biomage-ltd/testing/pull/15
+  If you DID modify the integration tests for this PR, add the name of the branch you created
+  in biomage-ltd/testing that will be used to test this branch.
 -->
 
 # Merge checklist

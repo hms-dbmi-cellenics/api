@@ -65,24 +65,18 @@ jobs:
       - id: extract-integration-test-ref
         name: Get integration test ref
         run: |-
-          REGEX="#### Integration test ref\s?\r\n(?:https:\/\/github\.com\/biomage-ltd\/testing\/pull\/([0-9]+)|(master))"
+          REGEX="#### Integration test branch\s?\r\n(.+)"
 
           echo "REGEX to test against:"
           echo $REGEX
           echo "Now looking at regex result:"
 
-          INTEGRATION_TEST_REF=$(pcregrep -o1 -o2 -M "$REGEX" <<\EOF
+          INTEGRATION_TEST_REF=$(pcregrep -o1-M "$REGEX" <<\EOF
           ${{ github.event.pull_request.body }}
           EOF
           )
 
-          if [ "$INTEGRATION_TEST_REF" = "master" ]; then
-            echo "Ref given is $INTEGRATION_TEST_REF, setting it as is."
-          else
-            INTEGRATION_TEST_REF="refs/pull/$INTEGRATION_TEST_REF/merge"
-            echo "Ref given is a URL, creating ref of $INTEGRATION_TEST_REF"
-          fi
-
+          echo "Ref given is $INTEGRATION_TEST_REF, setting it as is."
           echo "::set-output name=ref::$INTEGRATION_TEST_REF"
 
       - id: reach-staging
