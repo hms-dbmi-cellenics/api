@@ -186,8 +186,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     processingConfig,
     sampleIds,
   } = await experimentService.getAttributesToCreateQCPipeline(experimentId);
-
-  if (processingConfigUpdates) {
+  if (processingConfigUpdates.length) {
     processingConfigUpdates.forEach(({ name, body }) => {
       if (!processingConfig[name]) {
         processingConfig[name] = body;
