@@ -65,16 +65,17 @@ jobs:
       - id: extract-integration-test-ref
         name: Get integration test ref
         run: |-
-        
           REGEX="#### Integration test ref\s?\r\n(?:https:\/\/github\.com\/biomage-ltd\/testing\/pull\/([0-9]+)|(master))"
 
           echo "REGEX to test against:"
           echo $REGEX
           echo "Now looking at regex result:"
 
-          pcregrep -o1 -o2 -M "$REGEX" <<\EOF
+          INTEGRATION_TEST_REF=$(pcregrep -o1 -o2 -M "$REGEX" <<\EOF
           ${{ github.event.pull_request.body }}
-          EOF
+          EOF)
+
+          echo "::set-output name=sandbox::$INTEGRATION_TEST_REF"
 
       - id: reach-staging
         name: Attempt to reach staging environments
@@ -95,4 +96,4 @@ jobs:
           repo: biomage-ltd/testing
           token: ${{ secrets.API_TOKEN_GITHUB }}
           ref: master
-          inputs: '{ "environment": "staging", "sandboxId": "${{ steps.extract-staging.outputs.sandbox }}" }'
+          inputs: '{ "environment": "staging", "ref": "${{ steps.extract-integration-test-ref.ref }}", "sandboxId": "${{ steps.extract-staging.outputs.sandbox }}" }'
