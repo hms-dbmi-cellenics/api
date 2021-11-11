@@ -7,60 +7,65 @@ describe('Schema validator', () => {
 
     const validBody = {
       name: 'DotPlot',
-      markerGenes: true,
-      input: {
-        nGenes: 5,
-        genes: ['Gzma', 'Lyz2'],
-      },
-      subset: {
-        cellClassKey: 'louvain',
-        cellSetKey: 'All',
+      useMarkerGenes: false,
+      numberOfMarkers: 3,
+      customGenesList: [
+        'Lyz2',
+        'Chil3',
+        'Gzma',
+      ],
+      groupBy: 'louvain',
+      filterBy: {
+        group: 'All',
+        key: null,
       },
     };
 
     // It should validate correctly with the correct body
-    const validationResult = await validateRequest(validBody, schemaPath);
-
     // ValidateRequest does not return anything, so we're expecting undefined
-    expect(validationResult).toBeUndefined();
+    await expect(validateRequest(validBody, schemaPath)).resolves.toBeUndefined();
 
     // It has to contain the correct name
-    const wrongName = _.merge(validBody, { name: 'WrongName ' });
+    const wrongName = _.merge({}, validBody, { name: 'WrongName ' });
     await expect(validateRequest(wrongName, schemaPath)).rejects.toThrow();
 
-    // It has to contain markerGenes
-    const noMarkerGenes = _.clone(validBody);
-    delete noMarkerGenes.markerGenes;
+    // It has to contain useMarkerGenes
+    const noMarkerGenes = _.cloneDeep(validBody);
+    delete noMarkerGenes.useMarkerGenes;
     await expect(validateRequest(noMarkerGenes, schemaPath)).rejects.toThrow();
 
-    // It has to contain input
-    const noInput = _.clone(validBody);
-    delete noInput.input;
-    await expect(validateRequest(noInput, schemaPath)).rejects.toThrow();
-
-    // Input has to contain nGenes
-    const noInputNGenes = _.clone(validBody);
-    delete noInputNGenes.subset.nGenes;
-    await expect(validateRequest(noInputNGenes, schemaPath)).rejects.toThrow();
+    // Input has to contain numberOfMarkers
+    const noNumberOfMarkers = _.cloneDeep(validBody);
+    delete noNumberOfMarkers.numberOfMarkers;
+    await expect(validateRequest(noNumberOfMarkers, schemaPath)).rejects.toThrow();
 
     // Input has to contain genes
-    const noInputGenes = _.clone(validBody);
-    delete noInputGenes.subset.genes;
-    await expect(validateRequest(noInputGenes, schemaPath)).rejects.toThrow();
+    const noCustomGenesList = _.cloneDeep(validBody);
+    delete noCustomGenesList.customGenesList;
+    await expect(validateRequest(noCustomGenesList, schemaPath)).rejects.toThrow();
 
-    // It has to contain subset
-    const noSubset = _.clone(validBody);
-    delete noSubset.subset;
-    await expect(validateRequest(noSubset, schemaPath)).rejects.toThrow();
+    // It has to contain groupBy
+    const noGroupBy = _.cloneDeep(validBody);
+    delete noGroupBy.groupBy;
+    await expect(validateRequest(noGroupBy, schemaPath)).rejects.toThrow();
 
-    // subset has to contain cellClassKey
-    const noSubsetCellClassKey = _.clone(validBody);
-    delete noSubsetCellClassKey.subset;
-    await expect(validateRequest(noSubsetCellClassKey, schemaPath)).rejects.toThrow();
+    // It has to contain filterBy
+    const noFilterBy = _.cloneDeep(validBody);
+    delete noFilterBy.filterBy;
+    await expect(validateRequest(noGroupBy, schemaPath)).rejects.toThrow();
 
-    // subset has to contain cellSetKey
-    const noSubsetCellSetKey = _.clone(validBody);
-    delete noSubsetCellSetKey.subset;
-    await expect(validateRequest(noSubsetCellSetKey, schemaPath)).resolves.toEqual(undefined);
+    // subset has to contain group
+    const noFilterByGroup = _.cloneDeep(validBody);
+    delete noFilterByGroup.filterBy.group;
+    await expect(validateRequest(noFilterByGroup, schemaPath)).rejects.toThrow();
+
+    // filterBy does not have to contain key
+    // This is not required because null not pass validation
+    const noFilterByKey = _.cloneDeep(validBody);
+    delete noFilterByKey.filterBy.key;
+
+    console.log('*** filterByKey', noFilterByKey);
+
+    await expect(validateRequest(noFilterByKey, schemaPath)).resolves.toBeUndefined();
   });
 });
