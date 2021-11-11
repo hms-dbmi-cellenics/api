@@ -72,3 +72,12 @@ jobs:
           command: curl -f ${{ steps.extract-staging.outputs.url }}
           # Add jitter to break up correlated events.
           on_retry_command: sleep $[($RANDOM % 10) + 5]s
+
+      - id: run-integration-test
+        name: Run integration tests
+        uses: aurelien-baudet/workflow-dispatch@v2
+        with:
+          workflow: Run end-to-end tests
+          repo: biomage-ltd/testing
+          token: ${{ secrets.API_TOKEN_GITHUB }}
+          inputs: '{ "environment": "staging", "sandboxId": "${{ steps.extract-staging.outputs.sandbox }}" }'
