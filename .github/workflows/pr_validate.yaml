@@ -13,8 +13,8 @@ jobs:
     name: Check pull request template
     runs-on: ubuntu-20.04
     steps:
-      - id: copy-pr-body
-        name: Copy PR body to file
+      - id: install
+        name: Install requirements
         run: |-
           sudo apt-get update -y
           sudo apt-get install -y pcregrep
@@ -32,7 +32,7 @@ jobs:
           ${{ github.event.pull_request.body }}
           EOF
 
-      - id: check-staging-url
+      - id: extract-staging
         name: Check staging URL
         run: |-
           REGEX="#### Link to staging deployment URL\s?\r\n(https:\/\/ui-(.+)\.scp-staging\.biomage\.net|N\/A)"
@@ -53,6 +53,19 @@ jobs:
 
           echo "Full URL:"
           echo $URL
+          echo "::set-output name=url::$URL"
 
           echo "Sandbox:"
           echo $SANDBOX
+          echo "::set-output name=sandbox::$SANDBOX"
+
+      - id: reach-staging
+        name: Attempt to reach staging environments
+        uses: nick-invision/retry@v2
+        with:
+          timeout_seconds: 30
+          max_attempts: 5
+          retry_on: error
+          command: curl -f ${{ steps.extract-staging.outputs.url }}
+          # Add jitter to break up correlated events.
+          on_retry_command: sleep $[($RANDOM % 10) + 5]s
