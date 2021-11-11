@@ -6,9 +6,7 @@ const ALL = 'all';
 class hookRunner {
   constructor() {
     this.hooks = {};
-    // object in the format of <step name>: [<hooks>]
     this.results = {};
-    this.executedHooks = { [ALL]: [] };
   }
 
   // register will run callback function when the taskName matches the payload
@@ -33,40 +31,25 @@ class hookRunner {
 
   // run requires taskName to be present as a key in the payload
   async run(payload) {
-    // WE NEED TO CHANGE THIS ONCE THE PIPELINE MESSAGES ARE CHANGED
-    const { taskName } = payload; // || payload.input.taskName;
+    const { taskName } = payload;
     this.results[taskName] = [];
-    console.log(`running payload ${taskName}`);
-    console.log(payload);
 
-    const executeHooks = async (task, all = false) => {
-      const currentHooks = all ? ALL : task;
-      if (this.hooks[currentHooks]) {
-        this.executedHooks[task] = [];
-        // Manual looping is done to prevent passing function in hooks[taskName] into a callback,
-        // which might cause scoping issues
-        for (let i = 0; i < this.hooks[currentHooks].length; i += 1) {
-        // calling the hooks sequentially since they may depend on each other
-          // eslint-disable-next-line no-await-in-loop
-          this.results[task].push(await this.hooks[currentHooks][i](payload));
-        }
-        if (all) {
-          this.executedHooks[ALL].push({ taskName: 'executed' });
-        } else {
-          this.executedHooks[task].push('executed');
-        }
-      }
-    };
+    // Manual looping is done to prevent passing function in hooks[taskName] into a callback,
+    // which might cause scoping issues
 
-    // checks if the hooks already ran for this step
     // Runs task specific hooks
-    if (!this.executedHooks[taskName]) {
-      await executeHooks(taskName);
+    for (let i = 0; this.hooks[taskName] !== undefined && i < this.hooks[taskName].length; i += 1) {
+      // calling the hooks sequentially since they may depend on each other
+      // eslint-disable-next-line no-await-in-loop
+      this.results[taskName].push(await this.hooks[taskName][i](payload));
     }
+
     // Runs hooks that apply to all tasks (assigning the results to current task)
-    if (!this.executedHooks[ALL].includes(taskName)) {
-      await executeHooks(taskName, true);
+    for (let i = 0; this.hooks[ALL] !== undefined && i < this.hooks[ALL].length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      this.results[taskName].push(await this.hooks[ALL][i](payload));
     }
+
     logger.log(`Completed ${this.results[taskName].length} hooks for pipeline task ${taskName}`);
 
     return this.results;

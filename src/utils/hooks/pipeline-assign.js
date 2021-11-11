@@ -70,12 +70,10 @@ const patchPod = async (message) => {
 };
 
 const assignPodToPipeline = async (message) => {
-  console.log('RUNNING ASSINGN POD ', message);
   // this checks should be refactored and cleaned once the gem2s / qc spec refactors are done
   // and we can be sure that taskName is always present at the top-level of all the message
   // instead of inside input
-  const taskName = message.taskName || message.input.taskName;
-  if (message && taskName !== constants.ASSIGN_POD_TO_PIPELINE) {
+  if (message && message.taskName !== constants.ASSIGN_POD_TO_PIPELINE) {
     return;
   }
 
