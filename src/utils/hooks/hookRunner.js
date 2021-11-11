@@ -34,7 +34,7 @@ class hookRunner {
   // run requires taskName to be present as a key in the payload
   async run(payload) {
     // WE NEED TO CHANGE THIS ONCE THE PIPELINE MESSAGES ARE CHANGED
-    const taskName = payload.taskName || payload.input.taskName;
+    const { taskName } = payload; // || payload.input.taskName;
     this.results[taskName] = [];
     console.log(`running payload ${taskName}`);
     console.log(payload);
