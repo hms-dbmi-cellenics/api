@@ -23,7 +23,7 @@ const sendNotification = async (message) => {
   const experiment = await (new ExperimentService()).getExperimentData(experimentId);
   const { status } = statusRes[process];
 
-  if (status === FAILED && ['production', 'staging', 'development', 'test'].includes(config.clusterEnv)) {
+  if (status === FAILED && ['production', 'staging', 'test'].includes(config.clusterEnv)) {
     try {
       await sendFailedSlackMessage(message, user, experiment);
     } catch (e) {
