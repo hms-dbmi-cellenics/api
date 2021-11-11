@@ -12,7 +12,6 @@ const buildPipelineStatusEmailBody = (experimentId, status, user) => {
   const failMessage = `
       Unfortunately, when trying to run the analysis the data processing failed for your experiment: <br/>
       <a href="${link}">${link}</a> <br/>
-      Try running the process one more time. <br/>
       We are working hard to identify and fix the issue. We will let you know as soon as your data is ready to explore. <br/>
       `;
   const messageToSend = `
