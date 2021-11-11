@@ -23,11 +23,11 @@ const sendNotification = async (message) => {
   const experiment = await (new ExperimentService()).getExperimentData(experimentId);
   const { status } = statusRes[process];
 
-  if (status === FAILED && ['production', 'staging', 'test'].includes(config.clusterEnv)) {
+  if (status === FAILED && ['production', 'test'].includes(config.clusterEnv)) {
     try {
       await sendFailedSlackMessage(message, user, experiment);
     } catch (e) {
-      console.error('Error sending slack message ', e);
+      logger.error('Error sending slack message ', e);
     }
   }
   if (experiment.notifyByEmail
@@ -37,7 +37,7 @@ const sendNotification = async (message) => {
       const emailParams = buildPipelineStatusEmailBody(message.experimentId, status, user);
       await sendEmail(emailParams);
     } catch (e) {
-      console.error('Error sending email ', e);
+      logger.error('Error sending email ', e);
     }
   }
 };
