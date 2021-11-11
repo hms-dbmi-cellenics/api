@@ -104,4 +104,4 @@ jobs:
           repo: biomage-ltd/testing
           token: ${{ secrets.API_TOKEN_GITHUB }}
           ref: master
-          inputs: '{ "environment": "staging", "ref": "${{ steps.extract-integration-test-ref.ref }}", "sandboxId": "${{ steps.extract-staging.outputs.sandbox }}" }'
+          inputs: '{ "environment": "staging", "ref": "${{ steps.extract-integration-test-ref.outputs.ref }}", "sandboxId": "${{ steps.extract-staging.outputs.sandbox }}" }'
