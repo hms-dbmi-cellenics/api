@@ -65,7 +65,7 @@ jobs:
       - id: extract-integration-test-ref
         name: Get integration test ref
         run: |-
-          REGEX="#### Integration test branch\s?\r\n(.+)"
+          REGEX="#### Integration test branch\s?\r\n(.+)\r\n"
 
           echo "REGEX to test against:"
           echo $REGEX
