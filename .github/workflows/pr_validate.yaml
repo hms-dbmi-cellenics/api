@@ -62,6 +62,20 @@ jobs:
           echo $SANDBOX
           echo "::set-output name=sandbox::$SANDBOX"
 
+      - id: extract-integration-test-ref
+        name: Get integration test ref
+        run: |-
+        
+          REGEX="#### Integration test ref\s?\r\n(?:https:\/\/github\.com\/biomage-ltd\/testing\/pull\/([0-9]+)|(master))"
+
+          echo "REGEX to test against:"
+          echo $REGEX
+          echo "Now looking at regex result:"
+
+          pcregrep -o1 -o2 -M "$REGEX" <<\EOF
+          ${{ github.event.pull_request.body }}
+          EOF
+
       - id: reach-staging
         name: Attempt to reach staging environments
         uses: nick-invision/retry@v2
