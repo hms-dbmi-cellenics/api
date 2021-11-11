@@ -103,5 +103,5 @@ jobs:
           workflow: Run end-to-end tests
           repo: biomage-ltd/testing
           token: ${{ secrets.API_TOKEN_GITHUB }}
-          ref: master
+          ref: ${{ steps.extract-integration-test-ref.outputs.ref }}
           inputs: '{ "environment": "staging", "ref": "${{ steps.extract-integration-test-ref.outputs.ref }}", "sandboxId": "${{ steps.extract-staging.outputs.sandbox }}" }'
