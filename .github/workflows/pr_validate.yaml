@@ -71,7 +71,7 @@ jobs:
           echo $REGEX
           echo "Now looking at regex result:"
 
-          INTEGRATION_TEST_REF=$(pcregrep -o1-M "$REGEX" <<\EOF
+          INTEGRATION_TEST_REF=$(pcregrep -o1 -M "$REGEX" <<\EOF
           ${{ github.event.pull_request.body }}
           EOF
           )
