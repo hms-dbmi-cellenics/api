@@ -1,5 +1,7 @@
 const { getWebhookUrl } = require('./crypt');
+const getLogger = require('./getLogger');
 
+const logger = getLogger();
 const sendFailedSlackMessage = async (message, user, experiment) => {
   const { experimentId } = message;
 
@@ -55,7 +57,6 @@ const sendFailedSlackMessage = async (message, user, experiment) => {
       },
     ],
   };
-
   const r = await fetch(getWebhookUrl(), {
     method: 'POST',
     body: JSON.stringify(feedbackData),
@@ -63,6 +64,7 @@ const sendFailedSlackMessage = async (message, user, experiment) => {
   if (!r.ok) {
     throw new Error('Invalid status code returned.', r);
   }
+  logger.log('Slack message sent.');
 };
 
 module.exports = sendFailedSlackMessage;
