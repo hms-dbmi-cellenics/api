@@ -73,7 +73,8 @@ jobs:
 
           INTEGRATION_TEST_REF=$(pcregrep -o1 -o2 -M "$REGEX" <<\EOF
           ${{ github.event.pull_request.body }}
-          EOF)
+          EOF
+          )
 
           if [ "$INTEGRATION_TEST_REF" = "master" ]; then
             echo "Ref given is $INTEGRATION_TEST_REF, setting it as is."
