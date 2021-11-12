@@ -34,7 +34,7 @@ properties:
       - frequency
       - violin
       - markerHeatmap
-      - dotPlot
+      - DotPlot
   config:
     type: object
 required:
