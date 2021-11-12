@@ -7,6 +7,10 @@ exports[`gem2s gem2sReponse - Pass on error message properly 1`] = `
       "ExperimentUpdates-abcd1234",
       Object {
         "experimentId": "abcd1234",
+        "input": Object {
+          "authJWT": "Bearer eyJraWQiOiJ2TytRZ1lud0lnOU5pT2Y3azJTNEFEY2xvaDBwVlNUbkNNd",
+          "processName": "gem2s",
+        },
         "response": Object {
           "error": "some unknwon error",
         },
@@ -38,35 +42,10 @@ exports[`gem2s gem2sResponse - Should return message if message is valid 1`] = `
       "ExperimentUpdates-abcd1234",
       Object {
         "experimentId": "abcd1234",
-        "status": Object {
-          "gem2s": Object {
-            "completedSteps": Array [],
-            "startDate": null,
-            "status": "SUCCEEDED",
-            "stopDate": null,
-          },
+        "input": Object {
+          "authJWT": "samplejwt",
+          "processName": "gem2s",
         },
-        "taskName": "downloadGem",
-        "type": "gem2s",
-      },
-    ],
-  ],
-  "results": Array [
-    Object {
-      "type": "return",
-      "value": undefined,
-    },
-  ],
-}
-`;
-
-exports[`gem2s gem2sResponse - Should return message if message is valid 2`] = `
-[MockFunction] {
-  "calls": Array [
-    Array [
-      "ExperimentUpdates-abcd1234",
-      Object {
-        "experimentId": "abcd1234",
         "status": Object {
           "gem2s": Object {
             "completedSteps": Array [],
@@ -115,7 +94,7 @@ exports[`gem2s sendUpdateToSubscribed - Should send update if payloads are corre
     Array [
       "ExperimentUpdates-abcd1234",
       Object {
-        "authJWT": "Bearer mockAuthJwtToken",
+        "authJWT": "Bearer eyJraWQiOiJ2TytRZ1lud0lnOU5pT2Y3azJTNEFEY2xvaDBwVlNUbkNNd",
         "experimentId": "experimentId",
         "status": Object {
           "gem2s": Object {

@@ -6,11 +6,12 @@ const PipelineService = require('../../../src/api/route-services/pipeline-respon
 const pipelineAssign = require('../../../src/utils/hooks/pipeline-assign');
 const { buildPodRequest } = require('../../../src/api/general-services/pipeline-manage/constructors/assign-pod-to-pipeline');
 const constants = require('../../../src/api/general-services/pipeline-manage/constants');
+const { SUCCEEDED } = require('../../../src/api/general-services/pipeline-manage/constants');
 const fake = require('../../test-utils/constants');
+const getPipelineStatus = require('../../../src/api/general-services/pipeline-status');
 
-jest.mock('../../../src/api/general-services/pipeline-status', () => (() => ({
-  pipelineStatus: () => ({}),
-})));
+jest.mock('../../../src/api/general-services/pipeline-status');
+jest.mock('../../../src/utils/authMiddlewares');
 
 
 jest.mock('../../../src/utils/hooks/pipeline-assign', () => {
@@ -41,6 +42,11 @@ describe('Test Pipeline Response Service', () => {
   beforeEach(() => {
     mockSocket = io(fake.SOCKET_ENDPOINT);
     mockIO = { sockets: mockSocket };
+    getPipelineStatus.mockImplementationOnce(() => ({
+      qc: {
+        status: SUCCEEDED,
+      },
+    }));
   });
 
   afterEach(() => {
