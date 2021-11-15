@@ -21,11 +21,9 @@ properties:
         description: Cellset class key of the cell subset
         example: louvain
       key:
-        type:
-          - string
-          - 'null'
+        type: string
         description: Cellset key of the subset
-        example: louvain/louvain-0
+        example: louvain-0
   groupBy:
     type: string
     description: Cell set to group by
