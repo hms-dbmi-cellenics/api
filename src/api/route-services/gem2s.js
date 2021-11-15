@@ -4,7 +4,7 @@ const AWSXRay = require('aws-xray-sdk');
 const constants = require('../general-services/pipeline-manage/constants');
 const getPipelineStatus = require('../general-services/pipeline-status');
 const { createGem2SPipeline } = require('../general-services/pipeline-manage');
-
+const sendNotification = require('../../utils/hooks/send-notification');
 const saveProcessingConfigFromGem2s = require('../../utils/hooks/save-gem2s-processing-config');
 const runQCPipeline = require('../../utils/hooks/run-qc-pipeline');
 const validateRequest = require('../../utils/schema-validator');
@@ -20,11 +20,11 @@ const logger = getLogger();
 const pipelineHook = new PipelineHook();
 
 pipelineHook.register('uploadToAWS', [saveProcessingConfigFromGem2s, runQCPipeline]);
+pipelineHook.registerAll([sendNotification]);
 
 class Gem2sService {
   static async sendUpdateToSubscribed(experimentId, message, io) {
     const statusRes = await getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME);
-
     // Concatenate into a proper response.
     const response = {
       ...message,
@@ -33,13 +33,10 @@ class Gem2sService {
     };
 
     const { error = null } = message.response || {};
-
     if (error) {
       logger.log(`Error in ${constants.GEM2S_PROCESS_NAME} received`);
-
       AWSXRay.getSegment().addError(error);
     }
-
     logger.log('Sending to all clients subscribed to experiment', experimentId);
     io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
   }
@@ -87,6 +84,7 @@ class Gem2sService {
     return taskParams;
   }
 
+
   static async gem2sCreate(experimentId, body, authJWT) {
     logger.log('Creating GEM2S params...');
     const { paramsHash } = body;
@@ -111,7 +109,6 @@ class Gem2sService {
 
   static async gem2sResponse(io, message) {
     AWSXRay.getSegment().addMetadata('message', message);
-
     // Fail hard if there was an error.
     await validateRequest(message, 'GEM2SResponse.v1.yaml');
 
@@ -120,7 +117,6 @@ class Gem2sService {
     const { experimentId } = message;
 
     const messageForClient = _.cloneDeep(message);
-
     // Make sure authJWT doesn't get back to the client
     delete messageForClient.authJWT;
 
