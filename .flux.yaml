@@ -33,11 +33,7 @@ spec:
       requests:
         cpu: "100m"
     hpa:
-      enabled: true
-      minReplicas: 1
-      maxReplicas: 1
-      targetCPUUtilizationPercentage: 80
-    
+      enabled: false
     ingress:
       annotations:
         alb.ingress.kubernetes.io/healthcheck-path: /v1/health
