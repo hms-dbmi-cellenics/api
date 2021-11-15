@@ -114,15 +114,11 @@ module.exports = async (app) => {
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
     validateRequests: true,
     validateResponses: {
-      onError: (error, body, req) => {
+      onError: (error) => {
         console.log('Response body fails validation: ', error);
-        console.log('Emitted from:', req.originalUrl);
 
-        console.log('reqDebug');
-        console.log(req);
-
-        console.log('bodyDebug');
-        console.log(body);
+        AWSXRay.getSegment().addMetadata('openApiValidationError', JSON.stringify(error));
+        AWSXRay.getSegment().addAnnotation('openApiValidationFailed', true);
       },
     },
     operationHandlers: path.join(__dirname, '..', 'api'),
