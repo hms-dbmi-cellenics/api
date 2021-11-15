@@ -52,7 +52,7 @@ describe('Schema validator', () => {
     // It has to contain filterBy
     const noFilterBy = _.cloneDeep(validBody);
     delete noFilterBy.filterBy;
-    await expect(validateRequest(noGroupBy, schemaPath)).rejects.toThrow();
+    await expect(validateRequest(noFilterBy, schemaPath)).rejects.toThrow();
 
     // subset has to contain group
     const noFilterByGroup = _.cloneDeep(validBody);
@@ -63,9 +63,6 @@ describe('Schema validator', () => {
     // This is not required because null not pass validation
     const noFilterByKey = _.cloneDeep(validBody);
     delete noFilterByKey.filterBy.key;
-
-    console.log('*** filterByKey', noFilterByKey);
-
     await expect(validateRequest(noFilterByKey, schemaPath)).resolves.toBeUndefined();
   });
 });
