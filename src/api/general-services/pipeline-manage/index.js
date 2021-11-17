@@ -234,8 +234,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     authJWT,
   };
 
-
-  const qcPipelineSkeleton = getQcPipelineSkeleton(config.clusterEnv);
+  const qcPipelineSkeleton = getQcPipelineSkeleton(config.clusterEnv, processingConfigUpdates);
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);

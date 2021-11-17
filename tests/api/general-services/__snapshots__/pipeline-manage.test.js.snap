@@ -209,60 +209,6 @@ Array [
       "Comment": "QC Pipeline for clusterEnv 'test'",
       "StartAt": "RequestPod",
       "States": Object {
-        "CellSizeDistributionFilterMap": Object {
-          "ItemsPath": "$.samples",
-          "Iterator": Object {
-            "StartAt": "CellSizeDistributionFilter",
-            "States": Object {
-              "CellSizeDistributionFilter": Object {
-                "End": true,
-                "Parameters": Object {
-                  "config": Object {},
-                  "experimentId": "testExperimentId",
-                  "processName": "qc",
-                  "sampleUuid.$": "$.sampleUuid",
-                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
-                  "taskName": "cellSizeDistribution",
-                  "uploadCountMatrix": false,
-                },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
-                "ResultPath": null,
-                "TimeoutSeconds": 10800,
-                "Type": "Task",
-              },
-            },
-          },
-          "Next": "MitochondrialContentFilterMap",
-          "ResultPath": null,
-          "Type": "Map",
-        },
-        "ClassifierFilterMap": Object {
-          "ItemsPath": "$.samples",
-          "Iterator": Object {
-            "StartAt": "ClassifierFilter",
-            "States": Object {
-              "ClassifierFilter": Object {
-                "End": true,
-                "Parameters": Object {
-                  "config": Object {},
-                  "experimentId": "testExperimentId",
-                  "processName": "qc",
-                  "sampleUuid.$": "$.sampleUuid",
-                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
-                  "taskName": "classifier",
-                  "uploadCountMatrix": false,
-                },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
-                "ResultPath": null,
-                "TimeoutSeconds": 10800,
-                "Type": "Task",
-              },
-            },
-          },
-          "Next": "CellSizeDistributionFilterMap",
-          "ResultPath": null,
-          "Type": "Map",
-        },
         "ConfigureEmbedding": Object {
           "Next": "EndOfPipeline",
           "Parameters": Object {
@@ -342,60 +288,6 @@ Array [
           "End": true,
           "Type": "Pass",
         },
-        "MitochondrialContentFilterMap": Object {
-          "ItemsPath": "$.samples",
-          "Iterator": Object {
-            "StartAt": "MitochondrialContentFilter",
-            "States": Object {
-              "MitochondrialContentFilter": Object {
-                "End": true,
-                "Parameters": Object {
-                  "config": Object {},
-                  "experimentId": "testExperimentId",
-                  "processName": "qc",
-                  "sampleUuid.$": "$.sampleUuid",
-                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
-                  "taskName": "mitochondrialContent",
-                  "uploadCountMatrix": false,
-                },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
-                "ResultPath": null,
-                "TimeoutSeconds": 10800,
-                "Type": "Task",
-              },
-            },
-          },
-          "Next": "NumGenesVsNumUmisFilterMap",
-          "ResultPath": null,
-          "Type": "Map",
-        },
-        "NumGenesVsNumUmisFilterMap": Object {
-          "ItemsPath": "$.samples",
-          "Iterator": Object {
-            "StartAt": "NumGenesVsNumUmisFilter",
-            "States": Object {
-              "NumGenesVsNumUmisFilter": Object {
-                "End": true,
-                "Parameters": Object {
-                  "config": Object {},
-                  "experimentId": "testExperimentId",
-                  "processName": "qc",
-                  "sampleUuid.$": "$.sampleUuid",
-                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
-                  "taskName": "numGenesVsNumUmis",
-                  "uploadCountMatrix": false,
-                },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
-                "ResultPath": null,
-                "TimeoutSeconds": 10800,
-                "Type": "Task",
-              },
-            },
-          },
-          "Next": "DoubletScoresFilterMap",
-          "ResultPath": null,
-          "Type": "Map",
-        },
         "RequestPod": Object {
           "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
           "Next": "WaitForPod",
@@ -460,7 +352,7 @@ Array [
             },
           },
           "MaxConcurrency": 1,
-          "Next": "ClassifierFilterMap",
+          "Next": "DoubletScoresFilterMap",
           "ResultPath": null,
           "Retry": Array [
             Object {

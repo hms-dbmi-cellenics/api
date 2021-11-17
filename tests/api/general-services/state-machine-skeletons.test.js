@@ -1,5 +1,8 @@
 const { buildStateMachineDefinition } = require('../../../src/api/general-services/pipeline-manage');
-const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons');
+const {
+  getFirstQCStep, getQCStepsToRun, getGem2sPipelineSkeleton, getQcPipelineSkeleton,
+} = require('../../../src/api/general-services/pipeline-manage/skeletons');
+const { buildQCPipelineSteps } = require('../../../src/api/general-services/pipeline-manage/skeletons/qc-pipeline-skeleton');
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
@@ -37,22 +40,137 @@ const getContext = (processName) => ({
   processingConfig: {},
 });
 
+
+describe('helper functions for skeletons', () => {
+  it('returns the correct first step given a list', () => {
+    const processingConfig = [
+      {
+        name: 'numGenesVsNumUmis',
+        body: {
+          auto: true,
+          filterSettings: {
+            regressionType: 'linear',
+            regressionTypeSettings: {
+              linear: {
+                'p.level': 0.001,
+              },
+              spline: {
+                'p.level': 0.001,
+              },
+            },
+          },
+          enabled: true,
+          '8e6ffc70-14c1-425f-b1be-cef9656a55a5': {
+            auto: true,
+            filterSettings: {
+              regressionType: 'linear',
+              regressionTypeSettings: {
+                linear: {
+                  'p.level': 0.0002898551,
+                },
+                spline: {
+                  'p.level': 0.001,
+                },
+              },
+            },
+            defaultFilterSettings: {
+              regressionType: 'linear',
+              regressionTypeSettings: {
+                linear: {
+                  'p.level': 0.0002898551,
+                },
+                spline: {
+                  'p.level': 0.001,
+                },
+              },
+            },
+            api_url: 'http://host.docker.internal:3000',
+            enabled: true,
+          },
+        },
+      },
+      {
+        name: 'cellSizeDistribution',
+        body: {
+          auto: true,
+          filterSettings: {
+            minCellSize: 1080,
+            binStep: 200,
+          },
+          enabled: false,
+          '8e6ffc70-14c1-425f-b1be-cef9656a55a5': {
+            auto: true,
+            filterSettings: {
+              minCellSize: 1136,
+              binStep: 200,
+            },
+            defaultFilterSettings: {
+              minCellSize: 1136,
+              binStep: 200,
+            },
+            api_url: 'http://host.docker.internal:3000',
+            enabled: false,
+          },
+        },
+      },
+      {
+        name: 'doubletScores',
+        body: {
+          auto: true,
+          filterSettings: {
+            probabilityThreshold: 0.5,
+            binStep: 0.05,
+          },
+          enabled: true,
+          '8e6ffc70-14c1-425f-b1be-cef9656a55a5': {
+            auto: true,
+            filterSettings: {
+              probabilityThreshold: 0.6506245,
+              binStep: 0.05,
+            },
+            defaultFilterSettings: {
+              probabilityThreshold: 0.6506245,
+              binStep: 0.05,
+            },
+            api_url: 'http://host.docker.internal:3000',
+            enabled: true,
+          },
+        },
+      },
+    ];
+
+    const firstStep = getFirstQCStep(processingConfig);
+    expect(firstStep).toEqual('CellSizeDistributionFilterMap');
+  });
+
+  it('returns the default first step and full state machine if the config has no updates', () => {
+    const processingConfig = [];
+
+    const firstStep = getFirstQCStep(processingConfig);
+    expect(firstStep).toEqual('ClassifierFilterMap');
+
+    const qcSteps = getQCStepsToRun(firstStep);
+    const stateMachine = buildQCPipelineSteps(qcSteps);
+    expect(stateMachine).toMatchSnapshot();
+  });
+});
+
 describe('non-tests to document the State Machines', () => {
   let context = getContext('qc');
   it('- qc local development', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('development');
+    const qcPipelineSkeleton = getQcPipelineSkeleton('development', []);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
   it('- qc staging', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('staging');
+    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', []);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
   it('- qc production', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('production');
+    const qcPipelineSkeleton = getQcPipelineSkeleton('production', []);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });

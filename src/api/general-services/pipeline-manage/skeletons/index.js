@@ -1,5 +1,27 @@
-const { qcPipelineSteps } = require('./qc-pipeline-skeleton');
+const { buildQCPipelineSteps, qcPipelineSteps } = require('./qc-pipeline-skeleton');
 const { gem2SPipelineSteps } = require('./gem2s-pipeline-skeleton');
+
+
+const filterToStepName = {
+  classifier: 'ClassifierFilterMap',
+  cellSizeDistribution: 'CellSizeDistributionFilterMap',
+  mitochondrialContent: 'MitochondrialContentFilterMap',
+  numGenesVsNumUmis: 'NumGenesVsNumUmisFilterMap',
+  doubletScores: 'DoubletScoresFilterMap',
+  dataIntegration: 'DataIntegration',
+  configureEmbedding: 'ConfigureEmbedding',
+};
+
+const stepNames = [
+  'ClassifierFilterMap',
+  'CellSizeDistributionFilterMap',
+  'MitochondrialContentFilterMap',
+  'NumGenesVsNumUmisFilterMap',
+  'DoubletScoresFilterMap',
+  'DataIntegration',
+  'ConfigureEmbedding',
+];
+
 
 const createLocalPipeline = (nextStep) => ({
   DeleteCompletedPipelineWorker: {
@@ -27,10 +49,9 @@ const assignPipelineToPod = (nextStep) => ({
   },
 });
 
-
 const getSkeletonStepNames = (skeleton) => {
   const steps = Object.keys(skeleton);
-  // we need to add too the substep keys
+  // we need to add the substep keys too
   Object.values(skeleton).forEach((step) => {
     if ('Iterator' in step) {
       steps.push(...Object.keys(step.Iterator.States));
@@ -58,7 +79,7 @@ const buildInitialSteps = (clusterEnv, nextStep) => {
   return assignPipelineToPod(nextStep);
 };
 
-const firstStep = (clusterEnv) => {
+const getStateMachineFirstStep = (clusterEnv) => {
   if (clusterEnv === 'development') {
     return 'DeleteCompletedPipelineWorker';
   }
@@ -66,23 +87,54 @@ const firstStep = (clusterEnv) => {
   return 'RequestPod';
 };
 
+// getFirstQCStep returns which is the first step of the QC to be run
+// processingConfigUpdates is not ordered
+const getFirstQCStep = (processingConfigUpdates) => {
+  let earliestStep = 'ClassifierFilterMap'; // normally first step
+  let earliestIdx = 9999;
+  processingConfigUpdates.forEach(({ name }) => {
+    const stepName = filterToStepName[name];
+    const idx = stepNames.indexOf(stepName);
+    if (idx < earliestIdx) {
+      earliestIdx = idx;
+      earliestStep = stepName;
+    }
+  });
+  return earliestStep;
+};
+
+const getQCStepsToRun = (first) => {
+  const firstIdx = stepNames.indexOf(first);
+  return stepNames.slice(firstIdx);
+};
+
 const getGem2sPipelineSkeleton = (clusterEnv) => ({
   Comment: `Gem2s Pipeline for clusterEnv '${clusterEnv}'`,
-  StartAt: firstStep(clusterEnv),
+  StartAt: getStateMachineFirstStep(clusterEnv),
   States: {
     ...buildInitialSteps(clusterEnv, 'DownloadGem'),
     ...gem2SPipelineSteps,
   },
 });
 
-const getQcPipelineSkeleton = (clusterEnv) => ({
-  Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
-  StartAt: firstStep(clusterEnv),
-  States: {
-    ...buildInitialSteps(clusterEnv, 'ClassifierFilterMap'),
-    ...qcPipelineSteps,
-  },
-});
+const getQcPipelineSkeleton = (clusterEnv, processingConfigUpdates) => {
+  const firstStep = getFirstQCStep(processingConfigUpdates);
+  const qcSteps = getQCStepsToRun(firstStep);
+  return {
+    Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
+    StartAt: getStateMachineFirstStep(clusterEnv),
+    States: {
+      ...buildInitialSteps(clusterEnv, firstStep),
+      ...buildQCPipelineSteps(qcSteps),
+    },
+  };
+};
 
 
-module.exports = { getPipelineStepNames, getGem2sPipelineSkeleton, getQcPipelineSkeleton };
+module.exports = {
+  getFirstQCStep,
+  getQCStepsToRun,
+  getPipelineStepNames,
+  getGem2sPipelineSkeleton,
+  getQcPipelineSkeleton,
+};
