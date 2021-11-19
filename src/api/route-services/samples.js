@@ -241,7 +241,7 @@ class SamplesService {
     const s3 = new AWS.S3({
       apiVersion: '2006-03-01',
       signatureVersion: 'v4',
-      region: 'us-east-1',
+      region: 'eu-west-1',
     });
 
     const params = {
