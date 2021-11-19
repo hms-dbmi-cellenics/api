@@ -71,12 +71,13 @@ const getShallowAttrsUpdateParams = (body) => {
     projectId: body.projectUuid || body.projectId,
     description: body.description,
     sampleIds: body.sampleIds,
+    notifyByEmail: body.notifyByEmail,
   };
 
   const objectToMarshall = {};
   const updateExpressionList = Object.entries(dataToUpdate).reduce(
     (acc, [key, val]) => {
-      if (!val) {
+      if (!val && val !== false) {
         return acc;
       }
 
@@ -86,7 +87,6 @@ const getShallowAttrsUpdateParams = (body) => {
       return [...acc, `${key} = ${expressionKey}`];
     }, [],
   );
-
   const attributeValues = convertToDynamoDbRecord(objectToMarshall);
 
   return { updateExpressionList, attributeValues };

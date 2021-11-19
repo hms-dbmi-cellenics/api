@@ -1,7 +1,6 @@
 const AWSXRay = require('aws-xray-sdk');
 const k8s = require('@kubernetes/client-node');
 const getLogger = require('../../utils/getLogger');
-const config = require('../../config');
 
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
@@ -17,7 +16,7 @@ module.exports = {
     logger.log(`[${reason}] received kubernetes event: ${message} ${name} in ${namespace}`);
 
     // remove only pods in your namespace and due to backoff errors
-    if (namespace === `pipeline-${config.sandboxId}` && reason === 'BackOff' && config.clusterEnv !== 'development') {
+    if ((namespace.match('^pipeline-.*') || namespace.match('^worker-.*')) && reason === 'BackOff') {
       try {
         const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
         logger.log(`removing pod ${name} in ${namespace}`);

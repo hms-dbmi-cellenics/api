@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`sending email works sends failure email 1`] = `
+Array [
+  Array [
+    Object {
+      "Destination": Object {
+        "ToAddresses": Array [
+          "johncena@gmail.com",
+        ],
+      },
+      "Message": Object {
+        "Body": Object {
+          "Html": Object {
+            "Charset": "UTF-8",
+            "Data": "
+        <html>
+        <head>
+        </head>
+        <body>
+            <h3>Hello John,</h3>
+            <p>Thanks for using Cellenics! <br/>
+              
+      Unfortunately, when trying to run the analysis the data processing failed for your experiment: <br/>
+      <a href=\\"scp.biomage.net/experiments/other-id/data-processing\\">scp.biomage.net/experiments/other-id/data-processing</a> <br/>
+      We are working hard to identify and fix the issue. We will let you know as soon as your data is ready to explore. <br/>
+      <br/><br/>
+                The Biomage Team 
+              <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>
+            <p/>
+        </body>
+      </html>",
+          },
+          "Text": Object {
+            "Charset": "UTF-8",
+            "Data": "
+        <html>
+        <head>
+        </head>
+        <body>
+            <h3>Hello John,</h3>
+            <p>Thanks for using Cellenics! <br/>
+              
+      Unfortunately, when trying to run the analysis the data processing failed for your experiment: <br/>
+      <a href=\\"scp.biomage.net/experiments/other-id/data-processing\\">scp.biomage.net/experiments/other-id/data-processing</a> <br/>
+      We are working hard to identify and fix the issue. We will let you know as soon as your data is ready to explore. <br/>
+      <br/><br/>
+                The Biomage Team 
+              <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>
+            <p/>
+        </body>
+      </html>",
+          },
+        },
+        "Subject": Object {
+          "Charset": "UTF-8",
+          "Data": "Cellenics experiment status",
+        },
+      },
+      "Source": "notification@biomage.net",
+    },
+    [Function],
+  ],
+]
+`;
+
+exports[`sending email works sends success email 1`] = `
+Array [
+  Array [
+    Object {
+      "Destination": Object {
+        "ToAddresses": Array [
+          "johncena@gmail.com",
+        ],
+      },
+      "Message": Object {
+        "Body": Object {
+          "Html": Object {
+            "Charset": "UTF-8",
+            "Data": "
+        <html>
+        <head>
+        </head>
+        <body>
+            <h3>Hello John,</h3>
+            <p>Thanks for using Cellenics! <br/>
+              
+      The data processing pipeline has completed successfully and your data is now ready to explore:<br/>
+      <a href=\\"scp.biomage.net/experiments/other-id/data-processing\\">scp.biomage.net/experiments/other-id/data-processing</a>
+      Happy analysing! <br/><br/><br/>
+                The Biomage Team 
+              <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>
+            <p/>
+        </body>
+      </html>",
+          },
+          "Text": Object {
+            "Charset": "UTF-8",
+            "Data": "
+        <html>
+        <head>
+        </head>
+        <body>
+            <h3>Hello John,</h3>
+            <p>Thanks for using Cellenics! <br/>
+              
+      The data processing pipeline has completed successfully and your data is now ready to explore:<br/>
+      <a href=\\"scp.biomage.net/experiments/other-id/data-processing\\">scp.biomage.net/experiments/other-id/data-processing</a>
+      Happy analysing! <br/><br/><br/>
+                The Biomage Team 
+              <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>
+            <p/>
+        </body>
+      </html>",
+          },
+        },
+        "Subject": Object {
+          "Charset": "UTF-8",
+          "Data": "Cellenics experiment status",
+        },
+      },
+      "Source": "notification@biomage.net",
+    },
+    [Function],
+  ],
+]
+`;
