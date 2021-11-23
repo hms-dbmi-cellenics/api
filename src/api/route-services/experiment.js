@@ -78,10 +78,10 @@ class ExperimentService {
     const rbacCanWrite = Array.from(new Set([config.adminArn, user.sub]));
 
     const marshalledData = convertToDynamoDbRecord({
-      ':experimentName': body.name,
+      ':experimentName': body.experimentName,
       ':createdDate': body.createdDate,
       ':lastViewed': body.lastViewed,
-      ':projectId': body.projectUuid,
+      ':projectId': body.projectId,
       ':description': body.description,
       ':input': body.input,
       ':organism': body.organism,
