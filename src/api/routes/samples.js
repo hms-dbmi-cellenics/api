@@ -23,9 +23,9 @@ module.exports = {
   'samples#update': [
     expressAuthorizationMiddleware,
     (req, res, next) => {
-      const { body, params: { projectUuid } } = req;
+      const { body, params: { projectUuid, experimentId } } = req;
 
-      samplesService.updateSamples(projectUuid, body)
+      samplesService.updateSamples(projectUuid, experimentId, body)
         .then((data) => res.json(data))
         .catch(next);
     }],

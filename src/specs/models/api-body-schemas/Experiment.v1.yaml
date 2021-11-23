@@ -1,6 +1,16 @@
 title: Experiment
 description: 'An experiment object as stored in dynamodb'
-type: object
-properties:
-  experimentId:
-    type: string
+$ref: '../experiment-bodies/ExperimentAttrs.v1.yaml'
+
+required:
+  - experimentId
+  - experimentName
+  - projectId
+  - description
+  - createdDate
+  - lastViewed
+  - meta
+  - processingConfig
+  - sampleIds
+
+additionalProperties: false

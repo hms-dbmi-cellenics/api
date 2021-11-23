@@ -1,73 +1,48 @@
-const { NotFoundError, OK } = require('../../../utils/responses');
+const { OK } = require('../../../utils/responses');
+const MockDataFactory = require('./MockDataFactory');
 
-const mockCreateProject = jest.fn((projectUuid, body) => new Promise((resolve, reject) => {
-  if (!projectUuid
-    || !body
-    || !body.uuid
-  ) {
-    const err = new Error('Invalid body');
-    err.status = 400;
-
-    reject(err);
-  }
-
-  resolve(OK());
-}));
+const mockCreateProject = jest.fn(() => (
+  new Promise((resolve) => {
+    resolve(OK());
+  })
+));
 
 const mockGetProject = jest.fn((projectUuid) => new Promise((resolve) => {
-  if (projectUuid === 'unknown-project') {
-    throw new NotFoundError('Project not found');
-  }
+  const dataFactory = new MockDataFactory({ projectId: projectUuid });
 
-  resolve(OK());
+  resolve(dataFactory.getProject());
 }));
 
-const mockGetProjects = jest.fn(() => new Promise((resolve) => {
-  const projects = [
-    {
-      name: 'Project 1',
-      uuid: 'project-1',
-    },
-    {
-      name: 'Project 2',
-      uuid: 'project-2',
-    },
-    {
-      name: 'Project 3',
-      uuid: 'project-3',
-    }];
+const mockGetProjects = jest.fn(() => (
+  new Promise((resolve) => {
+    const dataFactory = new MockDataFactory();
+    const projects = [dataFactory.getProject()];
 
-  resolve(projects);
-}));
+    resolve(projects);
+  })
+));
 
-const mockGetExperiments = jest.fn((projectUuid) => new Promise((resolve) => {
-  if (projectUuid === 'unknown-project') {
-    throw new NotFoundError('Project not found');
-  }
+const mockGetExperiments = jest.fn((projectUuid) => (
+  new Promise((resolve) => {
+    const dataFactory = new MockDataFactory({ projectId: projectUuid });
 
-  resolve([
-    {
-      experimentId: 'mock-experiment',
-      name: 'someExperiments',
-    },
-  ]);
-}));
+    resolve([
+      dataFactory.getExperiment(),
+    ]);
+  })
+));
 
-const mockUpdateProject = jest.fn((projectUuid) => new Promise((resolve) => {
-  if (projectUuid === 'unknown-project') {
-    throw new NotFoundError('Project not found');
-  }
+const mockUpdateProject = jest.fn(() => (
+  new Promise((resolve) => {
+    resolve(OK());
+  })
+));
 
-  resolve(OK());
-}));
-
-const mockDeleteProject = jest.fn((projectUuid) => new Promise((resolve) => {
-  if (projectUuid === 'unknown-project') {
-    throw new NotFoundError('Project not found');
-  }
-
-  resolve(OK());
-}));
+const mockDeleteProject = jest.fn(() => (
+  new Promise((resolve) => {
+    resolve(OK());
+  })
+));
 
 const mock = jest.fn().mockImplementation(() => ({
   createProject: mockCreateProject,

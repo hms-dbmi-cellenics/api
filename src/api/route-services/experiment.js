@@ -37,7 +37,7 @@ class ExperimentService {
     logger.log(`GET experiment ${experimentId} data`);
 
     const data = await getExperimentAttributes(this.experimentsTableName, experimentId,
-      ['projectId', 'meta', 'experimentId', 'experimentName', 'sampleIds']);
+      ['projectId', 'meta', 'experimentId', 'experimentName', 'sampleIds', 'notifyByEmail']);
     return data;
   }
 
@@ -78,10 +78,10 @@ class ExperimentService {
     const rbacCanWrite = Array.from(new Set([config.adminArn, user.sub]));
 
     const marshalledData = convertToDynamoDbRecord({
-      ':experimentName': body.name,
+      ':experimentName': body.experimentName,
       ':createdDate': body.createdDate,
       ':lastViewed': body.lastViewed,
-      ':projectId': body.projectUuid,
+      ':projectId': body.projectId,
       ':description': body.description,
       ':input': body.input,
       ':organism': body.organism,
@@ -89,6 +89,7 @@ class ExperimentService {
       ':meta': body.meta || {},
       ':processingConfig': {},
       ':sampleIds': body.sampleIds,
+      ':notifyByEmail': true,
     });
 
     const params = {
@@ -102,7 +103,8 @@ class ExperimentService {
                           meta = :meta,
                           processingConfig = :processingConfig,
                           sampleIds = :sampleIds,
-                          rbac_can_write = :rbac_can_write`,
+                          rbac_can_write = :rbac_can_write,
+                          notifyByEmail = :notifyByEmail`,
       ExpressionAttributeValues: marshalledData,
       ConditionExpression: 'attribute_not_exists(#experimentId)',
       ExpressionAttributeNames: { '#experimentId': 'experimentId' },
@@ -127,9 +129,7 @@ class ExperimentService {
 
   async updateExperiment(experimentId, body) {
     logger.log(`UPDATE experiment ${experimentId} in dynamodb`);
-
     const dynamodb = createDynamoDbInstance();
-
     const {
       updateExpressionList: deepPropsUpdateExprList,
       attributeValues: deepPropsAttrValues,
@@ -143,7 +143,6 @@ class ExperimentService {
 
     const updateExpression = [...deepPropsUpdateExprList, ...shallowPropsUpdateExprList];
     const expressionAttributeValues = _.merge(deepPropsAttrValues, shallowPropsAttrValues);
-
     const params = {
       TableName: this.experimentsTableName,
       Key: convertToDynamoDbRecord({ experimentId }),
