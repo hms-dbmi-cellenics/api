@@ -140,14 +140,14 @@ describe('helper functions for skeletons', () => {
       },
     ];
 
-    const firstStep = getFirstQCStep(processingConfig);
+    const firstStep = getFirstQCStep(fake.EXPERIMENT_ID, processingConfig);
     expect(firstStep).toEqual('CellSizeDistributionFilterMap');
   });
 
   it('returns the default first step and full state machine if the config has no updates', () => {
     const processingConfig = [];
 
-    const firstStep = getFirstQCStep(processingConfig);
+    const firstStep = getFirstQCStep(fake.EXPERIMENT_ID, processingConfig);
     expect(firstStep).toEqual('ClassifierFilterMap');
 
     const qcSteps = getQCStepsToRun(firstStep);
