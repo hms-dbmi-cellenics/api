@@ -106,8 +106,6 @@ describe('test for pipeline services', () => {
   };
 
   it('Create QC pipeline works', async () => {
-    AWSMock.setSDKInstance(AWS);
-
     const describeClusterSpy = jest.fn((x) => x);
     AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
       describeClusterSpy(params);
@@ -161,6 +159,11 @@ describe('test for pipeline services', () => {
     AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
       callback(null, mockCluster);
     });
+
+    AWSMock.mock('S3', 'headObject', (params, callback) => {
+      callback(null, 'ex nihilo nihil fit');
+    });
+
 
     const createStateMachineSpy = jest.fn(
       // eslint-disable-next-line consistent-return
