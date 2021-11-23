@@ -1,3 +1,4 @@
+const fake = require('../../test-utils/constants');
 const { buildStateMachineDefinition } = require('../../../src/api/general-services/pipeline-manage');
 const {
   getFirstQCStep, getQCStepsToRun, getGem2sPipelineSkeleton, getQcPipelineSkeleton,
@@ -158,19 +159,19 @@ describe('helper functions for skeletons', () => {
 describe('non-tests to document the State Machines', () => {
   let context = getContext('qc');
   it('- qc local development', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('development', []);
+    const qcPipelineSkeleton = getQcPipelineSkeleton('development', fake.EXPERIMENT_ID, []);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
   it('- qc staging', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', []);
+    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', fake.EXPERIMENT_ID, []);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
   it('- qc production', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('production', []);
+    const qcPipelineSkeleton = getQcPipelineSkeleton('production', fake.EXPERIMENT_ID, []);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });

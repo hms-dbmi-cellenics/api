@@ -233,7 +233,8 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     authJWT,
   };
 
-  const qcPipelineSkeleton = getQcPipelineSkeleton(config.clusterEnv, processingConfigUpdates);
+  // eslint-disable-next-line max-len
+  const qcPipelineSkeleton = getQcPipelineSkeleton(config.clusterEnv, experimentId, processingConfigUpdates);
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
