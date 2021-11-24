@@ -114,15 +114,16 @@ const getStateMachineFirstStep = (clusterEnv) => {
 // checks whether an experiment has available filtered cell IDs in S3
 // meaning it can be started from any step in the QC pipeline without
 // needing to re-run previous steps
-const hasFilteredCellIdsAvailable = (experimentId) => {
+const hasFilteredCellIdsAvailable = async (experimentId) => {
   // first check if the biomage-filtered-cells-development exists
   const bucket = `biomage-filtered-cells-${config.clusterEnv}`;
-  return fileExists(bucket, experimentId);
+  const exists = await fileExists(bucket, experimentId);
+  return exists;
 };
 
 // getFirstQCStep returns which is the first step of the QC to be run
 // processingConfigUpdates is not ordered
-const getFirstQCStep = (experimentId, processingConfigUpdates) => {
+const getFirstQCStep = async (experimentId, processingConfigUpdates) => {
   let earliestStep = 'ClassifierFilterMap'; // normally first step
   let earliestIdx = 9999;
   processingConfigUpdates.forEach(({ name }) => {
@@ -139,8 +140,12 @@ const getFirstQCStep = (experimentId, processingConfigUpdates) => {
   // we check this after computing which would be the first step because if we
   // are going to run the pipeline from the first step then we avoid having to
   // make a more costly call to S3 to check if the file exists
-  if (earliestStep !== stepNames[0] && hasFilteredCellIdsAvailable(experimentId)) {
-    return earliestStep;
+  if (earliestStep !== stepNames[0]) {
+    const hasCellIds = await hasFilteredCellIdsAvailable(experimentId);
+
+    if (hasCellIds) {
+      return earliestStep;
+    }
   }
   return stepNames[0];
 };
@@ -159,8 +164,8 @@ const getGem2sPipelineSkeleton = (clusterEnv) => ({
   },
 });
 
-const getQcPipelineSkeleton = (clusterEnv, experimentId, processingConfigUpdates) => {
-  const firstStep = getFirstQCStep(experimentId, processingConfigUpdates);
+const getQcPipelineSkeleton = async (clusterEnv, experimentId, processingConfigUpdates) => {
+  const firstStep = await getFirstQCStep(experimentId, processingConfigUpdates);
   const qcSteps = getQCStepsToRun(firstStep);
   return {
     Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,

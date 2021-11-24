@@ -43,7 +43,7 @@ const getContext = (processName) => ({
 
 
 describe('helper functions for skeletons', () => {
-  it('returns the correct first step given a list', () => {
+  it('returns the correct first step given a list', async () => {
     const processingConfig = [
       {
         name: 'numGenesVsNumUmis',
@@ -140,14 +140,14 @@ describe('helper functions for skeletons', () => {
       },
     ];
 
-    const firstStep = getFirstQCStep(fake.EXPERIMENT_ID, processingConfig);
+    const firstStep = await getFirstQCStep(fake.EXPERIMENT_ID, processingConfig);
     expect(firstStep).toEqual('CellSizeDistributionFilterMap');
   });
 
-  it('returns the default first step and full state machine if the config has no updates', () => {
+  it('returns the default first step and full state machine if the config has no updates', async () => {
     const processingConfig = [];
 
-    const firstStep = getFirstQCStep(fake.EXPERIMENT_ID, processingConfig);
+    const firstStep = await getFirstQCStep(fake.EXPERIMENT_ID, processingConfig);
     expect(firstStep).toEqual('ClassifierFilterMap');
 
     const qcSteps = getQCStepsToRun(firstStep);
@@ -158,20 +158,20 @@ describe('helper functions for skeletons', () => {
 
 describe('non-tests to document the State Machines', () => {
   let context = getContext('qc');
-  it('- qc local development', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('development', fake.EXPERIMENT_ID, []);
+  it('- qc local development', async () => {
+    const qcPipelineSkeleton = await getQcPipelineSkeleton('development', fake.EXPERIMENT_ID, []);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
-  it('- qc staging', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', fake.EXPERIMENT_ID, []);
+  it('- qc staging', async () => {
+    const qcPipelineSkeleton = await getQcPipelineSkeleton('staging', fake.EXPERIMENT_ID, []);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
-  it('- qc production', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('production', fake.EXPERIMENT_ID, []);
+  it('- qc production', async () => {
+    const qcPipelineSkeleton = await getQcPipelineSkeleton('production', fake.EXPERIMENT_ID, []);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
