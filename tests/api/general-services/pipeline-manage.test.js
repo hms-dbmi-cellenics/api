@@ -1,6 +1,14 @@
 const AWSMock = require('aws-sdk-mock');
 const _ = require('lodash');
 const AWS = require('../../../src/utils/requireAWS');
+const { getQcPipelineStepNames } = require('../../../src/api/general-services/pipeline-manage/skeletons');
+const { getQcStepsToRun } = require('../../../src/api/general-services/pipeline-manage/qc-helpers');
+
+const mockStepNames = getQcPipelineStepNames();
+
+jest.mock('../../../src/api/general-services/pipeline-manage/qc-helpers', () => ({
+  getQcStepsToRun: jest.fn(() => mockStepNames),
+}));
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
@@ -159,11 +167,6 @@ describe('test for pipeline services', () => {
     AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
       callback(null, mockCluster);
     });
-
-    AWSMock.mock('S3', 'headObject', (params, callback) => {
-      callback(null, 'ex nihilo nihil fit');
-    });
-
 
     const createStateMachineSpy = jest.fn(
       // eslint-disable-next-line consistent-return

@@ -1,14 +1,14 @@
-const fake = require('../../test-utils/constants');
 const { buildStateMachineDefinition } = require('../../../src/api/general-services/pipeline-manage');
-const {
-  getFirstQCStep, getQCStepsToRun, getGem2sPipelineSkeleton, getQcPipelineSkeleton,
-} = require('../../../src/api/general-services/pipeline-manage/skeletons');
-const { buildQCPipelineSteps } = require('../../../src/api/general-services/pipeline-manage/skeletons/qc-pipeline-skeleton');
+const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons');
+const { getQcPipelineStepNames } = require('../../../src/api/general-services/pipeline-manage/skeletons');
+
+const qcStepNames = getQcPipelineStepNames();
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
   randomBytes: () => Buffer.from('asdfg'),
 }));
+
 
 const snapshotPlainJsonSerializer = {
   // eslint-disable-next-line no-unused-vars
@@ -42,136 +42,22 @@ const getContext = (processName) => ({
 });
 
 
-describe('helper functions for skeletons', () => {
-  it('returns the correct first step given a list', async () => {
-    const processingConfig = [
-      {
-        name: 'numGenesVsNumUmis',
-        body: {
-          auto: true,
-          filterSettings: {
-            regressionType: 'linear',
-            regressionTypeSettings: {
-              linear: {
-                'p.level': 0.001,
-              },
-              spline: {
-                'p.level': 0.001,
-              },
-            },
-          },
-          enabled: true,
-          '8e6ffc70-14c1-425f-b1be-cef9656a55a5': {
-            auto: true,
-            filterSettings: {
-              regressionType: 'linear',
-              regressionTypeSettings: {
-                linear: {
-                  'p.level': 0.0002898551,
-                },
-                spline: {
-                  'p.level': 0.001,
-                },
-              },
-            },
-            defaultFilterSettings: {
-              regressionType: 'linear',
-              regressionTypeSettings: {
-                linear: {
-                  'p.level': 0.0002898551,
-                },
-                spline: {
-                  'p.level': 0.001,
-                },
-              },
-            },
-            api_url: 'http://host.docker.internal:3000',
-            enabled: true,
-          },
-        },
-      },
-      {
-        name: 'cellSizeDistribution',
-        body: {
-          auto: true,
-          filterSettings: {
-            minCellSize: 1080,
-            binStep: 200,
-          },
-          enabled: false,
-          '8e6ffc70-14c1-425f-b1be-cef9656a55a5': {
-            auto: true,
-            filterSettings: {
-              minCellSize: 1136,
-              binStep: 200,
-            },
-            defaultFilterSettings: {
-              minCellSize: 1136,
-              binStep: 200,
-            },
-            api_url: 'http://host.docker.internal:3000',
-            enabled: false,
-          },
-        },
-      },
-      {
-        name: 'doubletScores',
-        body: {
-          auto: true,
-          filterSettings: {
-            probabilityThreshold: 0.5,
-            binStep: 0.05,
-          },
-          enabled: true,
-          '8e6ffc70-14c1-425f-b1be-cef9656a55a5': {
-            auto: true,
-            filterSettings: {
-              probabilityThreshold: 0.6506245,
-              binStep: 0.05,
-            },
-            defaultFilterSettings: {
-              probabilityThreshold: 0.6506245,
-              binStep: 0.05,
-            },
-            api_url: 'http://host.docker.internal:3000',
-            enabled: true,
-          },
-        },
-      },
-    ];
-
-    const firstStep = await getFirstQCStep(fake.EXPERIMENT_ID, processingConfig);
-    expect(firstStep).toEqual('CellSizeDistributionFilterMap');
-  });
-
-  it('returns the default first step and full state machine if the config has no updates', async () => {
-    const processingConfig = [];
-
-    const firstStep = await getFirstQCStep(fake.EXPERIMENT_ID, processingConfig);
-    expect(firstStep).toEqual('ClassifierFilterMap');
-
-    const qcSteps = getQCStepsToRun(firstStep);
-    const stateMachine = buildQCPipelineSteps(qcSteps);
-    expect(stateMachine).toMatchSnapshot();
-  });
-});
-
 describe('non-tests to document the State Machines', () => {
   let context = getContext('qc');
-  it('- qc local development', async () => {
-    const qcPipelineSkeleton = await getQcPipelineSkeleton('development', fake.EXPERIMENT_ID, []);
+  it('- qc local development', () => {
+    const qcPipelineSkeleton = getQcPipelineSkeleton('development', qcStepNames);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
-  it('- qc staging', async () => {
-    const qcPipelineSkeleton = await getQcPipelineSkeleton('staging', fake.EXPERIMENT_ID, []);
+  it('- qc staging', () => {
+    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', qcStepNames);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
-  it('- qc production', async () => {
-    const qcPipelineSkeleton = await getQcPipelineSkeleton('production', fake.EXPERIMENT_ID, []);
+  it('- qc production', () => {
+    const qcPipelineSkeleton = getQcPipelineSkeleton('production', qcStepNames);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
