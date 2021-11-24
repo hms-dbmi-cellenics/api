@@ -1,7 +1,8 @@
 const { buildQCPipelineSteps, qcPipelineSteps } = require('./qc-pipeline-skeleton');
 const { gem2SPipelineSteps } = require('./gem2s-pipeline-skeleton');
-const { fileExists } = require('../../../../utils/aws/s3');
+// const { fileExists } = require('../../../../utils/aws/s3');
 const config = require('../../../../config');
+const AWS = require('../../../../utils/requireAWS');
 
 
 const filterToStepName = {
@@ -24,6 +25,27 @@ const stepNames = [
   'ConfigureEmbedding',
 ];
 
+const fileExists = async (bucket, key) => {
+  const s3 = new AWS.S3();
+
+  // Using async/await (untested)
+  const params = {
+    Bucket: bucket,
+    Key: key,
+  };
+  try {
+    // ignore the result, just want to know if it exists (it will raise an exception if it doesn't)
+    const headCode = await s3.headObject(params).promise();
+    console.log(headCode);
+  } catch (err) {
+    if (err.code === 'NotFound') {
+      return false;
+    }
+    // if there's any other exception, raise it
+    throw err;
+  }
+  return true;
+};
 
 const createLocalPipeline = (nextStep) => ({
   DeleteCompletedPipelineWorker: {
