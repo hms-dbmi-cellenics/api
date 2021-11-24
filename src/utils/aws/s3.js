@@ -6,12 +6,11 @@ const fileExists = async (bucket, key) => {
   // Using async/await (untested)
   const params = {
     Bucket: bucket,
-    Key: key,
+    Prefix: key,
   };
   try {
     // ignore the result, just want to know if it exists (it will raise an exception if it doesn't)
-    const headCode = await s3.headObject(params).promise();
-    console.log(headCode);
+    await s3.listObjects(params).promise();
   } catch (err) {
     if (err.code === 'NotFound') {
       return false;
