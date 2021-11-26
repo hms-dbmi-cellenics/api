@@ -1,7 +1,5 @@
 const { buildQCPipelineSteps, qcPipelineSteps } = require('./qc-pipeline-skeleton');
 const { gem2SPipelineSteps } = require('./gem2s-pipeline-skeleton');
-// const { fileExists } = require('../../../../utils/aws/s3');
-// const config = require('../../../../config');
 
 
 const createLocalPipeline = (nextStep) => ({
@@ -82,7 +80,6 @@ const getGem2sPipelineSkeleton = (clusterEnv) => ({
   },
 });
 
-// const getQcPipelineSkeleton = (clusterEnv, experimentId, processingConfigUpdates) => {
 const getQcPipelineSkeleton = (clusterEnv, qcSteps) => ({
   Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
   StartAt: getStateMachineFirstStep(clusterEnv),

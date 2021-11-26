@@ -27,10 +27,8 @@ const stepNames = [
 // meaning it can be started from any step in the QC pipeline without
 // needing to re-run previous steps
 const hasFilteredCellIdsAvailable = async (experimentId) => {
-  // first check if the biomage-filtered-cells-development exists
   const bucket = `biomage-filtered-cells-${config.clusterEnv}`;
-  const exists = await fileExists(bucket, experimentId);
-  return exists;
+  return await fileExists(bucket, experimentId);
 };
 
 // getFirstQCStep returns which is the first step of the QC to be run
@@ -47,18 +45,21 @@ const getFirstQCStep = async (experimentId, processingConfigUpdates) => {
     }
   });
 
+  // if the earlist step to run is the first one, just return it without
+  // further checks
+  if (earliestStep === stepNames[0]) {
+    return earliestStep;
+  }
   // if the first step to run is not the first in the pipeline (stepNames[0])
   // then check if the experiment supports starting the pipeline from any step
   // we check this after computing which would be the first step because if we
   // are going to run the pipeline from the first step then we avoid having to
   // make a more costly call to S3 to check if the file exists
-  if (earliestStep !== stepNames[0]) {
-    const hasCellIds = await hasFilteredCellIdsAvailable(experimentId);
-
-    if (hasCellIds) {
-      return earliestStep;
-    }
+  const hasCellIds = await hasFilteredCellIdsAvailable(experimentId);
+  if (hasCellIds) {
+    return earliestStep;
   }
+
 
   return stepNames[0];
 };

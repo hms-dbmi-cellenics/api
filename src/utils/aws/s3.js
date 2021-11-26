@@ -15,9 +15,8 @@ const fileExists = async (bucket, prefix) => {
     if (err.code === 'NotFound') {
       return false;
     }
-    // // if there's any other exception, raise it
-    // throw err;
-    console.log(`error checking if file exists ${err}, returning false`);
+    // if there is an exception
+    console.log(`could not check whether ${bucket}/${prefix} exists: ${err}`);
     return false;
   }
   return true;

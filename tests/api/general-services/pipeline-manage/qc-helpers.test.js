@@ -1,7 +1,7 @@
 
 const { getQcStepsToRun } = require('../../../../src/api/general-services/pipeline-manage/qc-helpers');
+const { buildQCPipelineSteps } = require('../../../../src/api/general-services/pipeline-manage/skeletons/qc-pipeline-skeleton');
 const fake = require('../../../test-utils/constants');
-const { fileExists } = require('../../../../src/utils/aws/s3');
 
 jest.mock('../../../../src/utils/aws/s3', () => ({
   fileExists: jest.fn(() => true),
@@ -114,7 +114,7 @@ describe('helper functions for skeletons', () => {
 
     const qcSteps = await getQcStepsToRun(fake.EXPERIMENT_ID, processingConfig);
     expect(qcSteps[0]).toEqual('ClassifierFilterMap');
-    // const stateMachine = buildQCPipelineSteps(qcSteps);
-    // expect(stateMachine).toMatchSnapshot();
+    const stateMachine = buildQCPipelineSteps(qcSteps);
+    expect(stateMachine).toMatchSnapshot();
   });
 });
