@@ -99,17 +99,6 @@ jobs:
           # Add jitter to break up correlated events.
           on_retry_command: sleep $[($RANDOM % 10) + 5]s
 
-      - id: ensure-latest-commit-is-deployed
-        name: Ensure staged deployment has the latest commit
-        uses: nick-invision/retry@v2
-        with:
-          timeout_seconds: 10
-          max_attempts: 5
-          retry_on: error
-          command: kubectl get deploy ${{ steps.extract-staging.outputs.repo_name }}-${{ steps.extract-staging.outputs.sandbox }} --namespace ${{ steps.extract-staging.outputs.sandbox }} -o json | grep ${{ steps.extract-staging.outputs.github_sha }}
-          # Add jitter to break up correlated events.
-          on_retry_command: sleep $[($RANDOM % 20) + 180]s
-
       - id: run-integration-test
         name: Run integration tests
         uses: aurelien-baudet/workflow-dispatch@v2
@@ -118,4 +107,4 @@ jobs:
           repo: biomage-ltd/testing
           token: ${{ secrets.API_TOKEN_GITHUB }}
           ref: ${{ steps.extract-integration-test-ref.outputs.ref }}
-          inputs: '{ "environment": "staging", "ref": "${{ steps.extract-integration-test-ref.outputs.ref }}", "sandboxId": "${{ steps.extract-staging.outputs.sandbox }}" }'
+          inputs: '{ "environment": "staging", "ref": "${{ steps.extract-integration-test-ref.outputs.ref }}", "sandboxId": "${{ steps.extract-staging.outputs.sandbox }}", "image_sha" : "${{ steps.extract-staging.outputs.github_sha }}", "namespace": "${{ steps.extract-staging.outputs.repo_name }}-${{ steps.extract-staging.outputs.sandbox }}" }'
