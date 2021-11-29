@@ -64,6 +64,12 @@ jobs:
 
           echo "SHA of PR:"
           echo $GITHUB_SHA
+          echo "::set-output name=github_sha::$GITHUB_SHA"
+
+          REPO_NAME=$(echo $GITHUB_REPOSITORY | awk -F '/' '{print $2}')
+          echo "Repo name:"
+          echo $REPO_NAME
+          echo "::set-output name=repo_name::$REPO_NAME"
 
       - id: extract-integration-test-ref
         name: Get integration test ref
@@ -92,6 +98,17 @@ jobs:
           command: curl -f ${{ steps.extract-staging.outputs.url }}
           # Add jitter to break up correlated events.
           on_retry_command: sleep $[($RANDOM % 10) + 5]s
+
+      - id: ensure-latest-commit-is-deployed
+        name: Ensure staged deployment has the latest commit
+        uses: nick-invision/retry@v2
+        with:
+          timeout_seconds: 10
+          max_attempts: 5
+          retry_on: error
+          command: kubectl get deploy ${{ steps.extract-staging.outputs.repo_name }}-${{ steps.extract-staging.outputs.sandbox }} --namespace ${{ steps.extract-staging.outputs.sandbox }} -o json | grep ${{ steps.extract-staging.outputs.github_sha }}
+          # Add jitter to break up correlated events.
+          on_retry_command: sleep $[($RANDOM % 20) + 180]s
 
       - id: run-integration-test
         name: Run integration tests
