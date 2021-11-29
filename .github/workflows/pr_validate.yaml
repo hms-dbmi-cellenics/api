@@ -97,7 +97,7 @@ jobs:
           retry_on: error
           command: curl -f ${{ steps.extract-staging.outputs.url }}
           # Add jitter to break up correlated events.
-          on_retry_command: sleep $[($RANDOM % 10) + 5]s
+          on_retry_command: sleep $(shuf -i 10-15 -n 1)s
 
       - id: run-integration-test
         name: Run integration tests
