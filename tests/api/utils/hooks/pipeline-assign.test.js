@@ -27,11 +27,11 @@ const mockPodsList = {
   },
 };
 
-const removeNamespacedPod = jest.fn();
+const deleteNamespacedPod = jest.fn();
 const patchNamespacedPod = jest.fn();
 const listNamespacedPod = jest.fn(() => mockPodsList);
 const mockApi = {
-  removeNamespacedPod,
+  deleteNamespacedPod,
   patchNamespacedPod,
   listNamespacedPod,
 };
@@ -51,7 +51,7 @@ describe('tests for the pipeline-assign service', () => {
     jest.clearAllMocks();
   });
 
-  it('calls delete for every assigned pod and patches the selected one', async () => {
+  it('calls delete & patch when there are already running pods', async () => {
     const message = buildPodRequest(fake.SANDBOX_ID,
       fake.EXPERIMENT_ID,
       constants.ASSIGN_POD_TO_PIPELINE,
@@ -61,18 +61,35 @@ describe('tests for the pipeline-assign service', () => {
     await pipelineAssign.assignPodToPipeline(message);
 
     expect(listNamespacedPod).toHaveBeenCalledTimes(2);
-    expect(removeNamespacedPod).toHaveBeenCalledTimes(2);
+    // check that sandbox ID, activity & selector are correctly passed into k8s
+    expect(listNamespacedPod).toHaveBeenNthCalledWith(1,
+      expect.stringContaining(fake.SANDBOX_ID), null, null, null, null,
+      expect.stringContaining(fake.EXPERIMENT_ID));
+
+    expect(deleteNamespacedPod).toHaveBeenCalledTimes(2);
+    // check that pod name & sandbox ID are correctly passed into k8s
+    expect(deleteNamespacedPod).toHaveBeenNthCalledWith(1,
+      expect.stringContaining('pipeline-X1'),
+      expect.stringContaining(fake.SANDBOX_ID));
+
     expect(patchNamespacedPod).toHaveBeenCalledTimes(1);
+    // check that pod name & sandbox ID are correctly passed into k8s
+    expect(patchNamespacedPod).toHaveBeenNthCalledWith(1,
+      expect.stringContaining('pipeline-X1'),
+      expect.stringContaining(fake.SANDBOX_ID),
+      expect.anything(),
+      undefined, undefined, undefined, undefined,
+      expect.anything());
   });
 
 
   it('ignores message because it is not a pod request', async () => {
-    const message = {};
+    const message = { input: {} };
 
     await pipelineAssign.assignPodToPipeline(message);
 
     expect(listNamespacedPod).toHaveBeenCalledTimes(0);
-    expect(removeNamespacedPod).toHaveBeenCalledTimes(0);
+    expect(deleteNamespacedPod).toHaveBeenCalledTimes(0);
     expect(patchNamespacedPod).toHaveBeenCalledTimes(0);
   });
 

@@ -3,12 +3,13 @@ const validateRequest = require('../../utils/schema-validator');
 const AWS = require('../../utils/requireAWS');
 const getLogger = require('../../utils/getLogger');
 const { assignPodToPipeline } = require('../../utils/hooks/pipeline-assign');
+const { cleanupPods } = require('../../utils/hooks/pod-cleanup');
 const constants = require('../general-services/pipeline-manage/constants');
 const getPipelineStatus = require('../general-services/pipeline-status');
-
 const ExperimentService = require('./experiment');
 const PlotsTablesService = require('./plots-tables');
 const PipelineHook = require('../../utils/hooks/hookRunner');
+const sendNotification = require('../../utils/hooks/send-notification');
 
 const plotsTableService = new PlotsTablesService();
 const experimentService = new ExperimentService();
@@ -18,6 +19,8 @@ const logger = getLogger();
 const pipelineHook = new PipelineHook();
 
 pipelineHook.register(constants.ASSIGN_POD_TO_PIPELINE, [assignPodToPipeline]);
+pipelineHook.registerAll([sendNotification]);
+pipelineHook.register('configureEmbedding', [cleanupPods]);
 
 class PipelineService {
   static async getS3Output(message) {
@@ -106,19 +109,16 @@ class PipelineService {
     if (output !== null) {
       response.output = output;
     }
-
     if (error) {
       logger.log(`Error in ${constants.QC_PROCESS_NAME} received`);
       AWSXRay.getSegment().addError(error);
     }
-
     logger.log('Sending to all clients subscribed to experiment', experimentId);
     io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
   }
 
   static async qcResponse(io, message) {
     AWSXRay.getSegment().addMetadata('message', message);
-
     await validateRequest(message, 'PipelineResponse.v1.yaml');
 
     await pipelineHook.run(message);
@@ -135,7 +135,6 @@ class PipelineService {
       await this.updatePlotData(taskName, experimentId, output);
       await this.updateProcessingConfig(taskName, experimentId, output, sampleUuid);
     }
-
     // we want to send the update to the subscribed both in successful and error case
     await this.sendUpdateToSubscribed(experimentId, message, output, error, io);
   }

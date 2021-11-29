@@ -2,7 +2,7 @@ const deleteCompletedJobs = require('./delete-complete-jobs');
 const createNewStep = require('./create-new-step');
 const createNewJobIfNotExist = require('./create-new-job-if-not-exist');
 const {
-  getRunningPods, deleteRunningPods, assignPodToPipeline, waitForPod,
+  requestPod, waitForPod,
 } = require('./assign-pod-to-pipeline');
 
 const constructPipelineStep = (context, step) => {
@@ -11,24 +11,17 @@ const constructPipelineStep = (context, step) => {
   switch (stepType) {
     // Local steps
     case 'delete-completed-jobs': {
-      return deleteCompletedJobs(context, step, args);
+      return deleteCompletedJobs(context, step);
     }
     case 'create-new-job-if-not-exist': {
-      return createNewJobIfNotExist(context, step, args);
+      return createNewJobIfNotExist(context, step);
     }
-
     // Remote (aws) steps
-    case 'get-running-pods': {
-      return getRunningPods(context, step, args);
-    }
-    case 'delete-running-pods': {
-      return deleteRunningPods(context, step, args);
-    }
-    case 'assign-pipeline-to-pod': {
-      return assignPodToPipeline(context, step, args);
+    case 'request-pod': {
+      return requestPod(context, step);
     }
     case 'wait-for-pod': {
-      return waitForPod(context, step, args);
+      return waitForPod(context, step);
     }
     // used both locally and in aws
     case 'create-new-step': {

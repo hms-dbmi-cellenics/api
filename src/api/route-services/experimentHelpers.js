@@ -64,19 +64,20 @@ const getDeepAttrsUpdateParams = (body) => {
  */
 const getShallowAttrsUpdateParams = (body) => {
   const dataToUpdate = {
-    experimentName: body.name || body.experimentName,
+    experimentName: body.experimentName,
     apiVersion: body.apiVersion,
     createdDate: body.createdDate,
     lastViewed: body.lastViewed,
-    projectId: body.projectUuid || body.projectId,
+    projectId: body.projectId,
     description: body.description,
     sampleIds: body.sampleIds,
+    notifyByEmail: body.notifyByEmail,
   };
 
   const objectToMarshall = {};
   const updateExpressionList = Object.entries(dataToUpdate).reduce(
     (acc, [key, val]) => {
-      if (!val) {
+      if (!val && val !== false) {
         return acc;
       }
 
@@ -86,7 +87,6 @@ const getShallowAttrsUpdateParams = (body) => {
       return [...acc, `${key} = ${expressionKey}`];
     }, [],
   );
-
   const attributeValues = convertToDynamoDbRecord(objectToMarshall);
 
   return { updateExpressionList, attributeValues };

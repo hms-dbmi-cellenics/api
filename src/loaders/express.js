@@ -113,7 +113,14 @@ module.exports = async (app) => {
   app.use(OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
     validateRequests: true,
-    validateResponses: true,
+    validateResponses: {
+      onError: (error) => {
+        console.log('Response body fails validation: ', error);
+
+        AWSXRay.getSegment().addMetadata('openApiValidationError', JSON.stringify(error));
+        AWSXRay.getSegment().addAnnotation('openApiValidationFailed', true);
+      },
+    },
     operationHandlers: path.join(__dirname, '..', 'api'),
   }));
 
