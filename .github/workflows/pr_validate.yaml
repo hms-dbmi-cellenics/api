@@ -1,14 +1,14 @@
 name: Pull Request Workflow
-
 on:
   pull_request_review:
     types: [submitted]
   
-  # BEWARE: GitHub uses Microsoft-style line endings (CRLF)
-  # instead of Unix-style (LF) interally for things like PR text.
-  #
-  # You MUST check for `\r\n` as the line separator instead of `\n`
-  # in this workflow.
+# BEWARE: GitHub uses Microsoft-style line endings (CRLF)
+# instead of Unix-style (LF) interally for things like PR text.
+#
+# You MUST check for `\r\n` as the line separator instead of `\n`
+# in this workflow.
+jobs:
   check-pr-template:
     if: github.event.review.state == 'approved'
     name: Check pull request template
