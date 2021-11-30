@@ -1,10 +1,15 @@
 name: Pull Request Workflow
 on:
-  pull_request_review_comment:
-    types: [ created, edited ]
+  workflow_dispatch:
+    inputs:
+      body:
+        description: 'The body of the pull request'
+        required: true
+      head-ref:
+        description: 'The ref of the branch the PR is submitted for'
+        required: true
 jobs:
   
-
   # BEWARE: GitHub uses Microsoft-style line endings (CRLF)
   # instead of Unix-style (LF) interally for things like PR text.
   #
@@ -13,16 +18,10 @@ jobs:
   check-pr-template:
     name: Check pull request template
     runs-on: ubuntu-20.04
-    # concurrency: 
-    #   group: ${{ github.event.pull_request_review_comment.pull_request.head.ref }}
-    #   cancel-in-progress: true
+    concurrency: 
+      group: ${{ github.event.inputs.head_ref }}
+      cancel-in-progress: true
     steps:
-
-      - id: check-comment-runs-e2e
-        name: Check if comment runs e2e
-        run : |-
-          echo ${{ github.event.pull_request_review_comment.body }}
-
       - id: install
         name: Install requirements
         run: |-
@@ -39,7 +38,7 @@ jobs:
           echo "Now looking at regex result:"
 
           pcregrep -o1 -M "$REGEX" <<\EOF
-          ${{ github.event.pull_request_review_comment.pull_request.body }}
+          ${{ github.event.inputs.body }}
           EOF
 
       - id: extract-staging
@@ -52,12 +51,12 @@ jobs:
           echo "Now looking at regex result:"
 
           URL=$(pcregrep -o1 -M "$REGEX" <<\EOF
-          ${{ github.event.pull_request_review_comment.pull_request.body }}
+          ${{ github.event.inputs.body }}
           EOF
           )
 
           SANDBOX=$(pcregrep -o2 -M "$REGEX" <<\EOF
-          ${{ github.event.pull_request_review_comment.pull_request.body }}
+          ${{ github.event.inputs.body }}
           EOF
           )
 
@@ -70,7 +69,7 @@ jobs:
           echo "::set-output name=sandbox::$SANDBOX"
 
           echo "SHA of PR:"
-          echo $GITHUB_SHA
+          echo ${{ github.event.inputs.merge_commit_sha }}
           echo "::set-output name=github_sha::$GITHUB_SHA"
 
           REPO_NAME=$(echo $GITHUB_REPOSITORY | awk -F '/' '{print $2}')
@@ -88,7 +87,7 @@ jobs:
           echo "Now looking at regex result:"
 
           INTEGRATION_TEST_REF=$(pcregrep -o1 -M "$REGEX" <<\EOF
-          ${{ github.event.pull_request_review_comment.pull_request.body }}
+          ${{ github.event.inputs.body }}
           EOF
           )
 
