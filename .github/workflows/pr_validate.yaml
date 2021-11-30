@@ -14,7 +14,7 @@ jobs:
     name: Check pull request template
     runs-on: ubuntu-20.04
     concurrency: 
-      group: ${{ github.pull_request_review.pull_request.head.ref }}
+      group: ${{ github.event.pull_request_review.pull_request.head.ref }}
       cancel-in-progress: true
     steps:
       - id: install
