@@ -14,7 +14,7 @@ jobs:
     name: Check pull request template
     runs-on: ubuntu-20.04
     concurrency: 
-      group: ${{ github.event.pull_request_review.pull_request.head.ref }}
+      group: ${{ github.event.pull_request.head.ref }}
       cancel-in-progress: true
     steps:
       - id: install
@@ -33,7 +33,7 @@ jobs:
           echo "Now looking at regex result:"
 
           pcregrep -o1 -M "$REGEX" <<\EOF
-          ${{ github.event.pull_request_review.pull_request.body }}
+          ${{ github.event.pull_request.body }}
           EOF
 
       - id: extract-staging
@@ -46,12 +46,12 @@ jobs:
           echo "Now looking at regex result:"
 
           URL=$(pcregrep -o1 -M "$REGEX" <<\EOF
-          ${{ github.event.pull_request_review.pull_request.body }}
+          ${{ github.event.pull_request.body }}
           EOF
           )
 
           SANDBOX=$(pcregrep -o2 -M "$REGEX" <<\EOF
-          ${{ github.event.pull_request_review.pull_request.body }}
+          ${{ github.event.pull_request.body }}
           EOF
           )
 
@@ -82,7 +82,7 @@ jobs:
           echo "Now looking at regex result:"
 
           INTEGRATION_TEST_REF=$(pcregrep -o1 -M "$REGEX" <<\EOF
-          ${{ github.event.pull_request_review.pull_request.body }}
+          ${{ github.event.pull_request.body }}
           EOF
           )
 
