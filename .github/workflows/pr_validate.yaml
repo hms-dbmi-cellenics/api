@@ -1,9 +1,10 @@
 name: Pull Request Workflow
 on:
-  pull_request:
-    types: [ opened, reopened, edited ]
+  pull_request_review_comment:
+    types: [ created, edited ]
 jobs:
   
+
   # BEWARE: GitHub uses Microsoft-style line endings (CRLF)
   # instead of Unix-style (LF) interally for things like PR text.
   #
@@ -16,6 +17,12 @@ jobs:
       group: ${{ github.head_ref }}
       cancel-in-progress: true
     steps:
+
+      - id: check-comment-runs-e2e
+        name: Check if comment runs e2e
+        run : |-
+          echo ${{ github.event.pull_request_review_comment.body }}
+
       - id: install
         name: Install requirements
         run: |-
@@ -32,7 +39,7 @@ jobs:
           echo "Now looking at regex result:"
 
           pcregrep -o1 -M "$REGEX" <<\EOF
-          ${{ github.event.pull_request.body }}
+          ${{ github.event.pull_request_review_comment.pull_request.body }}
           EOF
 
       - id: extract-staging
@@ -45,12 +52,12 @@ jobs:
           echo "Now looking at regex result:"
 
           URL=$(pcregrep -o1 -M "$REGEX" <<\EOF
-          ${{ github.event.pull_request.body }}
+          ${{ github.event.pull_request_review_comment.pull_request.body }}
           EOF
           )
 
           SANDBOX=$(pcregrep -o2 -M "$REGEX" <<\EOF
-          ${{ github.event.pull_request.body }}
+          ${{ github.event.pull_request_review_comment.pull_request.body }}
           EOF
           )
 
@@ -81,7 +88,7 @@ jobs:
           echo "Now looking at regex result:"
 
           INTEGRATION_TEST_REF=$(pcregrep -o1 -M "$REGEX" <<\EOF
-          ${{ github.event.pull_request.body }}
+          ${{ github.event.pull_request_review_comment.pull_request.body }}
           EOF
           )
 
