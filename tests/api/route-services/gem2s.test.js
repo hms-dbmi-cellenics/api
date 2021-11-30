@@ -30,13 +30,13 @@ const mockGem2sParamsBackendCall = (
   };
 
   const samplesResponse = {
-    'sample-1': { name: 'Sample 1' },
-    'sample-2': { name: 'Sample 2' },
+    'sample-1': { name: 'Sample 1', metadata: { group: 'case' } },
+    'sample-2': { name: 'Sample 2', metadata: { group: 'control' } },
     ...customSamplesResponse,
   };
 
   const metadataResponse = {
-    metadataKeys: [],
+    metadataKeys: ['group'],
     ...customMetadataResponse,
   };
 
