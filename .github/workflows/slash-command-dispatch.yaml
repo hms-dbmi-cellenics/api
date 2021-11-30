@@ -17,6 +17,6 @@ jobs:
           commands: |
             e2e
           static-args: |
-            body=${{ github.event.issue.ull_request }}
+            body=${{ github.event.issue.pull_request }}
             head_ref=${{ github.event.issue.pull_request.head.ref }}  
             merge_commit_sha=${{ github.event.issue.pull_request.merge_commit_sha }}
