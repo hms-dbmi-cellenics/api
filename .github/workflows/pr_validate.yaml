@@ -13,9 +13,9 @@ jobs:
   check-pr-template:
     name: Check pull request template
     runs-on: ubuntu-20.04
-    concurrency: 
-      group: ${{ github.event.pull_request_review_comment.pull_request.head.ref }}
-      cancel-in-progress: true
+    # concurrency: 
+    #   group: ${{ github.event.pull_request_review_comment.pull_request.head.ref }}
+    #   cancel-in-progress: true
     steps:
 
       - id: check-comment-runs-e2e
