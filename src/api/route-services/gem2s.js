@@ -51,8 +51,6 @@ class Gem2sService {
 
     const defaultMetadataValue = 'N.A.';
 
-    const samplesEntries = Object.entries(samples);
-
     logger.log('Generating task params');
 
     const taskParams = {
@@ -72,9 +70,11 @@ class Gem2sService {
         // Make sure the key does not contain '-' as it will cause failure in GEM2S
         const sanitizedKey = key.replace(/-+/g, '_');
 
-        acc[sanitizedKey] = samplesEntries.map(
-          ([, sample]) => sample.metadata[key] || defaultMetadataValue,
-        );
+        acc[sanitizedKey] = experiment.sampleIds.map((sampleId) => {
+          const sample = samples[sampleId];
+          return sample.metadata[key] || defaultMetadataValue;
+        });
+
         return acc;
       }, {});
     }
