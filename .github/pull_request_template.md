@@ -18,7 +18,7 @@ N/A
   Your pull request will not pass the required checks if this is not followed.
 -->
 
-#### Links to any other PRs related to this PR
+#### Links to any PRs OR internal resources related to this PR
 <!---
   Delete this comment and include the URLs of any pull requests that are related to this PR.
   Place each PR on a new line. If no other PRs relate to this PR, replace this comment with N/A.
