@@ -16,6 +16,7 @@ jobs:
       cancel-in-progress: true
     outputs:
       sandbox: ${{ steps.extract-staging.outputs.sandbox }}
+      should_e2e_run: ${{ steps.check-e2e-trigger.outcome }}
     steps:
       - id: install
         name: Install requirements
@@ -72,10 +73,23 @@ jobs:
           # Add jitter to break up correlated events.
           on_retry_command: sleep $[($RANDOM % 10) + 5]s
 
+      - id: check-e2e-trigger
+        continue-on-error: true
+        name: Check if E2E testing is triggered
+        run: |-
+          REGEX="\[[Xx]\] Started end-to-end tests on the latest commit"
+    
+          pcregrep -o1 -M "$REGEX" <<\EOF
+          ${{ github.event.pull_request.body }}
+          EOF
+
+          
+
   run-e2e:
     name: Run end-to-end tests
     runs-on: ubuntu-20.04
     needs: lint-pr-body
+    if: ${{ needs.lint-pr-body.outputs.should_e2e_run }} == "success"
     concurrency: 
       group: ${{ github.head_ref }}
       cancel-in-progress: true
