@@ -1,20 +1,19 @@
-name: Pull Request Workflow
+name: Validate pull request
 on:
-  pull_request_review:
-    types: [submitted]
-  
-# BEWARE: GitHub uses Microsoft-style line endings (CRLF)
-# instead of Unix-style (LF) interally for things like PR text.
-#
-# You MUST check for `\r\n` as the line separator instead of `\n`
-# in this workflow.
+  pull_request:
+    types: [ opened, reopened, edited ]
 jobs:
+  
+  # BEWARE: GitHub uses Microsoft-style line endings (CRLF)
+  # instead of Unix-style (LF) interally for things like PR text.
+  #
+  # You MUST check for `\r\n` as the line separator instead of `\n`
+  # in this workflow.
   check-pr-template:
-    if: github.event.review.state == 'approved'
     name: Check pull request template
     runs-on: ubuntu-20.04
     concurrency: 
-      group: ${{ github.event.pull_request.head.ref }}
+      group: ${{ github.head_ref }}
       cancel-in-progress: true
     steps:
       - id: install
@@ -65,12 +64,6 @@ jobs:
 
           echo "SHA of PR:"
           echo $GITHUB_SHA
-          echo "::set-output name=github_sha::$GITHUB_SHA"
-
-          REPO_NAME=$(echo $GITHUB_REPOSITORY | awk -F '/' '{print $2}')
-          echo "Repo name:"
-          echo $REPO_NAME
-          echo "::set-output name=repo_name::$REPO_NAME"
 
       - id: extract-integration-test-ref
         name: Get integration test ref
@@ -98,8 +91,7 @@ jobs:
           retry_on: error
           command: curl -f ${{ steps.extract-staging.outputs.url }}
           # Add jitter to break up correlated events.
-          on_retry_command: sleep $(shuf -i 10-15 -n 1)s
-
+          on_retry_command: sleep $[($RANDOM % 10) + 5]s
 
       - id: run-integration-test
         name: Run integration tests
@@ -109,4 +101,4 @@ jobs:
           repo: biomage-ltd/testing
           token: ${{ secrets.API_TOKEN_GITHUB }}
           ref: ${{ steps.extract-integration-test-ref.outputs.ref }}
-          inputs: '{ "environment": "staging", "ref": "${{ steps.extract-integration-test-ref.outputs.ref }}", "sandboxId": "${{ steps.extract-staging.outputs.sandbox }}", "image_sha" : "${{ steps.extract-staging.outputs.github_sha }}", "namespace": "${{ steps.extract-staging.outputs.repo_name }}-${{ steps.extract-staging.outputs.sandbox }}" }'
+          inputs: '{ "environment": "staging", "ref": "${{ steps.extract-integration-test-ref.outputs.ref }}", "sandboxId": "${{ steps.extract-staging.outputs.sandbox }}" }'
