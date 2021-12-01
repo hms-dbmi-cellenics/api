@@ -80,6 +80,12 @@ jobs:
       group: ${{ github.head_ref }}
       cancel-in-progress: true
     steps:
+      - id: install
+        name: Install requirements
+        run: |-
+          sudo apt-get update -y
+          sudo apt-get install -y pcregrep
+
       - id: extract-commit-details
         name: Get details of last commit
         run: |-
