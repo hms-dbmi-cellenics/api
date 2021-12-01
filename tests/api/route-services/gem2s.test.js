@@ -30,13 +30,13 @@ const mockGem2sParamsBackendCall = (
   };
 
   const samplesResponse = {
-    'sample-1': { name: 'Sample 1' },
-    'sample-2': { name: 'Sample 2' },
+    'sample-1': { name: 'Sample 1', metadata: { group: 'case' } },
+    'sample-2': { name: 'Sample 2', metadata: { group: 'control' } },
     ...customSamplesResponse,
   };
 
   const metadataResponse = {
-    metadataKeys: [],
+    metadataKeys: ['group'],
     ...customMetadataResponse,
   };
 
@@ -94,6 +94,17 @@ describe('gem2s', () => {
     const taskParams = await Gem2sService.generateGem2sParams(experimentId, mockAuthJwt);
 
     expect(taskParams).toMatchSnapshot();
+  });
+
+  it('generateGem2sParams - Should order metadata tracks according to sampleIds order', async () => {
+    mockGem2sParamsBackendCall();
+    const taskParams = await Gem2sService.generateGem2sParams(experimentId, mockAuthJwt);
+
+    mockGem2sParamsBackendCall({ sampleIds: taskParams.sampleIds.reverse() });
+    const taskParamsReversed = await Gem2sService.generateGem2sParams(experimentId, mockAuthJwt);
+
+    expect(taskParams.metadata).toEqual({ group: ['case', 'control'] });
+    expect(taskParamsReversed.metadata).toEqual({ group: ['control', 'case'] });
   });
 
   it('sendUpdateToSubscribed - Should send update if payloads are correct', async () => {
