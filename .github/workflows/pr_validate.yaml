@@ -83,8 +83,6 @@ jobs:
           ${{ github.event.pull_request.body }}
           EOF
 
-          
-
   run-e2e:
     name: Run end-to-end tests
     runs-on: ubuntu-20.04
@@ -103,6 +101,10 @@ jobs:
       - id: extract-commit-details
         name: Get details of last commit
         run: |-
+          echo "should run:"
+          echo "${{ needs.lint-pr-body.outputs.should_e2e_run }}"
+          exit 1
+
           echo "SHA of GitHub merge commit:"
           echo $GITHUB_SHA
           echo "::set-output name=github_sha::$GITHUB_SHA"
