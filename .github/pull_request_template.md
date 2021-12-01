@@ -46,7 +46,7 @@ Your changes will be ready for merging after all of the steps below have been co
 Have best practices and ongoing refactors being observed in this PR
 - [ ] Migrated any selector / reducer used to the new format.
 
-### Testing
+### Manual/unit testing
 - [ ] Unit tests written **or** no unit tests required for change, e.g. documentation update.
 - [ ] Tested changes using InfraMock locally **or** no tests required for change, e.g. Kubernetes chart updates.
 - [ ] Validated that current unit tests for code work as expected and are sufficient for code coverage **or** no unit tests required for change, e.g. documentation update.
@@ -56,6 +56,13 @@ Have best practices and ongoing refactors being observed in this PR
   To set up easy local testing with inframock, follow the instructions here: https://github.com/biomage-ltd/inframock
   To deploy to the staging environment, follow the instructions here: https://github.com/biomage-ltd/biomage-utils
 -->
+
+### Integration testing
+End-to-end tests have to pass before the PR can be merged. **You must check the box below** to run these
+tests on the latest commit on your PR branch. Without doing so, your PR **will not pass** the required
+status checks for merging.
+
+- [ ] Started end-to-end tests on the latest commit.
 
 ### Documentation updates
 - [ ] Relevant Github READMEs updated **or** no GitHub README updates required.
