@@ -101,10 +101,6 @@ jobs:
       - id: extract-commit-details
         name: Get details of last commit
         run: |-
-          echo "should run:"
-          echo "${{ needs.lint-pr-body.outputs.should_e2e_run }}"
-          exit 1
-
           echo "SHA of GitHub merge commit:"
           echo $GITHUB_SHA
           echo "::set-output name=github_sha::$GITHUB_SHA"
