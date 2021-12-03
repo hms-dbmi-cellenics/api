@@ -62,4 +62,18 @@ module.exports = {
         next(e);
       }
     }],
+  'samples#downloadSampleFileUrl': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => {
+      const { projectUuid, sampleUuid, fileName } = req.params;
+
+      try {
+        const downloadUrl = samplesService
+          .getS3DownloadUrl(projectUuid, sampleUuid, fileName);
+
+        res.json(downloadUrl);
+      } catch (e) {
+        next(e);
+      }
+    }],
 };
