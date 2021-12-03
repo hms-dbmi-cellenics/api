@@ -39,6 +39,7 @@ const mockRemoveSamples = jest.fn(() => (
 ));
 
 const mockGetS3UploadUrl = jest.fn(() => 'mockedS3UploadUrl');
+const mockGetS3DownloadUrl = jest.fn(() => 'mockedS3DownloadUrl');
 
 const mock = jest.fn().mockImplementation(() => ({
   getSamples: mockGetSamples,
@@ -48,6 +49,7 @@ const mock = jest.fn().mockImplementation(() => ({
   addSample: mockAddSample,
   removeSamples: mockRemoveSamples, // Missing tests
   getS3UploadUrl: mockGetS3UploadUrl,
+  getS3DownloadUrl: mockGetS3DownloadUrl,
 }));
 
 module.exports = mock;
