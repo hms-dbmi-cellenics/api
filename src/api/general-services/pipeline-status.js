@@ -269,7 +269,18 @@ const getPipelineStatus = async (experimentId, processName) => {
   const events = await getExecutionHistory(stepFunctions, executionArn);
 
   error = checkError(events);
-  completedSteps = getStepsFromExecutionHistory(events);
+  const executedSteps = getStepsFromExecutionHistory(events);
+  const lastExecuted = executedSteps[executedSteps.length - 1];
+  switch (processName) {
+    case pipelineConstants.QC_PROCESS_NAME:
+      completedSteps = qcPipelineSteps.slice(0, qcPipelineSteps.indexOf(lastExecuted) + 1);
+      break;
+    case pipelineConstants.GEM2S_PROCESS_NAME:
+      completedSteps = gem2sPipelineSteps.slice(0, gem2sPipelineSteps.indexOf(lastExecuted) + 1);
+      break;
+    default:
+      logger.error(`unknown process name ${processName}`);
+  }
 
   return buildResponse(processName, execution, paramsHash, error, completedSteps);
 };

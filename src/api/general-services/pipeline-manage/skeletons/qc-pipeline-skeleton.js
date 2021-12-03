@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const qcPipelineSteps = {
   ClassifierFilterMap: {
     Type: 'Map',
@@ -118,4 +120,9 @@ const qcPipelineSteps = {
 };
 
 
-module.exports = { qcPipelineSteps };
+const buildQCPipelineSteps = (qcSteps) => {
+  const stepsToRemove = Object.keys(qcPipelineSteps).filter((step) => !qcSteps.includes(step) && step !== 'EndOfPipeline');
+  return _.omit(qcPipelineSteps, stepsToRemove);
+};
+
+module.exports = { buildQCPipelineSteps, qcPipelineSteps };

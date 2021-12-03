@@ -25,5 +25,7 @@ properties:
     type: array
     items:
       type: string
+  notifyByEmail:
+    type: boolean
 
 additionalProperties: false

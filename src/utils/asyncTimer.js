@@ -1,6 +1,6 @@
 
-const asyncTimer = (timeout) => new Promise(
-  (resolve) => setTimeout(() => resolve(), timeout),
+const asyncTimer = (timeout, body = 'OK') => new Promise(
+  (resolve) => setTimeout(() => resolve(body), timeout),
 );
 
 module.exports = asyncTimer;
