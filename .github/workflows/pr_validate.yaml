@@ -11,7 +11,8 @@ jobs:
   lint-pr-body:
     name: Lint pull request body
     runs-on: ubuntu-20.04
-    concurrency: ${{ github.head_ref }}
+    concurrency:
+      group: ${{ github.head_ref }}
     outputs:
       sandbox: ${{ steps.extract-staging.outputs.sandbox }}
       should_e2e_run: ${{ steps.check-e2e-trigger.outcome }}
