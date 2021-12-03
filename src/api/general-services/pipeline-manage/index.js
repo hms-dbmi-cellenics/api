@@ -9,8 +9,8 @@ const AWS = require('../../../utils/requireAWS');
 const config = require('../../../config');
 const getLogger = require('../../../utils/getLogger');
 const ExperimentService = require('../../route-services/experiment');
-
 const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('./skeletons');
+const { getQcStepsToRun } = require('./qc-helpers');
 const constructPipelineStep = require('./constructors/construct-pipeline-step');
 const asyncTimer = require('../../../utils/asyncTimer');
 
@@ -19,6 +19,7 @@ const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('./constants');
 const logger = getLogger();
 
 const experimentService = new ExperimentService();
+
 
 const getPipelineArtifacts = async () => {
   const response = await fetch(
@@ -72,6 +73,7 @@ const getClusterInfo = async () => {
     certAuthority,
   };
 };
+
 
 const createNewStateMachine = async (context, stateMachine, processName) => {
   const { clusterEnv, sandboxId } = config;
@@ -186,8 +188,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     processingConfig,
     sampleIds,
   } = await experimentService.getAttributesToCreateQCPipeline(experimentId);
-
-  if (processingConfigUpdates) {
+  if (processingConfigUpdates.length) {
     processingConfigUpdates.forEach(({ name, body }) => {
       if (!processingConfig[name]) {
         processingConfig[name] = body;
@@ -234,8 +235,13 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     authJWT,
   };
 
+  const qcSteps = await getQcStepsToRun(experimentId, processingConfigUpdates);
+  console.log(`qcSteps to run ${qcSteps}`);
 
-  const qcPipelineSkeleton = getQcPipelineSkeleton(config.clusterEnv);
+  const qcPipelineSkeleton = await getQcPipelineSkeleton(
+    config.clusterEnv,
+    qcSteps,
+  );
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);

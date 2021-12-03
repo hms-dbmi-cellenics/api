@@ -16,6 +16,12 @@ jobs:
     env:
       CI: "true"
     steps:
+    
+    - id: setup-node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
     - id: checkout
       name: Check out source code
       uses: actions/checkout@v2
@@ -27,6 +33,11 @@ jobs:
     - id: install
       name: Install dependencies
       run: |-
+        echo "Running CI with "
+        echo "Node version: $(node --version)"
+        echo "NPM version: $(npm --version)"
+
+        git config --global url."https://".insteadOf ssh://
         npm ci
 
     - id: test
@@ -182,6 +193,7 @@ jobs:
             KUBERNETES_ENV="production"
             IMAGE_TAG="${REF_DASHED/refs-tags-/}"
             IMAGE_GLOB="semver:>=0.0.0"
+            REPLICA_COUNT="4"
           fi
 
           if [ "${{ matrix.environment }}" = "develop" ]; then
@@ -190,6 +202,7 @@ jobs:
             KUBERNETES_ENV="staging"
             IMAGE_TAG="$REF_DASHED-$GITHUB_SHA"
             IMAGE_GLOB="glob:$REF_DASHED-*"
+            REPLICA_COUNT="4"
           fi
 
           if [ "${{ matrix.environment }}" = "staging" ]; then
@@ -198,6 +211,7 @@ jobs:
             KUBERNETES_ENV="staging"
             IMAGE_TAG="$REF_DASHED-$GITHUB_SHA"
             IMAGE_GLOB="glob:$REF_DASHED-*"
+            REPLICA_COUNT="1"
           fi
 
           echo "::set-output name=kubernetes-env::$KUBERNETES_ENV"
@@ -216,6 +230,7 @@ jobs:
           | yq w -d1 - spec.values.image.registry "${{ steps.login-ecr.outputs.registry }}" \
           | yq w -d1 - spec.values.image.repository "$DEPLOYMENT_NAME" \
           | yq w -d1 - spec.values.image.tag "$IMAGE_TAG" \
+          | yq w -d1 - spec.values.replicaCount $REPLICA_COUNT \
           | yq w -d1 - spec.values.serviceAccount.iamRole "arn:aws:iam::${{ steps.setup-aws.outputs.aws-account-id }}:role/api-role-$KUBERNETES_ENV" \
           > $DEPLOYMENT_NAME.yaml
 
