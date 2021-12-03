@@ -83,8 +83,8 @@ jobs:
           ${{ github.event.pull_request.body }}
           EOF
 
-  run-e2e:
-    name: Run end-to-end tests
+  run-integration-tests:
+    name: Run integration tests
     runs-on: ubuntu-20.04
     needs: lint-pr-body
     if: needs.lint-pr-body.outputs.should_e2e_run == 'success'
