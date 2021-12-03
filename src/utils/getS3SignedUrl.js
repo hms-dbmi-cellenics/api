@@ -9,7 +9,7 @@ const getS3SignedUrl = (operation, params) => {
   });
 
   const defaultParams = {
-    Expires: 300, // seconds; default to 5 mins
+    Expires: 120, // seconds; default to 2 mins
   };
 
   if (!params.Bucket) throw new Error('Bucket is required');
