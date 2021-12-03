@@ -24,10 +24,10 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y pcregrep
 
-      - id: check-jira-url
-        name: Check JIRA URL
+      - id: check-issue-url
+        name: Check issue URL
         run: |-
-          REGEX="#### URL to JIRA issue\s?\r\n(https:\/\/biomage\.atlassian\.net\/browse\/BIOMAGE-[0-9]+|N\/A)"
+          REGEX="#### URL to issue\s?\r\n(https:\/\/biomage\.atlassian\.net\/browse\/BIOMAGE-[0-9]+|N\/A)"
 
           echo "REGEX to test against:"
           echo $REGEX
