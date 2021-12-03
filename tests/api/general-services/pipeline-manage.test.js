@@ -1,6 +1,14 @@
 const AWSMock = require('aws-sdk-mock');
 const _ = require('lodash');
 const AWS = require('../../../src/utils/requireAWS');
+const { getQcPipelineStepNames } = require('../../../src/api/general-services/pipeline-manage/skeletons');
+const { getQcStepsToRun } = require('../../../src/api/general-services/pipeline-manage/qc-helpers');
+
+const mockStepNames = getQcPipelineStepNames();
+
+jest.mock('../../../src/api/general-services/pipeline-manage/qc-helpers', () => ({
+  getQcStepsToRun: jest.fn(() => mockStepNames),
+}));
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
@@ -106,8 +114,6 @@ describe('test for pipeline services', () => {
   };
 
   it('Create QC pipeline works', async () => {
-    AWSMock.setSDKInstance(AWS);
-
     const describeClusterSpy = jest.fn((x) => x);
     AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
       describeClusterSpy(params);

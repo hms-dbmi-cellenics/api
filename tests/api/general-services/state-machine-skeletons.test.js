@@ -1,10 +1,14 @@
 const { buildStateMachineDefinition } = require('../../../src/api/general-services/pipeline-manage');
 const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('../../../src/api/general-services/pipeline-manage/skeletons');
+const { getQcPipelineStepNames } = require('../../../src/api/general-services/pipeline-manage/skeletons');
+
+const qcStepNames = getQcPipelineStepNames();
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
   randomBytes: () => Buffer.from('asdfg'),
 }));
+
 
 const snapshotPlainJsonSerializer = {
   // eslint-disable-next-line no-unused-vars
@@ -37,22 +41,23 @@ const getContext = (processName) => ({
   processingConfig: {},
 });
 
+
 describe('non-tests to document the State Machines', () => {
   let context = getContext('qc');
   it('- qc local development', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('development');
+    const qcPipelineSkeleton = getQcPipelineSkeleton('development', qcStepNames);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
   it('- qc staging', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('staging');
+    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', qcStepNames);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
   it('- qc production', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('production');
+    const qcPipelineSkeleton = getQcPipelineSkeleton('production', qcStepNames);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });

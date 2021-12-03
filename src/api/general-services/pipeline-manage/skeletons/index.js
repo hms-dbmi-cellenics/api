@@ -1,5 +1,6 @@
-const { qcPipelineSteps } = require('./qc-pipeline-skeleton');
+const { buildQCPipelineSteps, qcPipelineSteps } = require('./qc-pipeline-skeleton');
 const { gem2SPipelineSteps } = require('./gem2s-pipeline-skeleton');
+
 
 const createLocalPipeline = (nextStep) => ({
   DeleteCompletedPipelineWorker: {
@@ -27,10 +28,9 @@ const assignPipelineToPod = (nextStep) => ({
   },
 });
 
-
 const getSkeletonStepNames = (skeleton) => {
   const steps = Object.keys(skeleton);
-  // we need to add too the substep keys
+  // we need to add the substep keys too
   Object.values(skeleton).forEach((step) => {
     if ('Iterator' in step) {
       steps.push(...Object.keys(step.Iterator.States));
@@ -49,6 +49,10 @@ const getPipelineStepNames = () => {
   return gem2sStepNames.concat(qcStepNames);
 };
 
+// getPipelineStepNames returns the names of the QC pipeline steps
+// if there are map states with nested substeps it returns those sub-steps too
+const getQcPipelineStepNames = () => getSkeletonStepNames(qcPipelineSteps);
+
 const buildInitialSteps = (clusterEnv, nextStep) => {
   // if we are running locally launch a pipeline job
   if (clusterEnv === 'development') {
@@ -58,7 +62,7 @@ const buildInitialSteps = (clusterEnv, nextStep) => {
   return assignPipelineToPod(nextStep);
 };
 
-const firstStep = (clusterEnv) => {
+const getStateMachineFirstStep = (clusterEnv) => {
   if (clusterEnv === 'development') {
     return 'DeleteCompletedPipelineWorker';
   }
@@ -66,23 +70,29 @@ const firstStep = (clusterEnv) => {
   return 'RequestPod';
 };
 
+
 const getGem2sPipelineSkeleton = (clusterEnv) => ({
   Comment: `Gem2s Pipeline for clusterEnv '${clusterEnv}'`,
-  StartAt: firstStep(clusterEnv),
+  StartAt: getStateMachineFirstStep(clusterEnv),
   States: {
     ...buildInitialSteps(clusterEnv, 'DownloadGem'),
     ...gem2SPipelineSteps,
   },
 });
 
-const getQcPipelineSkeleton = (clusterEnv) => ({
+const getQcPipelineSkeleton = (clusterEnv, qcSteps) => ({
   Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
-  StartAt: firstStep(clusterEnv),
+  StartAt: getStateMachineFirstStep(clusterEnv),
   States: {
-    ...buildInitialSteps(clusterEnv, 'ClassifierFilterMap'),
-    ...qcPipelineSteps,
+    ...buildInitialSteps(clusterEnv, qcSteps[0]),
+    ...buildQCPipelineSteps(qcSteps),
   },
 });
 
 
-module.exports = { getPipelineStepNames, getGem2sPipelineSkeleton, getQcPipelineSkeleton };
+module.exports = {
+  getPipelineStepNames,
+  getQcPipelineStepNames,
+  getGem2sPipelineSkeleton,
+  getQcPipelineSkeleton,
+};
