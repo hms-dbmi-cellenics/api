@@ -153,15 +153,16 @@ jobs:
 
           echo "Unchecked PR body"
           echo $UNCHECKED_BODY
-          echo "::set-output name=unchecked-body::$UNCHECKED_BODY"
+          
+      # echo "::set-output name=unchecked-body::$UNCHECKED_BODY"
 
-      - id: uncheck-integration-checkbox
-        name: Uncheck the integration checkbox
-        uses: tzkhan/pr-update-action@v2
-        with:
-          repo-token: "${{ secrets.API_TOKEN_GITHUB }}"
-          head-branch-regex: '${{ github.head_ref }}'
-          body-template: "${{  steps.create-unchecked-pr-body.outputs.unchecked-body }}"
-          body-update-action: 'replace'
+      # - id: uncheck-integration-checkbox
+      #   name: Uncheck the integration checkbox
+      #   uses: tzkhan/pr-update-action@v2
+      #   with:
+      #     repo-token: "${{ secrets.API_TOKEN_GITHUB }}"
+      #     head-branch-regex: '${{ github.head_ref }}'
+      #     body-template: "${{  steps.create-unchecked-pr-body.outputs.unchecked-body }}"
+      #     body-update-action: 'replace'
           
 
