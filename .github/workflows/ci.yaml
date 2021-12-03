@@ -10,12 +10,54 @@ on:
     branches:
       - master
 jobs:
+  uncheck-integration-test:
+    name: Mark integration test as not run
+    runs-on: ubuntu-20.04
+    steps:
+      - id: get-pr-body
+        name: Get the current PR body
+        uses: jwalton/gh-find-current-pr@v1
+        with:
+          state: open
+          
+      - id: create-unchecked-pr-body
+        name: Create unchecked PR body
+        run: |-
+          UNCHECKED_BODY=$(sed 's/- \[[Xx]\] Started end-to-end tests on the latest commit/- \[ \] Started end-to-end tests on the latest commit/' <<\EOF
+          ${{ steps.get-pr-body.outputs.body }}
+          EOF
+          )
+
+          UNCHECKED_BODY="${UNCHECKED_BODY//'%'/'%25'}"
+          UNCHECKED_BODY="${UNCHECKED_BODY//$'\n'/'%0A'}"
+          UNCHECKED_BODY="${UNCHECKED_BODY//$'\r'/'%0D'}"
+
+          echo "Unchecked PR body"
+          echo $UNCHECKED_BODY
+
+          echo "::set-output name=body::$UNCHECKED_BODY"
+
+      - id: uncheck-integration-checkbox
+        name: Uncheck the integration checkbox
+        uses: tzkhan/pr-update-action@v2
+        with:
+          repo-token: "${{ secrets.API_TOKEN_GITHUB }}"
+          head-branch-regex: '${{ github.head_ref }}'
+          body-template: "${{  steps.create-unchecked-pr-body.outputs.body }}"
+          body-update-action: 'replace'
+          
   test:
     name: Run tests
     runs-on: ubuntu-20.04
     env:
       CI: "true"
     steps:
+    
+    - id: setup-node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
     - id: checkout
       name: Check out source code
       uses: actions/checkout@v2
@@ -27,6 +69,11 @@ jobs:
     - id: install
       name: Install dependencies
       run: |-
+        echo "Running CI with "
+        echo "Node version: $(node --version)"
+        echo "NPM version: $(npm --version)"
+
+        git config --global url."https://".insteadOf ssh://
         npm ci
 
     - id: test
