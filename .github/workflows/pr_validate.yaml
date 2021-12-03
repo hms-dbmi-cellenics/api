@@ -88,8 +88,6 @@ jobs:
     runs-on: ubuntu-20.04
     needs: lint-pr-body
     if: needs.lint-pr-body.outputs.should_e2e_run == 'success'
-    concurrency: 
-      group: ${{ github.sha }}
     steps:
       - id: install
         name: Install requirements
