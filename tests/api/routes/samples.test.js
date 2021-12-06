@@ -210,7 +210,7 @@ describe('tests for samples route', () => {
       });
   });
 
-  it.only('Getting an s3FileDownloadUrl returns 200 correctly', async (done) => {
+  it('Getting an s3FileDownloadUrl returns 200 correctly', async (done) => {
     request(app)
       .get('/v1/projects/projectUuid/samples/sampleUuid/fileName/downloadUrl')
       .expect(200)
