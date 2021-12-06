@@ -7,7 +7,7 @@ const getLogger = require('../../utils/getLogger');
 const { OK, NotFoundError, BadRequestError } = require('../../utils/responses');
 
 const safeBatchGetItem = require('../../utils/safeBatchGetItem');
-const getS3SignedUrl = require('../../utils/getS3SignedUrl');
+const { getSignedUrl } = require('../../utils/aws/s3');
 
 const constants = require('../general-services/pipeline-manage/constants');
 const downloadTypes = require('../../utils/downloadTypes');
@@ -373,9 +373,10 @@ class ExperimentService {
       Bucket: bucket,
       Key: objectKey,
       ResponseContentDisposition: `attachment; filename ="${downloadedFileName}"`,
+      Expires: 120,
     };
 
-    const signedUrl = getS3SignedUrl('getObject', params);
+    const signedUrl = getSignedUrl('getObject', params);
     return signedUrl;
   }
 

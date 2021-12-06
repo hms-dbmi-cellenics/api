@@ -10,7 +10,7 @@ const {
 } = require('../../utils/dynamoDb');
 const AWS = require('../../utils/requireAWS');
 
-const getS3SignedUrl = require('../../utils/getS3SignedUrl');
+const { getSignedUrl } = require('../../utils/aws/s3');
 const getLogger = require('../../utils/getLogger');
 
 const logger = getLogger();
@@ -250,7 +250,7 @@ class SamplesService {
       };
     }
 
-    const signedUrl = getS3SignedUrl('putObject', params);
+    const signedUrl = getSignedUrl('putObject', params);
 
     return signedUrl;
   }
@@ -262,7 +262,7 @@ class SamplesService {
       Key: `${projectUuid}/${sampleUuid}/${fileName}`,
     };
 
-    const signedUrl = getS3SignedUrl('getObject', params);
+    const signedUrl = getSignedUrl('getObject', params);
 
     return signedUrl;
   }
