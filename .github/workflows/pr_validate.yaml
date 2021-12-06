@@ -12,7 +12,7 @@ jobs:
     name: Lint pull request body
     runs-on: ubuntu-20.04
     concurrency: 
-      group: asdasdasdsa
+      group: ${{ github.head_ref }}
       cancel-in-progress: true
     outputs:
       sandbox: ${{ steps.extract-staging.outputs.sandbox }}
@@ -88,6 +88,8 @@ jobs:
     runs-on: ubuntu-20.04
     needs: lint-pr-body
     if: needs.lint-pr-body.outputs.should_e2e_run == 'success'
+    concurrency: 
+      group: ${{ github.sha }}
     steps:
       - id: install
         name: Install requirements
