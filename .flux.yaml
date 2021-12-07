@@ -28,7 +28,7 @@ spec:
     readinessProbe:
       path: "/v1/health"
     livenessProbe:
-      path: "/v1/health"
+      probeType: tcpSocket
     resources:
       requests:
         cpu: "100m"
