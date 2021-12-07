@@ -68,7 +68,7 @@ const createNewStep = (context, step, stepArgs) => {
     Type: 'Task',
     Resource: activityArn,
     ResultPath: null,
-    TimeoutSeconds: 21600,
+    TimeoutSeconds: 50000,
     Parameters: params,
     ...!step.End && { Next: step.XNextOnCatch || step.Next },
   };
