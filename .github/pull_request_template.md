@@ -3,9 +3,9 @@
 
 # Details
 #### URL to issue
-N/A
 <!---
   Delete this comment and include the URL of the issue the pull request is related to.
+  Refer to https://github.com/biomage-ltd/biomage-utils#stage on how to stage a staging environment.
   If no issue exists for this PR, replace this comment with N/A.
   Your pull request will not pass the required checks if this is not followed.
 -->
@@ -13,8 +13,8 @@ N/A
 #### Link to staging deployment URL 
 <!---
   Delete this comment and include the URL of the staging environment for this pull request.
-  If no staging environment exists for this PR, replace this comment with N/A and explain why
-  a staging environment is not necessary.
+  If a staging environment for testing is not necessary for this PR, replace this comment with N/A 
+  and explain why a staging environment is not required for this PR.
   Your pull request will not pass the required checks if this is not followed.
 -->
 
@@ -27,7 +27,7 @@ N/A
 #### Integration test branch
 master
 <!---
-  The branch that the integration tests will be run against.
+  The branch of the integration test this PR will be run against
 
   If you DID NOT modify the integration tests for this PR, this can be left as `master`.
 
