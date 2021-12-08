@@ -104,11 +104,11 @@ jobs:
           ${{ github.event.pull_request.body }}
           EOF
 
-      - id: notify-to-follow-template
-        if: failure()
-        name: Follow PR Template
-        run: |-
-          echo "Make sure that you have followed the PR template that automatically gets created when you create a new PR."
+      # - id: notify-to-follow-template
+      #   if: failure()
+      #   name: Follow PR Template
+      #   run: |-
+      #     echo "Make sure that you have followed the PR template that automatically gets created when you create a new PR."
 
   run-integration-tests:
     name: Run integration tests
