@@ -186,6 +186,18 @@ describe('tests for samples route', () => {
       });
   });
 
+  it('Updating samples with body without data returns error 415', async (done) => {
+    request(app)
+      .put('/v1/projects/someId/experimentId/samples')
+      .expect(415)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
   it('Getting an s3FileUploadUrl returns 200 correctly', async (done) => {
     request(app)
       .get('/v1/projects/projectUuid/samples/sampleUuid/fileName/uploadUrl')
@@ -198,10 +210,10 @@ describe('tests for samples route', () => {
       });
   });
 
-  it('Updating samples with body without data returns error 415', async (done) => {
+  it('Getting an s3FileDownloadUrl returns 200 correctly', async (done) => {
     request(app)
-      .put('/v1/projects/someId/experimentId/samples')
-      .expect(415)
+      .get('/v1/projects/projectUuid/samples/sampleUuid/fileName/downloadUrl')
+      .expect(200)
       .end((err) => {
         if (err) {
           return done(err);
