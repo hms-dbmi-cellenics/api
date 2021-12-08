@@ -120,12 +120,12 @@ jobs:
     concurrency: 
       group: ${{ github.sha }}
     steps:
-      # - id: pass-if-staging-na
-      #   if: needs.lint-pr-body.outputs.is-staging-na == 1
-      #   name: Pass if staging is N/A
-      #   run: |-
-      #     echo "Staging is N/A, so skipping integration tests."
-      #     echo "::set-output name=result::success"
+      - id: pass-if-staging-na
+        if: needs.lint-pr-body.outputs.is-staging-na == 1
+        name: Pass if staging is N/A
+        run: |-
+          echo "Staging is N/A, so skipping integration tests."
+          echo "::set-output name=result::success"
 
       - id: install
         if: steps.pass-if-staging-na.outcome != 'success'
