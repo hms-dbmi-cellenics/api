@@ -17,7 +17,7 @@ jobs:
     outputs:
       is-staging-na: ${{ steps.extract-staging.outputs.is-staging-na }}
       sandbox: ${{ steps.extract-staging.outputs.sandbox }}
-      should_e2e_run: ${{ steps.check-e2e-trigger.outcome }}
+      is-e2e-box-checked: ${{ steps.check-e2e-trigger.outcome }}
     steps:
       - id: install
         name: Install requirements
@@ -52,10 +52,10 @@ jobs:
           EOF
           )
 
-          IS_STAGING_NA=0
+          IS_STAGING_NA=false
 
           if [ $URL = 'N/A' ]; then
-            IS_STAGING_NA=1
+            IS_STAGING_NA=true
           fi
 
           echo "Is staging N/A?"
@@ -86,61 +86,36 @@ jobs:
           # Add jitter to break up correlated events.
           on_retry_command: sleep $[($RANDOM % 10) + 5]s
 
-      - id: check-e2e-trigger
-        continue-on-error: true
-        name: Check if E2E testing is triggered
+      - id: check-e2e-checkbox
+        name: Check if E2E testing is checked
         run: |-
-
-          echo "Result"
-          echo ${{steps.extract-staging.outputs.is-staging-na}}
-
-          if [ ${{ steps.extract-staging.outputs.is-staging-na }} -eq 1 ]; then
-            exit 0
-          fi
-
           REGEX="\[[Xx]\] Started end-to-end tests on the latest commit"
     
           pcregrep -o1 -M "$REGEX" <<\EOF
           ${{ github.event.pull_request.body }}
           EOF
 
-      # - id: notify-to-follow-template
-      #   if: failure()
-      #   name: Follow PR Template
-      #   run: |-
-      #     echo "Make sure that you have followed the PR template that automatically gets created when you create a new PR."
-
   run-integration-tests:
     name: Run integration tests
     runs-on: ubuntu-20.04
     needs: lint-pr-body
-    # if: needs.lint-pr-body.outputs.should_e2e_run == 'success'
-    outputs:
-      result: ${{ steps.run-integration-test.outcome }}
     concurrency: 
       group: ${{ github.sha }}
     steps:
-      - id: pass-if-staging-na
-        if: needs.lint-pr-body.outputs.is-staging-na == 1
-        name: Pass if staging is N/A
-        run: |-
-          echo "Staging is N/A, so skipping integration tests."
-          echo "::set-output name=result::success"
-
       - id: cancel
         name: Cancel if staging is not N/A and box is not checked
-        if: steps.pass-if-staging-na.outcome != 'success' && needs.lint-pr-body.outputs.should_e2e_run != 'success'
+        if: needs.lint-pr-body.outputs.is-staging-na == true && needs.lint-pr-body.outputs.is-e2e-box-checked != 'success'
         uses: andymckay/cancel-action@0.2
 
       - id: install
-        if: steps.pass-if-staging-na.outcome != 'success'
+        if: needs.lint-pr-body.outputs.is-staging-na == false
         name: Install requirements
         run: |-
           sudo apt-get update -y
           sudo apt-get install -y pcregrep
 
       - id: extract-commit-details
-        if: steps.pass-if-staging-na.outcome != 'success'
+        if: needs.lint-pr-body.outputs.is-staging-na == false
         name: Get details of last commit
         run: |-
           echo "SHA of GitHub merge commit:"
@@ -153,7 +128,7 @@ jobs:
           echo "::set-output name=repo_name::$REPO_NAME"
 
       - id: extract-integration-test-ref
-        if: steps.pass-if-staging-na.outcome != 'success'
+        if: needs.lint-pr-body.outputs.is-staging-na == false
         name: Get integration test ref
         run: |-
           REGEX="#### Integration test branch\s?\r\n(.+)\s?\r\n"
@@ -171,7 +146,7 @@ jobs:
           echo "::set-output name=ref::$INTEGRATION_TEST_REF"
 
       - id: run-integration-test
-        if: steps.pass-if-staging-na.outcome != 'success'
+        if: needs.lint-pr-body.outputs.is-staging-na == false
         name: Run integration tests
         uses: aurelien-baudet/workflow-dispatch@v2
         with:
