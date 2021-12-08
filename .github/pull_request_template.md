@@ -10,7 +10,7 @@
   Your pull request will not pass the required checks if this is not followed.
 -->
 
-#### Link to staging deployment URL 
+#### Link to staging deployment URL (or set N/A)
 <!---
   Delete this comment and include the URL of the staging environment for this pull request.
   Refer to https://github.com/biomage-ltd/biomage-utils#stage on how to stage a staging environment.

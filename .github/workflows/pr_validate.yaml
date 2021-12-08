@@ -41,7 +41,7 @@ jobs:
       - id: extract-staging
         name: Check staging URL
         run: |-
-          REGEX="#### Link to staging deployment URL\s?\r\n(https:\/\/ui-(.+)\.scp-staging\.biomage\.net|N\/A)"
+          REGEX="#### Link to staging deployment URL \(or set N\/A\)\s?\r\n(https:\/\/ui-(.+)\.scp-staging\.biomage\.net|N\/A)"
 
           echo "REGEX to test against:"
           echo $REGEX
@@ -120,12 +120,12 @@ jobs:
     concurrency: 
       group: ${{ github.sha }}
     steps:
-      - id: pass-if-staging-na
-        if: needs.lint-pr-body.outputs.is-staging-na == 1
-        name: Pass if staging is N/A
-        run: |-
-          echo "Staging is N/A, so skipping integration tests."
-          echo "::set-output name=result::success"
+      # - id: pass-if-staging-na
+      #   if: needs.lint-pr-body.outputs.is-staging-na == 1
+      #   name: Pass if staging is N/A
+      #   run: |-
+      #     echo "Staging is N/A, so skipping integration tests."
+      #     echo "::set-output name=result::success"
 
       - id: install
         if: steps.pass-if-staging-na.outcome != 'success'
