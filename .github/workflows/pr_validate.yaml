@@ -129,7 +129,7 @@ jobs:
 
       - id: cancel
         name: Cancel if staging is not N/A and box is not checked
-        if: (steps.pass-if-staging-na.outcome != 'success') && (needs.lint-pr-body.outputs.should_e2e_run == 'failed')
+        if: steps.pass-if-staging-na.outcome != 'success' && needs.lint-pr-body.outputs.should_e2e_run != 'success'
         uses: andymckay/cancel-action@0.2
 
       - id: install
