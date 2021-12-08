@@ -17,7 +17,7 @@ jobs:
     outputs:
       is-staging-na: ${{ steps.extract-staging.outputs.is-staging-na }}
       sandbox: ${{ steps.extract-staging.outputs.sandbox }}
-      is-e2e-box-checked: ${{ steps.check-e2e-trigger.outcome }}
+      is-e2e-box-checked: ${{ steps.check-e2e-checkbox.outcome }}
     steps:
       - id: install
         name: Install requirements
