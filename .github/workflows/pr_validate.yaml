@@ -54,9 +54,9 @@ jobs:
 
           IS_STAGING_NA=0
 
-          if[ URL -eq 'N/A' ]; then
+          if [ $URL -eq 'N/A' ]; then
             IS_STAGING_NA=1
-          fi']
+          fi
 
           echo "Is staging N/A?"
           echo $IS_STAGING_NA
@@ -90,7 +90,11 @@ jobs:
         continue-on-error: true
         name: Check if E2E testing is triggered
         run: |-
-          if [ {{ steps.extract-staging.outputs.is-staging-na }} -eq 1 ]; then
+
+          echo "Result"
+          echo ${{steps.extract-staging.outputs.is-staging-na}}
+
+          if [ ${{ steps.extract-staging.outputs.is-staging-na }} -eq 1 ]; then
             exit 0
           fi
 
