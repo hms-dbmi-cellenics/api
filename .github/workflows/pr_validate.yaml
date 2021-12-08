@@ -15,7 +15,7 @@ jobs:
       group: ${{ github.head_ref }}
       cancel-in-progress: true
     outputs:
-      url: ${{ steps.extract-staging.outputs.url }}
+      is-staging-na: ${{ steps.extract-staging.outputs.is-staging-na }}
       sandbox: ${{ steps.extract-staging.outputs.sandbox }}
       should_e2e_run: ${{ steps.check-e2e-trigger.outcome }}
     steps:
@@ -51,6 +51,17 @@ jobs:
           ${{ github.event.pull_request.body }}
           EOF
           )
+
+          IS_STAGING_NA=0
+
+          if[ URL -eq 'N/A' ]; then
+            IS_STAGING_NA=1
+          fi']
+
+          echo "Is staging N/A?"
+          echo $IS_STAGING_NA
+          echo "::set-output name=is-staging-na::$IS_STAGING_NA"
+
           echo "Full URL:"
           echo $URL
           echo "::set-output name=url::$URL"
@@ -76,10 +87,13 @@ jobs:
           on_retry_command: sleep $[($RANDOM % 10) + 5]s
 
       - id: check-e2e-trigger
-        if: steps.extract-staging.outputs.url != 'N/A'
         continue-on-error: true
         name: Check if E2E testing is triggered
         run: |-
+          if [ {{ steps.extract-staging.outputs.is-staging-na }} -eq 1 ]; then
+            exit 0
+          fi
+
           REGEX="\[[Xx]\] Started end-to-end tests on the latest commit"
     
           pcregrep -o1 -M "$REGEX" <<\EOF
@@ -102,13 +116,22 @@ jobs:
     concurrency: 
       group: ${{ github.sha }}
     steps:
+      - id: pass-if-staging-na
+        if: needs.lint-pr-body.outputs.is-staging-na == 1
+        name: Pass if staging is N/A
+        run: |-
+          echo "Staging is N/A, so skipping integration tests."
+          echo "::set-output name=result::success"
+
       - id: install
+        if: steps.pass-if-staging-na.outcome != 'success'
         name: Install requirements
         run: |-
           sudo apt-get update -y
           sudo apt-get install -y pcregrep
 
       - id: extract-commit-details
+        if: steps.pass-if-staging-na.outcome != 'success'
         name: Get details of last commit
         run: |-
           echo "SHA of GitHub merge commit:"
@@ -121,6 +144,7 @@ jobs:
           echo "::set-output name=repo_name::$REPO_NAME"
 
       - id: extract-integration-test-ref
+        if: steps.pass-if-staging-na.outcome != 'success'
         name: Get integration test ref
         run: |-
           REGEX="#### Integration test branch\s?\r\n(.+)\s?\r\n"
@@ -138,6 +162,7 @@ jobs:
           echo "::set-output name=ref::$INTEGRATION_TEST_REF"
 
       - id: run-integration-test
+        if: steps.pass-if-staging-na.outcome != 'success'
         name: Run integration tests
         uses: aurelien-baudet/workflow-dispatch@v2
         with:
@@ -181,34 +206,3 @@ jobs:
           head-branch-regex: '${{ github.head_ref }}'
           body-template: "${{  steps.create-unchecked-pr-body.outputs.body }}"
           body-update-action: 'replace'
-
-  conclude-intergration-tests:
-    name: Conclude integration tests
-    runs-on: ubuntu-20.04
-    needs: [lint-pr-body, run-integration-tests]
-    concurrency: 
-      group: ${{ github.head_ref }}
-    steps:
-      - id: conclude
-        name: Conclude integation test
-        run: |-
-
-          IS_STAGING_NA = ${{ needs.lint-pr-body.outputs.url == 'N/A' }}
-          echo "Does the PR need to be checked against integration tests?"
-          echo $IS_STAGING_NA
-
-          if [ {{ IS_STAGING_NA }} -eq 1 ]; then
-            echo "This PR is marked as not having to go through integration tests."
-            exit 0
-          fi
-          
-          INTEGRATION_TEST_RESULT=${{ needs.run-integration-tests.outcome }}
-          echo "Result of integration tests:"
-          echo $INTEGRATION_TEST_RESULT
-
-          if [ {{ INTEGRATION_TEST_RESULT }} == 'success' ]; then
-            echo "Integration tests passed."
-            exit 0
-          else
-            echo "Integration tests failed."
-            exit 1
