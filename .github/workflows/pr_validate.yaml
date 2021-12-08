@@ -54,7 +54,7 @@ jobs:
 
           IS_STAGING_NA=0
 
-          if [ $URL -eq 'N/A' ]; then
+          if [ $URL = 'N/A' ]; then
             IS_STAGING_NA=1
           fi
 
