@@ -83,6 +83,12 @@ jobs:
           ${{ github.event.pull_request.body }}
           EOF
 
+      - id: notify-to-follow-template
+        if: failure()
+        name: Show information on linting failure
+        run: |-
+          echo "Make sure that you have followed the PR template that automatically gets created when you create a new PR."
+
   run-integration-tests:
     name: Run integration tests
     runs-on: ubuntu-20.04
@@ -170,9 +176,3 @@ jobs:
           head-branch-regex: '${{ github.head_ref }}'
           body-template: "${{  steps.create-unchecked-pr-body.outputs.body }}"
           body-update-action: 'replace'
-          
-      - id: notify-to-follow-template
-        if: failure()
-        name: Show information on linting failure
-        run: |-
-          echo "Make sure that you have followed the PR template that automatically gets created when you create a new PR."
