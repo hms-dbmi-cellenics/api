@@ -63,6 +63,7 @@ jobs:
           echo "::set-output name=sandbox::$SANDBOX"
 
       - id: reach-staging
+        if: steps.extract-staging.outputs.url != 'N/A'
         name: Attempt to reach staging environments
         uses: nick-invision/retry@v2
         with:
@@ -74,6 +75,7 @@ jobs:
           on_retry_command: sleep $[($RANDOM % 10) + 5]s
 
       - id: check-e2e-trigger
+        if: steps.extract-staging.outputs.url != 'N/A'
         continue-on-error: true
         name: Check if E2E testing is triggered
         run: |-
