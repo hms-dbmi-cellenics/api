@@ -1113,6 +1113,38 @@ paths:
             application/json:
               schema:
                 type: string
+  '/projects/{projectUuid}/samples/{sampleUuid}/{fileName}/downloadUrl':
+    get:
+      summary: Get file download url
+      description: Get temporary s3 upload url for fileName
+      operationId: downloadSampleFileUrl
+      x-eov-operation-id: samples#downloadSampleFileUrl
+      x-eov-operation-handler: routes/samples
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Experiment not found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
   /projects:
     get:
       summary: Get the list of projects
