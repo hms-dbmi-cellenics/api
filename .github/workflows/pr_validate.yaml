@@ -106,7 +106,7 @@ jobs:
       - id: debug
         name: Debug
         run: |-
-          echo {{ needs.lint-pr-body.outputs.is-e2e-box-checked }}
+          echo ${{ needs.lint-pr-body.outputs.is-e2e-box-checked }}
 
       - id: cancel
         name: Cancel if staging is not N/A and box is not checked
