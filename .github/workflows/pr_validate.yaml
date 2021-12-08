@@ -88,6 +88,7 @@ jobs:
 
       - id: check-e2e-checkbox
         name: Check if E2E testing is checked
+        continue-on-error: true
         run: |-
           REGEX="\[[Xx]\] Started end-to-end tests on the latest commit"
     
