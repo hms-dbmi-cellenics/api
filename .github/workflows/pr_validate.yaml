@@ -105,7 +105,7 @@ jobs:
     steps:
       - id: cancel
         name: Cancel if staging is not N/A and box is not checked
-        if: needs.lint-pr-body.outputs.is-staging-na == true && needs.lint-pr-body.outputs.is-e2e-box-checked != 'success'
+        if: needs.lint-pr-body.outputs.is-staging-na == false && needs.lint-pr-body.outputs.is-e2e-box-checked != 'success'
         uses: andymckay/cancel-action@0.2
 
       - id: install
