@@ -52,10 +52,10 @@ jobs:
           EOF
           )
 
-          IS_STAGING_NA=false
+          IS_STAGING_NA='false'
 
           if [ $URL = 'N/A' ]; then
-            IS_STAGING_NA=true
+            IS_STAGING_NA='true'
           fi
 
           echo "Is staging N/A?"
@@ -110,18 +110,18 @@ jobs:
 
       - id: cancel
         name: Cancel if staging is not N/A and box is not checked
-        if: needs.lint-pr-body.outputs.is-staging-na == false && needs.lint-pr-body.outputs.is-e2e-box-checked != 'success'
+        if: needs.lint-pr-body.outputs.is-staging-na == 'false' && needs.lint-pr-body.outputs.is-e2e-box-checked != 'success'
         uses: andymckay/cancel-action@0.2
 
       - id: install
-        if: needs.lint-pr-body.outputs.is-staging-na == false
+        if: needs.lint-pr-body.outputs.is-staging-na == 'false'
         name: Install requirements
         run: |-
           sudo apt-get update -y
           sudo apt-get install -y pcregrep
 
       - id: extract-commit-details
-        if: needs.lint-pr-body.outputs.is-staging-na == false
+        if: needs.lint-pr-body.outputs.is-staging-na == 'false'
         name: Get details of last commit
         run: |-
           echo "SHA of GitHub merge commit:"
@@ -134,7 +134,7 @@ jobs:
           echo "::set-output name=repo_name::$REPO_NAME"
 
       - id: extract-integration-test-ref
-        if: needs.lint-pr-body.outputs.is-staging-na == false
+        if: needs.lint-pr-body.outputs.is-staging-na == 'false'
         name: Get integration test ref
         run: |-
           REGEX="#### Integration test branch\s?\r\n(.+)\s?\r\n"
@@ -152,7 +152,7 @@ jobs:
           echo "::set-output name=ref::$INTEGRATION_TEST_REF"
 
       - id: run-integration-test
-        if: needs.lint-pr-body.outputs.is-staging-na == false
+        if: needs.lint-pr-body.outputs.is-staging-na == 'false'
         name: Run integration tests
         uses: aurelien-baudet/workflow-dispatch@v2
         with:
