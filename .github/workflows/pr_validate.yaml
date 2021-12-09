@@ -103,20 +103,40 @@ jobs:
     concurrency: 
       group: ${{ github.sha }}
     steps:
+      
+      -id: check-e2e-run
+        name: Check if E2E should run
+        run: |-
+          $SHOULD_RUN_E2E='true'
+          $SHOULD_CANCEL_E2E='false'
+
+          echo "Should E2E cancel?"
+          if[ ${{ needs.lint-pr-body.outputs.is-staging-na}} = 'false' ] && [ needs.lint-pr-body.outputs.is-e2e-box-checked != 'success' ]; then
+            $SHOULD_CANCEL_E2E='true'
+          fi
+          
+          echo "Should E2E be skipped?"
+          if[ ${{ needs.lint-pr-body.outputs.is-staging-na}} = 'true' ]; then
+            $SHOULD_RUN_E2E='false'
+          fi
+
+          echo "::set-output name=should-e2e-cancel::$SHOULD_CANCEL_E2E"
+          echo "::set-output name=should-e2e-run::$SHOULD_RUN_E2E"
+        
       - id: cancel
         name: Cancel if staging is not N/A and box is not checked
-        if: needs.lint-pr-body.outputs.is-staging-na == 'false' && needs.lint-pr-body.outputs.is-e2e-box-checked != 'success'
+        if: steps.should-e2e-run.outputs.should-e2e-cancel == 'true'
         uses: andymckay/cancel-action@0.2
 
       - id: install
-        if: needs.lint-pr-body.outputs.is-staging-na == 'false' && needs.lint-pr-body.outputs.is-e2e-box-checked == 'success'
+        if: steps.check-e2e-run.outputs.should-e2e-run == 'true'
         name: Install requirements
         run: |-
           sudo apt-get update -y
           sudo apt-get install -y pcregrep
 
       - id: extract-commit-details
-        if: needs.lint-pr-body.outputs.is-staging-na == 'false' && needs.lint-pr-body.outputs.is-e2e-box-checked == 'success'
+        if: steps.check-e2e-run.outputs.should-e2e-run == 'true'
         name: Get details of last commit
         run: |-
           echo "SHA of GitHub merge commit:"
@@ -129,7 +149,7 @@ jobs:
           echo "::set-output name=repo_name::$REPO_NAME"
 
       - id: extract-integration-test-ref
-        if: needs.lint-pr-body.outputs.is-staging-na == 'false' && needs.lint-pr-body.outputs.is-e2e-box-checked == 'success'
+        if: steps.check-e2e-run.outputs.should-e2e-run == 'true'
         name: Get integration test ref
         run: |-
           REGEX="#### Integration test branch\s?\r\n(.+)\s?\r\n"
@@ -147,7 +167,7 @@ jobs:
           echo "::set-output name=ref::$INTEGRATION_TEST_REF"
 
       - id: run-integration-test
-        if: needs.lint-pr-body.outputs.is-staging-na == 'false' && needs.lint-pr-body.outputs.is-e2e-box-checked == 'success'
+        if: steps.check-e2e-run.outputs.should-e2e-run == 'true'
         name: Run integration tests
         uses: aurelien-baudet/workflow-dispatch@v2
         with:
