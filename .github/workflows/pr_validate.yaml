@@ -107,18 +107,20 @@ jobs:
       - id: check-e2e-run
         name: Check if E2E should run
         run: |-
-          $SHOULD_RUN_E2E='true'
-          $SHOULD_CANCEL_E2E='false'
+          SHOULD_RUN_E2E='true'
+          SHOULD_CANCEL_E2E='false'
 
           echo "Should E2E cancel?"
           if[ ${{ needs.lint-pr-body.outputs.is-staging-na}} = 'false' ] && [ needs.lint-pr-body.outputs.is-e2e-box-checked != 'success' ]; then
-            $SHOULD_CANCEL_E2E='true'
+            SHOULD_CANCEL_E2E='true'
           fi
+          echo $SHOULD_CANCEL_E2E
           
           echo "Should E2E be skipped?"
           if[ ${{ needs.lint-pr-body.outputs.is-staging-na}} = 'true' ]; then
-            $SHOULD_RUN_E2E='false'
+            SHOULD_RUN_E2E='false'
           fi
+          echo $SHOULD_RUN_E2E
 
           echo "::set-output name=should-e2e-cancel::$SHOULD_CANCEL_E2E"
           echo "::set-output name=should-e2e-run::$SHOULD_RUN_E2E"
