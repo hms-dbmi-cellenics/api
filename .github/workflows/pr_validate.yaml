@@ -84,6 +84,8 @@ jobs:
           retry_on: error
           command: curl -f ${{ steps.extract-staging.outputs.url }}
           # Add jitter to break up correlated events.
+
+          # mcock comment, remove this before merging
           on_retry_command: sleep $[($RANDOM % 10) + 5]s
 
       - id: check-e2e-checkbox
