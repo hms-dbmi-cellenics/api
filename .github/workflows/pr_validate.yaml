@@ -104,7 +104,7 @@ jobs:
       group: ${{ github.sha }}
     steps:
       
-      -id: check-e2e-run
+      - id: check-e2e-run
         name: Check if E2E should run
         run: |-
           $SHOULD_RUN_E2E='true'
