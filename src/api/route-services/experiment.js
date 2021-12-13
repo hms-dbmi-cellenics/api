@@ -377,6 +377,7 @@ class ExperimentService {
     };
 
     const signedUrl = getSignedUrl('getObject', params);
+
     return signedUrl;
   }
 
