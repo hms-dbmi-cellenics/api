@@ -84,6 +84,17 @@ describe('getSignedUrl', () => {
     expect(AWS.S3).toHaveBeenCalledWith(expect.objectContaining(expectedConfig));
   });
 
+  it('Should add the region config if the requested url is not doing upload too', () => {
+    const expectedConfig = {
+      region: 'eu-west-1',
+    };
+
+    getSignedUrl('getObject', testParams);
+
+    // Expect config to have region
+    expect(AWS.S3).toHaveBeenCalledWith(expect.objectContaining(expectedConfig));
+  });
+
   it('Should throw an error if bucket is not defined', () => {
     expect(() => {
       getSignedUrl('test-bucket', { Key: 'test-key' });
