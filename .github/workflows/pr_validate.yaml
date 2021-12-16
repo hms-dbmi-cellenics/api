@@ -90,7 +90,7 @@ jobs:
         name: Check if E2E testing is checked
         continue-on-error: true
         run: |-
-          REGEX="\[[Xx]\] Started end-to-end tests on the latest commit"
+          REGEX="\[[Xx]\] Started end-to-end tests on the latest commit\."
     
           pcregrep -o1 -M "$REGEX" <<\EOF
           ${{ github.event.pull_request.body }}
@@ -190,7 +190,7 @@ jobs:
         if: failure()
         name: Create unchecked PR body
         run: |-
-          UNCHECKED_BODY=$(sed 's/- \[[Xx]\] Started end-to-end tests on the latest commit/- \[ \] Started end-to-end tests on the latest commit/' <<\EOF
+          UNCHECKED_BODY=$(sed 's/- \[[Xx]\] Started end-to-end tests on the latest commit\./- \[ \] Started end-to-end tests on the latest commit\./' <<\EOF
           ${{ steps.get-pr-body.outputs.body }}
           EOF
           )

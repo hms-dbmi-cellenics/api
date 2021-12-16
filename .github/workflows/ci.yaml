@@ -13,6 +13,7 @@ jobs:
   uncheck-integration-test:
     name: Mark integration test as not run
     runs-on: ubuntu-20.04
+    if: github.event_name == 'pull_request'
     steps:
       - id: get-pr-body
         name: Get the current PR body
@@ -23,7 +24,7 @@ jobs:
       - id: create-unchecked-pr-body
         name: Create unchecked PR body
         run: |-
-          UNCHECKED_BODY=$(sed 's/- \[[Xx]\] Started end-to-end tests on the latest commit/- \[ \] Started end-to-end tests on the latest commit/' <<\EOF
+          UNCHECKED_BODY=$(sed 's/- \[[Xx]\] Started end-to-end tests on the latest commit./- \[ \] Started end-to-end tests on the latest commit./' <<\EOF
           ${{ steps.get-pr-body.outputs.body }}
           EOF
           )

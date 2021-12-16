@@ -63,7 +63,7 @@ Have best practices and ongoing refactors being observed in this PR
 Integration tests have to pass before the PR can be merged. Without checking the box, your PR
 **will not pass** the required status checks for merging.
 
-- [ ] Started integration tests on the latest commit.
+- [ ] Started end-to-end tests on the latest commit.
 
 ### Documentation updates
 - [ ] Relevant Github READMEs updated **or** no GitHub README updates required.
