@@ -10,6 +10,7 @@ const {
 } = require('../../utils/dynamoDb');
 const AWS = require('../../utils/requireAWS');
 
+const { getSignedUrl } = require('../../utils/aws/s3');
 const getLogger = require('../../utils/getLogger');
 
 const logger = getLogger();
@@ -103,7 +104,7 @@ class SamplesService {
       await dynamodb.updateItem(params).send();
       return OK();
     } catch (e) {
-      if (e.statusCode === 404) throw NotFoundError('Project not found');
+      if (e.statusCode === 404) throw new NotFoundError('Project not found');
       throw e;
     }
   }
@@ -222,7 +223,7 @@ class SamplesService {
     try {
       promises.push(await dynamodb.deleteItem(dynamodbParams).send());
     } catch (e) {
-      if (e.statusCode === 404) throw NotFoundError('Project not found');
+      if (e.statusCode === 404) throw new NotFoundError('Project not found');
       throw e;
     }
 
@@ -236,12 +237,6 @@ class SamplesService {
   }
 
   getS3UploadUrl(projectUuid, sampleUuid, fileName, cellrangerVersion) {
-    const s3 = new AWS.S3({
-      apiVersion: '2006-03-01',
-      signatureVersion: 'v4',
-      region: config.awsRegion,
-    });
-
     const params = {
       Bucket: this.sampleFilesBucketName,
       Key: `${projectUuid}/${sampleUuid}/${fileName}`,
@@ -255,7 +250,19 @@ class SamplesService {
       };
     }
 
-    const signedUrl = s3.getSignedUrl('putObject', params);
+    const signedUrl = getSignedUrl('putObject', params);
+
+    return signedUrl;
+  }
+
+
+  getS3DownloadUrl(projectUuid, sampleUuid, fileName) {
+    const params = {
+      Bucket: this.sampleFilesBucketName,
+      Key: `${projectUuid}/${sampleUuid}/${fileName}`,
+    };
+
+    const signedUrl = getSignedUrl('getObject', params);
 
     return signedUrl;
   }

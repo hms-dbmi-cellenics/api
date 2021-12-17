@@ -1,4 +1,5 @@
 const AWS = require('../requireAWS');
+const config = require('../../config');
 
 const fileExists = async (bucket, prefix) => {
   const s3 = new AWS.S3();
@@ -22,4 +23,19 @@ const fileExists = async (bucket, prefix) => {
   return true;
 };
 
-module.exports = { fileExists };
+const getSignedUrl = (operation, params) => {
+  const S3Config = {
+    apiVersion: '2006-03-01',
+    signatureVersion: 'v4',
+    region: config.awsRegion,
+  };
+
+  const s3 = new AWS.S3(S3Config);
+
+  if (!params.Bucket) throw new Error('Bucket is required');
+  if (!params.Key) throw new Error('Key is required');
+
+  return s3.getSignedUrl(operation, params);
+};
+
+module.exports = { fileExists, getSignedUrl };

@@ -5,7 +5,10 @@ const config = require('../../config');
 const AWS = require('../../utils/requireAWS');
 const getLogger = require('../../utils/getLogger');
 const { OK, NotFoundError, BadRequestError } = require('../../utils/responses');
+
 const safeBatchGetItem = require('../../utils/safeBatchGetItem');
+const { getSignedUrl } = require('../../utils/aws/s3');
+
 const constants = require('../general-services/pipeline-manage/constants');
 const downloadTypes = require('../../utils/downloadTypes');
 
@@ -366,9 +369,6 @@ class ExperimentService {
         break;
     }
 
-
-    const s3 = new AWS.S3();
-
     const params = {
       Bucket: bucket,
       Key: objectKey,
@@ -376,8 +376,9 @@ class ExperimentService {
       Expires: 120,
     };
 
-    const signedUrl = s3.getSignedUrl('getObject', params);
-    return { signedUrl };
+    const signedUrl = getSignedUrl('getObject', params);
+
+    return signedUrl;
   }
 
   async deleteExperimentEntryFromDynamodb(experimentId) {

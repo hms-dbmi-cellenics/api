@@ -1,7 +1,8 @@
-const { convertToDynamoUpdateParams } = require('../../src/utils/dynamoDb');
+// @ts-nocheck
+const { batchConvertToDynamoUpdateParams, convertToDynamoUpdateParams } = require('../../src/utils/dynamoDb');
 
-describe('tests for DynamoDB functions', () => {
-  it('convertToDynamoUpdateParams converts configArrray properly', () => {
+describe('convertToDynamoUpdateParams', () => {
+  it('calls aws correctly', () => {
     const input = [
       {
         name: 'conf1',
@@ -48,6 +49,59 @@ describe('tests for DynamoDB functions', () => {
     };
 
     const result = convertToDynamoUpdateParams('test', input);
+
+    expect(result).toEqual(output);
+  });
+});
+
+describe('batchConvertToDynamoUpdateParams', () => {
+  it('works correctly', () => {
+    const input = [
+      ['meta'],
+      {
+        meta: [
+          {
+            name: 'pipeline',
+            body: {
+              stateMachineArn: 'arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-qc-development-stuff',
+              executionArn: 'arn:aws:states:eu-west-1:000000000000:execution:biomage-qc-development-stuff',
+            },
+          }, {
+            name: 'gem2s',
+            body: {
+              paramsHash: 'hash',
+              stateMachineArn: 'arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-gem2s-development-stuff',
+              executionArn: 'arn:aws:states:eu-west-1:000000000000:execution:biomage-gem2s-development-stuff',
+            },
+          }, { name: 'organism', body: null }, { name: 'type', body: '10x' }],
+      },
+    ];
+
+    const output = {
+      updateExpressionList: [' meta.#key1 = :val1, meta.#key2 = :val2, meta.#key3 = :val3, meta.#key4 = :val4'],
+      attributeNames: {
+        '#key1': 'pipeline', '#key2': 'gem2s', '#key3': 'organism', '#key4': 'type',
+      },
+      attributeValues: {
+        ':val1': {
+          M: {
+            stateMachineArn: { S: 'arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-qc-development-stuff' },
+            executionArn: { S: 'arn:aws:states:eu-west-1:000000000000:execution:biomage-qc-development-stuff' },
+          },
+        },
+        ':val2': {
+          M: {
+            paramsHash: { S: 'hash' },
+            stateMachineArn: { S: 'arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-gem2s-development-stuff' },
+            executionArn: { S: 'arn:aws:states:eu-west-1:000000000000:execution:biomage-gem2s-development-stuff' },
+          },
+        },
+        ':val3': { NULL: true },
+        ':val4': { S: '10x' },
+      },
+    };
+
+    const result = batchConvertToDynamoUpdateParams(...input);
 
     expect(result).toEqual(output);
   });
