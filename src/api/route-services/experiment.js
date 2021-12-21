@@ -25,6 +25,10 @@ const {
   convertToDynamoUpdateParams,
 } = require('../../utils/dynamoDb');
 
+const PermissionsService = require('./permissions');
+
+const permissionsService = new PermissionsService();
+
 const logger = getLogger('[ExperimentService] - ');
 
 class ExperimentService {
@@ -78,7 +82,15 @@ class ExperimentService {
 
     const documentClient = new AWS.DynamoDB.DocumentClient();
 
+    // const permissions = [{
+    //   module: '*',
+    //   mode: 'w',
+    // }];
     const rbacCanWrite = Array.from(new Set([config.adminArn, user.sub]));
+    // const rbacPermissions = {
+    //   [config.adminArn]: permissions,
+    //   [user.sub]: permissions,
+    // };
 
     const marshalledData = convertToDynamoDbRecord({
       ':experimentName': body.experimentName,
@@ -115,6 +127,9 @@ class ExperimentService {
     };
 
     await dynamodb.updateItem(params).promise();
+
+    await permissionsService.addFullExperimentPermissions(user.sub, experimentId, body.projectId);
+    await permissionsService.addFullExperimentPermissions(config.adminArn, experimentId, body.projectId);
 
     return OK();
   }

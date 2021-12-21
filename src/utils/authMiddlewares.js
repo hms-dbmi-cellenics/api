@@ -18,9 +18,13 @@ const { CacheMissError } = require('../cache/cache-utils');
 const { UnauthorizedError, UnauthenticatedError } = require('./responses');
 const ExperimentService = require('../api/route-services/experiment');
 const ProjectsService = require('../api/route-services/projects');
+const PermissionsService = require('../api/route-services/permissions');
 
 const experimentService = new ExperimentService();
+const permissionsService = new PermissionsService();
 const projectService = new ProjectsService();
+
+const { getPathModule, permissionRequested } = require('../api/route-services/permissionsHelpers');
 
 /**
  * Authentication middleware for Express. Returns a middleware that
@@ -230,6 +234,30 @@ const authorize = async (authResource, claim, authByExperiment = true) => {
   throw new UnauthorizedError(`User ${userName} (${email}) does not have access to ${authByExperiment ? 'experiment' : 'project'} ${authResource}.`);
 };
 
+const authorizeNew = async (req) => {
+  const { 'cognito:username': userId, email } = req.user;
+
+
+  let { experimentId } = req.params;
+  const { projectUuid } = req.params;
+
+  if (!experimentId && projectUuid) {
+    const experiments = await projectService.getExperiments(projectUuid, true);
+    experimentId = experiments[0].experimentId;
+  }
+
+  const granted = await permissionsService.canAccessExperiment(userId,
+    experimentId,
+    req.url,
+    req.method);
+
+  if (granted) {
+    return true;
+  }
+
+  throw new UnauthorizedError(`User ${userId} (${email}) does not have access to experiment ${experimentId} or project ${projectUuid}.`);
+};
+
 /**
  * Wrapper for the general authorization middleware for use in Express.
  * Calls `authorize()` internally.
@@ -240,14 +268,13 @@ const expressAuthorizationMiddleware = async (req, res, next) => {
     return;
   }
 
-  const authByExperiment = !!req.params.experimentId;
-  const authResource = req.params.experimentId ? req.params.experimentId : req.params.projectUuid;
+  // const authByExperiment = !!req.params.experimentId;
+  // const authResource = req.params.experimentId ? req.params.experimentId : req.params.projectUuid;
 
   try {
-    await authorize(authResource, req.user, authByExperiment);
-
+    // await authorize(authResource, req.user, authByExperiment);
+    await authorizeNew(req);
     next();
-    return;
   } catch (e) {
     next(e);
   }
