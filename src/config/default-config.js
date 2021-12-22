@@ -49,8 +49,6 @@ async function getAwsPoolId() {
   const { UserPools } = await cognitoISP.listUserPools({ MaxResults: 60 }).promise();
   // when k8s is undefined we are in development where we use staging user pool so we set
   // it as the default one.
-
-
   let userPoolName = 'biomage-user-pool-case-insensitive-staging';
   if (process.env.K8S_ENV) {
     userPoolName = `biomage-user-pool-case-insensitive-${process.env.K8S_ENV}`;
