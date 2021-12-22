@@ -49,10 +49,9 @@ async function getAwsPoolId() {
   const { UserPools } = await cognitoISP.listUserPools({ MaxResults: 60 }).promise();
   // when k8s is undefined we are in development where we use staging user pool so we set
   // it as the default one.
-  let userPoolName = 'biomage-user-pool-staging';
-  if (process.env.K8S_ENV) {
-    userPoolName = `biomage-user-pool-${process.env.K8S_ENV}`;
-  }
+  const k8sEnv = process.env.K8S_ENV || 'staging';
+  const userPoolName = `biomage-user-pool-case-insensitive-${k8sEnv}`;
+
   const poolId = UserPools.find((pool) => pool.Name === userPoolName).Id;
 
   return poolId;
@@ -85,7 +84,7 @@ const config = {
   pipelineInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/pipeline.yaml',
   cachingEnabled: true,
   corsOriginUrl: 'https://scp.biomage.net',
-  adminArn: 'a07c6615-d982-413b-9fdc-48bd85182e83',
+  adminArn: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
 };
 
 
@@ -95,7 +94,7 @@ if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
   config.pipelineInstanceConfigUrl = 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/pipeline.yaml';
   config.cachingEnabled = false;
   config.corsOriginUrl = 'https://ui-default.scp-staging.biomage.net';
-  config.adminArn = 'a07c6615-d982-413b-9fdc-48bd85182e83';
+  config.adminArn = '032abd44-0cd3-4d58-af21-850ca0b95ac7';
 }
 
 // We are in user staging environments
