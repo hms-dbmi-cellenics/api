@@ -84,7 +84,7 @@ const config = {
   pipelineInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/pipeline.yaml',
   cachingEnabled: true,
   corsOriginUrl: 'https://scp.biomage.net',
-  adminArn: 'a07c6615-d982-413b-9fdc-48bd85182e83',
+  adminArn: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
 };
 
 
@@ -94,7 +94,7 @@ if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
   config.pipelineInstanceConfigUrl = 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/pipeline.yaml';
   config.cachingEnabled = false;
   config.corsOriginUrl = 'https://ui-default.scp-staging.biomage.net';
-  config.adminArn = 'a07c6615-d982-413b-9fdc-48bd85182e83';
+  config.adminArn = '032abd44-0cd3-4d58-af21-850ca0b95ac7';
 }
 
 // We are in user staging environments
@@ -103,7 +103,7 @@ if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
   config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/${config.sandboxId}.yaml`;
   config.cachingEnabled = false;
   config.corsOriginUrl = `https://ui-${config.sandboxId}.scp-staging.biomage.net`;
-  config.adminArn = '70c213d4-e7b6-4920-aefb-706ce8606ee2';
+  config.adminArn = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
 }
 
 
@@ -121,7 +121,7 @@ if (config.clusterEnv === 'development') {
   });
 
   config.corsOriginUrl = 'http://localhost:5000';
-  config.adminArn = '70c213d4-e7b6-4920-aefb-706ce8606ee2';
+  config.adminArn = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
 }
 
 module.exports = config;
