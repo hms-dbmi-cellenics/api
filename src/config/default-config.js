@@ -6,15 +6,17 @@ const getLogger = require('../utils/getLogger');
 const logger = getLogger();
 
 
-let githubOrganisationName = 'hms-dbmi-cellenics';
-const getGithubRepo = async () => {
+const getGithubOrg = async () => {
+  let githubOrganisationName = 'hms-dbmi-cellenics';
   const answer = await fetch(`https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/production/pipeline.yaml`);
   const text = await answer.text();
   if (text === '404: Not Found') {
     githubOrganisationName = 'biomage-ltd';
   }
+  return githubOrganisationName;
 };
-getGithubRepo();
+
+const githubOrganisationName = getGithubOrg();
 
 // If we are not deployed on Github (AWS/k8s), the environment is given by
 // NODE_ENV, or development if NODE_ENV is not set.
