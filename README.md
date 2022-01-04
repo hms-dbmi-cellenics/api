@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/biomage-ltd/api/branch/master/graph/badge.svg?token=hC9LshrTQm)](https://codecov.io/gh/biomage-ltd/api)
+[![codecov](https://codecov.io/gh/hms-dbmi-cellenics/api/branch/master/graph/badge.svg?token=hC9LshrTQm)](https://codecov.io/gh/hms-dbmi-cellenics/api)
 API
 ======
 
@@ -59,9 +59,9 @@ You should see the following output on your terminal:
 The reason for this is that the API is not connected with the rest of the platform. To get the API running end-to-end
 with a mocked dataset, you will need to set up each of these:
 
-- Inframock: https://github.com/biomage-ltd/inframock
-- worker: https://github.com/biomage-ltd/worker
-- UI: https://github.com/biomage-ltd/ui
+- Inframock: https://github.com/hms-dbmi-cellenics/inframock
+- worker: https://github.com/hms-dbmi-cellenics/worker
+- UI: https://github.com/hms-dbmi-cellenics/ui
 
 The following steps explain in more details on how to get the Cellscope platform running end-to-end locally.
 
@@ -71,7 +71,7 @@ Inframock is a tool that we have developed in order to run the single cell seque
 without the need to access AWS resources. It enables local end-to-end testing and development
 and it is highly recommended that you set it up when developing a new feature.
 
-In order to connect with Inframock, follow the instructions in here next: https://github.com/biomage-ltd/inframock
+In order to connect with Inframock, follow the instructions in here next: https://github.com/hms-dbmi-cellenics/inframock
 
 After Inframock is started, the next step is to start the API.
 
@@ -126,18 +126,18 @@ directly. This means that caching of data will not work in this case.
 
 Also note that if you decide to run the API with a ***live*** cluster, you won't be able to receive responses back from the
 worker. This is because the live SNS topic cannot push messages to a local development machine, only to an endpoint
-exposed to the internet. See the system achitecture here for more context: https://github.com/biomage-ltd/developer-docs/wiki/Biomage-Single-Cell-Platform:-Architecture
+exposed to the internet. See the system achitecture here for more context: https://github.com/hms-dbmi-cellenics/developer-docs/wiki/Biomage-Single-Cell-Platform:-Architecture
 
 #### 3. (Optional) Run the UI locally
 
 This is required only if you want to run the API with a local version of the UI.
-Go to the UI repo found in here: https://github.com/biomage-ltd/ui and follow the instructions to set it up and start it.
+Go to the UI repo found in here: https://github.com/hms-dbmi-cellenics/ui and follow the instructions to set it up and start it.
 After the UI is launched on a separate terminal tab, any request from the UI will be automatically forwarded to the API.
 
 #### 4. (Optional) Run the worker locally
 
 This is required only if you want to run the API with a local version of the worker.
-Go to the worker repo found in here: https://github.com/biomage-ltd/worker and clone the repository.
+Go to the worker repo found in here: https://github.com/hms-dbmi-cellenics/worker and clone the repository.
 On a separate terminal inside the worker project, start the worker locally by following the instructions in the worker README.
 
 After the worker is launched, any request from the API will be automatically forwarded to the worker by default
@@ -166,7 +166,7 @@ from the file `payload.json`.
 #### 5. (Optional) Run the pipeline locally
 
 This is required only if you are going to work on functionality involving the QC pipeline.
-Go to the pipeline repo found in here: https://github.com/biomage-ltd/pipeline and clone the repository.
+Go to the pipeline repo found in here: https://github.com/hms-dbmi-cellenics/pipeline and clone the repository.
 On a separate terminal inside the worker pipeline, start the worker locally by following the instructions in the pipeline README.
 
 You can inspect the inframock state machines that drive the pipeline with
@@ -178,14 +178,14 @@ aws --endpoint-url=http://localhost:4566 stepfunctions describe-state-machine --
 ```
 
 One of the test suites creates a snapshot with the definition of the [state machine used in inframock and in non-local
-deployments](https://github.com/biomage-ltd/api/blob/master/tests/api/general-services/__snapshots__/state-machine-definition.test.js.snap).
+deployments](https://github.com/hms-dbmi-cellenics/api/blob/master/tests/api/general-services/__snapshots__/state-machine-definition.test.js.snap).
 
 Deployment
 ----------
 
 The api is deployed to an AWS-managed Kubernetes cluster during a CI build via Github Actions upon a merged Pull Request.
-For more information on the deployment, see the deploy step of the CI script for the API: https://github.com/biomage-ltd/api/blob/master/.github/workflows/ci.yaml
-and the iac repo: https://github.com/biomage-ltd/iac
+For more information on the deployment, see the deploy step of the CI script for the API: https://github.com/hms-dbmi-cellenics/api/blob/master/.github/workflows/ci.yaml
+and the iac repo: https://github.com/hms-dbmi-cellenics/iac
 
 To inspect the state of the state machine that drives the pipeline, you can access the [AWS Step Functions
 console](https://eu-west-1.console.aws.amazon.com/states/home?region=eu-west-1#/statemachines), or from the
