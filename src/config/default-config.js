@@ -1,15 +1,30 @@
 const dotenv = require('dotenv');
 const AWS = require('aws-sdk');
+const fetch = require('node-fetch');
 const getLogger = require('../utils/getLogger');
 
 const logger = getLogger();
 
-// If we are not deployed on GitLab (AWS/k8s), the environment is given by
+
+const getGithubOrg = async () => {
+  let githubOrganisationName = 'hms-dbmi-cellenics';
+  const answer = await fetch(`https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/production/pipeline.yaml`);
+  const text = await answer.text();
+  if (text === '404: Not Found') {
+    githubOrganisationName = 'biomage-ltd';
+  }
+  return githubOrganisationName;
+};
+
+const githubOrganisationName = getGithubOrg();
+
+// If we are not deployed on Github (AWS/k8s), the environment is given by
 // NODE_ENV, or development if NODE_ENV is not set.
 
-// If we are, assign NODE_ENV based on the GitLab (AWS/k8s cluster) environment.
-// If NODE_ENV is set, that will take precedence over the GitLab
+// If we are, assign NODE_ENV based on the Github (AWS/k8s cluster) environment.
+// If NODE_ENV is set, that will take precedence over the Github
 // environment.
+
 if (process.env.K8S_ENV && !process.env.NODE_ENV) {
   switch (process.env.K8S_ENV) {
     case 'staging':
@@ -80,8 +95,8 @@ const config = {
   api: {
     prefix: '/',
   },
-  workerInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/worker.yaml',
-  pipelineInstanceConfigUrl: 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/production/pipeline.yaml',
+  workerInstanceConfigUrl: `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/production/worker.yaml`,
+  pipelineInstanceConfigUrl: `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/production/pipeline.yaml`,
   cachingEnabled: true,
   corsOriginUrl: 'https://scp.biomage.net',
   adminArn: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
@@ -90,8 +105,8 @@ const config = {
 
 // We are in permanent develop staging environment
 if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
-  config.workerInstanceConfigUrl = 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/worker.yaml';
-  config.pipelineInstanceConfigUrl = 'https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/pipeline.yaml';
+  config.workerInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/worker.yaml`;
+  config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/pipeline.yaml`;
   config.cachingEnabled = false;
   config.corsOriginUrl = 'https://ui-default.scp-staging.biomage.net';
   config.adminArn = '032abd44-0cd3-4d58-af21-850ca0b95ac7';
@@ -99,8 +114,8 @@ if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
 
 // We are in user staging environments
 if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
-  config.workerInstanceConfigUrl = `https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/${config.sandboxId}.yaml`;
-  config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/biomage-ltd/iac/master/releases/staging/${config.sandboxId}.yaml`;
+  config.workerInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/${config.sandboxId}.yaml`;
+  config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/${config.sandboxId}.yaml`;
   config.cachingEnabled = false;
   config.corsOriginUrl = `https://ui-${config.sandboxId}.scp-staging.biomage.net`;
   config.adminArn = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
