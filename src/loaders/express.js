@@ -27,13 +27,13 @@ module.exports = async (app) => {
   app.use(bodyParser.text({ extended: false, limit: '1mb', parameterLimit: 300000 }));
   app.use(bodyParser.json({
     extended: false,
-    limit: '10mb',
+    limit: '50mb',
     parameterLimit: 300000,
     type: 'application/json',
   }));
   app.use(bodyParser.json({
     extended: false,
-    limit: '10mb',
+    limit: '50mb',
     parameterLimit: 300000,
     type: 'application/*+json',
   }));

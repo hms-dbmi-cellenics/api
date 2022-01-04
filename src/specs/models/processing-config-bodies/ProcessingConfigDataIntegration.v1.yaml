@@ -67,6 +67,7 @@ properties:
           - cca
       numPCs:
         type: number
+        nullable: true
         minimum: 1
       excludeGeneCategories:
         type: array

@@ -483,11 +483,8 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  signedUrl:
-                    type: string
-                    description: signed URL of the resource
+                type: string
+                description: signed URL of the resource
         '400':
           description: Invalid download type request.
           content:

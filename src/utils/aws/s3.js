@@ -27,11 +27,8 @@ const getSignedUrl = (operation, params) => {
   const S3Config = {
     apiVersion: '2006-03-01',
     signatureVersion: 'v4',
+    region: config.awsRegion,
   };
-
-  if (operation === 'putObject') {
-    S3Config.region = config.awsRegion;
-  }
 
   const s3 = new AWS.S3(S3Config);
 
