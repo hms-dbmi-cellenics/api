@@ -5,21 +5,23 @@ const getLogger = require('../utils/getLogger');
 
 const logger = getLogger();
 
-// If we are not deployed on GitLab (AWS/k8s), the environment is given by
-// NODE_ENV, or development if NODE_ENV is not set.
 
-// If we are, assign NODE_ENV based on the GitLab (AWS/k8s cluster) environment.
-// If NODE_ENV is set, that will take precedence over the GitLab
-// environment.
-let githubOrganisationName = 'biomage-ltd';
+let githubOrganisationName = 'hms-dbmi-cellenics';
 const getGithubRepo = async () => {
   const answer = await fetch(`https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/production/pipeline.yaml`);
   const text = await answer.text();
   if (text === '404: Not Found') {
-    githubOrganisationName = 'hms-dbmi-cellenics';
+    githubOrganisationName = 'biomage-ltd';
   }
 };
 getGithubRepo();
+
+// If we are not deployed on Github (AWS/k8s), the environment is given by
+// NODE_ENV, or development if NODE_ENV is not set.
+
+// If we are, assign NODE_ENV based on the Github (AWS/k8s cluster) environment.
+// If NODE_ENV is set, that will take precedence over the Github
+// environment.
 
 if (process.env.K8S_ENV && !process.env.NODE_ENV) {
   switch (process.env.K8S_ENV) {
