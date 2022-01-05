@@ -1,6 +1,22 @@
-const express = require('express');
-const request = require('supertest');
-const expressLoader = require('../../../src/loaders/express');
+const k8s = require('@kubernetes/client-node');
+
+
+jest.mock('@kubernetes/client-node');
+
+
+const deleteNamespacedPod = jest.fn();
+const patchNamespacedPod = jest.fn();
+const listNamespacedPod = jest.fn();
+const mockApi = {
+  deleteNamespacedPod,
+  patchNamespacedPod,
+  listNamespacedPod,
+};
+
+k8s.KubeConfig.mockImplementation(() => ({
+  loadFromDefault: jest.fn(),
+  makeApiClient: (() => mockApi),
+}));
 
 
 const removeRequest = {
@@ -47,6 +63,10 @@ const removeRequest = {
   },
 };
 
+const express = require('express');
+const request = require('supertest');
+const expressLoader = require('../../../src/loaders/express');
+
 describe('tests for experiment route', () => {
   let app = null;
 
@@ -75,5 +95,13 @@ describe('tests for experiment route', () => {
 
         return done();
       });
+  });
+
+  it('sending an empty request works', async (done) => {
+    request(app)
+      .post('/v1/kubernetesEvents')
+      .send(undefined)
+      .expect(500)
+      .end((err) => done(err));
   });
 });
