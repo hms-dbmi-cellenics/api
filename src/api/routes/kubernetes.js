@@ -5,7 +5,6 @@ const getLogger = require('../../utils/getLogger');
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
 
-
 const logger = getLogger();
 
 module.exports = {
