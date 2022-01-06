@@ -77,13 +77,6 @@ jobs:
         git config --global url."https://".insteadOf ssh://
         npm ci
 
-    - id: test-trial
-      name: Run unit tests
-      run: |-
-        npm test
-      env:
-        AWS_DEFAULT_REGION: 'eu-west-1'
-
     - id: test-codecov
       name: Run unit tests with coverage
       uses: mattallty/jest-github-action@v1

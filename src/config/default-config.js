@@ -63,7 +63,6 @@ async function getAwsAccountId() {
 }
 
 const config = {
-  githubOrganisationName,
   port: parseInt(process.env.PORT, 10) || 3000,
   clusterEnv: process.env.CLUSTER_ENV || 'development',
   sandboxId: process.env.SANDBOX_ID || 'default',

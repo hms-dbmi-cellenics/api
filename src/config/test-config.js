@@ -1,4 +1,4 @@
-const { githubOrganisationName } = require('./default-config');
+const githubOrganisationName = 'hms-dbmi-cellenics';
 
 process.env.NODE_ENV = 'test';
 
