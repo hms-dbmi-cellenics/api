@@ -20,7 +20,7 @@ jobs:
         uses: jwalton/gh-find-current-pr@v1
         with:
           state: open
-          
+
       - id: create-unchecked-pr-body
         name: Create unchecked PR body
         run: |-
@@ -46,14 +46,14 @@ jobs:
           head-branch-regex: '${{ github.head_ref }}'
           body-template: "${{  steps.create-unchecked-pr-body.outputs.body }}"
           body-update-action: 'replace'
-          
+
   test:
     name: Run tests
     runs-on: ubuntu-20.04
     env:
       CI: "true"
     steps:
-    
+
     - id: setup-node
       uses: actions/setup-node@v2
       with:
@@ -77,8 +77,15 @@ jobs:
         git config --global url."https://".insteadOf ssh://
         npm ci
 
-    - id: test
+    - id: test-trial
       name: Run unit tests
+      run: |-
+        npm test
+      env:
+        AWS_DEFAULT_REGION: 'eu-west-1'
+
+    - id: test-codecov
+      name: Run unit tests with coverage
       uses: mattallty/jest-github-action@v1
       env:
         AWS_DEFAULT_REGION: 'eu-west-1'
@@ -100,7 +107,7 @@ jobs:
         channel: pipelines
         status: FAILED
         color: danger
-        
+
   build-docker:
     name: Build Docker container
     runs-on: ubuntu-20.04
