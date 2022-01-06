@@ -5,7 +5,7 @@ info:
   description: The main Node.js pipeline API.
   license:
     name: MIT
-    url: 'https://github.com/biomage-ltd/api/blob/master/LICENSE'
+    url: 'https://github.com/hms-dbmi-cellenics/api/blob/master/LICENSE'
   contact:
     name: Biomage Ltd.
 servers:
