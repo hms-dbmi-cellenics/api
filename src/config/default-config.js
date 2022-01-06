@@ -1,22 +1,10 @@
 const dotenv = require('dotenv');
 const AWS = require('aws-sdk');
-const fetch = require('node-fetch');
 const getLogger = require('../utils/getLogger');
 
 const logger = getLogger();
 
-
-const getGithubOrg = async () => {
-  let githubOrganisationName = 'hms-dbmi-cellenics';
-  const answer = await fetch(`https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/production/pipeline.yaml`);
-  const text = await answer.text();
-  if (text === '404: Not Found') {
-    githubOrganisationName = 'biomage-ltd';
-  }
-  return githubOrganisationName;
-};
-
-const githubOrganisationName = getGithubOrg();
+const githubOrganisationName = 'hms-dbmi-cellenics';
 
 // If we are not deployed on Github (AWS/k8s), the environment is given by
 // NODE_ENV, or development if NODE_ENV is not set.
@@ -24,7 +12,6 @@ const githubOrganisationName = getGithubOrg();
 // If we are, assign NODE_ENV based on the Github (AWS/k8s cluster) environment.
 // If NODE_ENV is set, that will take precedence over the Github
 // environment.
-
 if (process.env.K8S_ENV && !process.env.NODE_ENV) {
   switch (process.env.K8S_ENV) {
     case 'staging':
@@ -82,6 +69,7 @@ async function getAwsAccountId() {
 }
 
 const config = {
+  githubOrganisationName,
   port: parseInt(process.env.PORT, 10) || 3000,
   clusterEnv: process.env.CLUSTER_ENV || 'development',
   sandboxId: process.env.SANDBOX_ID || 'default',
