@@ -1,3 +1,5 @@
+const { githubOrganisationName } = require('./default-config');
+
 process.env.NODE_ENV = 'test';
 
 function getAwsAccountId() {
@@ -15,8 +17,8 @@ module.exports = {
   awsAccountIdPromise: getAwsAccountId(),
   workerNamespace: 'worker-test-namespace',
   pipelineNamespace: 'pipeline-test-namespace',
-  workerInstanceConfigUrl: 'https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/production/worker.yaml',
-  pipelineInstanceConfigUrl: 'https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/staging/pipeline.yaml',
+  pipelineInstanceConfigUrl: `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/pipeline.yaml`,
+  workerInstanceConfigUrl: `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/production/worker.yaml`,
   api: {
     prefix: '/',
   },
