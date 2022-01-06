@@ -614,27 +614,6 @@ paths:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
       description: Reads a plot and table for a given experiment with the data specified.
-    delete:
-      summary: ''
-      operationId: deletePlotTable
-      x-eov-operation-id: plots-tables#delete
-      x-eov-operation-handler: routes/plots-tables
-      responses:
-        '200':
-          description: OK
-        '401':
-          description: The request lacks authentication credentials.
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
-        '403':
-          description: The authenticated user is not authorized to view this resource.
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
-      description: Deletes a plot and table for a given experiment with the data specified.
   '/experiments/{experimentId}/gem2s':
     parameters:
       - schema:
