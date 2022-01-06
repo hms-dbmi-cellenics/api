@@ -281,7 +281,7 @@ jobs:
         uses: benjefferies/branch-protection-bot@1.0.7
         with:
           access_token: ${{ secrets.API_TOKEN_GITHUB }}
-          owner: hms-dbmi-cellenics
+          owner: ${{ github.repository_owner }}
           repo: iac
           enforce_admins: false
           retries: 8
@@ -327,7 +327,7 @@ jobs:
         if: always()
         with:
           access_token: ${{ secrets.API_TOKEN_GITHUB }}
-          owner: hms-dbmi-cellenics
+          owner: ${{ github.repository_owner }}
           repo: iac
           enforce_admins: true
           retries: 8
