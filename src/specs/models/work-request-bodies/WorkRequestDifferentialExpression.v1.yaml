@@ -31,9 +31,15 @@ properties:
       If it is `rest`, the comparison is made between the UUID in `cellSet` and all remaning cells under the same cell set hierarchy (e.g. scratchpad).
 
       If it is `background`, the comparison is made between the UUID in `cellSet` and all other cells in the experiment.
-  maxNum:
-    type: integer
-    description: 'The top number of genes to return ordered by the `zScore`. If blank, all genes are returned.'
+  pathwayAnalysis:
+    type: object
+    description: Configuration object to format result for pathway analysis.
+    properties:
+      nGenesToReturn:
+        type:
+          - string
+          - integer
+        description: Number of genes to be used for pathwayAnalysis
 required:
   - name
   - cellSet

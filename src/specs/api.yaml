@@ -683,7 +683,7 @@ paths:
   '/experiments/{experimentId}/backendStatus':
     get:
       summary: Create new pipeline
-      description: Endpoint to download files
+      description: Endpoint to get backend status
       operationId: get-experiments-experimentId-pipelines
       x-eov-operation-id: backend-status#get
       x-eov-operation-handler: routes/backend-status
@@ -1072,7 +1072,7 @@ paths:
   '/projects/{projectUuid}/samples/{sampleUuid}/{fileName}/uploadUrl':
     get:
       summary: Get file upload url
-      description: Get temporary s3 upload url for fileName
+      description: Get temporary s3 upload url for sample file
       operationId: uploadSampleFileUrl
       x-eov-operation-id: samples#uploadSampleFileUrl
       x-eov-operation-handler: routes/samples
@@ -1092,7 +1092,7 @@ paths:
   '/projects/{projectUuid}/samples/{sampleUuid}/{fileName}/downloadUrl':
     get:
       summary: Get file download url
-      description: Get temporary s3 upload url for fileName
+      description: Get temporary s3 signed download url for sample file
       operationId: downloadSampleFileUrl
       x-eov-operation-id: samples#downloadSampleFileUrl
       x-eov-operation-handler: routes/samples
