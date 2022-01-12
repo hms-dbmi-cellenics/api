@@ -52,7 +52,7 @@ properties:
         type: array
         items:
           anyOf:
-            - description: 'Filter column by value (minimum and maximum). Useful for numeric values, e.g. filtering on `pvalue`/`qvalue`.'
+            - description: 'A conditional filter to apply to the results by providing column, operation and value'
               properties:
                 columnName:
                   type: string
@@ -61,17 +61,17 @@ properties:
                   type: string
                   pattern: numeric
                   description: The type of filter. Must be `numeric` for this type of filter.
-                min:
-                  type: number
-                  description: The minimum (inclusive) value that will be shown of a given column name.
-                  default: 'null'
-                max:
-                  type: number
-                  description: The maximum (inclusive) value that will be shown of a given column name.
-                  default: 'null'
+                comparison:
+                  type: string
+                  description: The type of comparison - greater than or less than
+                value:
+                  type: integer
+                  description: The value of the filter
               required:
                 - columnName
                 - type
+                - comparison
+                - value
             - description: Filter column by text (w/ wildcards). Useful for string-based filters.
               properties:
                 columnName:
