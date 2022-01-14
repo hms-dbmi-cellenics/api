@@ -64,6 +64,7 @@ module.exports = Object.freeze({
   S3_BUCKET: 'worker-results-test',
   S3_KEY: '11111122222233333344444455555555',
   SAMPLE_UUID: 'aaaaaaaa-bbbb-3333-4444-999999999999',
+  PLOT_UUID: 'aaaaaaaa-bbbb-3333-4444-999999999999',
   SANDBOX_ID: 'default',
   REGION: 'eu-east-9',
   AWS_ACCOUNT_ID: '111111111111',

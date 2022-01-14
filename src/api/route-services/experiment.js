@@ -80,17 +80,6 @@ class ExperimentService {
     const dynamodb = createDynamoDbInstance();
     const key = convertToDynamoDbRecord({ experimentId });
 
-    const documentClient = new AWS.DynamoDB.DocumentClient();
-
-    // const permissions = [{
-    //   module: '*',
-    //   mode: 'w',
-    // }];
-    const rbacCanWrite = Array.from(new Set([config.adminArn, user.sub]));
-    // const rbacPermissions = {
-    //   [config.adminArn]: permissions,
-    //   [user.sub]: permissions,
-    // };
 
     const marshalledData = convertToDynamoDbRecord({
       ':experimentName': body.experimentName,
@@ -100,7 +89,6 @@ class ExperimentService {
       ':description': body.description,
       ':input': body.input,
       ':organism': body.organism,
-      ':rbac_can_write': documentClient.createSet(rbacCanWrite),
       ':meta': body.meta || {},
       ':processingConfig': {},
       ':sampleIds': body.sampleIds,
@@ -118,7 +106,6 @@ class ExperimentService {
                           meta = :meta,
                           processingConfig = :processingConfig,
                           sampleIds = :sampleIds,
-                          rbac_can_write = :rbac_can_write,
                           notifyByEmail = :notifyByEmail`,
       ExpressionAttributeValues: marshalledData,
       ConditionExpression: 'attribute_not_exists(#experimentId)',
@@ -128,8 +115,9 @@ class ExperimentService {
 
     await dynamodb.updateItem(params).promise();
 
-    await permissionsService.addFullExperimentPermissions(user.sub, experimentId, body.projectId);
-    await permissionsService.addFullExperimentPermissions(config.adminArn, experimentId, body.projectId);
+    const { projectId } = body;
+    await permissionsService.grantAllPermissions(user.email, experimentId, projectId);
+    await permissionsService.grantAllPermissions(config.adminEmail, experimentId, projectId);
 
     return OK();
   }

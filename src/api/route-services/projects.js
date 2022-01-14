@@ -9,11 +9,13 @@ const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 
 const SamplesService = require('./samples');
 const ExperimentService = require('./experiment');
+const PermissionsService = require('./permissions');
 
 const logger = getLogger();
 
 const samplesService = new SamplesService();
 const experimentService = new ExperimentService();
+const permissionsService = new PermissionsService();
 
 class ProjectsService {
   constructor() {
@@ -88,46 +90,7 @@ class ProjectsService {
       return [];
     }
 
-    // Get project data from the experiments table. Only return
-    // those tables that have a project ID associated with them.
-    const params = {
-      TableName: experimentService.experimentsTableName,
-      FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
-      ExpressionAttributeNames: {
-        '#pid': 'projectId',
-        '#rbac_can_write': 'rbac_can_write',
-      },
-      ExpressionAttributeValues: {
-        ':userId': { S: user.sub },
-      },
-      ProjectionExpression: '#pid',
-    };
-
-    const dynamodb = createDynamoDbInstance();
-
-    let response = await dynamodb.scan(params).promise();
-
-    const extractProjectIds = (resp) => resp.Items.map(
-      (entry) => convertToJsObject(entry).projectId,
-    ).filter((id) => id);
-
-    let projectIds = extractProjectIds(response);
-
-    // Check if query exceeds limit
-    while (response.LastEvaluatedKey) {
-      params.ExclusiveStartKey = response.LastEvaluatedKey;
-
-      // eslint-disable-next-line no-await-in-loop
-      response = await dynamodb.scan(params).promise();
-
-      const newProjectIds = extractProjectIds(response);
-
-      projectIds = projectIds.concat(newProjectIds);
-    }
-
-    // Remove duplicates (when we support multi experiment projects
-    // we might have repeated projectId's)
-    projectIds = [...new Set(projectIds)];
+    const projectIds = await permissionsService.getProjects(user.email);
 
     return await this.getProjectsFromIds(projectIds);
   }

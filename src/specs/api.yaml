@@ -1092,7 +1092,7 @@ paths:
   '/projects/{projectUuid}/samples/{sampleUuid}/{fileName}/downloadUrl':
     get:
       summary: Get file download url
-      description: Get temporary s3 upload url for fileName
+      description: Get temporary s3 download url for fileName
       operationId: downloadSampleFileUrl
       x-eov-operation-id: samples#downloadSampleFileUrl
       x-eov-operation-handler: routes/samples

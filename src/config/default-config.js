@@ -1,4 +1,3 @@
-const dotenv = require('dotenv');
 const AWS = require('aws-sdk');
 const fetch = require('node-fetch');
 const getLogger = require('../utils/getLogger');
@@ -49,11 +48,6 @@ if (!process.env.K8S_ENV) {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 }
 
-const envFound = dotenv.config();
-if (!envFound) {
-  throw new Error("Couldn't find .env file");
-}
-
 const awsRegion = process.env.AWS_DEFAULT_REGION || 'eu-west-1';
 
 async function getAwsPoolId() {
@@ -100,6 +94,8 @@ const config = {
   cachingEnabled: true,
   corsOriginUrl: 'https://scp.biomage.net',
   adminArn: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
+  adminEmail: 'admin@biomage.net',
+
 };
 
 

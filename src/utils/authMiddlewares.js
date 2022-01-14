@@ -235,7 +235,7 @@ const authorize = async (authResource, claim, authByExperiment = true) => {
 };
 
 const authorizeNew = async (req) => {
-  const { 'cognito:username': userId, email } = req.user;
+  const { email: userId } = req.user;
 
 
   let { experimentId } = req.params;
@@ -255,7 +255,7 @@ const authorizeNew = async (req) => {
     return true;
   }
 
-  throw new UnauthorizedError(`User ${userId} (${email}) does not have access to experiment ${experimentId} or project ${projectUuid}.`);
+  throw new UnauthorizedError(`User ${userId} does not have access to [${req.method}] ${req.url}`);
 };
 
 /**
@@ -295,4 +295,5 @@ module.exports = {
   expressAuthenticationOnlyMiddleware,
   checkAuthExpiredMiddleware,
   authorize,
+  authorizeNew,
 };
