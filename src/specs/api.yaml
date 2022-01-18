@@ -1143,6 +1143,23 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+  '/workResults/{experimentId}/{ETag}':
+    get:
+      summary: Get the work results from S3
+      operationId: getWorkResults
+      x-eov-operation-id: work#getResults
+      x-eov-operation-handler: routes/work
+      description: On success, returns a signed url with the uploaded worker results in S3
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signedUrl:
+                    type: string
 components:
   schemas:
     Project:
