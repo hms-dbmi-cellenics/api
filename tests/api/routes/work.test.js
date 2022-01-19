@@ -41,4 +41,15 @@ describe('work routes tests', () => {
         return done();
       });
   });
+  it('If no tags are found returns 404', async (done) => {
+    request(app)
+      .get('/v1/workResults/nonExistentId/someETag')
+      .expect(404)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
 });
