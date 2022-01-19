@@ -18,13 +18,13 @@ const getWorkResults = async (experimentId, ETag) => {
   try {
     objectTagging = await s3.getObjectTagging(params).promise();
   } catch (err) {
-    logger.log('Error received while getting object tags ', err);
+    logger.log('Error received while getting object tags', err);
   }
-
   const experimentIdTag = objectTagging.TagSet.filter((tag) => tag.Key === 'experimentId')[0].Value;
-
   if (experimentIdTag !== experimentId) {
-    throw new Error('User is not authorized');
+    console.log('ASDASD ', experimentIdTag, ' asd ', experimentId);
+
+    throw new Error('User is not authorized to get worker results for this experiment');
   }
 
   const signedUrl = getSignedUrl('getObject', params);

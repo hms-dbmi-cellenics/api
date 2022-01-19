@@ -122,6 +122,16 @@ const mockS3GetObject = (payload = {}, error = null) => {
   return fnSpy;
 };
 
+const mockS3GetObjectTagging = (payload = {}, error = null) => {
+  const fnSpy = jest.fn((x) => x);
+  AWSMock.setSDKInstance(AWS);
+  AWSMock.mock('S3', 'getObjectTagging', (params, callback) => {
+    fnSpy(params);
+    callback(error, payload);
+  });
+  return fnSpy;
+};
+
 const mockS3PutObject = (payload = {}, error = null) => {
   const fnSpy = jest.fn((x) => x);
   AWSMock.setSDKInstance(AWS);
@@ -179,4 +189,5 @@ module.exports = {
   mockS3DeleteObject,
   mockS3DeleteObjects,
   mockS3GetSignedUrl,
+  mockS3GetObjectTagging,
 };
