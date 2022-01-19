@@ -1160,6 +1160,12 @@ paths:
                 properties:
                   signedUrl:
                     type: string
+        '403':
+          description: The user does not have permissions to view the work results.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
 components:
   schemas:
     Project:

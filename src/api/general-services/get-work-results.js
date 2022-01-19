@@ -1,6 +1,7 @@
 const config = require('../../config');
 const AWS = require('../../utils/requireAWS');
 const getLogger = require('../../utils/getLogger');
+const { UnauthorizedError } = require('../../utils/responses');
 
 const { getSignedUrl } = require('../../utils/aws/s3');
 
@@ -22,7 +23,7 @@ const getWorkResults = async (experimentId, ETag) => {
   }
   const experimentIdTag = objectTagging.TagSet.filter((tag) => tag.Key === 'experimentId')[0].Value;
   if (experimentIdTag !== experimentId) {
-    throw new Error('User is not authorized to get worker results for this experiment');
+    throw new UnauthorizedError('User is not authorized to get worker results for this experiment');
   }
 
   const signedUrl = getSignedUrl('getObject', params);
