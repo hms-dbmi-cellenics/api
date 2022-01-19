@@ -22,8 +22,6 @@ const getWorkResults = async (experimentId, ETag) => {
   }
   const experimentIdTag = objectTagging.TagSet.filter((tag) => tag.Key === 'experimentId')[0].Value;
   if (experimentIdTag !== experimentId) {
-    console.log('ASDASD ', experimentIdTag, ' asd ', experimentId);
-
     throw new Error('User is not authorized to get worker results for this experiment');
   }
 
