@@ -5,6 +5,7 @@ oneOf:
   - $ref: ./work-request-bodies/WorkRequestClusterCells.v1.yaml
   - $ref: ./work-request-bodies/WorkRequestDifferentialExpression.v1.yaml
   - $ref: ./work-request-bodies/WorkRequestListGenes.v1.yaml
+  - $ref: ./work-request-bodies/WorkRequestGetBackgroundExpressedGenes.v1.yaml
   - $ref: ./work-request-bodies/WorkRequestGeneExpression.v1.yaml
   - $ref: ./work-request-bodies/WorkRequestMitochondrialContent.v1.yaml
   - $ref: ./work-request-bodies/WorkRequestDoubletScores.v1.yaml
