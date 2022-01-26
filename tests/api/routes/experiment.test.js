@@ -49,45 +49,6 @@ describe('tests for experiment route', () => {
       });
   });
 
-  it('Updating cell sets with no data results in an 415 error', async (done) => {
-    request(app)
-      .put('/v1/experiments/someId/cellSets')
-      .expect(415)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        // there is no point testing for the values of the response body
-        // - if something is wrong, the schema validator will catch it
-        return done();
-      });
-  });
-
-  it('Updating cell sets with a valid data set results in a successful response', async (done) => {
-    const newData = [
-      {
-        name: 'Empty cluster',
-        key: 'empty',
-        color: '#ff00ff',
-        children: [],
-        cellIds: [],
-      },
-    ];
-
-    request(app)
-      .put('/v1/experiments/someId/cellSets')
-      .send(newData)
-      .expect(200, newData)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        // there is no point testing for the values of the response body
-        // - if something is wrong, the schema validator will catch it
-        return done();
-      });
-  });
-
   it('Get processing config by id works', async (done) => {
     request(app)
       .get('/v1/experiments/someId/processingConfig')
