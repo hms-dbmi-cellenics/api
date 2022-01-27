@@ -215,6 +215,6 @@ jobs:
         uses: tzkhan/pr-update-action@v2
         with:
           repo-token: "${{ secrets.API_TOKEN_GITHUB }}"
-          head-branch-regex: '${{ github.head_ref }}'
+          head-branch-regex: "/${{ github.head_ref }}/i"
           body-template: "${{  steps.create-unchecked-pr-body.outputs.body }}"
           body-update-action: 'replace'
