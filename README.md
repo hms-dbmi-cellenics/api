@@ -35,7 +35,7 @@ Default output format: json
 
 #### Step 1. Connect with Inframock
 
-Inframock is a tool that we have developed in order to run Cellenics locally, without the need to access AWS resources. It enables local end-to-end testing and development and it is compulsory to up when developing a new feature.
+Inframock is a tool that we have developed in order to run Cellenics locally, without the need to access AWS resources. It enables local end-to-end testing and development and it is compulsory to have it running when developing a new feature.
 Go to the [Inframock repo](https://github.com/hms-dbmi-cellenics/inframock) and follow the instructions in the README to set it up and start it on a separate terminal.
 After Inframock service is started, the next step is to start the API.
 
