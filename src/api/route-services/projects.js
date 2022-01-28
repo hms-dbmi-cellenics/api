@@ -9,13 +9,13 @@ const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 
 const SamplesService = require('./samples');
 const ExperimentService = require('./experiment');
-const PermissionsService = require('./permissions');
+const AccessService = require('./access');
 
 const logger = getLogger();
 
 const samplesService = new SamplesService();
 const experimentService = new ExperimentService();
-const permissionsService = new PermissionsService();
+const accessService = new AccessService();
 
 class ProjectsService {
   constructor() {
@@ -83,14 +83,11 @@ class ProjectsService {
   }
 
   /**
-   * Finds all projects referenced in experiments.
+   * Finds all accessible projects of a user
    */
   async getProjects(user) {
-    if (!user) {
-      return [];
-    }
-
-    const projectIds = await permissionsService.getProjects(user.email);
+    console.log(user);
+    const projectIds = await accessService.getAccessibleProjects(user.sub);
 
     return await this.getProjectsFromIds(projectIds);
   }
@@ -148,7 +145,7 @@ class ProjectsService {
     return projects;
   }
 
-  async getExperiments(projectUuid, withWritePermissions = false) {
+  async getExperiments(projectUuid) {
     const dynamodb = createDynamoDbInstance();
 
     const marshalledKey = convertToDynamoDbRecord({ projectUuid });
@@ -165,13 +162,6 @@ class ProjectsService {
       if (!Object.prototype.hasOwnProperty.call(result, 'projects')) return [];
 
       const experiments = await experimentService.getListOfExperiments(result.projects.experiments);
-
-      if (!withWritePermissions) {
-        experiments.forEach((experiment) => {
-          // eslint-disable-next-line no-param-reassign
-          delete experiment.rbac_can_write;
-        });
-      }
 
 
       return experiments;

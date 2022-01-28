@@ -25,9 +25,10 @@ const {
   convertToDynamoUpdateParams,
 } = require('../../utils/dynamoDb');
 
-const PermissionsService = require('./permissions');
+const AccessService = require('./access');
+const roles = require('./roles');
 
-const permissionsService = new PermissionsService();
+const accessService = new AccessService();
 
 const logger = getLogger('[ExperimentService] - ');
 
@@ -116,8 +117,8 @@ class ExperimentService {
     await dynamodb.updateItem(params).promise();
 
     const { projectId } = body;
-    await permissionsService.grantAllPermissions(user.email, experimentId, projectId);
-    await permissionsService.grantAllPermissions(config.adminEmail, experimentId, projectId);
+    await accessService.grantRole(user.sub, experimentId, projectId, roles.OWNER);
+    await accessService.grantRole(config.adminArn, experimentId, projectId, roles.ADMIN);
 
     return OK();
   }
@@ -168,12 +169,6 @@ class ExperimentService {
     return prettyData;
   }
 
-  async getExperimentPermissions(experimentId) {
-    logger.log(`GET permissions for experiment ${experimentId}`);
-
-    const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['experimentId', 'rbac_can_write']);
-    return data;
-  }
 
   async getProcessingConfig(experimentId) {
     logger.log(`GET processing config for experiment ${experimentId}`);

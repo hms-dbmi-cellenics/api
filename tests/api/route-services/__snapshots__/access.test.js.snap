@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`tests for the projects service GetProjects gets all the projects 1`] = `
+exports[`tests for the access service GetProjects gets all the projects 1`] = `
 [MockFunction] {
   "calls": Array [
     Array [
@@ -32,7 +32,7 @@ exports[`tests for the projects service GetProjects gets all the projects 1`] = 
 }
 `;
 
-exports[`tests for the projects service createProject creates entries in projects and samples correctly 1`] = `
+exports[`tests for the access service createProject creates entries in projects and samples correctly 1`] = `
 Array [
   Object {
     "ExpressionAttributeValues": Object {
@@ -54,7 +54,7 @@ Array [
 ]
 `;
 
-exports[`tests for the projects service createProject creates entries in projects and samples correctly 2`] = `
+exports[`tests for the access service createProject creates entries in projects and samples correctly 2`] = `
 Array [
   Object {
     "ExpressionAttributeValues": Object {
