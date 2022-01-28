@@ -29,8 +29,8 @@ You will also need to have aws command line interface `aws-cli` installed and co
 Once installed, run `aws configure`. You will need an AWS access & secret key for the configuration. Alternatively you can use the example data provided below:
 
 ```bash
-AWS Access Key ID: AKIAIOSFODNN7EXAMPLE
-AWS Secret Access Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+AWS Access Key ID: BLABLAEXAMPLE
+AWS Secret Access Key: BLABLABLAEXAMPLEKEY
 Default region name: eu-west-1
 Default output format: json
 ```
