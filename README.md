@@ -4,8 +4,8 @@ API
 
 A nodejs service that does the following:
 - Authorizes and validates requests. 
-- Creates and starts gem2s and qc state machines for Data Processing module.
-- Creates a SQS queue and assigns available worker to an experiement that needs one for Data Exploration tasks.
+- Creates and starts gem2s and qc state machines for data processing tasks.
+- Creates a SQS queue and assigns available worker to an experiement that needs one for data analysis tasks.
 - Deletes worker pods that are no longer needed.
 - Listens to broadcasted messages by the worker on Redis and processes the message that's relevant to it (based on the value of `socketId` in the message body).
 See the [Emitters](https://socket.io/docs/v4/redis-adapter/#emitter) section in the Redis adapter documention for more details about how the worker-API communication happens.
