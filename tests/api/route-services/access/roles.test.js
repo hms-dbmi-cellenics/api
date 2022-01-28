@@ -1,5 +1,5 @@
-const roles = require('../../../src/api/route-services/roles');
-const fake = require('../../test-utils/constants');
+const roles = require('../../../../src/api/route-services/access/roles');
+const fake = require('../../../test-utils/constants');
 
 
 describe('tests for the roles logic', () => {

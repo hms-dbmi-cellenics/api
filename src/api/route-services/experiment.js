@@ -26,7 +26,7 @@ const {
 } = require('../../utils/dynamoDb');
 
 const AccessService = require('./access');
-const roles = require('./roles');
+const roles = require('./access/roles');
 
 const accessService = new AccessService();
 

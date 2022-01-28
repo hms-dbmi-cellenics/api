@@ -26,6 +26,7 @@ const isRoleAuthorized = (role, resource, method) => {
   if (!ROLE_NAMES.includes(role)) {
     return false;
   }
+
   // all roles have view permissions by default
   if (method === 'GET') {
     return true;
