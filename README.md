@@ -97,7 +97,7 @@ After the UI service is started, any request from the UI will be automatically f
 
 #### Step 4. Run the pipeline locally
 
-This is required for working on the Data Processing module of Cellenics or you want to obtain an .rds file for the Data Exploration module.
+This is required for working on the Data Processing module of Cellenics or if you want to obtain an `.rds` file for the Data Exploration module.
 Go to the [pipeline repo](https://github.com/hms-dbmi-cellenics/pipeline) and follow the instructions in the README to set up and start it on a separate terminal.
 After the pipeline service is started, any request from the API will be automatically forwarded to the pipeline and vice versa.
 
