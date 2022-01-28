@@ -2,23 +2,21 @@
 API
 ======
 
-The API of Cellenics - a cloud-based single cell RNA sequencing analysis web platform.
-The API does the following tasks:
+A nodejs service that does the following:
 - Authorizes and validates requests. 
 - Creates and starts gem2s and qc state machines for Data Processing module.
 - Creates a SQS queue and assigns available worker to an experiement that needs one for Data Exploration tasks.
 - Deletes worker pods that are no longer needed.
 - Listens to broadcasted messages by the worker on Redis and processes the message that's relevant to it (based on the value of `socketId` in the message body).
-
 See the [Emitters](https://socket.io/docs/v4/redis-adapter/#emitter) section in the Redis adapter documention for more details about how the worker-API communication happens.
 - Communicates to the UI via socket connections to send the status of worker requests and details about where they can be found.
 - Contains HTTP endpoints that allow programmatic access and modification to experiment data by authorized users.
 
 ## Running locally
 
-In most cases, developing on the API requires having other parts of Cellenics set up and started too. This is why this readme includes instructions not only for the API, but for how to set up Cellenics to run end-to-end. If you still want to run only the API, do only step 0 and step 2 from the steps outlined below.
+In most cases, developing on the API requires having other parts of Cellenics set up and started too. This is why this readme includes instructions not only for the API, but for how to set up Cellenics to run end-to-end. If you still want to run only the API, do only Step 0 and Step 2 from the steps outlined below and skip the rest.
 
-### 0. Prerequisites
+### Step 0. Prerequisites
 
 We highly recommend using VSCode for local development. Make sure you also have `npm` and `docker` installed.
 
@@ -35,13 +33,13 @@ Default region name: eu-west-1
 Default output format: json
 ```
 
-#### 1. Connect with Inframock
+#### Step 1. Connect with Inframock
 
 Inframock is a tool that we have developed in order to run Cellenics locally, without the need to access AWS resources. It enables local end-to-end testing and development and it is compulsory to up when developing a new feature.
 Go to the [Inframock repo](https://github.com/hms-dbmi-cellenics/inframock) and follow the instructions in the README to set it up and start it on a separate terminal.
 After Inframock service is started, the next step is to start the API.
 
-#### 2. Start the API
+#### Step 2. Start the API
 
 To run the API, first install the dependencies with:
 
@@ -91,19 +89,19 @@ If you did complete step 1 and are runnig Inframock locally, you should see the 
 [2020-12-18T07:06:21.112Z] redis:reader Connection ready.
 ```
 
-#### 3. Run the UI locally
+#### Step 3. Run the UI locally
 
 This is required for running the API with a local version of the UI.
 Go to the [UI repo](https://github.com/hms-dbmi-cellenics/ui) and follow the instructions in the README to set it up and start it on a separate terminal.
 After the UI service is started, any request from the UI will be automatically forwarded to the API and vice versa.
 
-#### 4. Run the pipeline locally
+#### Step 4. Run the pipeline locally
 
 This is required for working on the Data Processing module of Cellenics or you want to obtain an .rds file for the Data Exploration module.
 Go to the [pipeline repo](https://github.com/hms-dbmi-cellenics/pipeline) and follow the instructions in the README to set up and start it on a separate terminal.
 After the pipeline service is started, any request from the API will be automatically forwarded to the pipeline and vice versa.
 
-#### 5. Run the worker locally
+#### Step 5. Run the worker locally
 
 This is required for running the API with a local version of the worker.
 Go to the [worker repo](https://github.com/hms-dbmi-cellenics/worker) and follow the instructions in the README to set up and start it on a separate terminal.
@@ -111,4 +109,8 @@ After the worker service is started, any request from the API will be automatica
 
 ## Deployment
 
-The api is deployed as a Helm chart to an AWS-managed Kubernetes cluster and is running on a non-fargate node. The deployment is handled by the cluster Helm operator, Flux and the [API Github Actions workflow](https://github.com/hms-dbmi-cellenics/api/blob/master/.github/workflows/ci.yaml). The API Github Actions workflow pushes new API images to ECR and adds API-specific configurations to the [nodejs Helm chart](https://github.com/hms-dbmi-cellenics/iac/tree/master/charts/nodejs), that is used for the deployment of the API and the UI.
+The API is deployed as a Helm chart to an AWS-managed Kubernetes cluster. The deployment is handled by the cluster Helm operator and the [API Github Actions workflow](https://github.com/hms-dbmi-cellenics/api/blob/master/.github/workflows/ci.yaml). 
+
+During a deployment, API Github Actions workflow does the following:
+- It pushes new API images to ECR.
+- Adds API-specific configurations to the [nodejs Helm chart](https://github.com/hms-dbmi-cellenics/iac/tree/master/charts/nodejs), that is used for the deployment of the API. Pushes those API-specific configuration changes in [releases/](https://github.com/hms-dbmi-cellenics/iac/tree/master/releases) folder in iac, under the relevant environment.
