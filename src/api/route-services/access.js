@@ -54,8 +54,6 @@ class AccessService {
       Key: key,
     };
 
-    console.log(params);
-
     const dynamodb = createDynamoDbInstance();
     const response = await dynamodb.getItem(params).promise();
     const { role } = convertToJsObject(response.Item);
@@ -72,8 +70,6 @@ class AccessService {
       },
     };
 
-    console.log('getting projects');
-    console.log(params);
     const extractProjectIds = (resp) => resp.Items.map(
       (entry) => {
         const p = convertToJsObject(entry);

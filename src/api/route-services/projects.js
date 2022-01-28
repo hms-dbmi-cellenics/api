@@ -86,7 +86,6 @@ class ProjectsService {
    * Finds all accessible projects of a user
    */
   async getProjects(user) {
-    console.log(user);
     const projectIds = await accessService.getAccessibleProjects(user.sub);
 
     return await this.getProjectsFromIds(projectIds);
