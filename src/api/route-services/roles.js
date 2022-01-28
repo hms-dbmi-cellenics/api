@@ -3,6 +3,8 @@ const ADMIN = 'admin';
 const EXPLORER = 'explorer';
 const VIEWER = 'viewer';
 
+const ROLE_NAMES = [OWNER, ADMIN, EXPLORER, VIEWER];
+
 // allowedResources contains which resources each roles is allowed to modify (read-write)
 // all the resources are viewable by default by all roles
 const allowedResources = {
@@ -17,10 +19,11 @@ const allowedResources = {
     '/experiments/(?<experimentId>.*)/plots-tables/(?<plotUuid>.*)',
     '/experiments/(?<experimentId>.*)/cellSets',
   ],
+  [VIEWER]: [],
 };
 const isRoleAuthorized = (role, resource, method) => {
-  // if no role is provided, return not authorized
-  if (!role) {
+  // if no valid role is provided, return not authorized
+  if (!ROLE_NAMES.includes(role)) {
     return false;
   }
   // all roles have view permissions by default
@@ -38,5 +41,5 @@ const isRoleAuthorized = (role, resource, method) => {
 };
 
 module.exports = {
-  OWNER, ADMIN, EXPLORER, VIEWER, isRoleAuthorized,
+  ROLE_NAMES, OWNER, ADMIN, EXPLORER, VIEWER, isRoleAuthorized,
 };
