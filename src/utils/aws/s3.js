@@ -24,6 +24,9 @@ const fileExists = async (bucket, prefix) => {
 };
 
 const getSignedUrl = (operation, params) => {
+  if (!params.Bucket) throw new Error('Bucket is required');
+  if (!params.Key) throw new Error('Key is required');
+
   const S3Config = {
     apiVersion: '2006-03-01',
     signatureVersion: 'v4',
@@ -31,9 +34,6 @@ const getSignedUrl = (operation, params) => {
   };
 
   const s3 = new AWS.S3(S3Config);
-
-  if (!params.Bucket) throw new Error('Bucket is required');
-  if (!params.Key) throw new Error('Key is required');
 
   return s3.getSignedUrl(operation, params);
 };

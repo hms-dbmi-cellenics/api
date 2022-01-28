@@ -20,7 +20,7 @@ jobs:
         uses: jwalton/gh-find-current-pr@v1
         with:
           state: open
-          
+
       - id: create-unchecked-pr-body
         name: Create unchecked PR body
         run: |-
@@ -43,17 +43,18 @@ jobs:
         uses: tzkhan/pr-update-action@v2
         with:
           repo-token: "${{ secrets.API_TOKEN_GITHUB }}"
-          head-branch-regex: '${{ github.head_ref }}'
+          head-branch-regex: "${{ github.head_ref }}"
+          lowercase-branch: false
           body-template: "${{  steps.create-unchecked-pr-body.outputs.body }}"
           body-update-action: 'replace'
-          
+
   test:
     name: Run tests
     runs-on: ubuntu-20.04
     env:
       CI: "true"
     steps:
-    
+
     - id: setup-node
       uses: actions/setup-node@v2
       with:
@@ -77,8 +78,8 @@ jobs:
         git config --global url."https://".insteadOf ssh://
         npm ci
 
-    - id: test
-      name: Run unit tests
+    - id: test-codecov
+      name: Run unit tests with coverage
       uses: mattallty/jest-github-action@v1
       env:
         AWS_DEFAULT_REGION: 'eu-west-1'
@@ -100,7 +101,7 @@ jobs:
         channel: pipelines
         status: FAILED
         color: danger
-        
+
   build-docker:
     name: Build Docker container
     runs-on: ubuntu-20.04
@@ -281,7 +282,7 @@ jobs:
         uses: benjefferies/branch-protection-bot@1.0.7
         with:
           access_token: ${{ secrets.API_TOKEN_GITHUB }}
-          owner: hms-dbmi-cellenics
+          owner: ${{ github.repository_owner }}
           repo: iac
           enforce_admins: false
           retries: 8
@@ -327,7 +328,7 @@ jobs:
         if: always()
         with:
           access_token: ${{ secrets.API_TOKEN_GITHUB }}
-          owner: hms-dbmi-cellenics
+          owner: ${{ github.repository_owner }}
           repo: iac
           enforce_admins: true
           retries: 8

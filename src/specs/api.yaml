@@ -309,44 +309,6 @@ paths:
         required: true
         schema:
           type: string
-    put:
-      summary: ''
-      operationId: updateExperimentCellSetsById
-      x-eov-operation-id: experiment#updateCellSets
-      x-eov-operation-handler: routes/experiment
-      responses:
-        '200':
-          description: Update to object in response successful.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  allOf:
-                    - $ref: '#/components/schemas/CellSets'
-        '401':
-          description: The request lacks authentication credentials.
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
-        '403':
-          description: The authenticated user is not authorized to view this resource.
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
-      description: Updates the cell set information in the database with a modified tree.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                allOf:
-                  - $ref: '#/components/schemas/CellSets'
-      tags:
-        - experiments
     patch:
       summary: ''
       operationId: patchExperimentCellSetsById
@@ -614,27 +576,6 @@ paths:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
       description: Reads a plot and table for a given experiment with the data specified.
-    delete:
-      summary: ''
-      operationId: deletePlotTable
-      x-eov-operation-id: plots-tables#delete
-      x-eov-operation-handler: routes/plots-tables
-      responses:
-        '200':
-          description: OK
-        '401':
-          description: The request lacks authentication credentials.
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
-        '403':
-          description: The authenticated user is not authorized to view this resource.
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
-      description: Deletes a plot and table for a given experiment with the data specified.
   '/experiments/{experimentId}/gem2s':
     parameters:
       - schema:
@@ -1160,6 +1101,35 @@ paths:
                   $ref: '#/components/schemas/Project'
         '401':
           description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+  '/workResults/{experimentId}/{ETag}':
+    get:
+      summary: Get the work results from S3
+      operationId: getWorkResults
+      x-eov-operation-id: work#getResults
+      x-eov-operation-handler: routes/work
+      description: On success, returns a signed url with the uploaded worker results in S3
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signedUrl:
+                    type: string
+        '403':
+          description: The user does not have permissions to view the work results.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: The work results were not found.
           content:
             application/json:
               schema:

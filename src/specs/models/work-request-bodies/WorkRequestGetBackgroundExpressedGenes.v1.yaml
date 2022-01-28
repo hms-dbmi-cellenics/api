@@ -1,0 +1,25 @@
+title: GetBackgroundExpressedGenes
+type: object
+description: |-
+  Get the background expressed genes.
+properties:
+  name:
+    type: string
+    description: The name of this work -- must be `GetBackgroundExpressedGenes`.
+    pattern: GetBackgroundExpressedGenes
+  basis:
+    type: string
+    description: |-
+      This value is the same as described for Differential Expression
+  cellSet:
+    type: string
+    description: This value is the same as described for Differential Expression
+  compareWith:
+    type: string
+    description: |-
+      This value is the same as described for Differential Expression
+required:
+  - name
+  - basis
+  - cellSet
+  - compareWith
