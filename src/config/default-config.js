@@ -1,4 +1,3 @@
-const dotenv = require('dotenv');
 const AWS = require('aws-sdk');
 const getLogger = require('../utils/getLogger');
 
@@ -36,11 +35,6 @@ if (!process.env.K8S_ENV) {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 }
 
-const envFound = dotenv.config();
-if (!envFound) {
-  throw new Error("Couldn't find .env file");
-}
-
 const awsRegion = process.env.AWS_DEFAULT_REGION || 'eu-west-1';
 
 async function getAwsPoolId() {
@@ -69,7 +63,6 @@ async function getAwsAccountId() {
 }
 
 const config = {
-  githubOrganisationName,
   port: parseInt(process.env.PORT, 10) || 3000,
   clusterEnv: process.env.CLUSTER_ENV || 'development',
   sandboxId: process.env.SANDBOX_ID || 'default',
