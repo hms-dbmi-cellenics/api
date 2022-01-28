@@ -113,4 +113,5 @@ The API is deployed as a Helm chart to an AWS-managed Kubernetes cluster. The de
 
 During a deployment, API Github Actions workflow does the following:
 - It pushes new API images to ECR.
-- Adds API-specific configurations to the [nodejs Helm chart](https://github.com/hms-dbmi-cellenics/iac/tree/master/charts/nodejs), that is used for the deployment of the API. Pushes those API-specific configuration changes in [releases/](https://github.com/hms-dbmi-cellenics/iac/tree/master/releases) folder in iac, under the relevant environment.
+- Adds API-specific configurations to the [nodejs Helm chart](https://github.com/hms-dbmi-cellenics/iac/tree/master/charts/nodejs), that is used for the deployment of the API. 
+- Pushes the API-specific configuration changes into the [releases/](https://github.com/hms-dbmi-cellenics/iac/tree/master/releases) folder in iac, under the relevant environment.
