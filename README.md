@@ -2,7 +2,7 @@
 API
 ======
 
-A nodejs service that does the following:
+A nodejs service that sits in between the UI, the Cellenics backends and the Data store and does the following:
 - Authorizes and validates requests. 
 - Creates and starts gem2s and qc state machines for data processing tasks.
 - Creates a SQS queue and assigns available worker to an experiement that needs one for data analysis tasks.
