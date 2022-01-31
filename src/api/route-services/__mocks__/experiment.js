@@ -65,8 +65,8 @@ const mockGetCellSets = jest.fn(() => new Promise((resolve) => {
   });
 }));
 
-const mockUpdateCellSets = jest.fn((experimentId, cellSetData) => new Promise((resolve) => {
-  resolve(cellSetData);
+const mockPatchCellSets = jest.fn(() => new Promise((resolve) => {
+  resolve([]);
 }));
 
 const mockGetProcessingConfig = jest.fn(() => new Promise((resolve) => {
@@ -150,7 +150,7 @@ const mock = jest.fn().mockImplementation(() => ({
   deleteExperiment: mockDeleteExperiment,
   getListOfExperiments: mockGetListOfExperiments,
   getCellSets: mockGetCellSets,
-  updateCellSets: mockUpdateCellSets,
+  patchCellSets: mockPatchCellSets,
   getProcessingConfig: mockGetProcessingConfig,
   updateProcessingConfig: mockUpdateProcessingConfig,
   saveGem2sHandle: mockSaveGem2sHandle,
