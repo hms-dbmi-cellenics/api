@@ -36,5 +36,6 @@ properties:
     description: 'The top number of genes to return ordered by the `zScore`. If blank, all genes are returned.'
 required:
   - name
+  - basis
   - cellSet
   - compareWith
