@@ -31,6 +31,17 @@ properties:
       If it is `rest`, the comparison is made between the UUID in `cellSet` and all remaning cells under the same cell set hierarchy (e.g. scratchpad).
 
       If it is `background`, the comparison is made between the UUID in `cellSet` and all other cells in the experiment.
+  comparisonType:
+    type: string
+    enum:
+      - between
+      - within
+    description: |-
+      The comparison type that is chosen. This can be  `within` or `between`.
+
+      `within` signifies that the comparison is done between clusters within a group.
+
+      `between` signifies that the comparison is between groups within a cluster.
   maxNum:
     type: integer
     description: 'The top number of genes to return ordered by the `zScore`. If blank, all genes are returned.'
@@ -39,3 +50,4 @@ required:
   - basis
   - cellSet
   - compareWith
+  - comparisonType
