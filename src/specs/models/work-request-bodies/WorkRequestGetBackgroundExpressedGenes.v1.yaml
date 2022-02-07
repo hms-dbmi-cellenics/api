@@ -1,7 +1,6 @@
 title: GetBackgroundExpressedGenes
 type: object
-description: |-
-  Get the background expressed genes.
+description: Get the background expressed genes.
 properties:
   name:
     type: string
@@ -9,17 +8,27 @@ properties:
     pattern: GetBackgroundExpressedGenes
   basis:
     type: string
-    description: |-
-      This value is the same as described for Differential Expression
+    description: This value is the same as described for Differential Expression
   cellSet:
     type: string
     description: This value is the same as described for Differential Expression
   compareWith:
     type: string
+    description: This value is the same as described for Differential Expression
+  comparisonType:
+    type: string
     description: |-
-      This value is the same as described for Differential Expression
+      The comparison type that is chosen. This can be  `within` or `between`.
+
+      `within` signifies that the comparison is done between clusters within a group.
+
+      `between` signifies that the comparison is between groups within a cluster.
+    enum:
+      - between
+      - within
 required:
   - name
   - basis
   - cellSet
   - compareWith
+  - comparisonType
