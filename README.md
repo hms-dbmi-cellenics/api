@@ -62,7 +62,7 @@ with a mocked dataset, you will need to set up each of these:
 - worker: https://github.com/hms-dbmi-cellenics/worker
 - UI: https://github.com/hms-dbmi-cellenics/ui
 
-The following steps explain in more details on how to get the Cellenics running end-to-end locally.
+The following steps explain in more details on how to get Cellenics running end-to-end locally.
 
 #### 1. Connect with Inframock
 
