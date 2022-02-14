@@ -3,7 +3,7 @@ API
 ======
 
 
-Cellenics - single cell RNA seq analysis web platform.
+The API of Cellenics - single cell RNA seq analysis web platform.
 
 Development
 -----------
@@ -61,7 +61,6 @@ with a mocked dataset, you will need to set up each of these:
 - Inframock: https://github.com/hms-dbmi-cellenics/inframock
 - worker: https://github.com/hms-dbmi-cellenics/worker
 - UI: https://github.com/hms-dbmi-cellenics/ui
-
 
 The following steps explain in more details on how to get Cellenics running end-to-end locally.
 
