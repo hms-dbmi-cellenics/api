@@ -35,7 +35,7 @@ class AccessService {
       },
     };
 
-    const docClient = new AWS.DynamoDB.DocumentClient()({
+    const docClient = new AWS.DynamoDB.DocumentClient({
       region: config.awsRegion,
     });
 
