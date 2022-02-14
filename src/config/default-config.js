@@ -81,7 +81,6 @@ const config = {
   cachingEnabled: true,
   corsOriginUrl: 'https://scp.biomage.net',
   adminArn: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
-  adminEmail: 'admin@biomage.net',
 
 };
 

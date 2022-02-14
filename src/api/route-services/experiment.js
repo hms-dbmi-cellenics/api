@@ -81,6 +81,9 @@ class ExperimentService {
     const dynamodb = createDynamoDbInstance();
     const key = convertToDynamoDbRecord({ experimentId });
 
+    const documentClient = new AWS.DynamoDB.DocumentClient();
+
+    const rbacCanWrite = Array.from(new Set([config.adminArn, user.sub]));
 
     const marshalledData = convertToDynamoDbRecord({
       ':experimentName': body.experimentName,
@@ -90,6 +93,7 @@ class ExperimentService {
       ':description': body.description,
       ':input': body.input,
       ':organism': body.organism,
+      ':rbac_can_write': documentClient.createSet(rbacCanWrite),
       ':meta': body.meta || {},
       ':processingConfig': {},
       ':sampleIds': body.sampleIds,
@@ -107,6 +111,7 @@ class ExperimentService {
                           meta = :meta,
                           processingConfig = :processingConfig,
                           sampleIds = :sampleIds,
+                          rbac_can_write = :rbac_can_write,
                           notifyByEmail = :notifyByEmail`,
       ExpressionAttributeValues: marshalledData,
       ConditionExpression: 'attribute_not_exists(#experimentId)',
@@ -169,6 +174,12 @@ class ExperimentService {
     return prettyData;
   }
 
+  async getExperimentPermissions(experimentId) {
+    logger.log(`GET permissions for experiment ${experimentId}`);
+
+    const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['experimentId', 'rbac_can_write']);
+    return data;
+  }
 
   async getProcessingConfig(experimentId) {
     logger.log(`GET processing config for experiment ${experimentId}`);

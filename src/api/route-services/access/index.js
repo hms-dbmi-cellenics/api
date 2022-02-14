@@ -35,8 +35,7 @@ class AccessService {
       },
     };
 
-    // TODO refactor into using this.db
-    const docClient = new AWS.this.db.DocumentClient({
+    const docClient = new AWS.DynamoDB.DocumentClient()({
       region: config.awsRegion,
     });
 
