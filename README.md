@@ -8,8 +8,7 @@ The API of Cellenics - single cell RNA seq analysis web platform.
 Development
 -----------
 
-The instructions in this section include all information that you need to know in order to run the api locally and
-or connect it to the other parts of Cellenics.
+The instructions in this section include all information that you need to know in order to run the api locally and to connect it to the other parts of Cellenics.
 
 ### Prerequisites
 
