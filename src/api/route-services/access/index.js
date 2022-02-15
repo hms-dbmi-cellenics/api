@@ -56,8 +56,12 @@ class AccessService {
 
     const db = createDynamoDbInstance();
     const response = await db.getItem(params).promise();
-    const { role } = convertToJsObject(response.Item);
+    if (!response.Item) {
+      // if there is no role for the user and experiment, reject authorization
+      return false;
+    }
 
+    const { role } = convertToJsObject(response.Item);
     return isRoleAuthorized(role, url, method);
   }
 
