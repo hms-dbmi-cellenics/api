@@ -38,6 +38,9 @@ module.exports = (socket) => {
         }
         const jwtClaim = await authenticationMiddlewareSocketIO(Authorization, socket);
         await authorize(experimentId, jwtClaim);
+        // TODO replace, when switching to new permissions
+        // const { sub: userId } = jwtClaim;
+        // await authorize(userId, 'socket', null, experimentId);
         await handleWorkRequest(data);
       } catch (e) {
         logger.log(`[REQ ??, SOCKET ${socket.id}] Error while processing WorkRequest event.`);

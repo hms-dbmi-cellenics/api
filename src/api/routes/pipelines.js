@@ -19,6 +19,7 @@ module.exports = {
     },
   ],
   'pipelines#create': [
+    expressAuthorizationMiddleware,
     async (req, res) => {
       const { processingConfig } = req.body;
 

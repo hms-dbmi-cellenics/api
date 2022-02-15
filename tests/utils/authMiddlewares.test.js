@@ -24,7 +24,6 @@ describe('Tests for authorization/authentication middlewares', () => {
   afterEach(() => {
     AWSMock.restore('DynamoDB');
   });
-
   it('Authorized user can proceed', async () => {
     mockDynamoGetItem(data);
 
@@ -81,7 +80,6 @@ describe('Tests for authorization/authentication middlewares', () => {
     await expressAuthorizationMiddleware(req, {}, next);
     expect(next).toBeCalledWith(expect.any(UnauthorizedError));
   });
-
   it('Express middleware can reject unauthenticated requests', async () => {
     mockDynamoGetItem(data);
 
@@ -93,35 +91,29 @@ describe('Tests for authorization/authentication middlewares', () => {
     await expressAuthorizationMiddleware(req, {}, next);
     expect(next).toBeCalledWith(expect.any(UnauthenticatedError));
   });
-
   it('Express middleware can resolve using authorization using projectUuid', async () => {
     mockDynamoBatchGetItem({
       Responses: {
         'experiments-test': [data],
       },
     });
-
     const req = {
       params: { projectUuid: '23456' },
     };
     const next = jest.fn();
-
     await expressAuthorizationMiddleware(req, {}, next);
     expect(next).toBeCalledWith(expect.any(UnauthenticatedError));
   });
-
   it('Express middleware with unknown projectUuid will throw unauth error', async () => {
     mockDynamoBatchGetItem({
       Responses: {
         'experiments-test': [data],
       },
     });
-
     const req = {
       params: { projectUuid: '2345' },
     };
     const next = jest.fn();
-
     await expressAuthorizationMiddleware(req, {}, next);
     expect(next).toBeCalledWith(expect.any(UnauthenticatedError));
   });

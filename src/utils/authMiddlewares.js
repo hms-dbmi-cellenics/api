@@ -16,10 +16,12 @@ const CacheSingleton = require('../cache');
 
 const { CacheMissError } = require('../cache/cache-utils');
 const { UnauthorizedError, UnauthenticatedError } = require('./responses');
-const ExperimentService = require('../api/route-services/experiment');
 const ProjectsService = require('../api/route-services/projects');
+const AccessService = require('../api/route-services/access');
+const ExperimentService = require('../api/route-services/experiment');
 
 const experimentService = new ExperimentService();
+const accessService = new AccessService();
 const projectService = new ProjectsService();
 
 /**
@@ -230,6 +232,40 @@ const authorize = async (authResource, claim, authByExperiment = true) => {
   throw new UnauthorizedError(`User ${userName} (${email}) does not have access to ${authByExperiment ? 'experiment' : 'project'} ${authResource}.`);
 };
 
+
+/**
+ * General authorization middleware. Resolves with nothing on
+ * successful authorization, or an exception on unauthorized access.
+ *
+ * @param {*} userId The ID of the user to authorize.
+ * @param {*} resource The resource the user is requesting (either the URL or 'sockets').
+ * @param {*} method The HTTP method of the request (or null in the case of sockets)
+ * @param {*} authResource Either the experimentId or the projectUuid
+ * @param {*} authByExperiment if true => authResource is an experimentId, false => projectUuid
+ * @returns Promise that resolves or rejects based on authorization status.
+ * @throws {UnauthorizedError} Authorization failed.
+ * TODO after SQL migration, projects will no longer exist so refactor this method
+ * and remove authByExperiment
+ */
+const authorizeNew = async (userId, resource, method, authResource, authByExperiment = true) => {
+  let experimentId = authResource;
+  if (!authByExperiment) {
+    const experiments = await projectService.getExperiments(authResource);
+    experimentId = experiments[0].experimentId;
+  }
+
+  const granted = await accessService.canAccessExperiment(userId,
+    experimentId,
+    resource,
+    method);
+
+  if (granted) {
+    return true;
+  }
+
+  throw new UnauthorizedError(`User ${userId} does not have access to ${authByExperiment ? 'experiment' : 'project'} ${authResource}.`);
+};
+
 /**
  * Wrapper for the general authorization middleware for use in Express.
  * Calls `authorize()` internally.
@@ -245,9 +281,9 @@ const expressAuthorizationMiddleware = async (req, res, next) => {
 
   try {
     await authorize(authResource, req.user, authByExperiment);
-
+    // TODO replace, when switching to new permissions
+    // await authorizeNew(req.user.sub, req.url, req.method, authResource, authByExperiment);
     next();
-    return;
   } catch (e) {
     next(e);
   }
@@ -268,4 +304,5 @@ module.exports = {
   expressAuthenticationOnlyMiddleware,
   checkAuthExpiredMiddleware,
   authorize,
+  authorizeNew,
 };
