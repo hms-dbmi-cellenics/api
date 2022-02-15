@@ -78,19 +78,7 @@ describe('tests for the projects service', () => {
 
     expect(res).toEqual(fnResult);
 
-    expect(fnSpy).toHaveBeenCalledWith({
-      TableName: 'experiments-test',
-      ExpressionAttributeNames: {
-        '#pid': 'projectId',
-        '#rbac_can_write': 'rbac_can_write',
-      },
-      ExpressionAttributeValues: {
-        ':userId': { S: user.sub },
-      },
-      FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
-      ProjectionExpression: '#pid',
-    });
-
+    expect(fnSpy).toMatchSnapshot();
     expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(projectIdsArr);
   });
 

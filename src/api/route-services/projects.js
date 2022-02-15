@@ -9,11 +9,13 @@ const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 
 const SamplesService = require('./samples');
 const ExperimentService = require('./experiment');
+const AccessService = require('./access');
 
 const logger = getLogger();
 
 const samplesService = new SamplesService();
 const experimentService = new ExperimentService();
+const accessService = new AccessService();
 
 class ProjectsService {
   constructor() {
@@ -132,6 +134,16 @@ class ProjectsService {
     return await this.getProjectsFromIds(projectIds);
   }
 
+  // TODO replace getProjects when migrating to new permissions model
+  /**
+   * Finds all accessible projects of a user
+   */
+  async getProjectsNew(user) {
+    const projectIds = await accessService.getAccessibleProjects(user.sub);
+
+    return await this.getProjectsFromIds(projectIds);
+  }
+
   /**
    * Returns information about a group of projects.
    *
@@ -185,7 +197,7 @@ class ProjectsService {
     return projects;
   }
 
-  async getExperiments(projectUuid, withWritePermissions = false) {
+  async getExperiments(projectUuid) {
     const dynamodb = createDynamoDbInstance();
 
     const marshalledKey = convertToDynamoDbRecord({ projectUuid });
@@ -202,13 +214,6 @@ class ProjectsService {
       if (!Object.prototype.hasOwnProperty.call(result, 'projects')) return [];
 
       const experiments = await experimentService.getListOfExperiments(result.projects.experiments);
-
-      if (!withWritePermissions) {
-        experiments.forEach((experiment) => {
-          // eslint-disable-next-line no-param-reassign
-          delete experiment.rbac_can_write;
-        });
-      }
 
 
       return experiments;

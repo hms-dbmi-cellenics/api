@@ -25,6 +25,11 @@ const {
   convertToDynamoUpdateParams,
 } = require('../../utils/dynamoDb');
 
+const AccessService = require('./access');
+const roles = require('./access/roles');
+
+const accessService = new AccessService();
+
 const logger = getLogger('[ExperimentService] - ');
 
 class ExperimentService {
@@ -115,6 +120,10 @@ class ExperimentService {
     };
 
     await dynamodb.updateItem(params).promise();
+
+    const { projectId } = body;
+    await accessService.grantRole(user.sub, experimentId, projectId, roles.OWNER);
+    await accessService.grantRole(config.adminArn, experimentId, projectId, roles.ADMIN);
 
     return OK();
   }
