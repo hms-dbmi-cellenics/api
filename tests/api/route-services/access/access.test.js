@@ -1,33 +1,64 @@
 const AWSMock = require('aws-sdk-mock');
-const AWS = require('../../../../src/utils/requireAWS');
+const fake = require('../../../test-utils/constants');
 
 const {
-  mockDynamoUpdateItem,
-  mockDynamoDeleteItem,
-  mockDynamoGetItem,
-  mockDynamoBatchGetItem,
+
+  mockDocClientQuery,
+  mockDocClientBatchWrite,
   mockDynamoScan,
 } = require('../../../test-utils/mockAWSServices');
 const AccessService = require('../../../../src/api/route-services/access');
-const { OK } = require('../../../../src/utils/responses');
 
 jest.mock('../../../../src/api/route-services/experiment');
 jest.mock('../../../../src/utils/authMiddlewares');
 
 describe('tests for the projects service', () => {
-  const mockProject = {
-    name: 'Test project',
-    description: '',
-    createdDate: '',
-    lastModified: '',
-    uuid: 'project-1',
-    experiments: ['experiment-1'],
-    lastAnalyzed: null,
-    samples: [],
-  };
-
   afterEach(() => {
     AWSMock.restore('DynamoDB');
+  });
+
+  test('getExperimentEntries calls doc client', async () => {
+    const items = [
+      {
+        userId: fake.USER.sub,
+        experimentId: fake.EXPERIMENT_ID,
+        projectId: fake.PROJECT_ID,
+        role: 'OWNER',
+      },
+    ];
+    const deleteSpy = mockDocClientQuery(items);
+
+    const responseItems = await AccessService.getExperimentEntries('table', fake.EXPERIMENT_ID);
+
+    expect(deleteSpy).toHaveBeenCalledTimes(1);
+    expect(deleteSpy.mock.calls).toMatchSnapshot();
+    expect(items).toEqual(responseItems);
+  });
+
+  test('deleteExperimentEntries calls doc client', async () => {
+    const items = [
+      {
+        userId: fake.USER.sub,
+        experimentId: fake.EXPERIMENT_ID,
+        projectId: fake.PROJECT_ID,
+        role: 'OWNER',
+      },
+    ];
+    const deleteSpy = mockDocClientBatchWrite();
+
+    const as = new AccessService();
+
+    await as.deleteExperimentEntries(as.userAccessTableName, fake.EXPERIMENT_ID, items);
+
+    expect(deleteSpy).toHaveBeenCalledTimes(1);
+    expect(deleteSpy.mock.calls).toMatchSnapshot();
+
+    deleteSpy.mockClear();
+
+    await as.deleteExperimentEntries(as.inviteAccessTableName, fake.EXPERIMENT_ID, items);
+
+    expect(deleteSpy).toHaveBeenCalledTimes(1);
+    expect(deleteSpy.mock.calls).toMatchSnapshot();
   });
 
   test('GetAccessibleProjects gets all the projects across many pages of scan results', async () => {
@@ -127,5 +158,42 @@ describe('tests for the projects service', () => {
     const res = await accessService.getAccessibleProjects(user);
 
     expect(res).toEqual(expectedResult);
+  });
+
+  test('deleteExperiment calls get and delete', async () => {
+    const items = [
+      {
+        userId: fake.USER.sub,
+        experimentId: fake.EXPERIMENT_ID,
+        projectId: fake.PROJECT_ID,
+        role: 'OWNER',
+      },
+    ];
+
+    const getMock = jest.fn(() => items);
+    const deleteMock = jest.fn();
+
+    AccessService.getExperimentEntries = getMock;
+
+    const as = new AccessService();
+    as.deleteExperimentEntries = deleteMock;
+    await as.deleteExperiment(fake.EXPERIMENT_ID);
+
+    expect(getMock).toHaveBeenCalledTimes(2);
+    expect(deleteMock).toHaveBeenCalledTimes(2);
+  });
+
+  test('deleteExperiment does not call delete if there are no items', async () => {
+    const getMock = jest.fn(() => []);
+    const deleteMock = jest.fn();
+
+    AccessService.getExperimentEntries = getMock;
+
+    const as = new AccessService();
+    as.deleteExperimentEntries = deleteMock;
+    await as.deleteExperiment(fake.EXPERIMENT_ID);
+
+    expect(getMock).toHaveBeenCalledTimes(2);
+    expect(deleteMock).toHaveBeenCalledTimes(0);
   });
 });
