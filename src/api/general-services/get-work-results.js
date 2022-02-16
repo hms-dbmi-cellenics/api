@@ -22,7 +22,7 @@ const getWorkResults = async (experimentId, ETag) => {
     logger.log('Error received while getting object tags', err);
   }
   if (!objectTagging.TagSet) {
-    throw new NotFoundError('Worker results not found');
+    throw new NotFoundError(`Worker results do not have tags for experiment ${experimentId} and eTag ${ETag}`);
   }
   const experimentIdTag = objectTagging.TagSet.filter((tag) => tag.Key === 'experimentId')[0].Value;
   if (experimentIdTag !== experimentId) {
