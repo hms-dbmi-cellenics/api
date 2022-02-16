@@ -13,14 +13,15 @@ const AccessService = require('./access');
 
 const logger = getLogger();
 
-const samplesService = new SamplesService();
-const experimentService = new ExperimentService();
-const accessService = new AccessService();
 
 class ProjectsService {
   constructor() {
     this.projectsTableName = `projects-${config.clusterEnv}`;
     this.samplesTableName = `samples-${config.clusterEnv}`;
+
+    this.samplesService = new SamplesService();
+    this.experimentService = new ExperimentService();
+    this.accessService = new AccessService();
   }
 
   async getProject(projectUuid) {
@@ -93,7 +94,7 @@ class ProjectsService {
     // Get project data from the experiments table. Only return
     // those tables that have a project ID associated with them.
     const params = {
-      TableName: experimentService.experimentsTableName,
+      TableName: this.experimentService.experimentsTableName,
       FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
       ExpressionAttributeNames: {
         '#pid': 'projectId',
@@ -139,7 +140,7 @@ class ProjectsService {
    * Finds all accessible projects of a user
    */
   async getProjectsNew(user) {
-    const projectIds = await accessService.getAccessibleProjects(user.sub);
+    const projectIds = await this.accessService.getAccessibleProjects(user.sub);
 
     return await this.getProjectsFromIds(projectIds);
   }
@@ -213,7 +214,9 @@ class ProjectsService {
 
       if (!Object.prototype.hasOwnProperty.call(result, 'projects')) return [];
 
-      const experiments = await experimentService.getListOfExperiments(result.projects.experiments);
+      const experiments = await this.experimentService.getListOfExperiments(
+        result.projects.experiments,
+      );
 
 
       return experiments;
@@ -241,9 +244,9 @@ class ProjectsService {
 
       if (experiments.length > 0) {
         const deletePromises = experiments.reduce((acc, experimentId) => {
-          acc.push(experimentService.deleteExperiment(experimentId));
-          acc.push(samplesService.deleteSamplesEntry(projectUuid, experimentId, sampleUuids));
-          acc.push(accessService.deleteExperiment(experimentId));
+          acc.push(this.experimentService.deleteExperiment(experimentId));
+          acc.push(this.samplesService.deleteSamplesEntry(projectUuid, experimentId, sampleUuids));
+          acc.push(this.accessService.deleteExperiment(experimentId));
           return acc;
         }, []);
 
