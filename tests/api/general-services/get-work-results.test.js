@@ -1,6 +1,7 @@
 const AWSMock = require('aws-sdk-mock');
 const getWorkResults = require('../../../src/api/general-services/get-work-results');
 const { mockS3GetObjectTagging, mockS3GetSignedUrl } = require('../../test-utils/mockAWSServices');
+const fake = require('../../test-utils/constants');
 
 const tags = { TagSet: [{ Key: 'experimentId', Value: 'mockExperimentIdsd41dvc3' }, { Key: 'otherTag', Value: 'mockOtherTag' }] };
 
@@ -32,8 +33,9 @@ describe('Get worker results signed url', () => {
   it('Not existent results throws 404', () => {
     mockS3GetObjectTagging({});
 
+    const ETag = 'mockETag';
     return expect(
-      getWorkResults('mockExperimentIdsd41dvc3', 'mockETag'),
-    ).rejects.toThrow('Worker results not found');
+      getWorkResults(fake.EXPERIMENT_ID, ETag),
+    ).rejects.toThrow(`Worker results do not have tags for experiment ${fake.EXPERIMENT_ID} and eTag ${ETag}`);
   });
 });

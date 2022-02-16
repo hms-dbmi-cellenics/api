@@ -9,13 +9,12 @@ const logger = getLogger();
 
 module.exports = {
   'kubernetes#event': async (req, res, next) => {
-    logger.log('received kubernetes event');
     try {
       const { reason, message, involvedObject: { name, namespace } } = req.body;
-      logger.log(`[${reason}] received kubernetes event: ${message} ${name} in ${namespace}`);
 
       // remove only pods in your namespace and due to backoff errors
       if ((namespace.match('^pipeline-.*') || namespace.match('^worker-.*')) && reason === 'BackOff') {
+        logger.log(`[${reason}] received kubernetes event: ${message} ${name} in ${namespace}`);
         const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
         logger.log(`removing pod ${name} in ${namespace}`);
         await k8sApi.deleteNamespacedPod(name, namespace);
