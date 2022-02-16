@@ -242,8 +242,8 @@ class ProjectsService {
       if (experiments.length > 0) {
         const deletePromises = experiments.reduce((acc, experimentId) => {
           acc.push(experimentService.deleteExperiment(experimentId));
-          // acc.push(accessService.deleteExpqgaeriment(experimentId));
           acc.push(samplesService.deleteSamplesEntry(projectUuid, experimentId, sampleUuids));
+          acc.push(accessService.deleteExperiment(experimentId));
           return acc;
         }, []);
 

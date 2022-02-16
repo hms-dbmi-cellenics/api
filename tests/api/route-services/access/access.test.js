@@ -2,7 +2,6 @@ const AWSMock = require('aws-sdk-mock');
 const fake = require('../../../test-utils/constants');
 
 const {
-
   mockDocClientQuery,
   mockDocClientBatchWrite,
   mockDynamoScan,
@@ -28,7 +27,9 @@ describe('tests for the projects service', () => {
     ];
     const deleteSpy = mockDocClientQuery(items);
 
-    const responseItems = await AccessService.getExperimentEntries('table', fake.EXPERIMENT_ID);
+
+    const as = new AccessService();
+    const responseItems = await as.getExperimentEntries('table', fake.EXPERIMENT_ID);
 
     expect(deleteSpy).toHaveBeenCalledTimes(1);
     expect(deleteSpy.mock.calls).toMatchSnapshot();
@@ -173,9 +174,9 @@ describe('tests for the projects service', () => {
     const getMock = jest.fn(() => items);
     const deleteMock = jest.fn();
 
-    AccessService.getExperimentEntries = getMock;
 
     const as = new AccessService();
+    as.getExperimentEntries = getMock;
     as.deleteExperimentEntries = deleteMock;
     await as.deleteExperiment(fake.EXPERIMENT_ID);
 
@@ -187,9 +188,9 @@ describe('tests for the projects service', () => {
     const getMock = jest.fn(() => []);
     const deleteMock = jest.fn();
 
-    AccessService.getExperimentEntries = getMock;
 
     const as = new AccessService();
+    as.getExperimentEntries = getMock;
     as.deleteExperimentEntries = deleteMock;
     await as.deleteExperiment(fake.EXPERIMENT_ID);
 

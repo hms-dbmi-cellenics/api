@@ -100,7 +100,8 @@ class AccessService {
     return projectIds;
   }
 
-  static async getExperimentEntries(table, experimentId) {
+  // eslint-disable-next-line class-methods-use-this
+  async getExperimentEntries(table, experimentId) {
     const docClient = new AWS.DynamoDB.DocumentClient({
       region: config.awsRegion,
     });
@@ -151,9 +152,9 @@ class AccessService {
   }
 
   async deleteByExperimentId(table, experimentId) {
-    const items = await AccessService.getExperimentEntries(table, experimentId);
+    const items = await this.getExperimentEntries(table, experimentId);
     if (items.length === 0) {
-      console.log(`no permissions rows found in ${table} for ${experimentId}`);
+      // invite-access table can be empty, in that case skip deleting.
       return;
     }
 
