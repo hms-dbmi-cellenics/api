@@ -174,13 +174,6 @@ class ExperimentService {
     return prettyData;
   }
 
-  async getExperimentPermissions(experimentId) {
-    logger.log(`GET permissions for experiment ${experimentId}`);
-
-    const data = await getExperimentAttributes(this.experimentsTableName, experimentId, ['experimentId', 'rbac_can_write']);
-    return data;
-  }
-
   async getProcessingConfig(experimentId) {
     logger.log(`GET processing config for experiment ${experimentId}`);
 
