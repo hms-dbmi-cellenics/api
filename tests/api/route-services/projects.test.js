@@ -73,7 +73,7 @@ describe('tests for the projects service', () => {
     const fnSpy = mockDynamoScan([projectIds]);
 
     const projectService = new ProjectsService();
-    const user = { sub: 'mockSubject' };
+    const user = { sub: fake.USER.sub };
 
     projectService.getProjectsFromIds = jest.fn().mockImplementation(() => fnResult);
 
