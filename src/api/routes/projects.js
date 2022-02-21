@@ -16,7 +16,7 @@ module.exports = {
         .catch(next);
     }],
   'projects#update': [
-    expressAuthenticationOnlyMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => {
       projectsService.updateProject(req.params.projectUuid, req.body)
         .then((data) => res.json(data))

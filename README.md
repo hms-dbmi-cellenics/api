@@ -3,13 +3,12 @@ API
 ======
 
 
-The API of Cellscope (the Biomage single cell analysis platform).
+The API of Cellenics - single cell RNA seq analysis web platform.
 
 Development
 -----------
 
-The instructions in this section include all information that you need to know in order to run the api locally and
-or connect it to the other parts of the Biomage Single Cell Platform.
+The instructions in this section include all information that you need to know in order to run the api locally and to connect it to the other parts of Cellenics.
 
 ### Prerequisites
 
@@ -63,7 +62,7 @@ with a mocked dataset, you will need to set up each of these:
 - worker: https://github.com/hms-dbmi-cellenics/worker
 - UI: https://github.com/hms-dbmi-cellenics/ui
 
-The following steps explain in more details on how to get the Cellscope platform running end-to-end locally.
+The following steps explain in more details on how to get Cellenics running end-to-end locally.
 
 #### 1. Connect with Inframock
 
@@ -126,7 +125,7 @@ directly. This means that caching of data will not work in this case.
 
 Also note that if you decide to run the API with a ***live*** cluster, you won't be able to receive responses back from the
 worker. This is because the live SNS topic cannot push messages to a local development machine, only to an endpoint
-exposed to the internet. See the system achitecture here for more context: https://github.com/hms-dbmi-cellenics/developer-docs/wiki/Biomage-Single-Cell-Platform:-Architecture
+exposed to the internet. See the [system achitecture](https://github.com/hms-dbmi-cellenics/developer-docs/wiki/Cellenics:-Architecture) for more context.
 
 #### 3. (Optional) Run the UI locally
 
