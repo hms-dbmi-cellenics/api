@@ -1,9 +1,13 @@
 const express = require('express');
 const request = require('supertest');
 const expressLoader = require('../../../src/loaders/express');
+const fake = require('../../test-utils/constants');
 
-const mockExperimentId = 'someId';
-const mockPlotUuid = 'somePlotUuid';
+jest.mock('../../../src/utils/authMiddlewares');
+
+
+const mockExperimentId = fake.EXPERIMENT_ID;
+const mockPlotUuid = fake.PLOT_UUID;
 
 jest.mock('../../../src/api/route-services/plots-tables');
 

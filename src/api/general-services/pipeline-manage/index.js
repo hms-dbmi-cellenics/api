@@ -236,7 +236,6 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   };
 
   const qcSteps = await getQcStepsToRun(experimentId, processingConfigUpdates);
-  console.log(`qcSteps to run ${qcSteps}`);
 
   const qcPipelineSkeleton = await getQcPipelineSkeleton(
     config.clusterEnv,

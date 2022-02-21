@@ -55,15 +55,18 @@ const S3_WORKER_RESULT = {
 const USER = {
   name: 'John Cena',
   email: 'johncena@gmail.com',
-  sub: 'useridayylmao',
+  sub: '032cdb44-0cd3-4d58-af21-850kp0b95ac7',
 };
 // Try to use realistic values but DO NOT USE real ones.
 module.exports = Object.freeze({
   SOCKET_ENDPOINT: 'localhost:5000',
+  URL: 'localhost:5000/v1/experiments',
   EXPERIMENT_ID: 'experimentid11111111111111111111',
   S3_BUCKET: 'worker-results-test',
   S3_KEY: '11111122222233333344444455555555',
+  PROJECT_ID: 'aaaaaaaa-bbbb-3333-4444-999999999999',
   SAMPLE_UUID: 'aaaaaaaa-bbbb-3333-4444-999999999999',
+  PLOT_UUID: 'aaaaaaaa-bbbb-3333-4444-999999999999',
   SANDBOX_ID: 'default',
   REGION: 'eu-east-9',
   AWS_ACCOUNT_ID: '111111111111',
