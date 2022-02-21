@@ -67,13 +67,19 @@ describe('tests for the samples service', () => {
     });
   });
 
-  it('updateSamples work', async () => {
+  it('updateSamples patches instead of replace', async () => {
     const projectUuid = 'project-1';
     const experimentId = 'experiment-1';
 
-    const jsData = {
-      'sample-1': { name: 'sample-1' },
+    const dbData = {
+      samples: {
+        'sample-1': { name: 'sample-1' },
+      },
+    };
+
+    const newData = {
       'sample-2': { name: 'sample-2' },
+      'sample-3': { name: 'sample-3' },
     };
 
     const marshalledKey = AWS.DynamoDB.Converter.marshall({
@@ -81,17 +87,18 @@ describe('tests for the samples service', () => {
     });
 
     const marshalledData = AWS.DynamoDB.Converter.marshall({
-      ':samples': jsData,
+      ':samples': { ...dbData.samples, ...newData },
       ':projectUuid': projectUuid,
     });
 
-    const getItemSpy = mockDynamoUpdateItem(jsData);
+    mockDynamoGetItem(dbData);
+    const updateItemSpy = mockDynamoUpdateItem(newData);
 
-    const res = await (new SamplesService()).updateSamples(projectUuid, experimentId, jsData);
+    const res = await (new SamplesService()).updateSamples(projectUuid, experimentId, newData);
 
     expect(res).toEqual(OK());
 
-    expect(getItemSpy).toHaveBeenCalledWith({
+    expect(updateItemSpy).toHaveBeenCalledWith({
       TableName: 'samples-test',
       Key: marshalledKey,
       UpdateExpression: 'SET samples = :samples, projectUuid = :projectUuid',
