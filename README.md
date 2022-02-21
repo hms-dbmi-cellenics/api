@@ -90,7 +90,6 @@ If you did complete step 1 and are runnig Inframock locally, you should see the 
 ```
 
 #### Step 3. Run the UI locally
-
 This is required to run the API with a local version of the UI.
 Go to the [UI repo](https://github.com/hms-dbmi-cellenics/ui) and follow the instructions in the README to set it up and start it on a separate terminal.
 After the UI service is started, any request from the UI will be automatically forwarded to the API and vice versa.

@@ -1,7 +1,7 @@
 const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../../src/utils/requireAWS');
+const fake = require('../../test-utils/constants');
 
-const ProjectsService = require('../../../src/api/route-services/projects');
 const {
   mockDynamoUpdateItem,
   mockDynamoDeleteItem,
@@ -14,6 +14,9 @@ const { OK } = require('../../../src/utils/responses');
 
 jest.mock('../../../src/api/route-services/experiment');
 jest.mock('../../../src/utils/authMiddlewares');
+
+const ProjectsService = require('../../../src/api/route-services/projects');
+
 
 describe('tests for the projects service', () => {
   const mockProject = {
@@ -70,7 +73,7 @@ describe('tests for the projects service', () => {
     const fnSpy = mockDynamoScan([projectIds]);
 
     const projectService = new ProjectsService();
-    const user = { sub: 'mockSubject' };
+    const user = { sub: fake.USER.sub };
 
     projectService.getProjectsFromIds = jest.fn().mockImplementation(() => fnResult);
 
@@ -78,19 +81,7 @@ describe('tests for the projects service', () => {
 
     expect(res).toEqual(fnResult);
 
-    expect(fnSpy).toHaveBeenCalledWith({
-      TableName: 'experiments-test',
-      ExpressionAttributeNames: {
-        '#pid': 'projectId',
-        '#rbac_can_write': 'rbac_can_write',
-      },
-      ExpressionAttributeValues: {
-        ':userId': { S: user.sub },
-      },
-      FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
-      ProjectionExpression: '#pid',
-    });
-
+    expect(fnSpy).toMatchSnapshot();
     expect(projectService.getProjectsFromIds).toHaveBeenCalledWith(projectIdsArr);
   });
 
@@ -368,27 +359,48 @@ describe('tests for the projects service', () => {
     });
   });
 
-  test('DeleteProject deletes project and samples properly', async () => {
-    const experiments = ['project-1'];
+  test('DeleteProject deletes project, samples, and access properly', async () => {
+    const experiments = [fake.EXPERIMENT_ID];
     const samples = [];
 
     const marshalledKey = AWS.DynamoDB.Converter.marshall({
-      projectUuid: 'project-1',
+      projectUuid: fake.PROJECT_ID,
     });
 
     const deleteSpy = mockDynamoDeleteItem();
     const getSpy = mockDynamoGetItem({ projects: { experiments, samples }, samples });
 
-    const res = await (new ProjectsService()).deleteProject('project-1');
 
-    expect(res).toEqual(OK());
+    const asSpy = jest.fn();
+    const ssSpy = jest.fn();
+    const esSpy = jest.fn();
 
-    expect(deleteSpy).toHaveBeenCalledWith({
+    const ps = new ProjectsService();
+    ps.accessService.deleteExperiment = asSpy;
+    ps.samplesService.deleteSamplesEntry = ssSpy;
+    ps.experimentService.deleteExperiment = esSpy;
+
+    const res = await ps.deleteProject(fake.PROJECT_ID);
+
+    // first call getProjects to get the experiment & samples info
+    expect(getSpy).toHaveBeenCalledWith({
       TableName: 'projects-test',
       Key: marshalledKey,
     });
 
-    expect(getSpy).toHaveBeenCalledWith({
+    // ensure that experiments, samples, and user access deletes are called
+    expect(esSpy).toHaveBeenCalledTimes(1);
+    expect(esSpy).toHaveBeenCalledWith(fake.EXPERIMENT_ID);
+
+    expect(ssSpy).toHaveBeenCalledTimes(1);
+    expect(ssSpy).toHaveBeenCalledWith(fake.PROJECT_ID, fake.EXPERIMENT_ID, samples);
+
+    expect(asSpy).toHaveBeenCalledTimes(1);
+    expect(asSpy).toHaveBeenCalledWith(fake.EXPERIMENT_ID);
+    expect(res).toEqual(OK());
+
+    // ensure that the project itself is deleted
+    expect(deleteSpy).toHaveBeenCalledWith({
       TableName: 'projects-test',
       Key: marshalledKey,
     });

@@ -204,11 +204,6 @@ jobs:
 
           echo "::set-output name=body::$UNCHECKED_BODY"
 
-      - id: check-case-sensitivity
-        run: |-
-          echo "Github head ref"
-          echo ${{ github.head_ref }}
-
       - id: uncheck-integration-checkbox
         if: failure()
         name: Uncheck the integration checkbox
