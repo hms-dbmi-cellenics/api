@@ -5,18 +5,13 @@ exports[`tests for the projects service GetProjects gets all the projects 1`] = 
   "calls": Array [
     Array [
       Object {
-        "ExpressionAttributeNames": Object {
-          "#pid": "projectId",
-          "#rbac_can_write": "rbac_can_write",
-        },
         "ExpressionAttributeValues": Object {
           ":userId": Object {
-            "S": "mockSubject",
+            "S": "032cdb44-0cd3-4d58-af21-850kp0b95ac7",
           },
         },
-        "FilterExpression": "attribute_exists(projectId) and contains(#rbac_can_write, :userId)",
-        "ProjectionExpression": "#pid",
-        "TableName": "experiments-test",
+        "FilterExpression": "(userId = :userId)",
+        "TableName": "user-access-test",
       },
     ],
   ],
@@ -24,18 +19,13 @@ exports[`tests for the projects service GetProjects gets all the projects 1`] = 
     Object {
       "type": "return",
       "value": Object {
-        "ExpressionAttributeNames": Object {
-          "#pid": "projectId",
-          "#rbac_can_write": "rbac_can_write",
-        },
         "ExpressionAttributeValues": Object {
           ":userId": Object {
-            "S": "mockSubject",
+            "S": "032cdb44-0cd3-4d58-af21-850kp0b95ac7",
           },
         },
-        "FilterExpression": "attribute_exists(projectId) and contains(#rbac_can_write, :userId)",
-        "ProjectionExpression": "#pid",
-        "TableName": "experiments-test",
+        "FilterExpression": "(userId = :userId)",
+        "TableName": "user-access-test",
       },
     },
   ],
