@@ -1,7 +1,7 @@
 const config = require('../../config');
 const AWS = require('../../utils/requireAWS');
 const getLogger = require('../../utils/getLogger');
-const { UnauthorizedError, NotFoundError } = require('../../utils/responses');
+const { UnauthorizedError, NotFoundError, InternalServerError } = require('../../utils/responses');
 
 const { getSignedUrl } = require('../../utils/aws/s3');
 
@@ -13,13 +13,9 @@ const logger = getLogger();
  * If they don't match, throws an exception
  */
 const validateTagMatching = async (experimentId, params) => {
-  let objectTagging = [];
   const s3 = new AWS.S3();
 
-  // once we get here, the authorization middleware has already run so we
-  // know that the user has permissions to access the given experiment_id
-  // however, we need to verify that the given ETag matches the authorized
-  // experimentId
+  let objectTagging = [];
   try {
     objectTagging = await s3.getObjectTagging(params).promise();
   } catch (err) {
@@ -27,15 +23,18 @@ const validateTagMatching = async (experimentId, params) => {
     if (err.code === 'NoSuchKey') {
       throw new NotFoundError(`Couldn't find s3 worker results bucket with key: ${params.Key}`);
     }
-
     logger.log('Error received while getting object tags', err);
     throw err;
   }
 
+  if (!objectTagging.TagSet) {
+    throw new InternalServerError(`S3 work results key ${params.Key} has no tags`);
+  }
+
   const experimentIdTag = objectTagging.TagSet.filter((tag) => tag.Key === 'experimentId')[0].Value;
   if (experimentIdTag !== experimentId) {
-    throw new UnauthorizedError(`User was authorized for experiment ${experimentId} but the requested
-    worker results belong to experiment ${experimentIdTag}.`);
+    throw new UnauthorizedError(`User was authorized for experiment ${experimentId} but the requested `
+    + `worker results belong to experiment ${experimentIdTag}.`);
   }
 };
 
@@ -46,6 +45,7 @@ const getWorkResults = async (experimentId, ETag) => {
   };
 
   await validateTagMatching(experimentId, params);
+
   const signedUrl = getSignedUrl('getObject', params);
   return { signedUrl };
 };
