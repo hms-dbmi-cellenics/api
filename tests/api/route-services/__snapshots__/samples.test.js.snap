@@ -81,3 +81,26 @@ Array [
   },
 ]
 `;
+
+exports[`tests for the samples service addSample works 3`] = `
+Array [
+  Object {
+    "ExpressionAttributeValues": Object {
+      ":newSampleId": Object {
+        "L": Array [
+          Object {
+            "S": "sampleUuid",
+          },
+        ],
+      },
+    },
+    "Key": Object {
+      "experimentId": Object {
+        "S": "experimentId",
+      },
+    },
+    "TableName": "experiments-test",
+    "UpdateExpression": "SET sampleIds = list_append(sampleIds, :newSampleId)",
+  },
+]
+`;

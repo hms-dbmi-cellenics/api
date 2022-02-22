@@ -173,8 +173,9 @@ describe('tests for the samples service', () => {
 
     expect(updateItemSpy.mock.calls[0]).toMatchSnapshot();
     expect(updateItemSpy.mock.calls[1]).toMatchSnapshot();
+    expect(updateItemSpy.mock.calls[2]).toMatchSnapshot();
 
     // Only these two calls to dynamo were made
-    expect(updateItemSpy.mock.calls).toHaveLength(2);
+    expect(updateItemSpy.mock.calls).toHaveLength(3);
   });
 });
