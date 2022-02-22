@@ -59,7 +59,7 @@ const getLocalhostParams = () => ({
   database: 'auroraDB',
 });
 
-const SQLClient = async () => {
+const createSQLClient = async () => {
   const params = config.clusterEnv !== 'development' ? await getRDSParams() : getLocalhostParams();
 
   const knexClient = knex.default({
@@ -70,4 +70,4 @@ const SQLClient = async () => {
   return knexClient;
 };
 
-export default SQLClient;
+module.exports = createSQLClient;
