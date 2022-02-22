@@ -49,7 +49,6 @@ const getRDSParams = async () => {
     user: username,
     password: token,
     database: 'auroraDB',
-    ssl: true,
   };
 };
 
@@ -62,6 +61,9 @@ const getLocalhostParams = () => ({
 
 const createSQLClient = async () => {
   const params = config.clusterEnv !== 'development' ? await getRDSParams() : getLocalhostParams();
+
+  console.log('paramsDebug');
+  console.log(JSON.stringify(params));
 
   const knexClient = knex.default({
     client: 'pg',
