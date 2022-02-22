@@ -17,6 +17,7 @@ const logger = getLogger();
 
 class SamplesService {
   constructor() {
+    this.experimentsTableName = `experiments-${config.clusterEnv}`;
     this.samplesTableName = `samples-${config.clusterEnv}`;
     this.sampleFilesBucketName = `biomage-originals-${config.clusterEnv}`;
     this.projectsTableName = `projects-${config.clusterEnv}`;
@@ -204,9 +205,31 @@ class SamplesService {
       await dynamodb.updateItem(params).promise();
     };
 
+    const addSampleIdToExperiments = async () => {
+      const dynamodb = createDynamoDbInstance();
+
+      const marshalledKey = convertToDynamoDbRecord({
+        experimentId,
+      });
+
+      const marshalledData = convertToDynamoDbRecord({
+        ':newSampleId': [newSample.uuid],
+      });
+
+      const params = {
+        TableName: this.experimentsTableName,
+        Key: marshalledKey,
+        UpdateExpression: 'SET sampleIds = list_append(sampleIds, :newSampleId)',
+        ExpressionAttributeValues: marshalledData,
+      };
+
+      await dynamodb.updateItem(params).promise();
+    };
+
     await Promise.all([
       addSampleIdToProjects(),
       addSampleToSamples(),
+      addSampleIdToExperiments(),
     ]);
 
     return OK();
