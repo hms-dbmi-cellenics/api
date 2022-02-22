@@ -59,9 +59,6 @@ Array [
           "projectUuid": Object {
             "S": "projectUuid",
           },
-          "species": Object {
-            "NULL": true,
-          },
           "type": Object {
             "S": "10X Chromium",
           },

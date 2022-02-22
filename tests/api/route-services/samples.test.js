@@ -155,7 +155,6 @@ describe('tests for the samples service', () => {
       projectUuid: 'projectUuid',
       uuid: 'sampleUuid',
       type: '10X Chromium',
-      species: null,
       createdDate: '4242-42-42T18:58:49.131Z',
       lastModified: '4242-42-42T18:58:49.131Z',
       complete: false,
