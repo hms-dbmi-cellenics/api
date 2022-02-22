@@ -54,6 +54,7 @@
     "node-fetch": "^2.6.1",
     "node-jq": "^2.0.0",
     "object-hash": "^2.0.3",
+    "pg": "^8.7.3",
     "promise.any": "^2.0.2",
     "sns-validator": "^0.3.4",
     "socket.io": "^3.1.2",
