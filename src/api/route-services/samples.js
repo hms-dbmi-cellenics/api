@@ -17,6 +17,7 @@ const logger = getLogger();
 
 class SamplesService {
   constructor() {
+    this.experimentsTableName = `experiments-${config.clusterEnv}`;
     this.samplesTableName = `samples-${config.clusterEnv}`;
     this.sampleFilesBucketName = `biomage-originals-${config.clusterEnv}`;
     this.projectsTableName = `projects-${config.clusterEnv}`;
@@ -81,27 +82,39 @@ class SamplesService {
   async updateSamples(projectUuid, experimentId, body) {
     logger.log(`Updating samples for project ${projectUuid} and expId ${experimentId}`);
 
+    const dynamodb = createDynamoDbInstance();
+
     const marshalledKey = convertToDynamoDbRecord({
       experimentId,
     });
 
+    const getSamplesParams = {
+      TableName: this.samplesTableName,
+      Key: marshalledKey,
+      ProjectionExpression: 'samples',
+    };
+
+    // Merge samples record with the body
+    const response = await dynamodb.getItem(getSamplesParams).promise();
+    const { samples } = convertToJsObject(response.Item);
+
+    const updatedSamples = _.merge(samples, body);
+
     const marshalledData = convertToDynamoDbRecord({
-      ':samples': body,
+      ':samples': updatedSamples,
       ':projectUuid': projectUuid,
     });
 
     // Update samples
-    const params = {
+    const updateSamplesParams = {
       TableName: this.samplesTableName,
       Key: marshalledKey,
       UpdateExpression: 'SET samples = :samples, projectUuid = :projectUuid',
       ExpressionAttributeValues: marshalledData,
     };
 
-    const dynamodb = createDynamoDbInstance();
-
     try {
-      await dynamodb.updateItem(params).send();
+      await dynamodb.updateItem(updateSamplesParams).send();
       return OK();
     } catch (e) {
       if (e.statusCode === 404) throw new NotFoundError('Project not found');
@@ -192,9 +205,31 @@ class SamplesService {
       await dynamodb.updateItem(params).promise();
     };
 
+    const addSampleIdToExperiments = async () => {
+      const dynamodb = createDynamoDbInstance();
+
+      const marshalledKey = convertToDynamoDbRecord({
+        experimentId,
+      });
+
+      const marshalledData = convertToDynamoDbRecord({
+        ':newSampleId': [newSample.uuid],
+      });
+
+      const params = {
+        TableName: this.experimentsTableName,
+        Key: marshalledKey,
+        UpdateExpression: 'SET sampleIds = list_append(sampleIds, :newSampleId)',
+        ExpressionAttributeValues: marshalledData,
+      };
+
+      await dynamodb.updateItem(params).promise();
+    };
+
     await Promise.all([
       addSampleIdToProjects(),
       addSampleToSamples(),
+      addSampleIdToExperiments(),
     ]);
 
     return OK();
