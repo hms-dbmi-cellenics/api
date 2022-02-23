@@ -43,15 +43,6 @@ const getRDSParams = async () => {
 
   const token = await signer.getAuthToken();
 
-  // const sslCertUrl = `https://truststore.pki.rds.amazonaws.com/${config.clusterEnv}/${config.clusterEnv}-bundle.pem`;
-
-  // ssl: {
-  //   rejectUnauthorized: false,
-  //     ca: fs.readFileSync(process.env.DB_ROOT_CERT), // e.g., '/path/to/my/server-ca.pem'
-  //       key: fs.readFileSync(process.env.DB_KEY), // e.g. '/path/to/my/client-key.pem'
-  //         cert: fs.readFileSync(process.env.DB_CERT), // e.g. '/path/to/my/client-cert.pem'
-  //     },
-
   return {
     host: endpoint,
     port: 5432,

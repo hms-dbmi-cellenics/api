@@ -10,8 +10,6 @@ const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 const SamplesService = require('./samples');
 const ExperimentService = require('./experiment');
 
-const createSQLClient = require('../../serviceConnections/createSQLClient');
-
 const logger = getLogger();
 
 const samplesService = new SamplesService();
@@ -67,14 +65,6 @@ class ProjectsService {
     const marshalledData = convertToDynamoDbRecord({
       ':project': project,
     });
-
-    // TEMPORARY ONLY TO TEST OUT THE CONNECTION
-    const sqlClient = await createSQLClient();
-    const result = await sqlClient.select().from('test_table');
-
-    logger.log('resultDebug');
-    logger.log(result);
-    // END TEMPORARY ONLY TO TEST OUT THE CONNECTION
 
     const params = {
       TableName: this.projectsTableName,
