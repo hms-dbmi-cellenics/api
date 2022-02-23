@@ -59,9 +59,6 @@ Array [
           "projectUuid": Object {
             "S": "projectUuid",
           },
-          "species": Object {
-            "NULL": true,
-          },
           "type": Object {
             "S": "10X Chromium",
           },
@@ -78,6 +75,29 @@ Array [
     },
     "TableName": "samples-test",
     "UpdateExpression": "SET samples.#newSampleId = :newSample",
+  },
+]
+`;
+
+exports[`tests for the samples service addSample works 3`] = `
+Array [
+  Object {
+    "ExpressionAttributeValues": Object {
+      ":newSampleId": Object {
+        "L": Array [
+          Object {
+            "S": "sampleUuid",
+          },
+        ],
+      },
+    },
+    "Key": Object {
+      "experimentId": Object {
+        "S": "experimentId",
+      },
+    },
+    "TableName": "experiments-test",
+    "UpdateExpression": "SET sampleIds = list_append(sampleIds, :newSampleId)",
   },
 ]
 `;

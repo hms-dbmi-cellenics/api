@@ -67,13 +67,19 @@ describe('tests for the samples service', () => {
     });
   });
 
-  it('updateSamples work', async () => {
+  it('updateSamples patches instead of replace', async () => {
     const projectUuid = 'project-1';
     const experimentId = 'experiment-1';
 
-    const jsData = {
-      'sample-1': { name: 'sample-1' },
+    const dbData = {
+      samples: {
+        'sample-1': { name: 'sample-1' },
+      },
+    };
+
+    const newData = {
       'sample-2': { name: 'sample-2' },
+      'sample-3': { name: 'sample-3' },
     };
 
     const marshalledKey = AWS.DynamoDB.Converter.marshall({
@@ -81,17 +87,18 @@ describe('tests for the samples service', () => {
     });
 
     const marshalledData = AWS.DynamoDB.Converter.marshall({
-      ':samples': jsData,
+      ':samples': { ...dbData.samples, ...newData },
       ':projectUuid': projectUuid,
     });
 
-    const getItemSpy = mockDynamoUpdateItem(jsData);
+    mockDynamoGetItem(dbData);
+    const updateItemSpy = mockDynamoUpdateItem(newData);
 
-    const res = await (new SamplesService()).updateSamples(projectUuid, experimentId, jsData);
+    const res = await (new SamplesService()).updateSamples(projectUuid, experimentId, newData);
 
     expect(res).toEqual(OK());
 
-    expect(getItemSpy).toHaveBeenCalledWith({
+    expect(updateItemSpy).toHaveBeenCalledWith({
       TableName: 'samples-test',
       Key: marshalledKey,
       UpdateExpression: 'SET samples = :samples, projectUuid = :projectUuid',
@@ -148,7 +155,6 @@ describe('tests for the samples service', () => {
       projectUuid: 'projectUuid',
       uuid: 'sampleUuid',
       type: '10X Chromium',
-      species: null,
       createdDate: '4242-42-42T18:58:49.131Z',
       lastModified: '4242-42-42T18:58:49.131Z',
       complete: false,
@@ -166,8 +172,9 @@ describe('tests for the samples service', () => {
 
     expect(updateItemSpy.mock.calls[0]).toMatchSnapshot();
     expect(updateItemSpy.mock.calls[1]).toMatchSnapshot();
+    expect(updateItemSpy.mock.calls[2]).toMatchSnapshot();
 
     // Only these two calls to dynamo were made
-    expect(updateItemSpy.mock.calls).toHaveLength(2);
+    expect(updateItemSpy.mock.calls).toHaveLength(3);
   });
 });

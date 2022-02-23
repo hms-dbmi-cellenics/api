@@ -55,7 +55,7 @@ describe('tests for samples route', () => {
 
     const invalidBodySample = _.cloneDeep(correctSample);
 
-    delete invalidBodySample['sample-1'].species;
+    delete invalidBodySample['sample-1'].uuid;
 
     request(app)
       .put('/v1/projects/someId/experimentId/samples')
@@ -108,7 +108,7 @@ describe('tests for samples route', () => {
 
     const invalidBodySample = _.cloneDeep(correctSample);
 
-    delete invalidBodySample['sample-1'].species;
+    delete invalidBodySample['sample-1'].uuid;
 
     request(app)
       .post('/v1/projects/someId/experimentId/samples')
