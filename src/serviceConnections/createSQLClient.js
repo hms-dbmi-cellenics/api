@@ -58,8 +58,7 @@ const getRDSParams = async () => {
     user: username,
     password: token,
     database: 'auroraDB',
-    // ssl: true,
-    ssl: { sslmode: 'prefer' },
+    ssl: { rejectUnauthorized: false },
   };
 };
 
