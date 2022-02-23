@@ -48,7 +48,7 @@ const getRDSParams = async () => {
     port: 5432,
     user: username,
     password: token,
-    database: 'auroraDB',
+    database: 'aurora_db',
     ssl: { rejectUnauthorized: false },
   };
 };
@@ -56,8 +56,9 @@ const getRDSParams = async () => {
 const getLocalhostParams = () => ({
   host: '127.0.0.1',
   port: 5432,
-  user: 'username',
-  database: 'auroraDB',
+  user: 'api_role',
+  password: 'postgres',
+  database: 'aurora_db',
 });
 
 const createSQLClient = async () => {
