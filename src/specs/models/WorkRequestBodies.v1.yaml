@@ -11,3 +11,4 @@ oneOf:
   - $ref: ./work-request-bodies/WorkRequestDoubletScores.v1.yaml
   - $ref: ./work-request-bodies/WorkRequestMarkerGenes.v1.yaml
   - $ref: ./work-request-bodies/WorkRequestDotPlot.v1.yaml
+  - $ref: ./work-request-bodies/WorkRequestGetExpressionCellSets.v1.yaml

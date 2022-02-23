@@ -9,16 +9,19 @@ const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 
 const SamplesService = require('./samples');
 const ExperimentService = require('./experiment');
+const AccessService = require('./access');
 
 const logger = getLogger();
 
-const samplesService = new SamplesService();
-const experimentService = new ExperimentService();
 
 class ProjectsService {
   constructor() {
     this.projectsTableName = `projects-${config.clusterEnv}`;
     this.samplesTableName = `samples-${config.clusterEnv}`;
+
+    this.samplesService = new SamplesService();
+    this.experimentService = new ExperimentService();
+    this.accessService = new AccessService();
   }
 
   async getProject(projectUuid) {
@@ -80,54 +83,12 @@ class ProjectsService {
     return OK();
   }
 
+
   /**
-   * Finds all projects referenced in experiments.
+   * Finds all accessible projects of a user
    */
   async getProjects(user) {
-    if (!user) {
-      return [];
-    }
-
-    // Get project data from the experiments table. Only return
-    // those tables that have a project ID associated with them.
-    const params = {
-      TableName: experimentService.experimentsTableName,
-      FilterExpression: 'attribute_exists(projectId) and contains(#rbac_can_write, :userId)',
-      ExpressionAttributeNames: {
-        '#pid': 'projectId',
-        '#rbac_can_write': 'rbac_can_write',
-      },
-      ExpressionAttributeValues: {
-        ':userId': { S: user.sub },
-      },
-      ProjectionExpression: '#pid',
-    };
-
-    const dynamodb = createDynamoDbInstance();
-
-    let response = await dynamodb.scan(params).promise();
-
-    const extractProjectIds = (resp) => resp.Items.map(
-      (entry) => convertToJsObject(entry).projectId,
-    ).filter((id) => id);
-
-    let projectIds = extractProjectIds(response);
-
-    // Check if query exceeds limit
-    while (response.LastEvaluatedKey) {
-      params.ExclusiveStartKey = response.LastEvaluatedKey;
-
-      // eslint-disable-next-line no-await-in-loop
-      response = await dynamodb.scan(params).promise();
-
-      const newProjectIds = extractProjectIds(response);
-
-      projectIds = projectIds.concat(newProjectIds);
-    }
-
-    // Remove duplicates (when we support multi experiment projects
-    // we might have repeated projectId's)
-    projectIds = [...new Set(projectIds)];
+    const projectIds = await this.accessService.getAccessibleProjects(user.sub);
 
     return await this.getProjectsFromIds(projectIds);
   }
@@ -185,7 +146,7 @@ class ProjectsService {
     return projects;
   }
 
-  async getExperiments(projectUuid, withWritePermissions = false) {
+  async getExperiments(projectUuid) {
     const dynamodb = createDynamoDbInstance();
 
     const marshalledKey = convertToDynamoDbRecord({ projectUuid });
@@ -201,14 +162,9 @@ class ProjectsService {
 
       if (!Object.prototype.hasOwnProperty.call(result, 'projects')) return [];
 
-      const experiments = await experimentService.getListOfExperiments(result.projects.experiments);
-
-      if (!withWritePermissions) {
-        experiments.forEach((experiment) => {
-          // eslint-disable-next-line no-param-reassign
-          delete experiment.rbac_can_write;
-        });
-      }
+      const experiments = await this.experimentService.getListOfExperiments(
+        result.projects.experiments,
+      );
 
 
       return experiments;
@@ -236,8 +192,9 @@ class ProjectsService {
 
       if (experiments.length > 0) {
         const deletePromises = experiments.reduce((acc, experimentId) => {
-          acc.push(experimentService.deleteExperiment(experimentId));
-          acc.push(samplesService.deleteSamplesEntry(projectUuid, experimentId, sampleUuids));
+          acc.push(this.experimentService.deleteExperiment(experimentId));
+          acc.push(this.samplesService.deleteSamplesEntry(projectUuid, experimentId, sampleUuids));
+          acc.push(this.accessService.deleteExperiment(experimentId));
           return acc;
         }, []);
 

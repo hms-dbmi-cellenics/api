@@ -1,5 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`tests for the projects service GetProjects gets all the projects 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "ExpressionAttributeValues": Object {
+          ":userId": Object {
+            "S": "032cdb44-0cd3-4d58-af21-850kp0b95ac7",
+          },
+        },
+        "FilterExpression": "(userId = :userId)",
+        "TableName": "user-access-test",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "ExpressionAttributeValues": Object {
+          ":userId": Object {
+            "S": "032cdb44-0cd3-4d58-af21-850kp0b95ac7",
+          },
+        },
+        "FilterExpression": "(userId = :userId)",
+        "TableName": "user-access-test",
+      },
+    },
+  ],
+}
+`;
+
 exports[`tests for the projects service createProject creates entries in projects and samples correctly 1`] = `
 Array [
   Object {
