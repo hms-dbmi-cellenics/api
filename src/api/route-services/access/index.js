@@ -1,4 +1,3 @@
-
 const _ = require('lodash');
 
 const config = require('../../../config');
@@ -14,6 +13,8 @@ const {
 const { isRoleAuthorized } = require('./roles');
 
 const logger = getLogger('[AccessService] - ');
+const sendEmail = require('../../../utils/send-email');
+const buildUserInvitedEmailBody = require('../../../utils/emailTemplates/buildUserInvitedEmailBody');
 
 class AccessService {
   constructor() {
@@ -40,6 +41,19 @@ class AccessService {
     });
 
     await docClient.put(params).promise();
+  }
+
+  async inviteUser(userEmail, experimentId, projectId, role) {
+    logger.log('Trying to invite user for experiment ', experimentId);
+
+    const userAttributes = await config.awsUserAttributesPromise(userEmail);
+    if (!userAttributes) {
+      throw new Error('User is not registered');
+    }
+    const userSub = userAttributes.find((attr) => attr.Name === 'sub').Value;
+    await this.grantRole(userSub, experimentId, projectId, role);
+    const emailBody = buildUserInvitedEmailBody(userEmail, experimentId);
+    await sendEmail(emailBody);
   }
 
   async canAccessExperiment(userId, experimentId, url, method) {

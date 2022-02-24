@@ -36,12 +36,10 @@ if (!process.env.K8S_ENV) {
 }
 
 const awsRegion = process.env.AWS_DEFAULT_REGION || 'eu-west-1';
-
+const cognitoISP = new AWS.CognitoIdentityServiceProvider({
+  region: awsRegion,
+});
 async function getAwsPoolId() {
-  const cognitoISP = new AWS.CognitoIdentityServiceProvider({
-    region: awsRegion,
-  });
-
   const { UserPools } = await cognitoISP.listUserPools({ MaxResults: 60 }).promise();
   // when k8s is undefined we are in development where we use staging user pool so we set
   // it as the default one.
@@ -49,7 +47,6 @@ async function getAwsPoolId() {
   const userPoolName = `biomage-user-pool-case-insensitive-${k8sEnv}`;
 
   const poolId = UserPools.find((pool) => pool.Name === userPoolName).Id;
-
   return poolId;
 }
 
@@ -62,6 +59,12 @@ async function getAwsAccountId() {
   return data.Account;
 }
 
+async function getAwsUserAttributes(email) {
+  const poolId = await getAwsPoolId();
+  const user = await cognitoISP.adminGetUser({ UserPoolId: poolId, Username: email }).promise();
+  return user.UserAttributes;
+}
+
 const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
   clusterEnv: process.env.CLUSTER_ENV || 'development',
@@ -72,6 +75,7 @@ const config = {
   awsRegion,
   awsAccountIdPromise: getAwsAccountId(),
   awsUserPoolIdPromise: getAwsPoolId(),
+  awsUserAttributesPromise: (email) => getAwsUserAttributes(email),
   githubToken: process.env.READONLY_API_TOKEN_GITHUB,
   api: {
     prefix: '/',
