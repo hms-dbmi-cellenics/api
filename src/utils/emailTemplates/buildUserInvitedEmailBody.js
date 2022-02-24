@@ -1,4 +1,4 @@
-const buildUserInvitedEmailBody = (email, experimentId) => {
+const buildUserInvitedEmailBody = (email, experimentId, inviterUser) => {
   const link = `scp.biomage.net/experiments/${experimentId}/data-processing`;
 
   const messageToSend = `
@@ -8,10 +8,9 @@ const buildUserInvitedEmailBody = (email, experimentId) => {
         <body>
             <h3>Hello, </h3> <br/>
             <p>
-              Your collaborator <person> has invited you to explore their single cell RNA-seq project in Cellenics. <br/>
-             
+              User ${inviterUser.name} - ${inviterUser.email} has invited you to explore their single cell RNA-seq project in Cellenics. <br/>
               Access it with the link below: <br/>
-              <a href="${link}">${link}</a> <br/>
+              <a href="${link}">${link}</a> <br/> <br/>
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
               The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/>
               More information about Cellenics can be found at <a href="https://biomage.net">biomage.net</a>.

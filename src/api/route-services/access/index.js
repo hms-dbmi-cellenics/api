@@ -43,16 +43,18 @@ class AccessService {
     await docClient.put(params).promise();
   }
 
-  async inviteUser(userEmail, experimentId, projectId, role) {
+  async inviteUser(userEmail, experimentId, projectId, role, inviterUser) {
     logger.log('Trying to invite user for experiment ', experimentId);
 
     const userAttributes = await config.awsUserAttributesPromise(userEmail);
     if (!userAttributes) {
       throw new Error('User is not registered');
     }
+
     const userSub = userAttributes.find((attr) => attr.Name === 'sub').Value;
     await this.grantRole(userSub, experimentId, projectId, role);
-    const emailBody = buildUserInvitedEmailBody(userEmail, experimentId);
+
+    const emailBody = buildUserInvitedEmailBody(userEmail, experimentId, inviterUser);
     await sendEmail(emailBody);
   }
 
