@@ -32,7 +32,7 @@ describe('Get worker results signed url', () => {
     expect(signedUrlSpy).not.toHaveBeenCalled();
   });
 
-  it('Unexpected error is re-thrown', async () => {
+  it('Unexpected errors throw a NotFound', async () => {
     const customError = Error('custom');
     mockS3GetObjectTagging(undefined, customError);
     const signedUrlSpy = mockS3GetSignedUrl();
