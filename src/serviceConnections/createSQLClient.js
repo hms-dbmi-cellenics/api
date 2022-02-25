@@ -57,15 +57,12 @@ const getLocalhostParams = () => ({
   host: '127.0.0.1',
   port: 5432,
   user: 'api_role',
-  password: 'postgres',
+  password: 'postgres', // pragma: allowlist secret
   database: 'aurora_db',
 });
 
 const createSQLClient = async () => {
   const params = config.clusterEnv !== 'development' ? await getRDSParams() : getLocalhostParams();
-
-  console.log('paramsDebug');
-  console.log(JSON.stringify(params));
 
   const knexClient = knex.default({
     client: 'pg',
