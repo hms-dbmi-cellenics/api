@@ -188,4 +188,4 @@ and the iac repo: https://github.com/hms-dbmi-cellenics/iac
 
 To inspect the state of the state machine that drives the pipeline, you can access the [AWS Step Functions
 console](https://eu-west-1.console.aws.amazon.com/states/home?region=eu-west-1#/statemachines), or from the
-CLI with `aws stepfunctions...`.
+CLI with `aws stepfunctions...`.TEST
