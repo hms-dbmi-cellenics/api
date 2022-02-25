@@ -20,12 +20,12 @@ const validateTagMatching = async (experimentId, params) => {
     objectTagging = await s3.getObjectTagging(params).promise();
   } catch (err) {
     // the API asks for the results before they are available, we just return a not found
-    if (err.code === 'NoSuchKey') {
-      throw new NotFoundError(`Couldn't find s3 worker results bucket with key: ${params.Key}`);
-    }
-
+    // if (err.code === 'NoSuchKey') {
     logger.log(`Error received while getting object ${params.Key} tags for ${experimentId}`, err);
-    throw err;
+    throw new NotFoundError(`Couldn't find worker results with key: ${params.Key}. Reason ${err.code}`);
+    // }
+
+    // throw err;
   }
 
   if (!objectTagging.TagSet) {
