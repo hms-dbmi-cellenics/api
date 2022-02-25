@@ -188,11 +188,16 @@ describe('tests for the samples service', () => {
 
     expect(res).toEqual(OK());
 
+    // Update samples
     expect(updateItemSpy.mock.calls[0]).toMatchSnapshot();
+
+    // Update projects
     expect(updateItemSpy.mock.calls[1]).toMatchSnapshot();
+
+    // Update experiments
     expect(updateItemSpy.mock.calls[2]).toMatchSnapshot();
 
-    // Only these two calls to dynamo were made
+    // Only these three calls to dynamo were made
     expect(updateItemSpy.mock.calls).toHaveLength(3);
   });
 });
