@@ -81,10 +81,6 @@ class ExperimentService {
     const dynamodb = createDynamoDbInstance();
     const key = convertToDynamoDbRecord({ experimentId });
 
-    const documentClient = new AWS.DynamoDB.DocumentClient();
-
-    const rbacCanWrite = Array.from(new Set([config.adminArn, user.sub]));
-
     const marshalledData = convertToDynamoDbRecord({
       ':experimentName': body.experimentName,
       ':createdDate': body.createdDate,
@@ -93,7 +89,6 @@ class ExperimentService {
       ':description': body.description,
       ':input': body.input,
       ':organism': body.organism,
-      ':rbac_can_write': documentClient.createSet(rbacCanWrite),
       ':meta': body.meta || {},
       ':processingConfig': {},
       ':sampleIds': body.sampleIds,
@@ -111,7 +106,6 @@ class ExperimentService {
                           meta = :meta,
                           processingConfig = :processingConfig,
                           sampleIds = :sampleIds,
-                          rbac_can_write = :rbac_can_write,
                           notifyByEmail = :notifyByEmail`,
       ExpressionAttributeValues: marshalledData,
       ConditionExpression: 'attribute_not_exists(#experimentId)',
