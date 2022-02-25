@@ -67,19 +67,37 @@ describe('tests for the samples service', () => {
     });
   });
 
-  it('updateSamples patches instead of replace', async () => {
+  it('updateSamples correctly updates samples ', async () => {
     const projectUuid = 'project-1';
     const experimentId = 'experiment-1';
 
     const dbData = {
       samples: {
-        'sample-1': { name: 'sample-1' },
+        'sample-1': {
+          name: 'sample-1',
+          metadata: {
+            track_1: 'value_1',
+            track_2: 'value_2',
+          },
+        },
       },
     };
 
     const newData = {
-      'sample-2': { name: 'sample-2' },
-      'sample-3': { name: 'sample-3' },
+      'sample-1': {
+        name: 'new-sample-1-name',
+        metadata: {
+          track_1: 'value_2',
+          track_2: 'value_3',
+        },
+      },
+      'sample-2': {
+        name: 'sample-2',
+        metadata: {
+          track_1: "value_1'",
+          track_2: 'value_2',
+        },
+      },
     };
 
     const marshalledKey = AWS.DynamoDB.Converter.marshall({
@@ -87,7 +105,7 @@ describe('tests for the samples service', () => {
     });
 
     const marshalledData = AWS.DynamoDB.Converter.marshall({
-      ':samples': { ...dbData.samples, ...newData },
+      ':samples': newData,
       ':projectUuid': projectUuid,
     });
 
