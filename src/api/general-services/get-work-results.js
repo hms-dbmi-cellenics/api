@@ -24,7 +24,7 @@ const validateTagMatching = async (experimentId, params) => {
       throw new NotFoundError(`Couldn't find s3 worker results bucket with key: ${params.Key}`);
     }
 
-    logger.log('Error received while getting object tags', err);
+    logger.log(`Error received while getting object ${params.Key} tags for ${experimentId}`, err);
     throw err;
   }
 
