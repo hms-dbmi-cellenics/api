@@ -78,6 +78,7 @@ describe('tests for the samples service', () => {
           metadata: {
             track_1: 'value_1',
             track_2: 'value_2',
+            track_3: 'value_3',
           },
         },
       },
