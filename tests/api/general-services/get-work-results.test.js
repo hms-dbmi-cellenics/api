@@ -27,8 +27,7 @@ describe('Get worker results signed url', () => {
     const experimentId = 'someOtherExpIdasdasd';
     await expect(
       getWorkResults(experimentId, 'mockETag'),
-    ).rejects.toThrow(new NotFoundError('Couldn\'t find s3 worker results bucket'
-    + ' with key: mockETag'));
+    ).rejects.toThrow(NotFoundError);
 
     expect(signedUrlSpy).not.toHaveBeenCalled();
   });
@@ -40,7 +39,7 @@ describe('Get worker results signed url', () => {
     const experimentId = 'someOtherExpIdasdasd';
     await expect(
       getWorkResults(experimentId, 'mockETag'),
-    ).rejects.toThrow(customError);
+    ).rejects.toThrow(NotFoundError);
 
     expect(signedUrlSpy).not.toHaveBeenCalled();
   });
