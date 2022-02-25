@@ -250,7 +250,6 @@ class MockDataFactory {
         projectUuid: 'project-1',
         uuid: 'sample-1',
         type: '10X Chromium',
-        species: 'hsapies',
         createdDate: '2020-01-01T00:00:00.000Z',
         lastModified: null,
         complete: true,

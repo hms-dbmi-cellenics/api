@@ -8,9 +8,6 @@ properties:
     type: string
   projectUuid:
     type: string
-  species:
-    nullable: true
-    type: string
   type:
     type: string
     pattern: 10X Chromium
@@ -42,12 +39,9 @@ required:
   - name
   - projectUuid
   - uuid
-  - species
   - createdDate
   - lastModified
   - complete
   - error
   - fileNames
   - files
-  
-additionalProperties: false
