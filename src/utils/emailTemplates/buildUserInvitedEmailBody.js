@@ -1,5 +1,5 @@
 const buildUserInvitedEmailBody = (email, experimentId, inviterUser) => {
-  const link = `scp.biomage.net/experiments/${experimentId}/data-processing`;
+  const link = `scp.biomage.net/experiments/${experimentId}/data-exploration`;
 
   const messageToSend = `
         <html>
@@ -14,7 +14,7 @@ const buildUserInvitedEmailBody = (email, experimentId, inviterUser) => {
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
               The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
               More information about Cellenics can be found at <a href="https://biomage.net">biomage.net</a>.<br/>
-              If you need help or have any questions, please contact us at hello@biomage.net. <br/>
+              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>
               Best Regards, <br/>
               Cellenics team
             <p/>
