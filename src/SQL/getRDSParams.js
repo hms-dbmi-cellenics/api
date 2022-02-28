@@ -1,5 +1,6 @@
+const AWS = require('aws-sdk');
+
 const config = require('../config');
-const AWS = require('../utils/requireAWS');
 
 const getRDSEndpoint = async (rdsClient) => {
   const clusterId = `aurora-cluster-${config.clusterEnv}`;
@@ -28,6 +29,10 @@ const getRDSEndpoint = async (rdsClient) => {
 };
 
 const getRDSParams = async () => {
+  if (config.clusterEnv === 'development') {
+    return Promise.resolve({});
+  }
+
   const rdsClient = new AWS.RDS();
   const endpoint = await getRDSEndpoint(rdsClient);
   const username = 'api_role';
@@ -39,7 +44,8 @@ const getRDSParams = async () => {
     username,
   });
 
-  const token = await signer.getAuthToken();
+  // @ts-ignore
+  const token = await signer.getAuthToken().promise();
 
   // Token expires in 15 minutes https://aws.amazon.com/premiumsupport/knowledge-center/users-connect-rds-iam/
   const MINUTES = 60000;

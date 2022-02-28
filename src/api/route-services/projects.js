@@ -11,6 +11,8 @@ const SamplesService = require('./samples');
 const ExperimentService = require('./experiment');
 const AccessService = require('./access');
 
+const SQL = require('../../SQL');
+
 const logger = getLogger();
 
 
@@ -64,6 +66,10 @@ class ProjectsService {
     const marshalledKey = convertToDynamoDbRecord({
       projectUuid,
     });
+
+    const result = await SQL.select().from('test_table');
+    console.log('resultDebug');
+    console.log(result);
 
     const marshalledData = convertToDynamoDbRecord({
       ':project': project,
