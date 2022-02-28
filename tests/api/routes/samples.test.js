@@ -69,7 +69,7 @@ describe('tests for samples route', () => {
       });
   });
 
-  it('Updating with extra properties returns error 400', async (done) => {
+  it('Updating with extra properties does not return error', async (done) => {
     const correctSample = dataFactory.getSamplesEntry();
 
     const extraPropertiesBodySample = _.cloneDeep(correctSample);
@@ -78,7 +78,7 @@ describe('tests for samples route', () => {
 
     request(app)
       .put('/v1/projects/someId/experimentId/samples')
-      .expect(400)
+      .expect(200)
       .send(extraPropertiesBodySample)
       .end((err) => {
         if (err) {
@@ -122,7 +122,7 @@ describe('tests for samples route', () => {
       });
   });
 
-  it('Creating with extra properties returns error 400', async (done) => {
+  it('Creating with extra properties does not return error', async (done) => {
     const correctSample = dataFactory.getSamplesEntry();
 
     const extraPropertiesBodySample = _.cloneDeep(correctSample);
@@ -131,7 +131,7 @@ describe('tests for samples route', () => {
 
     request(app)
       .post('/v1/projects/someId/experimentId/samples')
-      .expect(400)
+      .expect(200)
       .send(extraPropertiesBodySample['sample-1'])
       .end((err) => {
         if (err) {
