@@ -45,5 +45,3 @@ required:
   - error
   - fileNames
   - files
-
-additionalProperties: false
