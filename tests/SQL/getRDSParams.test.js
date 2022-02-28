@@ -1,13 +1,10 @@
-const knex = require('knex');
-
 const AWS = require('aws-sdk');
 
 const config = require('../../src/config');
 
-const createSQLClient = require('../../src/serviceConnections/createSQLClient');
+const getRDSParams = require('../../src/SQL/getRDSParams');
 
 jest.mock('../../src/config');
-jest.mock('knex', () => ({ default: jest.fn() }));
 
 const mockDescribeDBClusterEndpoints = jest.fn();
 jest.mock('aws-sdk', () => ({
@@ -24,14 +21,6 @@ AWS.RDS.Signer = jest.fn(() => ({
   getAuthToken: mockGetAuthTokenSpy,
 }));
 
-const localhostParams = {
-  host: '127.0.0.1',
-  port: 5432,
-  user: 'api_role',
-  password: 'postgres', // pragma: allowlist secret
-  database: 'aurora_db',
-};
-
 const rdsParams = {
   host: 'endpointName',
   port: 5432,
@@ -39,29 +28,16 @@ const rdsParams = {
   password: 'passwordToken', // pragma: allowlist secret
   database: 'aurora_db',
   ssl: { rejectUnauthorized: false },
+  pool: {
+    max: 10,
+    min: 2,
+  },
+  expirationChecker: expect.any(Function),
 };
 
 describe('createSQLClient', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  it('Establishes a connection in development environment', () => {
-    config.clusterEnv = 'development';
-    config.awsRegion = 'eu-west-1';
-
-    const signerSpy = jest.fn((x) => x);
-
-    createSQLClient();
-
-    // Doesn't call the aws signer because we aren't interacting with aws
-    expect(signerSpy).not.toHaveBeenCalled();
-
-    // Creates a connection with the correct parameters
-    expect(knex.default).toHaveBeenCalledWith({
-      client: 'pg',
-      connection: localhostParams,
-    });
   });
 
   it('Establishes a connection in staging environment', async () => {
@@ -72,7 +48,7 @@ describe('createSQLClient', () => {
 
     mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
 
-    await createSQLClient();
+    const params = await getRDSParams();
 
     expect(mockDescribeDBClusterEndpoints.mock.calls[0]).toMatchSnapshot();
 
@@ -85,10 +61,7 @@ describe('createSQLClient', () => {
 
     expect(mockGetAuthTokenSpy).toHaveBeenCalled();
 
-    expect(knex.default).toHaveBeenCalledWith({
-      client: 'pg',
-      connection: rdsParams,
-    });
+    expect(params).toEqual(rdsParams);
   });
 
   it('Fails if there is no writer endpoint available', async () => {
@@ -100,11 +73,10 @@ describe('createSQLClient', () => {
 
     mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
 
-    await expect(createSQLClient()).rejects.toThrow();
+    await expect(getRDSParams()).rejects.toThrow();
 
     expect(mockDescribeDBClusterEndpoints.mock.calls[0]).toMatchSnapshot();
 
     expect(mockGetAuthTokenSpy).not.toHaveBeenCalled();
-    expect(knex.default).not.toHaveBeenCalled();
   });
 });

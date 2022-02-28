@@ -1,5 +1,3 @@
-const knex = require('knex');
-
 const config = require('../config');
 const AWS = require('../utils/requireAWS');
 
@@ -43,33 +41,23 @@ const getRDSParams = async () => {
 
   const token = await signer.getAuthToken();
 
+  // Token expires in 15 minutes https://aws.amazon.com/premiumsupport/knowledge-center/users-connect-rds-iam/
+  const MINUTES = 60000;
+  const tokenExpiration = new Date().getTime() + 15 * MINUTES;
+
   return {
     host: endpoint,
     port: 5432,
     user: username,
     password: token,
+    expirationChecker: () => tokenExpiration <= Date.now(),
     database: 'aurora_db',
     ssl: { rejectUnauthorized: false },
+    pool: {
+      min: 2,
+      max: 10,
+    },
   };
 };
 
-const getLocalhostParams = () => ({
-  host: '127.0.0.1',
-  port: 5432,
-  user: 'api_role',
-  password: 'postgres', // pragma: allowlist secret
-  database: 'aurora_db',
-});
-
-const createSQLClient = async () => {
-  const params = config.clusterEnv !== 'development' ? await getRDSParams() : getLocalhostParams();
-
-  const knexClient = knex.default({
-    client: 'pg',
-    connection: params,
-  });
-
-  return knexClient;
-};
-
-module.exports = createSQLClient;
+module.exports = getRDSParams;
