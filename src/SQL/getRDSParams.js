@@ -13,6 +13,8 @@ const getRDSEndpoint = async (rdsClient) => {
   // https://forums.aws.amazon.com/thread.jspa?messageID=486170&#486199
   // https://stackoverflow.com/questions/34990104/rds-endpoint-name-format
 
+  console.log('HOLA3');
+
   const { DBClusterEndpoints: endpoints } = await rdsClient.describeDBClusterEndpoints({
     DBClusterIdentifier: clusterId,
     Filters: [
@@ -21,9 +23,16 @@ const getRDSEndpoint = async (rdsClient) => {
     ],
   }).promise();
 
+  console.log('endpointsDebug');
+  console.log(endpoints[0].Endpoint);
+
+  console.log('HOLA4');
+
   if (endpoints.length === 0) {
     throw new Error(`No available endpoints for ${clusterId}`);
   }
+
+  console.log('HOLA5');
 
   return endpoints[0].Endpoint;
 };
@@ -33,9 +42,13 @@ const getRDSParams = async () => {
     return Promise.resolve({});
   }
 
+  console.log('HOLA');
+
   const rdsClient = new AWS.RDS();
   const endpoint = await getRDSEndpoint(rdsClient);
   const username = 'api_role';
+
+  console.log('HOLA1');
 
   const signer = new AWS.RDS.Signer({
     hostname: endpoint,
@@ -44,12 +57,23 @@ const getRDSParams = async () => {
     username,
   });
 
+  console.log('HOLA6');
+
   // @ts-ignore
   const token = await signer.getAuthToken().promise();
 
+  console.log('HOLA7');
+
   // Token expires in 15 minutes https://aws.amazon.com/premiumsupport/knowledge-center/users-connect-rds-iam/
-  const MINUTES = 60000;
-  const tokenExpiration = new Date().getTime() + 15 * MINUTES;
+  const tokenExpiration = new Date().getTime() + 15 * 60000;
+
+  console.log('HOLA8');
+
+  console.log('config.clusterEnv');
+  console.log(config.clusterEnv);
+
+  console.log('endpointDebug');
+  console.log(endpoint);
 
   return {
     host: endpoint,
