@@ -39,7 +39,7 @@ const buildUserInvitedEmailBody = (email, experimentId, inviterUser) => {
       },
       Subject: {
         Charset: 'UTF-8',
-        Data: 'Cellenics experiment invitation',
+        Data: 'Invitation to join a project in Cellenics',
       },
     },
     Source: 'notification@biomage.net',
