@@ -59,12 +59,6 @@ async function getAwsAccountId() {
   return data.Account;
 }
 
-async function getAwsUserAttributes(email) {
-  const poolId = await getAwsPoolId();
-  const user = await cognitoISP.adminGetUser({ UserPoolId: poolId, Username: email }).promise();
-  return user.UserAttributes;
-}
-
 const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
   clusterEnv: process.env.CLUSTER_ENV || 'development',
@@ -75,7 +69,7 @@ const config = {
   awsRegion,
   awsAccountIdPromise: getAwsAccountId(),
   awsUserPoolIdPromise: getAwsPoolId(),
-  awsUserAttributesPromise: (email) => getAwsUserAttributes(email),
+  cognitoISP,
   githubToken: process.env.READONLY_API_TOKEN_GITHUB,
   api: {
     prefix: '/',

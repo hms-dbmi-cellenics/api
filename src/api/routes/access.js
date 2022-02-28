@@ -1,17 +1,17 @@
 const AccessService = require('../route-services/access/index');
-const { authenticationMiddlewareSocketIO, expressAuthenticationOnlyMiddleware } = require('../../utils/authMiddlewares');
+const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
 
 const accessService = new AccessService();
 module.exports = {
-  'access#addRole': [expressAuthenticationOnlyMiddleware,
+  'access#addRole': [
+    expressAuthorizationMiddleware,
     async (req, res, next) => {
+      const { experimentId } = req.params;
       const {
-        experimentId, userEmail, projectId, role,
+        userEmail, projectUuid, role,
       } = req.body;
 
-      const inviterUser = await authenticationMiddlewareSocketIO(req.headers.authorization);
-
-      accessService.inviteUser(userEmail, experimentId, projectId, role, inviterUser)
+      accessService.inviteUser(userEmail, experimentId, projectUuid, role, req.user)
         .then((data) => res.json(data))
         .catch(next);
     },

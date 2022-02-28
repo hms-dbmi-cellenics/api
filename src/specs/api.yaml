@@ -1134,7 +1134,7 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-  /access:
+  '/access/{experimentId}':
     put:
       summary: Add user to an experiment
       operationId: put-access
@@ -1145,18 +1145,16 @@ paths:
         '200':
           description: OK
         '404':
-          description: Not Found
+          description: User not found
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                experimentId:
-                  type: string
                 userEmail:
                   type: string
-                projectId:
+                projectUuid:
                   type: string
                 role:
                   type: string

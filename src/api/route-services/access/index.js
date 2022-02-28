@@ -3,6 +3,7 @@ const _ = require('lodash');
 const config = require('../../../config');
 const AWS = require('../../../utils/requireAWS');
 const getLogger = require('../../../utils/getLogger');
+const { NotFoundError } = require('../../../utils/responses');
 
 const {
   createDynamoDbInstance,
@@ -11,6 +12,7 @@ const {
 } = require('../../../utils/dynamoDb');
 
 const { isRoleAuthorized } = require('./roles');
+const { getAwsUserAttributesByEmail } = require('../../../utils/aws/user');
 
 const logger = getLogger('[AccessService] - ');
 const sendEmail = require('../../../utils/send-email');
@@ -43,16 +45,16 @@ class AccessService {
     await docClient.put(params).promise();
   }
 
-  async inviteUser(userEmail, experimentId, projectId, role, inviterUser) {
+  async inviteUser(userEmail, experimentId, projectUuid, role, inviterUser) {
     logger.log('Trying to invite user for experiment ', experimentId);
 
-    const userAttributes = await config.awsUserAttributesPromise(userEmail);
+    const userAttributes = await getAwsUserAttributesByEmail(userEmail);
     if (!userAttributes) {
-      throw new Error('User is not registered');
+      throw new NotFoundError('User is not registered');
     }
 
     const userSub = userAttributes.find((attr) => attr.Name === 'sub').Value;
-    await this.grantRole(userSub, experimentId, projectId, role);
+    await this.grantRole(userSub, experimentId, projectUuid, role);
 
     const emailBody = buildUserInvitedEmailBody(userEmail, experimentId, inviterUser);
     await sendEmail(emailBody);
