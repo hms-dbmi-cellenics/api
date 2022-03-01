@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`createSQLClient Establishes a connection in staging environment 1`] = `
+exports[`createSQLClient Creates correct params in production environment 1`] = `
 Array [
   Object {
-    "DBClusterIdentifier": "aurora-cluster-staging",
+    "DBClusterIdentifier": "aurora-cluster-production",
     "Filters": Array [
       Object {
         "Name": "db-cluster-endpoint-type",
@@ -22,7 +22,7 @@ Array [
 ]
 `;
 
-exports[`createSQLClient Establishes a connection in staging environment 2`] = `
+exports[`createSQLClient Creates correct params in staging environment 1`] = `
 Array [
   Object {
     "DBClusterIdentifier": "aurora-cluster-staging",
