@@ -66,7 +66,7 @@ const getConnectionParams = async () => {
 
   console.log('HOLA6');
 
-  const token = await signer.getAuthToken().promise();
+  const token = await signer.getAuthToken();
 
   console.log('tokenDebug');
   console.log(token);
