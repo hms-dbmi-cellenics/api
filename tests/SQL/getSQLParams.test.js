@@ -44,7 +44,7 @@ describe('createSQLClient', () => {
     jest.clearAllMocks();
   });
 
-  it('Establishes a connection in development environment', async () => {
+  it('Creates correct params in development environment', async () => {
     config.clusterEnv = 'development';
     config.awsRegion = 'eu-west-1';
 
@@ -59,7 +59,7 @@ describe('createSQLClient', () => {
     expect(params).toEqual(localhostParams);
   });
 
-  it('Establishes a connection in staging environment', async () => {
+  it('Creates correct params in staging environment', async () => {
     config.clusterEnv = 'staging';
     config.awsRegion = 'eu-west-1';
 
@@ -83,8 +83,8 @@ describe('createSQLClient', () => {
     expect(params).toEqual(rdsParams);
   });
 
-  it('Establishes a connection in staging environment', async () => {
-    config.clusterEnv = 'staging';
+  it('Creates correct params in production environment', async () => {
+    config.clusterEnv = 'production';
     config.awsRegion = 'eu-west-1';
 
     mockDescribeDBClusterEndpoints.mockReturnValueOnce({ promise: () => Promise.resolve({ DBClusterEndpoints: [{ Endpoint: 'endpointName' }] }) });
