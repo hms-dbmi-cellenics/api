@@ -20,13 +20,9 @@ const getRDSEndpoint = async (rdsClient) => {
     ],
   }).promise();
 
-  console.log('HOLA4');
-
   if (endpoints.length === 0) {
     throw new Error(`No available endpoints for ${clusterId}`);
   }
-
-  console.log('HOLA5');
 
   return endpoints[0].Endpoint;
 };
@@ -42,13 +38,9 @@ const getConnectionParams = async () => {
     };
   }
 
-  console.log('HOLA');
-
   const rdsClient = new AWS.RDS();
   const endpoint = await getRDSEndpoint(rdsClient);
   const username = 'api_role';
-
-  console.log('HOLA1');
 
   const signer = new AWS.RDS.Signer({
     hostname: endpoint,
@@ -57,25 +49,10 @@ const getConnectionParams = async () => {
     username,
   });
 
-  console.log('HOLA6');
-
   const token = await signer.getAuthToken();
-
-  console.log('tokenDebug');
-  console.log(token);
-
-  console.log('HOLA7');
 
   // Token expires in 15 minutes https://aws.amazon.com/premiumsupport/knowledge-center/users-connect-rds-iam/
   const tokenExpiration = new Date().getTime() + 15 * 60000;
-
-  console.log('HOLA8');
-
-  console.log('config.clusterEnv');
-  console.log(config.clusterEnv);
-
-  console.log('endpointDebug');
-  console.log(endpoint);
 
   return {
     host: endpoint,
