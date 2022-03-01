@@ -36,10 +36,6 @@ const rdsParams = {
   password: 'passwordToken', // pragma: allowlist secret
   database: 'aurora_db',
   ssl: { rejectUnauthorized: false },
-  pool: {
-    max: 10,
-    min: 2,
-  },
   expirationChecker: expect.any(Function),
 };
 
