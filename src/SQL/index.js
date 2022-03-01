@@ -1,8 +1,17 @@
 const knex = require('knex');
-const config = require('../config');
 
-const knexfile = require('./knexfile');
+const SQLClient = (() => {
+  let instance;
 
-const SQLClient = knex.default(knexfile[config.clusterEnv]);
+  return {
+    get: (knexConfig) => {
+      if (!instance && knexConfig) {
+        instance = knex.default(knexConfig);
+      }
+
+      return instance;
+    },
+  };
+})();
 
 module.exports = SQLClient;

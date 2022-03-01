@@ -1,16 +1,22 @@
 /* eslint-disable no-console */
 require('log-timestamp');
 const express = require('express');
+
 const expressLoader = require('./loaders/express');
 const cacheLoader = require('./loaders/cache');
+const SQLClientLoader = require('./loaders/SQL');
+
 const config = require('./config');
 const getLogger = require('./utils/getLogger');
+
 
 const logger = getLogger();
 
 async function startServer() {
   const { app, server, socketIo: io } = await expressLoader(express());
   await cacheLoader(io);
+
+  await SQLClientLoader();
 
   app.set('io', io);
 

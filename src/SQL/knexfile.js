@@ -1,25 +1,20 @@
-const getRDSParams = require('./getRDSParams');
+const config = require('../config');
+const getConnectionParams = require('./getConnectionParams');
 
-/**
- * @type { Object.<string, import("knex").Knex.Config> }
- */
-module.exports = {
-  development: {
-    client: 'postgresql',
-    connection: {
-      host: '127.0.0.1',
-      port: 5432,
-      user: 'api_role',
-      password: 'postgres', // pragma: allowlist secret
-      database: 'aurora_db',
+// This is one of the shapes the knexfile can take https://knexjs.org/#knexfile
+const fetchConfiguration = async () => {
+  const params = await getConnectionParams();
+  return {
+    [config.clusterEnv]: {
+      client: 'postgresql',
+      connection: params,
     },
-  },
-  staging: {
-    client: 'postgresql',
-    connection: getRDSParams(),
-  },
-  production: {
-    client: 'postgresql',
-    connection: getRDSParams(),
-  },
+  };
+};
+
+module.exports = async () => {
+  const configuration = await fetchConfiguration();
+  return {
+    ...configuration,
+  };
 };

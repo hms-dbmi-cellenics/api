@@ -11,7 +11,7 @@ const SamplesService = require('./samples');
 const ExperimentService = require('./experiment');
 const AccessService = require('./access');
 
-const SQL = require('../../SQL');
+const SQLClient = require('../../SQL');
 
 const logger = getLogger();
 
@@ -67,7 +67,7 @@ class ProjectsService {
       projectUuid,
     });
 
-    const result = await SQL.select().from('test_table');
+    const result = await SQLClient.get().from('test_table');
     console.log('resultDebug');
     console.log(result);
 
