@@ -1,5 +1,4 @@
-const AWS = require('aws-sdk');
-// const AWS = require('../utils/requireAWS');
+const AWS = require('../utils/requireAWS');
 
 const config = require('../config');
 
@@ -67,7 +66,6 @@ const getConnectionParams = async () => {
 
   console.log('HOLA6');
 
-  // @ts-ignore
   const token = await signer.getAuthToken().promise();
 
   console.log('tokenDebug');
