@@ -43,7 +43,7 @@ k8s.KubeConfig.mockImplementation(() => {
   };
 });
 
-const { cleanupPods } = require('../../../src/utils/hooks/pod-cleanup');
+const { cleanupPods } = require('../../../src/utils/hooks/podCleanup');
 
 
 describe('cleanupPods', () => {

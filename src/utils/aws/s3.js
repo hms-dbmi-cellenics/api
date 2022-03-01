@@ -1,4 +1,4 @@
-const AWS = require('../requireAWS');
+const AWS = require('./requireAWS');
 const config = require('../../config');
 
 const fileExists = async (bucket, prefix) => {

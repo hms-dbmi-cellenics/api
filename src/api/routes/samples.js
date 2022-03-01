@@ -1,4 +1,4 @@
-const SamplesService = require('../route-services/samples');
+const SamplesService = require('../services/SamplesService');
 
 const samplesService = new SamplesService();
 

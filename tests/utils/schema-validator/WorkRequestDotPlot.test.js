@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const validateRequest = require('../../../src/utils/schema-validator');
+const validateRequest = require('../../../src/utils/validateRequest');
 
 describe('Schema validator', () => {
   it('Validates the DotPlot work request correctly', async () => {

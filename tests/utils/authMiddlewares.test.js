@@ -1,5 +1,5 @@
 const AWSMock = require('aws-sdk-mock');
-const AWS = require('../../src/utils/requireAWS');
+const AWS = require('../../src/utils/aws/requireAWS');
 const {
   expressAuthorizationMiddleware,
   authorize,

@@ -1,5 +1,5 @@
-const { cacheSetResponse, cacheGetRequest } = require('../../src/utils/cache-request');
-const { CacheMissError } = require('../../src/cache/cache-utils');
+const { cacheSetResponse, cacheGetRequest } = require('../../src/utils/cacheRequest');
+const { CacheMissError } = require('../../src/cache/cacheUtils');
 
 const CacheSingleton = require('../../src/cache');
 

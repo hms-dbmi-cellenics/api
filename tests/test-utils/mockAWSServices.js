@@ -1,6 +1,6 @@
 const AWSMock = require('aws-sdk-mock');
 const _ = require('lodash');
-const AWS = require('../../src/utils/requireAWS');
+const AWS = require('../../src/utils/aws/requireAWS');
 
 const marshallTableResults = (entries) => entries.map(
   (entry) => AWS.DynamoDB.Converter.marshall(entry),

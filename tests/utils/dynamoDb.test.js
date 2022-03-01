@@ -1,5 +1,5 @@
 // @ts-nocheck
-const { batchConvertToDynamoUpdateParams, convertToDynamoUpdateParams } = require('../../src/utils/dynamoDb');
+const { batchConvertToDynamoUpdateParams, convertToDynamoUpdateParams } = require('../../src/utils/aws/dynamoDb');
 
 describe('convertToDynamoUpdateParams', () => {
   it('calls aws correctly', () => {

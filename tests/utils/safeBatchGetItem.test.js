@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const safeBatchGetItem = require('../../src/utils/safeBatchGetItem');
+const safeBatchGetItem = require('../../src/utils/aws/safeBatchGetItem');
 
 const generateTableEntry = (amountOfKeys) => ({
   AttributesToGet: ['attributeId'],

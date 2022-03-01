@@ -1,9 +1,9 @@
 
 const k8s = require('@kubernetes/client-node');
-const constants = require('../../../../src/api/general-services/pipeline-manage/constants');
+const constants = require('../../../../src/api/services/pipelines/manage/pipelineConstants');
 const fake = require('../../../test-utils/constants');
 
-const { buildPodRequest } = require('../../../../src/api/general-services/pipeline-manage/constructors/assign-pod-to-pipeline');
+const { buildPodRequest } = require('../../../../src/api/services/pipelines/manage/constructors/buildPodRequest');
 
 jest.mock('@kubernetes/client-node');
 
@@ -30,7 +30,7 @@ k8s.KubeConfig.mockImplementation(() => {
   };
 });
 
-const pipelineAssign = require('../../../../src/utils/hooks/pipeline-assign');
+const pipelineAssign = require('../../../../src/utils/hooks/assignPodToPipeline');
 
 describe('tests for the pipeline-assign service', () => {
   it('does not call delete because there are not assigned pods', async () => {

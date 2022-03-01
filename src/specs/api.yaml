@@ -510,7 +510,7 @@ paths:
       summary: ''
       operationId: updatePlotTable
       x-eov-operation-id: plots-tables#update
-      x-eov-operation-handler: routes/plots-tables
+      x-eov-operation-handler: routes/plotsTables
       responses:
         '200':
           description: Update to object in response successful.
@@ -549,7 +549,7 @@ paths:
       summary: ''
       operationId: getPlotTable
       x-eov-operation-id: plots-tables#read
-      x-eov-operation-handler: routes/plots-tables
+      x-eov-operation-handler: routes/plotsTables
       responses:
         '200':
           description: OK
@@ -648,7 +648,7 @@ paths:
       description: Endpoint to download files
       operationId: get-experiments-experimentId-pipelines
       x-eov-operation-id: backend-status#get
-      x-eov-operation-handler: routes/backend-status
+      x-eov-operation-handler: routes/backendStatus
       responses:
         '200':
           description: OK

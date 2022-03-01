@@ -1,8 +1,8 @@
 // const Redis = require('ioredis-mock');
 const _ = require('lodash');
 const CacheSingleton = require('../../src/cache');
-const { BASE_CONFIG } = require('../../src/cache/generate-config');
-const { cacheGetRequest, cacheSetResponse } = require('../../src/utils/cache-request');
+const { BASE_CONFIG } = require('../../src/cache/generateConfig');
+const { cacheGetRequest, cacheSetResponse } = require('../../src/utils/cacheRequest');
 
 jest.mock('ioredis', () => {
   // eslint-disable-next-line global-require

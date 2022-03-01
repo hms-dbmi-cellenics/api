@@ -1,10 +1,10 @@
 const fetchMock = require('jest-fetch-mock');
-const sendNotification = require('../../../src/utils/hooks/send-notification');
-const getPipelineStatus = require('../../../src/api/general-services/pipeline-status');
-const { FAILED, SUCCEEDED } = require('../../../src/api/general-services/pipeline-manage/constants');
-const sendFailedSlackMessage = require('../../../src/utils/send-failed-slack-message');
-const sendEmail = require('../../../src/utils/send-email');
-const ExperimentService = require('../../../src/api/route-services/experiment');
+const sendNotification = require('../../../src/utils/hooks/sendNotification');
+const getPipelineStatus = require('../../../src/api/services/pipelines/pipelineStatus');
+const { FAILED, SUCCEEDED } = require('../../../src/api/services/pipelines/manage/pipelineConstants');
+const sendFailedSlackMessage = require('../../../src/utils/sendFailedSlackMessage');
+const sendEmail = require('../../../src/utils/email/templates/sendEmail');
+const ExperimentService = require('../../../src/api/services/experiments/ExperimentService');
 
 jest.mock('../../../src/utils/authMiddlewares', () => ({
   authenticationMiddlewareSocketIO: () => ({
@@ -13,7 +13,7 @@ jest.mock('../../../src/utils/authMiddlewares', () => ({
   }),
 }));
 jest.mock('../../../src/api/route-services/experiment');
-jest.mock('../../../src/api/general-services/pipeline-status');
+jest.mock('../../../src/api/services/pipeline-status');
 jest.mock('../../../src/utils/send-failed-slack-message', () => jest.fn());
 jest.mock('../../../src/utils/send-email', () => jest.fn());
 

@@ -1,5 +1,5 @@
 const fetchMock = require('jest-fetch-mock');
-const sendFailedSlackMessage = require('../../src/utils/send-failed-slack-message');
+const sendFailedSlackMessage = require('../../src/utils/sendFailedSlackMessage');
 const { USER } = require('../test-utils/constants');
 
 fetchMock.enableFetchMocks();

@@ -1,6 +1,6 @@
 const { fileExists, getSignedUrl } = require('../../../src/utils/aws/s3');
 
-const AWS = require('../../../src/utils/requireAWS');
+const AWS = require('../../../src/utils/aws/requireAWS');
 
 jest.mock('../../../src/utils/requireAWS', () => ({
   S3: jest.fn(),

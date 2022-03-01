@@ -3,7 +3,7 @@ const express = require('express');
 const request = require('supertest');
 const expressLoader = require('../../../src/loaders/express');
 
-const MockDataFactory = require('../../../src/api/route-services/__mocks__/MockDataFactory');
+const MockDataFactory = require('../../../src/api/services/__mocks__/MockDataFactory');
 
 jest.mock('../../../src/api/route-services/samples');
 jest.mock('../../../src/utils/authMiddlewares');

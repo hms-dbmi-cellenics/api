@@ -1,9 +1,9 @@
 const AWSXRay = require('aws-xray-sdk');
-const { createQCPipeline } = require('../general-services/pipeline-manage');
-const getBackendStatus = require('../general-services/backend-status');
-const ExperimentService = require('../route-services/experiment');
-const PipelineService = require('../route-services/pipeline-response');
-const parseSNSMessage = require('../../utils/parse-sns-message');
+const { createQCPipeline } = require('../services/pipelines/manage');
+const getBackendStatus = require('../services/getBackendStatus');
+const ExperimentService = require('../services/experiments/ExperimentService');
+const PipelineService = require('../services/pipelines/PipelineService');
+const parseSNSMessage = require('../../utils/parseSNSMessage');
 const getLogger = require('../../utils/getLogger');
 const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
 

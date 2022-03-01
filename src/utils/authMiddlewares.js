@@ -14,10 +14,10 @@ const config = require('../config');
 
 const CacheSingleton = require('../cache');
 
-const { CacheMissError } = require('../cache/cache-utils');
+const { CacheMissError } = require('../cache/cacheUtils');
 const { UnauthorizedError, UnauthenticatedError } = require('./responses');
-const ProjectsService = require('../api/route-services/projects');
-const AccessService = require('../api/route-services/access');
+const ProjectsService = require('../api/services/ProjectsService');
+const AccessService = require('../api/services/access/AccessService');
 
 const accessService = new AccessService();
 const projectService = new ProjectsService();

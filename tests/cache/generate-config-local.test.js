@@ -1,5 +1,5 @@
 /* eslint-disable consistent-return */
-const { BASE_CONFIG, generateConfig } = require('../../src/cache/generate-config');
+const { BASE_CONFIG, generateConfig } = require('../../src/cache/generateConfig');
 
 describe('generateConfig (cache, local)', () => {
   it('Returns the default configuration in development and testing', async () => {

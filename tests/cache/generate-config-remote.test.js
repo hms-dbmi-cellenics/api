@@ -1,8 +1,8 @@
 /* eslint-disable consistent-return */
 const AWSMock = require('aws-sdk-mock');
-const AWS = require('../../src/utils/requireAWS');
-const mockConfig = require('../../src/config/test-config');
-const { BASE_CONFIG, generateConfig } = require('../../src/cache/generate-config');
+const AWS = require('../../src/utils/aws/requireAWS');
+const mockConfig = require('../../src/config/testConfig');
+const { BASE_CONFIG, generateConfig } = require('../../src/cache/generateConfig');
 
 jest.mock('../../src/config', () => ({
   ...mockConfig, clusterEnv: 'staging',

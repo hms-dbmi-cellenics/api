@@ -1,8 +1,8 @@
 const AWS = require('aws-sdk-mock');
-const sendEmail = require('../../src/utils/send-email');
-const { SUCCEEDED, FAILED } = require('../../src/api/general-services/pipeline-manage/constants');
+const sendEmail = require('../../src/utils/email/templates/sendEmail');
+const { SUCCEEDED, FAILED } = require('../../src/api/services/pipelines/manage/pipelineConstants');
 const { USER } = require('../test-utils/constants');
-const buildPipelineStatusEmailBody = require('../../src/utils/emailTemplates/buildPipelineStatusEmailBody');
+const buildPipelineStatusEmailBody = require('../../src/utils/email/templates/buildPipelineStatusEmailBody');
 
 describe('sending email works', () => {
   const experimentId = 'other-id';

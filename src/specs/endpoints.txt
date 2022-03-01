@@ -1,0 +1,63 @@
+Misc - User related
+ /health
+   get
+ /kubernetesEvents
+   post
+
+Data received from infra (pipelines / worker)
+ /gem2sResults
+   post
+ /pipelineResults
+   post
+
+Data management
+ '/experiments/(?<experimentId>.*)'
+   get
+   post
+   put
+ '/experiments/(?<experimentId>.*)/cellSets'
+   get
+   put
+   patch
+ '/experiments/(?<experimentId>.*)/processingConfig'
+   get
+   put
+ '/experiments/(?<experimentId>.*)/download/{type}'
+   get
+ '/experiments/(?<experimentId>.*)/backendStatus'
+   get
+ '/experiments/(?<experimentId>.*)/samples'
+   get
+ '/projects/(?<projectUuid>.*)'
+   post
+   put
+   delete
+ '/projects/(?<projectUuid>.*)/experiments'
+   get
+ '/projects/(?<projectUuid>.*)/samples'
+   get
+ '/projects/(?<projectUuid>.*)/(?<experimentId>.*)/samples'
+   put
+   post
+   delete
+ '/projects/(?<projectUuid>.*)/samples/(?<sampleUuid>.*)/(?<fileName>.*)/uploadUrl'
+   get
+ '/projects/(?<projectUuid>.*)/samples/(?<sampleUuid>.*)/(?<fileName>.*)/downloadUrl'
+   get
+ /projects
+   get
+
+Data Processing
+ '/experiments/(?<experimentId>.*)/gem2s'
+   post
+ '/experiments/(?<experimentId>.*)/pipelines'
+
+Data Exploration
+  data exploration is going to be trickier because now the UI fetches the results either from S3 directly or
+  using sockets so the API middleware won't be able to intercept those requests.
+
+Plots and tables
+ '/experiments/(?<experimentId>.*)/plots-tables/(?<plotUuid>.*)'
+   put
+   get
+   delete

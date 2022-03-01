@@ -3,7 +3,7 @@ const _ = require('lodash');
 const createMemCache = require('./mem-cache');
 const createClient = require('./createClient');
 const timeout = require('../utils/timeout');
-const { CacheMissError, bypassCache } = require('./cache-utils');
+const { CacheMissError, bypassCache } = require('./cacheUtils');
 const getLogger = require('../utils/getLogger');
 
 const logger = getLogger();

@@ -1,4 +1,4 @@
-const ExperimentService = require('../route-services/experiment');
+const ExperimentService = require('../services/experiments/ExperimentService');
 
 const { expressAuthorizationMiddleware, expressAuthenticationOnlyMiddleware } = require('../../utils/authMiddlewares');
 

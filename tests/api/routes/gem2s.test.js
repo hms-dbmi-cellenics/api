@@ -5,7 +5,7 @@ const _ = require('lodash');
 
 const expressLoader = require('../../../src/loaders/express');
 const CacheSingleton = require('../../../src/cache');
-const { createGem2SPipeline } = require('../../../src/api/general-services/pipeline-manage');
+const { createGem2SPipeline } = require('../../../src/api/services/pipelines/manage');
 
 const getLogger = require('../../../src/utils/getLogger');
 
@@ -15,7 +15,7 @@ jest.mock('../../../src/utils/authMiddlewares');
 jest.mock('../../../src/utils/getLogger');
 jest.mock('../../../src/cache');
 jest.mock('../../../src/api/route-services/gem2s');
-jest.mock('../../../src/api/general-services/pipeline-manage');
+jest.mock('../../../src/api/services/pipeline-manage');
 jest.mock('../../../src/api/route-services/experiment');
 
 const mockLogger = {

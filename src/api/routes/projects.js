@@ -1,4 +1,4 @@
-const ProjectsService = require('../route-services/projects');
+const ProjectsService = require('../services/ProjectsService');
 
 const {
   expressAuthorizationMiddleware,

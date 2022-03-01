@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { BASE_CONFIG } = require('../generate-config');
-const { CacheMissError } = require('../cache-utils');
+const { BASE_CONFIG } = require('../generateConfig');
+const { CacheMissError } = require('../cacheUtils');
 
 const CacheMock = jest.fn().mockImplementation((conf, initialState) => {
   const state = _.cloneDeep(initialState);

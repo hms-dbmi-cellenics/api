@@ -3,7 +3,7 @@ const express = require('express');
 const expressLoader = require('../../../src/loaders/express');
 
 jest.mock('../../../src/utils/authMiddlewares');
-jest.mock('../../../src/api/general-services/get-work-results');
+jest.mock('../../../src/api/services/get-work-results');
 
 describe('work routes tests', () => {
   let app = null;
