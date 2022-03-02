@@ -1134,6 +1134,35 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+  '/access/{experimentId}':
+    put:
+      summary: Add user to an experiment
+      operationId: put-access
+      x-eov-operation-id: access#addRole
+      x-eov-operation-handler: routes/access
+      description: Adds permissions for the user email for the experiment from the body
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: User not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userEmail:
+                  type: string
+                projectUuid:
+                  type: string
+                role:
+                  type: string
+              required:
+                - userEmail
+                - projectUuid
+                - role
+
 components:
   schemas:
     Project:

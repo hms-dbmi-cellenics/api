@@ -239,7 +239,7 @@ const expressAuthorizationMiddleware = async (req, res, next) => {
   }
 
   const authByExperiment = !!req.params.experimentId;
-  const authResource = req.params.experimentId ? req.params.experimentId : req.params.projectUuid;
+  const authResource = authByExperiment ? req.params.experimentId : req.params.projectUuid;
 
   try {
     await authorize(req.user.sub, req.url, req.method, authResource, authByExperiment);
