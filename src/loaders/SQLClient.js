@@ -1,7 +1,7 @@
 const config = require('../config');
 
-const SQLClient = require('../SQLClient');
-const knexfile = require('../SQLClient/knexfile');
+const SQLClient = require('../SQL/SQLClient');
+const knexfile = require('../SQL/knexfile');
 
 const getLogger = require('../utils/getLogger');
 

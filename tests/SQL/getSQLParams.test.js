@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 
 const config = require('../../src/config');
 
-const getConnectionParams = require('../../src/SQLClient/getConnectionParams');
+const getConnectionParams = require('../../src/SQL/getConnectionParams');
 
 jest.mock('../../src/config');
 
