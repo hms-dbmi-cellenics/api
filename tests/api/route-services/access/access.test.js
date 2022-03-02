@@ -11,6 +11,16 @@ const AccessService = require('../../../../src/api/route-services/access');
 jest.mock('../../../../src/api/route-services/experiment');
 jest.mock('../../../../src/utils/authMiddlewares');
 
+jest.mock('../../../../src/utils/send-email', () => jest.fn());
+jest.mock('../../../../src/utils/aws/user', () => ({
+  getAwsUserAttributesByEmail: jest.fn(() => ([
+    { Name: 'sub', Value: '00db34d7-5058-413b-b550-5f3fb4cdc5cc' },
+    { Name: 'email_verified', Value: 'true' },
+    { Name: 'name', Value: 'my name' },
+    { Name: 'email', Value: 'asd.asd@asd.ac.uk' }]
+  )),
+}));
+
 describe('tests for the projects service', () => {
   afterEach(() => {
     AWSMock.restore('DynamoDB');
@@ -196,5 +206,25 @@ describe('tests for the projects service', () => {
 
     expect(getMock).toHaveBeenCalledTimes(2);
     expect(deleteMock).toHaveBeenCalledTimes(0);
+  });
+
+  test('inviting a user works', async () => {
+    const grantRoleMock = jest.fn();
+    const as = new AccessService();
+    as.grantRole = grantRoleMock;
+    await as.inviteUser(fake.USER.email, fake.EXPERIMENT_ID, fake.PROJECT_ID, 'admin', { email: 'inviter@user.com' });
+
+    expect(grantRoleMock).toHaveBeenCalledTimes(1);
+    expect(grantRoleMock.mock.calls).toEqual([['00db34d7-5058-413b-b550-5f3fb4cdc5cc', 'experimentid11111111111111111111', 'aaaaaaaa-bbbb-3333-4444-999999999999', 'admin']]);
+  });
+
+  test('not existent user returns error', async () => {
+    const as = new AccessService();
+    const grantRoleMock = jest.fn();
+    as.grantRole = grantRoleMock;
+
+    expect(async () => (
+      await as.inviteUser(fake.USER.email, fake.EXPERIMENT_ID, fake.PROJECT_ID, 'admin', { email: 'inviter@user.com' })))
+      .rejects.toThrow(/User is not registered/);
   });
 });

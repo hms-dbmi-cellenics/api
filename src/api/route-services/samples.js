@@ -82,39 +82,27 @@ class SamplesService {
   async updateSamples(projectUuid, experimentId, body) {
     logger.log(`Updating samples for project ${projectUuid} and expId ${experimentId}`);
 
-    const dynamodb = createDynamoDbInstance();
-
     const marshalledKey = convertToDynamoDbRecord({
       experimentId,
     });
 
-    const getSamplesParams = {
-      TableName: this.samplesTableName,
-      Key: marshalledKey,
-      ProjectionExpression: 'samples',
-    };
-
-    // Merge samples record with the body
-    const response = await dynamodb.getItem(getSamplesParams).promise();
-    const { samples } = convertToJsObject(response.Item);
-
-    const updatedSamples = _.merge(samples, body);
-
     const marshalledData = convertToDynamoDbRecord({
-      ':samples': updatedSamples,
+      ':samples': body,
       ':projectUuid': projectUuid,
     });
 
     // Update samples
-    const updateSamplesParams = {
+    const params = {
       TableName: this.samplesTableName,
       Key: marshalledKey,
       UpdateExpression: 'SET samples = :samples, projectUuid = :projectUuid',
       ExpressionAttributeValues: marshalledData,
     };
 
+    const dynamodb = createDynamoDbInstance();
+
     try {
-      await dynamodb.updateItem(updateSamplesParams).send();
+      await dynamodb.updateItem(params).send();
       return OK();
     } catch (e) {
       if (e.statusCode === 404) throw new NotFoundError('Project not found');
