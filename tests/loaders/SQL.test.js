@@ -1,21 +1,36 @@
+const SQLClientLoader = require('../../src/loaders/SQLClient');
 
-// const config = require('../config');
+const knexfile = require('../../src/SQLClient/knexfile');
+const SQLClient = require('../../src/SQLClient');
 
-// const CacheSingleton = require('../SQLClient');
-// const knexfile = require('../SQL/knexfile');
+const config = require('../../src/config');
 
-// const getLogger = require('../utils/getLogger');
+const mockClusterEnv = 'production';
+const mockKnexConfig = { fake: true, connection: { host: 'fakeHost' } };
 
-// const logger = getLogger();
 
-// module.exports = async () => {
-//   logger.log('Generating configuration for sql client...');
+jest.mock('../../src/config');
+jest.mock('../../src/SQLClient/knexfile', () => jest.fn(
+  () => Promise.resolve({
+    [mockClusterEnv]: mockKnexConfig,
+  }),
+));
 
-//   const knexConfig = (await knexfile())[config.clusterEnv];
+jest.mock('../../src/SQLClient', () => ({
+  get: jest.fn(),
+}));
 
-//   logger.log(`SQL endpoint at: ${knexConfig.connection.host}`);
+describe('SQLClientLoader', () => {
+  it('Works correctly', async () => {
+    config.clusterEnv = mockClusterEnv;
 
-//   CacheSingleton.get(knexConfig);
+    await SQLClientLoader();
 
-//   logger.log('SQLClient instance created.');
-// };
+    // Loads the knexfile
+    expect(knexfile).toHaveBeenCalledTimes(1);
+
+    // Uses the knex config it gets on the SQLClient
+    expect(SQLClient.get).toHaveBeenCalledWith(mockKnexConfig);
+    expect(SQLClient.get).toHaveBeenCalledTimes(1);
+  });
+});
