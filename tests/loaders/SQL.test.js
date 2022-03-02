@@ -10,13 +10,13 @@ const mockKnexConfig = { fake: true, connection: { host: 'fakeHost' } };
 
 
 jest.mock('../../src/config');
-jest.mock('../../src/SQLClient/knexfile', () => jest.fn(
+jest.mock('../../src/SQL/knexfile', () => jest.fn(
   () => Promise.resolve({
     [mockClusterEnv]: mockKnexConfig,
   }),
 ));
 
-jest.mock('../../src/SQLClient', () => ({
+jest.mock('../../src/SQL/SQLClient', () => ({
   get: jest.fn(),
 }));
 
