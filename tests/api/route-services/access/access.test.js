@@ -217,4 +217,14 @@ describe('tests for the projects service', () => {
     expect(grantRoleMock).toHaveBeenCalledTimes(1);
     expect(grantRoleMock.mock.calls).toEqual([['00db34d7-5058-413b-b550-5f3fb4cdc5cc', 'experimentid11111111111111111111', 'aaaaaaaa-bbbb-3333-4444-999999999999', 'admin']]);
   });
+
+  test('not existent user returns error', async () => {
+    const as = new AccessService();
+    const grantRoleMock = jest.fn();
+    as.grantRole = grantRoleMock;
+
+    expect(async () => (
+      await as.inviteUser(fake.USER.email, fake.EXPERIMENT_ID, fake.PROJECT_ID, 'admin', { email: 'inviter@user.com' })))
+      .rejects.toThrow(/User is not registered/);
+  });
 });
