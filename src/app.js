@@ -4,7 +4,7 @@ const express = require('express');
 
 const expressLoader = require('./loaders/express');
 const cacheLoader = require('./loaders/cache');
-const SQLClientLoader = require('./loaders/SQL');
+const SQLClientLoader = require('./loaders/SQLClient');
 
 const config = require('./config');
 const getLogger = require('./utils/getLogger');
