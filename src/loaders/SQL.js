@@ -1,6 +1,6 @@
 const config = require('../config');
 
-const CacheSingleton = require('../SQL');
+const SQLClient = require('../SQL');
 const knexfile = require('../SQL/knexfile');
 
 const getLogger = require('../utils/getLogger');
@@ -14,7 +14,7 @@ module.exports = async () => {
 
   logger.log(`SQL endpoint at: ${knexConfig.connection.host}`);
 
-  CacheSingleton.get(knexConfig);
+  SQLClient.get(knexConfig);
 
   logger.log('SQLClient instance created.');
 };
