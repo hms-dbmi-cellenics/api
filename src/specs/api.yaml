@@ -1111,7 +1111,7 @@ paths:
       operationId: getWorkResults
       x-eov-operation-id: work#getResults
       x-eov-operation-handler: routes/work
-      description: On success, returns a signed url with the uploaded worker results in S3
+      description: 'On success, returns a signed url with the uploaded worker results in S3'
       responses:
         '200':
           description: OK
@@ -1162,28 +1162,59 @@ paths:
                 - userEmail
                 - projectUuid
                 - role
+    get:
+      summary: Get the users with access to an experiment
+      operationId: get-access
+      x-eov-operation-id: access#getRoles
+      x-eov-operation-handler: routes/access
+      description: Returns the users with access to the experiment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: array
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  role:
+                    type: string
+                required:
+                  - name
+                  - email
+                  - role
 
+        '404':
+          description: Experiment not found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
 components:
   schemas:
     Project:
-      $ref: './models/api-body-schemas/Project.v1.yaml'
+      $ref: ./models/api-body-schemas/Project.v1.yaml
     Samples:
-      $ref: './models/api-body-schemas/Samples.v1.yaml'
+      $ref: ./models/api-body-schemas/Samples.v1.yaml
     Sample:
-      $ref: './models/samples-bodies/Sample.v1.yaml'
+      $ref: ./models/samples-bodies/Sample.v1.yaml
     SamplesRemoveBody:
-      $ref: './models/samples-bodies/SamplesRemoveBody.v1.yaml'
+      $ref: ./models/samples-bodies/SamplesRemoveBody.v1.yaml
     Experiment:
-      $ref: './models/api-body-schemas/Experiment.v1.yaml'
+      $ref: ./models/api-body-schemas/Experiment.v1.yaml
     ExperimentDetails:
-      $ref: './models/api-body-schemas/ExperimentDetails.v1.yaml'
+      $ref: ./models/api-body-schemas/ExperimentDetails.v1.yaml
     ExperimentAttrs:
-       $ref: './models/experiment-bodies/ExperimentAttrs.v1.yaml'
+      $ref: ./models/experiment-bodies/ExperimentAttrs.v1.yaml
     ProcessingConfig:
-      $ref: './models/ProcessingConfig.v1.yaml'
+      $ref: ./models/ProcessingConfig.v1.yaml
     CellSets:
-      $ref: './models/api-body-schemas/CellSets.v1.yaml'
+      $ref: ./models/api-body-schemas/CellSets.v1.yaml
     PlotTableConfig:
-      $ref: './models/api-body-schemas/PlotTableConfig.v1.yaml'
+      $ref: ./models/api-body-schemas/PlotTableConfig.v1.yaml
     SamplesByExperiment:
-      $ref: './models/samples-bodies/SamplesByExperiment.v1.yaml'
+      $ref: ./models/samples-bodies/SamplesByExperiment.v1.yaml
