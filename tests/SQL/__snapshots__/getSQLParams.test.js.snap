@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createSQLClient Creates correct params in production environment 1`] = `
+Array [
+  Object {
+    "DBClusterIdentifier": "aurora-cluster-production",
+    "Filters": Array [
+      Object {
+        "Name": "db-cluster-endpoint-type",
+        "Values": Array [
+          "writer",
+        ],
+      },
+      Object {
+        "Name": "db-cluster-endpoint-status",
+        "Values": Array [
+          "available",
+        ],
+      },
+    ],
+  },
+]
+`;
+
+exports[`createSQLClient Creates correct params in staging environment 1`] = `
+Array [
+  Object {
+    "DBClusterIdentifier": "aurora-cluster-staging",
+    "Filters": Array [
+      Object {
+        "Name": "db-cluster-endpoint-type",
+        "Values": Array [
+          "writer",
+        ],
+      },
+      Object {
+        "Name": "db-cluster-endpoint-status",
+        "Values": Array [
+          "available",
+        ],
+      },
+    ],
+  },
+]
+`;
+
+exports[`createSQLClient Fails if there is no writer endpoint available 1`] = `
+Array [
+  Object {
+    "DBClusterIdentifier": "aurora-cluster-staging",
+    "Filters": Array [
+      Object {
+        "Name": "db-cluster-endpoint-type",
+        "Values": Array [
+          "writer",
+        ],
+      },
+      Object {
+        "Name": "db-cluster-endpoint-status",
+        "Values": Array [
+          "available",
+        ],
+      },
+    ],
+  },
+]
+`;
