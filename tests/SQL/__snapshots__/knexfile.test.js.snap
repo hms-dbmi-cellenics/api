@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`knexfile Works correctly for staging 1`] = `
+Object {
+  "staging": Object {
+    "client": "postgresql",
+    "connection": Object {
+      "fake": true,
+    },
+  },
+}
+`;
