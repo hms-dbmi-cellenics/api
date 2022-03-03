@@ -1187,13 +1187,37 @@ paths:
                   - name
                   - email
                   - role
-
         '404':
           description: Experiment not found
           content:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+    delete:
+      summary: ''
+      operationId: delete-access-experimentId
+      x-eov-operation-id: access#revokeRole
+      x-eov-operation-handler: routes/access
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Role not found
+      description: Delete a role for a user in experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                userEmail:
+                  type: string
+                  minLength: 1
+              required:
+                - userEmail
+        description: email of the user to remove from experiment
+        
 components:
   schemas:
     Project:

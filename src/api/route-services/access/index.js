@@ -61,6 +61,31 @@ class AccessService {
     await sendEmail(emailBody);
   }
 
+  async revokeRole(userEmail, experimentId) {
+    logger.log('Removing role for user ', userEmail, ' in experiment ', experimentId);
+
+    const userAttributes = await getAwsUserAttributesByEmail(userEmail);
+    const userId = userAttributes.find((attr) => attr.Name === 'sub').Value;
+
+    const key = convertToDynamoDbRecord({
+      experimentId,
+      userId,
+    });
+    const dynamoParams = {
+      TableName: this.userAccessTableName,
+      Key: key,
+    };
+
+    const dynamodb = createDynamoDbInstance();
+
+    try {
+      await dynamodb.deleteItem(dynamoParams).send();
+    } catch (e) {
+      if (e.statusCode === 404) throw new NotFoundError(`Role for user ${userEmail} in experiment ${experimentId} not found`);
+      throw e;
+    }
+  }
+
   async getRoles(experimentId) {
     logger.log('Getting access for experiment ', experimentId);
     const experimentEntries = await this.getExperimentEntries(
@@ -85,8 +110,7 @@ class AccessService {
     });
 
     // remove admin from returned list
-    return users;
-    // return users.filter((user) => user.role !== 'admin');
+    return users.filter((user) => user.role !== 'admin');
   }
 
   async canAccessExperiment(userId, experimentId, url, method) {
