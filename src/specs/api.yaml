@@ -1144,8 +1144,16 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPSuccess.v1.yaml
         '404':
           description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
       requestBody:
         content:
           application/json:
