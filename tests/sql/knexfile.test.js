@@ -6,7 +6,7 @@ const knexfile = require('../../src/sql/knexfile');
 jest.mock('../../src/config');
 
 const mockConnectionParams = { fake: true };
-jest.mock('../../src/SQL/getConnectionParams', () => jest.fn(() => mockConnectionParams));
+jest.mock('../../src/sql/getConnectionParams', () => jest.fn(() => mockConnectionParams));
 
 describe('knexfile', () => {
   it('Works correctly for staging', async () => {
