@@ -1,6 +1,6 @@
 const knex = require('knex');
 
-const SQLClient = require('../../src/SQL/SQLClient');
+const SQLClient = require('../../src/sql/SQLClient');
 
 const mockKnexInstance = jest.fn();
 jest.mock('knex', () => ({

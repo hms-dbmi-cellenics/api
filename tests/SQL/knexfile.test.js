@@ -1,7 +1,7 @@
 const config = require('../../src/config');
-const getConnectionParams = require('../../src/SQL/getConnectionParams');
+const getConnectionParams = require('../../src/sql/getConnectionParams');
 
-const knexfile = require('../../src/SQL/knexfile');
+const knexfile = require('../../src/sql/knexfile');
 
 jest.mock('../../src/config');
 
