@@ -58,6 +58,8 @@ class AccessService {
 
     const emailBody = buildUserInvitedEmailBody(userEmail, experimentId, inviterUser);
     await sendEmail(emailBody);
+
+    return OK();
   }
 
   async revokeRole(userEmail, experimentId) {
