@@ -1,10 +1,9 @@
-/* eslint-disable no-restricted-syntax */
 const _ = require('lodash');
 
 const config = require('../../../config');
 const AWS = require('../../../utils/requireAWS');
 const getLogger = require('../../../utils/getLogger');
-const { NotFoundError } = require('../../../utils/responses');
+const { NotFoundError, OK } = require('../../../utils/responses');
 
 const {
   createDynamoDbInstance,
@@ -80,6 +79,7 @@ class AccessService {
 
     try {
       await dynamodb.deleteItem(dynamoParams).send();
+      return OK();
     } catch (e) {
       if (e.statusCode === 404) throw new NotFoundError(`Role for user ${userEmail} in experiment ${experimentId} not found`);
       throw e;

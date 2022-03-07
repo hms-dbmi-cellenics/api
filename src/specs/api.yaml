@@ -1209,8 +1209,22 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPSuccess.v1.yaml
         '404':
           description: Role not found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The user does not have permissions to revoke the role.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
       description: Delete a role for a user in experiment
       requestBody:
         content:
