@@ -16,7 +16,7 @@ See the [Emitters](https://socket.io/docs/v4/redis-adapter/#emitter) section in 
 
 In most cases, developing on the API requires having other parts of Cellenics set up and started too. This is why this readme includes instructions not only for the API, but for how to set up Cellenics to run end-to-end. If you still want to run only the API, do only Step 0 and Step 2 from the steps outlined below and skip the rest.
 
-### Step 0. Prerequisites
+#### Step 0. Prerequisites
 
 We highly recommend using VSCode for local development. Make sure you also have `npm` and `docker` installed.
 
