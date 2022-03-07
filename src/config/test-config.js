@@ -9,6 +9,7 @@ function getAwsAccountId() {
 }
 
 module.exports = {
+  version: 'v1',
   port: 3000,
   clusterEnv: 'test',
   awsRegion: 'eu-west-1',

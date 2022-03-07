@@ -55,7 +55,7 @@ module.exports = async (app) => {
         description: 'Health check',
         http_method: '*',
         host: '*',
-        url_path: '/v1/health',
+        url_path: `/${config.version}/health`,
         fixed_target: 0,
         rate: 0.0,
       },
@@ -110,8 +110,12 @@ module.exports = async (app) => {
 
   app.use(checkAuthExpiredMiddleware);
 
+  // api and apiv2 could be renamed to v1 v2 once we focus on data model,
+  // for now leaving like this so we don't get merge conflicts with other changes
+  const apiName = config.version === 'v1' ? 'api' : 'apiv2';
+
   app.use(OpenApiValidator.middleware({
-    apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
+    apiSpec: path.join(__dirname, '..', 'specs', `${apiName}.yaml`),
     validateRequests: true,
     validateResponses: {
       onError: (error) => {
@@ -121,7 +125,7 @@ module.exports = async (app) => {
         AWSXRay.getSegment().addAnnotation('openApiValidationFailed', true);
       },
     },
-    operationHandlers: path.join(__dirname, '..', 'api'),
+    operationHandlers: path.join(__dirname, '..', `${apiName}`),
   }));
 
   // Custom error handler.
