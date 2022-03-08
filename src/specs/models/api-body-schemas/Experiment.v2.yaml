@@ -1,0 +1,37 @@
+title: Experiment
+description: 'An experiment object as stored in sql'
+$ref: '../experiment-bodies/ExperimentAttrs.v1.yaml'
+
+type: object
+properties:
+  experimentId:
+    type: string
+  experimentName:
+    type: string
+  description:
+    type: string
+  createdDate:
+    type: string
+  updatedDate:
+    type: string
+  processingConfig:
+    $ref: '../ProcessingConfig.v1.yaml'
+  sampleIds:
+    type: array
+    items:
+      type: string
+  notifyByEmail:
+    type: boolean
+
+additionalProperties: false
+
+required:
+  - experimentId
+  - experimentName
+  - projectId
+  - description
+  - createdDate
+  - lastViewed
+  - sampleIds
+
+additionalProperties: false
