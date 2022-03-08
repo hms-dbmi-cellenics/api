@@ -116,19 +116,21 @@ module.exports = async (app) => {
   ['v1', 'v2'].forEach((version) => {
     const apiYamlFileName = version === 'v1' ? 'api' : `api.${version}`;
 
-    OpenApiValidator.middleware({
-      apiSpec: path.join(__dirname, '..', 'specs', `${apiYamlFileName}.yaml`),
-      validateRequests: true,
-      validateResponses: {
-        onError: (error) => {
-          console.log('Response body fails validation: ', error);
+    app.use(
+      OpenApiValidator.middleware({
+        apiSpec: path.join(__dirname, '..', 'specs', `${apiYamlFileName}.yaml`),
+        validateRequests: true,
+        validateResponses: {
+          onError: (error) => {
+            console.log('Response body fails validation: ', error);
 
-          AWSXRay.getSegment().addMetadata('openApiValidationError', JSON.stringify(error));
-          AWSXRay.getSegment().addAnnotation('openApiValidationFailed', true);
+            AWSXRay.getSegment().addMetadata('openApiValidationError', JSON.stringify(error));
+            AWSXRay.getSegment().addAnnotation('openApiValidationFailed', true);
+          },
         },
-      },
-      operationHandlers: path.join(__dirname, '..', `${apiYamlFileName}`),
-    });
+        operationHandlers: path.join(__dirname, '..', `${apiYamlFileName}`),
+      }),
+    );
   });
 
   // Custom error handler.
