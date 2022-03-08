@@ -1,12 +1,7 @@
 const {
-  getExperimentDetails,
+  // getExperimentDetails,
   createExperiment,
 } = require('../controllers/experimentController');
-
-const { expressAuthorizationMiddleware, expressAuthenticationOnlyMiddleware } = require('../../utils/authMiddlewares');
-const getLogger = require('../../utils/getLogger');
-
-const logger = getLogger('[ExperimentService] - ');
 
 module.exports = {
   // 'experiment#getExperiment': [
@@ -14,7 +9,6 @@ module.exports = {
   //   getExperimentDetails,
   // ],
   'experiment#createExperiment': [
-    expressAuthenticationOnlyMiddleware,
     (req, res, next) => createExperiment(req, res).catch(next),
   ],
   // 'experiment#updateExperiment': [

@@ -9,9 +9,9 @@ const tableName = 'experiment';
 module.exports = {
   create: async (
     id, name, description,
-  ) => (
+  ) => {
     await sqlClient.insert({
       id, name, description,
-    }).into(tableName)
-  ),
+    }).into(tableName);
+  },
 };
