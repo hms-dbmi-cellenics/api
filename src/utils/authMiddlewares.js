@@ -233,13 +233,6 @@ const authorize = async (userId, resource, method, authResource, authByExperimen
  * Calls `authorize()` internally.
  */
 const expressAuthorizationMiddleware = async (req, res, next) => {
-  console.log('requrlDebug');
-  console.log(req.url);
-  // if (reqVersion === 'v2') {
-  //   next();
-  //   return;
-  // }
-
   if (!req.user) {
     next(new UnauthenticatedError('The request does not contain an authentication token.'));
     return;
