@@ -116,8 +116,6 @@ module.exports = async (app) => {
   ['v1', 'v2'].forEach((version) => {
     const apiYamlFileName = version === 'v1' ? 'api' : `api.${version}`;
 
-    console.log(`Using api ${version} for this request`);
-
     OpenApiValidator.middleware({
       apiSpec: path.join(__dirname, '..', 'specs', `${apiYamlFileName}.yaml`),
       validateRequests: true,
