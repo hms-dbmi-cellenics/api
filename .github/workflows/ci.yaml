@@ -334,7 +334,7 @@ jobs:
           destination-repository-name: 'iac'
           user-email: 'ci@biomage.net'
           target-branch: master
-          target-directory: 'migrations/sql/${{ matrix.environment }}'
+          target-directory: 'migrations/sql/${{ steps.fill-metadata.outputs.kubernetes-env }}'
 
       - id: enable-admin-enforcement
         name: Re-enable admin enforcement
