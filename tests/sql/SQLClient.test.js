@@ -1,18 +1,18 @@
 const knex = require('knex');
 
-const SQLClient = require('../../src/SQL/SQLClient');
+const sqlClient = require('../../src/sql/sqlClient');
 
 const mockKnexInstance = jest.fn();
 jest.mock('knex', () => ({
   default: jest.fn(() => mockKnexInstance),
 }));
 
-describe('SQLClient', () => {
+describe('sqlClient', () => {
   it('Works correctly', () => {
     const mockedConfig = 'mockedConfig';
 
     // First time it's called
-    const instance = SQLClient.get(mockedConfig);
+    const instance = sqlClient.get(mockedConfig);
 
     // It uses the config it receives
     expect(instance).toEqual(mockKnexInstance);
@@ -20,7 +20,7 @@ describe('SQLClient', () => {
     expect(knex.default).toHaveBeenCalledTimes(1);
 
     // Next time it doesn't need it anymore
-    const secondInstance = SQLClient.get();
+    const secondInstance = sqlClient.get();
 
     // It returns the same instance it got the first time
     expect(secondInstance).toEqual(mockKnexInstance);

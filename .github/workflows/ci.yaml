@@ -322,6 +322,18 @@ jobs:
           user_email: 'ci@biomage.net'
           user_name: 'Biomage CI/CD'
 
+      - name: Push migrations into iac
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: 'src/sql/migrations'
+          destination-github-username: '${{ github.repository_owner }}'
+          destination-repository-name: 'iac'
+          user-email: 'ci@biomage.net'
+          target-branch: master
+          target-directory: 'migrations/sql/${{ matrix.environment }}'
+
       - id: enable-admin-enforcement
         name: Re-enable admin enforcement
         uses: benjefferies/branch-protection-bot@1.0.7

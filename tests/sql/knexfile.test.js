@@ -1,12 +1,12 @@
 const config = require('../../src/config');
-const getConnectionParams = require('../../src/SQL/getConnectionParams');
+const getConnectionParams = require('../../src/sql/getConnectionParams');
 
-const knexfile = require('../../src/SQL/knexfile');
+const knexfile = require('../../src/sql/knexfile');
 
 jest.mock('../../src/config');
 
 const mockConnectionParams = { fake: true };
-jest.mock('../../src/SQL/getConnectionParams', () => jest.fn(() => mockConnectionParams));
+jest.mock('../../src/sql/getConnectionParams', () => jest.fn(() => mockConnectionParams));
 
 describe('knexfile', () => {
   it('Works correctly for staging', async () => {

@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 
 const config = require('../../src/config');
 
-const getConnectionParams = require('../../src/SQL/getConnectionParams');
+const getConnectionParams = require('../../src/sql/getConnectionParams');
 
 jest.mock('../../src/config');
 
@@ -23,7 +23,7 @@ AWS.RDS.Signer = jest.fn(() => ({
 
 const localhostParams = {
   host: '127.0.0.1',
-  port: 5432,
+  port: 5431,
   user: 'api_role',
   password: 'postgres', // pragma: allowlist secret
   database: 'aurora_db',
