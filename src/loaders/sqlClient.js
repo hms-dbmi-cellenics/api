@@ -1,7 +1,7 @@
 const config = require('../config');
 
-const SQLClient = require('../SQL/SQLClient');
-const knexfile = require('../SQL/knexfile');
+const sqlClient = require('../sql/sqlClient');
+const knexfile = require('../sql/knexfile');
 
 const getLogger = require('../utils/getLogger');
 
@@ -14,7 +14,7 @@ module.exports = async () => {
 
   logger.log(`SQL endpoint at: ${knexConfig.connection.host}`);
 
-  SQLClient.get(knexConfig);
+  sqlClient.get(knexConfig);
 
-  logger.log('SQLClient instance created.');
+  logger.log('sqlClient instance created.');
 };

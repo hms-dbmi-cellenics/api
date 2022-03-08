@@ -1,6 +1,6 @@
 const knex = require('knex');
 
-const SQLClient = (() => {
+const sqlClient = (() => {
   let instance;
 
   return {
@@ -14,4 +14,4 @@ const SQLClient = (() => {
   };
 })();
 
-module.exports = SQLClient;
+module.exports = sqlClient;
