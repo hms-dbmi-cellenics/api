@@ -4,7 +4,7 @@ const express = require('express');
 
 const expressLoader = require('./loaders/express');
 const cacheLoader = require('./loaders/cache');
-const SQLClientLoader = require('./loaders/SQLClient');
+const sqlClientLoader = require('./loaders/sqlClient');
 
 const config = require('./config');
 const getLogger = require('./utils/getLogger');
@@ -16,7 +16,7 @@ async function startServer() {
   const { app, server, socketIo: io } = await expressLoader(express());
   await cacheLoader(io);
 
-  await SQLClientLoader();
+  await sqlClientLoader();
 
   app.set('io', io);
 

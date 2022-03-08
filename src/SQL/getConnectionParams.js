@@ -31,7 +31,7 @@ const getConnectionParams = async () => {
   if (config.clusterEnv === 'development') {
     return {
       host: '127.0.0.1',
-      port: 5432,
+      port: 5431,
       user: 'api_role',
       password: 'postgres', // pragma: allowlist secret
       database: 'aurora_db',
