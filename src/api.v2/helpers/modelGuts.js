@@ -1,4 +1,4 @@
-const sqlClient = require('../../SQL/sqlClient');
+const sqlClient = require('../../sql/sqlClient');
 
 // The guts of a model that uses Knexjs to store and retrieve data from a
 // database using the provided `knex` instance. Custom functionality can be

@@ -1,7 +1,7 @@
 const config = require('../config');
 
-const sqlClient = require('../SQL/sqlClient');
-const knexfile = require('../SQL/knexfile');
+const sqlClient = require('../sql/sqlClient');
+const knexfile = require('../sql/knexfile');
 
 const getLogger = require('../utils/getLogger');
 
@@ -12,7 +12,7 @@ module.exports = async () => {
 
   const knexConfig = (await knexfile())[config.clusterEnv];
 
-  logger.log(`SQL endpoint at: ${knexConfig.connection.host}`);
+  logger.log(`sql endpoint at: ${knexConfig.connection.host}`);
 
   sqlClient.get(knexConfig);
 
