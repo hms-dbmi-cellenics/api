@@ -21,9 +21,4 @@ const guts = createGuts({
 
 module.exports = {
   ...guts,
-  // create: async (id, name, description) => {
-  //   await sqlClient.insert({
-  //     id, name, description,
-  //   }).into(tableName);
-  // },
 };

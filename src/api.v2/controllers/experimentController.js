@@ -14,6 +14,5 @@ const createExperiment = async (req, res) => {
 };
 
 module.exports = {
-  // getExperimentDetails,
   createExperiment,
 };
