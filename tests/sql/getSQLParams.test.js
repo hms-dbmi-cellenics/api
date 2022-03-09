@@ -39,7 +39,7 @@ const rdsParams = {
   expirationChecker: expect.any(Function),
 };
 
-describe('createSQLClient', () => {
+describe('getConnectionParams', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
