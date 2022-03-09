@@ -1,5 +1,3 @@
-// const sqlClient = require('../../SQL/sqlClient').get();
-
 const createGuts = require('../helpers/modelGuts');
 
 const tableName = 'experiment';
