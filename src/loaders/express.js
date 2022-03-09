@@ -55,7 +55,7 @@ module.exports = async (app) => {
         description: 'Health check',
         http_method: '*',
         host: '*',
-        url_path: `/${config.version}/health`,
+        url_path: '/v1/health',
         fixed_target: 0,
         rate: 0.0,
       },
