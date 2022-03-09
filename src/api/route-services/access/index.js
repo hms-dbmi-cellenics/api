@@ -79,13 +79,8 @@ class AccessService {
 
     const dynamodb = createDynamoDbInstance();
 
-    try {
-      await dynamodb.deleteItem(dynamoParams).send();
-      return OK();
-    } catch (e) {
-      if (e.statusCode === 404) throw new NotFoundError(`Role for user ${userEmail} in experiment ${experimentId} not found`);
-      throw e;
-    }
+    await dynamodb.deleteItem(dynamoParams).send();
+    return OK();
   }
 
   async getRoles(experimentId) {
