@@ -1,5 +1,4 @@
 const {
-  // getExperimentDetails,
   createExperiment,
 } = require('../controllers/experimentController');
 
