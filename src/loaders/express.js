@@ -112,7 +112,7 @@ module.exports = async (app) => {
   ['v1', 'v2'].forEach((version) => {
     // api and api.v2 could be renamed to api.v1 api.v2 once we focus on data model,
     // for now leaving like this so we don't get merge conflicts
-    // with other changes that may come in on api/ while we are still doing the base setup
+    // with other changes that may come in on "api/"
     const apiYamlFileName = version === 'v1' ? 'api' : `api.${version}`;
 
     app.use(
