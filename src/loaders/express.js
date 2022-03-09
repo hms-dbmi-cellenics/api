@@ -67,7 +67,6 @@ module.exports = async (app) => {
     version: 2,
   });
 
-
   /**
    * This middleware must be instantiated before the X-Ray middleware
    * opens the segment. This adds a hook to run when `res` is sent to the
@@ -110,10 +109,10 @@ module.exports = async (app) => {
 
   app.use(checkAuthExpiredMiddleware);
 
-  // api and api.v2 could be renamed to api.v1 api.v2 once we focus on data model,
-  // for now leaving like this so we don't get merge conflicts
-  // with other changes that may come in while we are still doing the base setup
   ['v1', 'v2'].forEach((version) => {
+    // api and api.v2 could be renamed to api.v1 api.v2 once we focus on data model,
+    // for now leaving like this so we don't get merge conflicts
+    // with other changes that may come in on api/ while we are still doing the base setup
     const apiYamlFileName = version === 'v1' ? 'api' : `api.${version}`;
 
     app.use(
