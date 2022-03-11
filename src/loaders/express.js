@@ -113,11 +113,11 @@ module.exports = async (app) => {
     // api and api.v2 could be renamed to api.v1 api.v2 once we focus on data model,
     // for now leaving like this so we don't get merge conflicts
     // with other changes that may come in on "api/"
-    const apiYamlFileName = version === 'v1' ? 'api' : `api.${version}`;
+    const versionName = version === 'v1' ? 'api' : `api.${version}`;
 
     app.use(
       OpenApiValidator.middleware({
-        apiSpec: path.join(__dirname, '..', 'specs', `${apiYamlFileName}.yaml`),
+        apiSpec: path.join(__dirname, '..', 'specs', `${versionName}.yaml`),
         validateRequests: true,
         validateResponses: {
           onError: (error) => {
@@ -127,7 +127,7 @@ module.exports = async (app) => {
             AWSXRay.getSegment().addAnnotation('openApiValidationFailed', true);
           },
         },
-        operationHandlers: path.join(__dirname, '..', `${apiYamlFileName}`),
+        operationHandlers: path.join(__dirname, '..', `${versionName}`),
       }),
     );
   });
