@@ -3,7 +3,7 @@ const _ = require('lodash');
 const config = require('../../../config');
 const AWS = require('../../../utils/requireAWS');
 const getLogger = require('../../../utils/getLogger');
-const { NotFoundError } = require('../../../utils/responses');
+const { NotFoundError, OK } = require('../../../utils/responses');
 
 const {
   createDynamoDbInstance,
@@ -58,6 +58,56 @@ class AccessService {
 
     const emailBody = buildUserInvitedEmailBody(userEmail, experimentId, inviterUser);
     await sendEmail(emailBody);
+
+    return OK();
+  }
+
+  async revokeRole(userEmail, experimentId) {
+    logger.log('Removing role for user ', userEmail, ' in experiment ', experimentId);
+
+    const userAttributes = await getAwsUserAttributesByEmail(userEmail);
+    const userId = userAttributes.find((attr) => attr.Name === 'sub').Value;
+
+    const key = convertToDynamoDbRecord({
+      experimentId,
+      userId,
+    });
+    const dynamoParams = {
+      TableName: this.userAccessTableName,
+      Key: key,
+    };
+
+    const dynamodb = createDynamoDbInstance();
+
+    await dynamodb.deleteItem(dynamoParams).send();
+    return OK();
+  }
+
+  async getRoles(experimentId) {
+    logger.log('Getting access for experiment ', experimentId);
+    const experimentEntries = await this.getExperimentEntries(
+      this.userAccessTableName, experimentId,
+    );
+
+    const requests = [];
+    experimentEntries.forEach(async (entry) => {
+      requests.push(getAwsUserAttributesByEmail(entry.userId));
+    });
+    const results = await Promise.all(requests);
+
+    const users = results.map((userInfo) => {
+      const email = userInfo.find((attr) => attr.Name === 'email').Value;
+      const name = userInfo.find((attr) => attr.Name === 'name').Value;
+      const userId = userInfo.find((attr) => attr.Name === 'sub').Value;
+
+      const { role } = experimentEntries.find((entry) => entry.userId === userId);
+      return {
+        name, email, role,
+      };
+    });
+
+    // remove admin from returned list
+    return users.filter((user) => user.role !== 'admin');
   }
 
   async canAccessExperiment(userId, experimentId, url, method) {
