@@ -1,4 +1,4 @@
-const createGuts = require('../helpers/modelGuts');
+const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
 
 const tableName = 'invite_access';
 
@@ -9,11 +9,11 @@ const selectableProps = [
   'updated_at',
 ];
 
-const guts = createGuts({
+const basicModelFunctions = generateBasicModelFunctions({
   tableName,
   selectableProps,
 });
 
 module.exports = {
-  ...guts,
+  ...basicModelFunctions,
 };

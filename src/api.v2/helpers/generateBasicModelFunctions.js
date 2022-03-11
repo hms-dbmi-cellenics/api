@@ -1,8 +1,8 @@
 const sqlClient = require('../../sql/sqlClient');
 
-// The guts of a model that uses Knexjs to store and retrieve data from a
+// The basic functions of a model that uses Knexjs to store and retrieve data from a
 // database using the provided `knex` instance. Custom functionality can be
-// composed on top of this set of common guts.
+// composed on top of this set of common functions.
 //
 // The idea is that these are the most-used types of functions that most/all
 // "models" will want to have.
