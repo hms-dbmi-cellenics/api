@@ -5,6 +5,7 @@ const {
   mockDocClientQuery,
   mockDocClientBatchWrite,
   mockDynamoScan,
+  mockDynamoDeleteItem,
 } = require('../../../test-utils/mockAWSServices');
 const AccessService = require('../../../../src/api/route-services/access');
 
@@ -14,7 +15,7 @@ jest.mock('../../../../src/utils/authMiddlewares');
 jest.mock('../../../../src/utils/send-email', () => jest.fn());
 jest.mock('../../../../src/utils/aws/user', () => ({
   getAwsUserAttributesByEmail: jest.fn(() => ([
-    { Name: 'sub', Value: '00db34d7-5058-413b-b550-5f3fb4cdc5cc' },
+    { Name: 'sub', Value: '032cdb44-0cd3-4d58-af21-850kp0b95ac7' },
     { Name: 'email_verified', Value: 'true' },
     { Name: 'name', Value: 'my name' },
     { Name: 'email', Value: 'asd.asd@asd.ac.uk' }]
@@ -215,7 +216,7 @@ describe('tests for the projects service', () => {
     await as.inviteUser(fake.USER.email, fake.EXPERIMENT_ID, fake.PROJECT_ID, 'admin', { email: 'inviter@user.com' });
 
     expect(grantRoleMock).toHaveBeenCalledTimes(1);
-    expect(grantRoleMock.mock.calls).toEqual([['00db34d7-5058-413b-b550-5f3fb4cdc5cc', 'experimentid11111111111111111111', 'aaaaaaaa-bbbb-3333-4444-999999999999', 'admin']]);
+    expect(grantRoleMock.mock.calls).toEqual([[fake.USER.sub, fake.EXPERIMENT_ID, 'aaaaaaaa-bbbb-3333-4444-999999999999', 'admin']]);
   });
 
   test('not existent user returns error', async () => {
@@ -226,5 +227,32 @@ describe('tests for the projects service', () => {
     expect(async () => (
       await as.inviteUser(fake.USER.email, fake.EXPERIMENT_ID, fake.PROJECT_ID, 'admin', { email: 'inviter@user.com' })))
       .rejects.toThrow(/User is not registered/);
+  });
+
+  test('Get roles', async () => {
+    const as = new AccessService();
+    const getExperimentEntriesMock = jest.fn(() => [{ userId: fake.USER.sub, role: 'owner' }]);
+    as.getExperimentEntries = getExperimentEntriesMock;
+    const roles = await as.getRoles(fake.EXPERIMENT_ID);
+    expect(getExperimentEntriesMock).toHaveBeenCalledTimes(1);
+    expect(getExperimentEntriesMock.mock.calls).toEqual([[as.userAccessTableName, fake.EXPERIMENT_ID]]);
+    expect(roles).toEqual([{ name: 'my name', email: 'asd.asd@asd.ac.uk', role: 'owner' }]);
+  });
+
+  test('Revoke role', async () => {
+    const as = new AccessService();
+    const deleteSpy = mockDynamoDeleteItem();
+
+    await as.revokeRole(fake.USER.email, fake.EXPERIMENT_ID);
+    expect(deleteSpy).toHaveBeenCalledTimes(1);
+    expect(deleteSpy).toHaveBeenCalledWith(
+      {
+        Key: {
+          experimentId: { S: fake.EXPERIMENT_ID },
+          userId: { S: fake.USER.sub },
+        },
+        TableName: as.userAccessTableName,
+      },
+    );
   });
 });

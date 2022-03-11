@@ -16,4 +16,24 @@ module.exports = {
         .catch(next);
     },
   ],
+  'access#getRoles': [
+    expressAuthorizationMiddleware,
+    async (req, res, next) => {
+      const { experimentId } = req.params;
+      accessService.getRoles(experimentId)
+        .then((data) => res.json(data))
+        .catch(next);
+    },
+  ],
+  'access#revokeRole': [
+    expressAuthorizationMiddleware,
+    async (req, res, next) => {
+      const { experimentId } = req.params;
+      const { userEmail } = req.body;
+
+      accessService.revokeRole(userEmail, experimentId)
+        .then((data) => res.json(data))
+        .catch(next);
+    },
+  ],
 };
