@@ -1,5 +1,5 @@
 title: Experiment Creation
-description: 'Data required to create an experiment object'
+description: 'Data required to create a new experiment'
 
 type: object
 properties:
