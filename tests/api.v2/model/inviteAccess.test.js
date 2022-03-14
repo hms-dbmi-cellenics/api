@@ -3,25 +3,22 @@ const generateBasicModelFunctions = require('../../../src/api.v2/helpers/generat
 jest.mock('../../../src/api.v2/helpers/generateBasicModelFunctions',
   () => jest.fn(() => ({ hasFakeBasicModelFunctions: true })));
 
-const experiment = require('../../../src/api.v2/model/experiment');
+const inviteAccess = require('../../../src/api.v2/model/inviteAccess');
 
-describe('model/experiment', () => {
+describe('model/inviteAccess', () => {
   it('Returns the correct generateBasicModelFunctions', async () => {
     expect(generateBasicModelFunctions).toHaveBeenCalledTimes(1);
     expect(generateBasicModelFunctions).toHaveBeenCalledWith({
-      tableName: 'experiment',
+      tableName: 'user_access',
       selectableProps: [
-        'id',
-        'name',
-        'description',
-        'processing_config',
-        'notify_by_email',
-        'created_at',
+        'user_email',
+        'experiment_id',
+        'access_role',
         'updated_at',
       ],
     });
 
-    expect(experiment).toEqual(
+    expect(inviteAccess).toEqual(
       expect.objectContaining({
         hasFakeBasicModelFunctions: true,
       }),
