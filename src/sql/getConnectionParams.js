@@ -32,8 +32,7 @@ const getConnectionParams = async () => {
     return {
       host: '127.0.0.1',
       port: 5431,
-      user: 'api_role',
-      password: 'postgres', // pragma: allowlist secret
+      user: 'postgres',
       database: 'aurora_db',
     };
   }
