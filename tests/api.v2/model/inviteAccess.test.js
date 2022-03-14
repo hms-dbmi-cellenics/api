@@ -9,7 +9,7 @@ describe('model/inviteAccess', () => {
   it('Returns the correct generateBasicModelFunctions', async () => {
     expect(generateBasicModelFunctions).toHaveBeenCalledTimes(1);
     expect(generateBasicModelFunctions).toHaveBeenCalledWith({
-      tableName: 'user_access',
+      tableName: 'invite_access',
       selectableProps: [
         'user_email',
         'experiment_id',
