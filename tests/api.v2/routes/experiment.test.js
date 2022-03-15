@@ -43,16 +43,16 @@ describe('tests for experiment route', () => {
       });
   });
 
-  it('Creating a new experiment fails if body is wrong', async (done) => {
+  it('Creating a new experiment fails if body is invalid', async (done) => {
     const experimentId = 'experiment-id';
 
-    const wrongExperimentData = {
+    const invalidExperimentData = {
       description: 'experimentDescription',
     };
 
     request(app)
       .post(`/v2/experiments/${experimentId}`)
-      .send(wrongExperimentData)
+      .send(invalidExperimentData)
       .expect(400)
       .end((err) => {
         if (err) {
