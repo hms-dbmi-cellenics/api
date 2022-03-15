@@ -8,13 +8,20 @@ const AccessRole = require('../../utils/enums/AccessRole');
 
 const { OK } = require('../../utils/responses');
 
+const getLogger = require('../../utils/getLogger');
+
+const logger = getLogger('[ExperimentController] - ');
+
 const createExperiment = async (req, res) => {
   const { params: { experimentId }, user, body } = req;
 
   const { name, description } = body;
 
+  logger.log('Creating experiment');
+
   await experiment.create({ id: experimentId, name, description });
 
+  logger.log('Setting up access permissions for experiment');
   await Promise.all([
     userAccess.create(
       { user_id: user.sub, experiment_id: experimentId, access_role: AccessRole.OWNER },
@@ -23,6 +30,8 @@ const createExperiment = async (req, res) => {
       { user_id: config.adminSub, experiment_id: experimentId, access_role: AccessRole.OWNER },
     ),
   ]);
+
+  logger.log('Finished creating experiment');
 
   res.json(OK());
 };
