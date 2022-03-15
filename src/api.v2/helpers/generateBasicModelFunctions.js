@@ -11,7 +11,7 @@ const sqlClient = require('../../sql/sqlClient');
 module.exports = ({
   tableName,
   selectableProps = [],
-  timeout = 1000,
+  timeout = 4000,
 }) => {
   const create = (props) => sqlClient.get().insert(props)
     .returning(selectableProps)
