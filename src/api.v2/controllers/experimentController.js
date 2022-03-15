@@ -20,7 +20,7 @@ const createExperiment = async (req, res) => {
       { user_id: user.sub, experiment_id: experimentId, access_role: AccessRole.OWNER },
     ),
     userAccess.create(
-      { user_id: config.adminArn, experiment_id: experimentId, access_role: AccessRole.OWNER },
+      { user_id: config.adminSub, experiment_id: experimentId, access_role: AccessRole.OWNER },
     ),
   ]);
 

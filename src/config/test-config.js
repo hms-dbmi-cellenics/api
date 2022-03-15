@@ -14,7 +14,7 @@ module.exports = {
   awsRegion: 'eu-west-1',
   podName: 'test',
   sandboxId: 'default',
-  adminArn: 'mockAdminArn',
+  adminSub: 'mockAdminSub',
   awsAccountIdPromise: getAwsAccountId(),
   workerNamespace: 'worker-test-namespace',
   pipelineNamespace: 'pipeline-test-namespace',

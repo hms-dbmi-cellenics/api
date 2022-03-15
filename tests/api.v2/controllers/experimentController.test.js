@@ -51,7 +51,7 @@ describe('experimentController', () => {
     });
 
     expect(userAccessModel.create).toHaveBeenCalledWith({
-      user_id: config.adminArn,
+      user_id: config.adminSub,
       experiment_id: 'mockId',
       access_role: AccessRole.OWNER,
     });

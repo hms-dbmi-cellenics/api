@@ -117,7 +117,7 @@ class ExperimentService {
 
     const { projectId } = body;
     await accessService.grantRole(user.sub, experimentId, projectId, roles.OWNER);
-    await accessService.grantRole(config.adminArn, experimentId, projectId, roles.ADMIN);
+    await accessService.grantRole(config.adminSub, experimentId, projectId, roles.ADMIN);
 
     return OK();
   }
