@@ -42,4 +42,25 @@ describe('tests for experiment route', () => {
         return done();
       });
   });
+
+  it('Creating a new experiment fails if body is wrong', async (done) => {
+    const experimentId = 'experiment-id';
+
+    const wrongExperimentData = {
+      description: 'experimentDescription',
+    };
+
+    request(app)
+      .post(`/v2/experiments/${experimentId}`)
+      .send(wrongExperimentData)
+      .expect(400)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
 });
