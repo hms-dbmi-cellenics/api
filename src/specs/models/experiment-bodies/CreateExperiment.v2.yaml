@@ -1,0 +1,18 @@
+title: Experiment Creation
+description: 'Data required to create a new experiment'
+
+type: object
+properties:
+  id:
+    type: string
+  name:
+    type: string
+  description:
+    type: string
+
+required:
+  - id
+  - name
+  - description
+
+additionalProperties: false
