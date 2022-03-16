@@ -1,4 +1,4 @@
-const AWS = require('../utils/requireAWS');
+const AWS = require('aws-sdk');
 
 const config = require('../config');
 
@@ -27,8 +27,8 @@ const getRDSEndpoint = async (rdsClient) => {
   return endpoints[0].Endpoint;
 };
 
-const getConnectionParams = async () => {
-  if (config.clusterEnv === 'development') {
+const getConnectionParams = async (environment) => {
+  if (environment === 'development') {
     return {
       host: '127.0.0.1',
       port: 5431,
@@ -37,9 +37,9 @@ const getConnectionParams = async () => {
     };
   }
 
-  const rdsClient = new AWS.RDS();
-  const endpoint = await getRDSEndpoint(rdsClient);
-  const username = 'api_role';
+  const rdsClient = new AWS.RDS({ region: config.awsRegion });
+  const endpoint = await getRDSEndpoint(rdsClient, environment);
+  const username = 'dev_role';
 
   const signer = new AWS.RDS.Signer({
     hostname: endpoint,
@@ -48,7 +48,9 @@ const getConnectionParams = async () => {
     username,
   });
 
-  const token = await signer.getAuthToken();
+
+  // @ts-ignore
+  const token = signer.getAuthToken();
 
   // Token expires in 15 minutes https://aws.amazon.com/premiumsupport/knowledge-center/users-connect-rds-iam/
   const tokenExpiration = new Date().getTime() + 15 * 60000;
