@@ -27,10 +27,10 @@ const getRDSEndpoint = async (rdsClient, environment) => {
   return endpoints[0].Endpoint;
 };
 
-const getConnectionParams = async (environment, username) => {
+const getConnectionParams = async (environment, isAMigration) => {
   if (environment === 'development') {
     return {
-      host: '127.0.0.1',
+      host: 'localhost',
       port: 5431,
       user: 'postgres',
       database: 'aurora_db',
@@ -39,6 +39,8 @@ const getConnectionParams = async (environment, username) => {
 
   const rdsClient = new AWS.RDS({ region: config.awsRegion });
   const endpoint = await getRDSEndpoint(rdsClient, environment);
+
+  const username = isAMigration ? 'dev_role' : 'api_role';
 
   const signer = new AWS.RDS.Signer({
     hostname: endpoint,
@@ -55,7 +57,7 @@ const getConnectionParams = async (environment, username) => {
   const tokenExpiration = new Date().getTime() + 15 * 60000;
 
   return {
-    host: endpoint,
+    host: isAMigration ? 'localhost' : endpoint,
     port: 5432,
     user: username,
     password: token, // pragma: allowlist secret
