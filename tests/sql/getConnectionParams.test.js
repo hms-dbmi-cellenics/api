@@ -22,7 +22,7 @@ AWS.RDS.Signer = jest.fn(() => ({
 }));
 
 const localhostParams = {
-  host: '127.0.0.1',
+  host: 'localhost',
   port: 5431,
   user: 'postgres',
   database: 'aurora_db',
