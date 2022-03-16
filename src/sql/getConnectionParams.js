@@ -39,7 +39,7 @@ const getConnectionParams = async (environment) => {
 
   const rdsClient = new AWS.RDS({ region: config.awsRegion });
   const endpoint = await getRDSEndpoint(rdsClient, environment);
-  const username = 'dev_role';
+  const username = 'api_role';
 
   const signer = new AWS.RDS.Signer({
     hostname: endpoint,
