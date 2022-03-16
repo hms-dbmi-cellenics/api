@@ -1,9 +1,9 @@
 
 const setOnUpdateTrigger = (table) => (`
-  CREATE TRIGGER ${table}_updated_at_trigger
-  BEFORE UPDATE ON ${table}
-  FOR EACH ROW
-  EXECUTE PROCEDURE on_update_timestamp();
+CREATE TRIGGER ${table}_updated_at_trigger
+BEFORE UPDATE ON ${table}
+FOR EACH ROW
+EXECUTE PROCEDURE on_update_timestamp();
 `);
 
 const nativeEnum = (table, tableName) => (
@@ -11,9 +11,9 @@ const nativeEnum = (table, tableName) => (
 );
 
 /**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
+* @param { import("knex").Knex } knex
+* @returns { Promise<void> }
+*/
 exports.up = async (knex) => {
   await knex.raw('CREATE TYPE pipeline_type AS ENUM (\'qc\', \'gem2s\');');
   await knex.raw('CREATE TYPE sample_technology AS ENUM (\'10x\', \'rhapsody\');');
@@ -140,9 +140,9 @@ exports.up = async (knex) => {
 };
 
 /**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
+* @param { import("knex").Knex } knex
+* @returns { Promise<void> }
+*/
 exports.down = async (knex) => {
   await Promise.all([
     knex.schema.dropTable('user_access'),
