@@ -1,0 +1,96 @@
+openapi: 3.0.0
+info:
+  title: API
+  version: 2.0.0
+  description: The main Node.js pipeline API.
+  license:
+    name: MIT
+    url: 'https://github.com/hms-dbmi-cellenics/api/blob/master/LICENSE'
+  contact:
+    name: Biomage Ltd.
+servers:
+  - url: /v2
+tags:
+  - name: experiments
+    description: Manage your experiments and experiment details.
+  - name: heartbeat
+    description: API health checks.
+  - name: work
+    description: Submitting and receiving work.
+  - name: processing-config
+    description: Structure for configuration of processing steps.
+paths:
+  /health:
+    get:
+      tags:
+        - heartbeat
+      summary: API health check
+      operationId: checkHealth
+      x-eov-operation-id: health#check
+      x-eov-operation-handler: routes/health
+      responses:
+        '200':
+          description: API is available.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    pattern: up
+                  env:
+                    type: string
+                    enum:
+                      - development
+                      - test
+                      - staging
+                      - production
+                  clusterEnv:
+                    type: string
+                    enum:
+                      - development
+                      - test
+                      - staging
+                      - production
+                required:
+                  - status
+                  - env
+                  - clusterEnv
+      description: Returns a status on the health of the API.
+  '/experiments/{experimentId}':
+    post:
+      summary: Create experiment
+      description: Create a new experiment
+      operationId: createExperiment
+      x-eov-operation-id: experiment#createExperiment
+      x-eov-operation-handler: routes/experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExperiment'
+      responses:
+        '200':
+          description: Create experiment
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+
+components:
+  schemas:
+    CreateExperiment:
+      $ref: './models/experiment-bodies/CreateExperiment.v2.yaml'

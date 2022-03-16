@@ -67,7 +67,6 @@ module.exports = async (app) => {
     version: 2,
   });
 
-
   /**
    * This middleware must be instantiated before the X-Ray middleware
    * opens the segment. This adds a hook to run when `res` is sent to the
@@ -110,19 +109,28 @@ module.exports = async (app) => {
 
   app.use(checkAuthExpiredMiddleware);
 
-  app.use(OpenApiValidator.middleware({
-    apiSpec: path.join(__dirname, '..', 'specs', 'api.yaml'),
-    validateRequests: true,
-    validateResponses: {
-      onError: (error) => {
-        console.log('Response body fails validation: ', error);
+  ['v1', 'v2'].forEach((version) => {
+    // api and api.v2 could be renamed to api.v1 api.v2 once we focus on data model,
+    // for now leaving like this so we don't get merge conflicts
+    // with other changes that may come in on "api/"
+    const versionName = version === 'v1' ? 'api' : `api.${version}`;
 
-        AWSXRay.getSegment().addMetadata('openApiValidationError', JSON.stringify(error));
-        AWSXRay.getSegment().addAnnotation('openApiValidationFailed', true);
-      },
-    },
-    operationHandlers: path.join(__dirname, '..', 'api'),
-  }));
+    app.use(
+      OpenApiValidator.middleware({
+        apiSpec: path.join(__dirname, '..', 'specs', `${versionName}.yaml`),
+        validateRequests: true,
+        validateResponses: {
+          onError: (error) => {
+            console.log('Response body fails validation: ', error);
+
+            AWSXRay.getSegment().addMetadata('openApiValidationError', JSON.stringify(error));
+            AWSXRay.getSegment().addAnnotation('openApiValidationFailed', true);
+          },
+        },
+        operationHandlers: path.join(__dirname, '..', `${versionName}`),
+      }),
+    );
+  });
 
   // Custom error handler.
   app.use((err, req, res, next) => {
