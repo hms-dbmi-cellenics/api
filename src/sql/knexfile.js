@@ -2,10 +2,10 @@ const config = require('../config');
 const getConnectionParams = require('./getConnectionParams');
 
 // This is one of the shapes the knexfile can take https://knexjs.org/#knexfile
-const fetchConfiguration = async () => {
-  const params = await getConnectionParams();
+const fetchConfiguration = async (environment) => {
+  const params = await getConnectionParams(environment);
   return {
-    [config.clusterEnv]: {
+    [environment]: {
       client: 'postgresql',
       connection: params,
     },
@@ -13,7 +13,9 @@ const fetchConfiguration = async () => {
 };
 
 module.exports = async () => {
-  const configuration = await fetchConfiguration();
+  const environment = process.env.MIGRATIONS_ENV || config.clusterEnv;
+
+  const configuration = await fetchConfiguration(environment);
   return {
     ...configuration,
   };
