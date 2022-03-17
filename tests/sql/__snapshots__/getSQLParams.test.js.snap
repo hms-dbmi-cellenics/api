@@ -3,7 +3,7 @@
 exports[`getConnectionParams Creates correct params in production environment 1`] = `
 Array [
   Object {
-    "DBClusterIdentifier": "aurora-cluster-production",
+    "DBClusterIdentifier": "aurora-cluster-production-default",
     "Filters": Array [
       Object {
         "Name": "db-cluster-endpoint-type",
@@ -25,7 +25,7 @@ Array [
 exports[`getConnectionParams Creates correct params in staging environment 1`] = `
 Array [
   Object {
-    "DBClusterIdentifier": "aurora-cluster-staging",
+    "DBClusterIdentifier": "aurora-cluster-staging-default",
     "Filters": Array [
       Object {
         "Name": "db-cluster-endpoint-type",
@@ -47,7 +47,7 @@ Array [
 exports[`getConnectionParams Fails if there is no writer endpoint available 1`] = `
 Array [
   Object {
-    "DBClusterIdentifier": "aurora-cluster-staging",
+    "DBClusterIdentifier": "aurora-cluster-staging-default",
     "Filters": Array [
       Object {
         "Name": "db-cluster-endpoint-type",
