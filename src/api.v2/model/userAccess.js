@@ -1,4 +1,5 @@
 const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
+const sqlClient = require('../../sql/sqlClient');
 
 const tableName = 'user_access';
 
@@ -14,6 +15,21 @@ const basicModelFunctions = generateBasicModelFunctions({
   selectableProps,
 });
 
+const canAccessExperiment = async (userId, experimentId) => {
+  const results = await sqlClient.get()
+    .select('id')
+    .from(tableName)
+    .where({ experiment_id: experimentId, user_id: userId });
+
+  // If there is an entry in userAccess, then the user has access to the experiment
+  return results.length > 0;
+};
+// const find = (filters) => sqlClient.get().select(selectableProps)
+//   .from(tableName)
+//   .where(filters)
+//   .timeout(timeout);
+
 module.exports = {
+  canAccessExperiment,
   ...basicModelFunctions,
 };

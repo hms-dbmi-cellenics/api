@@ -22,6 +22,8 @@ const AccessService = require('../api/route-services/access');
 const accessService = new AccessService();
 const projectService = new ProjectsService();
 
+const userAccess = require('../api.v2/model/userAccess');
+
 /**
  * Authentication middleware for Express. Returns a middleware that
  * can be used in the API to authenticate Cognito-issued JWTs.
@@ -210,16 +212,25 @@ const authenticationMiddlewareSocketIO = async (authHeader) => {
  * and remove authByExperiment
  */
 const authorize = async (userId, resource, method, authResource, authByExperiment = true) => {
+  const isV2 = resource.startsWith('/v2/');
+
   let experimentId = authResource;
-  if (!authByExperiment) {
+
+  if (!authByExperiment && !isV2) {
     const experiments = await projectService.getExperiments(authResource);
     experimentId = experiments[0].experimentId;
   }
 
-  const granted = await accessService.canAccessExperiment(userId,
-    experimentId,
-    resource,
-    method);
+  let granted;
+
+  if (isV2) {
+    granted = await userAccess.canAccessExperiment(userId, experimentId);
+  } else {
+    granted = await accessService.canAccessExperiment(userId,
+      experimentId,
+      resource,
+      method);
+  }
 
   if (granted) {
     return true;
