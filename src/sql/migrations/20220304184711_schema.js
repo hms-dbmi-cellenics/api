@@ -73,10 +73,9 @@ exports.up = async (knex) => {
 
   await knex.schema
     .createTable('metadata_track', (table) => {
-      table.string('key');
+      table.increments('id', { primaryKey: true });
       table.uuid('experiment_id').references('experiment.id').onDelete('CASCADE').notNullable();
-
-      table.primary(['key', 'experiment_id']);
+      table.string('key');
     });
 
   await knex.schema
@@ -89,19 +88,11 @@ exports.up = async (knex) => {
 
   await knex.schema
     .createTable('sample_in_metadata_track_map', (table) => {
-      table.string('metadata_track_key').notNullable();
-      table.uuid('experiment_id').notNullable();
+      table.string('metadata_track_id').references('sample.id').onDelete('CASCADE').notNullable();
       table.uuid('sample_id').references('sample.id').onDelete('CASCADE').notNullable();
       table.string('value').notNullable();
 
-      table.primary(['metadata_track_key', 'experiment_id', 'sample_id']);
-
-      // @ts-ignore
-      table.foreign(
-        ['metadata_track_key', 'experiment_id'],
-        ['metadata_track.key', 'metadata_track.experiment_id'],
-        // @ts-ignore
-      ).onDelete('CASCADE');
+      table.primary(['metadata_track_id', 'sample_id']);
     });
 
   await knex.schema
