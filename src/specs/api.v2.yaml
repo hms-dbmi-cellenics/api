@@ -59,6 +59,36 @@ paths:
                   - clusterEnv
       description: Returns a status on the health of the API.
   '/experiments/{experimentId}':
+    get:
+      summary: Get an experiment
+      description: Get an experiment
+      operationId: getExperiment
+      x-eov-operation-id: experiment#getExperiment
+      x-eov-operation-handler: routes/experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExperimentData'
+      responses:
+        '200':
+          description: Create experiment
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
     post:
       summary: Create experiment
       description: Create a new experiment
@@ -94,3 +124,5 @@ components:
   schemas:
     CreateExperiment:
       $ref: './models/experiment-bodies/CreateExperiment.v2.yaml'
+    ExperimentData:
+      $ref: './models/experiment-bodies/ExperimentData.v2.yaml'

@@ -1,0 +1,19 @@
+title: Experiment Execution
+description: 'Data for the execution of one of the pipelines (gem2s or qc)'
+
+type: object
+properties:
+  experimentId:
+    type: string
+  stateMachineArn:
+    type: string
+  executionArn:
+    type: string
+
+required:
+  - experimentId
+  - pipelineType
+  - stateMachineArn
+  - executionArn
+
+additionalProperties: false

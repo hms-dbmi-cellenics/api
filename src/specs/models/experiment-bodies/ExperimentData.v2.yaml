@@ -1,0 +1,36 @@
+title: Experiment Data
+description: 'An experiment's basic data'
+
+type: object
+properties:
+  id:
+    type: string
+  name:
+    type: string
+  description:
+    type: string
+  sampleOrder:
+    type: array
+    items:
+      type: string
+  notifyByEmail:
+    type: boolean
+  createdAt:
+    type: string
+  updatedAt:
+    type: string
+  executionGem2s:
+    $ref: ./Gem2sExecution.v2.yaml
+  executionQC:
+    $ref: ./QCExecution.v2.yaml
+
+required:
+  - id
+  - name
+  - description
+  - sampleIds
+  - notifyByEmail
+  - createdAt
+  - updatedAt
+
+additionalProperties: false
