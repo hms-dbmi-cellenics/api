@@ -16,3 +16,6 @@ coverage:
     patch:                    # measuring the coverage of new changes
       default:
         enabled: no
+
+ignore:
+  - "src/sql/migrations"
