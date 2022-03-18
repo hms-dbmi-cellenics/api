@@ -1,4 +1,3 @@
-
 const setOnUpdateTrigger = (table) => (`
 CREATE TRIGGER ${table}_updated_at_trigger
 BEFORE UPDATE ON ${table}
@@ -30,6 +29,7 @@ exports.up = async (knex) => {
       table.text('description').notNullable();
       table.jsonb('processing_config').nullable();
       table.boolean('notify_by_email').defaultTo(true);
+      table.specificType('samples_order', 'UUID[]');
       // Based on https://stackoverflow.com/a/48028011
       table.timestamps(true, true);
     }).then(() => {
@@ -88,7 +88,7 @@ exports.up = async (knex) => {
 
   await knex.schema
     .createTable('sample_in_metadata_track_map', (table) => {
-      table.string('metadata_track_id').references('sample.id').onDelete('CASCADE').notNullable();
+      table.integer('metadata_track_id').references('metadata_track.id').onDelete('CASCADE').notNullable();
       table.uuid('sample_id').references('sample.id').onDelete('CASCADE').notNullable();
       table.string('value').notNullable();
 
