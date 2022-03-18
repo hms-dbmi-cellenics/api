@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+const AWS = require('../../src/utils/requireAWS');
 
 const config = require('../../src/config');
 
@@ -7,7 +7,7 @@ const getConnectionParams = require('../../src/sql/getConnectionParams');
 jest.mock('../../src/config');
 
 const mockDescribeDBClusterEndpoints = jest.fn();
-jest.mock('aws-sdk', () => ({
+jest.mock('../../src/utils/requireAWS', () => ({
   config: {
     credentials: { expired: false },
   },

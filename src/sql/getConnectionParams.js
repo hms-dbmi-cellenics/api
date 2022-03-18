@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+const AWS = require('../utils/requireAWS');
 
 const config = require('../config');
 
@@ -27,7 +27,7 @@ const getRDSEndpoint = async (rdsClient, environment) => {
   return endpoints[0].Endpoint;
 };
 
-const getConnectionParams = async (environment, isAMigration) => {
+const getConnectionParams = async (environment) => {
   if (environment === 'development') {
     return {
       host: 'localhost',
@@ -40,7 +40,7 @@ const getConnectionParams = async (environment, isAMigration) => {
   const rdsClient = new AWS.RDS({ region: config.awsRegion });
   const endpoint = await getRDSEndpoint(rdsClient, environment);
 
-  const username = isAMigration ? 'dev_role' : 'api_role';
+  const username = 'api_role';
 
   const signer = new AWS.RDS.Signer({
     hostname: endpoint,
@@ -49,15 +49,13 @@ const getConnectionParams = async (environment, isAMigration) => {
     username,
   });
 
-
-  // @ts-ignore
   const token = signer.getAuthToken();
 
   // Token expires in 15 minutes https://aws.amazon.com/premiumsupport/knowledge-center/users-connect-rds-iam/
   const tokenExpiration = new Date().getTime() + 15 * 60000;
 
   return {
-    host: isAMigration ? 'localhost' : endpoint,
+    host: endpoint,
     port: 5432,
     user: username,
     password: token, // pragma: allowlist secret

@@ -1,11 +1,9 @@
-const _ = require('lodash');
-
 const config = require('../config');
 const getConnectionParams = require('./getConnectionParams');
 
 // This is one of the shapes the knexfile can take https://knexjs.org/#knexfile
-const fetchConfiguration = async (environment, isAMigration) => {
-  const params = await getConnectionParams(environment, isAMigration);
+const fetchConfiguration = async (environment) => {
+  const params = await getConnectionParams(environment);
   return {
     [environment]: {
       client: 'postgresql',
@@ -15,11 +13,7 @@ const fetchConfiguration = async (environment, isAMigration) => {
 };
 
 module.exports = async () => {
-  // Check if this is being run for a migration or for the api
-  const isAMigration = !_.isNil(process.env.MIGRATIONS_ENV);
-  const environment = process.env.MIGRATIONS_ENV || config.clusterEnv;
-
-  const configuration = await fetchConfiguration(environment, isAMigration);
+  const configuration = await fetchConfiguration(config.clusterEnv);
   return {
     ...configuration,
   };
