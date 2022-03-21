@@ -36,6 +36,15 @@ const createExperiment = async (req, res) => {
   res.json(OK());
 };
 
+const getExperiment = async (req, res) => {
+  const { params: { experimentId } } = req;
+
+  const data = await experiment.getExperimentData(experimentId);
+
+  res.json(data);
+};
+
 module.exports = {
   createExperiment,
+  getExperiment,
 };

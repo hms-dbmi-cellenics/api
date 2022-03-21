@@ -24,10 +24,6 @@ const canAccessExperiment = async (userId, experimentId) => {
   // If there is an entry in userAccess, then the user has access to the experiment
   return results.length > 0;
 };
-// const find = (filters) => sqlClient.get().select(selectableProps)
-//   .from(tableName)
-//   .where(filters)
-//   .timeout(timeout);
 
 module.exports = {
   canAccessExperiment,

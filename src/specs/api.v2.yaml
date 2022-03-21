@@ -65,11 +65,11 @@ paths:
       operationId: getExperiment
       x-eov-operation-id: experiment#getExperiment
       x-eov-operation-handler: routes/experiment
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ExperimentData'
+      # requestBody:
+      #   content:
+      #     application/json:
+      #       schema:
+      #         $ref: '#/components/schemas/ExperimentData'
       responses:
         '200':
           description: Create experiment
@@ -124,5 +124,5 @@ components:
   schemas:
     CreateExperiment:
       $ref: './models/experiment-bodies/CreateExperiment.v2.yaml'
-    ExperimentData:
-      $ref: './models/experiment-bodies/ExperimentData.v2.yaml'
+    # ExperimentData:
+    #   $ref: './models/experiment-bodies/ExperimentData.v2.yaml'

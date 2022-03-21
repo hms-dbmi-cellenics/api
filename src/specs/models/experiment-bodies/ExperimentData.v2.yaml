@@ -19,10 +19,12 @@ properties:
     type: string
   updatedAt:
     type: string
-  executionGem2s:
-    $ref: ./Gem2sExecution.v2.yaml
-  executionQC:
-    $ref: ./QCExecution.v2.yaml
+  gem2s:
+    nullable: true
+    $ref: ./PipelineExecution.v2.yaml
+  qc:
+    nullable: true
+    $ref: ./PipelineExecution.v2.yaml
 
 required:
   - id

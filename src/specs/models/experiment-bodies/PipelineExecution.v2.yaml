@@ -1,9 +1,9 @@
 title: Experiment Execution
-description: 'Data for the execution of one of the pipelines (gem2s or qc)'
+description: 'Data for the execution of one of the pipelines'
 
 type: object
 properties:
-  experimentId:
+  paramsHash:
     type: string
   stateMachineArn:
     type: string
@@ -11,8 +11,7 @@ properties:
     type: string
 
 required:
-  - experimentId
-  - pipelineType
+  - paramsHash
   - stateMachineArn
   - executionArn
 
