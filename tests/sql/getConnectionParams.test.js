@@ -4,8 +4,6 @@ const config = require('../../src/config');
 
 const getConnectionParams = require('../../src/sql/getConnectionParams');
 
-jest.mock('../../src/config');
-
 const mockDescribeDBClusterEndpoints = jest.fn();
 jest.mock('../../src/utils/requireAWS', () => ({
   config: {
@@ -44,8 +42,6 @@ describe('getConnectionParams', () => {
   });
 
   it('Creates correct params in development environment', async () => {
-    config.awsRegion = 'eu-west-1';
-
     const signerSpy = jest.fn((x) => x);
 
     const params = await getConnectionParams('development');
@@ -58,8 +54,6 @@ describe('getConnectionParams', () => {
   });
 
   it('Creates correct params in staging environment', async () => {
-    config.awsRegion = 'eu-west-1';
-
     mockDescribeDBClusterEndpoints.mockReturnValueOnce({ promise: () => Promise.resolve({ DBClusterEndpoints: [{ Endpoint: 'endpointName' }] }) });
 
     mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
@@ -81,8 +75,6 @@ describe('getConnectionParams', () => {
   });
 
   it('Creates correct params in production environment', async () => {
-    config.awsRegion = 'eu-west-1';
-
     mockDescribeDBClusterEndpoints.mockReturnValueOnce({ promise: () => Promise.resolve({ DBClusterEndpoints: [{ Endpoint: 'endpointName' }] }) });
 
     mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
@@ -104,8 +96,6 @@ describe('getConnectionParams', () => {
   });
 
   it('Fails if there is no writer endpoint available', async () => {
-    config.awsRegion = 'eu-west-1';
-
     mockDescribeDBClusterEndpoints
       .mockReturnValueOnce({ promise: () => Promise.resolve({ DBClusterEndpoints: [] }) });
 
