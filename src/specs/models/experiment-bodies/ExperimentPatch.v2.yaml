@@ -1,0 +1,16 @@
+title: Experiment Patch
+description: The properties of an experiment that can be patched
+type: object
+properties:
+  name:
+    type: string
+  description:
+    type: string
+  samplesOrder:
+    type: array
+    items:
+      type: string
+  notifyByEmail:
+    type: boolean
+
+additionalProperties: false

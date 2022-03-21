@@ -12,6 +12,14 @@ const getLogger = require('../../utils/getLogger');
 
 const logger = getLogger('[ExperimentController] - ');
 
+const getExperiment = async (req, res) => {
+  const { params: { experimentId } } = req;
+
+  const data = await experiment.getExperimentData(experimentId);
+
+  res.json(data);
+};
+
 const createExperiment = async (req, res) => {
   const { params: { experimentId }, user, body } = req;
 
@@ -36,15 +44,16 @@ const createExperiment = async (req, res) => {
   res.json(OK());
 };
 
-const getExperiment = async (req, res) => {
-  const { params: { experimentId } } = req;
+const patchExperiment = async (req, res) => {
+  const { params: { experimentId }, body } = req;
 
-  const data = await experiment.getExperimentData(experimentId);
+  await experiment.update(experimentId, body);
 
-  res.json(data);
+  res.json(OK());
 };
 
 module.exports = {
-  createExperiment,
   getExperiment,
+  createExperiment,
+  patchExperiment,
 };

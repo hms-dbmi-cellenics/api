@@ -16,11 +16,6 @@ const experimentFields = [
   'updated_at',
 ];
 
-
-const experimentExecutionFields = [
-  'params_hash', 'state_machine_arn', 'execution_arn',
-];
-
 const basicModelFunctions = generateBasicModelFunctions({
   tableName,
   selectableProps: experimentFields,
@@ -36,6 +31,10 @@ const getExperimentData = async (experimentId) => {
       .where('id', experimentId)
       .as('experiment_with_exec');
   }
+
+  const experimentExecutionFields = [
+    'params_hash', 'state_machine_arn', 'execution_arn',
+  ];
 
   const result = await aggregateIntoJson(query, experimentFields, experimentExecutionFields, 'pipeline_type', 'pipelines', sql);
 
