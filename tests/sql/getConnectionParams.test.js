@@ -34,6 +34,8 @@ const rdsParams = {
   expirationChecker: expect.any(Function),
 };
 
+const testSandboxId = 'test';
+
 describe('getConnectionParams', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -42,7 +44,7 @@ describe('getConnectionParams', () => {
   it('Creates correct params in development environment', async () => {
     const signerSpy = jest.fn((x) => x);
 
-    const params = await getConnectionParams('development');
+    const params = await getConnectionParams('development', testSandboxId);
 
     // Doesn't call the aws signer because we aren't interacting with aws
     expect(signerSpy).not.toHaveBeenCalled();
@@ -56,7 +58,7 @@ describe('getConnectionParams', () => {
 
     mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
 
-    const params = await getConnectionParams('staging');
+    const params = await getConnectionParams('staging', testSandboxId);
 
     expect(mockDescribeDBClusterEndpoints.mock.calls[0]).toMatchSnapshot();
 
@@ -77,7 +79,7 @@ describe('getConnectionParams', () => {
 
     mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
 
-    const params = await getConnectionParams('production');
+    const params = await getConnectionParams('production', testSandboxId);
 
     expect(mockDescribeDBClusterEndpoints.mock.calls[0]).toMatchSnapshot();
 
@@ -99,7 +101,7 @@ describe('getConnectionParams', () => {
 
     mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
 
-    await expect(getConnectionParams('staging')).rejects.toThrow();
+    await expect(getConnectionParams('staging', testSandboxId)).rejects.toThrow();
 
     expect(mockDescribeDBClusterEndpoints.mock.calls[0]).toMatchSnapshot();
 
