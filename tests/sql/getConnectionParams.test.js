@@ -1,7 +1,5 @@
 const AWS = require('../../src/utils/requireAWS');
 
-const config = require('../../src/config');
-
 const getConnectionParams = require('../../src/sql/getConnectionParams');
 
 const mockDescribeDBClusterEndpoints = jest.fn();
