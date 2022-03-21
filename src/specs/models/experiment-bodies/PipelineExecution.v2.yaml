@@ -1,9 +1,9 @@
-title: Experiment Execution
-description: 'Data for the execution of one of the pipelines'
-
+title: Pipeline Execution
 type: object
+description: holo
 properties:
   paramsHash:
+    nullable: true
     type: string
   stateMachineArn:
     type: string

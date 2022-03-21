@@ -1,6 +1,4 @@
 title: Experiment Data
-description: 'An experiment's basic data'
-
 type: object
 properties:
   id:
@@ -9,7 +7,7 @@ properties:
     type: string
   description:
     type: string
-  sampleOrder:
+  samplesOrder:
     type: array
     items:
       type: string
@@ -19,20 +17,22 @@ properties:
     type: string
   updatedAt:
     type: string
-  gem2s:
-    nullable: true
-    $ref: ./PipelineExecution.v2.yaml
-  qc:
-    nullable: true
-    $ref: ./PipelineExecution.v2.yaml
+  # pipelines:  
+  #   type: object
+  #   properties:
+  #     gem2s:
+  #       $ref: '../../api.v2.yaml#/components/schemas/PipelineExecution'
+  #     qc:
+  #       $ref: '../../api.v2.yaml#/components/schemas/PipelineExecution'
 
 required:
   - id
   - name
   - description
-  - sampleIds
+  - samplesOrder
   - notifyByEmail
+  - pipelines
   - createdAt
   - updatedAt
 
-additionalProperties: false
+# additionalProperties: false

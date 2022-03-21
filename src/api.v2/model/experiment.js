@@ -25,8 +25,7 @@ const experimentFieldsOrig = [
 // ];
 
 const experimentExecutionFieldsAggregate = [
-  '\'pipelineType\', pipeline_type', '\'paramsHash\', params_hash',
-  '\'stateMachineArn\', state_machine_arn', '\'executionArn\', execution_arn',
+  '\'paramsHash\', params_hash', '\'stateMachineArn\', state_machine_arn', '\'executionArn\', execution_arn',
 ];
 
 const basicModelFunctions = generateBasicModelFunctions({
@@ -65,27 +64,17 @@ const getExperimentData = async (experimentId) => {
   const sql = sqlClient.get();
 
   const results = await sql
-    .select([...experimentFields, sql.raw(`jsonb_object_agg(pipeline_type, json_build_object(${experimentExecutionFieldsAggregate.join(', ')}))`)])
+    .select([...experimentFields, sql.raw(`jsonb_object_agg(pipeline_type, json_build_object(${experimentExecutionFieldsAggregate.join(', ')})) as pipelines`)])
     // eslint-disable-next-line func-names
     .from(function () {
       this.select('*')
         .from(tableName)
         .leftJoin('experiment_execution', `${tableName}.id`, 'experiment_execution.experiment_id')
         .where('id', experimentId)
-        .as('queryResult');
+        .as('experiment_with_exec');
     }).groupBy(experimentFieldsOrig);
 
-  console.log('resultsDebug');
-  console.log(JSON.stringify(results));
-
-  // const resultObject = results;
-
-  // const resultObject = _.pick(
-  //   results[0],
-  //   ['id', 'name', 'description', 'sample_order', 'notify_by_email', 'created_at', 'updated_at'],
-  // );
-
-  return results;
+  return results[0];
 };
 
 module.exports = {
