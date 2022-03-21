@@ -37,15 +37,6 @@ const getExperimentData = async (experimentId) => {
       .as('experiment_with_exec');
   }
 
-  const a = await sql.select('*')
-    .from(tableName)
-    .leftJoin('experiment_execution', `${tableName}.id`, 'experiment_execution.experiment_id')
-    .where('id', experimentId)
-    .as('experiment_with_exec');
-
-  console.log('aDebug');
-  console.log(a);
-
   const result = await aggregateIntoJson(query, experimentFields, experimentExecutionFields, 'pipeline_type', 'pipelines', sql);
 
   return result[0];
