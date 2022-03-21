@@ -103,6 +103,7 @@ if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
 
 // We are in the `development` clusterEnv, meaning we run on
 // InfraMock. Set up API accordingly.
+
 if (config.clusterEnv === 'development') {
   const endpoint = 'http://localhost:4566';
   logger.log(`Running development cluster on ${endpoint}, patching AWS to use InfraMock endpoint...`);
