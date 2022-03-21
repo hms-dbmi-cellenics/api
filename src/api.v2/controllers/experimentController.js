@@ -1,4 +1,6 @@
 /* eslint-disable import/prefer-default-export */
+const _ = require('lodash');
+
 const config = require('../../config');
 
 const experiment = require('../model/experiment');
@@ -47,7 +49,9 @@ const createExperiment = async (req, res) => {
 const patchExperiment = async (req, res) => {
   const { params: { experimentId }, body } = req;
 
-  await experiment.update(experimentId, body);
+  const snakeCasedBody = _.mapKeys(body, _.snakeCase);
+
+  await experiment.update(experimentId, snakeCasedBody);
 
   res.json(OK());
 };

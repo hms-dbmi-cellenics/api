@@ -6,10 +6,6 @@ properties:
     type: string
   description:
     type: string
-  samplesOrder:
-    type: array
-    items:
-      type: string
   notifyByEmail:
     type: boolean
 
