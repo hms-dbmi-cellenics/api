@@ -124,5 +124,3 @@ components:
       $ref: './models/HTTPSuccess.v1.yaml'
     HTTPError:
       $ref: './models/HTTPError.v1.yaml'
-    # PipelineExecution:
-    #   $ref: './models/experiment-bodies/PipelineExecution.v2.yaml'
