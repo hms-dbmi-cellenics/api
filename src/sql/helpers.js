@@ -1,6 +1,8 @@
 const _ = require('lodash');
 
-const jsonAggregate = (key, fields, pipelines, sql) => {
+const sqlToCamelCased = (snakeCasedFields) => snakeCasedFields.map((snakecased) => `${snakecased} as ${_.camelCase(snakecased)}`);
+
+const jsonbObjectAgg = (key, fields, pipelines, sql) => {
   const jsonObjectProps = fields.reduce((acum, current) => {
     const camelcasedField = _.camelCase(current);
     acum.push(`'${camelcasedField}'`);
@@ -14,6 +16,63 @@ const jsonAggregate = (key, fields, pipelines, sql) => {
   return sql.raw(`jsonb_object_agg(${key}, ${jsonBuildObject}) as ${pipelines}`);
 };
 
-const sqlToCamelCased = (snakeCasedFields) => snakeCasedFields.map((snakecased) => `${snakecased} as ${_.camelCase(snakecased)}`);
+/**
+ *
+ * @param {*} originalQuery Query that fetches the sql data
+ * @param {*} rootFields Fields that shouldn't be aggregated
+ * @param {*} nestedFields Fields that vary across each aggregationColumnName,
+ * this is what we want to aggregate into one object for each aggregationColumnName
+ * @param {*} aggregationColumnKey The column by which we want to perform the aggregation,
+ * the object will contain one key for each aggregationColumnName value
+ * @param {*} aggregationJsonKey The key that we want to be added holding all the aggregated data
+ * @param {*} sql The sql client to use
+ * @returns An object with all the data that can be aggregated squashed together, for example,
+ * If our originalQuery returns two rows:
+ * [
+ *  { id: '123', name: 'myExp', pipeline_type: gem2s, pipeline_arn: 5555, hash: 123 },
+ *  { id: '123', name: 'myExp', pipeline_type: qc, pipeline_arn: 6666, hash: 321 }
+ * ]
+ *
+ * We can use this function to return instead:
+ * [
+ *  {
+ *    id: '123',
+ *    name: 'myExp',
+ *    pipelines: {
+ *      gem2s: {
+ *        pipelineArn: 5555,
+ *        hash: 123
+ *      },
+ *      qc: {
+ *        pipelineArn: 6666,
+ *        hash: 321
+ *      }
+ *    }
+ *  }
+ * ]
+ * For this example:
+ * - rootFields: ['id', 'name'],
+ * - nestedFields: ['pipeline_arn', 'hash]
+ * - aggregationColumnKey: 'pipeline_type'
+ * - aggregationJsonKey: 'pipelines'
+ *
+ * Note it also camelcases all the keys returned
+ */
+const aggregateIntoJson = async (
+  originalQuery,
+  rootFields,
+  nestedFields,
+  aggregationColumnKey,
+  aggregationJsonKey,
+  sql,
+) => (
+  await sql
+    .select([
+      ...sqlToCamelCased(rootFields),
+      jsonbObjectAgg(aggregationColumnKey, nestedFields, aggregationJsonKey, sql),
+    ])
+    .from(originalQuery)
+    .groupBy(rootFields)
+);
 
-module.exports = { jsonAggregate, sqlToCamelCased };
+module.exports = { aggregateIntoJson, sqlToCamelCased };

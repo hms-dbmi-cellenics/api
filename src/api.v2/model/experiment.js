@@ -2,7 +2,7 @@
 
 const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
 const sqlClient = require('../../sql/sqlClient');
-const { jsonAggregate, sqlToCamelCased } = require('../../sql/helpers');
+const { aggregateIntoJson } = require('../../sql/helpers');
 
 const tableName = 'experiment';
 
@@ -29,17 +29,26 @@ const basicModelFunctions = generateBasicModelFunctions({
 const getExperimentData = async (experimentId) => {
   const sql = sqlClient.get();
 
-  const results = await sql
-    .select([...sqlToCamelCased(experimentFields), jsonAggregate('pipeline_type', experimentExecutionFields, 'pipelines', sql)])
-    .from(function () {
-      this.select('*')
-        .from(tableName)
-        .leftJoin('experiment_execution', `${tableName}.id`, 'experiment_execution.experiment_id')
-        .where('id', experimentId)
-        .as('experiment_with_exec');
-    }).groupBy(experimentFields);
+  function query() {
+    this.select('*')
+      .from(tableName)
+      .leftJoin('experiment_execution', `${tableName}.id`, 'experiment_execution.experiment_id')
+      .where('id', experimentId)
+      .as('experiment_with_exec');
+  }
 
-  return results[0];
+  const a = await sql.select('*')
+    .from(tableName)
+    .leftJoin('experiment_execution', `${tableName}.id`, 'experiment_execution.experiment_id')
+    .where('id', experimentId)
+    .as('experiment_with_exec');
+
+  console.log('aDebug');
+  console.log(a);
+
+  const result = await aggregateIntoJson(query, experimentFields, experimentExecutionFields, 'pipeline_type', 'pipelines', sql);
+
+  return result[0];
 };
 
 module.exports = {
