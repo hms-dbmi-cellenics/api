@@ -83,7 +83,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
     post:
       summary: Create experiment
       description: Create a new experiment
@@ -101,24 +101,28 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPSuccess.v1.yaml
+                $ref: '#/components/schemas/HTTPSuccess'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
         '401':
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
 components:
   schemas:
     CreateExperiment:
       $ref: './models/experiment-bodies/CreateExperiment.v2.yaml'
     ExperimentData:
       $ref: './models/experiment-bodies/ExperimentData.v2.yaml'
+    HTTPSuccess:
+      $ref: './models/HTTPSuccess.v1.yaml'
     HTTPError:
       $ref: './models/HTTPError.v1.yaml'
+    # PipelineExecution:
+    #   $ref: './models/experiment-bodies/PipelineExecution.v2.yaml'

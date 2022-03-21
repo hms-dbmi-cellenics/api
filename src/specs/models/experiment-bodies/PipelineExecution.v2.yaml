@@ -1,6 +1,5 @@
 title: Pipeline Execution
 type: object
-description: holo
 properties:
   paramsHash:
     nullable: true
@@ -9,7 +8,6 @@ properties:
     type: string
   executionArn:
     type: string
-
 required:
   - paramsHash
   - stateMachineArn
