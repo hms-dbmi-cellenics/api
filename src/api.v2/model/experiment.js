@@ -27,14 +27,7 @@ const basicModelFunctions = generateBasicModelFunctions({
 });
 
 const getExperimentData = async (experimentId) => {
-  // const results = await sqlClient.get()
-  //   .select(...experimentFields, ...experimentExecutionFields)
-  //   .from(tableName)
-  //   .leftJoin('experiment_execution', `${tableName}.id`, 'experiment_execution.experiment_id')
-  //   .where('id', experimentId);
-
   const sql = sqlClient.get();
-
 
   const results = await sql
     .select([...sqlToCamelCased(experimentFields), jsonAggregate('pipeline_type', experimentExecutionFields, 'pipelines', sql)])
