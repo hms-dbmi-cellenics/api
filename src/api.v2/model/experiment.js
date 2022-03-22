@@ -44,19 +44,29 @@ const getExperimentData = async (experimentId) => {
 const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
   const sql = sqlClient.get();
 
-  // await sql(tableName)
-  //   .where({ id: experimentId })
-  //   .jsonSet([
-  //     sql.jsonSet('samples_order', `'{${oldPosition}}'`, `samples_order -> ${newPosition}`),
-  //     `'{${newPosition}}'`,
+  // const a = await sql(tableName).update({
+  //   samples_order: sql.jsonSet(
+  //     sql.jsonSet('samples_order', `${oldPosition}`, `samples_order -> ${newPosition}`),
+  //     `${newPosition}`,
   //     `samples_order -> ${oldPosition}`,
-  //   ]);
+  //   ),
+  //   // sql.raw(`jsonb_set(jsonb_set(samples_order, '{${oldPosition}}', samples_order -> ${newPosition}), '{${newPosition}}', samples_order -> ${oldPosition})`),
+  //   // update "experiment" set "samples_order" = (jsonb_set(jsonb_set("samples_order", '{0}', 'samples_order -> 1'), '{1}', 'samples_order -> 0')) where "id" = 'c7749b4c-9f9f-a8ba-de74-390c6b033fea'
+  // }).where('id', experimentId);
 
-  await sql.raw(`
-    UPDATE ${tableName}
-    SET samples_order = jsonb_set(jsonb_set(samples_order, '{${oldPosition}}', samples_order -> ${newPosition}), '{${newPosition}}', samples_order -> ${oldPosition})
-    WHERE id = '${experimentId}';
-  `);
+  await sql(tableName).update({
+    samples_order: sql.raw(
+      `jsonb_set(jsonb_set(samples_order, '{${oldPosition}}', samples_order -> ${newPosition}), '{${newPosition}}', samples_order -> ${oldPosition})`,
+    ),
+  }).where('id', experimentId);
+
+  // await sql.raw(`
+  //   UPDATE ${tableName}
+  //   SET samples_order = jsonb_set(jsonb_set(samples_order, '{${oldPosition}}', samples_order -> ${newPosition}), '{${newPosition}}', samples_order -> ${oldPosition})
+  //   WHERE id = '${experimentId}';
+  // `);
+
+  // 'update "item" set "samples_order" = jsonb_set(jsonb_set(samples_order, \'{0}\', samples_order -> 1), \'{1}\', samples_order -> 0) where "id" = \'c7749b4c-9f9f-a8ba-de74-390c6b033fea\'';
 };
 
 module.exports = {
