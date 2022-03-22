@@ -41,7 +41,26 @@ const getExperimentData = async (experimentId) => {
   return result[0];
 };
 
+const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
+  const sql = sqlClient.get();
+
+  // await sql(tableName)
+  //   .where({ id: experimentId })
+  //   .jsonSet([
+  //     sql.jsonSet('samples_order', `'{${oldPosition}}'`, `samples_order -> ${newPosition}`),
+  //     `'{${newPosition}}'`,
+  //     `samples_order -> ${oldPosition}`,
+  //   ]);
+
+  await sql.raw(`
+    UPDATE ${tableName}
+    SET samples_order = jsonb_set(jsonb_set(samples_order, '{${oldPosition}}', samples_order -> ${newPosition}), '{${newPosition}}', samples_order -> ${oldPosition})
+    WHERE id = '${experimentId}';
+  `);
+};
+
 module.exports = {
   getExperimentData,
+  updateSamplePosition,
   ...basicModelFunctions,
 };

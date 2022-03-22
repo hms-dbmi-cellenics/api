@@ -1,5 +1,5 @@
 const {
-  createExperiment, getExperiment, patchExperiment,
+  createExperiment, getExperiment, patchExperiment, updateSamplePosition,
 } = require('../controllers/experimentController');
 
 const { expressAuthenticationOnlyMiddleware } = require('../../utils/authMiddlewares');
@@ -16,5 +16,9 @@ module.exports = {
   'experiment#patchExperiment': [
     // expressAuthorizationMiddleware,
     (req, res, next) => patchExperiment(req, res).catch(next),
+  ],
+  'experiment#updateSamplePosition': [
+    // expressAuthorizationMiddleware,
+    (req, res, next) => updateSamplePosition(req, res).catch(next),
   ],
 };

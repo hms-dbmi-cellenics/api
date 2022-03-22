@@ -56,8 +56,20 @@ const patchExperiment = async (req, res) => {
   res.json(OK());
 };
 
+const updateSamplePosition = async (req, res) => {
+  const {
+    params: { experimentId },
+    body: { newPosition, oldPosition },
+  } = req;
+
+  await experiment.updateSamplePosition(experimentId, oldPosition, newPosition);
+
+  res.json(OK());
+};
+
 module.exports = {
   getExperiment,
   createExperiment,
   patchExperiment,
+  updateSamplePosition,
 };
