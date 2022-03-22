@@ -49,9 +49,9 @@ const createExperiment = async (req, res) => {
 const patchExperiment = async (req, res) => {
   const { params: { experimentId }, body } = req;
 
-  const snakeCasedBody = _.mapKeys(body, _.snakeCase);
+  const snakeCasedKeysToPatch = _.mapKeys(body, (_value, key) => _.snakeCase(key));
 
-  await experiment.update(experimentId, snakeCasedBody);
+  await experiment.update(experimentId, snakeCasedKeysToPatch);
 
   res.json(OK());
 };

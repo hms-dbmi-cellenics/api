@@ -1,8 +1,9 @@
 /* eslint-disable func-names */
-
 const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
 const sqlClient = require('../../sql/sqlClient');
 const { aggregateIntoJson } = require('../../sql/helpers');
+
+const { NotFoundError } = require('../../utils/responses');
 
 const tableName = 'experiment';
 
@@ -37,6 +38,10 @@ const getExperimentData = async (experimentId) => {
   ];
 
   const result = await aggregateIntoJson(query, experimentFields, experimentExecutionFields, 'pipeline_type', 'pipelines', sql);
+
+  if (result.length === 0) {
+    throw new NotFoundError('Experiment not found');
+  }
 
   return result[0];
 };
