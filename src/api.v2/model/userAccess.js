@@ -17,7 +17,7 @@ const basicModelFunctions = generateBasicModelFunctions({
 
 const canAccessExperiment = async (userId, experimentId) => {
   const results = await sqlClient.get()
-    .select('id')
+    .select()
     .from(tableName)
     .where({ experiment_id: experimentId, user_id: userId });
 
