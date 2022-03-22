@@ -29,7 +29,7 @@ const createExperiment = async (req, res) => {
 
   logger.log('Creating experiment');
 
-  await experiment.create({ id: experimentId, name, description });
+  const { 0: { id } } = await experiment.create({ id: experimentId, name, description });
 
   logger.log('Setting up access permissions for experiment');
   await Promise.all([
@@ -41,7 +41,7 @@ const createExperiment = async (req, res) => {
     ),
   ]);
 
-  logger.log('Finished creating experiment');
+  logger.log(`Finished creating experiment ${id}`);
 
   res.json(OK());
 };
