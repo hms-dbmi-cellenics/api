@@ -3,8 +3,6 @@ const generateBasicModelFunctions = require('../helpers/generateBasicModelFuncti
 const sqlClient = require('../../sql/sqlClient');
 const { aggregateIntoJson } = require('../../sql/helpers');
 
-const { NotFoundError } = require('../../utils/responses');
-
 const tableName = 'experiment';
 
 const experimentFields = [
@@ -39,10 +37,6 @@ const getExperimentData = async (experimentId) => {
 
   const result = await aggregateIntoJson(query, experimentFields, experimentExecutionFields, 'pipeline_type', 'pipelines', sql);
 
-  if (result.length === 0) {
-    throw new NotFoundError('Experiment not found');
-  }
-
   return result[0];
 };
 
@@ -50,7 +44,7 @@ const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
   const sql = sqlClient.get();
 
   // Switches values between the item at newPosition and the one at oldPosition
-  await sql(tableName).update({
+  const result = await sql(tableName).update({
     samples_order: sql.raw(
       `jsonb_set(
         jsonb_set(
@@ -62,7 +56,10 @@ const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
         samples_order -> ${oldPosition}
       )`,
     ),
-  }).where('id', experimentId);
+  }).where('id', experimentId)
+    .returning(['id']);
+
+  return result;
 };
 
 module.exports = {

@@ -84,6 +84,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
     post:
       summary: Create experiment
       description: Create a new experiment
@@ -144,6 +150,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   '/experiments/{experimentId}/samples/position':
     put:
       summary: Update position for a sample
@@ -176,6 +188,12 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
         '401':
           description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
           content:
             application/json:
               schema:

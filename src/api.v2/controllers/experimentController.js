@@ -7,10 +7,9 @@ const experiment = require('../model/experiment');
 const userAccess = require('../model/userAccess');
 
 const AccessRole = require('../../utils/enums/AccessRole');
-
-const { OK } = require('../../utils/responses');
-
 const getLogger = require('../../utils/getLogger');
+const { OK } = require('../../utils/responses');
+const { NotFoundError } = require('../../utils/responses');
 
 const logger = getLogger('[ExperimentController] - ');
 
@@ -18,6 +17,10 @@ const getExperiment = async (req, res) => {
   const { params: { experimentId } } = req;
 
   const data = await experiment.getExperimentData(experimentId);
+
+  if (_.isNil(data)) {
+    throw new NotFoundError('Experiment not found');
+  }
 
   res.json(data);
 };
@@ -68,7 +71,11 @@ const updateSamplePosition = async (req, res) => {
 
   logger.log(`Reordering sample in ${experimentId} from position ${oldPosition} to ${newPosition}`);
 
-  await experiment.updateSamplePosition(experimentId, oldPosition, newPosition);
+  const result = await experiment.updateSamplePosition(experimentId, oldPosition, newPosition);
+
+  if (result.length === 0) {
+    throw new NotFoundError('Experiment not found');
+  }
 
   logger.log(`Finished reordering samples in ${experimentId}`);
 
