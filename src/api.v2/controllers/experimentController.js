@@ -66,7 +66,11 @@ const updateSamplePosition = async (req, res) => {
     body: { newPosition, oldPosition },
   } = req;
 
+  logger.log(`Reordering sample in ${experimentId} from position ${oldPosition} to ${newPosition}`);
+
   await experiment.updateSamplePosition(experimentId, oldPosition, newPosition);
+
+  logger.log(`Finished reordering samples in ${experimentId}`);
 
   res.json(OK());
 };
