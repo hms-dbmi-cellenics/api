@@ -4,8 +4,13 @@ const AccessRole = require('../../../src/utils/enums/AccessRole');
 const experimentModel = require('../../../src/api.v2/model/experiment');
 const userAccessModel = require('../../../src/api.v2/model/userAccess');
 
+const mockExperiment = {
+  id: 'mockExperimentId',
+  name: 'mockExperimentName',
+  description: 'mockExperimentDescription',
+};
 jest.mock('../../../src/api.v2/model/experiment', () => ({
-  create: jest.fn(),
+  create: jest.fn(() => Promise.resolve([mockExperiment])),
 }));
 jest.mock('../../../src/api.v2/model/userAccess', () => ({
   create: jest.fn(),
