@@ -14,7 +14,7 @@ describe('model/experiment', () => {
         'id',
         'name',
         'description',
-        'processing_config',
+        'samples_order',
         'notify_by_email',
         'created_at',
         'updated_at',
