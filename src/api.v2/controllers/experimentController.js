@@ -71,6 +71,11 @@ const updateSamplePosition = async (req, res) => {
 
   logger.log(`Reordering sample in ${experimentId} from position ${oldPosition} to ${newPosition}`);
 
+  if (oldPosition === newPosition) {
+    logger.log('Skipping reordering, oldPosition === newPosition');
+    res.json(OK());
+  }
+
   const result = await experiment.updateSamplePosition(experimentId, oldPosition, newPosition);
 
   if (result.length === 0) {
