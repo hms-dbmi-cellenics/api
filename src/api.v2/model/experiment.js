@@ -1,6 +1,4 @@
 /* eslint-disable func-names */
-const _ = require('lodash');
-
 const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
 const sqlClient = require('../../sql/sqlClient');
 const { aggregateIntoJson } = require('../../sql/helpers');
@@ -45,16 +43,16 @@ const getExperimentData = async (experimentId) => {
 const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
   const sql = sqlClient.get();
 
-  // Switches values between the item at newPosition and the one at oldPosition
+  // Sets samples_order as an array that has the sample in oldPosition moved to newPosition
   const result = await sql(tableName).update({
-    samples_order: sql.raw(`
-    (SELECT jsonb_insert(samples_order - ${oldPosition}, '{${newPosition}}', samples_order -> ${oldPosition}, false)
-    FROM (
-      SELECT (samples_order)
-      FROM experiment e
-      WHERE e.id = '${experimentId}'
-    ) samples_order)
-    `),
+    samples_order: sql.raw(`(
+      SELECT jsonb_insert(samples_order - ${oldPosition}, '{${newPosition}}', samples_order -> ${oldPosition}, false)
+      FROM (
+        SELECT (samples_order)
+        FROM experiment e
+        WHERE e.id = '${experimentId}'
+      ) samples_order
+    )`),
   }).where('id', experimentId)
     .returning(['samples_order']);
 
