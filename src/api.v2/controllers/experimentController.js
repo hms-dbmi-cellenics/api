@@ -32,10 +32,14 @@ const createExperiment = async (req, res) => {
 
   logger.log('Creating experiment');
 
-  const result = await experiment.create({ id: experimentId, name, description });
+  const experimentCreateResult = await experiment.create({ id: experimentId, name, description });
+
+  if (experimentCreateResult.length === 0) {
+    throw new Error(`Experiment ${experimentId} creation failed`);
+  }
 
   logger.log('Setting up access permissions for experiment');
-  await Promise.all([
+  const userAccessCreateResults = await Promise.all([
     userAccess.create(
       { user_id: user.sub, experiment_id: experimentId, access_role: AccessRole.OWNER },
     ),
@@ -44,7 +48,11 @@ const createExperiment = async (req, res) => {
     ),
   ]);
 
-  logger.log(`Finished creating experiment ${result.id}`);
+  if (userAccessCreateResults[0].length === 0 || userAccessCreateResults[1].length === 0) {
+    throw new Error(`User access creation failed for experiment ${experimentId}`);
+  }
+
+  logger.log(`Finished creating experiment ${experimentId}`);
 
   res.json(OK());
 };
