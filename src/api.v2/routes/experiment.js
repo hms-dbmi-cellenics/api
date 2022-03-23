@@ -10,7 +10,7 @@ module.exports = {
     (req, res, next) => createExperiment(req, res).catch(next),
   ],
   'experiment#getExperiment': [
-    // expressAuthorizationMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => getExperiment(req, res).catch(next),
   ],
   'experiment#patchExperiment': [
