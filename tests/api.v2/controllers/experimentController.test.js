@@ -8,6 +8,10 @@ const mockExperiment = {
   id: 'mockExperimentId',
   name: 'mockExperimentName',
   description: 'mockExperimentDescription',
+  samples_order: [],
+  notify_by_email: true,
+  created_at: '1900-03-23 21:06:00.573142+00',
+  updated_at: '1900-03-26 21:06:00.573142+00',
 };
 jest.mock('../../../src/api.v2/model/experiment', () => ({
   create: jest.fn(() => Promise.resolve([mockExperiment])),
