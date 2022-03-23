@@ -1,5 +1,6 @@
 const _ = require('lodash');
 
+// Adds commands in a select to transform fields that are in snake_case format to camelCase
 const sqlToCamelCased = (snakeCasedFields) => snakeCasedFields.map((snakecased) => `${snakecased} as ${_.camelCase(snakecased)}`);
 
 const jsonbObjectAgg = (aggregationColumnKey, nestedFields, aggregationJsonKey, sql) => {
