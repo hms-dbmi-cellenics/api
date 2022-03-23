@@ -173,6 +173,7 @@ paths:
                   type: integer
                 newPosition:
                   type: integer
+              additionalProperties: false
       responses:
         '200':
           description: Success
