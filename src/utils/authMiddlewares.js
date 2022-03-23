@@ -225,7 +225,12 @@ const authorize = async (userId, resource, method, authResource, authByExperimen
   let granted;
 
   if (isV2) {
-    granted = await userAccess.canAccessExperiment(userId, experimentId);
+    granted = await userAccess.canAccessExperiment(
+      userId,
+      experimentId,
+      resource,
+      method,
+    );
   } else {
     granted = await accessService.canAccessExperiment(userId,
       experimentId,
