@@ -2,8 +2,8 @@ const _ = require('lodash');
 
 const sqlToCamelCased = (snakeCasedFields) => snakeCasedFields.map((snakecased) => `${snakecased} as ${_.camelCase(snakecased)}`);
 
-const jsonbObjectAgg = (key, fields, pipelines, sql) => {
-  const jsonObjectProps = fields.reduce((acum, current) => {
+const jsonbObjectAgg = (aggregationColumnKey, nestedFields, aggregationJsonKey, sql) => {
+  const jsonObjectProps = nestedFields.reduce((acum, current) => {
     const camelcasedField = _.camelCase(current);
     acum.push(`'${camelcasedField}'`);
     acum.push(current);
@@ -11,9 +11,25 @@ const jsonbObjectAgg = (key, fields, pipelines, sql) => {
     return acum;
   }, []);
 
-  const jsonBuildObject = `json_build_object(${jsonObjectProps.join(', ')})`;
+  // Specify which properties from the rows we want in each value in the aggregated object
+  const jsonBuildObjectSql = `json_build_object(${jsonObjectProps.join(', ')})`;
 
-  return sql.raw(`jsonb_object_agg(${key}, ${jsonBuildObject}) as ${pipelines}`);
+  // Set column {key} as the key for each value
+  const jsonbObjectAggSql = `jsonb_object_agg(${aggregationColumnKey}, ${jsonBuildObjectSql})`;
+
+  // When there is no row to aggregate, json_object_agg throws an error
+  // So we need to handle this case outside jsonb_object_agg with coalesce
+  // Solution based on https://stackoverflow.com/a/33305456
+  const handleNoExecutionsFoundSql = `
+  COALESCE(${jsonbObjectAggSql}
+    FILTER(
+      WHERE ${aggregationColumnKey} IS NOT NULL
+    ),
+    '{}'::jsonb
+  ) 
+  `;
+
+  return sql.raw(`${handleNoExecutionsFoundSql} as ${aggregationJsonKey}`);
 };
 
 /**
