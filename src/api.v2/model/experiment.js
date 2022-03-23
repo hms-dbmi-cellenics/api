@@ -1,7 +1,13 @@
+const _ = require('lodash');
+
 /* eslint-disable func-names */
 const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
 const sqlClient = require('../../sql/sqlClient');
 const { aggregateIntoJson } = require('../../sql/helpers');
+
+const getLogger = require('../../utils/getLogger');
+
+const logger = getLogger('[ExperimentModel] - ');
 
 const tableName = 'experiment';
 
@@ -44,19 +50,37 @@ const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
   const sql = sqlClient.get();
 
   // Sets samples_order as an array that has the sample in oldPosition moved to newPosition
-  const result = await sql(tableName).update({
-    samples_order: sql.raw(`(
-      SELECT jsonb_insert(samples_order - ${oldPosition}, '{${newPosition}}', samples_order -> ${oldPosition}, false)
-      FROM (
-        SELECT (samples_order)
-        FROM experiment e
-        WHERE e.id = '${experimentId}'
-      ) samples_order
-    )`),
-  }).where('id', experimentId)
-    .returning(['samples_order']);
 
-  return result;
+  const trx = await sql.transaction();
+
+  try {
+    const result = await trx(tableName).update({
+      samples_order: trx.raw(`(
+        SELECT jsonb_insert(samples_order - ${oldPosition}, '{${newPosition}}', samples_order -> ${oldPosition}, false)
+        FROM (
+          SELECT (samples_order)
+          FROM experiment e
+          WHERE e.id = '${experimentId}'
+        ) samples_order
+      )`),
+    }).where('id', experimentId)
+      .returning(['samples_order']);
+
+    const { samples_order: samplesOrder } = result[0];
+
+    if (_.isNil(samplesOrder)
+      || !_.inRange(oldPosition, 0, samplesOrder.length - 1)
+      || !_.inRange(newPosition, 0, samplesOrder.length - 1)
+    ) {
+      logger.log('Invalid positions or samples_order was broken, rolling back transaction');
+      throw new Error('Invalid update parameters');
+    }
+
+    trx.commit();
+  } catch (e) {
+    trx.rollback();
+    throw e;
+  }
 };
 
 module.exports = {

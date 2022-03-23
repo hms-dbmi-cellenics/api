@@ -76,11 +76,7 @@ const updateSamplePosition = async (req, res) => {
     res.json(OK());
   }
 
-  const result = await experiment.updateSamplePosition(experimentId, oldPosition, newPosition);
-
-  if (result.length === 0) {
-    throw new NotFoundError('Experiment not found');
-  }
+  await experiment.updateSamplePosition(experimentId, oldPosition, newPosition);
 
   logger.log(`Finished reordering samples in ${experimentId}`);
 
