@@ -8,6 +8,9 @@ const fetchConfiguration = async (environment, sandboxId) => {
     [environment]: {
       client: 'postgresql',
       connection: params,
+      migrations: {
+        tableName: 'migrations',
+      },
     },
   };
 };
