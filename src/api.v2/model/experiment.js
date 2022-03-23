@@ -45,31 +45,10 @@ const getExperimentData = async (experimentId) => {
 const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
   const sql = sqlClient.get();
 
-  const newPositionPreviousValueModifier = oldPosition < newPosition ? -1 : 0;
-  const newPositionAfterRemove = newPosition + newPositionPreviousValueModifier;
-  // const rawString = oldPosition < newPosition ? (
-  //   `SELECT array[:]`
-  // ) : (
-
-  // );
-
-  const selectResult = await sql(tableName).select('samples_order').where('id', experimentId);
-
-  if (selectResult.length === 0) {
-    return 0;
-  }
-
-  const samplesOrder = _.clone(selectResult[0].samples_order);
-
-  const sampleId = samplesOrder[oldPosition];
-
-  console.log('newPositionAfterRemoveDebug');
-  console.log(newPositionAfterRemove);
-
   // Switches values between the item at newPosition and the one at oldPosition
   const result = await sql(tableName).update({
     samples_order: sql.raw(`
-    (SELECT jsonb_insert(samples_order - '${sampleId}', '{${newPositionAfterRemove}}', '"${sampleId}"')
+    (SELECT jsonb_insert(samples_order - ${oldPosition}, '{${newPosition}}', samples_order -> ${oldPosition}, false)
     FROM (
       SELECT (samples_order)
       FROM experiment e
@@ -78,20 +57,6 @@ const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
     `),
   }).where('id', experimentId)
     .returning(['samples_order']);
-
-  // const result = await sql.raw(`
-  //   UPDATE "experiment" SET "samples_order" = (
-  //   SELECT jsonb_insert(samples_order - '${sampleId}',
-  // '{${newPositionInFilteredArray}}', '"${sampleId}"')
-  //   FROM (
-  //     SELECT (samples_order)
-  //     FROM experiment e
-  //     WHERE e.id = '${experimentId}'
-  //   ) samples_order )
-  //   `);
-
-  console.log('resultDebug');
-  console.log(result);
 
   return result;
 };
