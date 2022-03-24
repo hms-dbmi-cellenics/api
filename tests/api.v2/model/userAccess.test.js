@@ -1,6 +1,8 @@
 jest.mock('../../../src/api.v2/helpers/generateBasicModelFunctions',
   () => jest.fn(() => ({ hasFakeBasicModelFunctions: true })));
 
+const { mockSqlClient } = require('../mocks/getMockSqlClient')();
+
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
 }));

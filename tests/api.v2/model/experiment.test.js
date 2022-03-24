@@ -5,7 +5,7 @@ const helpers = require('../../../src/sql/helpers');
 
 const validSamplesOrderResult = ['sampleId1', 'sampleId2', 'sampleId3', 'sampleId4'];
 
-const { mockSqlClient, mockTrx, mockTrxQueryBuilder } = require('../mocks/getMockSqlClient')();
+const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 
 jest.mock('../../../src/api.v2/helpers/generateBasicModelFunctions',
   () => jest.fn(() => ({ hasFakeBasicModelFunctions: true })));

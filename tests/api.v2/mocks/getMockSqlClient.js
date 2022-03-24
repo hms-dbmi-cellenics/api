@@ -2,7 +2,7 @@
 const _ = require('lodash');
 
 module.exports = () => {
-  const queryBuilder = {
+  const queries = {
     where: jest.fn().mockReturnThis(),
     select: jest.fn().mockReturnThis(),
     update: jest.fn().mockReturnThis(),
@@ -11,15 +11,16 @@ module.exports = () => {
     returning: jest.fn(),
   };
 
-  const mockTrx = jest.fn(() => queryBuilder);
+  const queriesInTrx = _.cloneDeep(queries);
+  const mockTrx = jest.fn(() => queriesInTrx);
   mockTrx.commit = jest.fn().mockReturnThis();
   mockTrx.rollback = jest.fn().mockReturnThis();
+  _.merge(mockTrx, queriesInTrx);
 
-  _.merge(mockTrx, queryBuilder);
-
+  const queriesInSqlClient = _.cloneDeep(queries);
   const mockSqlClient = {
     transaction: jest.fn(() => Promise.resolve(mockTrx)),
-    ...(_.cloneDeep(queryBuilder)),
+    ...queriesInSqlClient,
   };
 
   return { mockSqlClient, mockTrx };
