@@ -114,8 +114,25 @@ describe('model/experiment', () => {
   it('updateSamplePosition rolls back if the result is invalid', async () => {
     mockTrx.returning.mockImplementationOnce(() => Promise.resolve([{ samples_order: null }]));
 
-    await expect(experiment.updateSamplePosition(mockExperimentId, 0, 1)).rejects.toThrow();
-    // .rejects.toEqual(new Error('Invalid update parameters'));
+    await expect(experiment.updateSamplePosition(mockExperimentId, 0, 1)).rejects.toThrow('Invalid update parameters');
+
+    expect(mockTrx).toHaveBeenCalledWith('experiment');
+
+    expect(mockTrx.update).toHaveBeenCalledWith({ samples_order: mockRawResult });
+    expect(mockTrx.raw.mock.calls[0]).toMatchSnapshot();
+    expect(mockTrx.where).toHaveBeenCalledWith('id', 'mockExperimentId');
+    expect(mockTrx.returning).toHaveBeenCalledWith(['samples_order']);
+
+    expect(mockTrx.commit).not.toHaveBeenCalled();
+    expect(mockTrx.rollback).toHaveBeenCalled();
+  });
+
+  it('updateSamplePosition rolls back if the parameters are invalid', async () => {
+    mockTrx.returning.mockImplementationOnce(
+      () => Promise.resolve([{ samples_order: validSamplesOrderResult }]),
+    );
+
+    await expect(experiment.updateSamplePosition(mockExperimentId, 0, 10000)).rejects.toThrow('Invalid update parameters');
 
     expect(mockTrx).toHaveBeenCalledWith('experiment');
 

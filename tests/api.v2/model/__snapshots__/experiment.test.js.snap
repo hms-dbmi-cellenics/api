@@ -1,14 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`model/experiment Works correctly 1`] = `
-"function query() {
-    /* istanbul ignore next */
-    cov_1j1ezz8dqm().f[1]++;
-    cov_1j1ezz8dqm().s[11]++;
-    this.select('*').from(tableName).leftJoin('experiment_execution', \`\${tableName}.id\`, 'experiment_execution.experiment_id').where('id', experimentId).as('experiment_with_exec');
-  }"
-`;
-
 exports[`model/experiment getExperimentData works correctly 1`] = `
 "function query() {
     /* istanbul ignore next */
@@ -18,10 +9,10 @@ exports[`model/experiment getExperimentData works correctly 1`] = `
   }"
 `;
 
-exports[`model/experiment updateSamplePosition rolls back if the result is invalid 1`] = `
+exports[`model/experiment updateSamplePosition rolls back if the parameters are invalid 1`] = `
 Array [
   "(
-        SELECT jsonb_insert(samples_order - 0, '{1}', samples_order -> 0, false)
+        SELECT jsonb_insert(samples_order - 0, '{10000}', samples_order -> 0, false)
         FROM (
           SELECT (samples_order)
           FROM experiment e
@@ -31,7 +22,7 @@ Array [
 ]
 `;
 
-exports[`model/experiment updateSamplePosition works correctly 1`] = `
+exports[`model/experiment updateSamplePosition rolls back if the result is invalid 1`] = `
 Array [
   "(
         SELECT jsonb_insert(samples_order - 0, '{1}', samples_order -> 0, false)
