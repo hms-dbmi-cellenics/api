@@ -45,10 +45,7 @@ describe('aggregateIntoJson', () => {
       mockSql,
     );
 
-    expect(mockSql.raw)
-      .toHaveBeenCalledWith(
-        'jsonb_object_agg(aggregationColumnKey, json_build_object(\'nested1\', nested_1, \'nested2\', nested_2)) as aggregationJsonKey',
-      );
+    expect(mockSql.raw.mock.calls[0]).toMatchSnapshot();
 
     expect(mockSelect).toHaveBeenCalledWith(['root_1 as root1', 'root_2 as root2', mockJsonbObjectAggResult]);
     expect(mockFrom).toHaveBeenCalledWith('originalQuery');

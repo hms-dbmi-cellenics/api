@@ -21,14 +21,14 @@ const jsonbObjectAgg = (aggregationColumnKey, nestedFields, aggregationJsonKey, 
   // When there is no row to aggregate, json_object_agg throws an error
   // So we need to handle this case outside jsonb_object_agg with coalesce
   // Solution based on https://stackoverflow.com/a/33305456
-  const handleNoExecutionsFoundSql = `
-  COALESCE(${jsonbObjectAggSql}
-    FILTER(
-      WHERE ${aggregationColumnKey} IS NOT NULL
-    ),
-    '{}'::jsonb
-  ) 
-  `;
+  const handleNoExecutionsFoundSql = (
+    `COALESCE(${jsonbObjectAggSql}
+      FILTER(
+        WHERE ${aggregationColumnKey} IS NOT NULL
+      ),
+      '{}'::jsonb
+    )`
+  );
 
   return sql.raw(`${handleNoExecutionsFoundSql} as ${aggregationJsonKey}`);
 };
