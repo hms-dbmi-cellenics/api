@@ -1,6 +1,10 @@
 jest.mock('../../../src/api.v2/helpers/generateBasicModelFunctions',
   () => jest.fn(() => ({ hasFakeBasicModelFunctions: true })));
 
+jest.mock('../../../src/sql/sqlClient', () => ({
+  get: jest.fn(() => mockSqlClient),
+}));
+
 const userAccess = require('../../../src/api.v2/model/userAccess');
 
 describe('model/userAccess', () => {
@@ -10,5 +14,9 @@ describe('model/userAccess', () => {
         hasFakeBasicModelFunctions: true,
       }),
     );
+  });
+
+  it('canAccessExperiment works correctly', async () => {
+
   });
 });
