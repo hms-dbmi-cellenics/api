@@ -13,6 +13,15 @@ const mockExperiment = {
   created_at: '1900-03-23 21:06:00.573142+00',
   updated_at: '1900-03-26 21:06:00.573142+00',
 };
+
+const mockUserAccessCreateResults = [
+  [{
+    user_id: 'someUser', experiment_id: 'mockExperimentId', access_role: 'owner', updated_at: '1910-03-23 21:06:00.573142+00',
+  }], [{
+    user_id: 'theAdmin', experiment_id: 'mockExperimentId', access_role: 'owner', updated_at: '1910-03-23 21:06:00.573142+00',
+  }],
+];
+
 jest.mock('../../../src/api.v2/model/experiment', () => ({
   create: jest.fn(() => Promise.resolve([mockExperiment])),
 }));
@@ -28,6 +37,11 @@ describe('experimentController', () => {
   });
 
   it('Creating a new experiment works correctly', async () => {
+    userAccessModel.create
+      // @ts-ignore
+      .mockImplementationOnce(() => Promise.resolve([mockUserAccessCreateResults[0]]))
+      .mockImplementationOnce(() => Promise.resolve([mockUserAccessCreateResults[1]]));
+
     const mockReq = {
       params: {
         experimentId: 'mockId',
