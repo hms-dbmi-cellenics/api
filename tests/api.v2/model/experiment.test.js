@@ -75,8 +75,13 @@ describe('model/experiment', () => {
 
     const firstParam = helpers.aggregateIntoJson.mock.calls[0][0];
 
-    // Checking query (a function, the first param that was passed to helpers.aggregateIntoJson)
-    expect(firstParam.toString()).toMatchSnapshot();
+
+    // The replace(/__cov) is to remove coverage annotations:
+    // https://stackoverflow.com/questions/30470796/function-equality-assertion-broken-by-code-coverage-report
+    const firstParamWithoutCoverageAnnotations = firstParam.toString().replace(/cov.*?;/g, '');
+
+    // Checking query (the first param that was passed to helpers.aggregateIntoJson)
+    expect(firstParamWithoutCoverageAnnotations).toMatchSnapshot();
   });
 
   it('updateSamplePosition works correctly if valid params are passed', async () => {
