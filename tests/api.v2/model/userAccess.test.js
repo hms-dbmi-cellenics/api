@@ -15,6 +15,10 @@ jest.mock('../../../src/sql/sqlClient', () => ({
 const userAccess = require('../../../src/api.v2/model/userAccess');
 
 describe('model/userAccess', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('Returns the correct generateBasicModelFunctions', async () => {
     expect(userAccess).toEqual(
       expect.objectContaining({
@@ -45,5 +49,50 @@ describe('model/userAccess', () => {
     expect(roles.isRoleAuthorized).toHaveBeenCalledWith('roleThatIsOk', url, method);
 
     expect(result).toEqual(true);
+  });
+
+  it('canAccessExperiment denies access if no entry exists', async () => {
+    const userId = 'userId';
+    const experimentId = 'experimentId';
+    const url = 'url';
+    const method = 'method';
+
+    mockSqlClient.where.mockImplementationOnce(() => []);
+
+    const result = await userAccess.canAccessExperiment(userId, experimentId, url, method);
+
+    expect(mockSqlClient.select).toHaveBeenCalled();
+    expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
+    expect(mockSqlClient.where).toHaveBeenCalledWith(
+      { experiment_id: experimentId, user_id: userId },
+    );
+
+    expect(roles.isRoleAuthorized).not.toHaveBeenCalled();
+
+    expect(result).toEqual(false);
+  });
+
+  it('canAccessExperiment denies access if an entry exists but the role doesn\'t allow this kind of access', async () => {
+    const userId = 'userId';
+    const experimentId = 'experimentId';
+    const url = 'url';
+    const method = 'method';
+
+    mockSqlClient.where.mockImplementationOnce(() => [{ access_role: 'roleThatIsNotOk' }]);
+
+    // @ts-ignore
+    roles.isRoleAuthorized.mockImplementationOnce(() => false);
+
+    const result = await userAccess.canAccessExperiment(userId, experimentId, url, method);
+
+    expect(mockSqlClient.select).toHaveBeenCalled();
+    expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
+    expect(mockSqlClient.where).toHaveBeenCalledWith(
+      { experiment_id: experimentId, user_id: userId },
+    );
+
+    expect(roles.isRoleAuthorized).toHaveBeenCalledWith('roleThatIsNotOk', url, method);
+
+    expect(result).toEqual(false);
   });
 });
