@@ -3,8 +3,9 @@ const _ = require('lodash');
 
 module.exports = () => {
   const queries = {
-    where: jest.fn().mockReturnThis(),
     select: jest.fn().mockReturnThis(),
+    from: jest.fn().mockReturnThis(),
+    where: jest.fn().mockReturnThis(),
     update: jest.fn().mockReturnThis(),
     orderBy: jest.fn().mockReturnThis(),
     raw: jest.fn(),
