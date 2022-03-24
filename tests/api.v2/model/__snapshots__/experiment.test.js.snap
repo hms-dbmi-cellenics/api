@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`model/experiment Works correctly 1`] = `
+"function query() {
+    /* istanbul ignore next */
+    cov_1j1ezz8dqm().f[1]++;
+    cov_1j1ezz8dqm().s[11]++;
+    this.select('*').from(tableName).leftJoin('experiment_execution', \`\${tableName}.id\`, 'experiment_execution.experiment_id').where('id', experimentId).as('experiment_with_exec');
+  }"
+`;
