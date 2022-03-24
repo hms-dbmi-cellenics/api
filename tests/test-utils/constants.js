@@ -60,7 +60,10 @@ const USER = {
 // Try to use realistic values but DO NOT USE real ones.
 module.exports = Object.freeze({
   SOCKET_ENDPOINT: 'localhost:5000',
-  URL: 'localhost:5000/v1/experiments',
+  URL_V1: 'localhost:5000/v1/experiments',
+  URL_V2: 'localhost:5000/v2/experiments',
+  RESOURCE_V1: '/v1/experiments',
+  RESOURCE_V2: '/v2/experiments',
   EXPERIMENT_ID: 'experimentid11111111111111111111',
   S3_BUCKET: 'worker-results-test',
   S3_KEY: '11111122222233333344444455555555',

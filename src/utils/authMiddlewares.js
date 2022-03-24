@@ -232,10 +232,12 @@ const authorize = async (userId, resource, method, authResource, authByExperimen
       method,
     );
   } else {
-    granted = await accessService.canAccessExperiment(userId,
+    granted = await accessService.canAccessExperiment(
+      userId,
       experimentId,
       resource,
-      method);
+      method,
+    );
   }
 
   if (granted) {
