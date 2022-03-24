@@ -4,7 +4,6 @@ const _ = require('lodash');
 
 const sqlClient = require('../../../src/sql/sqlClient');
 const helpers = require('../../../src/sql/helpers');
-const generateBasicModelFunctions = require('../../../src/api.v2/helpers/generateBasicModelFunctions');
 
 const validSamplesOrderResult = ['sampleId1', 'sampleId2', 'sampleId3', 'sampleId4'];
 const mockRawResult = Promise.resolve({ isRawResult: true });
@@ -27,6 +26,10 @@ const mockSqlClient = {
   isMockSqlClient: true,
   transaction: jest.fn(() => Promise.resolve(mockTrx)),
 };
+
+jest.mock('../../../src/api.v2/helpers/generateBasicModelFunctions',
+  () => jest.fn(() => ({ hasFakeBasicModelFunctions: true })));
+
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
 }));
@@ -35,33 +38,16 @@ jest.mock('../../../src/sql/helpers', () => ({
   aggregateIntoJson: jest.fn(),
 }));
 
-jest.mock('../../../src/api.v2/helpers/generateBasicModelFunctions',
-  () => jest.fn(() => ({ hasFakeBasicModelFunctions: true })));
-
 const experiment = require('../../../src/api.v2/model/experiment');
 
 const mockExperimentId = 'mockExperimentId';
 
 describe('model/experiment', () => {
-  afterEach(() => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('Returns the correct generateBasicModelFunctions', async () => {
-    expect(generateBasicModelFunctions).toHaveBeenCalledTimes(1);
-    expect(generateBasicModelFunctions).toHaveBeenCalledWith({
-      tableName: 'experiment',
-      selectableProps: [
-        'id',
-        'name',
-        'description',
-        'samples_order',
-        'notify_by_email',
-        'created_at',
-        'updated_at',
-      ],
-    });
-
     expect(experiment).toEqual(
       expect.objectContaining({
         hasFakeBasicModelFunctions: true,
