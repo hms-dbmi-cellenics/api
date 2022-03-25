@@ -55,9 +55,6 @@ const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
   const trx = await sql.transaction();
 
   try {
-    console.log('trx(tableName)');
-    console.log(await trx(experimentTable));
-
     const result = await trx(experimentTable).update({
       samples_order: trx.raw(`(
         SELECT jsonb_insert(samples_order - ${oldPosition}, '{${newPosition}}', samples_order -> ${oldPosition}, false)
