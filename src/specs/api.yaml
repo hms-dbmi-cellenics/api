@@ -941,6 +941,12 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '404':
           description: Not Found
           content:
@@ -1239,7 +1245,7 @@ paths:
               required:
                 - userEmail
         description: email of the user to remove from experiment
-        
+
 components:
   schemas:
     Project:
