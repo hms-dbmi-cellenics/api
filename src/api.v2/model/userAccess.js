@@ -3,7 +3,7 @@ const sqlClient = require('../../sql/sqlClient');
 
 const { isRoleAuthorized } = require('../helpers/roles');
 
-const tableName = 'user_access';
+const userAccessTable = 'user_access';
 
 const selectableProps = [
   'user_id',
@@ -13,14 +13,14 @@ const selectableProps = [
 ];
 
 const basicModelFunctions = generateBasicModelFunctions({
-  tableName,
+  tableName: userAccessTable,
   selectableProps,
 });
 
 const canAccessExperiment = async (userId, experimentId, url, method) => {
   const results = await sqlClient.get()
     .select()
-    .from(tableName)
+    .from(userAccessTable)
     .where({ experiment_id: experimentId, user_id: userId });
 
   // If there is no entry for this user and role, then user definitely doesn't have access

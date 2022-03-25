@@ -9,7 +9,8 @@ const getLogger = require('../../utils/getLogger');
 
 const logger = getLogger('[ExperimentModel] - ');
 
-const tableName = 'experiment';
+const experimentTable = 'experiment';
+const experimentExecutionTable = 'experiment_execution';
 
 const experimentFields = [
   'id',
@@ -22,7 +23,7 @@ const experimentFields = [
 ];
 
 const basicModelFunctions = generateBasicModelFunctions({
-  tableName,
+  tableName: experimentTable,
   selectableProps: experimentFields,
 });
 
@@ -31,8 +32,8 @@ const getExperimentData = async (experimentId) => {
 
   function query() {
     this.select('*')
-      .from(tableName)
-      .leftJoin('experiment_execution', `${tableName}.id`, 'experiment_execution.experiment_id')
+      .from(experimentTable)
+      .leftJoin(experimentExecutionTable, `${experimentTable}.id`, `${experimentExecutionTable}.experiment_id`)
       .where('id', experimentId)
       .as('experiment_with_exec');
   }
@@ -55,9 +56,9 @@ const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
 
   try {
     console.log('trx(tableName)');
-    console.log(await trx(tableName));
+    console.log(await trx(experimentTable));
 
-    const result = await trx(tableName).update({
+    const result = await trx(experimentTable).update({
       samples_order: trx.raw(`(
         SELECT jsonb_insert(samples_order - ${oldPosition}, '{${newPosition}}', samples_order -> ${oldPosition}, false)
         FROM (
