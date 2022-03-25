@@ -5,7 +5,7 @@ exports[`model/experiment getExperimentData works correctly 1`] = `
     /* istanbul ignore next */
     
     
-    this.select('*').from(tableName).leftJoin('experiment_execution', \`\${tableName}.id\`, 'experiment_execution.experiment_id').where('id', experimentId).as('experiment_with_exec');
+    this.select('*').from(experimentTable).leftJoin(experimentExecutionTable, \`\${experimentTable}.id\`, \`\${experimentExecutionTable}.experiment_id\`).where('id', experimentId).as('experiment_with_exec');
   }"
 `;
 
