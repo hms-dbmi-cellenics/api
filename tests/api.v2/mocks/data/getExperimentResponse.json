@@ -1,0 +1,29 @@
+{
+  "id": "e52db391-89a1-e514-6fce-6d864c641bd0",
+  "name": "Covid19 Fake Experiment",
+  "description": "",
+  "samplesOrder": [
+      "d05cac1d-2cec-46f7-9076-a3fbe99aaf0e",
+      "c0738ce5-aeca-4237-bbee-f08da29ce402",
+      "0cb5f82e-4079-4b91-9061-e9961147515c",
+      "9100394d-e635-4fdd-85c8-e5ab12ed9456",
+      "f52990df-ae96-4180-85e6-b1e009196a71",
+      "da683352-be5e-4815-8261-10e3c81d968e",
+      "3668649d-25fa-42c7-af93-443b2d5a67b8"
+  ],
+  "notifyByEmail": true,
+  "createdAt": "2021-10-26 14:12:23.666+00",
+  "updatedAt": "2021-10-26 14:51:30.974+00",
+  "pipelines": {
+      "qc": {
+          "paramsHash": null,
+          "executionArn": "arn:aws:states:eu-west-1:accId:execution:biomage-qc-production-bc6c4292d46112103828a19eb6027b7d236ec0c2:90ed77ea-d440-4fe0-98ee-4d3fa36ed855",
+          "stateMachineArn": "arn:aws:states:eu-west-1:accId:stateMachine:biomage-qc-production-bc6c4292d46112103828a19eb6027b7d236ec0c2"
+      },
+      "gem2s": {
+          "paramsHash": "tha",
+          "executionArn": "arn:aws:states:eu-west-1:accId:execution:biomage-gem2s-production-bc6c4292d46112103828a19eb6027b7d236ec0c2:c270886a-12bc-404d-8a9d-d550cb48b685",
+          "stateMachineArn": "arn:aws:states:eu-west-1:accId:stateMachine:biomage-gem2s-production-bc6c4292d46112103828a19eb6027b7d236ec0c2"
+      }
+  }
+}

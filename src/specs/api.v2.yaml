@@ -173,6 +173,9 @@ paths:
                   type: integer
                 newPosition:
                   type: integer
+              required:
+                - oldPosition
+                - newPosition
               additionalProperties: false
       responses:
         '200':
