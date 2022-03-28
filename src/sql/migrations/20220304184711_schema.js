@@ -1,9 +1,8 @@
-
 const setOnUpdateTrigger = (table) => (`
-  CREATE TRIGGER ${table}_updated_at_trigger
-  BEFORE UPDATE ON ${table}
-  FOR EACH ROW
-  EXECUTE PROCEDURE on_update_timestamp();
+CREATE TRIGGER ${table}_updated_at_trigger
+BEFORE UPDATE ON ${table}
+FOR EACH ROW
+EXECUTE PROCEDURE on_update_timestamp();
 `);
 
 const nativeEnum = (table, tableName) => (
@@ -11,10 +10,10 @@ const nativeEnum = (table, tableName) => (
 );
 
 /**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
-exports.up = async function (knex) {
+* @param { import("knex").Knex } knex
+* @returns { Promise<void> }
+*/
+exports.up = async (knex) => {
   await knex.raw('CREATE TYPE pipeline_type AS ENUM (\'qc\', \'gem2s\');');
   await knex.raw('CREATE TYPE sample_technology AS ENUM (\'10x\', \'rhapsody\');');
   await knex.raw('CREATE TYPE sample_file_type AS ENUM (\'features10x\', \'barcodes10x\', \'matrix10x\', \'rhapsody\');');
@@ -30,6 +29,7 @@ exports.up = async function (knex) {
       table.text('description').notNullable();
       table.jsonb('processing_config').nullable();
       table.boolean('notify_by_email').defaultTo(true);
+      table.specificType('samples_order', 'UUID[]').notNullable();
       // Based on https://stackoverflow.com/a/48028011
       table.timestamps(true, true);
     }).then(() => {
@@ -63,8 +63,8 @@ exports.up = async function (knex) {
       table.uuid('id').primary();
       nativeEnum(table, 'sample_file_type').notNullable();
       table.boolean('valid').notNullable();
+      table.integer('size').notNullable();
       table.string('s3_path').notNullable();
-      table.string('bundle_path').notNullable();
       nativeEnum(table, 'upload_status').notNullable();
       table.timestamp('updated_at').defaultTo(knex.fn.now());
     }).then(() => {
@@ -73,8 +73,9 @@ exports.up = async function (knex) {
 
   await knex.schema
     .createTable('metadata_track', (table) => {
-      table.string('key').primary();
+      table.increments('id', { primaryKey: true });
       table.uuid('experiment_id').references('experiment.id').onDelete('CASCADE').notNullable();
+      table.string('key');
     });
 
   await knex.schema
@@ -87,11 +88,11 @@ exports.up = async function (knex) {
 
   await knex.schema
     .createTable('sample_in_metadata_track_map', (table) => {
-      table.string('metadata_track_key').references('metadata_track.key').onDelete('CASCADE').notNullable();
+      table.integer('metadata_track_id').references('metadata_track.id').onDelete('CASCADE').notNullable();
       table.uuid('sample_id').references('sample.id').onDelete('CASCADE').notNullable();
       table.string('value').notNullable();
 
-      table.primary(['metadata_track_key', 'sample_id']);
+      table.primary(['metadata_track_id', 'sample_id']);
     });
 
   await knex.schema
@@ -130,11 +131,11 @@ exports.up = async function (knex) {
 };
 
 /**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
-exports.down = async function (knex) {
-  return Promise.all([
+* @param { import("knex").Knex } knex
+* @returns { Promise<void> }
+*/
+exports.down = async (knex) => {
+  await Promise.all([
     knex.schema.dropTable('user_access'),
     knex.schema.dropTable('invite_access'),
     knex.schema.dropTable('plot'),
