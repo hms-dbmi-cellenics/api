@@ -13,7 +13,7 @@ const AccessService = require('../../../../src/api/route-services/access');
 
 jest.mock('../../../../src/api/route-services/experiment');
 jest.mock('../../../../src/utils/authMiddlewares');
-
+jest.mock('../../../../src/utils/send-email', () => jest.fn());
 jest.mock('../../../../src/utils/aws/user', () => ({
   getAwsUserAttributesByEmail: jest.fn((email) => {
     if (email === 'asd@asd.com') {
