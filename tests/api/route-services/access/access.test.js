@@ -238,7 +238,6 @@ describe('tests for the projects service', () => {
     const addItem = mockDocClientPutItem();
     as.addToInviteAccess(fake.USER.sub, fake.EXPERIMENT_ID, fake.PROJECT_ID, 'admin');
     expect(addItem).toHaveBeenCalledTimes(1);
-    expect(addItem.mock.calls).toMatchSnapshot();
   });
 
   test('Get roles', async () => {
