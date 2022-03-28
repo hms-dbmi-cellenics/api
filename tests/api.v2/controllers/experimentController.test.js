@@ -77,7 +77,7 @@ describe('experimentController', () => {
     expect(userAccessModel.create).toHaveBeenCalledWith({
       user_id: config.adminSub,
       experiment_id: mockExperiment.id,
-      access_role: AccessRole.OWNER,
+      access_role: AccessRole.ADMIN,
     });
 
     expect(experimentModel.create).toHaveBeenCalledTimes(1);
@@ -123,7 +123,7 @@ describe('experimentController', () => {
     expect(userAccessModel.create).toHaveBeenCalledWith({
       user_id: config.adminSub,
       experiment_id: mockExperiment.id,
-      access_role: AccessRole.OWNER,
+      access_role: AccessRole.ADMIN,
     });
   });
 
