@@ -1,13 +1,9 @@
-const AWS = require('aws-sdk');
-
-const config = require('../../src/config');
+const AWS = require('../../src/utils/requireAWS');
 
 const getConnectionParams = require('../../src/sql/getConnectionParams');
 
-jest.mock('../../src/config');
-
 const mockDescribeDBClusterEndpoints = jest.fn();
-jest.mock('aws-sdk', () => ({
+jest.mock('../../src/utils/requireAWS', () => ({
   config: {
     credentials: { expired: false },
   },
@@ -22,7 +18,7 @@ AWS.RDS.Signer = jest.fn(() => ({
 }));
 
 const localhostParams = {
-  host: '127.0.0.1',
+  host: 'localhost',
   port: 5431,
   user: 'postgres',
   database: 'aurora_db',
@@ -44,12 +40,9 @@ describe('getConnectionParams', () => {
   });
 
   it('Creates correct params in development environment', async () => {
-    config.clusterEnv = 'development';
-    config.awsRegion = 'eu-west-1';
-
     const signerSpy = jest.fn((x) => x);
 
-    const params = await getConnectionParams();
+    const params = await getConnectionParams('development');
 
     // Doesn't call the aws signer because we aren't interacting with aws
     expect(signerSpy).not.toHaveBeenCalled();
@@ -59,14 +52,11 @@ describe('getConnectionParams', () => {
   });
 
   it('Creates correct params in staging environment', async () => {
-    config.clusterEnv = 'staging';
-    config.awsRegion = 'eu-west-1';
-
     mockDescribeDBClusterEndpoints.mockReturnValueOnce({ promise: () => Promise.resolve({ DBClusterEndpoints: [{ Endpoint: 'endpointName' }] }) });
 
     mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
 
-    const params = await getConnectionParams();
+    const params = await getConnectionParams('staging');
 
     expect(mockDescribeDBClusterEndpoints.mock.calls[0]).toMatchSnapshot();
 
@@ -83,14 +73,11 @@ describe('getConnectionParams', () => {
   });
 
   it('Creates correct params in production environment', async () => {
-    config.clusterEnv = 'production';
-    config.awsRegion = 'eu-west-1';
-
     mockDescribeDBClusterEndpoints.mockReturnValueOnce({ promise: () => Promise.resolve({ DBClusterEndpoints: [{ Endpoint: 'endpointName' }] }) });
 
     mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
 
-    const params = await getConnectionParams();
+    const params = await getConnectionParams('production');
 
     expect(mockDescribeDBClusterEndpoints.mock.calls[0]).toMatchSnapshot();
 
@@ -107,15 +94,12 @@ describe('getConnectionParams', () => {
   });
 
   it('Fails if there is no writer endpoint available', async () => {
-    config.clusterEnv = 'staging';
-    config.awsRegion = 'eu-west-1';
-
     mockDescribeDBClusterEndpoints
       .mockReturnValueOnce({ promise: () => Promise.resolve({ DBClusterEndpoints: [] }) });
 
     mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
 
-    await expect(getConnectionParams()).rejects.toThrow();
+    await expect(getConnectionParams('staging')).rejects.toThrow();
 
     expect(mockDescribeDBClusterEndpoints.mock.calls[0]).toMatchSnapshot();
 
