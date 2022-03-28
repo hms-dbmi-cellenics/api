@@ -1,5 +1,4 @@
 const AWSMock = require('aws-sdk-mock');
-const AWS = require('aws-sdk-mock');
 const fake = require('../../../test-utils/constants');
 
 const {
