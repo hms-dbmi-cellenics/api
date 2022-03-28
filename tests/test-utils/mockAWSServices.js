@@ -59,6 +59,16 @@ const mockDynamoQuery = (payload = [], error = null) => {
   return fnSpy;
 };
 
+const mockDocClientPutItem = (payload = {}, error = null) => {
+  const fnSpy = jest.fn((x) => x);
+  AWSMock.setSDKInstance(AWS);
+  AWSMock.mock('DynamoDB.DocumentClient', 'put', (params, callback) => {
+    fnSpy(params);
+    callback(error, payload);
+  });
+  return fnSpy;
+};
+
 const mockDocClientQuery = (payload = [], error = null) => {
   const payloadToReturn = !Array.isArray(payload) ? [payload] : payload;
 
@@ -217,4 +227,5 @@ module.exports = {
   mockS3GetObjectTagging,
   mockDocClientQuery,
   mockDocClientBatchWrite,
+  mockDocClientPutItem,
 };
