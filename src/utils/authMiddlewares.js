@@ -216,7 +216,7 @@ const authorize = async (userId, resource, method, authResource, authByExperimen
 
   let experimentId = authResource;
 
-  // authResource is always experimentId in V2
+  // authResource is always experimentId in V2 because there is not project
   if (!authByExperiment && !isV2) {
     const experiments = await projectService.getExperiments(authResource);
     experimentId = experiments[0].experimentId;
