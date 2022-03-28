@@ -235,11 +235,10 @@ describe('tests for the projects service', () => {
 
   test('add to invite-access', () => {
     const as = new AccessService();
-    // const addToInviteAccess = jest.fn();
     const addItem = mockDocClientPutItem();
-    // as.addToInviteAccess = addToInviteAccess;
     as.addToInviteAccess(fake.USER.sub, fake.EXPERIMENT_ID, fake.PROJECT_ID, 'admin');
     expect(addItem).toHaveBeenCalledTimes(1);
+    expect(addItem.mock.calls).toMatchSnapshot();
   });
 
   test('Get roles', async () => {
