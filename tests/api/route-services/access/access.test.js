@@ -1,4 +1,5 @@
 const AWSMock = require('aws-sdk-mock');
+const AWS = require('aws-sdk-mock');
 const fake = require('../../../test-utils/constants');
 
 const {
@@ -6,14 +7,14 @@ const {
   mockDocClientBatchWrite,
   mockDynamoScan,
   mockDynamoDeleteItem,
+  mockDocClientPutItem,
 } = require('../../../test-utils/mockAWSServices');
 const AccessService = require('../../../../src/api/route-services/access');
-const sendEmail = require('../../../../src/utils/send-email');
+
 
 jest.mock('../../../../src/api/route-services/experiment');
 jest.mock('../../../../src/utils/authMiddlewares');
 
-jest.mock('../../../../src/utils/send-email', () => jest.fn());
 jest.mock('../../../../src/utils/aws/user', () => ({
   getAwsUserAttributesByEmail: jest.fn((email) => {
     if (email === 'asd@asd.com') {
@@ -224,13 +225,22 @@ describe('tests for the projects service', () => {
     expect(grantRoleMock.mock.calls).toEqual([[fake.USER.sub, fake.EXPERIMENT_ID, 'aaaaaaaa-bbbb-3333-4444-999999999999', 'admin']]);
   });
 
-  test('not existent user adds to invite-access', async () => {
+  test('not existent user calls adds to invite-access', async () => {
     const as = new AccessService();
     const addToInviteAccess = jest.fn();
     as.addToInviteAccess = addToInviteAccess;
 
     await as.inviteUser('asd@asd.com', fake.EXPERIMENT_ID, fake.PROJECT_ID, 'admin', { email: 'inviter@user.com' });
-    expect(sendEmail).toHaveBeenCalled();
+    expect(addToInviteAccess).toHaveBeenCalledTimes(1);
+  });
+
+  test('add to invite-access', () => {
+    const as = new AccessService();
+    // const addToInviteAccess = jest.fn();
+    const addItem = mockDocClientPutItem();
+    // as.addToInviteAccess = addToInviteAccess;
+    as.addToInviteAccess(fake.USER.sub, fake.EXPERIMENT_ID, fake.PROJECT_ID, 'admin');
+    expect(addItem).toHaveBeenCalledTimes(1);
   });
 
   test('Get roles', async () => {

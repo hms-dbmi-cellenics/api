@@ -48,6 +48,7 @@ class AccessService {
 
   async addToInviteAccess(userEmail, experimentId, projectId, role) {
     logger.log(`PUT experiment role ${experimentId} data in invite-access`);
+
     const params = {
       TableName: this.inviteAccessTableName,
       Item: {
