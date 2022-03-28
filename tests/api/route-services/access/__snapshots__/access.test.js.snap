@@ -1,5 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`tests for the projects service add to invite-access 1`] = `
+Array [
+  Array [
+    Object {
+      "Item": Object {
+        "createdDate": "2022-03-28T10:37:42.494Z",
+        "experimentId": "experimentid11111111111111111111",
+        "projectId": "aaaaaaaa-bbbb-3333-4444-999999999999",
+        "role": "admin",
+        "userEmail": "032cdb44-0cd3-4d58-af21-850kp0b95ac7",
+      },
+      "TableName": "invite-access-test",
+    },
+  ],
+]
+`;
+
 exports[`tests for the projects service deleteExperimentEntries calls doc client 1`] = `
 Array [
   Array [
