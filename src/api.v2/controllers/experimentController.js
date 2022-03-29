@@ -9,7 +9,6 @@ const userAccess = require('../model/userAccess');
 const AccessRole = require('../../utils/enums/AccessRole');
 const getLogger = require('../../utils/getLogger');
 const { OK } = require('../../utils/responses');
-const { NotFoundError } = require('../../utils/responses');
 
 const logger = getLogger('[ExperimentController] - ');
 
@@ -17,10 +16,6 @@ const getExperiment = async (req, res) => {
   const { params: { experimentId } } = req;
 
   const data = await experiment.getExperimentData(experimentId);
-
-  if (_.isNil(data)) {
-    throw new NotFoundError('Experiment not found');
-  }
 
   res.json(data);
 };

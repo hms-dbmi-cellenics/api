@@ -7,6 +7,8 @@ const { aggregateIntoJson } = require('../../sql/helpers');
 
 const getLogger = require('../../utils/getLogger');
 
+const { NotFoundError } = require('../../utils/responses');
+
 const logger = getLogger('[ExperimentModel] - ');
 
 const experimentTable = 'experiment';
@@ -43,6 +45,10 @@ const getExperimentData = async (experimentId) => {
   ];
 
   const result = await aggregateIntoJson(query, experimentFields, experimentExecutionFields, 'pipeline_type', 'pipelines', sql);
+
+  if (result.length === 0) {
+    throw new NotFoundError('Experiment not found');
+  }
 
   return result[0];
 };
