@@ -8,6 +8,7 @@ module.exports = () => {
     where: jest.fn().mockReturnThis(),
     update: jest.fn().mockReturnThis(),
     orderBy: jest.fn().mockReturnThis(),
+    first: jest.fn().mockReturnThis(),
     raw: jest.fn(),
     returning: jest.fn(),
   };
@@ -19,10 +20,12 @@ module.exports = () => {
   _.merge(mockTrx, queriesInTrx);
 
   const queriesInSqlClient = _.cloneDeep(queries);
-  const mockSqlClient = {
+
+  const mockSqlClient = jest.fn(() => queriesInSqlClient);
+  _.merge(mockSqlClient, {
     transaction: jest.fn(() => Promise.resolve(mockTrx)),
     ...queriesInSqlClient,
-  };
+  });
 
   return { mockSqlClient, mockTrx };
 };

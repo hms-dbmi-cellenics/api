@@ -32,7 +32,7 @@ const canAccessExperiment = async (userId, experimentId, url, method) => {
     return false;
   }
 
-  const { access_role: role } = result[0];
+  const { access_role: role } = result;
 
   return isRoleAuthorized(role, url, method);
 };

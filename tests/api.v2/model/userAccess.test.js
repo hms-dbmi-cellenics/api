@@ -1,3 +1,4 @@
+// @ts-nocheck
 const roles = require('../../../src/api.v2/helpers/roles');
 
 const { mockSqlClient } = require('../mocks/getMockSqlClient')();
@@ -33,14 +34,14 @@ describe('model/userAccess', () => {
     const url = 'url';
     const method = 'method';
 
-    mockSqlClient.where.mockImplementationOnce(() => [{ access_role: 'roleThatIsOk' }]);
+    mockSqlClient.from.mockImplementationOnce(() => ({ access_role: 'roleThatIsOk' }));
 
     // @ts-ignore
     roles.isRoleAuthorized.mockImplementationOnce(() => true);
 
     const result = await userAccess.canAccessExperiment(userId, experimentId, url, method);
 
-    expect(mockSqlClient.select).toHaveBeenCalled();
+    expect(mockSqlClient.first).toHaveBeenCalled();
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
     expect(mockSqlClient.where).toHaveBeenCalledWith(
       { experiment_id: experimentId, user_id: userId },
@@ -57,11 +58,11 @@ describe('model/userAccess', () => {
     const url = 'url';
     const method = 'method';
 
-    mockSqlClient.where.mockImplementationOnce(() => []);
+    mockSqlClient.from.mockImplementationOnce(() => undefined);
 
     const result = await userAccess.canAccessExperiment(userId, experimentId, url, method);
 
-    expect(mockSqlClient.select).toHaveBeenCalled();
+    expect(mockSqlClient.first).toHaveBeenCalled();
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
     expect(mockSqlClient.where).toHaveBeenCalledWith(
       { experiment_id: experimentId, user_id: userId },
@@ -78,14 +79,14 @@ describe('model/userAccess', () => {
     const url = 'url';
     const method = 'method';
 
-    mockSqlClient.where.mockImplementationOnce(() => [{ access_role: 'roleThatIsNotOk' }]);
+    mockSqlClient.from.mockImplementationOnce(() => ({ access_role: 'roleThatIsNotOk' }));
 
     // @ts-ignore
     roles.isRoleAuthorized.mockImplementationOnce(() => false);
 
     const result = await userAccess.canAccessExperiment(userId, experimentId, url, method);
 
-    expect(mockSqlClient.select).toHaveBeenCalled();
+    expect(mockSqlClient.first).toHaveBeenCalled();
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
     expect(mockSqlClient.where).toHaveBeenCalledWith(
       { experiment_id: experimentId, user_id: userId },
