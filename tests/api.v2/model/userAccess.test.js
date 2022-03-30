@@ -23,16 +23,16 @@ const userAccess = require('../../../src/api.v2/model/userAccess');
 
 const mockUserAccessCreateResults = [
   [{
-    user_id: 'mockAdminSub',
-    experiment_id: 'mockExperimentId',
-    access_role: 'owner',
-    updated_at: '1910-03-23 21:06:00.573142+00',
+    userId: 'mockAdminSub',
+    experimentId: 'mockExperimentId',
+    accessRole: 'owner',
+    updatedAt: '1910-03-23 21:06:00.573142+00',
   }],
   [{
-    user_id: 'someUser',
-    experiment_id: 'mockExperimentId',
-    access_role: 'owner',
-    updated_at: '1910-03-23 21:06:00.573142+00',
+    userId: 'someUser',
+    experimentId: 'mockExperimentId',
+    accessRole: 'owner',
+    updatedAt: '1910-03-23 21:06:00.573142+00',
   }],
 ];
 
@@ -106,7 +106,7 @@ describe('model/userAccess', () => {
     const url = 'url';
     const method = 'method';
 
-    mockSqlClient.from.mockImplementationOnce(() => ({ access_role: 'roleThatIsOk' }));
+    mockSqlClient.from.mockImplementationOnce(() => ({ accessRole: 'roleThatIsOk' }));
 
     // @ts-ignore
     roles.isRoleAuthorized.mockImplementationOnce(() => true);
@@ -151,7 +151,7 @@ describe('model/userAccess', () => {
     const url = 'url';
     const method = 'method';
 
-    mockSqlClient.from.mockImplementationOnce(() => ({ access_role: 'roleThatIsNotOk' }));
+    mockSqlClient.from.mockImplementationOnce(() => ({ accessRole: 'roleThatIsNotOk' }));
 
     // @ts-ignore
     roles.isRoleAuthorized.mockImplementationOnce(() => false);
