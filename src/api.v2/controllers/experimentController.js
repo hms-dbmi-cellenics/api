@@ -24,13 +24,8 @@ const createExperiment = async (req, res) => {
 
   logger.log('Creating experiment');
 
-  const experimentCreateResult = await experiment.create({ id: experimentId, name, description });
-
-  if (experimentCreateResult.length === 0) {
-    throw new Error(`Experiment ${experimentId} creation failed`);
-  }
-
-  userAccess.createNewExperimentPermissions(user.sub, experimentId);
+  await experiment.create({ id: experimentId, name, description });
+  await userAccess.createNewExperimentPermissions(user.sub, experimentId);
 
   logger.log(`Finished creating experiment ${experimentId}`);
 
