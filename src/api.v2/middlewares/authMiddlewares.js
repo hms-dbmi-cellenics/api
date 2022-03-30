@@ -10,17 +10,14 @@ const jwkToPem = require('jwk-to-pem');
 const util = require('util');
 const dns = require('dns').promises;
 
-const config = require('../config');
+const config = require('../../config');
 
-const CacheSingleton = require('../cache');
+const CacheSingleton = require('../../cache');
 
-const { CacheMissError } = require('../cache/cache-utils');
-const { UnauthorizedError, UnauthenticatedError } = require('./responses');
-const ProjectsService = require('../api/route-services/projects');
-const AccessService = require('../api/route-services/access');
+const { CacheMissError } = require('../../cache/cache-utils');
+const { UnauthorizedError, UnauthenticatedError } = require('../../utils/responses');
 
-const accessService = new AccessService();
-const projectService = new ProjectsService();
+const userAccess = require('../model/userAccess');
 
 /**
  * Authentication middleware for Express. Returns a middleware that
@@ -210,16 +207,15 @@ const authenticationMiddlewareSocketIO = async (authHeader) => {
  * and remove authByExperiment
  */
 const authorize = async (userId, resource, method, authResource, authByExperiment = true) => {
-  let experimentId = authResource;
-  if (!authByExperiment) {
-    const experiments = await projectService.getExperiments(authResource);
-    experimentId = experiments[0].experimentId;
-  }
+  // authResource is always experimentId in V2 because there is not project
+  const experimentId = authResource;
 
-  const granted = await accessService.canAccessExperiment(userId,
+  const granted = await userAccess.canAccessExperiment(
+    userId,
     experimentId,
     resource,
-    method);
+    method,
+  );
 
   if (granted) {
     return true;

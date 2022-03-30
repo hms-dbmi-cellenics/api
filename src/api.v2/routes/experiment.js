@@ -2,7 +2,7 @@ const {
   createExperiment, getExperiment, patchExperiment, updateSamplePosition,
 } = require('../controllers/experimentController');
 
-const { expressAuthenticationOnlyMiddleware, expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
+const { expressAuthenticationOnlyMiddleware, expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
 
 module.exports = {
   'experiment#createExperiment': [
