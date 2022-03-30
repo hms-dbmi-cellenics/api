@@ -64,6 +64,12 @@ describe('model/experiment', () => {
     expect(firstParamWithoutCoverageAnnotations).toMatchSnapshot();
   });
 
+  it('getExperimentData throws if nothing is returned (the experiment was not found)', async () => {
+    helpers.aggregateIntoJson.mockReturnValueOnce([]);
+
+    await expect(experiment.getExperimentData(mockExperimentId)).rejects.toThrow(new Error('Experiment not found'));
+  });
+
   it('updateSamplePosition works correctly if valid params are passed', async () => {
     mockTrx.returning.mockImplementationOnce(
       () => Promise.resolve([{ samplesOrder: validSamplesOrderResult }]),
