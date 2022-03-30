@@ -26,25 +26,21 @@ const basicModelFunctions = generateBasicModelFunctions({
   selectableProps,
 });
 
-const createNewExperimentPermissions = async (userSub, experimentId) => {
+const createNewExperimentPermissions = async (userId, experimentId) => {
   logger.log('Setting up access permissions for experiment');
 
-  const adminCreate = await basicModelFunctions.create(
+  await basicModelFunctions.create(
     { user_id: config.adminSub, experiment_id: experimentId, access_role: AccessRole.ADMIN },
   );
 
-  if (userSub === config.adminSub) {
+  if (userId === config.adminSub) {
     logger.log('User is the admin, so only creating admin access');
     return;
   }
 
-  const ownerCreate = await basicModelFunctions.create(
-    { user_id: userSub, experiment_id: experimentId, access_role: AccessRole.OWNER },
+  await basicModelFunctions.create(
+    { user_id: userId, experiment_id: experimentId, access_role: AccessRole.OWNER },
   );
-
-  if (adminCreate.length === 0 || ownerCreate.length === 0) {
-    throw new Error(`User access creation failed for experiment ${experimentId}`);
-  }
 };
 
 const canAccessExperiment = async (userId, experimentId, url, method) => {
