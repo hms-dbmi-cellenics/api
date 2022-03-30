@@ -1,9 +1,12 @@
 const _ = require('lodash');
 
-const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
-const sqlClient = require('../../sql/sqlClient');
+const config = require('../../config');
 
+const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
 const { isRoleAuthorized } = require('../helpers/roles');
+
+const AccessRole = require('../../utils/enums/AccessRole');
+const sqlClient = require('../../sql/sqlClient');
 
 const userAccessTable = 'user_access';
 
@@ -14,10 +17,36 @@ const selectableProps = [
   'updated_at',
 ];
 
+const getLogger = require('../../utils/getLogger');
+
+const logger = getLogger('[UserAccessModel] - ');
+
 const basicModelFunctions = generateBasicModelFunctions({
   tableName: userAccessTable,
   selectableProps,
 });
+
+const createNewExperimentPermissions = async (userSub, experimentId) => {
+  logger.log('Setting up access permissions for experiment');
+
+
+  const adminCreate = await basicModelFunctions.create(
+    { user_id: config.adminSub, experiment_id: experimentId, access_role: AccessRole.ADMIN },
+  );
+
+  if (userSub === config.adminSub) {
+    logger.log('User is the admin, so only creating admin access');
+    return;
+  }
+
+  const ownerCreate = await basicModelFunctions.create(
+    { user_id: userSub, experiment_id: experimentId, access_role: AccessRole.OWNER },
+  );
+
+  if (adminCreate.length === 0 || ownerCreate.length === 0) {
+    throw new Error(`User access creation failed for experiment ${experimentId}`);
+  }
+};
 
 const canAccessExperiment = async (userId, experimentId, url, method) => {
   const sql = sqlClient.get();
@@ -38,6 +67,7 @@ const canAccessExperiment = async (userId, experimentId, url, method) => {
 };
 
 module.exports = {
+  createNewExperimentPermissions,
   canAccessExperiment,
   ...basicModelFunctions,
 };

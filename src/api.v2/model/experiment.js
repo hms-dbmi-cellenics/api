@@ -5,9 +5,9 @@ const generateBasicModelFunctions = require('../helpers/generateBasicModelFuncti
 const sqlClient = require('../../sql/sqlClient');
 const { aggregateIntoJson } = require('../../sql/helpers');
 
-const getLogger = require('../../utils/getLogger');
-
 const { NotFoundError } = require('../../utils/responses');
+
+const getLogger = require('../../utils/getLogger');
 
 const logger = getLogger('[ExperimentModel] - ');
 

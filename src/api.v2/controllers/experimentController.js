@@ -1,12 +1,9 @@
 /* eslint-disable import/prefer-default-export */
 const _ = require('lodash');
 
-const config = require('../../config');
-
 const experiment = require('../model/experiment');
 const userAccess = require('../model/userAccess');
 
-const AccessRole = require('../../utils/enums/AccessRole');
 const getLogger = require('../../utils/getLogger');
 const { OK } = require('../../utils/responses');
 
@@ -33,19 +30,7 @@ const createExperiment = async (req, res) => {
     throw new Error(`Experiment ${experimentId} creation failed`);
   }
 
-  logger.log('Setting up access permissions for experiment');
-  const userAccessCreateResults = await Promise.all([
-    userAccess.create(
-      { user_id: user.sub, experiment_id: experimentId, access_role: AccessRole.OWNER },
-    ),
-    userAccess.create(
-      { user_id: config.adminSub, experiment_id: experimentId, access_role: AccessRole.ADMIN },
-    ),
-  ]);
-
-  if (userAccessCreateResults[0].length === 0 || userAccessCreateResults[1].length === 0) {
-    throw new Error(`User access creation failed for experiment ${experimentId}`);
-  }
+  userAccess.createNewExperimentPermissions(user.sub, experimentId);
 
   logger.log(`Finished creating experiment ${experimentId}`);
 
