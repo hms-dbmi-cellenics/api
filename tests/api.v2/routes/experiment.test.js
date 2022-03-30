@@ -16,7 +16,7 @@ jest.mock('../../../src/api.v2/controllers/experimentController', () => ({
   updateSamplePosition: jest.fn(),
 }));
 
-jest.mock('../../../src/utils/authMiddlewares');
+jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
 
 describe('tests for experiment route', () => {
   let app = null;
