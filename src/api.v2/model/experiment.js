@@ -76,8 +76,8 @@ const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
     const { samplesOrder = null } = result[0] || {};
 
     if (_.isNil(samplesOrder)
-      || !_.inRange(oldPosition, 0, samplesOrder.length - 1)
-      || !_.inRange(newPosition, 0, samplesOrder.length - 1)
+      || !_.inRange(oldPosition, 0, samplesOrder.length)
+      || !_.inRange(newPosition, 0, samplesOrder.length)
     ) {
       logger.log('Invalid positions or samples_order was broken, rolling back transaction');
       throw new Error('Invalid update parameters');
