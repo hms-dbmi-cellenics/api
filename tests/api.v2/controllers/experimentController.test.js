@@ -15,6 +15,8 @@ const mockExperiment = {
 jest.mock('../../../src/api.v2/model/experiment');
 jest.mock('../../../src/api.v2/model/userAccess');
 
+const getExperimentResponse = require('../mocks/data/getExperimentResponse');
+
 const experimentController = require('../../../src/api.v2/controllers/experimentController');
 
 const mockReqCreateExperiment = {
@@ -39,9 +41,21 @@ describe('experimentController', () => {
     jest.clearAllMocks();
   });
 
+  it('getExperiment works correctly', async () => {
+    const mockReqGetExperiment = { params: { experimentId: getExperimentResponse.id } };
+
+    experimentModel.getExperimentData.mockImplementationOnce(
+      () => Promise.resolve(getExperimentResponse),
+    );
+
+    await experimentController.getExperiment(mockReqGetExperiment, mockRes);
+
+    expect(experimentModel.getExperimentData).toHaveBeenCalledWith(getExperimentResponse.id);
+    expect(mockRes.json).toHaveBeenCalledWith(getExperimentResponse);
+  });
+
   it('createExperiment works correctly', async () => {
     userAccessModel.createNewExperimentPermissions.mockImplementationOnce(() => Promise.resolve());
-
     experimentModel.create.mockImplementationOnce(() => Promise.resolve([mockExperiment]));
 
     await experimentController.createExperiment(mockReqCreateExperiment, mockRes);
