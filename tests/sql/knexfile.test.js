@@ -64,6 +64,7 @@ describe('postProcessResponse', () => {
     const aShallowObject = {
       key_one: 'one_one',
       key_two: 'another one',
+      key_array: ['item_1', 'item_2', 'item_3', 'item_4'],
       key_three: 'yep',
       key_nested_things: {
         nested_key1: 'one',
@@ -76,6 +77,7 @@ describe('postProcessResponse', () => {
     const result = {
       keyOne: 'one_one',
       keyTwo: 'another one',
+      keyArray: ['item_1', 'item_2', 'item_3', 'item_4'],
       keyThree: 'yep',
       keyNestedThings: {
         nestedKey1: 'one',
