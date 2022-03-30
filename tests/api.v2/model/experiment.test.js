@@ -66,7 +66,7 @@ describe('model/experiment', () => {
 
   it('updateSamplePosition works correctly if valid params are passed', async () => {
     mockTrx.returning.mockImplementationOnce(
-      () => Promise.resolve([{ samples_order: validSamplesOrderResult }]),
+      () => Promise.resolve([{ samplesOrder: validSamplesOrderResult }]),
     );
     mockTrx.raw.mockImplementationOnce(() => 'resultOfSql.raw');
 
@@ -84,7 +84,7 @@ describe('model/experiment', () => {
   });
 
   it('updateSamplePosition rolls back if the result is invalid', async () => {
-    mockTrx.returning.mockImplementationOnce(() => Promise.resolve([{ samples_order: null }]));
+    mockTrx.returning.mockImplementationOnce(() => Promise.resolve([{ samplesOrder: null }]));
     mockTrx.raw.mockImplementationOnce(() => 'resultOfSql.raw');
 
     await expect(experiment.updateSamplePosition(mockExperimentId, 0, 1)).rejects.toThrow('Invalid update parameters');
@@ -102,7 +102,7 @@ describe('model/experiment', () => {
 
   it('updateSamplePosition rolls back if the parameters are invalid', async () => {
     mockTrx.returning.mockImplementationOnce(
-      () => Promise.resolve([{ samples_order: validSamplesOrderResult }]),
+      () => Promise.resolve([{ samplesOrder: validSamplesOrderResult }]),
     );
     mockTrx.raw.mockImplementationOnce(() => 'resultOfSql.raw');
 

@@ -2,7 +2,7 @@
 
 exports[`aggregateIntoJson Works correctly 1`] = `
 Array [
-  "COALESCE(jsonb_object_agg(aggregationColumnKey, json_build_object('nested1', nested_1, 'nested2', nested_2))
+  "COALESCE(jsonb_object_agg(aggregationColumnKey, json_build_object('nested_1', nested_1, 'nested_2', nested_2))
       FILTER(
         WHERE aggregationColumnKey IS NOT NULL
       ),
