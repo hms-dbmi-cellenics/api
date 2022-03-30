@@ -29,7 +29,6 @@ const basicModelFunctions = generateBasicModelFunctions({
 const createNewExperimentPermissions = async (userSub, experimentId) => {
   logger.log('Setting up access permissions for experiment');
 
-
   const adminCreate = await basicModelFunctions.create(
     { user_id: config.adminSub, experiment_id: experimentId, access_role: AccessRole.ADMIN },
   );
