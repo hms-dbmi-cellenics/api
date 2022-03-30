@@ -73,7 +73,7 @@ const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
     }).where('id', experimentId)
       .returning(['samples_order']);
 
-    const { samples_order: samplesOrder = null } = result[0] || {};
+    const { samplesOrder = null } = result[0] || {};
 
     if (_.isNil(samplesOrder)
       || !_.inRange(oldPosition, 0, samplesOrder.length - 1)
