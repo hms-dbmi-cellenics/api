@@ -118,22 +118,4 @@ describe('Tests for authorization/authentication middlewares', () => {
     await expressAuthorizationMiddleware(req, {}, next);
     expect(next).toBeCalledWith(expect.any(UnauthenticatedError));
   });
-
-  it('Express middleware calls userAccess if the request is for v2', async () => {
-    // @ts-ignore
-    userAccessModel.canAccessExperiment.mockImplementationOnce(() => true);
-
-    const req = {
-      params: { experimentId: fake.EXPERIMENT_ID },
-      user: 'allowed-user-id',
-      url: fake.RESOURCE_V2,
-      method: 'POST',
-    };
-
-    const next = jest.fn();
-
-    await expressAuthorizationMiddleware(req, {}, next);
-
-    expect(next).toBeCalledWith();
-  });
 });
