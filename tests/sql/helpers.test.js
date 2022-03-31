@@ -1,16 +1,18 @@
+// @ts-nocheck
 const { aggregateIntoJsonObject } = require('../../src/sql/helpers');
 
-describe('aggregateIntoJsonObject', () => {
-  it('Works correctly', async () => {
-    const mockGroupBy = jest.fn(() => Promise.resolve('finish'));
-    const mockFrom = jest.fn(() => ({ groupBy: mockGroupBy }));
-    const mockSelect = jest.fn(() => ({ from: mockFrom }));
+const { mockSqlClient } = require('../api.v2/mocks/getMockSqlClient')();
 
-    const mockJsonbObjectAggResult = 'jsonb_object_agg(etc, etc)';
-    const mockSql = {
-      raw: jest.fn(() => mockJsonbObjectAggResult),
-      select: mockSelect,
-    };
+describe('aggregateIntoJsonObject', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  })
+
+  it('Works correctly', async () => {
+    const mockJsonbObjectAggResult = 'jsonbObjectAggResult';
+
+    mockSqlClient.groupBy.mockImplementationOnce(() => Promise.resolve('finish'));
+    mockSqlClient.raw.mockImplementationOnce(() => mockJsonbObjectAggResult);
 
     const result = await aggregateIntoJsonObject(
       'originalQuery',
@@ -18,14 +20,14 @@ describe('aggregateIntoJsonObject', () => {
       ['nested_1', 'nested_2'],
       'aggregationColumnKey',
       'aggregationJsonKey',
-      mockSql,
+      mockSqlClient,
     );
 
-    expect(mockSql.raw.mock.calls[0]).toMatchSnapshot();
+    expect(mockSqlClient.raw.mock.calls[0]).toMatchSnapshot();
 
-    expect(mockSelect).toHaveBeenCalledWith(['root_1', 'root_2', mockJsonbObjectAggResult]);
-    expect(mockFrom).toHaveBeenCalledWith('originalQuery');
-    expect(mockGroupBy).toHaveBeenCalledWith(['root_1', 'root_2']);
+    expect(mockSqlClient.select).toHaveBeenCalledWith(['root_1', 'root_2', mockJsonbObjectAggResult]);
+    expect(mockSqlClient.from).toHaveBeenCalledWith('originalQuery');
+    expect(mockSqlClient.groupBy).toHaveBeenCalledWith(['root_1', 'root_2']);
 
     expect(result).toEqual('finish');
   });
