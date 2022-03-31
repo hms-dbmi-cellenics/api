@@ -29,7 +29,7 @@ exports.up = async (knex) => {
       table.text('description').notNullable();
       table.jsonb('processing_config').nullable();
       table.boolean('notify_by_email').defaultTo(true);
-      table.specificType('samples_order', 'UUID[]').notNullable();
+      table.jsonb('samples_order').defaultTo(JSON.stringify([]));
       // Based on https://stackoverflow.com/a/48028011
       table.timestamps(true, true);
     }).then(() => {

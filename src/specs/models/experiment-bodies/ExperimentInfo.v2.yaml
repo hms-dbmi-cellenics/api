@@ -1,0 +1,65 @@
+title: Experiment Info
+type: object
+properties:
+  id:
+    type: string
+  name:
+    type: string
+  description:
+    type: string
+  samplesOrder:
+    type: array
+    items:
+      type: string
+  notifyByEmail:
+    type: boolean
+  createdAt:
+    type: string
+  updatedAt:
+    type: string
+  pipelines:  
+    type: object
+    properties:
+      gem2s:
+        # Couldn't import PipelineExecution.v2.yaml twice for some reason
+        nullable: true
+        type: object
+        properties:
+          paramsHash:
+            nullable: true
+            type: string
+          stateMachineArn:
+            type: string
+          executionArn:
+            type: string
+        required:
+          - paramsHash
+          - stateMachineArn
+          - executionArn
+      qc:
+        nullable: true
+        type: object
+        properties:
+          paramsHash:
+            nullable: true
+            type: string
+          stateMachineArn:
+            type: string
+          executionArn:
+            type: string
+        required:
+          - paramsHash
+          - stateMachineArn
+          - executionArn
+
+required:
+  - id
+  - name
+  - description
+  - samplesOrder
+  - notifyByEmail
+  - pipelines
+  - createdAt
+  - updatedAt
+
+additionalProperties: false
