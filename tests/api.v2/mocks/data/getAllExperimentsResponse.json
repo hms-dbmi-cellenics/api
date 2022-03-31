@@ -1,0 +1,42 @@
+[
+    {
+        "id": "0b5f622a-01b8-254c-6b69-9e2606ac0b40",
+        "name": "another test",
+        "description": "",
+        "samplesOrder": [
+            "e949a40a-2b88-45cc-a12e-4195104f124d",
+            "b795c2da-fc42-4bbe-aaef-dd790196f4d9",
+            "59a02c6f-0652-4308-bf06-46ce5f322eaf",
+            "090b5e1f-e1a3-4f39-a4c1-db489d367a85",
+            "45f614b5-2a08-4aaf-a6a4-6dd9f1a3b3d2",
+            "e0a2a155-e5ef-4f42-a901-c47a37887e12",
+            "f58b45f8-9440-4926-acc7-d2f073c1f21c",
+            "4ec4bdbf-ddb7-41db-9ed4-0d7d01a01488",
+            "93e953dc-966f-4d08-b4bb-c7d430cd16e5",
+            "b52cc656-bccd-4272-8762-5c57d2d87f35",
+            "1c76788f-fcb6-43fe-8270-e0749e6c5f9c"
+        ],
+        "notifyByEmail": false,
+        "createdAt": "2021-11-30 17:17:44.114+00",
+        "updatedAt": "2021-11-30 17:23:11.325+00",
+        "metadataKeys": [
+            "gtype"
+        ]
+    },
+    {
+        "id": "14f77ce0-0bd6-3e0d-1340-b965c43d444d",
+        "name": "test dataset",
+        "description": "",
+        "samplesOrder": [
+            "65906442-7543-42b5-8457-6fb483bc24b1",
+            "547e9bb3-cdb7-4709-8d2e-cf04fe468ed1",
+            "81e70704-e632-4790-8916-7ac64c7a0897"
+        ],
+        "notifyByEmail": true,
+        "createdAt": "2021-11-30 18:17:20.816+00",
+        "updatedAt": "2022-01-03 13:33:10.875+00",
+        "metadataKeys": [
+            "gtype"
+        ]
+    }
+]
