@@ -1,6 +1,6 @@
-const { aggregateIntoJson } = require('../../src/sql/helpers');
+const { aggregateIntoJsonObject } = require('../../src/sql/helpers');
 
-describe('aggregateIntoJson', () => {
+describe('aggregateIntoJsonObject', () => {
   it('Works correctly', async () => {
     const mockGroupBy = jest.fn(() => Promise.resolve('finish'));
     const mockFrom = jest.fn(() => ({ groupBy: mockGroupBy }));
@@ -12,7 +12,7 @@ describe('aggregateIntoJson', () => {
       select: mockSelect,
     };
 
-    const result = await aggregateIntoJson(
+    const result = await aggregateIntoJsonObject(
       'originalQuery',
       ['root_1', 'root_2'],
       ['nested_1', 'nested_2'],

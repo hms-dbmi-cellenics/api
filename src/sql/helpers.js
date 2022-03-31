@@ -76,7 +76,7 @@ const jsonbObjectAgg = (aggregationColumnKey, nestedFields, aggregationJsonKey, 
  *
  * Note it also camelcases all the keys returned
  */
-const aggregateIntoJson = (
+const aggregateIntoJsonObject = (
   originalQuery,
   rootFields,
   nestedFields,
@@ -93,14 +93,14 @@ const aggregateIntoJson = (
     .groupBy(rootFields)
 );
 
-const aggregateIntoJsonArray = async (
+const aggregateIntoJsonArray = (
   originalQuery,
   rootFields,
   fieldKey,
   fieldJsonKey,
   sql,
 ) => (
-  await sql
+  sql
     .select([
       ...rootFields,
       sql.raw(`array_remove(array_agg("${fieldKey}"), NULL) as "${fieldJsonKey}"`),
@@ -110,5 +110,5 @@ const aggregateIntoJsonArray = async (
 );
 
 module.exports = {
-  aggregateIntoJson, aggregateIntoJsonArray, addAlias,
+  aggregateIntoJsonObject, aggregateIntoJsonArray, addAlias,
 };
