@@ -1,0 +1,37 @@
+title: Get all experiments
+type: array
+items:
+  type: object
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    description:
+      type: string
+    notifyByEmail:
+      type: boolean
+    samplesOrder:
+      type: array
+      items:
+        type: string
+    metadataKeys:  
+      type: array
+      items:
+        type: string
+    createdAt:
+      type: string
+    updatedAt:
+      type: string
+  required:
+    - id
+    - name
+    - description
+    - notifyByEmail
+    - samplesOrder
+    - metadataKeys
+    - createdAt
+    - updatedAt
+  additionalProperties: false
+
+additionalProperties: false

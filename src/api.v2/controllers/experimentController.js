@@ -9,6 +9,14 @@ const { OK } = require('../../utils/responses');
 
 const logger = getLogger('[ExperimentController] - ');
 
+const getAllExperiments = async (req, res) => {
+  const { user } = req;
+
+  const data = await experiment.getAllExperiments(user.sub);
+
+  res.json(data);
+};
+
 const getExperiment = async (req, res) => {
   const { params: { experimentId } } = req;
 
@@ -69,6 +77,7 @@ const updateSamplePosition = async (req, res) => {
 };
 
 module.exports = {
+  getAllExperiments,
   getExperiment,
   createExperiment,
   patchExperiment,

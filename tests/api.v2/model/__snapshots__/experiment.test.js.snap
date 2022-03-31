@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`model/experiment getExperimentData works correctly 1`] = `
-"function query() {
+"function mainQuery() {
     /* istanbul ignore next */
     
     
-    this.select('*').from(experimentTable).leftJoin(experimentExecutionTable, \`\${experimentTable}.id\`, \`\${experimentExecutionTable}.experiment_id\`).where('id', experimentId).as('experiment_with_exec');
+    this.select('*').from(experimentTable).leftJoin(experimentExecutionTable, \`\${experimentTable}.id\`, \`\${experimentExecutionTable}.experiment_id\`).where('id', experimentId).as('mainQuery');
   }"
 `;
 
