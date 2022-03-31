@@ -44,13 +44,15 @@ const getExperimentData = async (experimentId) => {
     'params_hash', 'state_machine_arn', 'execution_arn',
   ];
 
-  const result = await aggregateIntoJson(query, experimentFields, experimentExecutionFields, 'pipeline_type', 'pipelines', sql);
+  const result = await aggregateIntoJson(
+    query, experimentFields, experimentExecutionFields, 'pipeline_type', 'pipelines', sql,
+  ).first();
 
-  if (result.length === 0) {
+  if (_.isEmpty(result)) {
     throw new NotFoundError('Experiment not found');
   }
 
-  return result[0];
+  return result;
 };
 
 const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {

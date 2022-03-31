@@ -36,12 +36,13 @@ describe('model/experiment', () => {
   });
 
   it('getExperimentData works correctly', async () => {
-    const mockAggregateIntoJsonResult = ['result'];
-    helpers.aggregateIntoJson.mockReturnValueOnce(mockAggregateIntoJsonResult);
+    const mockAggregateIntoJsonResult = 'result';
+    helpers.aggregateIntoJson.mockReturnValueOnce(mockSqlClient);
+    mockSqlClient.first.mockReturnValueOnce(mockAggregateIntoJsonResult);
 
     const result = await experiment.getExperimentData(mockExperimentId);
 
-    expect(result).toEqual(mockAggregateIntoJsonResult[0]);
+    expect(result).toEqual(mockAggregateIntoJsonResult);
 
     expect(sqlClient.get).toHaveBeenCalled();
     expect(helpers.aggregateIntoJson).toHaveBeenCalledWith(
@@ -64,8 +65,9 @@ describe('model/experiment', () => {
     expect(firstParamWithoutCoverageAnnotations).toMatchSnapshot();
   });
 
-  it('getExperimentData throws if nothing is returned (the experiment was not found)', async () => {
-    helpers.aggregateIntoJson.mockReturnValueOnce([]);
+  it('getExperimentData throws if an empty object is returned (the experiment was not found)', async () => {
+    helpers.aggregateIntoJson.mockReturnValueOnce(mockSqlClient);
+    mockSqlClient.first.mockReturnValueOnce({});
 
     await expect(experiment.getExperimentData(mockExperimentId)).rejects.toThrow(new Error('Experiment not found'));
   });

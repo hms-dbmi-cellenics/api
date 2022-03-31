@@ -69,7 +69,7 @@ const jsonbObjectAgg = (aggregationColumnKey, nestedFields, aggregationJsonKey, 
  *
  * Note it also camelcases all the keys returned
  */
-const aggregateIntoJson = async (
+const aggregateIntoJson = (
   originalQuery,
   rootFields,
   nestedFields,
@@ -77,7 +77,7 @@ const aggregateIntoJson = async (
   aggregationJsonKey,
   sql,
 ) => (
-  await sql
+  sql
     .select([
       ...rootFields,
       jsonbObjectAgg(aggregationColumnKey, nestedFields, aggregationJsonKey, sql),
