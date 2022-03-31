@@ -102,7 +102,7 @@ class SamplesService {
     const dynamodb = createDynamoDbInstance();
 
     try {
-      await dynamodb.updateItem(params).send();
+      await dynamodb.updateItem(params).promise();
       return OK();
     } catch (e) {
       if (e.statusCode === 404) throw new NotFoundError('Project not found');
@@ -244,7 +244,7 @@ class SamplesService {
     const promises = [];
 
     try {
-      promises.push(await dynamodb.deleteItem(dynamodbParams).send());
+      promises.push(await dynamodb.deleteItem(dynamodbParams).promise());
     } catch (e) {
       if (e.statusCode === 404) throw new NotFoundError('Project not found');
       throw e;
