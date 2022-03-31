@@ -1,5 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`aggregateIntoJsonArray Works correctly 1`] = `
+Array [
+  "array_remove(array_agg(\\"field_key\\"), NULL) as \\"fieldJsonKey\\"",
+]
+`;
+
 exports[`aggregateIntoJsonObject Works correctly 1`] = `
 Array [
   "COALESCE(jsonb_object_agg(aggregationColumnKey, json_build_object('nested_1', nested_1, 'nested_2', nested_2))
