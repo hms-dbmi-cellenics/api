@@ -11,7 +11,6 @@ jest.mock('../../../src/api.v2/helpers/generateBasicModelFunctions', () => jest.
   }
 )));
 
-// const mockIsRoleAuthorized = jest.fn();
 jest.mock('../../../src/api.v2/helpers/roles');
 
 jest.mock('../../../src/sql/sqlClient', () => ({
