@@ -15,7 +15,7 @@ jest.mock('../../../src/sql/sqlClient', () => ({
 }));
 
 jest.mock('../../../src/sql/helpers', () => ({
-  aggregateIntoJson: jest.fn(),
+  aggregateIntoJsonObject: jest.fn(),
 }));
 
 const experiment = require('../../../src/api.v2/model/experiment');
@@ -37,7 +37,7 @@ describe('model/experiment', () => {
 
   it('getExperimentData works correctly', async () => {
     const mockAggregateIntoJsonResult = 'result';
-    helpers.aggregateIntoJson.mockReturnValueOnce(mockSqlClient);
+    helpers.aggregateIntoJsonObject.mockReturnValueOnce(mockSqlClient);
     mockSqlClient.first.mockReturnValueOnce(mockAggregateIntoJsonResult);
 
     const result = await experiment.getExperimentData(mockExperimentId);
@@ -45,7 +45,7 @@ describe('model/experiment', () => {
     expect(result).toEqual(mockAggregateIntoJsonResult);
 
     expect(sqlClient.get).toHaveBeenCalled();
-    expect(helpers.aggregateIntoJson).toHaveBeenCalledWith(
+    expect(helpers.aggregateIntoJsonObject).toHaveBeenCalledWith(
       expect.anything(),
       ['id', 'name', 'description', 'samples_order', 'notify_by_email', 'processing_config', 'created_at', 'updated_at'],
       ['params_hash', 'state_machine_arn', 'execution_arn'],
@@ -54,19 +54,19 @@ describe('model/experiment', () => {
       mockSqlClient,
     );
 
-    const firstParam = helpers.aggregateIntoJson.mock.calls[0][0];
+    const firstParam = helpers.aggregateIntoJsonObject.mock.calls[0][0];
 
 
     // The replace(/__cov) is to remove coverage annotations:
     // https://stackoverflow.com/questions/30470796/function-equality-assertion-broken-by-code-coverage-report
     const firstParamWithoutCoverageAnnotations = firstParam.toString().replace(/cov.*?;/g, '');
 
-    // Checking query (the first param that was passed to helpers.aggregateIntoJson)
+    // Checking query (the first param that was passed to helpers.aggregateIntoJsonObject)
     expect(firstParamWithoutCoverageAnnotations).toMatchSnapshot();
   });
 
   it('getExperimentData throws if an empty object is returned (the experiment was not found)', async () => {
-    helpers.aggregateIntoJson.mockReturnValueOnce(mockSqlClient);
+    helpers.aggregateIntoJsonObject.mockReturnValueOnce(mockSqlClient);
     mockSqlClient.first.mockReturnValueOnce({});
 
     await expect(experiment.getExperimentData(mockExperimentId)).rejects.toThrow(new Error('Experiment not found'));
