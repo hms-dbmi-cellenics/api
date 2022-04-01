@@ -1,10 +1,3 @@
-// Adds a table alias to the fields
-const addAlias = (fields, tableAlias = undefined) => {
-  const aliasPrefix = tableAlias ? `${tableAlias}.` : '';
-
-  return fields.map((field) => `${aliasPrefix}${field}`);
-};
-
 const jsonbObjectAgg = (aggregationColumnKey, nestedFields, aggregationJsonKey, sql) => {
   const jsonObjectProps = nestedFields.reduce((acum, current) => {
     acum.push(`'${current}'`);
@@ -110,5 +103,5 @@ const aggregateIntoJsonArray = (
 );
 
 module.exports = {
-  aggregateIntoJsonObject, aggregateIntoJsonArray, addAlias,
+  aggregateIntoJsonObject, aggregateIntoJsonArray,
 };

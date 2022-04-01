@@ -4,7 +4,7 @@ const _ = require('lodash');
 const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
 const sqlClient = require('../../sql/sqlClient');
 const {
-  aggregateIntoJsonObject, aggregateIntoJsonArray, addAlias,
+  aggregateIntoJsonObject, aggregateIntoJsonArray,
 } = require('../../sql/helpers');
 
 const getLogger = require('../../utils/getLogger');
@@ -47,7 +47,7 @@ const getAllExperiments = async (userId) => {
     'updated_at',
   ];
 
-  const aliasedExperimentFields = addAlias(fields, 'e');
+  const aliasedExperimentFields = fields.map((field) => `e.${field}`);
   function mainQuery() {
     this.select([...aliasedExperimentFields, 'm.key'])
       .from(userAccessTable)
