@@ -16,6 +16,7 @@ jest.mock('../../../src/sql/sqlClient', () => ({
 
 jest.mock('../../../src/sql/helpers', () => ({
   aggregateIntoJsonObject: jest.fn(),
+  aggregateIntoJsonArray: jest.fn(),
 }));
 
 const experiment = require('../../../src/api.v2/model/experiment');
@@ -35,14 +36,43 @@ describe('model/experiment', () => {
     );
   });
 
+  it('getAllExperiments works correctly', async () => {
+    const queryResult = 'result';
+    helpers.aggregateIntoJsonArray.mockReturnValueOnce(
+      Promise.resolve(queryResult),
+    );
+
+    const expectedResult = await experiment.getAllExperiments(mockExperimentId);
+
+    expect(queryResult).toEqual(expectedResult);
+
+    expect(sqlClient.get).toHaveBeenCalled();
+    expect(helpers.aggregateIntoJsonArray).toHaveBeenCalledWith(
+      expect.anything(),
+      ['id', 'name', 'description', 'samples_order', 'notify_by_email', 'created_at', 'updated_at'],
+      'key',
+      'metadataKeys',
+      mockSqlClient,
+    );
+
+    const firstParam = helpers.aggregateIntoJsonArray.mock.calls[0][0];
+
+    // The replace(/__cov) is to remove coverage annotations:
+    // https://stackoverflow.com/questions/30470796/function-equality-assertion-broken-by-code-coverage-report
+    const firstParamWithoutCoverageAnnotations = firstParam.toString().replace(/cov.*?;/g, '');
+
+    // Checking query (the first param that was passed to helpers.aggregateIntoJsonObject)
+    expect(firstParamWithoutCoverageAnnotations).toMatchSnapshot();
+  });
+
   it('getExperimentData works correctly', async () => {
-    const mockAggregateIntoJsonResult = 'result';
+    const queryResult = 'result';
     helpers.aggregateIntoJsonObject.mockReturnValueOnce(mockSqlClient);
-    mockSqlClient.first.mockReturnValueOnce(mockAggregateIntoJsonResult);
+    mockSqlClient.first.mockReturnValueOnce(queryResult);
 
-    const result = await experiment.getExperimentData(mockExperimentId);
+    const expectedResult = await experiment.getExperimentData(mockExperimentId);
 
-    expect(result).toEqual(mockAggregateIntoJsonResult);
+    expect(expectedResult).toEqual(queryResult);
 
     expect(sqlClient.get).toHaveBeenCalled();
     expect(helpers.aggregateIntoJsonObject).toHaveBeenCalledWith(
@@ -55,7 +85,6 @@ describe('model/experiment', () => {
     );
 
     const firstParam = helpers.aggregateIntoJsonObject.mock.calls[0][0];
-
 
     // The replace(/__cov) is to remove coverage annotations:
     // https://stackoverflow.com/questions/30470796/function-equality-assertion-broken-by-code-coverage-report
