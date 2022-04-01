@@ -10,9 +10,9 @@ const { OK } = require('../../utils/responses');
 const logger = getLogger('[ExperimentController] - ');
 
 const getAllExperiments = async (req, res) => {
-  const { user } = req;
+  const { user: { sub: userId } } = req;
 
-  const data = await experiment.getAllExperiments(user.sub);
+  const data = await experiment.getAllExperiments(userId);
 
   res.json(data);
 };
