@@ -6,7 +6,7 @@ const { mockSqlClient } = require('../api.v2/mocks/getMockSqlClient')();
 describe('aggregateIntoJsonObject', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  })
+  });
 
   it('Works correctly', async () => {
     const mockJsonbObjectAggResult = 'jsonbObjectAggResult';
@@ -36,7 +36,7 @@ describe('aggregateIntoJsonObject', () => {
 describe('aggregateIntoJsonArray', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  })
+  });
 
   it('Works correctly', async () => {
     const mockArrayAggregate = 'arrayAggregateResult';
@@ -54,9 +54,9 @@ describe('aggregateIntoJsonArray', () => {
 
     expect(mockSqlClient.raw.mock.calls[0]).toMatchSnapshot();
 
-    expect(mockSqlClient.select).toHaveBeenCalledWith(["root_1", "root_2", "arrayAggregateResult"]);
-    expect(mockSqlClient.from).toHaveBeenCalledWith("originalQuery");
-    expect(mockSqlClient.groupBy).toHaveBeenCalledWith(["root_1", "root_2"]);
+    expect(mockSqlClient.select).toHaveBeenCalledWith(['root_1', 'root_2', 'arrayAggregateResult']);
+    expect(mockSqlClient.from).toHaveBeenCalledWith('originalQuery');
+    expect(mockSqlClient.groupBy).toHaveBeenCalledWith(['root_1', 'root_2']);
 
     expect(result).toEqual('finish');
   });
