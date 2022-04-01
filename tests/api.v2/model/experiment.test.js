@@ -48,7 +48,7 @@ describe('model/experiment', () => {
 
     expect(sqlClient.get).toHaveBeenCalled();
     expect(helpers.aggregateIntoJsonArray).toHaveBeenCalledWith(
-      expect.anything(),
+      expect.any(Function),
       ['id', 'name', 'description', 'samples_order', 'notify_by_email', 'created_at', 'updated_at'],
       'key',
       'metadataKeys',
@@ -76,7 +76,7 @@ describe('model/experiment', () => {
 
     expect(sqlClient.get).toHaveBeenCalled();
     expect(helpers.aggregateIntoJsonObject).toHaveBeenCalledWith(
-      expect.anything(),
+      expect.any(Function),
       ['id', 'name', 'description', 'samples_order', 'notify_by_email', 'processing_config', 'created_at', 'updated_at'],
       ['params_hash', 'state_machine_arn', 'execution_arn'],
       'pipeline_type',
