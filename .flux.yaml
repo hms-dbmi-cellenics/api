@@ -12,6 +12,7 @@ metadata:
   namespace: FILLED_IN_BY_CI
   labels:
     sandboxId: FILLED_IN_BY_CI
+    testLabel: TestLabel
   annotations:
     fluxcd.io/automated: "true"
     filter.fluxcd.io/chart-image: FILLED_IN_BY_CI
