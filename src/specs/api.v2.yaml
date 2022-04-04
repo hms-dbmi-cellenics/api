@@ -156,6 +156,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+  '/experiments/{experimentId}/samples/{sampleId}':
+    post:
+      summary: Create sample
+      operationId: createSample
+      x-eov-operation-id: sample#createSample
+      x-eov-operation-handler: routes/sample
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSample'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   '/experiments/{experimentId}/samples/position':
     put:
       summary: Update position for a sample
@@ -210,6 +246,8 @@ components:
       $ref: './models/experiment-bodies/ExperimentInfo.v2.yaml'
     ExperimentPatch:
       $ref: './models/experiment-bodies/ExperimentPatch.v2.yaml'
+    CreateSample:
+      $ref: './models/samples-bodies/CreateSample.v2.yaml'
     HTTPSuccess:
       $ref: './models/HTTPSuccess.v1.yaml'
     HTTPError:

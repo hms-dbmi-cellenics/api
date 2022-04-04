@@ -1,6 +1,5 @@
 const _ = require('lodash');
 
-/* eslint-disable func-names */
 const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
 const sqlClient = require('../../sql/sqlClient');
 const { aggregateIntoJson } = require('../../sql/helpers');
@@ -13,7 +12,6 @@ const logger = getLogger('[ExperimentModel] - ');
 
 const experimentTable = 'experiment';
 const experimentExecutionTable = 'experiment_execution';
-
 const experimentFields = [
   'id',
   'name',

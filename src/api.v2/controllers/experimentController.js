@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 const _ = require('lodash');
 
 const experiment = require('../model/experiment');
