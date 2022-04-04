@@ -8,7 +8,7 @@ const logger = getLogger('[SampleController] - ');
 const createSample = async (req, res) => {
   const { params: { experimentId, sampleId }, body } = req;
 
-  const { name, technology } = body;
+  const { name, sampleTechnology } = body;
 
   logger.log('Creating sample');
 
@@ -16,7 +16,7 @@ const createSample = async (req, res) => {
     id: sampleId,
     experiment_id: experimentId,
     name,
-    sample_technology: technology,
+    sample_technology: sampleTechnology,
   });
 
   logger.log(`Finished creating sample ${sampleId} for experiment ${experimentId}`);
