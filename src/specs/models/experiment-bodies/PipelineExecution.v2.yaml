@@ -1,0 +1,16 @@
+title: Pipeline Execution
+type: object
+properties:
+  paramsHash:
+    nullable: true
+    type: string
+  stateMachineArn:
+    type: string
+  executionArn:
+    type: string
+required:
+  - paramsHash
+  - stateMachineArn
+  - executionArn
+
+additionalProperties: false

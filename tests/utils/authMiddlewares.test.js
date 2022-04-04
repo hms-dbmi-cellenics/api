@@ -1,5 +1,4 @@
 const AWSMock = require('aws-sdk-mock');
-const AWS = require('../../src/utils/requireAWS');
 const {
   expressAuthorizationMiddleware,
   authorize,
@@ -12,6 +11,11 @@ const {
   mockDynamoBatchGetItem,
 } = require('../test-utils/mockAWSServices');
 
+const userAccessModel = require('../../src/api.v2/model/userAccess');
+
+jest.mock('../../src/api.v2/model/userAccess', () => ({
+  canAccessExperiment: jest.fn(),
+}));
 
 describe('Tests for authorization/authentication middlewares', () => {
   // Sample experiment permission data.
@@ -45,7 +49,7 @@ describe('Tests for authorization/authentication middlewares', () => {
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
       user: fake.USER,
-      url: fake.URL,
+      url: fake.RESOURCE_V1,
       method: 'POST',
     };
     const next = jest.fn();
@@ -60,7 +64,7 @@ describe('Tests for authorization/authentication middlewares', () => {
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
       user: 'another-user-id',
-      url: fake.URL,
+      url: fake.RESOURCE_V1,
       method: 'POST',
     };
     const next = jest.fn();
@@ -74,7 +78,7 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
-      url: fake.URL,
+      url: fake.RESOURCE_V1,
       method: 'POST',
     };
     const next = jest.fn();
