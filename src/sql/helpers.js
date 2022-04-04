@@ -89,14 +89,14 @@ const collapseKeysIntoObject = (
 const collapseKeyIntoArray = (
   originalQuery,
   rootFields,
-  originalKeyName,
-  collapsedKeyName,
+  collapseKey,
+  collapsedKeyNewName,
   sql,
 ) => (
   sql
     .select([
       ...rootFields,
-      sql.raw(`array_remove(array_agg("${originalKeyName}"), NULL) as "${collapsedKeyName}"`),
+      sql.raw(`array_remove(array_agg("${collapseKey}"), NULL) as "${collapsedKeyNewName}"`),
     ])
     .from(originalQuery)
     .groupBy(rootFields)
