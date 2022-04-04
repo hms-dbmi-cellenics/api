@@ -9,7 +9,7 @@ properties:
       - type: string
       - oneOf:
         - pattern: 10x
-        # - pattern: rhapsody
+        - pattern: rhapsody
  
 required:
   - name
