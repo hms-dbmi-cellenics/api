@@ -1,23 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`model/experiment getAllExperiments works correctly 1`] = `
-"function mainQuery() {
-    /* istanbul ignore next */
-    
-    
-    this.select([...aliasedExperimentFields, 'm.key']).from(userAccessTable).where('user_id', userId).join(\`\${experimentTable} as e\`, 'e.id', \`\${userAccessTable}.experiment_id\`).leftJoin(\`\${metadataTrackTable} as m\`, 'e.id', 'm.experiment_id').as('mainQuery');
-  }"
-`;
-
-exports[`model/experiment getExperimentData works correctly 1`] = `
-"function mainQuery() {
-    /* istanbul ignore next */
-    
-    
-    this.select('*').from(experimentTable).leftJoin(experimentExecutionTable, \`\${experimentTable}.id\`, \`\${experimentExecutionTable}.experiment_id\`).where('id', experimentId).as('mainQuery');
-  }"
-`;
-
 exports[`model/experiment updateSamplePosition rolls back if the parameters are invalid 1`] = `
 Array [
   "(
