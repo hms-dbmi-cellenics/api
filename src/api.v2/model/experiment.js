@@ -4,7 +4,7 @@ const _ = require('lodash');
 const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
 const sqlClient = require('../../sql/sqlClient');
 const {
-  aggregateIntoJsonObject, aggregateIntoJsonArray,
+  collapseKeysIntoObject, collapseKeyIntoArray,
 } = require('../../sql/helpers');
 
 const getLogger = require('../../utils/getLogger');
@@ -57,7 +57,7 @@ const getAllExperiments = async (userId) => {
       .as('mainQuery');
   }
 
-  const result = await aggregateIntoJsonArray(mainQuery, [...fields], 'key', 'metadataKeys', sql);
+  const result = await collapseKeyIntoArray(mainQuery, [...fields], 'key', 'metadataKeys', sql);
 
   return result;
 };
@@ -77,7 +77,7 @@ const getExperimentData = async (experimentId) => {
     'params_hash', 'state_machine_arn', 'execution_arn',
   ];
 
-  const result = await aggregateIntoJsonObject(
+  const result = await collapseKeysIntoObject(
     mainQuery, experimentFields, experimentExecutionFields, 'pipeline_type', 'pipelines', sql,
   ).first();
 

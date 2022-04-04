@@ -16,3 +16,20 @@ Array [
     ) as aggregationJsonKey",
 ]
 `;
+
+exports[`collapseKeyIntoArray Works correctly 1`] = `
+Array [
+  "array_remove(array_agg(\\"field_key\\"), NULL) as \\"fieldJsonKey\\"",
+]
+`;
+
+exports[`collapseKeysIntoObject Works correctly 1`] = `
+Array [
+  "COALESCE(jsonb_object_agg(collapseKeyName, json_build_object('nested_1', nested_1, 'nested_2', nested_2))
+      FILTER(
+        WHERE collapseKeyName IS NOT NULL
+      ),
+      '{}'::jsonb
+    ) as collapseKeyNewName",
+]
+`;
