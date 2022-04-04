@@ -224,7 +224,7 @@ describe('tests for the projects service', () => {
     expect(grantRoleMock.mock.calls).toEqual([[fake.USER.sub, fake.EXPERIMENT_ID, 'aaaaaaaa-bbbb-3333-4444-999999999999', 'admin']]);
   });
 
-  test('not existent user calls adds to invite-access', async () => {
+  test('non-existent user calls adds to invite-access', async () => {
     const as = new AccessService();
     const addToInviteAccess = jest.fn();
     as.addToInviteAccess = addToInviteAccess;
