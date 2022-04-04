@@ -18,3 +18,11 @@ properties:
     $ref: ../processing-config-bodies/ProcessingConfigConfigureEmbedding.v1.yaml
   meta:
     $ref: ../processing-config-bodies/ProcessingConfigMeta.v1.yaml
+required:
+  - cellSizeDistribution
+  - mitochondrialContent
+  - classifier
+  - numGenesVsNumUmis
+  - doubletScores
+  - dataIntegration
+  - configureEmbedding
