@@ -18,8 +18,8 @@ const recursiveCamelcase = (result) => _.transform(result, (acc, value, key, tar
 });
 
 // This is one of the shapes the knexfile can take https://knexjs.org/#knexfile
-const fetchConfiguration = async (environment, sandboxId) => {
-  const params = await getConnectionParams(environment, sandboxId);
+const fetchConfiguration = async (environment, clusterId) => {
+  const params = await getConnectionParams(environment, clusterId);
   return {
     [environment]: {
       client: 'postgresql',
@@ -33,7 +33,7 @@ const fetchConfiguration = async (environment, sandboxId) => {
 };
 
 module.exports = async () => {
-  const configuration = await fetchConfiguration(config.clusterEnv, config.sandboxId);
+  const configuration = await fetchConfiguration(config.clusterEnv, config.rdsClusterId);
   return {
     ...configuration,
   };

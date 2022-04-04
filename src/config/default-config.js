@@ -63,6 +63,7 @@ const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
   clusterEnv: process.env.CLUSTER_ENV || 'development',
   sandboxId: process.env.SANDBOX_ID || 'default',
+  rdsClusterId: process.env.RDS_CLUSTER_ID || 'default',
   podName: process.env.K8S_POD_NAME || 'local',
   workerNamespace: `worker-${process.env.SANDBOX_ID || 'default'}`,
   pipelineNamespace: `pipeline-${process.env.SANDBOX_ID || 'default'}`,
