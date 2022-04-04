@@ -1,4 +1,4 @@
-const jsonbObjectAgg = (aggregationColumnKey, nestedFields, aggregationJsonKey, sql) => {
+const createCollapsedObject = (collapseKey, nestedFields, collapseKeyNewName, sql) => {
   const jsonObjectProps = nestedFields.reduce((acum, current) => {
     acum.push(`'${current}'`);
     acum.push(current);
@@ -10,7 +10,7 @@ const jsonbObjectAgg = (aggregationColumnKey, nestedFields, aggregationJsonKey, 
   const jsonBuildObjectSql = `json_build_object(${jsonObjectProps.join(', ')})`;
 
   // Set column {key} as the key for each value
-  const jsonbObjectAggSql = `jsonb_object_agg(${aggregationColumnKey}, ${jsonBuildObjectSql})`;
+  const jsonbObjectAggSql = `jsonb_object_agg(${collapseKey}, ${jsonBuildObjectSql})`;
 
   // When there is no row to aggregate, json_object_agg throws an error
   // So we need to handle this case outside jsonb_object_agg with coalesce
@@ -18,24 +18,24 @@ const jsonbObjectAgg = (aggregationColumnKey, nestedFields, aggregationJsonKey, 
   const handleNoExecutionsFoundSql = (
     `COALESCE(${jsonbObjectAggSql}
       FILTER(
-        WHERE ${aggregationColumnKey} IS NOT NULL
+        WHERE ${collapseKey} IS NOT NULL
       ),
       '{}'::jsonb
     )`
   );
 
-  return sql.raw(`${handleNoExecutionsFoundSql} as ${aggregationJsonKey}`);
+  return sql.raw(`${handleNoExecutionsFoundSql} as ${collapseKeyNewName}`);
 };
 
 /**
  *
  * @param {*} originalQuery Query that fetches the sql data
  * @param {*} rootFields Fields that shouldn't be aggregated
- * @param {*} nestedFields Fields that vary across each aggregationColumnName,
+ * @param {*} fieldsToCollapse Fields that vary across each aggregationColumnName,
  * this is what we want to aggregate into one object for each aggregationColumnName
- * @param {*} aggregationColumnKey The column by which we want to perform the aggregation,
+ * @param {*} collapseKey The column by which we want to perform the aggregation,
  * the object will contain one key for each aggregationColumnName value
- * @param {*} aggregationJsonKey The key that we want to be added holding all the aggregated data
+ * @param {*} collapseKeyNewName The key that we want to be added holding all the aggregated data
  * @param {*} sql The sql client to use
  * @returns An object with all the data that can be aggregated squashed together, for example,
  * If our originalQuery returns two rows:
@@ -64,44 +64,44 @@ const jsonbObjectAgg = (aggregationColumnKey, nestedFields, aggregationJsonKey, 
  * For this example:
  * - rootFields: ['id', 'name'],
  * - nestedFields: ['pipeline_arn', 'hash]
- * - aggregationColumnKey: 'pipeline_type'
- * - aggregationJsonKey: 'pipelines'
+ * - collapseKey: 'pipeline_type'
+ * - collapseKeyNewName: 'pipelines'
  *
  * Note it also camelcases all the keys returned
  */
-const aggregateIntoJsonObject = (
+const collapseKeysIntoObject = (
   originalQuery,
   rootFields,
-  nestedFields,
-  aggregationColumnKey,
-  aggregationJsonKey,
+  fieldsToCollapse,
+  collapseKey,
+  collapseKeyNewName,
   sql,
 ) => (
   sql
     .select([
       ...rootFields,
-      jsonbObjectAgg(aggregationColumnKey, nestedFields, aggregationJsonKey, sql),
+      createCollapsedObject(collapseKey, fieldsToCollapse, collapseKeyNewName, sql),
     ])
     .from(originalQuery)
     .groupBy(rootFields)
 );
 
-const aggregateIntoJsonArray = (
+const collapseKeyIntoArray = (
   originalQuery,
   rootFields,
-  fieldKey,
-  fieldJsonKey,
+  originalKeyName,
+  collapsedKeyName,
   sql,
 ) => (
   sql
     .select([
       ...rootFields,
-      sql.raw(`array_remove(array_agg("${fieldKey}"), NULL) as "${fieldJsonKey}"`),
+      sql.raw(`array_remove(array_agg("${originalKeyName}"), NULL) as "${collapsedKeyName}"`),
     ])
     .from(originalQuery)
     .groupBy(rootFields)
 );
 
 module.exports = {
-  aggregateIntoJsonObject, aggregateIntoJsonArray,
+  collapseKeysIntoObject, collapseKeyIntoArray,
 };
