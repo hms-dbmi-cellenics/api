@@ -21,6 +21,7 @@ properties:
 required:
   - cellSizeDistribution
   - mitochondrialContent
+  - readAlignment
   - classifier
   - numGenesVsNumUmis
   - doubletScores
