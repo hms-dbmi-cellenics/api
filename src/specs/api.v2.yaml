@@ -59,6 +59,37 @@ paths:
                   - clusterEnv
       description: Returns a status on the health of the API.
   '/experiments/{experimentId}':
+    get:
+      summary: Get an experiment info
+      description: Get an experiment info
+      operationId: getExperiment
+      x-eov-operation-id: experiment#getExperiment
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: Create experiment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExperimentInfo'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
     post:
       summary: Create experiment
       description: Create a new experiment
@@ -76,21 +107,110 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPSuccess.v1.yaml
+                $ref: '#/components/schemas/HTTPSuccess'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
         '401':
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
-
+                $ref: '#/components/schemas/HTTPError'
+    patch:
+      summary: Patch an experiment
+      description: Update some properties in an experiment
+      operationId: patchExperiment
+      x-eov-operation-id: experiment#patchExperiment
+      x-eov-operation-handler: routes/experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExperimentPatch'
+      responses:
+        '200':
+          description: Create experiment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+  '/experiments/{experimentId}/samples/position':
+    put:
+      summary: Update position for a sample
+      description: Set a new position for a sample
+      operationId: updateSamplePosition
+      x-eov-operation-id: experiment#updateSamplePosition
+      x-eov-operation-handler: routes/experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPosition: 
+                  type: integer
+                newPosition:
+                  type: integer
+              required:
+                - oldPosition
+                - newPosition
+              additionalProperties: false
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
 components:
   schemas:
     CreateExperiment:
       $ref: './models/experiment-bodies/CreateExperiment.v2.yaml'
+    ExperimentInfo:
+      $ref: './models/experiment-bodies/ExperimentInfo.v2.yaml'
+    ExperimentPatch:
+      $ref: './models/experiment-bodies/ExperimentPatch.v2.yaml'
+    HTTPSuccess:
+      $ref: './models/HTTPSuccess.v1.yaml'
+    HTTPError:
+      $ref: './models/HTTPError.v1.yaml'
