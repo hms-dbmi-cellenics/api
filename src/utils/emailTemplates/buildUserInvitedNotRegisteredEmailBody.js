@@ -7,8 +7,8 @@ const buildUserInvitedNotRegisteredEmailBody = (email, inviterUser) => {
             <p>
               Hello, <br/>
               Your collaborator ${inviterUser.email} has invited you to explore their single cell RNA-seq project in Cellenics. <br/><br/>
-              You need to register to Cellenics to access it. <br/>
-              Register at <a href="https://scp.biomage.net">scp.biomage.net</a> <br/> <br/>
+              You need to create a Cellenics account in order to access the project. <br/>
+              Register at <a href="https://scp.biomage.net">scp.biomage.net</a> using this email address.<br/> <br/>
 
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
               The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
