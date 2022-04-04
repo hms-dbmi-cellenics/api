@@ -227,6 +227,7 @@ jobs:
 
           if [ "${{ matrix.environment }}" = "production" ]; then
             SANDBOX_ID="default"
+            RDS_CLUSTER_ID="default"
             CHART_REF="master"
             KUBERNETES_ENV="production"
             IMAGE_TAG="${REF_DASHED/refs-tags-/}"
@@ -236,6 +237,7 @@ jobs:
 
           if [ "${{ matrix.environment }}" = "develop" ]; then
             SANDBOX_ID="default"
+            RDS_CLUSTER_ID="default"
             CHART_REF="master"
             KUBERNETES_ENV="staging"
             IMAGE_TAG="$REF_DASHED-$GITHUB_SHA"
@@ -245,6 +247,7 @@ jobs:
 
           if [ "${{ matrix.environment }}" = "staging" ]; then
             SANDBOX_ID="STAGING_SANDBOX_ID"
+            RDS_CLUSTER_ID="STAGING_RDS_CLUSTER_ID"
             CHART_REF="STAGING_CHART_REF"
             KUBERNETES_ENV="staging"
             IMAGE_TAG="$REF_DASHED-$GITHUB_SHA"
@@ -259,6 +262,7 @@ jobs:
           | yq w -d0 - metadata.name "$DEPLOYMENT_NAME-$SANDBOX_ID" \
           | yq w -d0 - metadata.labels.sandboxId "$SANDBOX_ID" \
           | yq w -d1 - metadata.labels.sandboxId "$SANDBOX_ID" \
+          | yq w -d1 - metadata.labels.rdsClusterId "$RDS_CLUSTER_ID" \
           | yq w -d1 - "metadata.annotations[filter.fluxcd.io/chart-image]" "$IMAGE_GLOB" \
           | yq w -d1 - spec.releaseName "$DEPLOYMENT_NAME" \
           | yq w -d1 - spec.chart.ref "$CHART_REF" \
