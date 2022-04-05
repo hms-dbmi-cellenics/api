@@ -3,9 +3,7 @@ const _ = require('lodash');
 /* eslint-disable func-names */
 const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
 const sqlClient = require('../../sql/sqlClient');
-const {
-  collapseKeysIntoObject, collapseKeyIntoArray,
-} = require('../../sql/helpers');
+const { collapseKeyIntoArray } = require('../../sql/helpers');
 
 const getLogger = require('../../utils/getLogger');
 
@@ -77,9 +75,36 @@ const getExperimentData = async (experimentId) => {
     'params_hash', 'state_machine_arn', 'execution_arn',
   ];
 
-  const result = await collapseKeysIntoObject(
-    mainQuery, experimentFields, experimentExecutionFields, 'pipeline_type', 'pipelines', sql,
-  ).first();
+  const experimentExecutionKeys = experimentExecutionFields.reduce((acum, current) => {
+    acum.push(`'${current}'`);
+    acum.push(current);
+
+    return acum;
+  }, []);
+
+  const replaceNullsWithObject = (object, nullableKey) => (
+    `COALESCE(
+      ${object}
+      FILTER(
+        WHERE ${nullableKey} IS NOT NULL
+      ),
+      '{}'::jsonb
+    )`
+  );
+
+  const result = await sql
+    .select([
+      ...experimentFields,
+      sql.raw(
+        `${replaceNullsWithObject(
+          `jsonb_object_agg(pipeline_type, json_build_object(${experimentExecutionKeys.join(', ')}))`,
+          'pipeline_type',
+        )} as pipelines`,
+      ),
+    ])
+    .from(mainQuery)
+    .groupBy(experimentFields)
+    .first();
 
   if (_.isEmpty(result)) {
     throw new NotFoundError('Experiment not found');
