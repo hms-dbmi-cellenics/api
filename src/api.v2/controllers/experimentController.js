@@ -1,17 +1,18 @@
 const _ = require('lodash');
 
-const experiment = require('../model/experiment');
-const userAccess = require('../model/userAccess');
+const Experiment = require('../model/Experiment');
+const UserAccess = require('../model/UserAccess');
 
 const getLogger = require('../../utils/getLogger');
 const { OK } = require('../../utils/responses');
+// const runInTransaction = require('../helpers/runInTransaction');
 
 const logger = getLogger('[ExperimentController] - ');
 
 const getExperiment = async (req, res) => {
   const { params: { experimentId } } = req;
 
-  const data = await experiment.getExperimentData(experimentId);
+  const data = await new Experiment().getExperimentData(experimentId);
 
   res.json(data);
 };
@@ -23,8 +24,12 @@ const createExperiment = async (req, res) => {
 
   logger.log('Creating experiment');
 
-  await experiment.create({ id: experimentId, name, description });
-  await userAccess.createNewExperimentPermissions(user.sub, experimentId);
+  // await runInTransaction([
+  //   ()
+  // ]);
+
+  await new Experiment().create({ id: experimentId, name, description });
+  await new UserAccess().createNewExperimentPermissions(user.sub, experimentId);
 
   logger.log(`Finished creating experiment ${experimentId}`);
 
@@ -38,7 +43,7 @@ const patchExperiment = async (req, res) => {
 
   const snakeCasedKeysToPatch = _.mapKeys(body, (_value, key) => _.snakeCase(key));
 
-  await experiment.update(experimentId, snakeCasedKeysToPatch);
+  await new Experiment().update(experimentId, snakeCasedKeysToPatch);
 
   logger.log(`Finished updating experiment ${experimentId}`);
 
@@ -60,7 +65,7 @@ const updateSamplePosition = async (req, res) => {
     return;
   }
 
-  await experiment.updateSamplePosition(experimentId, oldPosition, newPosition);
+  await new Experiment().updateSamplePosition(experimentId, oldPosition, newPosition);
 
   logger.log(`Finished reordering samples in ${experimentId}`);
 

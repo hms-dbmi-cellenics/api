@@ -18,7 +18,7 @@ jest.mock('../../../src/sql/helpers', () => ({
   aggregateIntoJson: jest.fn(),
 }));
 
-const experiment = require('../../../src/api.v2/model/experiment');
+const experiment = require('../../../src/api.v2/model/Experiment');
 
 const mockExperimentId = 'mockExperimentId';
 
@@ -55,7 +55,6 @@ describe('model/experiment', () => {
     );
 
     const firstParam = helpers.aggregateIntoJson.mock.calls[0][0];
-
 
     // The replace(/__cov) is to remove coverage annotations:
     // https://stackoverflow.com/questions/30470796/function-equality-assertion-broken-by-code-coverage-report

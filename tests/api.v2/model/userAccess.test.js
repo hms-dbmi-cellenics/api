@@ -17,8 +17,7 @@ jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
 }));
 
-const userAccess = require('../../../src/api.v2/model/userAccess');
-
+const userAccess = require('../../../src/api.v2/model/UserAccess');
 
 const mockUserAccessCreateResults = [
   [{

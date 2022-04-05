@@ -1,9 +1,9 @@
-const generateBasicModelFunctions = require('../../../src/api.v2/helpers/generateBasicModelFunctions');
+const generateBasicModelFunctions = require('../../../src/api.v2/helpers/BasicModel');
 
 jest.mock('../../../src/api.v2/helpers/generateBasicModelFunctions',
   () => jest.fn(() => ({ hasFakeBasicModelFunctions: true })));
 
-const inviteAccess = require('../../../src/api.v2/model/inviteAccess');
+const inviteAccess = require('../../../src/api.v2/model/InviteAccess');
 
 describe('model/inviteAccess', () => {
   it('Returns the correct generateBasicModelFunctions', async () => {

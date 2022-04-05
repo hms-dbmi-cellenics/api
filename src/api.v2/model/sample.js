@@ -1,4 +1,5 @@
-const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
+const BasicModel = require('../helpers/BasicModel');
+const sqlClient = require('../../sql/sqlClient');
 
 const sampleTable = 'sample';
 const sampleFields = [
@@ -10,11 +11,10 @@ const sampleFields = [
   'updated_at',
 ];
 
-const basicModelFunctions = generateBasicModelFunctions({
-  tableName: sampleTable,
-  selectableProps: sampleFields,
-});
+class Sample extends BasicModel {
+  constructor(sql = sqlClient.get()) {
+    super(sql, sampleTable, sampleFields);
+  }
+}
 
-module.exports = {
-  ...basicModelFunctions,
-};
+module.exports = Sample;

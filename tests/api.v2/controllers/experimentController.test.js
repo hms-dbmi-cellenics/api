@@ -1,6 +1,6 @@
 // @ts-nocheck
-const experimentModel = require('../../../src/api.v2/model/experiment');
-const userAccessModel = require('../../../src/api.v2/model/userAccess');
+const experimentModel = require('../../../src/api.v2/model/Experiment');
+const userAccessModel = require('../../../src/api.v2/model/UserAccess');
 
 const mockExperiment = {
   id: 'mockExperimentId',

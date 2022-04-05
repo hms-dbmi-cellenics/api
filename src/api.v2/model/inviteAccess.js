@@ -1,4 +1,5 @@
-const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
+const BasicModel = require('../helpers/BasicModel');
+const sqlClient = require('../../sql/sqlClient');
 
 const tableName = 'invite_access';
 
@@ -9,11 +10,10 @@ const selectableProps = [
   'updated_at',
 ];
 
-const basicModelFunctions = generateBasicModelFunctions({
-  tableName,
-  selectableProps,
-});
+class InviteAccess extends BasicModel {
+  constructor(sql = sqlClient.get()) {
+    super(sql, tableName, selectableProps);
+  }
+}
 
-module.exports = {
-  ...basicModelFunctions,
-};
+module.exports = InviteAccess;

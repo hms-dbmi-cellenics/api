@@ -2,7 +2,7 @@
 // for how JWT verification works with Cognito.
 const { UnauthorizedError, UnauthenticatedError } = require('../../utils/responses');
 
-const userAccess = require('../model/userAccess');
+const UserAccess = require('../model/UserAccess');
 
 /**
  * General authorization middleware. Resolves with nothing on
@@ -20,7 +20,7 @@ const userAccess = require('../model/userAccess');
 const authorize = async (userId, resource, method, experimentId) => {
   // authResource is always experimentId in V2 because there is no project
 
-  const granted = await userAccess.canAccessExperiment(
+  const granted = await new UserAccess().canAccessExperiment(
     userId,
     experimentId,
     resource,
