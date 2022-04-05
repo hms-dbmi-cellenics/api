@@ -1,4 +1,5 @@
 const sample = require('../model/sample');
+const experiment = require('../model/experiment');
 
 const getLogger = require('../../utils/getLogger');
 const { OK } = require('../../utils/responses');
@@ -18,6 +19,8 @@ const createSample = async (req, res) => {
     name,
     sample_technology: sampleTechnology,
   });
+
+  await experiment.addSample(experimentId, sampleId);
 
   logger.log(`Finished creating sample ${sampleId} for experiment ${experimentId}`);
 

@@ -12,6 +12,7 @@ const logger = getLogger('[ExperimentModel] - ');
 
 const experimentTable = 'experiment';
 const experimentExecutionTable = 'experiment_execution';
+
 const experimentFields = [
   'id',
   'name',
@@ -61,16 +62,17 @@ const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
   const trx = await sql.transaction();
 
   try {
-    const result = await trx(experimentTable).update({
-      samples_order: trx.raw(`(
+    const result = await trx(experimentTable)
+      .update({
+        samples_order: trx.raw(`(
         SELECT jsonb_insert(samples_order - ${oldPosition}, '{${newPosition}}', samples_order -> ${oldPosition}, false)
-        FROM (
-          SELECT (samples_order)
-          FROM experiment e
-          WHERE e.id = '${experimentId}'
-        ) samples_order
-      )`),
-    }).where('id', experimentId)
+          FROM (
+            SELECT (samples_order)
+            FROM experiment e
+            WHERE e.id = '${experimentId}'
+          ) samples_order
+        )`),
+      }).where('id', experimentId)
       .returning(['samples_order']);
 
     const { samplesOrder = null } = result[0] || {};
@@ -90,8 +92,19 @@ const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
   }
 };
 
+const addSample = async (experimentId, sampleId) => {
+  const sql = sqlClient.get();
+
+  sql(experimentTable)
+    .update({
+      samples_order: sql.raw(`samples_order || '["${sampleId}"]'::jsonb`),
+    })
+    .where('id', experimentId);
+};
+
 module.exports = {
   getExperimentData,
   updateSamplePosition,
+  addSample,
   ...basicModelFunctions,
 };
