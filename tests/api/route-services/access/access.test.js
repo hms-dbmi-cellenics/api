@@ -6,20 +6,25 @@ const {
   mockDocClientBatchWrite,
   mockDynamoScan,
   mockDynamoDeleteItem,
+  mockDocClientPutItem,
 } = require('../../../test-utils/mockAWSServices');
 const AccessService = require('../../../../src/api/route-services/access');
 
+
 jest.mock('../../../../src/api/route-services/experiment');
 jest.mock('../../../../src/utils/authMiddlewares');
-
 jest.mock('../../../../src/utils/send-email', () => jest.fn());
 jest.mock('../../../../src/utils/aws/user', () => ({
-  getAwsUserAttributesByEmail: jest.fn(() => ([
-    { Name: 'sub', Value: '032cdb44-0cd3-4d58-af21-850kp0b95ac7' },
-    { Name: 'email_verified', Value: 'true' },
-    { Name: 'name', Value: 'my name' },
-    { Name: 'email', Value: 'asd.asd@asd.ac.uk' }]
-  )),
+  getAwsUserAttributesByEmail: jest.fn((email) => {
+    if (email === 'asd@asd.com') {
+      return Promise.resolve(null);
+    }
+    return [
+      { Name: 'sub', Value: '032cdb44-0cd3-4d58-af21-850kp0b95ac7' },
+      { Name: 'email_verified', Value: 'true' },
+      { Name: 'name', Value: 'my name' },
+      { Name: 'email', Value: 'asd.asd@asd.ac.uk' }];
+  }),
 }));
 
 describe('tests for the projects service', () => {
@@ -219,14 +224,20 @@ describe('tests for the projects service', () => {
     expect(grantRoleMock.mock.calls).toEqual([[fake.USER.sub, fake.EXPERIMENT_ID, 'aaaaaaaa-bbbb-3333-4444-999999999999', 'admin']]);
   });
 
-  test('not existent user returns error', async () => {
+  test('non-existent user calls adds to invite-access', async () => {
     const as = new AccessService();
-    const grantRoleMock = jest.fn();
-    as.grantRole = grantRoleMock;
+    const addToInviteAccess = jest.fn();
+    as.addToInviteAccess = addToInviteAccess;
 
-    expect(async () => (
-      await as.inviteUser(fake.USER.email, fake.EXPERIMENT_ID, fake.PROJECT_ID, 'admin', { email: 'inviter@user.com' })))
-      .rejects.toThrow(/User is not registered/);
+    await as.inviteUser('asd@asd.com', fake.EXPERIMENT_ID, fake.PROJECT_ID, 'admin', { email: 'inviter@user.com' });
+    expect(addToInviteAccess).toHaveBeenCalledTimes(1);
+  });
+
+  test('add to invite-access', () => {
+    const as = new AccessService();
+    const addItem = mockDocClientPutItem();
+    as.addToInviteAccess(fake.USER.sub, fake.EXPERIMENT_ID, fake.PROJECT_ID, 'admin');
+    expect(addItem).toHaveBeenCalledTimes(1);
   });
 
   test('Get roles', async () => {
