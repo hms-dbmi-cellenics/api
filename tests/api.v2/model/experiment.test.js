@@ -95,7 +95,7 @@ describe('model/experiment', () => {
     expect(mockSqlClient.raw.mock.calls[0]).toMatchSnapshot();
 
     expect(mockSqlClient.select).toHaveBeenCalledWith([...experimentFields, mockCollapsedObject]);
-    expect(mockSqlClient.groupBy).toHaveBeenCalledWith(...experimentFields);
+    expect(mockSqlClient.groupBy).toHaveBeenCalledWith(experimentFields);
     expect(mockSqlClient.from).toHaveBeenCalled();
 
     // Check that mainQuery is correct
