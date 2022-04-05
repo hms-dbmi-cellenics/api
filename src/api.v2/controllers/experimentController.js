@@ -32,9 +32,6 @@ const createExperiment = async (req, res) => {
   } catch (e) {
     logger.log(`Error creating experiment ${experimentId}, rolling back`);
 
-    console.log('eDebug');
-    console.log(e);
-
     trx.rollback();
     throw e;
   }

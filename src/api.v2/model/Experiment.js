@@ -90,7 +90,7 @@ class Experiment extends BasicModel {
   }
 
   async addSample(experimentId, sampleId) {
-    this.sql(experimentTable)
+    await this.sql(experimentTable)
       .update({
         samples_order: this.sql.raw(`samples_order || '["${sampleId}"]'::jsonb`),
       })

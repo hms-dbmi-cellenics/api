@@ -27,11 +27,13 @@ const createSample = async (req, res) => {
 
     await new Experiment(trx).addSample(experimentId, sampleId);
   } catch (e) {
-    logger.log(`Error creating experiment ${experimentId}, rolling back`);
+    logger.log(`Error creating sample ${sampleId} for experiment ${experimentId}, rolling back`);
 
     trx.rollback();
     throw e;
   }
+
+  trx.commit();
 
   logger.log(`Finished creating sample ${sampleId} for experiment ${experimentId}`);
 
