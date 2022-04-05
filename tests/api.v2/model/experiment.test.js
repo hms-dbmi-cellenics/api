@@ -73,27 +73,33 @@ describe('model/experiment', () => {
   });
 
   it('getExperimentData works correctly', async () => {
+    const experimentFields = [
+      'id', 'name', 'description',
+      'samples_order', 'notify_by_email',
+      'processing_config', 'created_at', 'updated_at',
+    ];
+
     const queryResult = 'result';
     helpers.collapseKeysIntoObject.mockReturnValueOnce(mockSqlClient);
     mockSqlClient.first.mockReturnValueOnce(queryResult);
+
+    const mockCollapsedObject = 'collapsedObject';
+    mockSqlClient.raw.mockImplementationOnce(() => mockCollapsedObject);
 
     const expectedResult = await experiment.getExperimentData(mockExperimentId);
 
     expect(expectedResult).toEqual(queryResult);
 
     expect(sqlClient.get).toHaveBeenCalled();
-    expect(helpers.collapseKeysIntoObject).toHaveBeenCalledWith(
-      expect.any(Function),
-      ['id', 'name', 'description', 'samples_order', 'notify_by_email', 'processing_config', 'created_at', 'updated_at'],
-      ['params_hash', 'state_machine_arn', 'execution_arn'],
-      'pipeline_type',
-      'pipelines',
-      mockSqlClient,
-    );
 
+    expect(mockSqlClient.raw.mock.calls[0]).toMatchSnapshot();
+
+    expect(mockSqlClient.select).toHaveBeenCalledWith([...experimentFields, mockCollapsedObject]);
+    expect(mockSqlClient.groupBy).toHaveBeenCalledWith(...experimentFields);
+    expect(mockSqlClient.from).toHaveBeenCalled();
 
     // Check that mainQuery is correct
-    const mainQuery = helpers.collapseKeysIntoObject.mock.calls[0][0];
+    const mainQuery = mockSqlClient.from.mock.calls[0][0];
 
     jest.clearAllMocks();
     await mainQuery.bind(mockSqlClient)();
