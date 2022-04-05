@@ -5,7 +5,7 @@ const UserAccess = require('../model/UserAccess');
 
 const getLogger = require('../../utils/getLogger');
 const { OK } = require('../../utils/responses');
-// const runInTransaction = require('../helpers/runInTransaction');
+const sqlClient = require('../../sql/sqlClient');
 
 const logger = getLogger('[ExperimentController] - ');
 
@@ -24,12 +24,22 @@ const createExperiment = async (req, res) => {
 
   logger.log('Creating experiment');
 
-  // await runInTransaction([
-  //   ()
-  // ]);
+  const trx = await sqlClient.get().transaction();
 
-  await new Experiment().create({ id: experimentId, name, description });
-  await new UserAccess().createNewExperimentPermissions(user.sub, experimentId);
+  try {
+    await new Experiment(trx).create({ id: experimentId, name, description });
+    await new UserAccess(trx).createNewExperimentPermissions(user.sub, experimentId);
+  } catch (e) {
+    logger.log(`Error creating experiment ${experimentId}, rolling back`);
+
+    console.log('eDebug');
+    console.log(e);
+
+    trx.rollback();
+    throw e;
+  }
+
+  trx.commit();
 
   logger.log(`Finished creating experiment ${experimentId}`);
 
