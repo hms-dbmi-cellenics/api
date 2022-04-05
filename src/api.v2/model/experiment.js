@@ -75,7 +75,7 @@ const getExperimentData = async (experimentId) => {
     'params_hash', 'state_machine_arn', 'execution_arn',
   ];
 
-  const experimentExecutionKeys = experimentExecutionFields.reduce((acum, current) => {
+  const pipelineExecutionKeys = experimentExecutionFields.reduce((acum, current) => {
     acum.push(`'${current}'`);
     acum.push(current);
 
@@ -97,7 +97,7 @@ const getExperimentData = async (experimentId) => {
       ...experimentFields,
       sql.raw(
         `${replaceNullsWithObject(
-          `jsonb_object_agg(pipeline_type, json_build_object(${experimentExecutionKeys.join(', ')}))`,
+          `jsonb_object_agg(pipeline_type, jsonb_build_object(${pipelineExecutionKeys.join(', ')}))`,
           'pipeline_type',
         )} as pipelines`,
       ),
