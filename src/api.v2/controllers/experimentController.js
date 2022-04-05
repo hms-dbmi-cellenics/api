@@ -20,7 +20,11 @@ const getAllExperiments = async (req, res) => {
 const getExperiment = async (req, res) => {
   const { params: { experimentId } } = req;
 
+  logger.log(`Getting experiment ${experimentId}`);
+
   const data = await experiment.getExperimentData(experimentId);
+
+  logger.log(`Finished getting experiment ${experimentId}`);
 
   res.json(data);
 };
