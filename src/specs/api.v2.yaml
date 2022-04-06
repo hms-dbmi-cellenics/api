@@ -192,6 +192,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+    delete:
+      summary: Delete sample
+      operationId: deleteSample
+      x-eov-operation-id: sample#deleteSample
+      x-eov-operation-handler: routes/sample
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   '/experiments/{experimentId}/samples/position':
     put:
       summary: Update position for a sample

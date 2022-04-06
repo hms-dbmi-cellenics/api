@@ -36,16 +36,20 @@ const createSample = async (req, res) => {
   res.json(OK());
 };
 
-// const deleteSample = async (req, res) => {
-//   const { params: { experimentId, sampleId } } = req;
+const deleteSample = async (req, res) => {
+  const { params: { experimentId, sampleId } } = req;
 
+  await sqlClient.get().transaction(async (trx) => {
+    await new Sample(trx).destroy(sampleId);
+    await new Experiment(trx).removeSample(experimentId, sampleId);
+  });
 
-//   const trx = await sqlClient.get().transaction();
+  logger.log(`Finished deleting sample ${sampleId} from experiment ${experimentId}`);
 
-//   await new Sample(trx).destroy();
-//   await new Experiment(trx).removeSample();
-// };
+  res.json(OK());
+};
 
 module.exports = {
   createSample,
+  deleteSample,
 };
