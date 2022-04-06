@@ -905,6 +905,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SamplesByExperiment'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The request lacks authorization credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '404':
           description: Not Found
           content:
