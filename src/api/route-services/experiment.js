@@ -390,9 +390,9 @@ class ExperimentService {
     const dynamodb = createDynamoDbInstance();
 
     try {
-      await dynamodb.deleteItem(dynamoParams).send();
+      await dynamodb.deleteItem(dynamoParams).promise();
     } catch (e) {
-      if (e.statusCode === 404) throw NotFoundError(`Experiment not found in ${this.experimentsTableName}`);
+      if (e.statusCode === 404) throw new NotFoundError(`Experiment not found in ${this.experimentsTableName}`);
       throw e;
     }
   }

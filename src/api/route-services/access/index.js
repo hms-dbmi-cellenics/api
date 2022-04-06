@@ -109,7 +109,7 @@ class AccessService {
 
     const dynamodb = createDynamoDbInstance();
 
-    await dynamodb.deleteItem(dynamoParams).send();
+    await dynamodb.deleteItem(dynamoParams).promise();
     return OK();
   }
 

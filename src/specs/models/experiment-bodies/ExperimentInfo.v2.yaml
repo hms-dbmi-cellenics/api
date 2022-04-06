@@ -13,6 +13,8 @@ properties:
       type: string
   notifyByEmail:
     type: boolean
+  processingConfig:
+    $ref: ./ProcessingConfig.v2.yaml
   createdAt:
     type: string
   updatedAt:

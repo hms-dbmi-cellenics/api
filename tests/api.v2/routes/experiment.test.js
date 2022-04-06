@@ -7,11 +7,13 @@ const { OK } = require('../../../src/utils/responses');
 
 const experimentController = require('../../../src/api.v2/controllers/experimentController');
 
-const getExperimentResponse = require('../mocks/data/getExperimentResponse');
+const getExperimentResponse = require('../mocks/data/getExperimentResponse.json');
+const getAllExperimentsResponse = require('../mocks/data/getAllExperimentsResponse.json');
 
 jest.mock('../../../src/api.v2/controllers/experimentController', () => ({
-  createExperiment: jest.fn(),
+  getAllExperiments: jest.fn(),
   getExperiment: jest.fn(),
+  createExperiment: jest.fn(),
   patchExperiment: jest.fn(),
   updateSamplePosition: jest.fn(),
 }));
@@ -35,7 +37,10 @@ describe('tests for experiment route', () => {
   });
 
   it('Creating a new experiment results in a successful response', async (done) => {
-    experimentController.createExperiment.mockImplementationOnce((req, res) => res.json(OK()));
+    experimentController.createExperiment.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
 
     const experimentId = 'experiment-id';
 
@@ -60,7 +65,10 @@ describe('tests for experiment route', () => {
   });
 
   it('Creating a new experiment fails if body is invalid', async (done) => {
-    experimentController.createExperiment.mockImplementationOnce((req, res) => res.json(OK()));
+    experimentController.createExperiment.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
 
     const experimentId = 'experiment-id';
 
@@ -85,9 +93,10 @@ describe('tests for experiment route', () => {
   it('getExperiment results in a successful response', async (done) => {
     const experimentId = 'experiment-id';
 
-    experimentController.getExperiment.mockImplementationOnce(
-      (req, res) => res.json(getExperimentResponse),
-    );
+    experimentController.getExperiment.mockImplementationOnce((req, res) => {
+      res.json(getExperimentResponse);
+      return Promise.resolve();
+    });
 
     request(app)
       .get(`/v2/experiments/${experimentId}`)
@@ -109,7 +118,10 @@ describe('tests for experiment route', () => {
       notifyByEmail: true,
     };
 
-    experimentController.patchExperiment.mockImplementationOnce((req, res) => res.json(OK()));
+    experimentController.patchExperiment.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
 
     request(app)
       .patch(`/v2/experiments/${experimentId}`)
@@ -132,7 +144,10 @@ describe('tests for experiment route', () => {
       notifyByEmail: 'true',
     };
 
-    experimentController.patchExperiment.mockImplementationOnce((req, res) => res.json(OK()));
+    experimentController.patchExperiment.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
 
     request(app)
       .patch(`/v2/experiments/${experimentId}`)
@@ -156,7 +171,10 @@ describe('tests for experiment route', () => {
       newPosition: 1,
     };
 
-    experimentController.updateSamplePosition.mockImplementationOnce((req, res) => res.json(OK()));
+    experimentController.updateSamplePosition.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
 
     request(app)
       .put(`/v2/experiments/${experimentId}/samples/position`)
@@ -179,12 +197,34 @@ describe('tests for experiment route', () => {
       oldPosition: 4,
     };
 
-    experimentController.updateSamplePosition.mockImplementationOnce((req, res) => res.json(OK()));
+    experimentController.updateSamplePosition.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
 
     request(app)
       .put(`/v2/experiments/${experimentId}/samples/position`)
       .send(body)
       .expect(400)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
+  it('getAllExperiments results in a successful response', async (done) => {
+    experimentController.getAllExperiments.mockImplementationOnce((req, res) => {
+      res.json(getAllExperimentsResponse);
+      return Promise.resolve();
+    });
+
+    request(app)
+      .get('/v2/experiments/')
+      .expect(200)
       .end((err) => {
         if (err) {
           return done(err);

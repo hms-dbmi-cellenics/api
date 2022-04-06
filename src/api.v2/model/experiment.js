@@ -3,16 +3,18 @@ const _ = require('lodash');
 /* eslint-disable func-names */
 const generateBasicModelFunctions = require('../helpers/generateBasicModelFunctions');
 const sqlClient = require('../../sql/sqlClient');
-const { aggregateIntoJson } = require('../../sql/helpers');
-
-const { NotFoundError } = require('../../utils/responses');
+const { collapseKeyIntoArray } = require('../../sql/helpers');
 
 const getLogger = require('../../utils/getLogger');
+
+const { NotFoundError } = require('../../utils/responses');
 
 const logger = getLogger('[ExperimentModel] - ');
 
 const experimentTable = 'experiment';
 const experimentExecutionTable = 'experiment_execution';
+const userAccessTable = 'user_access';
+const metadataTrackTable = 'metadata_track';
 
 const experimentFields = [
   'id',
@@ -20,6 +22,7 @@ const experimentFields = [
   'description',
   'samples_order',
   'notify_by_email',
+  'processing_config',
   'created_at',
   'updated_at',
 ];
@@ -29,24 +32,79 @@ const basicModelFunctions = generateBasicModelFunctions({
   selectableProps: experimentFields,
 });
 
+const getAllExperiments = async (userId) => {
+  const sql = sqlClient.get();
+
+  const fields = [
+    'id',
+    'name',
+    'description',
+    'samples_order',
+    'notify_by_email',
+    'created_at',
+    'updated_at',
+  ];
+
+  const aliasedExperimentFields = fields.map((field) => `e.${field}`);
+  function mainQuery() {
+    this.select([...aliasedExperimentFields, 'm.key'])
+      .from(userAccessTable)
+      .where('user_id', userId)
+      .join(`${experimentTable} as e`, 'e.id', `${userAccessTable}.experiment_id`)
+      .leftJoin(`${metadataTrackTable} as m`, 'e.id', 'm.experiment_id')
+      .as('mainQuery');
+  }
+
+  const result = await collapseKeyIntoArray(mainQuery, [...fields], 'key', 'metadataKeys', sql);
+
+  return result;
+};
+
 const getExperimentData = async (experimentId) => {
   const sql = sqlClient.get();
 
-  function query() {
+  function mainQuery() {
     this.select('*')
       .from(experimentTable)
       .leftJoin(experimentExecutionTable, `${experimentTable}.id`, `${experimentExecutionTable}.experiment_id`)
       .where('id', experimentId)
-      .as('experiment_with_exec');
+      .as('mainQuery');
   }
 
   const experimentExecutionFields = [
     'params_hash', 'state_machine_arn', 'execution_arn',
   ];
 
-  const result = await aggregateIntoJson(
-    query, experimentFields, experimentExecutionFields, 'pipeline_type', 'pipelines', sql,
-  ).first();
+  const pipelineExecutionKeys = experimentExecutionFields.reduce((acum, current) => {
+    acum.push(`'${current}'`);
+    acum.push(current);
+
+    return acum;
+  }, []);
+
+  const replaceNullsWithObject = (object, nullableKey) => (
+    `COALESCE(
+      ${object}
+      FILTER(
+        WHERE ${nullableKey} IS NOT NULL
+      ),
+      '{}'::jsonb
+    )`
+  );
+
+  const result = await sql
+    .select([
+      ...experimentFields,
+      sql.raw(
+        `${replaceNullsWithObject(
+          `jsonb_object_agg(pipeline_type, jsonb_build_object(${pipelineExecutionKeys.join(', ')}))`,
+          'pipeline_type',
+        )} as pipelines`,
+      ),
+    ])
+    .from(mainQuery)
+    .groupBy(experimentFields)
+    .first();
 
   if (_.isEmpty(result)) {
     throw new NotFoundError('Experiment not found');
@@ -93,6 +151,7 @@ const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
 };
 
 module.exports = {
+  getAllExperiments,
   getExperimentData,
   updateSamplePosition,
   ...basicModelFunctions,

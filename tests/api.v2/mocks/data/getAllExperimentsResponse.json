@@ -1,0 +1,70 @@
+[
+    {
+        "id": "0b5f622a-01b8-254c-6b69-9e2606ac0b40",
+        "name": "an Experiment",
+        "description": "",
+        "samplesOrder": [
+            "167b62f8-b1dc-11ec-b74f-032552275db2",
+            "167b647e-b1dc-11ec-b750-732603953d4e",
+            "167b64b0-b1dc-11ec-b751-7f52e763e0b7",
+            "167b64d8-b1dc-11ec-b752-9b94786aeee8",
+            "167b6500-b1dc-11ec-b753-fb1883891cd7",
+            "167b6528-b1dc-11ec-b754-27c2c680b9b0",
+            "167b6550-b1dc-11ec-b755-8b457d423d71",
+            "167b656e-b1dc-11ec-b756-6f28697043cf",
+            "167b6596-b1dc-11ec-b757-037fe85b53ee",
+            "167b65be-b1dc-11ec-b758-cf28571bf1e1"
+        ],
+        "notifyByEmail": false,
+        "createdAt": "2021-11-30 17:17:44.114+00",
+        "updatedAt": "2021-11-30 17:23:11.325+00",
+        "metadataKeys": [
+            "gtype"
+        ]
+    },
+    {
+        "id": "14f77ce0-0bd6-3e0d-1340-b965c43d444d",
+        "name": "test dataset",
+        "description": "",
+        "samplesOrder": [
+            "3972c45e-b1dc-11ec-8891-1793d9065067"
+        ],
+        "notifyByEmail": true,
+        "createdAt": "2021-11-30 18:17:20.816+00",
+        "updatedAt": "2022-01-03 13:33:10.875+00",
+        "metadataKeys": [
+            "gtype"
+        ]
+    },
+    {
+        "id": "0b5f622a-01b8-254c-6b69-9e2606ac0b40",
+        "name": "thirdExperiment",
+        "description": "",
+        "samplesOrder": [
+            "276c3efc-b1dc-11ec-8501-4b39f7939f6e",
+            "276c4078-b1dc-11ec-8502-9789ac2137fb",
+            "276c40aa-b1dc-11ec-8503-1357ebd5bb9e"
+        ],
+        "notifyByEmail": false,
+        "createdAt": "2021-11-30 17:17:44.114+00",
+        "updatedAt": "2021-11-30 17:23:11.325+00",
+        "metadataKeys": [
+            "gtype"
+        ]
+    },
+    {
+        "id": "14f77ce0-0bd6-3e0d-1340-b965c43d444d",
+        "name": "test dataset",
+        "description": "",
+        "samplesOrder": [
+            "499ec1ca-b1dc-11ec-aaf9-8b6de15845ac",
+            "499ec33c-b1dc-11ec-aafa-4b3a0f4045ec"
+        ],
+        "notifyByEmail": true,
+        "createdAt": "2021-11-30 18:17:20.816+00",
+        "updatedAt": "2022-01-03 13:33:10.875+00",
+        "metadataKeys": [
+            "gtype"
+        ]
+    }
+]
