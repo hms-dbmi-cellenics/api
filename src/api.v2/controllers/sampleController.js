@@ -15,30 +15,37 @@ const createSample = async (req, res) => {
 
   logger.log('Creating sample');
 
-  const trx = await sqlClient.get().transaction();
-
   try {
-    await new Sample(trx).create({
-      id: sampleId,
-      experiment_id: experimentId,
-      name,
-      sample_technology: sampleTechnology,
+    await sqlClient.get().transaction(async (trx) => {
+      await new Sample(trx).create({
+        id: sampleId,
+        experiment_id: experimentId,
+        name,
+        sample_technology: sampleTechnology,
+      });
+
+      await new Experiment(trx).addSample(experimentId, sampleId);
     });
-
-    await new Experiment(trx).addSample(experimentId, sampleId);
   } catch (e) {
-    logger.log(`Error creating sample ${sampleId} for experiment ${experimentId}, rolling back`);
+    logger.log(`Error creating sample ${sampleId} for experiment ${experimentId}`);
 
-    trx.rollback();
     throw e;
   }
-
-  trx.commit();
 
   logger.log(`Finished creating sample ${sampleId} for experiment ${experimentId}`);
 
   res.json(OK());
 };
+
+// const deleteSample = async (req, res) => {
+//   const { params: { experimentId, sampleId } } = req;
+
+
+//   const trx = await sqlClient.get().transaction();
+
+//   await new Sample(trx).destroy();
+//   await new Experiment(trx).removeSample();
+// };
 
 module.exports = {
   createSample,
