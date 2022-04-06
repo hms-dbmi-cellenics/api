@@ -28,7 +28,6 @@ const createSample = async (req, res) => {
     });
   } catch (e) {
     logger.log(`Error creating sample ${sampleId} for experiment ${experimentId}`);
-
     throw e;
   }
 

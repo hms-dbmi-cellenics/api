@@ -24,19 +24,16 @@ const createExperiment = async (req, res) => {
 
   logger.log('Creating experiment');
 
-  const trx = await sqlClient.get().transaction();
 
   try {
-    await new Experiment(trx).create({ id: experimentId, name, description });
-    await new UserAccess(trx).createNewExperimentPermissions(user.sub, experimentId);
+    await sqlClient.get().transaction(async (trx) => {
+      await new Experiment(trx).create({ id: experimentId, name, description });
+      await new UserAccess(trx).createNewExperimentPermissions(user.sub, experimentId);
+    });
   } catch (e) {
     logger.log(`Error creating experiment ${experimentId}, rolling back`);
-
-    trx.rollback();
     throw e;
   }
-
-  trx.commit();
 
   logger.log(`Finished creating experiment ${experimentId}`);
 
