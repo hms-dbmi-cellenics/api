@@ -7,9 +7,6 @@ const validSamplesOrderResult = ['sampleId1', 'sampleId2', 'sampleId3', 'sampleI
 
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 
-jest.mock('../../../src/api.v2/helpers/generateBasicModelFunctions',
-  () => jest.fn(() => ({ hasFakeBasicModelFunctions: true })));
-
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
 }));
@@ -19,7 +16,7 @@ jest.mock('../../../src/sql/helpers', () => ({
   collapseKeyIntoArray: jest.fn(),
 }));
 
-const experiment = require('../../../src/api.v2/model/Experiment');
+const Experiment = require('../../../src/api.v2/model/Experiment');
 
 const mockExperimentId = 'mockExperimentId';
 
@@ -28,21 +25,13 @@ describe('model/experiment', () => {
     jest.clearAllMocks();
   });
 
-  it('Returns the correct generateBasicModelFunctions', async () => {
-    expect(experiment).toEqual(
-      expect.objectContaining({
-        hasFakeBasicModelFunctions: true,
-      }),
-    );
-  });
-
   it('getAllExperiments works correctly', async () => {
     const queryResult = 'result';
     helpers.collapseKeyIntoArray.mockReturnValueOnce(
       Promise.resolve(queryResult),
     );
 
-    const expectedResult = await experiment.getAllExperiments('mockUserId');
+    const expectedResult = await new Experiment().getAllExperiments('mockUserId');
 
     expect(queryResult).toEqual(expectedResult);
 
@@ -75,8 +64,8 @@ describe('model/experiment', () => {
   it('getExperimentData works correctly', async () => {
     const experimentFields = [
       'id', 'name', 'description',
-      'samples_order', 'notify_by_email',
-      'processing_config', 'created_at', 'updated_at',
+      'samples_order', 'processing_config', 'notify_by_email',
+      'created_at', 'updated_at',
     ];
 
     const queryResult = 'result';
@@ -86,7 +75,7 @@ describe('model/experiment', () => {
     const mockCollapsedObject = 'collapsedObject';
     mockSqlClient.raw.mockImplementationOnce(() => mockCollapsedObject);
 
-    const expectedResult = await experiment.getExperimentData(mockExperimentId);
+    const expectedResult = await new Experiment().getExperimentData(mockExperimentId);
 
     expect(expectedResult).toEqual(queryResult);
 
@@ -115,7 +104,7 @@ describe('model/experiment', () => {
     helpers.collapseKeysIntoObject.mockReturnValueOnce(mockSqlClient);
     mockSqlClient.first.mockReturnValueOnce({});
 
-    await expect(experiment.getExperimentData(mockExperimentId)).rejects.toThrow(new Error('Experiment not found'));
+    await expect(new Experiment().getExperimentData(mockExperimentId)).rejects.toThrow(new Error('Experiment not found'));
   });
 
   it('updateSamplePosition works correctly if valid params are passed', async () => {
@@ -124,7 +113,7 @@ describe('model/experiment', () => {
     );
     mockTrx.raw.mockImplementationOnce(() => 'resultOfSql.raw');
 
-    await experiment.updateSamplePosition(mockExperimentId, 0, 1);
+    await new Experiment().updateSamplePosition(mockExperimentId, 0, 1);
 
     expect(mockTrx).toHaveBeenCalledWith('experiment');
 
@@ -141,7 +130,7 @@ describe('model/experiment', () => {
     mockTrx.returning.mockImplementationOnce(() => Promise.resolve([{ samplesOrder: null }]));
     mockTrx.raw.mockImplementationOnce(() => 'resultOfSql.raw');
 
-    await expect(experiment.updateSamplePosition(mockExperimentId, 0, 1)).rejects.toThrow('Invalid update parameters');
+    await expect(new Experiment().updateSamplePosition(mockExperimentId, 0, 1)).rejects.toThrow('Invalid update parameters');
 
     expect(mockTrx).toHaveBeenCalledWith('experiment');
 
@@ -160,7 +149,7 @@ describe('model/experiment', () => {
     );
     mockTrx.raw.mockImplementationOnce(() => 'resultOfSql.raw');
 
-    await expect(experiment.updateSamplePosition(mockExperimentId, 0, 10000)).rejects.toThrow('Invalid update parameters');
+    await expect(new Experiment().updateSamplePosition(mockExperimentId, 0, 10000)).rejects.toThrow('Invalid update parameters');
 
     expect(mockTrx).toHaveBeenCalledWith('experiment');
 

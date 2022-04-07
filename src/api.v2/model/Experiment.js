@@ -20,6 +20,7 @@ const experimentFields = [
   'name',
   'description',
   'samples_order',
+  'processing_config',
   'notify_by_email',
   'created_at',
   'updated_at',

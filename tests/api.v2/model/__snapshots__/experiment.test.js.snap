@@ -16,12 +16,12 @@ exports[`model/experiment updateSamplePosition rolls back if the parameters are 
 Array [
   "(
         SELECT jsonb_insert(samples_order - 0, '{10000}', samples_order -> 0, false)
-        FROM (
-          SELECT (samples_order)
-          FROM experiment e
-          WHERE e.id = 'mockExperimentId'
-        ) samples_order
-      )",
+          FROM (
+            SELECT (samples_order)
+            FROM experiment e
+            WHERE e.id = 'mockExperimentId'
+          ) samples_order
+        )",
 ]
 `;
 
@@ -29,12 +29,12 @@ exports[`model/experiment updateSamplePosition rolls back if the result is inval
 Array [
   "(
         SELECT jsonb_insert(samples_order - 0, '{1}', samples_order -> 0, false)
-        FROM (
-          SELECT (samples_order)
-          FROM experiment e
-          WHERE e.id = 'mockExperimentId'
-        ) samples_order
-      )",
+          FROM (
+            SELECT (samples_order)
+            FROM experiment e
+            WHERE e.id = 'mockExperimentId'
+          ) samples_order
+        )",
 ]
 `;
 
@@ -42,11 +42,11 @@ exports[`model/experiment updateSamplePosition works correctly if valid params a
 Array [
   "(
         SELECT jsonb_insert(samples_order - 0, '{1}', samples_order -> 0, false)
-        FROM (
-          SELECT (samples_order)
-          FROM experiment e
-          WHERE e.id = 'mockExperimentId'
-        ) samples_order
-      )",
+          FROM (
+            SELECT (samples_order)
+            FROM experiment e
+            WHERE e.id = 'mockExperimentId'
+          ) samples_order
+        )",
 ]
 `;
