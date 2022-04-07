@@ -11,12 +11,6 @@ const {
   mockDynamoBatchGetItem,
 } = require('../test-utils/mockAWSServices');
 
-const userAccessModel = require('../../src/api.v2/model/UserAccess');
-
-jest.mock('../../src/api.v2/model/userAccess', () => ({
-  canAccessExperiment: jest.fn(),
-}));
-
 describe('Tests for authorization/authentication middlewares', () => {
   // Sample experiment permission data.
   const data = {
