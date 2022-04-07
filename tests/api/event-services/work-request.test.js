@@ -74,7 +74,7 @@ describe('handleWorkRequest', () => {
       await handleWorkRequest(workRequest);
     } catch (e) {
       expect(e.message).toMatch(
-        /^Error: distanceMetric is not set to an allowed value/,
+        /^Error: distanceMetric must be one of the following/,
       );
     }
   });

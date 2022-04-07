@@ -1,12 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`model/experiment getExperimentData works correctly 1`] = `
-"function query() {
-    /* istanbul ignore next */
-    
-    
-    this.select('*').from(experimentTable).leftJoin(experimentExecutionTable, \`\${experimentTable}.id\`, \`\${experimentExecutionTable}.experiment_id\`).where('id', experimentId).as('experiment_with_exec');
-  }"
+Array [
+  "COALESCE(
+      jsonb_object_agg(pipeline_type, jsonb_build_object('params_hash', params_hash, 'state_machine_arn', state_machine_arn, 'execution_arn', execution_arn))
+      FILTER(
+        WHERE pipeline_type IS NOT NULL
+      ),
+      '{}'::jsonb
+    ) as pipelines",
+]
 `;
 
 exports[`model/experiment updateSamplePosition rolls back if the parameters are invalid 1`] = `

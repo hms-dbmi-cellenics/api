@@ -15,7 +15,8 @@ const mockExperiment = {
 jest.mock('../../../src/api.v2/model/experiment');
 jest.mock('../../../src/api.v2/model/userAccess');
 
-const getExperimentResponse = require('../mocks/data/getExperimentResponse');
+const getExperimentResponse = require('../mocks/data/getExperimentResponse.json');
+const getAllExperimentsResponse = require('../mocks/data/getAllExperimentsResponse.json');
 
 const experimentController = require('../../../src/api.v2/controllers/experimentController');
 
@@ -41,14 +42,27 @@ describe('experimentController', () => {
     jest.clearAllMocks();
   });
 
+  it('getAllExperiments works correctly', async () => {
+    const mockReq = { user: { sub: 'mockUserId' } };
+
+    experimentModel.getAllExperiments.mockImplementationOnce(
+      () => Promise.resolve(getAllExperimentsResponse),
+    );
+
+    await experimentController.getAllExperiments(mockReq, mockRes);
+
+    expect(experimentModel.getAllExperiments).toHaveBeenCalledWith('mockUserId');
+    expect(mockRes.json).toHaveBeenCalledWith(getAllExperimentsResponse);
+  });
+
   it('getExperiment works correctly', async () => {
-    const mockReqGetExperiment = { params: { experimentId: getExperimentResponse.id } };
+    const mockReq = { params: { experimentId: getExperimentResponse.id } };
 
     experimentModel.getExperimentData.mockImplementationOnce(
       () => Promise.resolve(getExperimentResponse),
     );
 
-    await experimentController.getExperiment(mockReqGetExperiment, mockRes);
+    await experimentController.getExperiment(mockReq, mockRes);
 
     expect(experimentModel.getExperimentData).toHaveBeenCalledWith(getExperimentResponse.id);
     expect(mockRes.json).toHaveBeenCalledWith(getExperimentResponse);

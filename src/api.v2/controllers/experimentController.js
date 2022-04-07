@@ -9,10 +9,22 @@ const sqlClient = require('../../sql/sqlClient');
 
 const logger = getLogger('[ExperimentController] - ');
 
+const getAllExperiments = async (req, res) => {
+  const { user: { sub: userId } } = req;
+
+  const data = await new Experiment().getAllExperiments(userId);
+
+  res.json(data);
+};
+
 const getExperiment = async (req, res) => {
   const { params: { experimentId } } = req;
 
+  logger.log(`Getting experiment ${experimentId}`);
+
   const data = await new Experiment().getExperimentData(experimentId);
+
+  logger.log(`Finished getting experiment ${experimentId}`);
 
   res.json(data);
 };
@@ -77,6 +89,7 @@ const updateSamplePosition = async (req, res) => {
 };
 
 module.exports = {
+  getAllExperiments,
   getExperiment,
   createExperiment,
   patchExperiment,
