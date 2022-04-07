@@ -50,9 +50,6 @@ describe('experimentController', () => {
   it('getAllExperiments works correctly', async () => {
     const mockReq = { user: { sub: 'mockUserId' } };
 
-    console.log('experimentModelDebug');
-    console.log(experimentModel);
-
     experimentModel.getAllExperiments.mockImplementationOnce(
       () => Promise.resolve(getAllExperimentsResponse),
     );

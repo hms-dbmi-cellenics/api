@@ -27,7 +27,14 @@ module.exports = () => {
 
   const mockSqlClient = jest.fn(() => queriesInSqlClient);
   _.merge(mockSqlClient, {
-    transaction: jest.fn(() => Promise.resolve(mockTrx)),
+    transaction: jest.fn((param) => {
+      if (!param || !(param instanceof Function)) {
+        return mockTrx;
+      }
+
+      // Received a function to run within the transaction
+      return param(mockTrx);
+    }),
     ...queriesInSqlClient,
   });
 
