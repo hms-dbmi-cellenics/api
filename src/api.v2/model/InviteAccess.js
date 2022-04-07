@@ -1,4 +1,4 @@
-const BasicModel = require('../helpers/BasicModel');
+const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 
 const tableName = 'invite_access';

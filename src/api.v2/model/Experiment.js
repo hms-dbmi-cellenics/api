@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const BasicModel = require('../helpers/BasicModel');
+const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 const { collapseKeyIntoArray } = require('../../sql/helpers');
 

@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const config = require('../../config');
 
-const BasicModel = require('../helpers/BasicModel');
+const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 
 const { isRoleAuthorized } = require('../helpers/roles');

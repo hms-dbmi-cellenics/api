@@ -7,7 +7,7 @@ const {
 const { UnauthorizedError, UnauthenticatedError } = require('../../../src/utils/responses');
 const fake = require('../../test-utils/constants');
 
-const userAccessModel = require('../../../src/api.v2/model/UserAccess');
+const userAccessModel = require('../../../src/api.v2/model/UserAccess')();
 
 jest.mock('../../../src/api.v2/model/userAccess');
 

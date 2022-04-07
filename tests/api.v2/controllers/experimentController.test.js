@@ -1,6 +1,8 @@
 // @ts-nocheck
-const experimentModel = require('../../../src/api.v2/model/Experiment');
-const userAccessModel = require('../../../src/api.v2/model/UserAccess');
+// const experimentModel = require('../../../src/api.v2/model/Experiment')();
+const experimentModel = require('../../../src/api.v2/model/Experiment')();
+const userAccessModel = require('../../../src/api.v2/model/UserAccess')();
+const { mockSqlClient } = require('../mocks/getMockSqlClient')();
 
 const mockExperiment = {
   id: 'mockExperimentId',
@@ -12,8 +14,11 @@ const mockExperiment = {
   updated_at: '1900-03-26 21:06:00.573142+00',
 };
 
-jest.mock('../../../src/api.v2/model/experiment');
-jest.mock('../../../src/api.v2/model/userAccess');
+jest.mock('../../../src/api.v2/model/Experiment');
+jest.mock('../../../src/api.v2/model/UserAccess');
+jest.mock('../../../src/sql/sqlClient', () => ({
+  get: jest.fn(() => mockSqlClient),
+}));
 
 const getExperimentResponse = require('../mocks/data/getExperimentResponse.json');
 const getAllExperimentsResponse = require('../mocks/data/getAllExperimentsResponse.json');
@@ -44,6 +49,9 @@ describe('experimentController', () => {
 
   it('getAllExperiments works correctly', async () => {
     const mockReq = { user: { sub: 'mockUserId' } };
+
+    console.log('experimentModelDebug');
+    console.log(experimentModel);
 
     experimentModel.getAllExperiments.mockImplementationOnce(
       () => Promise.resolve(getAllExperimentsResponse),
