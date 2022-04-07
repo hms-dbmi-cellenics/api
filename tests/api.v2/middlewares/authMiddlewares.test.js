@@ -9,7 +9,7 @@ const fake = require('../../test-utils/constants');
 
 const UserAccessModel = require('../../../src/api.v2/model/UserAccess')();
 
-jest.mock('../../../src/api.v2/model/userAccess');
+jest.mock('../../../src/api.v2/model/UserAccess');
 
 describe('Tests for authorization/authentication middlewares', () => {
   beforeEach(() => {
