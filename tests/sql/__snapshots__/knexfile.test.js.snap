@@ -7,9 +7,6 @@ Object {
     "connection": Object {
       "fake": true,
     },
-    "migrations": Object {
-      "tableName": "migrations",
-    },
     "postProcessResponse": [Function],
   },
 }

@@ -24,9 +24,6 @@ const fetchConfiguration = async (environment, clusterId) => {
     [environment]: {
       client: 'postgresql',
       connection: params,
-      migrations: {
-        tableName: 'migrations',
-      },
       postProcessResponse: recursiveCamelcase,
     },
   };
