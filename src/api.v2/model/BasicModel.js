@@ -28,7 +28,7 @@ class BasicModel {
   }
 
   find(filters) {
-    this.sql.select(this.selectableProps)
+    return this.sql.select(this.selectableProps)
       .from(this.tableName)
       .where(filters)
       .timeout(this.timeout);

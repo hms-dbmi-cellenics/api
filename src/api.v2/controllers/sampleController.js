@@ -1,5 +1,6 @@
 const Sample = require('../model/Sample');
 const Experiment = require('../model/Experiment');
+const MetadataTrack = require('../model/MetadataTrack');
 
 const getLogger = require('../../utils/getLogger');
 const { OK } = require('../../utils/responses');
@@ -25,6 +26,8 @@ const createSample = async (req, res) => {
       });
 
       await new Experiment(trx).addSample(experimentId, sampleId);
+
+      await new MetadataTrack(trx).createNewSampleValues(experimentId, sampleId);
     });
   } catch (e) {
     logger.log(`Error creating sample ${sampleId} for experiment ${experimentId}`);
