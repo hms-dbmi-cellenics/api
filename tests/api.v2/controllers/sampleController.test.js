@@ -2,7 +2,9 @@
 const experimentModel = require('../../../src/api.v2/model/Experiment')();
 const sampleModel = require('../../../src/api.v2/model/Sample')();
 const metadataTrackModel = require('../../../src/api.v2/model/MetadataTrack')();
-const { mockSqlClient } = require('../mocks/getMockSqlClient')();
+const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
+
+const { OK } = require('../../../src/utils/responses');
 
 jest.mock('../../../src/api.v2/model/Experiment');
 jest.mock('../../../src/api.v2/model/Sample');
@@ -13,20 +15,6 @@ jest.mock('../../../src/sql/sqlClient', () => ({
 }));
 
 const sampleController = require('../../../src/api.v2/controllers/sampleController');
-const { OK } = require('../../../src/utils/responses');
-
-// const mockReqCreateExperiment = {
-//   params: {
-//     experimentId: mockExperiment.id,
-//   },
-//   user: {
-//     sub: 'mockSub',
-//   },
-//   body: {
-//     name: 'mockName',
-//     description: 'mockDescription',
-//   },
-// };
 
 const mockRes = {
   json: jest.fn(),

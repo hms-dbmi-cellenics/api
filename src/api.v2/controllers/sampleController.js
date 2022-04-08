@@ -17,23 +17,19 @@ const createSample = async (req, res) => {
 
   logger.log('Creating sample');
 
-  try {
-    await sqlClient.get().transaction(async (trx) => {
-      await new Sample(trx).create({
-        id: sampleId,
-        experiment_id: experimentId,
-        name,
-        sample_technology: sampleTechnology,
-      });
-
-      await new Experiment(trx).addSample(experimentId, sampleId);
-
-      await new MetadataTrack(trx).createNewSampleValues(experimentId, sampleId);
+  await sqlClient.get().transaction(async (trx) => {
+    await new Sample(trx).create({
+      id: sampleId,
+      experiment_id: experimentId,
+      name,
+      sample_technology: sampleTechnology,
     });
-  } catch (e) {
-    logger.log(`Error creating sample ${sampleId} for experiment ${experimentId}`);
-    throw e;
-  }
+
+    await new Experiment(trx).addSample(experimentId, sampleId);
+
+    await new MetadataTrack(trx)
+      .createNewSampleValues(experimentId, sampleId);
+  });
 
   logger.log(`Finished creating sample ${sampleId} for experiment ${experimentId}`);
 
