@@ -153,7 +153,7 @@ class Experiment extends BasicModel {
       .where('id', experimentId);
   }
 
-  async removeSample(experimentId, sampleId) {
+  async deleteSample(experimentId, sampleId) {
     await this.sql(experimentTable)
       .update({
         samples_order: this.sql.raw(`samples_order - '${sampleId}'`),

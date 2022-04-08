@@ -19,6 +19,7 @@ jest.mock('../../../src/sql/helpers', () => ({
 const Experiment = require('../../../src/api.v2/model/Experiment');
 
 const mockExperimentId = 'mockExperimentId';
+const mockSampleId = 'mockSampleId';
 
 describe('model/experiment', () => {
   beforeEach(() => {
@@ -160,5 +161,27 @@ describe('model/experiment', () => {
 
     expect(mockTrx.commit).not.toHaveBeenCalled();
     expect(mockTrx.rollback).toHaveBeenCalled();
+  });
+
+  it('addSample works correctly', async () => {
+    mockSqlClient.where.mockImplementationOnce(() => { Promise.resolve(); });
+    mockSqlClient.raw.mockImplementationOnce(() => 'RawSqlCommand');
+
+    await new Experiment().addSample(mockExperimentId, mockSampleId);
+
+    expect(mockSqlClient.update).toHaveBeenCalledWith({ samples_order: 'RawSqlCommand' });
+    expect(mockSqlClient.raw).toHaveBeenCalledWith('samples_order || \'["mockSampleId"]\'::jsonb');
+    expect(mockSqlClient.where).toHaveBeenCalledWith('id', 'mockExperimentId');
+  });
+
+  it('deleteSample works correctly', async () => {
+    mockSqlClient.where.mockImplementationOnce(() => { Promise.resolve(); });
+    mockSqlClient.raw.mockImplementationOnce(() => 'RawSqlCommand');
+
+    await new Experiment().deleteSample(mockExperimentId, mockSampleId);
+
+    expect(mockSqlClient.update).toHaveBeenCalledWith({ samples_order: 'RawSqlCommand' });
+    expect(mockSqlClient.raw).toHaveBeenCalledWith('samples_order - \'mockSampleId\'');
+    expect(mockSqlClient.where).toHaveBeenCalledWith('id', 'mockExperimentId');
   });
 });

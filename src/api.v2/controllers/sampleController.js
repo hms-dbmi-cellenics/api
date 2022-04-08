@@ -44,7 +44,7 @@ const deleteSample = async (req, res) => {
 
   await sqlClient.get().transaction(async (trx) => {
     await new Sample(trx).destroy(sampleId);
-    await new Experiment(trx).removeSample(experimentId, sampleId);
+    await new Experiment(trx).deleteSample(experimentId, sampleId);
   });
 
   logger.log(`Finished deleting sample ${sampleId} from experiment ${experimentId}`);
