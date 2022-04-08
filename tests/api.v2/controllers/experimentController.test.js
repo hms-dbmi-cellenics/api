@@ -1,5 +1,4 @@
 // @ts-nocheck
-// const experimentModel = require('../../../src/api.v2/model/Experiment')();
 const experimentModel = require('../../../src/api.v2/model/Experiment')();
 const userAccessModel = require('../../../src/api.v2/model/UserAccess')();
 const { mockSqlClient } = require('../mocks/getMockSqlClient')();

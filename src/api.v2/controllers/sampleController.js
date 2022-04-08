@@ -10,9 +10,10 @@ const sqlClient = require('../../sql/sqlClient');
 const logger = getLogger('[SampleController] - ');
 
 const createSample = async (req, res) => {
-  const { params: { experimentId, sampleId }, body } = req;
-
-  const { name, sampleTechnology } = body;
+  const {
+    params: { experimentId, sampleId },
+    body: { name, sampleTechnology },
+  } = req;
 
   logger.log('Creating sample');
 
