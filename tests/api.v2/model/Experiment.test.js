@@ -21,7 +21,7 @@ const Experiment = require('../../../src/api.v2/model/Experiment');
 const mockExperimentId = 'mockExperimentId';
 const mockSampleId = 'mockSampleId';
 
-describe('model/experiment', () => {
+describe('model/Experiment', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
