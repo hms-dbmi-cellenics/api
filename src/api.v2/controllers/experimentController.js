@@ -78,7 +78,7 @@ const getProcessingConfig = async (req, res) => {
 
 const updateProcessingConfig = async (req, res) => {
   const { params: { experimentId }, body } = req;
-  logger.log('Updating processing config for experiment ', experimentId, 'name ', body);
+  logger.log('Updating processing config for experiment ', experimentId);
 
   await experiment.updateProcessingConfig(experimentId, body);
   res.json(OK());
