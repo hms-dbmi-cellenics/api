@@ -116,6 +116,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
         '404':
           description: Not found error.
           content:
@@ -182,6 +188,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
         '404':
           description: Not found error.
           content:
@@ -218,6 +230,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
         '404':
           description: Not found error.
           content:
@@ -244,6 +262,12 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
         '401':
           description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
           content:
             application/json:
               schema:
@@ -290,6 +314,12 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
         '401':
           description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
           content:
             application/json:
               schema:
