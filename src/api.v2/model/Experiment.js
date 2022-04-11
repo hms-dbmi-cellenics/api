@@ -6,14 +6,13 @@ const { collapseKeyIntoArray } = require('../../sql/helpers');
 
 const { NotFoundError } = require('../../utils/responses');
 
+const tableNames = require('../helpers/tableNames');
+
+
 const getLogger = require('../../utils/getLogger');
 
 const logger = getLogger('[ExperimentModel] - ');
 
-const experimentTable = 'experiment';
-const experimentExecutionTable = 'experiment_execution';
-const userAccessTable = 'user_access';
-const metadataTrackTable = 'metadata_track';
 
 const experimentFields = [
   'id',
@@ -28,7 +27,7 @@ const experimentFields = [
 
 class Experiment extends BasicModel {
   constructor(sql = sqlClient.get()) {
-    super(sql, experimentTable, experimentFields);
+    super(sql, tableNames.EXPERIMENT, experimentFields);
   }
 
   async getAllExperiments(userId) {
@@ -45,10 +44,10 @@ class Experiment extends BasicModel {
     const aliasedExperimentFields = fields.map((field) => `e.${field}`);
     function mainQuery() {
       this.select([...aliasedExperimentFields, 'm.key'])
-        .from(userAccessTable)
+        .from(tableNames.USER_ACCESS)
         .where('user_id', userId)
-        .join(`${experimentTable} as e`, 'e.id', `${userAccessTable}.experiment_id`)
-        .leftJoin(`${metadataTrackTable} as m`, 'e.id', 'm.experiment_id')
+        .join(`${tableNames.EXPERIMENT} as e`, 'e.id', `${tableNames.USER_ACCESS}.experiment_id`)
+        .leftJoin(`${tableNames.METADATA_TRACK} as m`, 'e.id', 'm.experiment_id')
         .as('mainQuery');
     }
 
@@ -60,8 +59,8 @@ class Experiment extends BasicModel {
   async getExperimentData(experimentId) {
     function mainQuery() {
       this.select('*')
-        .from(experimentTable)
-        .leftJoin(experimentExecutionTable, `${experimentTable}.id`, `${experimentExecutionTable}.experiment_id`)
+        .from(tableNames.EXPERIMENT)
+        .leftJoin(tableNames.EXPERIMENT_EXECUTION, `${tableNames.EXPERIMENT}.id`, `${tableNames.EXPERIMENT_EXECUTION}.experiment_id`)
         .where('id', experimentId)
         .as('mainQuery');
     }
@@ -115,7 +114,7 @@ class Experiment extends BasicModel {
     const trx = await this.sql.transaction();
 
     try {
-      const result = await trx(experimentTable)
+      const result = await trx(tableNames.EXPERIMENT)
         .update({
           samples_order: trx.raw(`(
         SELECT jsonb_insert(samples_order - ${oldPosition}, '{${newPosition}}', samples_order -> ${oldPosition}, false)
@@ -146,7 +145,7 @@ class Experiment extends BasicModel {
   }
 
   async addSample(experimentId, sampleId) {
-    await this.sql(experimentTable)
+    await this.sql(tableNames.EXPERIMENT)
       .update({
         samples_order: this.sql.raw(`samples_order || '["${sampleId}"]'::jsonb`),
       })
@@ -154,7 +153,7 @@ class Experiment extends BasicModel {
   }
 
   async deleteSample(experimentId, sampleId) {
-    await this.sql(experimentTable)
+    await this.sql(tableNames.EXPERIMENT)
       .update({
         samples_order: this.sql.raw(`samples_order - '${sampleId}'`),
       })

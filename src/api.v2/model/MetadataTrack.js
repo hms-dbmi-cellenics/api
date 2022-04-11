@@ -2,8 +2,8 @@
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 
-const metadataTrackTable = 'metadata_track';
-const sampleInMetadataTrackTable = 'sample_in_metadata_track_map';
+const tableNames = require('../helpers/tableNames');
+
 const sampleFields = [
   'id',
   'experiment_id',
@@ -15,12 +15,12 @@ const sampleFields = [
 
 class MetadataTrack extends BasicModel {
   constructor(sql = sqlClient.get()) {
-    super(sql, metadataTrackTable, sampleFields);
+    super(sql, tableNames.METADATA_TRACK, sampleFields);
   }
 
   async createNewSampleValues(experimentId, sampleId) {
     const tracks = await this.sql.select(['id'])
-      .from(metadataTrackTable)
+      .from(tableNames.METADATA_TRACK)
       .where({ experiment_id: experimentId });
 
     if (tracks.length === 0) {
@@ -33,7 +33,7 @@ class MetadataTrack extends BasicModel {
       value: 'N.A.',
     }));
 
-    await this.sql(sampleInMetadataTrackTable)
+    await this.sql(tableNames.SAMPLE_IN_METADATA_TRACK_MAP)
       .insert(valuesToInsert);
   }
 }

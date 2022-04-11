@@ -1,7 +1,7 @@
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 
-const tableName = 'invite_access';
+const tableNames = require('../helpers/tableNames');
 
 const selectableProps = [
   'user_email',
@@ -12,7 +12,7 @@ const selectableProps = [
 
 class InviteAccess extends BasicModel {
   constructor(sql = sqlClient.get()) {
-    super(sql, tableName, selectableProps);
+    super(sql, tableNames.INVITE_ACCESS, selectableProps);
   }
 }
 

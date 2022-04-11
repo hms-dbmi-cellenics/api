@@ -1,7 +1,8 @@
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 
-const sampleTable = 'sample';
+const tableNames = require('../helpers/tableNames');
+
 const sampleFields = [
   'id',
   'experiment_id',
@@ -13,7 +14,7 @@ const sampleFields = [
 
 class Sample extends BasicModel {
   constructor(sql = sqlClient.get()) {
-    super(sql, sampleTable, sampleFields);
+    super(sql, tableNames.SAMPLE, sampleFields);
   }
 }
 
