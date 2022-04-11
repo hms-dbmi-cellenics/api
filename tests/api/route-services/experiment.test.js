@@ -24,12 +24,10 @@ describe('tests for the experiment service', () => {
     AWSMock.restore('DynamoDB');
   });
 
-
   it('Get experiment data works', async (done) => {
     const jsData = {
       experimentId: '12345',
       experimentName: 'TGFB1 experiment',
-
     };
 
     const fnSpy = mockDynamoGetItem(jsData);
@@ -44,6 +42,22 @@ describe('tests for the experiment service', () => {
         });
       })
       .then(() => done());
+  });
+
+  it('Get experiment data throws NotFoundError if experiment is not found', async (done) => {
+    const errMsg = 'Experiment does not exist';
+    mockDynamoGetItem({}, new NotFoundError(errMsg));
+
+    (new ExperimentService()).getExperimentData('12345')
+      .then((returnValue) => {
+        expect(returnValue).toEqual(OK());
+      })
+      .then(() => done())
+      .catch((error) => {
+        expect(error instanceof NotFoundError).toEqual(true);
+        expect(error.message).toEqual(errMsg);
+        done();
+      });
   });
 
   it('Get list of experiments work', async (done) => {
