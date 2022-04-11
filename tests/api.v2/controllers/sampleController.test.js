@@ -1,7 +1,11 @@
 // @ts-nocheck
-const experimentModel = require('../../../src/api.v2/model/Experiment')();
-const sampleModel = require('../../../src/api.v2/model/Sample')();
-const metadataTrackModel = require('../../../src/api.v2/model/MetadataTrack')();
+const Experiment = require('../../../src/api.v2/model/Experiment');
+const Sample = require('../../../src/api.v2/model/Sample');
+const MetadataTrack = require('../../../src/api.v2/model/MetadataTrack');
+
+const experimentInstance = Experiment();
+const sampleInstance = Sample();
+const metadataTrackInstance = MetadataTrack();
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 
 const { OK } = require('../../../src/utils/responses');
@@ -36,13 +40,25 @@ describe('sampleController', () => {
       body: { name: mockSampleName, sampleTechnology: mockSampleTechnology },
     };
 
-    sampleModel.create.mockImplementationOnce(() => Promise.resolve());
-    experimentModel.addSample.mockImplementationOnce(() => Promise.resolve());
-    metadataTrackModel.createNewSampleValues.mockImplementationOnce(() => Promise.resolve());
+    sampleInstance.create.mockImplementationOnce(() => Promise.resolve());
+    experimentInstance.addSample.mockImplementationOnce(() => Promise.resolve());
+    metadataTrackInstance.createNewSampleValues.mockImplementationOnce(() => Promise.resolve());
 
     await sampleController.createSample(mockReq, mockRes);
 
-    expect(sampleModel.create).toHaveBeenCalledWith(
+    expect(mockSqlClient.transaction).toHaveBeenCalled();
+
+    // Used with transactions
+    expect(Sample).toHaveBeenCalledWith(mockTrx);
+    expect(Experiment).toHaveBeenCalledWith(mockTrx);
+    expect(MetadataTrack).toHaveBeenCalledWith(mockTrx);
+
+    // Not used without transactions
+    expect(Sample).not.toHaveBeenCalledWith(mockSqlClient);
+    expect(Experiment).not.toHaveBeenCalledWith(mockSqlClient);
+    expect(MetadataTrack).not.toHaveBeenCalledWith(mockSqlClient);
+
+    expect(sampleInstance.create).toHaveBeenCalledWith(
       {
         experiment_id: mockExperimentId,
         id: mockSampleId,
@@ -50,10 +66,61 @@ describe('sampleController', () => {
         sample_technology: mockSampleTechnology,
       },
     );
-    expect(experimentModel.addSample).toHaveBeenCalledWith(mockExperimentId, mockSampleId);
-    expect(metadataTrackModel.createNewSampleValues)
+    expect(experimentInstance.addSample).toHaveBeenCalledWith(mockExperimentId, mockSampleId);
+    expect(metadataTrackInstance.createNewSampleValues)
       .toHaveBeenCalledWith(mockExperimentId, mockSampleId);
 
     expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
+
+  it('createSample errors out if the transaction fails', async () => {
+    const mockReq = {
+      params: { experimentId: mockExperimentId, sampleId: mockSampleId },
+      body: { name: mockSampleName, sampleTechnology: mockSampleTechnology },
+    };
+
+    mockSqlClient.transaction.mockImplementationOnce(() => Promise.reject(new Error()));
+
+    await expect(sampleController.createSample(mockReq, mockRes)).rejects.toThrow();
+
+    expect(mockSqlClient.transaction).toHaveBeenCalled();
+
+    expect(mockRes.json).not.toHaveBeenCalled();
+  });
+
+  it('deleteSample works correctly', async () => {
+    const mockReq = { params: { experimentId: mockExperimentId, sampleId: mockSampleId } };
+
+    sampleInstance.destroy.mockImplementationOnce(() => Promise.resolve());
+    experimentInstance.deleteSample.mockImplementationOnce(() => Promise.resolve());
+
+    await sampleController.deleteSample(mockReq, mockRes);
+
+    expect(mockSqlClient.transaction).toHaveBeenCalled();
+
+    // Used with transactions
+    expect(Experiment).toHaveBeenCalledWith(mockTrx);
+    expect(Sample).toHaveBeenCalledWith(mockTrx);
+
+    // Not used without transactions
+    expect(Experiment).not.toHaveBeenCalledWith(mockSqlClient);
+    expect(Sample).not.toHaveBeenCalledWith(mockSqlClient);
+
+    expect(sampleInstance.destroy).toHaveBeenCalledWith(mockSampleId);
+    expect(experimentInstance.deleteSample).toHaveBeenCalledWith(mockExperimentId, mockSampleId);
+
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
+
+  it('deleteSample errors out if the transaction fails', async () => {
+    const mockReq = { params: { experimentId: mockExperimentId, sampleId: mockSampleId } };
+
+    mockSqlClient.transaction.mockImplementationOnce(() => Promise.reject(new Error()));
+
+    await expect(sampleController.deleteSample(mockReq, mockRes)).rejects.toThrow();
+
+    expect(mockSqlClient.transaction).toHaveBeenCalled();
+
+    expect(mockRes.json).not.toHaveBeenCalled();
   });
 });

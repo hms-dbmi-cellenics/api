@@ -5,7 +5,7 @@ const stub = {
   getExperimentData: jest.fn(),
   updateSamplePosition: jest.fn(),
   addSample: jest.fn(),
-  removeSample: jest.fn(),
+  deleteSample: jest.fn(),
   ...BasicModel,
 };
 
