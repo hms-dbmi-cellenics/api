@@ -121,16 +121,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+  '/experiments':
+    get:
+      summary: Get all experiments
+      description: Get all experiments that the user can access
+      operationId: getAllExperiments
+      x-eov-operation-id: experiment#getAllExperiments
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: All experiments that the user can acess
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllExperiments'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   '/experiments/{experimentId}':
     get:
-      summary: Get an experiment info
-      description: Get an experiment info
+      summary: Get an experiment
+      description: Get an experiment
       operationId: getExperiment
       x-eov-operation-id: experiment#getExperiment
       x-eov-operation-handler: routes/experiment
       responses:
         '200':
-          description: Create experiment
+          description: Get experiment
           content:
             application/json:
               schema:
@@ -265,6 +297,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+
 components:
   schemas:
     CreateExperiment:
@@ -275,6 +308,8 @@ components:
       $ref: './models/experiment-bodies/ExperimentPatch.v2.yaml'
     ProcessingConfig:
       $ref: './models/experiment-bodies/ProcessingConfig.v2.yaml'
+    GetAllExperiments:
+      $ref: './models/experiment-bodies/GetAllExperiments.v2.yaml'
     HTTPSuccess:
       $ref: './models/HTTPSuccess.v1.yaml'
     HTTPError:

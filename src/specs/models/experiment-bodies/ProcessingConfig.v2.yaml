@@ -1,24 +1,28 @@
-title: Processing config
+title: Processing Config v2
+description: Schema for data processing configuration
 type: object
 properties:
-  processingConfig:
-    type: object
-    properties:
-      classifier:
-        type: object
-      doubletScores:
-        type: object
-      dataIntegration:
-        type: object
-      numGenesVsNumUmis:
-        type: object
-      configureEmbedding:
-        type: object
-      cellSizeDistribution:
-        type: object
-      mitochondrialContent:
-        type: object
-  
+  cellSizeDistribution:
+    $ref: ../processing-config-bodies/ProcessingConfigCellSizeDistribution.v1.yaml
+  mitochondrialContent:
+    $ref: ../processing-config-bodies/ProcessingConfigMitochondrialContent.v1.yaml
+  classifier:
+    $ref: ../processing-config-bodies/ProcessingConfigClassifier.v1.yaml
+  numGenesVsNumUmis:
+    $ref: ../processing-config-bodies/ProcessingConfigNumGenesVsNumUMIs.v1.yaml
+  doubletScores:
+    $ref: ../processing-config-bodies/ProcessingConfigDoubletScores.v1.yaml
+  dataIntegration:
+    $ref: ../processing-config-bodies/ProcessingConfigDataIntegration.v1.yaml
+  configureEmbedding:
+    $ref: ../processing-config-bodies/ProcessingConfigConfigureEmbedding.v1.yaml
+  meta:
+    $ref: ../processing-config-bodies/ProcessingConfigMeta.v1.yaml
 required:
-  - processingConfig
-additionalProperties: false
+  - cellSizeDistribution
+  - mitochondrialContent
+  - classifier
+  - numGenesVsNumUmis
+  - doubletScores
+  - dataIntegration
+  - configureEmbedding
