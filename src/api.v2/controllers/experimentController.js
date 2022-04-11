@@ -68,9 +68,27 @@ const updateSamplePosition = async (req, res) => {
   res.json(OK());
 };
 
+const getProcessingConfig = async (req, res) => {
+  const { params: { experimentId } } = req;
+  logger.log('Getting processing config for experiment ', experimentId);
+
+  const result = await experiment.getProcessingConfig(experimentId);
+  res.json(result);
+};
+
+const updateProcessingConfig = async (req, res) => {
+  const { params: { experimentId }, body } = req;
+  logger.log('Updating processing config for experiment ', experimentId, 'name ', body);
+
+  await experiment.updateProcessingConfig(experimentId, body);
+  res.json(OK());
+};
+
 module.exports = {
   getExperiment,
   createExperiment,
+  updateProcessingConfig,
   patchExperiment,
   updateSamplePosition,
+  getProcessingConfig,
 };

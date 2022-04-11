@@ -92,8 +92,39 @@ const updateSamplePosition = async (experimentId, oldPosition, newPosition) => {
   }
 };
 
+const getProcessingConfig = async (experimentId) => {
+  const sql = sqlClient.get();
+
+  const result = await sql.select('processing_config')
+    .from(experimentTable)
+    .where('id', experimentId)
+    .first();
+
+  if (_.isEmpty(result)) {
+    throw new NotFoundError('Experiment not found');
+  }
+  return result;
+};
+
+const updateProcessingConfig = async (experimentId, body) => {
+  const { name: stepName, body: change } = body[0];
+
+  const sql = sqlClient.get();
+  const { processingConfig } = await getProcessingConfig(experimentId);
+  processingConfig[stepName] = change;
+
+  await sql.select('processing_config')
+    .from(experimentTable)
+    .update(
+      { processing_config: processingConfig },
+    )
+    .where('id', experimentId);
+};
+
 module.exports = {
   getExperimentData,
   updateSamplePosition,
+  getProcessingConfig,
+  updateProcessingConfig,
   ...basicModelFunctions,
 };

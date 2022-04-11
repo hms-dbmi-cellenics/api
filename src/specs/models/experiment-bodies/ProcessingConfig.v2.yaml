@@ -1,0 +1,24 @@
+title: Processing config
+type: object
+properties:
+  processingConfig:
+    type: object
+    properties:
+      classifier:
+        type: object
+      doubletScores:
+        type: object
+      dataIntegration:
+        type: object
+      numGenesVsNumUmis:
+        type: object
+      configureEmbedding:
+        type: object
+      cellSizeDistribution:
+        type: object
+      mitochondrialContent:
+        type: object
+  
+required:
+  - processingConfig
+additionalProperties: false
