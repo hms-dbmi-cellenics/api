@@ -8,6 +8,7 @@ oneOf:
   - $ref: ./work-request-bodies/WorkRequestGetBackgroundExpressedGenes.v1.yaml
   - $ref: ./work-request-bodies/WorkRequestGeneExpression.v1.yaml
   - $ref: ./work-request-bodies/WorkRequestMitochondrialContent.v1.yaml
+  - $ref: ./work-request-bodies/WorkRequestImgPlot.v1.yaml
   - $ref: ./work-request-bodies/WorkRequestDoubletScores.v1.yaml
   - $ref: ./work-request-bodies/WorkRequestMarkerGenes.v1.yaml
   - $ref: ./work-request-bodies/WorkRequestDotPlot.v1.yaml
