@@ -85,6 +85,14 @@ describe('experimentController', () => {
 
     await experimentController.createExperiment(mockReqCreateExperiment, mockRes);
 
+    // Used with transactions
+    expect(Experiment).toHaveBeenCalledWith(mockTrx);
+    expect(UserAccess).toHaveBeenCalledWith(mockTrx);
+
+    // Not used without transactions
+    expect(Experiment).not.toHaveBeenCalledWith(mockSqlClient);
+    expect(UserAccess).not.toHaveBeenCalledWith(mockSqlClient);
+
     expect(experimentInstance.create).toHaveBeenCalledWith({
       id: mockExperiment.id,
       name: 'mockName',
@@ -102,7 +110,9 @@ describe('experimentController', () => {
   it('createExperiment errors out if the transaction failed', async () => {
     mockSqlClient.transaction.mockImplementationOnce(() => Promise.reject(new Error()));
 
-    await expect(experimentController.createExperiment(mockReqCreateExperiment, mockRes)).rejects.toThrow();
+    await expect(
+      experimentController.createExperiment(mockReqCreateExperiment, mockRes),
+    ).rejects.toThrow();
 
     expect(mockRes.json).not.toHaveBeenCalled();
   });
