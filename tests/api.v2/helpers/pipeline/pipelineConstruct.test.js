@@ -5,7 +5,9 @@ const { getQcPipelineStepNames } = require('../../../../src/api.v2/helpers/pipel
 
 const mockStepNames = getQcPipelineStepNames();
 
-jest.mock('../../../src/api/general-services/pipeline-manage/qc-helpers', () => ({
+const { createQCPipeline, createGem2SPipeline } = jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
+
+jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/qcHelpers', () => ({
   getQcStepsToRun: jest.fn(() => mockStepNames),
 }));
 
@@ -13,7 +15,7 @@ jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
   randomBytes: () => Buffer.from('asdfg'),
 }));
-jest.mock('../../../src/utils/asyncTimer');
+jest.mock('../../../../src/utils/asyncTimer');
 
 const MockExperimentData = {
   Item: {
@@ -65,9 +67,6 @@ const MockExperimentData = {
     },
   },
 };
-
-const { createQCPipeline } = jest.requireActual('../../../src/api/general-services/pipeline-manage');
-const { createGem2SPipeline } = jest.requireActual('../../../src/api/general-services/pipeline-manage');
 
 describe('test for pipeline services', () => {
   afterEach(() => {
