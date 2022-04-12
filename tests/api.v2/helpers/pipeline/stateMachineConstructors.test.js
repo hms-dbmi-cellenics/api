@@ -1,6 +1,6 @@
 const constants = require('../../../../src/api.v2/helpers/pipeline/constants');
 const fake = require('../../../test-utils/constants');
-const { buildPodRequest } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/constructors/assign-pod-to-pipeline');
+const { buildPodRequest } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/constructors/assignPodToPipeline');
 const validateRequest = require('../../../../src/utils/schema-validator');
 
 describe('Test for pipeline constructor services', () => {

@@ -11,7 +11,7 @@ const getLogger = require('../../../../utils/getLogger');
 const ExperimentService = require('../../../../api/route-services/experiment');
 const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('./skeletons');
 const { getQcStepsToRun } = require('./qcHelpers');
-const constructPipelineStep = require('./constructors/construct-pipeline-step');
+const constructPipelineStep = require('./constructors/constructPipelineStep');
 const asyncTimer = require('../../../../utils/asyncTimer');
 
 const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../constants');

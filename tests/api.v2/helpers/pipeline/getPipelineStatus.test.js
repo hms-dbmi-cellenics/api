@@ -1,7 +1,7 @@
 const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../../../src/utils/requireAWS');
 const constants = require('../../../../src/api.v2/helpers/pipeline/constants');
-const { fullHistory, singleIterationHistory, noPodsToDeleteHistory } = require('./pipelineStatusTestData');
+const { fullHistory, singleIterationHistory, noPodsToDeleteHistory } = require('./getPipelineStatusTestData');
 const getPipelineStatus = require('../../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 const pipelineConstants = require('../../../../src/api.v2/helpers/pipeline/constants');
 

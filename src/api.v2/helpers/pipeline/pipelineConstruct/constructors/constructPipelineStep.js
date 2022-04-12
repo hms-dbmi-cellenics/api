@@ -1,9 +1,9 @@
 const deleteCompletedJobs = require('./deleteCompleteJobs');
 const createNewStep = require('./createNewStep');
-const createNewJobIfNotExist = require('./create-new-job-if-not-exist');
+const createNewJobIfNotExist = require('./createNewJobIfNotExist');
 const {
   requestPod, waitForPod,
-} = require('./assign-pod-to-pipeline');
+} = require('./assignPodToPipeline');
 
 const constructPipelineStep = (context, step) => {
   const { XStepType: stepType, XConstructorArgs: args } = step;
