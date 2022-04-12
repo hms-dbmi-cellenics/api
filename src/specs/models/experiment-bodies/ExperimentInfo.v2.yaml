@@ -59,6 +59,7 @@ required:
   - name
   - description
   - samplesOrder
+  - processingConfig
   - notifyByEmail
   - pipelines
   - createdAt
