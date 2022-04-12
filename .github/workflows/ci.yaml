@@ -227,7 +227,7 @@ jobs:
 
           if [ "${{ matrix.environment }}" = "production" ]; then
             SANDBOX_ID="default"
-            RDS_CLUSTER_ID="default"
+            RDS_SANDBOX_ID="default"
             CHART_REF="master"
             KUBERNETES_ENV="production"
             IMAGE_TAG="${REF_DASHED/refs-tags-/}"
@@ -237,7 +237,7 @@ jobs:
 
           if [ "${{ matrix.environment }}" = "develop" ]; then
             SANDBOX_ID="default"
-            RDS_CLUSTER_ID="default"
+            RDS_SANDBOX_ID="default"
             CHART_REF="master"
             KUBERNETES_ENV="staging"
             IMAGE_TAG="$REF_DASHED-$GITHUB_SHA"
@@ -247,7 +247,7 @@ jobs:
 
           if [ "${{ matrix.environment }}" = "staging" ]; then
             SANDBOX_ID="STAGING_SANDBOX_ID"
-            RDS_CLUSTER_ID="STAGING_RDS_CLUSTER_ID"
+            RDS_SANDBOX_ID="STAGING_RDS_SANDBOX_ID"
             CHART_REF="STAGING_CHART_REF"
             KUBERNETES_ENV="staging"
             IMAGE_TAG="$REF_DASHED-$GITHUB_SHA"
@@ -268,7 +268,7 @@ jobs:
           | yq w -d1 - spec.values.kubernetes.env "$KUBERNETES_ENV" \
           | yq w -d1 - spec.values.biomageCi.repo "$GITHUB_REPOSITORY" \
           | yq w -d1 - spec.values.biomageCi.sandboxId "$SANDBOX_ID" \
-          | yq w -d1 - spec.values.biomageCi.rdsClusterId "$RDS_CLUSTER_ID" \
+          | yq w -d1 - spec.values.biomageCi.rdsSandboxId "$RDS_SANDBOX_ID" \
           | yq w -d1 - spec.values.image.registry "${{ steps.login-ecr.outputs.registry }}" \
           | yq w -d1 - spec.values.image.repository "$DEPLOYMENT_NAME" \
           | yq w -d1 - spec.values.image.tag "$IMAGE_TAG" \
