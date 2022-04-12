@@ -22,7 +22,7 @@ const {
 const SUCCEEDED_ID = 'succeded_id';
 const EMPTY_ID = 'empty_id';
 // experimentID used to trigger an execution does not exist
-const EXECUTION_DOES_NOT_EXIST = 'EXECUTION_DOES_NOT_EXIST';
+const EXECUTION_DOES_NOT_EXIST_ID = 'EXECUTION_DOES_NOT_EXIST';
 const RANDOM_EXCEPTION = 'RANDOM_EXCEPTION';
 
 const paramsHash = '44c4c6e190e54c4b2740d37a861bb6954921730cnotASecret';
@@ -48,13 +48,13 @@ const mockExecutionNotExistResponse = [
   {
     pipelineType: GEM2S_PROCESS_NAME,
     stateMachineArn: '',
-    executionArn: EXECUTION_DOES_NOT_EXIST,
+    executionArn: EXECUTION_DOES_NOT_EXIST_ID,
     paramsHash,
   },
   {
     pipelineType: QC_PROCESS_NAME,
     stateMachineArn: '',
-    executionArn: EXECUTION_DOES_NOT_EXIST,
+    executionArn: EXECUTION_DOES_NOT_EXIST_ID,
     paramsHash: null,
   },
 ];
@@ -194,7 +194,7 @@ describe('pipelineStatus', () => {
       case EMPTY_ID:
         callback(null, emptyExecution);
         break;
-      case EXECUTION_DOES_NOT_EXIST:
+      case EXECUTION_DOES_NOT_EXIST_ID:
         throw errDoesNotExist;
       default:
         throw new Error(`Unexpected executionArn ${executionArn}`);
@@ -224,7 +224,7 @@ describe('pipelineStatus', () => {
         case SUCCEEDED_ID:
           response = mockRunResponse;
           break;
-        case EXECUTION_DOES_NOT_EXIST:
+        case EXECUTION_DOES_NOT_EXIST_ID:
           response = mockExecutionNotExistResponse;
           break;
         case RANDOM_EXCEPTION:
@@ -252,7 +252,7 @@ describe('pipelineStatus', () => {
       },
     });
 
-    // expect(mockDynamoGetItem).not.toHaveBeenCalled();
+    expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: EMPTY_ID });
   });
 
   it('handles properly a qc empty dynamodb record', async () => {
@@ -270,11 +270,11 @@ describe('pipelineStatus', () => {
       },
     });
 
-    // expect(mockDynamoGetItem).not.toHaveBeenCalled();
+    expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: EMPTY_ID });
   });
 
   it('handles a gem2s execution does not exist exception', async () => {
-    const status = await getPipelineStatus(EXECUTION_DOES_NOT_EXIST, GEM2S_PROCESS_NAME);
+    const status = await getPipelineStatus(EXECUTION_DOES_NOT_EXIST_ID, GEM2S_PROCESS_NAME);
 
     const expected = {
       [GEM2S_PROCESS_NAME]: {
@@ -295,11 +295,12 @@ describe('pipelineStatus', () => {
     expect(status[GEM2S_PROCESS_NAME].startDate).toBeDefined();
     expect(status[GEM2S_PROCESS_NAME].stopDate).toBeDefined();
 
-    // expect(mockDynamoGetItem).not.toHaveBeenCalled();
+    expect(experimentExecutionInstance.find)
+      .toHaveBeenCalledWith({ experiment_id: EXECUTION_DOES_NOT_EXIST_ID });
   });
 
   it('handles a qc execution does not exist exception', async () => {
-    const status = await getPipelineStatus(EXECUTION_DOES_NOT_EXIST, QC_PROCESS_NAME);
+    const status = await getPipelineStatus(EXECUTION_DOES_NOT_EXIST_ID, QC_PROCESS_NAME);
 
     const ninetyDaysAgo = new Date(new Date().setDate(new Date().getDate() - 90));
     const expected = {
@@ -320,7 +321,8 @@ describe('pipelineStatus', () => {
     };
     expect(status).toEqual(expected);
 
-    // expect(mockDynamoGetItem).not.toHaveBeenCalled();
+    expect(experimentExecutionInstance.find)
+      .toHaveBeenCalledWith({ experiment_id: EXECUTION_DOES_NOT_EXIST_ID });
   });
 
   it('fails on random exception', async () => {
@@ -341,7 +343,7 @@ describe('pipelineStatus', () => {
       },
     });
 
-    // expect(mockDynamoGetItem).not.toHaveBeenCalled();
+    expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: SUCCEEDED_ID });
   });
 
   it('handles properly a qc dynamodb record', async () => {
@@ -359,6 +361,6 @@ describe('pipelineStatus', () => {
       },
     });
 
-    // expect(mockDynamoGetItem).not.toHaveBeenCalled();
+    expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: SUCCEEDED_ID });
   });
 });
