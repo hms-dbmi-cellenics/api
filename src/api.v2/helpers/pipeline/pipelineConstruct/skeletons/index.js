@@ -1,5 +1,5 @@
-const { buildQCPipelineSteps, qcPipelineSteps } = require('./qc-pipeline-skeleton');
-const { gem2SPipelineSteps } = require('./gem2s-pipeline-skeleton');
+const { buildQCPipelineSteps, qcPipelineSteps } = require('./qcPipelineSkeleton');
+const { gem2SPipelineSteps } = require('./gem2sPipelineSkeleton');
 
 
 const createLocalPipeline = (nextStep) => ({

@@ -4,6 +4,7 @@ const sqlClient = require('../../sql/sqlClient');
 const tableNames = require('../helpers/tableNames');
 
 const selectableProps = [
+  'experiment_id', 'pipeline_type',
   'params_hash', 'state_machine_arn', 'execution_arn',
 ];
 

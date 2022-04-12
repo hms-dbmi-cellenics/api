@@ -1,10 +1,10 @@
 
 const crypto = require('crypto');
 const AWSXRay = require('aws-xray-sdk');
-const AWS = require('../../../utils/requireAWS');
+const AWS = require('../../../../utils/requireAWS');
 const createWorkerResources = require('./createWorkerK8s');
-const config = require('../../../config');
-const getLogger = require('../../../utils/getLogger');
+const config = require('../../../../config');
+const getLogger = require('../../../../utils/getLogger');
 
 const logger = getLogger();
 

@@ -5,7 +5,7 @@ const ExperimentExecution = require('../../model/ExperimentExecution');
 
 const config = require('../../../config');
 const getLogger = require('../../../utils/getLogger');
-const pipelineConstants = require('./pipelineConstruct/constants');
+const pipelineConstants = require('./constants');
 const { getPipelineStepNames } = require('./pipelineConstruct/skeletons');
 
 const logger = getLogger();
@@ -217,27 +217,24 @@ const getStepsFromExecutionHistory = (events) => {
      *  - steps are returned in the completion order, and are unique in the returned array
      */
 const getPipelineStatus = async (experimentId, processName) => {
-  const executions = new ExperimentExecution().find({ experiment_id: experimentId });
+  const executions = await new ExperimentExecution().find({ experiment_id: experimentId });
 
-  console.log('executionsDebug');
-  console.log(executions);
-
-  const { executionArn } = executions[processName];
-
-  let execution = {};
-  let completedSteps = [];
-  let error = false;
-  // only used in gem2s, will just be undefined for qc
-  const { paramsHash } = executions[processName] || {};
+  const pipelineExecution = _.find(executions, { pipelineType: processName });
 
   // if there aren't ARNs just return NOT_CREATED status
-  if (executionArn === '') {
+  if (_.isNil(pipelineExecution)) {
     return buildNotCreatedStatus(processName);
   }
 
   const stepFunctions = new AWS.StepFunctions({
     region: config.awsRegion,
   });
+
+  let execution = {};
+  let completedSteps = [];
+  let error = false;
+
+  const { executionArn = null, paramsHash = null } = pipelineExecution;
 
   try {
     execution = await stepFunctions.describeExecution({

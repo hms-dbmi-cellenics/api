@@ -5,16 +5,16 @@ const _ = require('lodash');
 const AWSXRay = require('aws-xray-sdk');
 const fetch = require('node-fetch');
 const { v4: uuidv4 } = require('uuid');
-const AWS = require('../../../utils/requireAWS');
-const config = require('../../../config');
-const getLogger = require('../../../utils/getLogger');
-const ExperimentService = require('../../route-services/experiment');
+const AWS = require('../../../../utils/requireAWS');
+const config = require('../../../../config');
+const getLogger = require('../../../../utils/getLogger');
+const ExperimentService = require('../../../../api/route-services/experiment');
 const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('./skeletons');
-const { getQcStepsToRun } = require('./qc-helpers');
+const { getQcStepsToRun } = require('./qcHelpers');
 const constructPipelineStep = require('./constructors/construct-pipeline-step');
-const asyncTimer = require('../../../utils/asyncTimer');
+const asyncTimer = require('../../../../utils/asyncTimer');
 
-const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('./constants');
+const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../constants');
 
 const logger = getLogger();
 
