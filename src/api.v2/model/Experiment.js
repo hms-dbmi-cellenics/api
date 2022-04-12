@@ -13,7 +13,6 @@ const getLogger = require('../../utils/getLogger');
 
 const logger = getLogger('[ExperimentModel] - ');
 
-
 const experimentFields = [
   'id',
   'name',
