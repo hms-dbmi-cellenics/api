@@ -1,8 +1,10 @@
 // @ts-nocheck
 const Experiment = require('../../../src/api.v2/model/Experiment');
 const UserAccess = require('../../../src/api.v2/model/UserAccess');
-
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
+
+const getPipelineStatus = require('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
+const getWorkerStatus = require('../../../src/api.v2/helpers/pipeline/getWorkerStatus');
 
 const experimentInstance = Experiment();
 const userAccessInstance = UserAccess();
@@ -22,6 +24,8 @@ jest.mock('../../../src/api.v2/model/UserAccess');
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
 }));
+jest.mock('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
+jest.mock('../../../src/api.v2/helpers/pipeline/getWorkerStatus');
 
 const getExperimentResponse = require('../mocks/data/getExperimentResponse.json');
 const getAllExperimentsResponse = require('../mocks/data/getAllExperimentsResponse.json');
@@ -171,5 +175,20 @@ describe('experimentController', () => {
     await experimentController.updateSamplePosition(mockReq, mockRes);
 
     expect(experimentInstance.updateSamplePosition).not.toHaveBeenCalled();
+  });
+
+  it('getBackendStatus works correctly', async () => {
+    getPipelineStatus
+      .mockImplementationOnce(() => Promise.resolve('gem2sStatus'))
+      .mockImplementationOnce(() => Promise.resolve('qcStatus'));
+    getWorkerStatus.mockImplementationOnce(() => 'workerStatus');
+
+    const mockReq = { params: { experimentId: mockExperiment.id } };
+
+    await experimentController.getBackendStatus(mockReq, mockRes);
+
+    expect(getPipelineStatus).toHaveBeenCalledWith(mockExperiment.id, 'gem2s');
+    expect(getPipelineStatus).toHaveBeenCalledWith(mockExperiment.id, 'qc');
+    expect(getWorkerStatus).toHaveBeenCalledWith(mockExperiment.id);
   });
 });
