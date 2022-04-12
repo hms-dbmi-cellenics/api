@@ -6,7 +6,7 @@ const fake = require('../../../test-utils/constants');
 
 const tags = { TagSet: [{ Key: 'experimentId', Value: fake.EXPERIMENT_ID }, { Key: 'otherTag', Value: 'mockOtherTag' }] };
 
-describe('Get worker results signed url', () => {
+describe('getWorkResults', () => {
   beforeEach(() => {
     AWSMock.restore();
     jest.clearAllMocks();

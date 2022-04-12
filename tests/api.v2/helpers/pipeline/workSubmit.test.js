@@ -4,7 +4,7 @@ const WorkSubmitService = require('../../../../src/api.v2/helpers/pipeline/workS
 
 jest.mock('@kubernetes/client-node');
 
-describe('tests for the work-submit service', () => {
+describe('workSubmit', () => {
   it('Can submit work', async (done) => {
     const workRequest = {
       uuid: '12345',
