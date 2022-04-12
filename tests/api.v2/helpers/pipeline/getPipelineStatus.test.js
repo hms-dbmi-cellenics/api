@@ -5,8 +5,16 @@ const { fullHistory, singleIterationHistory, noPodsToDeleteHistory } = require('
 const getPipelineStatus = require('../../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 const pipelineConstants = require('../../../../src/api.v2/helpers/pipeline/constants');
 
+const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
+
+const experimentExecutionInstance = ExperimentExecution();
+
+jest.mock('../../../../src/api.v2/model/ExperimentExecution');
+
+jest.useFakeTimers('modern').setSystemTime(new Date('2020-01-01').getTime());
+
 const {
-  GEM2S_PROCESS_NAME, QC_PROCESS_NAME, OLD_QC_NAME_TO_BE_REMOVED,
+  GEM2S_PROCESS_NAME, QC_PROCESS_NAME,
 } = constants;
 
 // these are constants used to indicate to a mocked component whether they should return a
@@ -19,134 +27,52 @@ const RANDOM_EXCEPTION = 'RANDOM_EXCEPTION';
 
 const paramsHash = '44c4c6e190e54c4b2740d37a861bb6954921730cnotASecret';
 
-const mockNotRunResponse = {
-  Item: {
-    meta: {
-      M: {
-        [GEM2S_PROCESS_NAME]: {
-          M: {
-            stateMachineArn: {
-              S: EMPTY_ID,
-            },
-            executionArn: {
-              S: '',
-            },
-            paramsHash: {
-              S: '',
-            },
-          },
-        },
-        [OLD_QC_NAME_TO_BE_REMOVED]: {
-          M: {
-            stateMachineArn: {
-              S: EMPTY_ID,
-            },
-            executionArn: {
-              S: '',
-            },
-          },
-        },
-      },
-    },
-  },
-};
+const mockNoRunsResponse = [];
 
-const mockRunResponse = {
-  Item: {
-    meta: {
-      M: {
-        [GEM2S_PROCESS_NAME]: {
-          M: {
-            stateMachineArn: {
-              S: SUCCEEDED_ID,
-            },
-            executionArn: {
-              S: SUCCEEDED_ID,
-            },
-            paramsHash: {
-              S: paramsHash,
-            },
-          },
-        },
-        [OLD_QC_NAME_TO_BE_REMOVED]: {
-          M: {
-            stateMachineArn: {
-              S: SUCCEEDED_ID,
-            },
-            executionArn: {
-              S: SUCCEEDED_ID,
-            },
-          },
-        },
-      },
-    },
+const mockRunResponse = [
+  {
+    pipelineType: GEM2S_PROCESS_NAME,
+    stateMachineArn: SUCCEEDED_ID,
+    executionArn: SUCCEEDED_ID,
+    paramsHash,
   },
-};
+  {
+    pipelineType: QC_PROCESS_NAME,
+    stateMachineArn: SUCCEEDED_ID,
+    executionArn: SUCCEEDED_ID,
+    paramsHash: null,
+  },
+];
 
-const mockExecutionNotExistResponse = {
-  Item: {
-    meta: {
-      M: {
-        [GEM2S_PROCESS_NAME]: {
-          M: {
-            stateMachineArn: {
-              S: '',
-            },
-            executionArn: {
-              S: EXECUTION_DOES_NOT_EXIST,
-            },
-            paramsHash: {
-              S: paramsHash,
-            },
-          },
-        },
-        [OLD_QC_NAME_TO_BE_REMOVED]: {
-          M: {
-            stateMachineArn: {
-              S: '',
-            },
-            executionArn: {
-              S: EXECUTION_DOES_NOT_EXIST,
-            },
-          },
-        },
-      },
-    },
+const mockExecutionNotExistResponse = [
+  {
+    pipelineType: GEM2S_PROCESS_NAME,
+    stateMachineArn: '',
+    executionArn: EXECUTION_DOES_NOT_EXIST,
+    paramsHash,
   },
-};
-const mockRandomExceptionResponse = {
-  Item: {
-    meta: {
-      M: {
-        [GEM2S_PROCESS_NAME]: {
-          M: {
-            stateMachineArn: {
-              S: '',
-            },
-            executionArn: {
-              S: RANDOM_EXCEPTION,
-            },
-            paramsHash: {
-              S: paramsHash,
-            },
-          },
-        },
-        [OLD_QC_NAME_TO_BE_REMOVED]: {
-          M: {
-            stateMachineArn: {
-              S: '',
-            },
-            executionArn: {
-              S: RANDOM_EXCEPTION,
-            },
-          },
-        },
-      },
-    },
+  {
+    pipelineType: QC_PROCESS_NAME,
+    stateMachineArn: '',
+    executionArn: EXECUTION_DOES_NOT_EXIST,
+    paramsHash: null,
   },
-};
+];
 
-jest.useFakeTimers('modern').setSystemTime(new Date('2020-01-01').getTime());
+const mockRandomExceptionResponse = [
+  {
+    pipelineType: GEM2S_PROCESS_NAME,
+    stateMachineArn: '',
+    executionArn: RANDOM_EXCEPTION,
+    paramsHash,
+  },
+  {
+    pipelineType: QC_PROCESS_NAME,
+    stateMachineArn: '',
+    executionArn: RANDOM_EXCEPTION,
+    paramsHash: null,
+  },
+];
 
 describe('getStepsFromExecutionHistory', () => {
   const truncateHistory = (lastEventId) => {
@@ -245,35 +171,6 @@ describe('checkError', () => {
 
 
 describe('pipelineStatus', () => {
-  AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
-    const experimentId = params.Key.experimentId.S;
-    switch (experimentId) {
-      case EMPTY_ID:
-        callback(null, mockNotRunResponse);
-        break;
-      case SUCCEEDED_ID:
-        callback(null, mockRunResponse);
-        break;
-      case EXECUTION_DOES_NOT_EXIST:
-        callback(null, mockExecutionNotExistResponse);
-        break;
-      case RANDOM_EXCEPTION:
-        callback(null, mockRandomExceptionResponse);
-        break;
-      default:
-        throw new Error(`Unrecognized experiment ID ${experimentId}.`);
-    }
-  });
-
-  const mockDynamoGetItem = jest.fn().mockImplementation(() => ({
-    Item: AWS.DynamoDB.Converter.marshall({
-      meta: {},
-      samples: {
-        ids: [],
-      },
-    }),
-  }));
-
   AWSMock.setSDKInstance(AWS);
 
   AWSMock.mock('StepFunctions', 'describeExecution', (params, callback) => {
@@ -315,6 +212,31 @@ describe('pipelineStatus', () => {
     jest.setSystemTime(new Date(2020, 3, 1));
   });
 
+  beforeEach(() => {
+    experimentExecutionInstance.find.mockClear();
+    experimentExecutionInstance.find.mockImplementation(({ experiment_id: experimentId }) => {
+      let response;
+
+      switch (experimentId) {
+        case EMPTY_ID:
+          response = mockNoRunsResponse;
+          break;
+        case SUCCEEDED_ID:
+          response = mockRunResponse;
+          break;
+        case EXECUTION_DOES_NOT_EXIST:
+          response = mockExecutionNotExistResponse;
+          break;
+        case RANDOM_EXCEPTION:
+          response = mockRandomExceptionResponse;
+          break;
+        default:
+          throw new Error(`Unrecognized experiment ID ${experimentId}.`);
+      }
+
+      return Promise.resolve(response);
+    });
+  });
 
   it('handles properly a gem2s empty dynamodb record', async () => {
     const status = await getPipelineStatus(EMPTY_ID, GEM2S_PROCESS_NAME);
@@ -330,7 +252,7 @@ describe('pipelineStatus', () => {
       },
     });
 
-    expect(mockDynamoGetItem).not.toHaveBeenCalled();
+    // expect(mockDynamoGetItem).not.toHaveBeenCalled();
   });
 
   it('handles properly a qc empty dynamodb record', async () => {
@@ -348,7 +270,7 @@ describe('pipelineStatus', () => {
       },
     });
 
-    expect(mockDynamoGetItem).not.toHaveBeenCalled();
+    // expect(mockDynamoGetItem).not.toHaveBeenCalled();
   });
 
   it('handles a gem2s execution does not exist exception', async () => {
@@ -373,7 +295,7 @@ describe('pipelineStatus', () => {
     expect(status[GEM2S_PROCESS_NAME].startDate).toBeDefined();
     expect(status[GEM2S_PROCESS_NAME].stopDate).toBeDefined();
 
-    expect(mockDynamoGetItem).not.toHaveBeenCalled();
+    // expect(mockDynamoGetItem).not.toHaveBeenCalled();
   });
 
   it('handles a qc execution does not exist exception', async () => {
@@ -398,7 +320,7 @@ describe('pipelineStatus', () => {
     };
     expect(status).toEqual(expected);
 
-    expect(mockDynamoGetItem).not.toHaveBeenCalled();
+    // expect(mockDynamoGetItem).not.toHaveBeenCalled();
   });
 
   it('fails on random exception', async () => {
@@ -419,7 +341,7 @@ describe('pipelineStatus', () => {
       },
     });
 
-    expect(mockDynamoGetItem).not.toHaveBeenCalled();
+    // expect(mockDynamoGetItem).not.toHaveBeenCalled();
   });
 
   it('handles properly a qc dynamodb record', async () => {
@@ -437,6 +359,6 @@ describe('pipelineStatus', () => {
       },
     });
 
-    expect(mockDynamoGetItem).not.toHaveBeenCalled();
+    // expect(mockDynamoGetItem).not.toHaveBeenCalled();
   });
 });
