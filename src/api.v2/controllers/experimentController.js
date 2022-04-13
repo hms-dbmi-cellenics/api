@@ -9,7 +9,7 @@ const sqlClient = require('../../sql/sqlClient');
 
 const constants = require('../helpers/pipeline/constants');
 const getPipelineStatus = require('../helpers/pipeline/getPipelineStatus');
-const getWorkerStatus = require('../helpers/pipeline/getWorkerStatus');
+const getWorkerStatus = require('../helpers/worker/getWorkerStatus');
 
 const logger = getLogger('[ExperimentController] - ');
 

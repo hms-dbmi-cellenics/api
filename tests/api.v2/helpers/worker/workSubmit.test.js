@@ -1,6 +1,6 @@
 const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../../../src/utils/requireAWS');
-const WorkSubmitService = require('../../../../src/api.v2/helpers/pipeline/workSubmit');
+const WorkSubmitService = require('../../../../src/api.v2/helpers/worker/workSubmit');
 
 jest.mock('@kubernetes/client-node');
 

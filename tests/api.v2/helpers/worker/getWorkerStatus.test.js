@@ -1,7 +1,7 @@
 
 const k8s = require('@kubernetes/client-node');
 
-const getWorkerStatus = require('../../../../src/api.v2/helpers/pipeline/getWorkerStatus');
+const getWorkerStatus = require('../../../../src/api.v2/helpers/worker/getWorkerStatus');
 
 describe('getWorkerStatus', () => {
   beforeEach(() => jest.resetModules());

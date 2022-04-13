@@ -1,6 +1,6 @@
 const AWSMock = require('aws-sdk-mock');
 const { UnauthorizedError, NotFoundError, InternalServerError } = require('../../../../src/utils/responses');
-const getWorkResults = require('../../../../src/api.v2/helpers/pipeline/getWorkResults');
+const getWorkResults = require('../../../../src/api.v2/helpers/worker/getWorkResults');
 const { mockS3GetObjectTagging, mockS3GetSignedUrl } = require('../../../test-utils/mockAWSServices');
 const fake = require('../../../test-utils/constants');
 
