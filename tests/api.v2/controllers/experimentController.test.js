@@ -172,4 +172,36 @@ describe('experimentController', () => {
 
     expect(experimentInstance.updateSamplePosition).not.toHaveBeenCalled();
   });
+
+  it('getProcessingConfig works', async () => {
+    const mockReq = {
+      params: {
+        experimentId: mockExperiment.id,
+      },
+    };
+    experimentInstance.getProcessingConfig.mockImplementationOnce(() => Promise.resolve());
+
+    await experimentController.getProcessingConfig(mockReq, mockRes);
+    expect(experimentInstance.getProcessingConfig).toHaveBeenCalledWith(mockExperiment.id);
+  });
+
+  it('updateProcessingConfig works', async () => {
+    const mockReq = {
+      params: {
+        experimentId: mockExperiment.id,
+      },
+      body: [{
+        name: 'classifier',
+        body: {
+          someChangedField: 'a value',
+        },
+      }],
+    };
+    experimentInstance.updateProcessingConfig.mockImplementationOnce(() => Promise.resolve());
+
+    await experimentController.updateProcessingConfig(mockReq, mockRes);
+    expect(experimentInstance.updateProcessingConfig).toHaveBeenCalledWith(
+      mockExperiment.id, mockReq.body,
+    );
+  });
 });
