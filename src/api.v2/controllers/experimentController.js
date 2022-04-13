@@ -1,18 +1,18 @@
-/* eslint-disable import/prefer-default-export */
 const _ = require('lodash');
 
-const experiment = require('../model/experiment');
-const userAccess = require('../model/userAccess');
+const Experiment = require('../model/Experiment');
+const UserAccess = require('../model/UserAccess');
 
 const getLogger = require('../../utils/getLogger');
 const { OK } = require('../../utils/responses');
+const sqlClient = require('../../sql/sqlClient');
 
 const logger = getLogger('[ExperimentController] - ');
 
 const getAllExperiments = async (req, res) => {
   const { user: { sub: userId } } = req;
 
-  const data = await experiment.getAllExperiments(userId);
+  const data = await new Experiment().getAllExperiments(userId);
 
   res.json(data);
 };
@@ -22,7 +22,7 @@ const getExperiment = async (req, res) => {
 
   logger.log(`Getting experiment ${experimentId}`);
 
-  const data = await experiment.getExperimentData(experimentId);
+  const data = await new Experiment().getExperimentData(experimentId);
 
   logger.log(`Finished getting experiment ${experimentId}`);
 
@@ -36,8 +36,10 @@ const createExperiment = async (req, res) => {
 
   logger.log('Creating experiment');
 
-  await experiment.create({ id: experimentId, name, description });
-  await userAccess.createNewExperimentPermissions(user.sub, experimentId);
+  await sqlClient.get().transaction(async (trx) => {
+    await new Experiment(trx).create({ id: experimentId, name, description });
+    await new UserAccess(trx).createNewExperimentPermissions(user.sub, experimentId);
+  });
 
   logger.log(`Finished creating experiment ${experimentId}`);
 
@@ -51,7 +53,7 @@ const patchExperiment = async (req, res) => {
 
   const snakeCasedKeysToPatch = _.mapKeys(body, (_value, key) => _.snakeCase(key));
 
-  await experiment.update(experimentId, snakeCasedKeysToPatch);
+  await new Experiment().update(experimentId, snakeCasedKeysToPatch);
 
   logger.log(`Finished updating experiment ${experimentId}`);
 
@@ -73,7 +75,7 @@ const updateSamplePosition = async (req, res) => {
     return;
   }
 
-  await experiment.updateSamplePosition(experimentId, oldPosition, newPosition);
+  await new Experiment().updateSamplePosition(experimentId, oldPosition, newPosition);
 
   logger.log(`Finished reordering samples in ${experimentId}`);
 
@@ -84,7 +86,7 @@ const getProcessingConfig = async (req, res) => {
   const { params: { experimentId } } = req;
   logger.log('Getting processing config for experiment ', experimentId);
 
-  const result = await experiment.getProcessingConfig(experimentId);
+  const result = await new Experiment().getProcessingConfig(experimentId);
   res.json(result);
 };
 
@@ -92,7 +94,7 @@ const updateProcessingConfig = async (req, res) => {
   const { params: { experimentId }, body } = req;
   logger.log('Updating processing config for experiment ', experimentId);
 
-  await experiment.updateProcessingConfig(experimentId, body);
+  await new Experiment().updateProcessingConfig(experimentId, body);
   res.json(OK());
 };
 

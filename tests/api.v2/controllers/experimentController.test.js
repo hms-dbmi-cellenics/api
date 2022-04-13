@@ -1,6 +1,11 @@
 // @ts-nocheck
-const experimentModel = require('../../../src/api.v2/model/experiment');
-const userAccessModel = require('../../../src/api.v2/model/userAccess');
+const Experiment = require('../../../src/api.v2/model/Experiment');
+const UserAccess = require('../../../src/api.v2/model/UserAccess');
+
+const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
+
+const experimentInstance = Experiment();
+const userAccessInstance = UserAccess();
 
 const mockExperiment = {
   id: 'mockExperimentId',
@@ -12,13 +17,17 @@ const mockExperiment = {
   updated_at: '1900-03-26 21:06:00.573142+00',
 };
 
-jest.mock('../../../src/api.v2/model/experiment');
-jest.mock('../../../src/api.v2/model/userAccess');
+jest.mock('../../../src/api.v2/model/Experiment');
+jest.mock('../../../src/api.v2/model/UserAccess');
+jest.mock('../../../src/sql/sqlClient', () => ({
+  get: jest.fn(() => mockSqlClient),
+}));
 
 const getExperimentResponse = require('../mocks/data/getExperimentResponse.json');
 const getAllExperimentsResponse = require('../mocks/data/getAllExperimentsResponse.json');
 
 const experimentController = require('../../../src/api.v2/controllers/experimentController');
+const { OK } = require('../../../src/utils/responses');
 
 const mockReqCreateExperiment = {
   params: {
@@ -45,45 +54,67 @@ describe('experimentController', () => {
   it('getAllExperiments works correctly', async () => {
     const mockReq = { user: { sub: 'mockUserId' } };
 
-    experimentModel.getAllExperiments.mockImplementationOnce(
+    experimentInstance.getAllExperiments.mockImplementationOnce(
       () => Promise.resolve(getAllExperimentsResponse),
     );
 
     await experimentController.getAllExperiments(mockReq, mockRes);
 
-    expect(experimentModel.getAllExperiments).toHaveBeenCalledWith('mockUserId');
+    expect(experimentInstance.getAllExperiments).toHaveBeenCalledWith('mockUserId');
     expect(mockRes.json).toHaveBeenCalledWith(getAllExperimentsResponse);
   });
 
   it('getExperiment works correctly', async () => {
     const mockReq = { params: { experimentId: getExperimentResponse.id } };
 
-    experimentModel.getExperimentData.mockImplementationOnce(
+    experimentInstance.getExperimentData.mockImplementationOnce(
       () => Promise.resolve(getExperimentResponse),
     );
 
     await experimentController.getExperiment(mockReq, mockRes);
 
-    expect(experimentModel.getExperimentData).toHaveBeenCalledWith(getExperimentResponse.id);
+    expect(experimentInstance.getExperimentData).toHaveBeenCalledWith(getExperimentResponse.id);
     expect(mockRes.json).toHaveBeenCalledWith(getExperimentResponse);
   });
 
   it('createExperiment works correctly', async () => {
-    userAccessModel.createNewExperimentPermissions.mockImplementationOnce(() => Promise.resolve());
-    experimentModel.create.mockImplementationOnce(() => Promise.resolve([mockExperiment]));
+    userAccessInstance.createNewExperimentPermissions.mockImplementationOnce(
+      () => Promise.resolve(),
+    );
+    experimentInstance.create.mockImplementationOnce(() => Promise.resolve([mockExperiment]));
 
     await experimentController.createExperiment(mockReqCreateExperiment, mockRes);
 
-    expect(experimentModel.create).toHaveBeenCalledWith({
+    // Used with transactions
+    expect(Experiment).toHaveBeenCalledWith(mockTrx);
+    expect(UserAccess).toHaveBeenCalledWith(mockTrx);
+
+    // Not used without transactions
+    expect(Experiment).not.toHaveBeenCalledWith(mockSqlClient);
+    expect(UserAccess).not.toHaveBeenCalledWith(mockSqlClient);
+
+    expect(experimentInstance.create).toHaveBeenCalledWith({
       id: mockExperiment.id,
       name: 'mockName',
       description: 'mockDescription',
     });
 
-    expect(userAccessModel.createNewExperimentPermissions).toHaveBeenCalledWith('mockSub', mockExperiment.id);
+    expect(userAccessInstance.createNewExperimentPermissions).toHaveBeenCalledWith('mockSub', mockExperiment.id);
 
-    expect(experimentModel.create).toHaveBeenCalledTimes(1);
-    expect(userAccessModel.createNewExperimentPermissions).toHaveBeenCalledTimes(1);
+    expect(experimentInstance.create).toHaveBeenCalledTimes(1);
+    expect(userAccessInstance.createNewExperimentPermissions).toHaveBeenCalledTimes(1);
+
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
+
+  it('createExperiment errors out if the transaction failed', async () => {
+    mockSqlClient.transaction.mockImplementationOnce(() => Promise.reject(new Error()));
+
+    await expect(
+      experimentController.createExperiment(mockReqCreateExperiment, mockRes),
+    ).rejects.toThrow();
+
+    expect(mockRes.json).not.toHaveBeenCalled();
   });
 
   it('patchExperiment works correctly', async () => {
@@ -96,14 +127,16 @@ describe('experimentController', () => {
       },
     };
 
-    experimentModel.update.mockImplementationOnce(() => Promise.resolve());
+    experimentInstance.update.mockImplementationOnce(() => Promise.resolve());
 
     await experimentController.patchExperiment(mockReq, mockRes);
 
-    expect(experimentModel.update).toHaveBeenCalledWith(
+    expect(experimentInstance.update).toHaveBeenCalledWith(
       mockExperiment.id,
       { description: 'mockDescription' },
     );
+
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
   });
 
   it('updateSamplePosition works correctly', async () => {
@@ -114,15 +147,17 @@ describe('experimentController', () => {
       body: { newPosition: 1, oldPosition: 5 },
     };
 
-    experimentModel.updateSamplePosition.mockImplementationOnce(() => Promise.resolve());
+    experimentInstance.updateSamplePosition.mockImplementationOnce(() => Promise.resolve());
 
     await experimentController.updateSamplePosition(mockReq, mockRes);
 
-    expect(experimentModel.updateSamplePosition).toHaveBeenCalledWith(
+    expect(experimentInstance.updateSamplePosition).toHaveBeenCalledWith(
       mockExperiment.id,
       5,
       1,
     );
+
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
   });
 
   it('updateSamplePosition skips reordering if possible', async () => {
@@ -135,6 +170,6 @@ describe('experimentController', () => {
 
     await experimentController.updateSamplePosition(mockReq, mockRes);
 
-    expect(experimentModel.updateSamplePosition).not.toHaveBeenCalled();
+    expect(experimentInstance.updateSamplePosition).not.toHaveBeenCalled();
   });
 });
