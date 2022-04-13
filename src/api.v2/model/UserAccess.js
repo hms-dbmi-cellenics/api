@@ -9,7 +9,7 @@ const { isRoleAuthorized } = require('../helpers/roles');
 
 const AccessRole = require('../../utils/enums/AccessRole');
 
-const tableNames = require('../helpers/tableNames');
+const tableNames = require('./tableNames');
 
 const selectableProps = [
   'user_id',

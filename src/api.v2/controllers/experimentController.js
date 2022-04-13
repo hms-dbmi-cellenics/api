@@ -95,7 +95,8 @@ const getBackendStatus = async (req, res) => {
     [
       getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME),
       getPipelineStatus(experimentId, constants.QC_PROCESS_NAME),
-      getWorkerStatus(experimentId)],
+      getWorkerStatus(experimentId),
+    ],
   );
 
   const formattedResponse = {
