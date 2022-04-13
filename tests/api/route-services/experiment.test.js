@@ -17,19 +17,51 @@ const {
 
 jest.setTimeout(30000);
 
-const { OK, NotFoundError } = require('../../../src/utils/responses');
+jest.mock('../../../src/api/route-services/access', () => function () {
+  return { grantRole: jest.fn() };
+});
+
+const { OK, NotFoundError, BadRequestError } = require('../../../src/utils/responses');
 
 describe('tests for the experiment service', () => {
   afterEach(() => {
     AWSMock.restore('DynamoDB');
   });
 
+  it('Create experiment data works', async (done) => {
+    const user = {
+      sub: 'mock-user-sub',
+    };
+
+    const body = {
+      experimentName: 'test-123',
+      createdDate: '2022-01-01T00:00:00.000Z',
+      lastViewed: '2022-01-01T00:00:00.000Z',
+      projectId: 'mock-project-id',
+      description: 'Mock experiment',
+      meta: {},
+      sampleIds: '["sample-1", "sample-2"]',
+    };
+
+    const jsData = {
+      projectId: 'mock-project-id',
+    };
+
+    const fnSpy = mockDynamoUpdateItem(jsData);
+
+    (new ExperimentService()).createExperiment('12345', body, user)
+      .then((data) => {
+        expect(data).toEqual(OK());
+        const updateParam = fnSpy.mock.calls[0];
+        expect(updateParam).toMatchSnapshot();
+      })
+      .then(() => done());
+  });
 
   it('Get experiment data works', async (done) => {
     const jsData = {
       experimentId: '12345',
       experimentName: 'TGFB1 experiment',
-
     };
 
     const fnSpy = mockDynamoGetItem(jsData);
@@ -44,6 +76,22 @@ describe('tests for the experiment service', () => {
         });
       })
       .then(() => done());
+  });
+
+  it('Get experiment data throws NotFoundError if experiment is not found', async (done) => {
+    const errMsg = 'Experiment does not exist';
+    mockDynamoGetItem({}, new NotFoundError(errMsg));
+
+    (new ExperimentService()).getExperimentData('12345')
+      .then((returnValue) => {
+        expect(returnValue).toEqual(OK());
+      })
+      .then(() => done())
+      .catch((error) => {
+        expect(error instanceof NotFoundError).toEqual(true);
+        expect(error.message).toEqual(errMsg);
+        done();
+      });
   });
 
   it('Get list of experiments work', async (done) => {
@@ -73,6 +121,25 @@ describe('tests for the experiment service', () => {
         );
       })
       .then(() => done());
+  });
+
+  it('Get list of experiments throws a 400 if there is an error fetching the data', (done) => {
+    const experimentIds = ['experiment-1', 'experiment-2', 'experiment-3'];
+
+    const errMsg = 'Some unknown error';
+
+    mockDynamoBatchGetItem([], new BadRequestError(errMsg));
+
+    (new ExperimentService()).getListOfExperiments(experimentIds)
+      .then((data) => {
+        expect(data).toEqual(experimentIds.map((experimentId) => ({ experimentId })));
+      })
+      .then(() => done())
+      .catch((error) => {
+        expect(error instanceof BadRequestError).toEqual(true);
+        expect(error.message).toEqual(errMsg);
+        done();
+      });
   });
 
   it('Get cell sets works', async (done) => {
