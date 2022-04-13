@@ -265,7 +265,7 @@
               }
             }
           },
-          "330390E9Cdc94C7FB68A0C51Fd059Dda": {
+          "330390E9Cdc94C7FB68A0C51Fd059Dda": { // pragma: allowlist secret
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
             "authJwt": "Bearer eyJraWQiOiJJYUFRSyttQ1BpcGwwVmg4ZGVrNjJNR25uWE9CaTRnYmZXR2g1eWZQRlA4PSIsImFsZyI6IlJTMjU2In0.eyJhdF9oYXNoIjoieTFzQkhUMWoyOTRFZnVmWFo3MXk0ZyIsInN1YiI6Ijc0OTY5NmZiLTM2NGMtNDIzYy05NjkxLWZlZjgzYmUyNmRlNiIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0xLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtMV9abW1CWUk2ak8iLCJjb2duaXRvOnVzZXJuYW1lIjoiNzQ5Njk2ZmItMzY0Yy00MjNjLTk2OTEtZmVmODNiZTI2ZGU2IiwiYXVkIjoiNGJmM2F2aW45Y3VkY3NycGUyazluZms0dnAiLCJldmVudF9pZCI6IjFmNDMwNDNmLWEzZTQtNGEyNy1iMjk0LTI5YTEwNjk1NDBlMiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjMxNjM0OTA2LCJuYW1lIjoiSXZhIiwiZXhwIjoxNjMxNjkyNzU5LCJpYXQiOjE2MzE2ODkxNTksImVtYWlsIjoiaXZhQGJpb21hZ2UubmV0In0.Ow5kRCvDwId39_fTvuiTpvQz5PeL6T32-D2oBnyli6DdvRj75EzoOZM1lgqNiCkmqBWmn_cLzljzvYEfdXXc9TCMVYjbqD3J4xSaR-ndGsNuVd-YCJPNJ1IHos2d5rDW63bRCDvbBbYNF8p-Bu9YCsDnWXYWBB8ZYg7qp2g6vi9zokWviIV2wT9Vo_3pgxRrqmv2DhrXclpJ2-piirhZdUJEWi9ODpTZbslsdWNBfPcwGeX6iS7RRjerkrSJTjskeRarxkFbGfZTrMgXJ1TzsehPoUYsDDLZZjddcPnEe6XWbnANphu8Tmgh_zZ0IIKHFX_nxCE8Vfprx1f1eUGYkQ",
