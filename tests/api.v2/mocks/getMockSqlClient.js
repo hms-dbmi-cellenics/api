@@ -4,17 +4,21 @@ const _ = require('lodash');
 module.exports = () => {
   const queries = {
     select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    del: jest.fn().mockReturnThis(),
     from: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
     update: jest.fn().mockReturnThis(),
     orderBy: jest.fn().mockReturnThis(),
     groupBy: jest.fn().mockReturnThis(),
     first: jest.fn().mockReturnThis(),
-    raw: jest.fn(),
-    returning: jest.fn(),
+    raw: jest.fn().mockReturnThis(),
+    returning: jest.fn().mockReturnThis(),
     join: jest.fn().mockReturnThis(),
     leftJoin: jest.fn().mockReturnThis(),
     as: jest.fn().mockReturnThis(),
+    into: jest.fn().mockReturnThis(),
+    timeout: jest.fn().mockReturnThis(),
   };
 
   const queriesInTrx = _.cloneDeep(queries);
@@ -27,7 +31,14 @@ module.exports = () => {
 
   const mockSqlClient = jest.fn(() => queriesInSqlClient);
   _.merge(mockSqlClient, {
-    transaction: jest.fn(() => Promise.resolve(mockTrx)),
+    transaction: jest.fn((param) => {
+      if (!param || !(param instanceof Function)) {
+        return mockTrx;
+      }
+
+      // Received a function to run within the transaction
+      return param(mockTrx);
+    }),
     ...queriesInSqlClient,
   });
 

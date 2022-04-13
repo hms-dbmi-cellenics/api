@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`model/Experiment getExperimentData works correctly 1`] = `
+Array [
+  "COALESCE(
+      jsonb_object_agg(pipeline_type, jsonb_build_object('params_hash', params_hash, 'state_machine_arn', state_machine_arn, 'execution_arn', execution_arn))
+      FILTER(
+        WHERE pipeline_type IS NOT NULL
+      ),
+      '{}'::jsonb
+    ) as pipelines",
+]
+`;
+
+exports[`model/Experiment updateSamplePosition rolls back if the parameters are invalid 1`] = `
+Array [
+  "(
+        SELECT jsonb_insert(samples_order - 0, '{10000}', samples_order -> 0, false)
+          FROM (
+            SELECT (samples_order)
+            FROM experiment e
+            WHERE e.id = 'mockExperimentId'
+          ) samples_order
+        )",
+]
+`;
+
+exports[`model/Experiment updateSamplePosition rolls back if the result is invalid 1`] = `
+Array [
+  "(
+        SELECT jsonb_insert(samples_order - 0, '{1}', samples_order -> 0, false)
+          FROM (
+            SELECT (samples_order)
+            FROM experiment e
+            WHERE e.id = 'mockExperimentId'
+          ) samples_order
+        )",
+]
+`;
+
+exports[`model/Experiment updateSamplePosition works correctly if valid params are passed 1`] = `
+Array [
+  "(
+        SELECT jsonb_insert(samples_order - 0, '{1}', samples_order -> 0, false)
+          FROM (
+            SELECT (samples_order)
+            FROM experiment e
+            WHERE e.id = 'mockExperimentId'
+          ) samples_order
+        )",
+]
+`;
