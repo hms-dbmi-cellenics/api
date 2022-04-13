@@ -216,6 +216,7 @@ Array [
             "States": Object {
               "CellSizeDistributionFilter": Object {
                 "End": true,
+                "HeartbeatSeconds": 60,
                 "Parameters": Object {
                   "config": Object {},
                   "experimentId": "testExperimentId",
@@ -243,6 +244,7 @@ Array [
             "States": Object {
               "ClassifierFilter": Object {
                 "End": true,
+                "HeartbeatSeconds": 60,
                 "Parameters": Object {
                   "config": Object {},
                   "experimentId": "testExperimentId",
@@ -264,6 +266,7 @@ Array [
           "Type": "Map",
         },
         "ConfigureEmbedding": Object {
+          "HeartbeatSeconds": 60,
           "Next": "EndOfPipeline",
           "Parameters": Object {
             "config": Object {},
@@ -280,6 +283,7 @@ Array [
           "Type": "Task",
         },
         "DataIntegration": Object {
+          "HeartbeatSeconds": 60,
           "Next": "ConfigureEmbedding",
           "Parameters": Object {
             "config": Object {},
@@ -302,6 +306,7 @@ Array [
             "States": Object {
               "DoubletScoresFilter": Object {
                 "End": true,
+                "HeartbeatSeconds": 60,
                 "Parameters": Object {
                   "config": Object {
                     "oneSample": Object {
@@ -349,6 +354,7 @@ Array [
             "States": Object {
               "MitochondrialContentFilter": Object {
                 "End": true,
+                "HeartbeatSeconds": 60,
                 "Parameters": Object {
                   "config": Object {},
                   "experimentId": "testExperimentId",
@@ -376,6 +382,7 @@ Array [
             "States": Object {
               "NumGenesVsNumUmisFilter": Object {
                 "End": true,
+                "HeartbeatSeconds": 60,
                 "Parameters": Object {
                   "config": Object {},
                   "experimentId": "testExperimentId",
