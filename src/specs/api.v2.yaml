@@ -168,7 +168,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExperimentPatch'
+              $ref: '#/components/schemas/PatchExperiment'
       responses:
         '200':
           description: Create experiment
@@ -242,6 +242,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+    patch:
+      summary: Patch sample
+      operationId: patchSample
+      x-eov-operation-id: sample#patchSample
+      x-eov-operation-handler: routes/sample
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              additionalProperties: false
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
     delete:
       summary: Delete sample
       operationId: deleteSample
@@ -336,8 +382,8 @@ components:
       $ref: './models/experiment-bodies/CreateExperiment.v2.yaml'
     ExperimentInfo:
       $ref: './models/experiment-bodies/ExperimentInfo.v2.yaml'
-    ExperimentPatch:
-      $ref: './models/experiment-bodies/ExperimentPatch.v2.yaml'
+    PatchExperiment:
+      $ref: './models/experiment-bodies/PatchExperiment.v2.yaml'
     GetAllExperiments:
       $ref: './models/experiment-bodies/GetAllExperiments.v2.yaml'
     CreateSample:

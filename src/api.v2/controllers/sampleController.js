@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const Sample = require('../model/Sample');
 const Experiment = require('../model/Experiment');
 const MetadataTrack = require('../model/MetadataTrack');
@@ -36,6 +38,20 @@ const createSample = async (req, res) => {
   res.json(OK());
 };
 
+const patchSample = async (req, res) => {
+  const { params: { experimentId, sampleId }, body } = req;
+
+  logger.log(`Patching sample ${sampleId} in experiment ${experimentId}`);
+
+  const snakeCasedKeysToPatch = _.mapKeys(body, (_value, key) => _.snakeCase(key));
+
+  await new Sample().update(sampleId, snakeCasedKeysToPatch);
+
+  logger.log(`Finished patching sample ${sampleId} in experiment ${experimentId}`);
+
+  res.json(OK());
+};
+
 const deleteSample = async (req, res) => {
   const { params: { experimentId, sampleId } } = req;
 
@@ -51,5 +67,6 @@ const deleteSample = async (req, res) => {
 
 module.exports = {
   createSample,
+  patchSample,
   deleteSample,
 };
