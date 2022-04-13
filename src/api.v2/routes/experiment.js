@@ -27,7 +27,7 @@ module.exports = {
     (req, res, next) => updateSamplePosition(req, res).catch(next),
   ],
   'experiment#getProcessingConfig': [
-    expressAuthorizationMiddleware,
+    // expressAuthorizationMiddleware,
     (req, res, next) => getProcessingConfig(req, res).catch(next),
   ],
   'experiment#updateProcessingConfig': [

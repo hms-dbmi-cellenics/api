@@ -4,7 +4,7 @@ const sqlClient = require('../../../src/sql/sqlClient');
 const helpers = require('../../../src/sql/helpers');
 
 const validSamplesOrderResult = ['sampleId1', 'sampleId2', 'sampleId3', 'sampleId4'];
-
+const getProcessingConfigResponse = require('../mocks/data/getProcessingConfigResponse');
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 
 jest.mock('../../../src/sql/sqlClient', () => ({
@@ -182,6 +182,15 @@ describe('model/Experiment', () => {
 
     expect(mockSqlClient.update).toHaveBeenCalledWith({ samples_order: 'RawSqlCommand' });
     expect(mockSqlClient.raw).toHaveBeenCalledWith('samples_order - \'mockSampleId\'');
+    expect(mockSqlClient.where).toHaveBeenCalledWith('id', 'mockExperimentId');
+  });
+
+  it('getProcessingConfig works', async () => {
+    mockSqlClient.first.mockImplementationOnce(() => Promise.resolve(getProcessingConfigResponse));
+    mockSqlClient.where.mockImplementationOnce(() => { Promise.resolve(); });
+
+    await new Experiment().getProcessingConfig(mockExperimentId);
+    expect(mockSqlClient.first).toHaveBeenCalledWith(['processing_config']);
     expect(mockSqlClient.where).toHaveBeenCalledWith('id', 'mockExperimentId');
   });
 });
