@@ -6,6 +6,7 @@ const helpers = require('../../../src/sql/helpers');
 const validSamplesOrderResult = ['sampleId1', 'sampleId2', 'sampleId3', 'sampleId4'];
 const getProcessingConfigResponse = require('../mocks/data/getProcessingConfigResponse');
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
+const BasicModel = require('../../../src/api.v2/model/BasicModel');
 
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
@@ -186,11 +187,29 @@ describe('model/Experiment', () => {
   });
 
   it('getProcessingConfig works', async () => {
-    mockSqlClient.first.mockImplementationOnce(() => Promise.resolve(getProcessingConfigResponse));
-    mockSqlClient.where.mockImplementationOnce(() => { Promise.resolve(); });
+    const mockFind = jest.spyOn(BasicModel.prototype, 'find')
+      .mockImplementationOnce(() => Promise.resolve(getProcessingConfigResponse));
 
-    await new Experiment().getProcessingConfig(mockExperimentId);
-    expect(mockSqlClient.first).toHaveBeenCalledWith(['processing_config']);
-    expect(mockSqlClient.where).toHaveBeenCalledWith('id', 'mockExperimentId');
+    const result = await new Experiment().getProcessingConfig(mockExperimentId);
+    expect(mockFind).toHaveBeenCalledWith({ id: mockExperimentId });
+    expect(result).toMatchSnapshot();
+  });
+
+  it('updateProcessingConfig works', async () => {
+    const mockBody = [{
+      name: 'classifier',
+      body: {
+        changedField: 'IamChanging so much',
+      },
+    }];
+    const mockFind = jest.spyOn(BasicModel.prototype, 'find')
+      .mockImplementationOnce(() => Promise.resolve(getProcessingConfigResponse));
+    const mockUpdate = jest.spyOn(BasicModel.prototype, 'update')
+      .mockImplementationOnce(() => Promise.resolve());
+
+    await new Experiment().updateProcessingConfig(mockExperimentId, mockBody);
+    expect(mockFind).toHaveBeenCalled();
+    expect(mockUpdate).toHaveBeenCalledWith(mockExperimentId,
+      { processing_config: getProcessingConfigResponse[0].processingConfig });
   });
 });

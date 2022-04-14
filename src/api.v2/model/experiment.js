@@ -149,7 +149,6 @@ class Experiment extends BasicModel {
     if (_.isEmpty(result)) {
       throw new NotFoundError('Experiment not found');
     }
-    console.log('RESULT IS ', result[0].processingConfig);
 
     return result[0].processingConfig;
   }
@@ -157,10 +156,10 @@ class Experiment extends BasicModel {
   async updateProcessingConfig(experimentId, body) {
     const { name: stepName, body: change } = body[0];
 
-    const { processingConfig } = await this.getProcessingConfig(experimentId);
+    const processingConfig = await this.getProcessingConfig(experimentId);
     processingConfig[stepName] = change;
 
-    await this.update(experimentId, { processingConfig });
+    await this.update(experimentId, { processing_config: processingConfig });
   }
 
   async addSample(experimentId, sampleId) {
