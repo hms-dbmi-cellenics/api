@@ -14,7 +14,10 @@ properties:
   notifyByEmail:
     type: boolean
   processingConfig:
-    $ref: ./ProcessingConfig.v2.yaml
+    anyOf:
+      - type: object
+        additionalProperties: false
+      - $ref: ./ProcessingConfig.v2.yaml
   createdAt:
     type: string
   updatedAt:
