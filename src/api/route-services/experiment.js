@@ -69,7 +69,7 @@ class ExperimentService {
         (experiment) => convertToJsObject(experiment),
       );
     } catch (e) {
-      if (e.statusCode === 400) throw new NotFoundError('Experiments not found');
+      if (e.statusCode === 400) throw new BadRequestError(e.message);
       throw e;
     }
   }
@@ -87,8 +87,6 @@ class ExperimentService {
       ':lastViewed': body.lastViewed,
       ':projectId': body.projectId,
       ':description': body.description,
-      ':input': body.input,
-      ':organism': body.organism,
       ':meta': body.meta || {},
       ':processingConfig': {},
       ':sampleIds': body.sampleIds,
