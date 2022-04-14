@@ -213,7 +213,6 @@ const getStepsFromExecutionHistory = (events) => {
   return shortestCompletedToReport || [];
 };
 
-
 /*
      * Return `completedSteps` of the state machine (SM) associated to the `experimentId`'s pipeline
      * The code assumes that
@@ -238,7 +237,7 @@ const getPipelineStatus = async (experimentId, processName) => {
   let completedSteps = [];
   let error = false;
 
-  const { executionArn = null, paramsHash = null } = pipelineExecution;
+  const { executionArn = null, paramsHash = null, lastStatusResponse } = pipelineExecution;
 
   try {
     execution = await stepFunctions.describeExecution({
@@ -252,12 +251,20 @@ const getPipelineStatus = async (experimentId, processName) => {
     // the pipeline losing annotations. This will be addressed checking if the
     // processed files exist in S3 to avoid allowing users to move onwards when the pipeline was not
     // actually run.
-    if ((e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
-      || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)) {
+    if (
+      (e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
+      || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
+    ) {
+      if (lastStatusResponse) {
+        logger.log(`Returning status stored in sql because AWS doesn't find arn ${executionArn}`);
+        return { [processName]: lastStatusResponse };
+      }
+
       logger.log(
         `Returning a mocked success ${processName} - pipeline status because ARN ${executionArn} `
-        + `does not exist and we are running in ${config.clusterEnv} so it means it's either a `
-        + ' a pulled experiment or that the production state machine expired and was deleted by aws.',
+        + `does not exist in aws and we are running in ${config.clusterEnv} so it means it's either a `
+        + 'a pulled experiment or this is a very old legacy experiment from before sql that (legacy) '
+        + 'doesn\'t have its latest execution stored in sql.',
       );
 
       // we set as date 90 days ago which is when the state machine expire in production, in
@@ -286,7 +293,17 @@ const getPipelineStatus = async (experimentId, processName) => {
       logger.error(`unknown process name ${processName}`);
   }
 
-  return buildResponse(processName, execution, paramsHash, error, completedSteps);
+  const response = buildResponse(processName, execution, paramsHash, error, completedSteps);
+
+  // If the new response changed compared to the stored one, update sql one
+  if (!_.isEqual(response, lastStatusResponse)) {
+    await new ExperimentExecution().update(
+      { experiment_id: experimentId, pipeline_type: processName },
+      { last_status_response: response },
+    );
+  }
+
+  return response;
 };
 
 module.exports = getPipelineStatus;

@@ -131,11 +131,11 @@ describe('experimentController', () => {
       },
     };
 
-    experimentInstance.update.mockImplementationOnce(() => Promise.resolve());
+    experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
 
     await experimentController.patchExperiment(mockReq, mockRes);
 
-    expect(experimentInstance.update).toHaveBeenCalledWith(
+    expect(experimentInstance.updateById).toHaveBeenCalledWith(
       mockExperiment.id,
       { description: 'mockDescription' },
     );
