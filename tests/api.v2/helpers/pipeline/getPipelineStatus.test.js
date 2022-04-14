@@ -286,7 +286,7 @@ describe('pipelineStatus', () => {
   it('handles properly a gem2s empty sql record', async () => {
     const status = await getPipelineStatus(EMPTY_ID, GEM2S_PROCESS_NAME);
 
-    expect(status).toStrictEqual({
+    const expectedStatus = {
       [GEM2S_PROCESS_NAME]: {
         startDate: null,
         stopDate: null,
@@ -295,17 +295,20 @@ describe('pipelineStatus', () => {
         completedSteps: [],
         paramsHash: undefined,
       },
-    });
+    };
+
+    expect(status).toStrictEqual(expectedStatus);
 
     expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: EMPTY_ID });
+
+    // sql update is not called
+    expect(experimentExecutionInstance.update).not.toHaveBeenCalled();
   });
 
   it('handles properly a qc empty sql record', async () => {
     const status = await getPipelineStatus(EMPTY_ID, QC_PROCESS_NAME);
 
-    // we don't check with StrictEqual because response will contain
-    // undefined paramsHash and that is OK (only needed in gem2s)
-    expect(status).toEqual({
+    const expectedStatus = {
       [QC_PROCESS_NAME]: {
         startDate: null,
         stopDate: null,
@@ -313,9 +316,16 @@ describe('pipelineStatus', () => {
         status: constants.NOT_CREATED,
         completedSteps: [],
       },
-    });
+    };
+
+    // we don't check with StrictEqual because response will contain
+    // undefined paramsHash and that is OK (only needed in gem2s)
+    expect(status).toEqual(expectedStatus);
 
     expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: EMPTY_ID });
+
+    // sql update is not called
+    expect(experimentExecutionInstance.update).not.toHaveBeenCalled();
   });
 
   it('handles a gem2s execution does not exist exception by returning sql last response', async () => {
@@ -327,6 +337,9 @@ describe('pipelineStatus', () => {
 
     expect(experimentExecutionInstance.find)
       .toHaveBeenCalledWith({ experiment_id: EXECUTION_DOES_NOT_EXIST_ID });
+
+    // sql last_status_response is not updated, couldnt obtain
+    expect(experimentExecutionInstance.update).not.toHaveBeenCalled();
   });
 
   it('handles a gem2s execution does not exist exception with hardcoded success if there is no sql value',
