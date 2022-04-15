@@ -2,7 +2,7 @@
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 
-const tableNames = require('../helpers/tableNames');
+const tableNames = require('./tableNames');
 
 const sampleFields = [
   'id',
