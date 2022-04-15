@@ -18,4 +18,7 @@ coverage:
         enabled: no
 
 ignore:
+  - "api/.eslintrc.js"
+  - "api/babel.config.js"
+  - "api/coverage/**/*"
   - "src/sql/migrations"
