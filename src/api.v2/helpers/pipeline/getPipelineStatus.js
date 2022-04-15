@@ -38,10 +38,6 @@ const pipelineSteps = getPipelineStepNames();
 // responses contain the same information and parameters
 // more specific building response should rely on calling this one
 const buildResponse = (processName, execution, paramsHash, error, completedSteps) => {
-  const paramsHashOnlyIfGem2s = processName === pipelineConstants.GEM2S_PROCESS_NAME
-    ? paramsHash
-    : undefined;
-
   const response = {
     [processName]: {
       startDate: execution.startDate,
@@ -49,7 +45,7 @@ const buildResponse = (processName, execution, paramsHash, error, completedSteps
       status: execution.status,
       error,
       completedSteps,
-      paramsHash: paramsHashOnlyIfGem2s,
+      paramsHash,
     },
   };
   return response;

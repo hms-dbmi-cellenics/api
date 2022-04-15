@@ -427,6 +427,7 @@ describe('pipelineStatus', () => {
         status: constants.SUCCEEDED,
         error: false,
         completedSteps: [],
+        paramsHash: null,
       },
     };
 
