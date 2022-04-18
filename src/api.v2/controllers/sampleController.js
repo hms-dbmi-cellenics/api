@@ -55,6 +55,8 @@ const patchSample = async (req, res) => {
 const deleteSample = async (req, res) => {
   const { params: { experimentId, sampleId } } = req;
 
+  logger.log(`Deleting sample ${sampleId} from experiment ${experimentId}`);
+
   await sqlClient.get().transaction(async (trx) => {
     await new Sample(trx).destroy(sampleId);
     await new Experiment(trx).deleteSample(experimentId, sampleId);
