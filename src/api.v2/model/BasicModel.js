@@ -52,10 +52,18 @@ class BasicModel {
       .timeout(this.timeout);
   }
 
-  update(id, props) {
+  updateById(id, props) {
     return this.sql.update(props)
       .from(this.tableName)
       .where({ id })
+      .returning(this.selectableProps)
+      .timeout(this.timeout);
+  }
+
+  update(filter, props) {
+    return this.sql.update(props)
+      .from(this.tableName)
+      .where(filter)
       .returning(this.selectableProps)
       .timeout(this.timeout);
   }

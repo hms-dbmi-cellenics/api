@@ -74,7 +74,19 @@ describe('model/BasicModel', () => {
   });
 
   it('update works correctly', async () => {
-    await new BasicModel(mockSqlClient, mockTableName, ['id', 'name']).update('mockId', { name: 'newNameUpdated' });
+    await new BasicModel(mockSqlClient, mockTableName, ['id', 'name']).update(
+      { key_1: 'key_1_val', key_2: 'key_2_val' }, { name: 'newNameUpdated' },
+    );
+
+    expect(mockSqlClient.update).toHaveBeenCalledWith({ name: 'newNameUpdated' });
+    expect(mockSqlClient.from).toHaveBeenCalledWith(mockTableName);
+    expect(mockSqlClient.where).toHaveBeenCalledWith({ key_1: 'key_1_val', key_2: 'key_2_val' });
+    expect(mockSqlClient.returning).toHaveBeenCalledWith(['id', 'name']);
+    expect(mockSqlClient.timeout).toHaveBeenCalledWith(4000);
+  });
+
+  it('updateById works correctly', async () => {
+    await new BasicModel(mockSqlClient, mockTableName, ['id', 'name']).updateById('mockId', { name: 'newNameUpdated' });
 
     expect(mockSqlClient.update).toHaveBeenCalledWith({ name: 'newNameUpdated' });
     expect(mockSqlClient.from).toHaveBeenCalledWith(mockTableName);

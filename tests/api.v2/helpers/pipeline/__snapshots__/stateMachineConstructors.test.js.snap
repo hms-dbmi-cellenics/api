@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test for pipeline constructor services builds valid pipeline pod assignation request 1`] = `
+Object {
+  "experimentId": "experimentid11111111111111111111",
+  "input": Object {
+    "activityId": "arn:aws:states:eu-east-9:111111111111:activity:biomage-gem2s-production-39249897-cfce-632b-a617-e58fbf251733",
+    "experimentId": "experimentid11111111111111111111",
+    "processName": "gem2s",
+    "sandboxId": "default",
+  },
+  "taskName": "assignPodToPipeline",
+}
+`;

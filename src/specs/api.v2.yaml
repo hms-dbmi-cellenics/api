@@ -263,6 +263,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+  '/experiments/{experimentId}/backendStatus':
+    get:
+      summary: Get backend status for an experiment
+      description: Get the status fo qc, gem2s and the worker for an experiment
+      operationId: getBackendStatus
+      x-eov-operation-id: experiment#getBackendStatus
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Experiment not found.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+    parameters:
+      - schema:
+          type: string
+        name: experimentId
+        in: path
+        required: true
+        description: ID of the experiment
+  
   '/experiments/{experimentId}/samples/{sampleId}':
     post:
       summary: Create sample
