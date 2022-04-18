@@ -202,14 +202,9 @@ describe('model/Experiment', () => {
         changedField: 'IamChanging so much',
       },
     }];
-    const mockFind = jest.spyOn(BasicModel.prototype, 'find')
-      .mockImplementationOnce(() => Promise.resolve(getProcessingConfigResponse));
-    const mockUpdate = jest.spyOn(BasicModel.prototype, 'update')
-      .mockImplementationOnce(() => Promise.resolve());
 
+    mockSqlClient.where.mockImplementationOnce(() => { Promise.resolve(); });
     await new Experiment().updateProcessingConfig(mockExperimentId, mockBody);
-    expect(mockFind).toHaveBeenCalled();
-    expect(mockUpdate).toHaveBeenCalledWith(mockExperimentId,
-      { processing_config: getProcessingConfigResponse[0].processingConfig });
+    expect(mockSqlClient.where).toHaveBeenCalledWith('id', mockExperimentId);
   });
 });
