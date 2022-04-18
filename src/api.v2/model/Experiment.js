@@ -154,11 +154,12 @@ class Experiment extends BasicModel {
 
   async updateProcessingConfig(experimentId, body) {
     const { name: stepName, body: change } = body[0];
+    const updateString = JSON.stringify({ [stepName]: change });
 
-    const processingConfig = await this.getProcessingConfig(experimentId);
-    processingConfig[stepName] = change;
-
-    await this.update(experimentId, { processing_config: processingConfig });
+    await this.sql(tableNames.EXPERIMENT)
+      .update({
+        processing_config: this.sql.raw(`processing_config || '${updateString}'::jsonb`),
+      }).where('id', experimentId);
   }
 
   async addSample(experimentId, sampleId) {
