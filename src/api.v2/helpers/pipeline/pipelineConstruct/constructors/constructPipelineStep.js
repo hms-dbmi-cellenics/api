@@ -1,6 +1,6 @@
-const deleteCompletedJobs = require('./delete-complete-jobs');
-const createNewStep = require('./create-new-step');
-const createNewJobIfNotExist = require('./create-new-job-if-not-exist');
+const deleteCompletedJobs = require('./deleteCompleteJobs');
+const createNewStep = require('./createNewStep');
+const createNewJobIfNotExist = require('./createNewJobIfNotExist');
 const {
   requestPod, waitForPod,
 } = require('./assignPodToPipeline');

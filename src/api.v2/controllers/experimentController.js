@@ -7,6 +7,10 @@ const getLogger = require('../../utils/getLogger');
 const { OK } = require('../../utils/responses');
 const sqlClient = require('../../sql/sqlClient');
 
+const constants = require('../helpers/pipeline/constants');
+const getPipelineStatus = require('../helpers/pipeline/getPipelineStatus');
+const getWorkerStatus = require('../helpers/worker/getWorkerStatus');
+
 const logger = getLogger('[ExperimentController] - ');
 
 const getAllExperiments = async (req, res) => {
@@ -53,7 +57,7 @@ const patchExperiment = async (req, res) => {
 
   const snakeCasedKeysToPatch = _.mapKeys(body, (_value, key) => _.snakeCase(key));
 
-  await new Experiment().update(experimentId, snakeCasedKeysToPatch);
+  await new Experiment().updateById(experimentId, snakeCasedKeysToPatch);
 
   logger.log(`Finished patching experiment ${experimentId}`);
 
@@ -82,10 +86,35 @@ const updateSamplePosition = async (req, res) => {
   res.json(OK());
 };
 
+const getBackendStatus = async (req, res) => {
+  const { experimentId } = req.params;
+
+  logger.log(`Getting backend status for experiment ${experimentId}`);
+
+  const [{ gem2s }, { qc }, { worker }] = await Promise.all(
+    [
+      getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME),
+      getPipelineStatus(experimentId, constants.QC_PROCESS_NAME),
+      getWorkerStatus(experimentId),
+    ],
+  );
+
+  const formattedResponse = {
+    [constants.OLD_QC_NAME_TO_BE_REMOVED]: qc,
+    gem2s,
+    worker,
+  };
+
+  logger.log(`Got backend status for experiment ${experimentId} successfully`);
+
+  res.json(formattedResponse);
+};
+
 module.exports = {
   getAllExperiments,
   getExperiment,
   createExperiment,
   patchExperiment,
   updateSamplePosition,
+  getBackendStatus,
 };
