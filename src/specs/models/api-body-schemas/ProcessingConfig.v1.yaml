@@ -2,28 +2,28 @@ title: Processing Config schema
 description: Processing Config schema
 type: object
 properties:
-  processingConfig:
-    type: object
-    properties:
-      cellSizeDistribution:
-        $ref: '../processing-config-bodies/ProcessingConfigCellSizeDistribution.v1.yaml'
-      mitochondrialContent:
-        $ref: '../processing-config-bodies/ProcessingConfigMitochondrialContent.v1.yaml'
-      readAlignment:
-        $ref: '../processing-config-bodies/ProcessingConfigReadAlignment.v1.yaml'
-      classifier:
-        $ref: '../processing-config-bodies/ProcessingConfigClassifier.v1.yaml'
-      numGenesVsNumUmis:
-        $ref: '../processing-config-bodies/ProcessingConfigNumGenesVsNumUMIs.v1.yaml'
-      doubletScores:
-        $ref: '../processing-config-bodies/ProcessingConfigDoubletScores.v1.yaml'
-      dataIntegration:
-        $ref: '../processing-config-bodies/ProcessingConfigDataIntegration.v1.yaml'
-      configureEmbedding:
-        $ref: '../processing-config-bodies/ProcessingConfigConfigureEmbedding.v1.yaml'
-  
+  cellSizeDistribution:
+    $ref: '../processing-config-bodies/ProcessingConfigCellSizeDistribution.v1.yaml'
+  mitochondrialContent:
+    $ref: '../processing-config-bodies/ProcessingConfigMitochondrialContent.v1.yaml'
+  readAlignment:
+    $ref: '../processing-config-bodies/ProcessingConfigReadAlignment.v1.yaml'
+  classifier:
+    $ref: '../processing-config-bodies/ProcessingConfigClassifier.v1.yaml'
+  numGenesVsNumUmis:
+    $ref: '../processing-config-bodies/ProcessingConfigNumGenesVsNumUMIs.v1.yaml'
+  doubletScores:
+    $ref: '../processing-config-bodies/ProcessingConfigDoubletScores.v1.yaml'
+  dataIntegration:
+    $ref: '../processing-config-bodies/ProcessingConfigDataIntegration.v1.yaml'
+  configureEmbedding:
+    $ref: '../processing-config-bodies/ProcessingConfigConfigureEmbedding.v1.yaml'
 required:
-  - processingConfig: [
-    'cellSizeDistribution', 'mitochondrialContent', 'readAlignment', 
-    'classifier', 'numGenesVsNumUmis', 'doubletScores', 'dataIntegration', 'configureEmbedding']
-additionalProperties: false
+  - cellSizeDistribution
+  - mitochondrialContent
+  - readAlignment
+  - classifier
+  - numGenesVsNumUmis
+  - doubletScores
+  - dataIntegration
+  - configureEmbedding
