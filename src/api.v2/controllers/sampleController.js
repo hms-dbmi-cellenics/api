@@ -45,7 +45,7 @@ const patchSample = async (req, res) => {
 
   const snakeCasedKeysToPatch = _.mapKeys(body, (_value, key) => _.snakeCase(key));
 
-  await new Sample().update(sampleId, snakeCasedKeysToPatch);
+  await new Sample().updateById(sampleId, snakeCasedKeysToPatch);
 
   logger.log(`Finished patching sample ${sampleId} in experiment ${experimentId}`);
 
