@@ -43,6 +43,7 @@ exports.up = async (knex) => {
       table.string('params_hash').nullable();
       table.string('state_machine_arn').notNullable();
       table.string('execution_arn').notNullable();
+      table.jsonb('last_status_response').nullable().defaultTo(null);
 
       table.primary(['experiment_id', 'pipeline_type']);
     });

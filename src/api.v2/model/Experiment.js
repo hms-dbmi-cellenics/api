@@ -6,13 +6,12 @@ const { collapseKeyIntoArray } = require('../../sql/helpers');
 
 const { NotFoundError } = require('../../utils/responses');
 
-const tableNames = require('../helpers/tableNames');
+const tableNames = require('./tableNames');
 
 
 const getLogger = require('../../utils/getLogger');
 
 const logger = getLogger('[ExperimentModel] - ');
-
 
 const experimentFields = [
   'id',
