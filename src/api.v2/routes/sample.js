@@ -1,5 +1,6 @@
 const {
   createSample,
+  patchSample,
   deleteSample,
 } = require('../controllers/sampleController');
 
@@ -9,6 +10,10 @@ module.exports = {
   'sample#createSample': [
     expressAuthorizationMiddleware,
     (req, res, next) => createSample(req, res).catch(next),
+  ],
+  'sample#patchSample': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => patchSample(req, res).catch(next),
   ],
   'sample#deleteSample': [
     expressAuthorizationMiddleware,
