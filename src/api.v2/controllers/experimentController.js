@@ -53,13 +53,13 @@ const createExperiment = async (req, res) => {
 const patchExperiment = async (req, res) => {
   const { params: { experimentId }, body } = req;
 
-  logger.log(`Updating experiment ${experimentId}`);
+  logger.log(`Patching experiment ${experimentId}`);
 
   const snakeCasedKeysToPatch = _.mapKeys(body, (_value, key) => _.snakeCase(key));
 
   await new Experiment().updateById(experimentId, snakeCasedKeysToPatch);
 
-  logger.log(`Finished updating experiment ${experimentId}`);
+  logger.log(`Finished patching experiment ${experimentId}`);
 
   res.json(OK());
 };
