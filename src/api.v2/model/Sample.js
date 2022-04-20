@@ -18,8 +18,12 @@ class Sample extends BasicModel {
   }
 
   async setNewFile(sampleId, sampleFileId, sampleFileType) {
-    // Remove references to previous sample file for this type (if they exist)
-    await this.sql().delete()
+    // If we are working within a transaction then
+    // keep using that one instead of starting a subtransaction
+    const trx = this.sql.isTransaction ? this.sql : await this.sql.transaction();
+
+    // Remove references to previous sample file for sampleFileType (if they exist)
+    await trx.del()
       .from({ sf_map: tableNames.SAMPLE_TO_SAMPLE_FILE_MAP })
       .where({ sample_id: sampleId })
       .andWhere(
@@ -31,8 +35,8 @@ class Sample extends BasicModel {
           .andWhere('sf.sample_file_type', '=', sampleFileType),
       );
 
-    // Add new sample file
-    await this.sql(tableNames.SAMPLE_TO_SAMPLE_FILE_MAP).insert(
+    // Add new sample file reference
+    await trx(tableNames.SAMPLE_TO_SAMPLE_FILE_MAP).insert(
       {
         sample_id: sampleId,
         sample_file_id: sampleFileId,

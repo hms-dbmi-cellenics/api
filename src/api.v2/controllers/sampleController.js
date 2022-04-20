@@ -10,6 +10,8 @@ const { OK } = require('../../utils/responses');
 const sqlClient = require('../../sql/sqlClient');
 const SampleFile = require('../model/SampleFile');
 
+const { getSampleFileUploadUrl } = require('../helpers/s3/getSignedUrl');
+
 const logger = getLogger('[SampleController] - ');
 
 const createSample = async (req, res) => {
@@ -71,8 +73,7 @@ const deleteSample = async (req, res) => {
 const setFile = async (req, res) => {
   const {
     params: { sampleId, sampleFileType },
-    // body: { sampleFileId, cellrangerVersion, size },
-    body: { sampleFileId, size },
+    body: { sampleFileId, cellrangerVersion, size },
   } = req;
 
   // const s3Path = sampleFileId;
@@ -86,18 +87,14 @@ const setFile = async (req, res) => {
     upload_status: 'fileNotFound',
   };
 
-  // let signedUrl;
-
-  console.log('weofiwmerfgoiernrio');
+  let signedUrl;
 
   await sqlClient.get().transaction(async (trx) => {
     await new SampleFile(trx).create(newSampleFile);
     await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType);
 
-    // signedUrl = getSignedUrl();
+    signedUrl = getSampleFileUploadUrl(sampleFileId, sampleFileId, cellrangerVersion);
   });
-
-  const signedUrl = '';
 
   res.json(signedUrl);
 };

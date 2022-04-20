@@ -424,27 +424,18 @@ paths:
       operationId: setFile
       x-eov-operation-id: sample#setFile
       x-eov-operation-handler: routes/sample
-      # requestBody:
-      #   content:
-      #     application/json:
-      #       schema:
-      #         type: object
-      #         properties:
-      #           oldPosition: 
-      #             type: integer
-      #           newPosition:
-      #             type: integer
-      #         required:
-      #           - oldPosition
-      #           - newPosition
-      #         additionalProperties: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSampleFile'
       responses:
         '200':
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
+                type: string
         '400':
           description: Bad Request
           content:
@@ -482,6 +473,8 @@ components:
       $ref: './models/experiment-bodies/GetAllExperiments.v2.yaml'
     CreateSample:
       $ref: './models/samples-bodies/CreateSample.v2.yaml'
+    CreateSampleFile:
+      $ref: './models/samples-bodies/CreateSampleFile.v2.yaml'
     HTTPSuccess:
       $ref: './models/HTTPSuccess.v1.yaml'
     HTTPError:

@@ -21,7 +21,7 @@ module.exports = {
     (req, res, next) => deleteSample(req, res).catch(next),
   ],
   'sample#setFile': [
-    // expressAuthorizationMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => setFile(req, res).catch(next),
   ],
 };

@@ -1,0 +1,19 @@
+title: Create sample file
+description: 'Data required to create a new sample file'
+type: object
+properties:
+  sampleFileId:
+    type: string
+  cellrangerVersion:
+    oneOf:
+      - pattern: v2
+      - pattern: v3
+  size:
+    type: number
+ 
+required:
+  - sampleFileId
+  - cellrangerVersion
+  - size
+
+additionalProperties: false
