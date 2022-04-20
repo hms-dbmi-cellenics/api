@@ -35,11 +35,8 @@ const nativeEnum = (table, tableName) => (
   table.enu(tableName, null, { useNative: true, existingType: true, enumName: tableName })
 );
 
-/**
-* @param { import("knex").Knex } knex
-* @returns { Promise<void> }
-*/
-exports.up = async (knex) => {
+
+const setupEnums = async (knex) => {
   await knex.raw('CREATE TYPE pipeline_type AS ENUM (\'qc\', \'gem2s\');');
   await knex.raw('CREATE TYPE sample_technology AS ENUM (\'10x\', \'rhapsody\');');
   await knex.raw('CREATE TYPE sample_file_type AS ENUM (\'features10x\', \'barcodes10x\', \'matrix10x\', \'rhapsody\');');
@@ -47,6 +44,19 @@ exports.up = async (knex) => {
     'CREATE TYPE upload_status AS ENUM (\'uploaded\', \'uploading\', \'compressing\', \'uploadError\', \'fileNotFound\', \'fileReadError\', \'fileReadAborted\');',
   );
   await knex.raw('CREATE TYPE access_role AS ENUM (\'owner\', \'admin\', \'explorer\', \'viewer\');');
+};
+
+const setupFunctions = async (knex) => {
+  await knex.raw(deleteSampleFileIfOrphanFunc);
+};
+
+/**
+* @param { import("knex").Knex } knex
+* @returns { Promise<void> }
+*/
+exports.up = async (knex) => {
+  await setupEnums(knex);
+  await setupFunctions(knex);
 
   await knex.schema
     .createTable('experiment', (table) => {
@@ -112,7 +122,6 @@ exports.up = async (knex) => {
 
       table.primary(['sample_id', 'sample_file_id']);
     }).then(async () => {
-      await knex.raw(deleteSampleFileIfOrphanFunc);
       await knex.raw(setDeleteSampleFileIfOrphanTrigger);
     });
 
