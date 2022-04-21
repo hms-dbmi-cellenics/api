@@ -15,50 +15,50 @@ Array [
 exports[`model/Experiment getProcessingConfig works 1`] = `
 Object {
   "cellSizeDistribution": Object {
-    "330390E9Cdc94C7FB68A0C51Fd059Dda-notASecret": Object { # pragma: allowlist secret
-      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-      "auto": true,
-      "defaultFilterSettings": Object {
-        "binStep": 200,
-        "minCellSize": 907,
-      },
-      "enabled": false,
-      "filterSettings": Object {
-        "binStep": 200,
-        "minCellSize": 907,
-      },
-    },
-    "46E6484545Dc4Aeb932DE1B43178Fe09-notASecret": Object { # pragma: allowlist secret
-      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-      "auto": true,
-      "defaultFilterSettings": Object {
-        "binStep": 200,
-        "minCellSize": 623,
-      },
-      "enabled": false,
-      "filterSettings": Object {
-        "binStep": 200,
-        "minCellSize": 623,
-      },
-    },
-    "7Ff6388CCa204325A30C0C29135E1D0-notASecret": Object { # pragma: allowlist secret
-      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-      "auto": true,
-      "defaultFilterSettings": Object {
-        "binStep": 200,
-        "minCellSize": 516,
-      },
-      "enabled": false,
-      "filterSettings": Object {
-        "binStep": 200,
-        "minCellSize": 516,
-      },
-    },
     "auto": true,
     "enabled": false,
     "filterSettings": Object {
       "binStep": 200,
       "minCellSize": 1080,
+    },
+    "sample1Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "binStep": 200,
+        "minCellSize": 907,
+      },
+      "enabled": false,
+      "filterSettings": Object {
+        "binStep": 200,
+        "minCellSize": 907,
+      },
+    },
+    "sample2Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "binStep": 200,
+        "minCellSize": 623,
+      },
+      "enabled": false,
+      "filterSettings": Object {
+        "binStep": 200,
+        "minCellSize": 623,
+      },
+    },
+    "sample3Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "binStep": 200,
+        "minCellSize": 516,
+      },
+      "enabled": false,
+      "filterSettings": Object {
+        "binStep": 200,
+        "minCellSize": 516,
+      },
     },
   },
   "classifier": Object {
@@ -118,122 +118,53 @@ Object {
     },
   },
   "doubletScores": Object {
-    "330390E9Cdc94C7FB68A0C51Fd059Dda-notASecret": Object { # pragma: allowlist secret
-      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-      "auto": true,
-      "defaultFilterSettings": Object {
-        "binStep": 0.05,
-        "probabilityThreshold": 0.3784758,
-      },
-      "enabled": true,
-      "filterSettings": Object {
-        "binStep": 0.05,
-        "probabilityThreshold": 0.3784758,
-      },
-    },
-    "46E6484545Dc4Aeb932DE1B43178Fe09-notASecret": Object { # pragma: allowlist secret
-      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-      "auto": true,
-      "defaultFilterSettings": Object {
-        "binStep": 0.05,
-        "probabilityThreshold": 0.4101394,
-      },
-      "enabled": true,
-      "filterSettings": Object {
-        "binStep": 0.05,
-        "probabilityThreshold": 0.4101394,
-      },
-    },
-    "7Ff6388CCa204325A30C0C29135E1D0-notASecret": Object { # pragma: allowlist secret
-      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-      "auto": true,
-      "defaultFilterSettings": Object {
-        "binStep": 0.05,
-        "probabilityThreshold": 0.7622447,
-      },
-      "enabled": true,
-      "filterSettings": Object {
-        "binStep": 0.05,
-        "probabilityThreshold": 0.7622447,
-      },
-    },
     "auto": true,
     "enabled": true,
     "filterSettings": Object {
       "binStep": 0.05,
       "probabilityThreshold": 0.5,
     },
+    "sample1Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "binStep": 0.05,
+        "probabilityThreshold": 0.3784758,
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "binStep": 0.05,
+        "probabilityThreshold": 0.3784758,
+      },
+    },
+    "sample2Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "binStep": 0.05,
+        "probabilityThreshold": 0.4101394,
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "binStep": 0.05,
+        "probabilityThreshold": 0.4101394,
+      },
+    },
+    "sample3Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "binStep": 0.05,
+        "probabilityThreshold": 0.7622447,
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "binStep": 0.05,
+        "probabilityThreshold": 0.7622447,
+      },
+    },
   },
   "mitochondrialContent": Object {
-    "330390E9Cdc94C7FB68A0C51Fd059Dda-notASecret": Object { # pragma: allowlist secret
-      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-      "auto": true,
-      "defaultFilterSettings": Object {
-        "method": "absolute_threshold",
-        "methodSettings": Object {
-          "absoluteThreshold": Object {
-            "binStep": 0.05,
-            "maxFraction": 0.1,
-          },
-        },
-      },
-      "enabled": true,
-      "filterSettings": Object {
-        "method": "absolute_threshold",
-        "methodSettings": Object {
-          "absoluteThreshold": Object {
-            "binStep": 0.05,
-            "maxFraction": 0.1,
-          },
-        },
-      },
-    },
-    "46E6484545Dc4Aeb932DE1B43178Fe09-notASecret": Object { # pragma: allowlist secret
-      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-      "auto": true,
-      "defaultFilterSettings": Object {
-        "method": "absolute_threshold",
-        "methodSettings": Object {
-          "absoluteThreshold": Object {
-            "binStep": 0.05,
-            "maxFraction": 0.1,
-          },
-        },
-      },
-      "enabled": true,
-      "filterSettings": Object {
-        "method": "absolute_threshold",
-        "methodSettings": Object {
-          "absoluteThreshold": Object {
-            "binStep": 0.05,
-            "maxFraction": 0.1,
-          },
-        },
-      },
-    },
-    "7Ff6388CCa204325A30C0C29135E1D0-notASecret": Object { # pragma: allowlist secret
-      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-      "auto": true,
-      "defaultFilterSettings": Object {
-        "method": "absolute_threshold",
-        "methodSettings": Object {
-          "absoluteThreshold": Object {
-            "binStep": 0.05,
-            "maxFraction": 0.1,
-          },
-        },
-      },
-      "enabled": true,
-      "filterSettings": Object {
-        "method": "absolute_threshold",
-        "methodSettings": Object {
-          "absoluteThreshold": Object {
-            "binStep": 0.05,
-            "maxFraction": 0.1,
-          },
-        },
-      },
-    },
     "auto": true,
     "enabled": true,
     "filterSettings": Object {
@@ -245,95 +176,164 @@ Object {
         },
       },
     },
+    "sample1Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "method": "absolute_threshold",
+        "methodSettings": Object {
+          "absoluteThreshold": Object {
+            "binStep": 0.05,
+            "maxFraction": 0.1,
+          },
+        },
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "method": "absolute_threshold",
+        "methodSettings": Object {
+          "absoluteThreshold": Object {
+            "binStep": 0.05,
+            "maxFraction": 0.1,
+          },
+        },
+      },
+    },
+    "sample2Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "method": "absolute_threshold",
+        "methodSettings": Object {
+          "absoluteThreshold": Object {
+            "binStep": 0.05,
+            "maxFraction": 0.1,
+          },
+        },
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "method": "absolute_threshold",
+        "methodSettings": Object {
+          "absoluteThreshold": Object {
+            "binStep": 0.05,
+            "maxFraction": 0.1,
+          },
+        },
+      },
+    },
+    "sample3Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "method": "absolute_threshold",
+        "methodSettings": Object {
+          "absoluteThreshold": Object {
+            "binStep": 0.05,
+            "maxFraction": 0.1,
+          },
+        },
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "method": "absolute_threshold",
+        "methodSettings": Object {
+          "absoluteThreshold": Object {
+            "binStep": 0.05,
+            "maxFraction": 0.1,
+          },
+        },
+      },
+    },
   },
   "numGenesVsNumUmis": Object {
-    "330390E9Cdc94C7FB68A0C51Fd059Dda-notASecret": Object { # pragma: allowlist secret
-      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-      "auto": true,
-      "defaultFilterSettings": Object {
-        "regressionType": "linear",
-        "regressionTypeSettings": Object {
-          "linear": Object {
-            "pLevel": 0.00009066183,
-          },
-          "spline": Object {
-            "pLevel": 0.00009066183,
-          },
-        },
-      },
-      "enabled": true,
-      "filterSettings": Object {
-        "regressionType": "linear",
-        "regressionTypeSettings": Object {
-          "linear": Object {
-            "pLevel": 0.00009066183,
-          },
-          "spline": Object {
-            "pLevel": 0.00009066183,
-          },
-        },
-      },
-    },
-    "46E6484545Dc4Aeb932DE1B43178Fe09-notASecret": Object { # pragma: allowlist secret
-      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-      "auto": true,
-      "defaultFilterSettings": Object {
-        "regressionType": "linear",
-        "regressionTypeSettings": Object {
-          "linear": Object {
-            "pLevel": 0.00009075234,
-          },
-          "spline": Object {
-            "pLevel": 0.00009075234,
-          },
-        },
-      },
-      "enabled": true,
-      "filterSettings": Object {
-        "regressionType": "linear",
-        "regressionTypeSettings": Object {
-          "linear": Object {
-            "pLevel": 0.00009075234,
-          },
-          "spline": Object {
-            "pLevel": 0.00009075234,
-          },
-        },
-      },
-    },
-    "7Ff6388CCa204325A30C0C29135E1D0-notASecret": Object { # pragma: allowlist secret
-      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-      "auto": true,
-      "defaultFilterSettings": Object {
-        "regressionType": "linear",
-        "regressionTypeSettings": Object {
-          "linear": Object {
-            "pLevel": 0.00009180207,
-          },
-          "spline": Object {
-            "pLevel": 0.00009180207,
-          },
-        },
-      },
-      "enabled": true,
-      "filterSettings": Object {
-        "regressionType": "linear",
-        "regressionTypeSettings": Object {
-          "linear": Object {
-            "pLevel": 0.00009180207,
-          },
-          "spline": Object {
-            "pLevel": 0.00009180207,
-          },
-        },
-      },
-    },
     "enabled": true,
     "filterSettings": Object {
       "regressionType": "gam",
       "regressionTypeSettings": Object {
         "gam": Object {
           "pLevel": 0.001,
+        },
+      },
+    },
+    "sample1Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "regressionType": "linear",
+        "regressionTypeSettings": Object {
+          "linear": Object {
+            "pLevel": 0.00009066183,
+          },
+          "spline": Object {
+            "pLevel": 0.00009066183,
+          },
+        },
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "regressionType": "linear",
+        "regressionTypeSettings": Object {
+          "linear": Object {
+            "pLevel": 0.00009066183,
+          },
+          "spline": Object {
+            "pLevel": 0.00009066183,
+          },
+        },
+      },
+    },
+    "sample2Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "regressionType": "linear",
+        "regressionTypeSettings": Object {
+          "linear": Object {
+            "pLevel": 0.00009075234,
+          },
+          "spline": Object {
+            "pLevel": 0.00009075234,
+          },
+        },
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "regressionType": "linear",
+        "regressionTypeSettings": Object {
+          "linear": Object {
+            "pLevel": 0.00009075234,
+          },
+          "spline": Object {
+            "pLevel": 0.00009075234,
+          },
+        },
+      },
+    },
+    "sample3Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "regressionType": "linear",
+        "regressionTypeSettings": Object {
+          "linear": Object {
+            "pLevel": 0.00009180207,
+          },
+          "spline": Object {
+            "pLevel": 0.00009180207,
+          },
+        },
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "regressionType": "linear",
+        "regressionTypeSettings": Object {
+          "linear": Object {
+            "pLevel": 0.00009180207,
+          },
+          "spline": Object {
+            "pLevel": 0.00009180207,
+          },
         },
       },
     },
