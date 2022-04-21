@@ -9,6 +9,7 @@ const experimentController = require('../../../src/api.v2/controllers/experiment
 
 const getExperimentResponse = require('../mocks/data/getExperimentResponse.json');
 const getAllExperimentsResponse = require('../mocks/data/getAllExperimentsResponse.json');
+const getProcessingConfigResponse = require('../mocks/data/getProcessingConfigResponse.json');
 
 jest.mock('../../../src/api.v2/controllers/experimentController', () => ({
   getAllExperiments: jest.fn(),
@@ -16,6 +17,8 @@ jest.mock('../../../src/api.v2/controllers/experimentController', () => ({
   createExperiment: jest.fn(),
   patchExperiment: jest.fn(),
   updateSamplePosition: jest.fn(),
+  getProcessingConfig: jest.fn(),
+  updateProcessingConfig: jest.fn(),
 }));
 
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
@@ -231,6 +234,41 @@ describe('tests for experiment route', () => {
         }
         // there is no point testing for the values of the response body
         // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
+  it('getProcessingConfig works', async (done) => {
+    const experimentId = 'experiment-id';
+    experimentController.getProcessingConfig.mockImplementationOnce((req, res) => {
+      res.json(getProcessingConfigResponse);
+      return Promise.resolve();
+    });
+    request(app)
+      .get(`/v2/experiments/${experimentId}/processingConfig`)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('updateProcessingConfig works', async (done) => {
+    const experimentId = 'experiment-id';
+
+    experimentController.updateProcessingConfig.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+    request(app)
+      .put(`/v2/experiments/${experimentId}/processingConfig`)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
         return done();
       });
   });
