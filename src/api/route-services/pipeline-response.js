@@ -118,9 +118,12 @@ class PipelineService {
   }
 
   static async qcResponse(io, message) {
+    console.log('starting qc response', message);
     AWSXRay.getSegment().addMetadata('message', message);
+    console.log('validating request');
     await validateRequest(message, 'PipelineResponse.v1.yaml');
 
+    console.log('running hooks');
     await pipelineHook.run(message);
 
     const { experimentId } = message;
@@ -128,13 +131,20 @@ class PipelineService {
 
     let output = null;
     // if there aren't errors proceed with the updates
+    console.log('and the rest is silence');
     if (!error && 'output' in message) {
       const { input: { sampleUuid, taskName } } = message;
 
+      console.log('getS3Output');
       output = await this.getS3Output(message);
+      console.log('updatePlotData');
       await this.updatePlotData(taskName, experimentId, output);
+      console.log('updateProcessingConfig');
       await this.updateProcessingConfig(taskName, experimentId, output, sampleUuid);
     }
+
+    console.log('and the rest is not silence');
+
     // we want to send the update to the subscribed both in successful and error case
     await this.sendUpdateToSubscribed(experimentId, message, output, error, io);
   }

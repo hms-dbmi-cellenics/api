@@ -19,6 +19,7 @@ const logger = getLogger();
 
 const pipelineHook = new PipelineHook();
 
+// TODO here we are reusing the jwt so if gem2s was longer than 1 hour it will fail.
 pipelineHook.register('uploadToAWS', [saveProcessingConfigFromGem2s, runQCPipeline]);
 pipelineHook.registerAll([sendNotification]);
 

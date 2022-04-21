@@ -125,6 +125,7 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
     return next(new UnauthenticatedError('token has expired'));
   }
 
+  console.log(`lcs checking ignore [${req.url}] [${req.method.toLowerCase()}]`);
   // check if we should ignore expired jwt token for this path and request type
   const longTimeoutEndpoints = [{ urlMatcher: /^\/v1\/experiments\/.{32}\/cellSets$/, method: 'PATCH' }];
   const isEndpointIgnored = longTimeoutEndpoints.some(
@@ -133,6 +134,7 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
     ),
   );
 
+  console.log('isEndpointIgnored: ', isEndpointIgnored);
   // if endpoint is not in ignore list, the JWT is too old, send an error accordingly
   if (!isEndpointIgnored) {
     return next(new UnauthenticatedError('token has expired'));
