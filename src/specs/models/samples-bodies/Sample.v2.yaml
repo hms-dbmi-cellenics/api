@@ -1,0 +1,47 @@
+title: Sample
+description: A single sample
+type: object
+properties:
+  uuid:
+    type: string
+  name:
+    type: string
+  projectUuid:
+    type: string
+  type:
+    type: string
+    pattern: 10X Chromium
+  createdDate:
+    type: string
+  lastModified:
+    nullable: true
+    type: string
+  complete:
+    type: boolean
+  error:
+    type: boolean
+  fileNames:
+    type: array
+    items:
+      type: string
+  files:
+    description: Container of data for files that together represent the sample
+    type: object
+    additionalProperties:
+      $ref: ./SampleFile.v1.yaml
+    properties:
+      lastModified:
+        type: string
+  metadata:
+    type: object
+
+required:
+  - name
+  - projectUuid
+  - uuid
+  - createdDate
+  - lastModified
+  - complete
+  - error
+  - fileNames
+  - files

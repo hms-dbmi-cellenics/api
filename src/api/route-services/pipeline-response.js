@@ -119,19 +119,21 @@ class PipelineService {
 
   static async qcResponse(io, message) {
     AWSXRay.getSegment().addMetadata('message', message);
+
     await validateRequest(message, 'PipelineResponse.v1.yaml');
 
     await pipelineHook.run(message);
 
     const { experimentId } = message;
     const { error = false } = message.response || {};
-
+    console.log('MESSAGE IS ', message);
     let output = null;
     // if there aren't errors proceed with the updates
     if (!error && 'output' in message) {
       const { input: { sampleUuid, taskName } } = message;
 
       output = await this.getS3Output(message);
+      console.log('OUTPUT IS ', output);
       await this.updatePlotData(taskName, experimentId, output);
       await this.updateProcessingConfig(taskName, experimentId, output, sampleUuid);
     }

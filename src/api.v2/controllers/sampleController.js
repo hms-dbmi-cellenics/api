@@ -67,8 +67,21 @@ const deleteSample = async (req, res) => {
   res.json(OK());
 };
 
+const getSamples = async (req, res) => {
+  const { params: { experimentId } } = req;
+
+  logger.log(`Getting samples for experiment ${experimentId}`);
+
+  const samples = await new Sample().getSamples(experimentId);
+
+  logger.log(`Finished getting samples for experiment ${experimentId}`);
+
+  res.json(OK(samples));
+};
+
 module.exports = {
   createSample,
   patchSample,
+  getSamples,
   deleteSample,
 };
