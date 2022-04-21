@@ -1,4 +1,4 @@
-title: Experiment Patch
+title: Patch Experiment 
 description: The properties of an experiment that can be patched
 type: object
 properties:

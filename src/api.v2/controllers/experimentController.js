@@ -53,13 +53,13 @@ const createExperiment = async (req, res) => {
 const patchExperiment = async (req, res) => {
   const { params: { experimentId }, body } = req;
 
-  logger.log(`Updating experiment ${experimentId}`);
+  logger.log(`Patching experiment ${experimentId}`);
 
   const snakeCasedKeysToPatch = _.mapKeys(body, (_value, key) => _.snakeCase(key));
 
   await new Experiment().updateById(experimentId, snakeCasedKeysToPatch);
 
-  logger.log(`Finished updating experiment ${experimentId}`);
+  logger.log(`Finished patching experiment ${experimentId}`);
 
   res.json(OK());
 };
@@ -83,6 +83,22 @@ const updateSamplePosition = async (req, res) => {
 
   logger.log(`Finished reordering samples in ${experimentId}`);
 
+  res.json(OK());
+};
+
+const getProcessingConfig = async (req, res) => {
+  const { params: { experimentId } } = req;
+  logger.log('Getting processing config for experiment ', experimentId);
+
+  const result = await new Experiment().getProcessingConfig(experimentId);
+  res.json(result);
+};
+
+const updateProcessingConfig = async (req, res) => {
+  const { params: { experimentId }, body } = req;
+  logger.log('Updating processing config for experiment ', experimentId);
+
+  await new Experiment().updateProcessingConfig(experimentId, body);
   res.json(OK());
 };
 
@@ -114,7 +130,9 @@ module.exports = {
   getAllExperiments,
   getExperiment,
   createExperiment,
+  updateProcessingConfig,
   patchExperiment,
   updateSamplePosition,
+  getProcessingConfig,
   getBackendStatus,
 };

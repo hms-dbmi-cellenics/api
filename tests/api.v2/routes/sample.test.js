@@ -10,6 +10,7 @@ const sampleController = require('../../../src/api.v2/controllers/sampleControll
 jest.mock('../../../src/api.v2/controllers/sampleController', () => ({
   createSample: jest.fn(),
   deleteSample: jest.fn(),
+  patchSample: jest.fn(),
 }));
 
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
@@ -89,14 +90,49 @@ describe('tests for experiment route', () => {
       return Promise.resolve();
     });
 
-    const invalidExperimentData = {
-      description: 'experimentDescription',
-    };
-
     request(app)
       .delete(`/v2/experiments/${experimentId}/samples/${sampleId}`)
-      .send(invalidExperimentData)
       .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
+  it('Patching a sample works', async (done) => {
+    sampleController.patchSample.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+
+    request(app)
+      .patch(`/v2/experiments/${experimentId}/samples/${sampleId}`)
+      .send({ name: 'newSampleName' })
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
+  it('Patching a sample fails if requestBody is invalid', async (done) => {
+    sampleController.patchSample.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+
+    request(app)
+      .patch(`/v2/experiments/${experimentId}/samples/${sampleId}`)
+      .send({ aName: 'newSampleName' })
+      .expect(400)
       .end((err) => {
         if (err) {
           return done(err);
