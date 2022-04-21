@@ -72,24 +72,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProcessingConfig'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'        
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'        
         '404':
           description: Not found error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: The request lacks authentication credentials.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPError'
+        
     put:
       summary: Update processing configuration for an experiment
       description: Update processing configuration for an experiment
@@ -103,12 +104,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPSuccess'
-        '404':
-          description: Not found error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPError'
         '400':
           description: Bad Request
           content:
@@ -121,6 +116,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        
   '/experiments':
     get:
       summary: Get all experiments

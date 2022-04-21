@@ -144,12 +144,12 @@ class Experiment extends BasicModel {
   }
 
   async getProcessingConfig(experimentId) {
-    const result = await this.find({ id: experimentId });
+    const result = await this.findOne({ id: experimentId });
     if (_.isEmpty(result)) {
       throw new NotFoundError('Experiment not found');
     }
 
-    return result[0].processingConfig;
+    return result.processingConfig;
   }
 
   async updateProcessingConfig(experimentId, body) {
