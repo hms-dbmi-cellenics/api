@@ -1,6 +1,6 @@
 const {
-  createExperiment, getExperiment, patchExperiment, getAllExperiments,
-  updateSamplePosition, getBackendStatus,
+  createExperiment, getExperiment, patchExperiment, updateSamplePosition,
+  getAllExperiments, getProcessingConfig, updateProcessingConfig, getBackendStatus,
 } = require('../controllers/experimentController');
 
 const { expressAuthenticationOnlyMiddleware, expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
@@ -25,6 +25,14 @@ module.exports = {
   'experiment#updateSamplePosition': [
     expressAuthorizationMiddleware,
     (req, res, next) => updateSamplePosition(req, res).catch(next),
+  ],
+  'experiment#getProcessingConfig': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => getProcessingConfig(req, res).catch(next),
+  ],
+  'experiment#updateProcessingConfig': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => updateProcessingConfig(req, res).catch(next),
   ],
   'experiment#getBackendStatus': [
     expressAuthorizationMiddleware,

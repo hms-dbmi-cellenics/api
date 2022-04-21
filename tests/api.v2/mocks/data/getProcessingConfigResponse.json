@@ -1,0 +1,342 @@
+[{
+    "processingConfig":{
+        "classifier": {
+          "brandNewTries": "changing lmaolxdd"
+        },
+        "doubletScores": {
+          "auto": true,
+          "enabled": true,
+          "filterSettings": {
+            "binStep": 0.05,
+            "probabilityThreshold": 0.5
+          },
+          "330390E9Cdc94C7FB68A0C51Fd059Dda-notASecret": {
+            "auto": true,
+            "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+          
+            "enabled": true,
+            "filterSettings": {
+              "binStep": 0.05,
+              "probabilityThreshold": 0.3784758
+            },
+            "defaultFilterSettings": {
+              "binStep": 0.05,
+              "probabilityThreshold": 0.3784758
+            }
+          },
+          "46E6484545Dc4Aeb932DE1B43178Fe09-notASecret": {
+            "auto": true,
+            "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+          
+            "enabled": true,
+            "filterSettings": {
+              "binStep": 0.05,
+              "probabilityThreshold": 0.4101394
+            },
+            "defaultFilterSettings": {
+              "binStep": 0.05,
+              "probabilityThreshold": 0.4101394
+            }
+          },
+          "7Ff6388CCa204325A30C0C29135E1D0-notASecret": {
+            "auto": true,
+            "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+          
+            "enabled": true,
+            "filterSettings": {
+              "binStep": 0.05,
+              "probabilityThreshold": 0.7622447
+            },
+            "defaultFilterSettings": {
+              "binStep": 0.05,
+              "probabilityThreshold": 0.7622447
+            }
+          }
+        },
+        "dataIntegration": {
+          "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+        
+          "dataIntegration": {
+            "method": "harmony",
+            "methodSettings": {
+              "fastmnn": {
+                "numGenes": 2000,
+                "normalisation": "logNormalize"
+              },
+              "harmony": {
+                "numGenes": 2000,
+                "normalisation": "logNormalize"
+              },
+              "seuratv4": {
+                "numGenes": 2000,
+                "normalisation": "logNormalize"
+              },
+              "unisample": {
+                "numGenes": 2000,
+                "normalisation": "logNormalize"
+              }
+            }
+          },
+          "dimensionalityReduction": {
+            "method": "rpca",
+            "numPCs": 30,
+            "excludeGeneCategories": []
+          }
+        },
+        "numGenesVsNumUmis": {
+          "enabled": true,
+          "filterSettings": {
+            "regressionType": "gam",
+            "regressionTypeSettings": {
+              "gam": {
+                "pLevel": 0.001
+              }
+            }
+          },
+          "330390E9Cdc94C7FB68A0C51Fd059Dda-notASecret": {
+            "auto": true,
+            "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+          
+            "enabled": true,
+            "filterSettings": {
+              "regressionType": "linear",
+              "regressionTypeSettings": {
+                "linear": {
+                  "pLevel": 0.00009066183
+                },
+                "spline": {
+                  "pLevel": 0.00009066183
+                }
+              }
+            },
+            "defaultFilterSettings": {
+              "regressionType": "linear",
+              "regressionTypeSettings": {
+                "linear": {
+                  "pLevel": 0.00009066183
+                },
+                "spline": {
+                  "pLevel": 0.00009066183
+                }
+              }
+            }
+          },
+          "46E6484545Dc4Aeb932DE1B43178Fe09-notASecret": {
+            "auto": true,
+            "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+          
+            "enabled": true,
+            "filterSettings": {
+              "regressionType": "linear",
+              "regressionTypeSettings": {
+                "linear": {
+                  "pLevel": 0.00009075234
+                },
+                "spline": {
+                  "pLevel": 0.00009075234
+                }
+              }
+            },
+            "defaultFilterSettings": {
+              "regressionType": "linear",
+              "regressionTypeSettings": {
+                "linear": {
+                  "pLevel": 0.00009075234
+                },
+                "spline": {
+                  "pLevel": 0.00009075234
+                }
+              }
+            }
+          },
+          "7Ff6388CCa204325A30C0C29135E1D0-notASecret": {
+            "auto": true,
+            "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+          
+            "enabled": true,
+            "filterSettings": {
+              "regressionType": "linear",
+              "regressionTypeSettings": {
+                "linear": {
+                  "pLevel": 0.00009180207
+                },
+                "spline": {
+                  "pLevel": 0.00009180207
+                }
+              }
+            },
+            "defaultFilterSettings": {
+              "regressionType": "linear",
+              "regressionTypeSettings": {
+                "linear": {
+                  "pLevel": 0.00009180207
+                },
+                "spline": {
+                  "pLevel": 0.00009180207
+                }
+              }
+            }
+          }
+        },
+        "configureEmbedding": {
+          "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+        
+          "embeddingSettings": {
+            "method": "umap",
+            "methodSettings": {
+              "tsne": {
+                "perplexity": 30,
+                "learningRate": 938.9167
+              },
+              "umap": {
+                "distanceMetric": "cosine",
+                "minimumDistance": 0.3
+              }
+            }
+          },
+          "clusteringSettings": {
+            "method": "louvain",
+            "methodSettings": {
+              "louvain": {
+                "resolution": 0.8
+              }
+            }
+          }
+        },
+        "cellSizeDistribution": {
+          "auto": true,
+          "enabled": false,
+          "filterSettings": {
+            "binStep": 200,
+            "minCellSize": 1080
+          },
+          "330390E9Cdc94C7FB68A0C51Fd059Dda-notASecret": {
+            "auto": true,
+            "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+          
+            "enabled": false,
+            "filterSettings": {
+              "binStep": 200,
+              "minCellSize": 907
+            },
+            "defaultFilterSettings": {
+              "binStep": 200,
+              "minCellSize": 907
+            }
+          },
+          "46E6484545Dc4Aeb932DE1B43178Fe09-notASecret": {
+            "auto": true,
+            "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+          
+            "enabled": false,
+            "filterSettings": {
+              "binStep": 200,
+              "minCellSize": 623
+            },
+            "defaultFilterSettings": {
+              "binStep": 200,
+              "minCellSize": 623
+            }
+          },
+          "7Ff6388CCa204325A30C0C29135E1D0-notASecret": {
+            "auto": true,
+            "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+          
+            "enabled": false,
+            "filterSettings": {
+              "binStep": 200,
+              "minCellSize": 516
+            },
+            "defaultFilterSettings": {
+              "binStep": 200,
+              "minCellSize": 516
+            }
+          }
+        },
+        "mitochondrialContent": {
+          "auto": true,
+          "enabled": true,
+          "filterSettings": {
+            "method": "absolute_threshold",
+            "methodSettings": {
+              "absoluteThreshold": {
+                "binStep": 0.05,
+                "maxFraction": 0.1
+              }
+            }
+          },
+          "330390E9Cdc94C7FB68A0C51Fd059Dda-notASecret": {
+            "auto": true,
+            "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+          
+            "enabled": true,
+            "filterSettings": {
+              "method": "absolute_threshold",
+              "methodSettings": {
+                "absoluteThreshold": {
+                  "binStep": 0.05,
+                  "maxFraction": 0.1
+                }
+              }
+            },
+            "defaultFilterSettings": {
+              "method": "absolute_threshold",
+              "methodSettings": {
+                "absoluteThreshold": {
+                  "binStep": 0.05,
+                  "maxFraction": 0.1
+                }
+              }
+            }
+          },
+          "46E6484545Dc4Aeb932DE1B43178Fe09-notASecret": {
+            "auto": true,
+            "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+          
+            "enabled": true,
+            "filterSettings": {
+              "method": "absolute_threshold",
+              "methodSettings": {
+                "absoluteThreshold": {
+                  "binStep": 0.05,
+                  "maxFraction": 0.1
+                }
+              }
+            },
+            "defaultFilterSettings": {
+              "method": "absolute_threshold",
+              "methodSettings": {
+                "absoluteThreshold": {
+                  "binStep": 0.05,
+                  "maxFraction": 0.1
+                }
+              }
+            }
+          },
+          "7Ff6388CCa204325A30C0C29135E1D0-notASecret": {
+            "auto": true,
+            "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+          
+            "enabled": true,
+            "filterSettings": {
+              "method": "absolute_threshold",
+              "methodSettings": {
+                "absoluteThreshold": {
+                  "binStep": 0.05,
+                  "maxFraction": 0.1
+                }
+              }
+            },
+            "defaultFilterSettings": {
+              "method": "absolute_threshold",
+              "methodSettings": {
+                "absoluteThreshold": {
+                  "binStep": 0.05,
+                  "maxFraction": 0.1
+                }
+              }
+            }
+          }
+        }
+      }
+}]
