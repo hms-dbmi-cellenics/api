@@ -124,7 +124,11 @@ class PipelineService {
     await validateRequest(message, 'PipelineResponse.v1.yaml');
 
     console.log('running hooks');
-    await pipelineHook.run(message);
+    try {
+      await pipelineHook.run(message);
+    } catch (e) {
+      logger.error('error running QC hooks: ', e);
+    }
 
     const { experimentId } = message;
     const { error = false } = message.response || {};

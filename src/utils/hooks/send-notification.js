@@ -9,6 +9,7 @@ const config = require('../../config');
 const buildPipelineStatusEmailBody = require('../emailTemplates/buildPipelineStatusEmailBody');
 
 const logger = getLogger();
+const NA = 'N/A';
 
 const sendNotification = async (message) => {
   const { authJWT, processName: process } = message.input;
@@ -16,7 +17,12 @@ const sendNotification = async (message) => {
     logger.log('No authJWT token in message, skipping status check for notifications...');
     return;
   }
-  const user = await authenticationMiddlewareSocketIO(authJWT);
+  let user = NA;
+  try {
+    user = await authenticationMiddlewareSocketIO(authJWT);
+  } catch (e) {
+    logger.error('could not retrieve user from token: ', e);
+  }
 
   const { experimentId } = message;
   const statusRes = await getPipelineStatus(experimentId, process);
@@ -30,7 +36,7 @@ const sendNotification = async (message) => {
       logger.error('Error sending slack message ', e);
     }
   }
-  if (experiment.notifyByEmail
+  if (user !== NA && experiment.notifyByEmail
       && ((process === QC_PROCESS_NAME && status === SUCCEEDED)
       || status === FAILED)) {
     try {
