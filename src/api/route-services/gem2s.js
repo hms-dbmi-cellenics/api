@@ -113,11 +113,7 @@ class Gem2sService {
     // Fail hard if there was an error.
     await validateRequest(message, 'GEM2SResponse.v1.yaml');
 
-    try {
-      await pipelineHook.run(message);
-    } catch (e) {
-      logger.error('error running GEM2S hooks: ', e);
-    }
+    await pipelineHook.run(message);
 
     const { experimentId } = message;
 

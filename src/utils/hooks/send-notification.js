@@ -1,3 +1,4 @@
+// const jwt = require('jsonwebtoken');
 const getLogger = require('../getLogger');
 const { authenticationMiddlewareSocketIO } = require('../authMiddlewares');
 const getPipelineStatus = require('../../api/general-services/pipeline-status');
@@ -9,7 +10,6 @@ const config = require('../../config');
 const buildPipelineStatusEmailBody = require('../emailTemplates/buildPipelineStatusEmailBody');
 
 const logger = getLogger();
-const NA = 'N/A';
 
 const sendNotification = async (message) => {
   const { authJWT, processName: process } = message.input;
@@ -17,12 +17,10 @@ const sendNotification = async (message) => {
     logger.log('No authJWT token in message, skipping status check for notifications...');
     return;
   }
-  let user = NA;
-  try {
-    user = await authenticationMiddlewareSocketIO(authJWT);
-  } catch (e) {
-    logger.error('could not retrieve user from token: ', e);
-  }
+
+  logger.log('lcs verifying token ignoring expiration');
+  const user = await authenticationMiddlewareSocketIO(authJWT, true);
+  logger.log('lcs user', user);
 
   const { experimentId } = message;
   const statusRes = await getPipelineStatus(experimentId, process);
@@ -36,7 +34,7 @@ const sendNotification = async (message) => {
       logger.error('Error sending slack message ', e);
     }
   }
-  if (user !== NA && experiment.notifyByEmail
+  if (experiment.notifyByEmail
       && ((process === QC_PROCESS_NAME && status === SUCCEEDED)
       || status === FAILED)) {
     try {
