@@ -525,6 +525,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+    patch:
+      summary: Update a sample files property
+      description: Update a sample files property, which can only be upload status
+      operationId: patchFile
+      x-eov-operation-id: sampleFile#patch
+      x-eov-operation-handler: routes/sampleFile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchSampleFile'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
                 
 components:
   schemas:
@@ -542,6 +584,8 @@ components:
       $ref: './models/samples-bodies/CreateSample.v2.yaml'
     CreateSampleFile:
       $ref: './models/samples-bodies/CreateSampleFile.v2.yaml'
+    PatchSampleFile:
+      $ref: './models/samples-bodies/PatchSampleFile.v2.yaml'
     HTTPSuccess:
       $ref: './models/HTTPSuccess.v1.yaml'
     HTTPError:

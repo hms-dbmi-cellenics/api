@@ -4,12 +4,17 @@ const Sample = require('../model/Sample');
 const SampleFile = require('../model/SampleFile');
 
 const { getSampleFileUploadUrl } = require('../helpers/s3/getSignedUrl');
+const { OK } = require('../../utils/responses');
+const getLogger = require('../../utils/getLogger');
 
-const setFile = async (req, res) => {
+const logger = getLogger('[SampleFileController] - ');
+
+const createFile = async (req, res) => {
   const {
-    params: { sampleId, sampleFileType },
+    params: { experimentId, sampleId, sampleFileType },
     body: { sampleFileId, size, metadata = null },
   } = req;
+  logger.log(`Creating sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
 
   const newSampleFile = {
     id: sampleFileId,
@@ -28,9 +33,23 @@ const setFile = async (req, res) => {
     signedUrl = getSampleFileUploadUrl(sampleFileId, sampleFileId, metadata);
   });
 
+  logger.log(`Finished creating sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
   res.json(signedUrl);
 };
 
+const patchFile = async (req, res) => {
+  const {
+    params: { experimentId, sampleId, sampleFileType },
+    body: { uploadStatus },
+  } = req;
+  logger.log(`Patching sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
+
+  await new SampleFile().updateUploadStatus(sampleId, sampleFileType, uploadStatus);
+
+  logger.log(`Finished patching sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
+  res.json(OK());
+};
+
 module.exports = {
-  setFile,
+  createFile, patchFile,
 };
