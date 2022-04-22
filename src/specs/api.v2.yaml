@@ -527,7 +527,6 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
     patch:
       summary: Update a sample files property
-      description: Update a sample files property, which can only be upload status
       operationId: patchFile
       x-eov-operation-id: sampleFile#patch
       x-eov-operation-handler: routes/sampleFile
