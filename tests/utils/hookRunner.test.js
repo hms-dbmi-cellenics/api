@@ -99,4 +99,18 @@ describe('HookRunner', () => {
     expect(runner.results['event-2']).toEqual([fn1()]);
     expect(runner.results['event-3']).toEqual([fn1()]);
   });
+
+  it('does not crash when a hook throws an exception ', async () => {
+    const fn1 = jest.fn(() => { throw new Error(); });
+
+    const runner = new HookRunner();
+
+    runner.registerAll([fn1]);
+
+    await runner.run({ taskName: 'event-1' });
+
+    expect(fn1).toHaveBeenCalledTimes(1);
+    // functions that throw exceptions return an empty list
+    expect(runner.results['event-1']).toEqual([]);
+  });
 });
