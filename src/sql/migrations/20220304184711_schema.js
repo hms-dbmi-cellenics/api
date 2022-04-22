@@ -99,7 +99,6 @@ exports.up = async (knex) => {
     .createTable('sample_file', (table) => {
       table.uuid('id').primary();
       nativeEnum(table, 'sample_file_type').notNullable();
-      table.boolean('valid').notNullable();
       table.integer('size').notNullable();
       table.string('s3_path').notNullable();
       nativeEnum(table, 'upload_status').notNullable();

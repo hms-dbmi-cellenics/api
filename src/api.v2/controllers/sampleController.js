@@ -73,18 +73,15 @@ const deleteSample = async (req, res) => {
 const setFile = async (req, res) => {
   const {
     params: { sampleId, sampleFileType },
-    body: { sampleFileId, cellrangerVersion, size },
+    body: { sampleFileId, size, metadata = null },
   } = req;
-
-  // const s3Path = sampleFileId;
 
   const newSampleFile = {
     id: sampleFileId,
     sample_file_type: sampleFileType,
-    valid: true,
     size,
     s3_path: sampleFileId,
-    upload_status: 'fileNotFound',
+    upload_status: 'uploading',
   };
 
   let signedUrl;
@@ -93,7 +90,7 @@ const setFile = async (req, res) => {
     await new SampleFile(trx).create(newSampleFile);
     await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType);
 
-    signedUrl = getSampleFileUploadUrl(sampleFileId, sampleFileId, cellrangerVersion);
+    signedUrl = getSampleFileUploadUrl(sampleFileId, sampleFileId, metadata);
   });
 
   res.json(signedUrl);

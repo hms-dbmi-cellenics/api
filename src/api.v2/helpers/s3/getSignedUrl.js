@@ -18,7 +18,7 @@ const getSignedUrl = (operation, params) => {
   return s3.getSignedUrl(operation, params);
 };
 
-const getSampleFileUploadUrl = (sampleFileId, fileType, cellrangerVersion) => {
+const getSampleFileUploadUrl = (sampleFileId, fileType, metadata) => {
   const params = {
     Bucket: bucketNames.SAMPLE_FILES,
     Key: `${sampleFileId}/${fileType}`,
@@ -26,9 +26,9 @@ const getSampleFileUploadUrl = (sampleFileId, fileType, cellrangerVersion) => {
     Expires: 3600,
   };
 
-  if (cellrangerVersion) {
+  if (metadata.cellrangerVersion) {
     params.Metadata = {
-      cellranger_version: cellrangerVersion,
+      cellranger_version: metadata.cellrangerVersion,
     };
   }
 

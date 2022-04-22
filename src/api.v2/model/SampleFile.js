@@ -6,7 +6,6 @@ const tableNames = require('./tableNames');
 const sampleFields = [
   'id',
   'sample_file_type',
-  'valid',
   'size',
   's3_path',
   'upload_status',
