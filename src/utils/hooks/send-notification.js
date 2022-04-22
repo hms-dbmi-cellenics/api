@@ -1,4 +1,3 @@
-// const jwt = require('jsonwebtoken');
 const getLogger = require('../getLogger');
 const { authenticationMiddlewareSocketIO } = require('../authMiddlewares');
 const getPipelineStatus = require('../../api/general-services/pipeline-status');
@@ -18,9 +17,7 @@ const sendNotification = async (message) => {
     return;
   }
 
-  logger.log('lcs verifying token ignoring expiration');
   const user = await authenticationMiddlewareSocketIO(authJWT, true);
-  logger.log('lcs user', user);
 
   const { experimentId } = message;
   const statusRes = await getPipelineStatus(experimentId, process);
