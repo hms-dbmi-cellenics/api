@@ -483,12 +483,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPError'
   '/experiments/{experimentId}/samples/{sampleId}/sampleFiles/{sampleFileType}':
-    put:
-      summary: Set a new file for sample
+    post:
+      summary: Create a new file for a sample
       description: Set a new file for a sample, returns signed url to upload sample file
-      operationId: setFile
-      x-eov-operation-id: sample#setFile
-      x-eov-operation-handler: routes/sample
+      operationId: createFile
+      x-eov-operation-id: sampleFile#create
+      x-eov-operation-handler: routes/sampleFile
       requestBody:
         content:
           application/json:
