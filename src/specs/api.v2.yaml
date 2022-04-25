@@ -71,7 +71,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProcessingConfig'
+                anyOf:
+                  - type: object
+                    additionalProperties: false
+                  - $ref: '#/components/schemas/ProcessingConfig'
         '400':
           description: Bad Request
           content:
