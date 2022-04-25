@@ -18,10 +18,10 @@ const getSignedUrl = (operation, params) => {
   return s3.getSignedUrl(operation, params);
 };
 
-const getSampleFileUploadUrl = (sampleFileId, fileType, metadata) => {
+const getSampleFileUploadUrl = (sampleFileId, metadata) => {
   const params = {
     Bucket: bucketNames.SAMPLE_FILES,
-    Key: `${sampleFileId}/${fileType}`,
+    Key: `${sampleFileId}`,
     // 1 hour timeout of upload link
     Expires: 3600,
   };
