@@ -29,8 +29,7 @@ const createSample = async (req, res) => {
 
     await new Experiment(trx).addSample(experimentId, sampleId);
 
-    await new MetadataTrack(trx)
-      .createNewSampleValues(experimentId, sampleId);
+    await new MetadataTrack(trx).createNewSampleValues(experimentId, sampleId);
   });
 
   logger.log(`Finished creating sample ${sampleId} for experiment ${experimentId}`);

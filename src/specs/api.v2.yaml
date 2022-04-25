@@ -71,7 +71,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProcessingConfig'
+                anyOf:
+                  - type: object
+                    additionalProperties: false
+                  - $ref: '#/components/schemas/ProcessingConfig'
         '400':
           description: Bad Request
           content:
@@ -451,6 +454,45 @@ paths:
                 - oldPosition
                 - newPosition
               additionalProperties: false
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
+  '/experiments/{experimentId}/metadataTracks/{metadataTrackKey}':
+    post:
+      summary: Creates a new metadata track
+      description: Creates a new metadata track
+      operationId: createMetadataTrack
+      x-eov-operation-id: metadataTrack#createMetadataTrack
+      x-eov-operation-handler: routes/metadataTrack
       responses:
         '200':
           description: Success
