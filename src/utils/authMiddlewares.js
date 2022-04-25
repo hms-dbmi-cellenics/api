@@ -99,6 +99,7 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
   };
 
   const isReqFromCluster = async () => {
+    console.log('lcs [URL,METHOD]: ', req.method.toLowerCase(), req.url);
     const domains = await dns.reverse(req.ip);
 
     if (!domains.some((domain) => INTERNAL_DOMAINS_REGEX.test(domain))) {
@@ -108,6 +109,7 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
     return true;
   };
 
+  console.log('lcs !req.user test');
   if (!req.user) {
     return next();
   }
@@ -120,8 +122,10 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
     return next();
   }
 
+  console.log('lcs time left in token ', timeLeft);
   // send error if JWT is older than the limit
   if (timeLeft < -(7 * 1000 * 60 * 60)) {
+    console.log('lcs rejecting very expired token');
     return next(new UnauthenticatedError('token has expired'));
   }
 
@@ -132,6 +136,8 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
       req.method.toLowerCase() === method.toLowerCase() && urlMatcher.test(req.url)
     ),
   );
+
+  console.log('lcs isEndpointIgnored ', isEndpointIgnored);
 
   // if endpoint is not in ignore list, the JWT is too old, send an error accordingly
   if (!isEndpointIgnored) {
