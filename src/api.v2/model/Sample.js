@@ -18,30 +18,28 @@ class Sample extends BasicModel {
   }
 
   async setNewFile(sampleId, sampleFileId, sampleFileType) {
-    // If we are working within a transaction then
-    // keep using that one instead of starting a subtransaction
-    const trx = this.sql.isTransaction ? this.sql : await this.sql.transaction();
+    await this.sql.transaction(async (trx) => {
+      // Remove references to previous sample file for sampleFileType (if they exist)
+      await trx.del()
+        .from({ sf_map: tableNames.SAMPLE_TO_SAMPLE_FILE_MAP })
+        .where({ sample_id: sampleId })
+        .andWhere(
+          'sample_file_id',
+          '=',
+          trx.select(['id'])
+            .from({ sf: tableNames.SAMPLE_FILE })
+            .where('sf.id', '=', trx.ref('sf_map.sample_file_id'))
+            .andWhere('sf.sample_file_type', '=', sampleFileType),
+        );
 
-    // Remove references to previous sample file for sampleFileType (if they exist)
-    await trx.del()
-      .from({ sf_map: tableNames.SAMPLE_TO_SAMPLE_FILE_MAP })
-      .where({ sample_id: sampleId })
-      .andWhere(
-        'sample_file_id',
-        '=',
-        this.sql.select(['id'])
-          .from({ sf: tableNames.SAMPLE_FILE })
-          .where('sf.id', '=', this.sql.ref('sf_map.sample_file_id'))
-          .andWhere('sf.sample_file_type', '=', sampleFileType),
+      // Add new sample file reference
+      await trx(tableNames.SAMPLE_TO_SAMPLE_FILE_MAP).insert(
+        {
+          sample_id: sampleId,
+          sample_file_id: sampleFileId,
+        },
       );
-
-    // Add new sample file reference
-    await trx(tableNames.SAMPLE_TO_SAMPLE_FILE_MAP).insert(
-      {
-        sample_id: sampleId,
-        sample_file_id: sampleFileId,
-      },
-    );
+    });
   }
 }
 

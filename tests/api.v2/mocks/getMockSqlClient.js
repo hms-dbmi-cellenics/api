@@ -8,6 +8,7 @@ module.exports = () => {
     del: jest.fn().mockReturnThis(),
     from: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
+    andWhere: jest.fn().mockReturnThis(),
     update: jest.fn().mockReturnThis(),
     orderBy: jest.fn().mockReturnThis(),
     groupBy: jest.fn().mockReturnThis(),
@@ -19,6 +20,7 @@ module.exports = () => {
     as: jest.fn().mockReturnThis(),
     into: jest.fn().mockReturnThis(),
     timeout: jest.fn().mockReturnThis(),
+    ref: jest.fn(),
   };
 
   const queriesInTrx = _.cloneDeep(queries);

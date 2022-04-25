@@ -112,7 +112,7 @@ class Experiment extends BasicModel {
   ) {
     // If we are working within a transaction then
     // keep using that one instead of starting a subtransaction
-    const trx = this.sql.isTransaction ? this.sql : await this.sql.transaction();
+    const trx = await this.sql.transaction();
 
     try {
       const result = await trx(tableNames.EXPERIMENT)
