@@ -241,6 +241,8 @@ class ExperimentService {
   }
 
   async patchCellSets(experimentId, patch) {
+    logger.log(`PATCH cell sets in s3 for experiment ${experimentId}`);
+
     const cellSetsObject = await this.getCellSets(experimentId);
     const { cellSets: cellSetsList } = cellSetsObject;
 
