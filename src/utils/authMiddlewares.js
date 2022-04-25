@@ -88,10 +88,13 @@ const INTERNAL_DOMAINS_REGEX = new RegExp('((\.compute\.internal)|(\.svc\.local)
 
 const checkAuthExpiredMiddleware = (req, res, next) => {
   const isReqFromLocalhost = async () => {
+    console.log('isReqFromLocalhost');
     const ip = req.connection.remoteAddress;
     const host = req.get('host');
 
+    console.log('isReqFromLocalhost ip, host: ', ip, host);
     if (ip === '127.0.0.1' || ip === '::ffff:127.0.0.1' || ip === '::1' || host.indexOf('localhost') !== -1) {
+      console.log('isReqFromLocalhost return true');
       return true;
     }
 
@@ -99,15 +102,20 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
   };
 
   const isReqFromCluster = async () => {
-    console.log('lcs [URL,METHOD]: ', req.method.toLowerCase(), req.url);
+    console.log('isReqFromCluster');
     const domains = await dns.reverse(req.ip);
 
+    console.log('isReqFromCluster domains ', domains);
     if (!domains.some((domain) => INTERNAL_DOMAINS_REGEX.test(domain))) {
+      console.log('isReqFromCluster throwing error');
       throw new Error('ip address does not come from internal sources');
     }
 
     return true;
   };
+
+  console.log('lcs [URL,METHOD]: ', req.method.toLowerCase(), req.url);
+
 
   console.log('lcs !req.user test');
   if (!req.user) {
