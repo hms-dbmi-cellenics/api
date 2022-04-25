@@ -3,7 +3,7 @@ const sqlClient = require('../../sql/sqlClient');
 const Sample = require('../model/Sample');
 const SampleFile = require('../model/SampleFile');
 
-const { getSampleFileUploadUrl } = require('../helpers/s3/getSignedUrl');
+const { getSampleFileUploadUrl } = require('../helpers/s3/signedUrl');
 const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 
@@ -12,7 +12,7 @@ const logger = getLogger('[SampleFileController] - ');
 const createFile = async (req, res) => {
   const {
     params: { experimentId, sampleId, sampleFileType },
-    body: { sampleFileId, size, metadata = null },
+    body: { sampleFileId, size, metadata = {} },
   } = req;
   logger.log(`Creating sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
 
