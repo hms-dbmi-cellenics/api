@@ -177,6 +177,25 @@ class Experiment extends BasicModel {
     }
   }
 
+  async getProcessingConfig(experimentId) {
+    const result = await this.findOne({ id: experimentId });
+    if (_.isEmpty(result)) {
+      throw new NotFoundError('Experiment not found');
+    }
+
+    return result.processingConfig;
+  }
+
+  async updateProcessingConfig(experimentId, body) {
+    const { name: stepName, body: change } = body[0];
+    const updateString = JSON.stringify({ [stepName]: change });
+
+    await this.sql(tableNames.EXPERIMENT)
+      .update({
+        processing_config: this.sql.raw(`processing_config || '${updateString}'::jsonb`),
+      }).where('id', experimentId);
+  }
+
   async addSample(experimentId, sampleId) {
     await this.sql(tableNames.EXPERIMENT)
       .update({

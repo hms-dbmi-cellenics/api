@@ -123,4 +123,22 @@ describe('sampleController', () => {
 
     expect(mockRes.json).not.toHaveBeenCalled();
   });
+
+  it('patchSample works correctly', async () => {
+    const mockSampleNewName = 'theNewName';
+    const mockReq = {
+      params: { experimentId: mockExperimentId, sampleId: mockSampleId },
+      body: { name: mockSampleNewName },
+    };
+
+    sampleInstance.updateById.mockImplementationOnce(() => Promise.resolve());
+
+    await sampleController.patchSample(mockReq, mockRes);
+
+    expect(sampleInstance.updateById).toHaveBeenCalledWith(
+      mockSampleId, { name: mockSampleNewName },
+    );
+
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
 });
