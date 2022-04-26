@@ -2,6 +2,23 @@ const AWS = require('../utils/requireAWS');
 
 const config = require('../config');
 
+const promisifiedGetAuthToken = async (signer) => (
+  new Promise((resolve, reject) => {
+    signer.getAuthToken({}, (err, token) => {
+      console.log('errDebug');
+      console.log(err);
+
+      console.log('callbacktokenDebugDebug');
+      console.log(token);
+      if (err) {
+        reject(err);
+      } else {
+        resolve(token);
+      }
+    });
+  })
+);
+
 const getRDSEndpoint = async (rdsClient, environment, rdsSandboxId) => {
   const clusterId = `aurora-cluster-${environment}-${rdsSandboxId}`;
 
@@ -55,7 +72,7 @@ const getConnectionParams = async (environment, rdsSandboxId) => {
     username,
   });
 
-  const token = await signer.getAuthToken().promise();
+  const token = await promisifiedGetAuthToken(signer);
 
   console.log('tokenDebug');
   console.log(token);
