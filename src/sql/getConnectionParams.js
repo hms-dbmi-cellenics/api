@@ -55,7 +55,7 @@ const getConnectionParams = async (environment, rdsSandboxId) => {
     username,
   });
 
-  const token = signer.getAuthToken();
+  const token = await signer.getAuthToken().promise();
 
   console.log('tokenDebug');
   console.log(token);
