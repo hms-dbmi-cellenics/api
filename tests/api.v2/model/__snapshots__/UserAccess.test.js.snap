@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`model/userAccess getExperimentUsers work correctly 1`] = `
+Array [
+  Object {
+    "email": "someUser@example.com",
+    "name": "someUser-name",
+    "role": "admin",
+  },
+]
+`;

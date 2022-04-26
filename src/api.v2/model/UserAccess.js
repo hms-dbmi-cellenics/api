@@ -30,9 +30,7 @@ class UserAccess extends BasicModel {
 
   // Get all users and their access for this experiment
   async getExperimentUsers(experimentId) {
-    const experimentsAccess = await this.sql.select('*')
-      .from(tableNames.USER_ACCESS)
-      .where('experiment_id', experimentId);
+    const experimentsAccess = await this.find({ experiment_id: experimentId });
 
     if (_.isEmpty(experimentsAccess)) {
       throw new NotFoundError('Experiment not found');

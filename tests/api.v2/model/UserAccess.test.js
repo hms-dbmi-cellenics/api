@@ -2,16 +2,27 @@
 const roles = require('../../../src/api.v2/helpers/roles');
 
 const { mockSqlClient } = require('../mocks/getMockSqlClient')();
+const { getAwsUserAttributesByEmail } = require('../../../src/utils/aws/user');
 
 jest.mock('../../../src/api.v2/helpers/roles');
-
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
 }));
+jest.mock('../../../src/utils/aws/user', () => ({
+  getAwsUserAttributesByEmail: jest.fn((userId) => Promise.resolve(
+    [
+      { Name: 'sub', Value: userId },
+      { Name: 'email_verified', Value: 'true' },
+      { Name: 'name', Value: `${userId}-name` },
+      { Name: 'email', Value: `${userId}@example.com` },
+    ],
+  )),
+}));
 
 const BasicModel = require('../../../src/api.v2/model/BasicModel');
-
 const UserAccess = require('../../../src/api.v2/model/UserAccess');
+
+const AccessRole = require('../../../src/utils/enums/AccessRole');
 
 const mockUserAccessCreateResults = [
   [{
@@ -28,9 +39,72 @@ const mockUserAccessCreateResults = [
   }],
 ];
 
+const mockGetExperimentUsersResults = [
+  {
+    userId: 'mockAdminSub',
+    experimentId: 'mockExperimentId',
+    accessRole: 'admin',
+    updatedAt: '1910-03-23 21:06:00.573142+00',
+  },
+  {
+    userId: 'someUser',
+    experimentId: 'mockExperimentId',
+    accessRole: 'owner',
+    updatedAt: '1910-03-23 21:06:00.573142+00',
+  },
+];
+
 describe('model/userAccess', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('getExperimentUsers work correctly', async () => {
+    const experimentId = 'experimentId';
+
+    const mockFind = jest.spyOn(BasicModel.prototype, 'find')
+      .mockImplementationOnce(() => Promise.resolve(mockGetExperimentUsersResults));
+
+    // Admin user is filtered out
+    const filteredUsers = mockGetExperimentUsersResults.filter(({ accessRole }) => accessRole !== AccessRole.ADMIN);
+    const result = await new UserAccess().getExperimentUsers(experimentId);
+
+    expect(mockFind).toHaveBeenCalledWith({ experiment_id: experimentId });
+    expect(mockFind).toHaveBeenCalledTimes(1);
+
+    expect(getAwsUserAttributesByEmail).toHaveBeenCalledTimes(filteredUsers.length);
+
+    expect(result).toMatchSnapshot();
+  });
+
+  it('getExperimentUsers throws a not found error if experiment does not exist', async () => {
+    const experimentId = 'experimentId';
+
+    const mockFind = jest.spyOn(BasicModel.prototype, 'find')
+      .mockImplementationOnce(() => Promise.resolve([]));
+
+    await expect(
+      new UserAccess().getExperimentUsers(experimentId),
+    ).rejects.toThrow('Experiment not found');
+
+    expect(mockFind).toHaveBeenCalledWith({ experiment_id: experimentId });
+    expect(mockFind).toHaveBeenCalledTimes(1);
+  });
+
+  it('getExperimentUsers throws a server error if there is an error fetching Cognito user data', async () => {
+    const experimentId = 'experimentId';
+
+    getAwsUserAttributesByEmail.mockImplementationOnce(() => Promise.reject(new Error('Error fetching user data')));
+
+    const mockFind = jest.spyOn(BasicModel.prototype, 'find')
+      .mockImplementationOnce(() => Promise.resolve(mockGetExperimentUsersResults));
+
+    await expect(
+      new UserAccess().getExperimentUsers(experimentId),
+    ).rejects.toThrow();
+
+    expect(mockFind).toHaveBeenCalledWith({ experiment_id: experimentId });
+    expect(mockFind).toHaveBeenCalledTimes(1);
   });
 
   it('createNewExperimentPermissions works correctly', async () => {
