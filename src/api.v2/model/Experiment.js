@@ -4,15 +4,14 @@ const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 const { collapseKeyIntoArray } = require('../../sql/helpers');
 
+const { getAwsUserAttributesByEmail } = require('../../utils/aws/user');
 const { NotFoundError } = require('../../utils/responses');
-
-const tableNames = require('../helpers/tableNames');
-
-
 const getLogger = require('../../utils/getLogger');
 
 const logger = getLogger('[ExperimentModel] - ');
 
+const tableNames = require('../helpers/tableNames');
+const AccessRole = require('../../utils/enums/AccessRole');
 
 const experimentFields = [
   'id',
@@ -105,6 +104,40 @@ class Experiment extends BasicModel {
     }
 
     return result;
+  }
+
+  // Get all users and their access for this experiment
+  async getUsers(experimentId) {
+    const experimentsAccess = await this.sql.select('*')
+      .from(tableNames.USER_ACCESS)
+      .where('experiment_id', experimentId);
+
+    if (_.isEmpty(experimentsAccess)) {
+      throw new NotFoundError('Experiment not found');
+    }
+
+    // Remove admin from user list
+    const filteredAccess = experimentsAccess.filter(
+      ({ accessRole }) => accessRole !== AccessRole.ADMIN,
+    );
+
+    const requests = filteredAccess.map(
+      async (entry) => getAwsUserAttributesByEmail(entry.userId),
+    );
+
+    const cognitoUserData = await Promise.all(requests);
+
+    const experimentUsers = cognitoUserData.map((userInfo, idx) => {
+      const email = userInfo.find((attr) => attr.Name === 'email').Value;
+      const name = userInfo.find((attr) => attr.Name === 'name').Value;
+      const { accessRole } = experimentsAccess[idx];
+
+      return {
+        name, email, role: accessRole,
+      };
+    });
+
+    return experimentUsers;
   }
 
   // Sets samples_order as an array that has the sample in oldPosition moved to newPosition
