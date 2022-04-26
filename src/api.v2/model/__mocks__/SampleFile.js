@@ -1,7 +1,7 @@
 const BasicModel = require('./BasicModel')();
 
 const stub = {
-  setNewFile: jest.fn(),
+  updateUploadStatus: jest.fn(),
   ...BasicModel,
 };
 
