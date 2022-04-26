@@ -4,12 +4,13 @@ const config = require('../../config');
 
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
-
-const { isRoleAuthorized } = require('../helpers/roles');
-
-const AccessRole = require('../../utils/enums/AccessRole');
+const { NotFoundError } = require('../../utils/responses');
+const { getAwsUserAttributesByEmail } = require('../../utils/aws/user');
 
 const tableNames = require('./tableNames');
+const AccessRole = require('../../utils/enums/AccessRole');
+
+const { isRoleAuthorized } = require('../helpers/roles');
 
 const selectableProps = [
   'user_id',
@@ -25,6 +26,40 @@ const logger = getLogger('[UserAccessModel] - ');
 class UserAccess extends BasicModel {
   constructor(sql = sqlClient.get()) {
     super(sql, tableNames.USER_ACCESS, selectableProps);
+  }
+
+  // Get all users and their access for this experiment
+  async getExperimentUsers(experimentId) {
+    const experimentsAccess = await this.sql.select('*')
+      .from(tableNames.USER_ACCESS)
+      .where('experiment_id', experimentId);
+
+    if (_.isEmpty(experimentsAccess)) {
+      throw new NotFoundError('Experiment not found');
+    }
+
+    // Remove admin from user list
+    const filteredAccess = experimentsAccess.filter(
+      ({ accessRole }) => accessRole !== AccessRole.ADMIN,
+    );
+
+    const requests = filteredAccess.map(
+      async (entry) => getAwsUserAttributesByEmail(entry.userId),
+    );
+
+    const cognitoUserData = await Promise.all(requests);
+
+    const experimentUsers = cognitoUserData.map((userInfo, idx) => {
+      const email = userInfo.find((attr) => attr.Name === 'email').Value;
+      const name = userInfo.find((attr) => attr.Name === 'name').Value;
+      const { accessRole } = experimentsAccess[idx];
+
+      return {
+        name, email, role: accessRole,
+      };
+    });
+
+    return experimentUsers;
   }
 
   async createNewExperimentPermissions(userId, experimentId) {
