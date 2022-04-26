@@ -5,7 +5,7 @@ Array [
   Object {
     "email": "someUser@example.com",
     "name": "someUser-name",
-    "role": "admin",
+    "role": "owner",
   },
 ]
 `;

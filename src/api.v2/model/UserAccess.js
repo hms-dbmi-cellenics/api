@@ -50,7 +50,7 @@ class UserAccess extends BasicModel {
     const experimentUsers = cognitoUserData.map((userInfo, idx) => {
       const email = userInfo.find((attr) => attr.Name === 'email').Value;
       const name = userInfo.find((attr) => attr.Name === 'name').Value;
-      const { accessRole } = experimentsAccess[idx];
+      const { accessRole } = filteredAccess[idx];
 
       return {
         name, email, role: accessRole,
