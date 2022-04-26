@@ -9,6 +9,7 @@ const jwtExpress = require('express-jwt');
 const jwkToPem = require('jwk-to-pem');
 const util = require('util');
 const dns = require('dns').promises;
+const ipaddr = require('ipaddr.js');
 
 const config = require('../config');
 
@@ -98,20 +99,36 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
       return true;
     }
 
+    console.log('isReqFromLocalhost throwing error');
     throw new Error('ip address is not localhost');
   };
 
   const isReqFromCluster = async () => {
-    console.log('isReqFromCluster');
-    const domains = await dns.reverse(req.ip);
+    console.log('isReqFromCluster ', req.ip);
 
-    console.log('isReqFromCluster domains ', domains);
-    if (!domains.some((domain) => INTERNAL_DOMAINS_REGEX.test(domain))) {
-      console.log('isReqFromCluster throwing error');
-      throw new Error('ip address does not come from internal sources');
+    let remoteAddress = req.ip;
+    const addr = ipaddr.parse(req.ip);
+    // req.ip returns IPv4 addresses mapped to IPv6, e.g.:
+    // 127.0.0.1 (IPv4) -> ::ffff:127.0.0.1 (IPv6)
+    // dns.reverse is not capable of dealing with them,
+    // it either uses IPv4 or IPv6, so we need to map those
+    // IPs back to IPv4 before.
+    if (addr.kind() === 'ipv6' && addr.isIPv4MappedAddress()) {
+      remoteAddress = addr.toIPv4Address().toString();
     }
 
-    return true;
+    console.log('what now IP ', remoteAddress);
+
+    const domains = await dns.reverse(remoteAddress);
+
+    console.log('isReqFromCluster domains ', domains);
+    if (domains.some((domain) => INTERNAL_DOMAINS_REGEX.test(domain))) {
+      console.log('isReqFromCluster throwing error');
+      return true;
+    }
+
+    console.log('isReqFromCluster throwing error');
+    throw new Error('ip address does not come from internal sources');
   };
 
   console.log('lcs [URL,METHOD]: ', req.method.toLowerCase(), req.url);
@@ -125,16 +142,20 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
   // JWT `exp` returns seconds since UNIX epoch, conver to milliseconds for this
   const timeLeft = (req.user.exp * 1000) - Date.now();
 
-  // ignore if JWT is still valid
-  if (timeLeft > 0) {
-    return next();
-  }
+  // temporarily ignore valid token to debug patch cellsets
+  if (!(req.url.includes('cellSets') && req.method.toLowerCase() === 'patch')) {
+    // ignore if JWT is still valid
+    if (timeLeft > 0) {
+      return next();
+    }
 
-  console.log('lcs time left in token ', timeLeft);
-  // send error if JWT is older than the limit
-  if (timeLeft < -(7 * 1000 * 60 * 60)) {
-    console.log('lcs rejecting very expired token');
-    return next(new UnauthenticatedError('token has expired'));
+
+    console.log('lcs time left in token ', timeLeft);
+    // send error if JWT is older than the limit
+    if (timeLeft < -(7 * 1000 * 60 * 60)) {
+      console.log('lcs rejecting very expired token');
+      return next(new UnauthenticatedError('token has expired'));
+    }
   }
 
   // check if we should ignore expired jwt token for this path and request type
@@ -156,8 +177,9 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
     .then(() => {
       next();
     })
-    .catch(() => {
-      next(new UnauthenticatedError('token has expired'));
+    .catch((e) => {
+      console.log('lcs error in promise any: ', e);
+      next(new UnauthenticatedError(`invalid request origin ${e}`));
     });
 
   return null;

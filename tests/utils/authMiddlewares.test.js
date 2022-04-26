@@ -1,5 +1,6 @@
 const AWSMock = require('aws-sdk-mock');
 const {
+  checkAuthExpiredMiddleware,
   expressAuthorizationMiddleware,
   authorize,
 } = require('../../src/utils/authMiddlewares');
@@ -51,6 +52,21 @@ describe('Tests for authorization/authentication middlewares', () => {
     await expressAuthorizationMiddleware(req, {}, next);
     expect(next).toBeCalledWith();
   });
+
+  // it('Express middleware can check expired auth', async () => {
+  //   mockDynamoGetItem(data);
+
+  //   const req = {
+  //     params: { experimentId: fake.EXPERIMENT_ID },
+  //     user: fake.USER,
+  //     url: `/experiments/${fake.EXPERIMENT_ID}/cellSets`,
+  //     method: 'PATCH',
+  //   };
+  //   const next = jest.fn();
+
+  //   await checkAuthExpiredMiddleware(req, {}, next);
+  //   expect(next).toBeCalledWith();
+  // });
 
   it('Express middleware can reject incorrect users', async () => {
     mockDynamoGetItem({});
