@@ -8,8 +8,6 @@ const jwt = require('jsonwebtoken');
 const jwtExpress = require('express-jwt');
 const jwkToPem = require('jwk-to-pem');
 const util = require('util');
-const dns = require('dns').promises;
-const ipaddr = require('ipaddr.js');
 
 const config = require('../config');
 
@@ -19,6 +17,7 @@ const { CacheMissError } = require('../cache/cache-utils');
 const { UnauthorizedError, UnauthenticatedError } = require('./responses');
 const ProjectsService = require('../api/route-services/projects');
 const AccessService = require('../api/route-services/access');
+const { isReqFromLocalhost, isReqFromCluster } = require('./isReqFrom');
 
 const accessService = new AccessService();
 const projectService = new ProjectsService();
@@ -83,58 +82,8 @@ const authenticationMiddlewareExpress = async (app) => {
   });
 };
 
-
-// eslint-disable-next-line no-useless-escape
-const INTERNAL_DOMAINS_REGEX = new RegExp('((\.compute\.internal)|(\.svc\.local))$');
-
 const checkAuthExpiredMiddleware = (req, res, next) => {
-  const isReqFromLocalhost = async () => {
-    console.log('isReqFromLocalhost');
-    const ip = req.connection.remoteAddress;
-    const host = req.get('host');
-
-    console.log('isReqFromLocalhost ip, host: ', ip, host);
-    if (ip === '127.0.0.1' || ip === '::ffff:127.0.0.1' || ip === '::1' || host.indexOf('localhost') !== -1) {
-      console.log('isReqFromLocalhost return true');
-      return true;
-    }
-
-    console.log('isReqFromLocalhost throwing error');
-    throw new Error('ip address is not localhost');
-  };
-
-  const isReqFromCluster = async () => {
-    console.log('isReqFromCluster ', req.ip);
-
-    let remoteAddress = req.ip;
-    const addr = ipaddr.parse(req.ip);
-    // req.ip returns IPv4 addresses mapped to IPv6, e.g.:
-    // 127.0.0.1 (IPv4) -> ::ffff:127.0.0.1 (IPv6)
-    // dns.reverse is not capable of dealing with them,
-    // it either uses IPv4 or IPv6, so we need to map those
-    // IPs back to IPv4 before.
-    if (addr.kind() === 'ipv6' && addr.isIPv4MappedAddress()) {
-      remoteAddress = addr.toIPv4Address().toString();
-    }
-
-    console.log('what now IP ', remoteAddress);
-
-    const domains = await dns.reverse(remoteAddress);
-
-    console.log('isReqFromCluster domains ', domains);
-    if (domains.some((domain) => INTERNAL_DOMAINS_REGEX.test(domain))) {
-      console.log('isReqFromCluster throwing error');
-      return true;
-    }
-
-    console.log('isReqFromCluster throwing error');
-    throw new Error('ip address does not come from internal sources');
-  };
-
   console.log('lcs [URL,METHOD]: ', req.method.toLowerCase(), req.url);
-
-
-  console.log('lcs !req.user test');
   if (!req.user) {
     return next();
   }
@@ -142,46 +91,43 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
   // JWT `exp` returns seconds since UNIX epoch, conver to milliseconds for this
   const timeLeft = (req.user.exp * 1000) - Date.now();
 
-  // temporarily ignore valid token to debug patch cellsets
-  if (!(req.url.includes('cellSets') && req.method.toLowerCase() === 'patch')) {
-    // ignore if JWT is still valid
-    if (timeLeft > 0) {
-      return next();
-    }
-
-
-    console.log('lcs time left in token ', timeLeft);
-    // send error if JWT is older than the limit
-    if (timeLeft < -(7 * 1000 * 60 * 60)) {
-      console.log('lcs rejecting very expired token');
-      return next(new UnauthenticatedError('token has expired'));
-    }
+  // ignore if JWT is still valid
+  if (timeLeft > 0) {
+    return next();
   }
 
+  // send error if JWT is older than the limit
+  if (timeLeft < -(7 * 1000 * 60 * 60)) {
+    return next(new UnauthenticatedError('token has expired'));
+  }
+
+
   // check if we should ignore expired jwt token for this path and request type
-  const longTimeoutEndpoints = [{ urlMatcher: /^\/v1\/experiments\/.{32}\/cellSets$/, method: 'PATCH' }];
+  const longTimeoutEndpoints = [{ urlMatcher: /experiments\/.{32}\/cellSets$/, method: 'PATCH' }];
   const isEndpointIgnored = longTimeoutEndpoints.some(
     ({ urlMatcher, method }) => (
       req.method.toLowerCase() === method.toLowerCase() && urlMatcher.test(req.url)
     ),
   );
 
-  console.log('lcs isEndpointIgnored ', isEndpointIgnored);
-
   // if endpoint is not in ignore list, the JWT is too old, send an error accordingly
   if (!isEndpointIgnored) {
     return next(new UnauthenticatedError('token has expired'));
   }
 
-  promiseAny([isReqFromCluster(), isReqFromLocalhost()])
+  console.log('lcs promise.any');
+  promiseAny([isReqFromCluster(req), isReqFromLocalhost(req)])
     .then(() => {
-      next();
+      console.log('lcs resolving and calling next');
+      return next();
+      // console.log('lcs resolving and calling next 2');
     })
     .catch((e) => {
       console.log('lcs error in promise any: ', e);
       next(new UnauthenticatedError(`invalid request origin ${e}`));
     });
 
+  console.log('returning null');
   return null;
 };
 
