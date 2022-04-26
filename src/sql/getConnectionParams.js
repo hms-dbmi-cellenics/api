@@ -20,6 +20,9 @@ const getRDSEndpoint = async (rdsClient, environment, rdsSandboxId) => {
     ],
   }).promise();
 
+  console.log('endpointsDebug');
+  console.log(JSON.stringify(endpoints));
+
   if (endpoints.length === 0) {
     throw new Error(`No available endpoints for ${rdsSandboxId}`);
   }
@@ -40,6 +43,9 @@ const getConnectionParams = async (environment, rdsSandboxId) => {
   const rdsClient = new AWS.RDS({ region: config.awsRegion });
   const endpoint = await getRDSEndpoint(rdsClient, environment, rdsSandboxId);
 
+  console.log('endpointDebug');
+  console.log(endpoint);
+
   const username = 'api_role';
 
   const signer = new AWS.RDS.Signer({
@@ -50,6 +56,9 @@ const getConnectionParams = async (environment, rdsSandboxId) => {
   });
 
   const token = signer.getAuthToken();
+
+  console.log('tokenDebug');
+  console.log(token);
 
   // Token expires in 15 minutes https://aws.amazon.com/premiumsupport/knowledge-center/users-connect-rds-iam/
   const tokenExpiration = new Date().getTime() + 15 * 60000;
