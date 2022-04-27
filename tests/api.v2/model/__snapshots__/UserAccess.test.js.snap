@@ -3,9 +3,16 @@
 exports[`model/userAccess getExperimentUsers work correctly 1`] = `
 Array [
   Object {
-    "email": "someUser@example.com",
-    "name": "someUser-name",
-    "role": "owner",
+    "accessRole": "admin",
+    "experimentId": "mockExperimentId",
+    "updatedAt": "1910-03-23 21:06:00.573142+00",
+    "userId": "mockAdminSub",
+  },
+  Object {
+    "accessRole": "owner",
+    "experimentId": "mockExperimentId",
+    "updatedAt": "1910-03-23 21:06:00.573142+00",
+    "userId": "someUser",
   },
 ]
 `;

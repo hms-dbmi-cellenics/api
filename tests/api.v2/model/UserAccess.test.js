@@ -22,8 +22,6 @@ jest.mock('../../../src/utils/aws/user', () => ({
 const BasicModel = require('../../../src/api.v2/model/BasicModel');
 const UserAccess = require('../../../src/api.v2/model/UserAccess');
 
-const AccessRole = require('../../../src/utils/enums/AccessRole');
-
 const mockUserAccessCreateResults = [
   [{
     userId: 'mockAdminSub',
@@ -65,14 +63,10 @@ describe('model/userAccess', () => {
     const mockFind = jest.spyOn(BasicModel.prototype, 'find')
       .mockImplementationOnce(() => Promise.resolve(mockGetExperimentUsersResults));
 
-    // Admin user is filtered out
-    const filteredUsers = mockGetExperimentUsersResults.filter(({ accessRole }) => accessRole !== AccessRole.ADMIN);
     const result = await new UserAccess().getExperimentUsers(experimentId);
 
     expect(mockFind).toHaveBeenCalledWith({ experiment_id: experimentId });
     expect(mockFind).toHaveBeenCalledTimes(1);
-
-    expect(getAwsUserAttributesByEmail).toHaveBeenCalledTimes(filteredUsers.length);
 
     expect(result).toMatchSnapshot();
   });
@@ -86,22 +80,6 @@ describe('model/userAccess', () => {
     await expect(
       new UserAccess().getExperimentUsers(experimentId),
     ).rejects.toThrow('Experiment not found');
-
-    expect(mockFind).toHaveBeenCalledWith({ experiment_id: experimentId });
-    expect(mockFind).toHaveBeenCalledTimes(1);
-  });
-
-  it('getExperimentUsers throws a server error if there is an error fetching Cognito user data', async () => {
-    const experimentId = 'experimentId';
-
-    getAwsUserAttributesByEmail.mockImplementationOnce(() => Promise.reject(new Error('Error fetching user data')));
-
-    const mockFind = jest.spyOn(BasicModel.prototype, 'find')
-      .mockImplementationOnce(() => Promise.resolve(mockGetExperimentUsersResults));
-
-    await expect(
-      new UserAccess().getExperimentUsers(experimentId),
-    ).rejects.toThrow();
 
     expect(mockFind).toHaveBeenCalledWith({ experiment_id: experimentId });
     expect(mockFind).toHaveBeenCalledTimes(1);

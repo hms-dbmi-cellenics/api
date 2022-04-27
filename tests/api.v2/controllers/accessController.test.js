@@ -1,18 +1,12 @@
 // @ts-nocheck
-const UserAccess = require('../../../src/api.v2/model/UserAccess');
-const { mockSqlClient } = require('../mocks/getMockSqlClient')();
+const getUserRoles = require('../../../src/api.v2/helpers/access/getUserRoles');
 const userAccessController = require('../../../src/api.v2/controllers/accessController');
 
-jest.mock('../../../src/api.v2/model/UserAccess');
-jest.mock('../../../src/sql/sqlClient', () => ({
-  get: jest.fn(() => mockSqlClient),
-}));
+jest.mock('../../../src/api.v2/helpers/access/getUserRoles');
 
 const mockRes = {
   json: jest.fn(),
 };
-
-const userAccessInstance = UserAccess();
 
 const mockUsersList = [
   {
@@ -35,13 +29,13 @@ describe('accessController', () => {
   it('getExperimentUsers works correctly', async () => {
     const mockReq = { params: { experimentId: 'mockExperimentId' } };
 
-    userAccessInstance.getExperimentUsers.mockImplementationOnce(
+    getUserRoles.mockImplementationOnce(
       () => Promise.resolve(mockUsersList),
     );
 
     await userAccessController.getExperimentUsers(mockReq, mockRes);
 
-    expect(userAccessInstance.getExperimentUsers).toHaveBeenCalledWith('mockExperimentId');
+    expect(getUserRoles).toHaveBeenCalledWith('mockExperimentId');
     expect(mockRes.json).toHaveBeenCalledWith(mockUsersList);
   });
 });
