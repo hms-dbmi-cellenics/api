@@ -1,7 +1,16 @@
+const config = require('../../../config');
+
 const UserAccess = require('../../model/UserAccess');
-const getAwsUserAttributesByEmail = require('../cognito/getAwsUserAttributesByEmail');
 
 const AccessRole = require('../../../utils/enums/AccessRole');
+
+const { cognitoISP } = config;
+
+const getAwsUserAttributesByEmail = async (email) => {
+  const poolId = await config.awsUserPoolIdPromise;
+  const user = await cognitoISP.adminGetUser({ UserPoolId: poolId, Username: email }).promise();
+  return user.UserAttributes;
+};
 
 const getUserRoles = async (experimentId) => {
   const userData = await new UserAccess().getExperimentUsers(experimentId);
