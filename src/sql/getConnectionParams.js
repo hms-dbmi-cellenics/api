@@ -4,18 +4,7 @@ const config = require('../config');
 
 const promisifiedGetAuthToken = async (signer) => (
   new Promise((resolve, reject) => {
-    signer.getAuthToken({}, (err, token) => {
-      console.log('errDebug');
-      console.log(err);
-
-      console.log('callbacktokenDebugDebug');
-      console.log(token);
-      if (err) {
-        reject(err);
-      } else {
-        resolve(token);
-      }
-    });
+    signer.getAuthToken({}, (err, token) => (err ? reject(err) : resolve(token)));
   })
 );
 

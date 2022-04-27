@@ -14,7 +14,7 @@ const createFile = async (req, res) => {
     params: { experimentId, sampleId, sampleFileType },
     body: { sampleFileId, size, metadata = {} },
   } = req;
-  logger.log(`Creating sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
+  logger.log(`Creating file ${sampleFileType} for sample ${sampleId} in experiment ${experimentId}`);
 
   const newSampleFile = {
     id: sampleFileId,
@@ -42,7 +42,7 @@ const patchFile = async (req, res) => {
     params: { experimentId, sampleId, sampleFileType },
     body: { uploadStatus },
   } = req;
-  logger.log(`Patching sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
+  logger.log(`Patching file ${sampleFileType} for sample ${sampleId} in experiment ${experimentId}`);
 
   await new SampleFile().updateUploadStatus(sampleId, sampleFileType, uploadStatus);
 
