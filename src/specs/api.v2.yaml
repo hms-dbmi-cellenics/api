@@ -490,11 +490,10 @@ paths:
   '/experiments/{experimentId}/metadataTracks/{metadataTrackKey}':
     post:
       summary: Creates a new metadata track
-      description: Creates a new metadata track
+      description: Creates a new metadata track, no requestBody required
       operationId: createMetadataTrack
       x-eov-operation-id: metadataTrack#createMetadataTrack
       x-eov-operation-handler: routes/metadataTrack
-      # requestBody:
       responses:
         '200':
           description: Success
