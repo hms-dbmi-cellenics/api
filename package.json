@@ -41,6 +41,7 @@
     "express-openapi-validator": "^4.10.8",
     "github-download-directory": "^2.0.0",
     "ioredis": "^4.17.3",
+    "ipaddr.js": "^2.0.1",
     "js-yaml": "^3.13.1",
     "json-merger": "^1.1.7",
     "jsonwebtoken": "^8.5.1",
