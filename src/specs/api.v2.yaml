@@ -493,6 +493,55 @@ paths:
       operationId: createMetadataTrack
       x-eov-operation-id: metadataTrack#createMetadataTrack
       x-eov-operation-handler: routes/metadataTrack
+      # requestBody:
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+    patch:
+      summary: Updates a metadata tracks properties
+      description: Updates a metadata tracks properties
+      operationId: patchMetadataTrack
+      x-eov-operation-id: metadataTrack#patchMetadataTrack
+      x-eov-operation-handler: routes/metadataTrack
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+              required:
+                - key
+              additionalProperties: false
       responses:
         '200':
           description: Success

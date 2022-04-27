@@ -77,6 +77,8 @@ exports.up = async (knex) => {
       table.increments('id', { primaryKey: true });
       table.uuid('experiment_id').references('experiment.id').onDelete('CASCADE').notNullable();
       table.string('key');
+
+      table.unique(['experiment_id', 'key']);
     });
 
   await knex.schema
