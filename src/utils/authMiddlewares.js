@@ -83,7 +83,6 @@ const authenticationMiddlewareExpress = async (app) => {
 };
 
 const checkAuthExpiredMiddleware = (req, res, next) => {
-  console.log('lcs [URL,METHOD]: ', req.method.toLowerCase(), req.url);
   if (!req.user) {
     return next();
   }
@@ -112,22 +111,15 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
 
   // if endpoint is not in ignore list, the JWT is too old, send an error accordingly
   if (!isEndpointIgnored) {
-    return next(new UnauthenticatedError('token has expired'));
+    return next(new UnauthenticatedError('token has expired for non-ignored endpoint'));
   }
 
-  console.log('lcs promise.any');
   promiseAny([isReqFromCluster(req), isReqFromLocalhost(req)])
-    .then(() => {
-      console.log('lcs resolving and calling next');
-      return next();
-      // console.log('lcs resolving and calling next 2');
-    })
+    .then(() => next())
     .catch((e) => {
-      console.log('lcs error in promise any: ', e);
       next(new UnauthenticatedError(`invalid request origin ${e}`));
     });
 
-  console.log('returning null');
   return null;
 };
 
