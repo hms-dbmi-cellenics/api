@@ -1,6 +1,6 @@
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
-
+const { replaceNullsWithObject } = require('../../sql/helpers');
 const tableNames = require('./tableNames');
 
 const sampleFields = [
@@ -18,30 +18,45 @@ class Sample extends BasicModel {
   }
 
   async getSamples(experimentId) {
-    const samples = await this.find({ experiment_id: experimentId });
-    console.log('SAMPLES ARE ', samples);
+    const { sql } = this;
 
-    return samples;
+    const fieldsWithMetadata = [...sampleFields, sql.raw(
+      `${replaceNullsWithObject('jsonb_object_agg(key, value)', 'key')} as metadata`,
+    )];
+    const sampleFieldsWithAlias = sampleFields.map((field) => `s.${field}`);
+
+    const metadataQuery = sql.select(fieldsWithMetadata)
+      .from(sql.select([...sampleFieldsWithAlias, 'm.key', 'sm_map.value'])
+        .from({ s: tableNames.SAMPLE })
+        .leftJoin(`${tableNames.METADATA_TRACK} as m`, 's.experiment_id', 'm.experiment_id')
+        .leftJoin(`${tableNames.SAMPLE_IN_METADATA_TRACK_MAP} as sm_map`, 's.id', 'sm_map.sample_id')
+        .where('s.experiment_id', experimentId)
+        .as('mainQuery'))
+      .groupBy(sampleFields)
+      .as('select_metadata');
+
+    const sampleFileFields = ['sample_file_type', 's3_path', 'size', 'valid', 'upload_status'];
+    const sampleFileFieldsWithAlias = sampleFileFields.map((field) => `sf.${field}`);
+    const fileObjectFormatted = sampleFileFields.map((field) => [`'${field}'`, field]);
+
+    const fileNamesQuery = sql.select(['id', sql.raw(
+      `jsonb_object_agg(sample_file_type,json_build_object(${fileObjectFormatted})) as files`,
+    )])
+      .from(sql.select([...sampleFileFieldsWithAlias, 's.id'])
+        .from({ s: tableNames.SAMPLE })
+        .join(`${tableNames.SAMPLE_TO_SAMPLE_FILE} as sf_map`, 's.id', 'sf_map.sample_id')
+        .join(`${tableNames.SAMPLE_FILE} as sf`, 'sf.id', 'sf_map.sample_file_id')
+        .where('s.experiment_id', experimentId)
+        .as('mainQuery'))
+      .groupBy('id')
+      .as('select_sample_file');
+
+    const result = await this.sql.select('*')
+      .from(metadataQuery)
+      .join(fileNamesQuery, 'select_metadata.id', 'select_sample_file.id');
+
+    return result;
   }
 }
-
-// [
-//   {
-//     id: '0008e395-4386-41f4-aa75-247e03a2992f',
-//     experimentId: 'd1416d5f-b7e2-c51e-0d94-80493cac56d4',
-//     name: 'MR5_filtered_feature_bc_matrix',
-//     sampleTechnology: '10x',
-//     createdAt: '2021-10-22 20:43:12.471+00',
-//     updatedAt: '2021-10-22 20:43:41.89+00'
-//   },
-//   {
-//     id: 'acf76478-ee49-487f-9a03-e4fd89d6e108',
-//     experimentId: 'd1416d5f-b7e2-c51e-0d94-80493cac56d4',
-//     name: 'MR6_filtered_feature_bc_matrix',
-//     sampleTechnology: '10x',
-//     createdAt: '2021-10-22 20:43:12.482+00',
-//     updatedAt: '2021-10-22 20:44:20.979+00'
-//   }
-// ]
 
 module.exports = Sample;

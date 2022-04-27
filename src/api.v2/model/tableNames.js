@@ -2,6 +2,8 @@ const tableNames = {
   EXPERIMENT: 'experiment',
   EXPERIMENT_EXECUTION: 'experiment_execution',
   SAMPLE: 'sample',
+  SAMPLE_FILE: 'sample_file',
+  SAMPLE_TO_SAMPLE_FILE: 'sample_to_sample_file_map',
   USER_ACCESS: 'user_access',
   INVITE_ACCESS: 'invite_access',
   METADATA_TRACK: 'metadata_track',

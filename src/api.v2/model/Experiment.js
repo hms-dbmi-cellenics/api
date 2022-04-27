@@ -7,7 +7,7 @@ const { collapseKeyIntoArray } = require('../../sql/helpers');
 const { NotFoundError } = require('../../utils/responses');
 
 const tableNames = require('./tableNames');
-
+const { replaceNullsWithObject } = require('../../sql/helpers');
 
 const getLogger = require('../../utils/getLogger');
 
@@ -74,16 +74,6 @@ class Experiment extends BasicModel {
 
       return acum;
     }, []);
-
-    const replaceNullsWithObject = (object, nullableKey) => (
-      `COALESCE(
-      ${object}
-      FILTER(
-        WHERE ${nullableKey} IS NOT NULL
-      ),
-      '{}'::jsonb
-    )`
-    );
 
     const result = await this.sql
       .select([
