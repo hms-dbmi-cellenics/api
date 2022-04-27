@@ -433,6 +433,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+
   '/experiments/{experimentId}/samples/position':
     put:
       summary: Update position for a sample
@@ -573,6 +574,57 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+
+  '/experiments/{experimentId}/samples/{sampleId}/metadataTracks/{metadataTrackKey}':
+    patch:
+      summary: Updates the value that a sample has in a metadata track in particular
+      description: Updates a metadata tracks properties
+      operationId: patchMetadataTrack
+      x-eov-operation-id: metadataTrack#patchSampleInMetadataTrackValue
+      x-eov-operation-handler: routes/metadataTrack
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value:
+                  type: string
+              required:
+                - value
+              additionalProperties: false
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
 
 components:
   schemas:

@@ -38,7 +38,22 @@ const patchMetadataTrack = async (req, res) => {
   res.json(OK());
 };
 
+const patchSampleInMetadataTrackValue = async (req, res) => {
+  const {
+    params: { experimentId, sampleId, metadataTrackKey },
+    body: { value },
+  } = req;
+
+  logger.log(`Patching value of metadata track ${metadataTrackKey} in sample ${sampleId} in experiment ${experimentId}`);
+
+  await new MetadataTrack().patchValueForSample(experimentId, sampleId, metadataTrackKey, value);
+
+  logger.log(`Finished patching value of metadata track ${metadataTrackKey} in sample ${sampleId} in experiment ${experimentId}, changed to ${value}`);
+  res.json(OK());
+};
+
 module.exports = {
   createMetadataTrack,
   patchMetadataTrack,
+  patchSampleInMetadataTrackValue,
 };

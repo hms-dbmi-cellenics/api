@@ -3,6 +3,7 @@ const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 
 const tableNames = require('./tableNames');
+const { NotFoundError } = require('../../utils/responses');
 
 const sampleFields = [
   'id',
@@ -15,7 +16,7 @@ class MetadataTrack extends BasicModel {
     super(sql, tableNames.METADATA_TRACK, sampleFields);
   }
 
-  async createNewMetadataTrack(experimentId, metadataTrackKey) {
+  async createNewMetadataTrack(experimentId, key) {
     const sampleIds = await this.sql.select(['id'])
       .from(tableNames.SAMPLE)
       .where({ experiment_id: experimentId });
@@ -24,7 +25,7 @@ class MetadataTrack extends BasicModel {
       const response = await trx
         .insert({
           experiment_id: experimentId,
-          key: metadataTrackKey,
+          key,
         })
         .returning(['id'])
         .into(this.tableName);
@@ -61,6 +62,19 @@ class MetadataTrack extends BasicModel {
     }));
 
     await this.sql(tableNames.SAMPLE_IN_METADATA_TRACK_MAP).insert(valuesToInsert);
+  }
+
+  async patchValueForSample(experimentId, sampleId, key, value) {
+    const [{ id }] = await this.find({ experiment_id: experimentId, key });
+
+    const result = await this.sql(tableNames.SAMPLE_IN_METADATA_TRACK_MAP)
+      .update({ value })
+      .where({ metadata_track_id: id, sample_id: sampleId })
+      .returning(['metadata_track_id']);
+
+    if (result.length === 0) {
+      throw new NotFoundError(`Metadata track ${key} or sample ${sampleId} don't exist`);
+    }
   }
 }
 
