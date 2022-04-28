@@ -56,7 +56,9 @@ describe('getConnectionParams', () => {
   it('Creates correct params in staging environment', async () => {
     mockDescribeDBClusterEndpoints.mockReturnValueOnce({ promise: () => Promise.resolve({ DBClusterEndpoints: [{ Endpoint: 'endpointName' }] }) });
 
-    mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
+    mockGetAuthTokenSpy.mockImplementation((params, callback) => {
+      callback(null, 'passwordToken');
+    });
 
     const params = await getConnectionParams('staging', testSandboxId);
 
@@ -77,7 +79,9 @@ describe('getConnectionParams', () => {
   it('Creates correct params in production environment', async () => {
     mockDescribeDBClusterEndpoints.mockReturnValueOnce({ promise: () => Promise.resolve({ DBClusterEndpoints: [{ Endpoint: 'endpointName' }] }) });
 
-    mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
+    mockGetAuthTokenSpy.mockImplementation((params, callback) => {
+      callback(null, 'passwordToken');
+    });
 
     const params = await getConnectionParams('production', testSandboxId);
 
@@ -99,7 +103,9 @@ describe('getConnectionParams', () => {
     mockDescribeDBClusterEndpoints
       .mockReturnValueOnce({ promise: () => Promise.resolve({ DBClusterEndpoints: [] }) });
 
-    mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
+    mockGetAuthTokenSpy.mockImplementation((params, callback) => {
+      callback(null, 'passwordToken');
+    });
 
     await expect(getConnectionParams('staging', testSandboxId)).rejects.toThrow();
 

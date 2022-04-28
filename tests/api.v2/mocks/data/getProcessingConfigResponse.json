@@ -10,7 +10,7 @@
             "binStep": 0.05,
             "probabilityThreshold": 0.5
           },
-          "330390E9Cdc94C7FB68A0C51Fd059Dda": {
+          "sample1Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
           
@@ -24,7 +24,7 @@
               "probabilityThreshold": 0.3784758
             }
           },
-          "46E6484545Dc4Aeb932DE1B43178Fe09": {
+          "sample2Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
           
@@ -38,7 +38,7 @@
               "probabilityThreshold": 0.4101394
             }
           },
-          "7Ff6388CCa204325A30C0C29135E1D05": {
+          "sample3Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
           
@@ -93,7 +93,7 @@
               }
             }
           },
-          "330390E9Cdc94C7FB68A0C51Fd059Dda": {
+          "sample1Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
           
@@ -121,7 +121,7 @@
               }
             }
           },
-          "46E6484545Dc4Aeb932DE1B43178Fe09": {
+          "sample2Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
           
@@ -149,7 +149,7 @@
               }
             }
           },
-          "7Ff6388CCa204325A30C0C29135E1D05": {
+          "sample3Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
           
@@ -210,7 +210,7 @@
             "binStep": 200,
             "minCellSize": 1080
           },
-          "330390E9Cdc94C7FB68A0C51Fd059Dda": {
+          "sample1Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
           
@@ -224,7 +224,7 @@
               "minCellSize": 907
             }
           },
-          "46E6484545Dc4Aeb932DE1B43178Fe09": {
+          "sample2Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
           
@@ -238,7 +238,7 @@
               "minCellSize": 623
             }
           },
-          "7Ff6388CCa204325A30C0C29135E1D05": {
+          "sample3Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
           
@@ -265,7 +265,7 @@
               }
             }
           },
-          "330390E9Cdc94C7FB68A0C51Fd059Dda": {
+          "sample1Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
           
@@ -289,7 +289,7 @@
               }
             }
           },
-          "46E6484545Dc4Aeb932DE1B43178Fe09": {
+          "sample2Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
           
@@ -313,7 +313,7 @@
               }
             }
           },
-          "7Ff6388CCa204325A30C0C29135E1D05": {
+          "sample3Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
           
