@@ -55,6 +55,7 @@ const getConnectionParams = async (environment, rdsSandboxId) => {
     username,
   });
 
+
   const token = await promisifiedGetAuthToken(signer);
 
   // Token expires in 15 minutes https://aws.amazon.com/premiumsupport/knowledge-center/users-connect-rds-iam/
