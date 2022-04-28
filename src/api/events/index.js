@@ -39,7 +39,13 @@ module.exports = (socket) => {
         const jwtClaim = await authenticationMiddlewareSocketIO(Authorization, socket);
         const { sub: userId } = jwtClaim;
         await authorize(userId, 'socket', null, experimentId);
-        await handleWorkRequest(data);
+        const podInfo = await handleWorkRequest(data);
+        socket.emit(`WorkerInfo-${experimentId}`, {
+          response: {
+            podInfo,
+            trace: AWSXRay.getSegment().trace_id,
+          },
+        });
       } catch (e) {
         logger.log(`[REQ ??, SOCKET ${socket.id}] Error while processing WorkRequest event.`);
         logger.trace(e);
