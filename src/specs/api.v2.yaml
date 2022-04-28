@@ -466,7 +466,7 @@ components:
     CreateSample:
       $ref: './models/samples-bodies/CreateSample.v2.yaml'
     GetSamples:
-      $ref: './models/samples-bodies/Sample.v2.yaml'
+      $ref: './models/samples-bodies/Samples.v2.yaml'
     HTTPSuccess:
       $ref: './models/HTTPSuccess.v1.yaml'
     HTTPError:

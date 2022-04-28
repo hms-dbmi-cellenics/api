@@ -11,6 +11,7 @@ jest.mock('../../../src/api.v2/controllers/sampleController', () => ({
   createSample: jest.fn(),
   deleteSample: jest.fn(),
   patchSample: jest.fn(),
+  getSamples: jest.fn(),
 }));
 
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
@@ -139,6 +140,22 @@ describe('tests for experiment route', () => {
         }
         // there is no point testing for the values of the response body
         // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+  it('Getting all samples works', async (done) => {
+    sampleController.getSamples.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+
+    request(app)
+      .get(`/v2/experiments/${experimentId}/samples`)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
         return done();
       });
   });

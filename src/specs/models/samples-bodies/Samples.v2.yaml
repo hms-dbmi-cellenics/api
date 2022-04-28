@@ -1,0 +1,4 @@
+title: Sample object
+description: Schema for a sample object
+items:
+  $ref: ./Sample.v2.yaml

@@ -2,12 +2,11 @@ const _ = require('lodash');
 
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
-const { collapseKeyIntoArray } = require('../../sql/helpers');
+const { collapseKeyIntoArray, replaceNullsWithObject } = require('../../sql/helpers');
 
 const { NotFoundError } = require('../../utils/responses');
 
 const tableNames = require('./tableNames');
-const { replaceNullsWithObject } = require('../../sql/helpers');
 
 const getLogger = require('../../utils/getLogger');
 

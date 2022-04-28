@@ -14,6 +14,7 @@ jest.mock('../../../src/sql/sqlClient', () => ({
 jest.mock('../../../src/sql/helpers', () => ({
   collapseKeysIntoObject: jest.fn(),
   collapseKeyIntoArray: jest.fn(),
+  replaceNullsWithObject: jest.fn(),
 }));
 
 const Experiment = require('../../../src/api.v2/model/Experiment');

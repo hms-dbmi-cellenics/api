@@ -1,0 +1,155 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sample apiv2 model Get samples works correctly 1`] = `
+Array [
+  Array [
+    "s.experiment_id",
+    "mockExperimentId",
+  ],
+  Array [
+    "s.experiment_id",
+    "mockExperimentId",
+  ],
+]
+`;
+
+exports[`Sample apiv2 model Get samples works correctly 2`] = `
+Array [
+  Array [
+    Object {
+      "s": "sample",
+    },
+  ],
+  Array [
+    [MockFunction],
+  ],
+  Array [
+    Object {
+      "s": "sample",
+    },
+  ],
+  Array [
+    [MockFunction],
+  ],
+  Array [
+    [MockFunction],
+  ],
+]
+`;
+
+exports[`Sample apiv2 model Get samples works correctly 3`] = `
+Array [
+  Array [
+    Array [
+      "id",
+      "experiment_id",
+      "name",
+      "sample_technology",
+      "created_at",
+      "updated_at",
+      [MockFunction],
+    ],
+  ],
+  Array [
+    Array [
+      "s.id",
+      "s.experiment_id",
+      "s.name",
+      "s.sample_technology",
+      "s.created_at",
+      "s.updated_at",
+      "m.key",
+      "sm_map.value",
+    ],
+  ],
+  Array [
+    Array [
+      "id",
+      [MockFunction],
+    ],
+  ],
+  Array [
+    Array [
+      "sf.sample_file_type",
+      "sf.s3_path",
+      "sf.size",
+      "sf.valid",
+      "sf.upload_status",
+      "s.id",
+    ],
+  ],
+  Array [
+    "*",
+  ],
+]
+`;
+
+exports[`Sample apiv2 model Get samples works correctly 4`] = `
+Array [
+  Array [
+    "sample_to_sample_file_map as sf_map",
+    "s.id",
+    "sf_map.sample_id",
+  ],
+  Array [
+    "sample_file as sf",
+    "sf.id",
+    "sf_map.sample_file_id",
+  ],
+  Array [
+    [MockFunction],
+    "select_metadata.id",
+    "select_sample_file.id",
+  ],
+]
+`;
+
+exports[`Sample apiv2 model Get samples works correctly 5`] = `
+Array [
+  Array [
+    Array [
+      "id",
+      "experiment_id",
+      "name",
+      "sample_technology",
+      "created_at",
+      "updated_at",
+    ],
+  ],
+  Array [
+    "id",
+  ],
+]
+`;
+
+exports[`Sample apiv2 model Get samples works correctly 6`] = `
+Array [
+  Array [
+    "COALESCE(
+      jsonb_object_agg(key, value)
+      FILTER(
+        WHERE key IS NOT NULL
+      ),
+      '{}'::jsonb
+    ) as metadata",
+  ],
+  Array [
+    "jsonb_object_agg(sample_file_type,json_build_object('sample_file_type',sample_file_type,'s3_path',s3_path,'size',size,'valid',valid,'upload_status',upload_status)) as files",
+  ],
+]
+`;
+
+exports[`Sample apiv2 model Get samples works correctly 7`] = `
+Array [
+  Array [
+    "metadata_track as m",
+    "s.experiment_id",
+    "m.experiment_id",
+  ],
+  Array [
+    "sample_in_metadata_track_map as sm_map",
+    "s.id",
+    "sm_map.sample_id",
+  ],
+]
+`;

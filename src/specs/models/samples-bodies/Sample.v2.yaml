@@ -2,7 +2,7 @@ title: Sample
 description: A single sample
 type: object
 properties:
-  uuid:
+  id:
     type: string
   name:
     type: string
@@ -38,7 +38,7 @@ properties:
 required:
   - name
   - projectUuid
-  - uuid
+  - id
   - createdDate
   - lastModified
   - complete
