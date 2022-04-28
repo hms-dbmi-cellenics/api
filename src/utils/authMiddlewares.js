@@ -8,7 +8,6 @@ const jwt = require('jsonwebtoken');
 const jwtExpress = require('express-jwt');
 const jwkToPem = require('jwk-to-pem');
 const util = require('util');
-const dns = require('dns').promises;
 
 const config = require('../config');
 
@@ -18,6 +17,7 @@ const { CacheMissError } = require('../cache/cache-utils');
 const { UnauthorizedError, UnauthenticatedError } = require('./responses');
 const ProjectsService = require('../api/route-services/projects');
 const AccessService = require('../api/route-services/access');
+const { isReqFromLocalhost, isReqFromCluster } = require('./isReqFrom');
 
 const accessService = new AccessService();
 const projectService = new ProjectsService();
@@ -82,32 +82,7 @@ const authenticationMiddlewareExpress = async (app) => {
   });
 };
 
-
-// eslint-disable-next-line no-useless-escape
-const INTERNAL_DOMAINS_REGEX = new RegExp('((\.compute\.internal)|(\.svc\.local))$');
-
 const checkAuthExpiredMiddleware = (req, res, next) => {
-  const isReqFromLocalhost = async () => {
-    const ip = req.connection.remoteAddress;
-    const host = req.get('host');
-
-    if (ip === '127.0.0.1' || ip === '::ffff:127.0.0.1' || ip === '::1' || host.indexOf('localhost') !== -1) {
-      return true;
-    }
-
-    throw new Error('ip address is not localhost');
-  };
-
-  const isReqFromCluster = async () => {
-    const domains = await dns.reverse(req.ip);
-
-    if (!domains.some((domain) => INTERNAL_DOMAINS_REGEX.test(domain))) {
-      throw new Error('ip address does not come from internal sources');
-    }
-
-    return true;
-  };
-
   if (!req.user) {
     return next();
   }
@@ -125,8 +100,9 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
     return next(new UnauthenticatedError('token has expired'));
   }
 
+
   // check if we should ignore expired jwt token for this path and request type
-  const longTimeoutEndpoints = [{ urlMatcher: /^\/v1\/experiments\/.{32}\/cellSets$/, method: 'PATCH' }];
+  const longTimeoutEndpoints = [{ urlMatcher: /experiments\/.{32}\/cellSets$/, method: 'PATCH' }];
   const isEndpointIgnored = longTimeoutEndpoints.some(
     ({ urlMatcher, method }) => (
       req.method.toLowerCase() === method.toLowerCase() && urlMatcher.test(req.url)
@@ -135,15 +111,13 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
 
   // if endpoint is not in ignore list, the JWT is too old, send an error accordingly
   if (!isEndpointIgnored) {
-    return next(new UnauthenticatedError('token has expired'));
+    return next(new UnauthenticatedError('token has expired for non-ignored endpoint'));
   }
 
-  promiseAny([isReqFromCluster(), isReqFromLocalhost()])
-    .then(() => {
-      next();
-    })
-    .catch(() => {
-      next(new UnauthenticatedError('token has expired'));
+  promiseAny([isReqFromCluster(req), isReqFromLocalhost(req)])
+    .then(() => next())
+    .catch((e) => {
+      next(new UnauthenticatedError(`invalid request origin ${e}`));
     });
 
   return null;
@@ -153,11 +127,13 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
  * Authentication middleware for Socket.IO requests. Resolves with
  * the JWT claim if the authentication was successful, or rejects with
  * the error otherwise.
+ * If ignoreExpiration is set to true, jwt.verify will not return an error
+ * for expired tokens.
  *
  * @param {*} authHeader The bearer-encoded JWT token.
  * @returns Promise that resolves or rejects based on authentication status.
  */
-const authenticationMiddlewareSocketIO = async (authHeader) => {
+const authenticationMiddlewareSocketIO = async (authHeader, ignoreExpiration = false) => {
   const poolId = await config.awsUserPoolIdPromise;
   const cache = CacheSingleton.get();
 
@@ -187,6 +163,7 @@ const authenticationMiddlewareSocketIO = async (authHeader) => {
         });
     },
     {
+      ignoreExpiration,
       algorithms: ['RS256'],
       issuer,
     },

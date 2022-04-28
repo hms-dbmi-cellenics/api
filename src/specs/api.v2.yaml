@@ -58,6 +58,74 @@ paths:
                   - env
                   - clusterEnv
       description: Returns a status on the health of the API.
+  '/experiments/{experimentId}/processingConfig':
+    get:
+      summary: Get processing configuration for an experiment
+      description: Get processing configuration for an experiment
+      operationId: getProcessingConfig
+      x-eov-operation-id: experiment#getProcessingConfig
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: get processing configuration for an experiment
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - type: object
+                    additionalProperties: false
+                  - $ref: '#/components/schemas/ProcessingConfig'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'        
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'        
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        
+    put:
+      summary: Update processing configuration for an experiment
+      description: Update processing configuration for an experiment
+      operationId: updateProcessingConfig
+      x-eov-operation-id: experiment#updateProcessingConfig
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: Processing configuration for an experiment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        
   '/experiments':
     get:
       summary: Get all experiments
@@ -453,6 +521,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+
 components:
   schemas:
     CreateExperiment:
@@ -461,6 +530,8 @@ components:
       $ref: './models/experiment-bodies/ExperimentInfo.v2.yaml'
     PatchExperiment:
       $ref: './models/experiment-bodies/PatchExperiment.v2.yaml'
+    ProcessingConfig:
+      $ref: './models/experiment-bodies/ProcessingConfig.v2.yaml'
     GetAllExperiments:
       $ref: './models/experiment-bodies/GetAllExperiments.v2.yaml'
     CreateSample:

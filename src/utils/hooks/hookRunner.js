@@ -31,28 +31,36 @@ class hookRunner {
 
   // run requires taskName to be present as a key in the payload
   async run(payload) {
-    const { taskName } = payload;
-    this.results[taskName] = [];
+    // run all hooks inside a try catch because they are side-effects and as such, they should
+    // not break the main program execution
+    try {
+      const { taskName } = payload;
+      this.results[taskName] = [];
 
-    // Manual looping is done to prevent passing function in hooks[taskName] into a callback,
-    // which might cause scoping issues
+      // Manual looping is done to prevent passing function in hooks[taskName] into a callback,
+      // which might cause scoping issues
 
-    // Runs task specific hooks
-    for (let i = 0; this.hooks[taskName] !== undefined && i < this.hooks[taskName].length; i += 1) {
-      // calling the hooks sequentially since they may depend on each other
-      // eslint-disable-next-line no-await-in-loop
-      this.results[taskName].push(await this.hooks[taskName][i](payload));
+      // Runs task specific hooks
+      // eslint-disable-next-line max-len
+      for (let i = 0; this.hooks[taskName] !== undefined && i < this.hooks[taskName].length; i += 1) {
+        // calling the hooks sequentially since they may depend on each other
+        // eslint-disable-next-line no-await-in-loop
+        this.results[taskName].push(await this.hooks[taskName][i](payload));
+      }
+
+      // Runs hooks that apply to all tasks (assigning the results to current task)
+      for (let i = 0; this.hooks[ALL] !== undefined && i < this.hooks[ALL].length; i += 1) {
+        // eslint-disable-next-line no-await-in-loop
+        this.results[taskName].push(await this.hooks[ALL][i](payload));
+      }
+
+      logger.log(`Completed ${this.results[taskName].length} hooks for pipeline task ${taskName}`);
+
+      return this.results;
+    } catch (e) {
+      logger.error('Error running hooks: ', e);
     }
-
-    // Runs hooks that apply to all tasks (assigning the results to current task)
-    for (let i = 0; this.hooks[ALL] !== undefined && i < this.hooks[ALL].length; i += 1) {
-      // eslint-disable-next-line no-await-in-loop
-      this.results[taskName].push(await this.hooks[ALL][i](payload));
-    }
-
-    logger.log(`Completed ${this.results[taskName].length} hooks for pipeline task ${taskName}`);
-
-    return this.results;
+    return [];
   }
 }
 
