@@ -4,12 +4,12 @@ const config = require('../../config');
 
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
-
-const { isRoleAuthorized } = require('../helpers/roles');
-
-const AccessRole = require('../../utils/enums/AccessRole');
+const { NotFoundError } = require('../../utils/responses');
 
 const tableNames = require('./tableNames');
+const AccessRole = require('../../utils/enums/AccessRole');
+
+const { isRoleAuthorized } = require('../helpers/roles');
 
 const selectableProps = [
   'user_id',
@@ -25,6 +25,17 @@ const logger = getLogger('[UserAccessModel] - ');
 class UserAccess extends BasicModel {
   constructor(sql = sqlClient.get()) {
     super(sql, tableNames.USER_ACCESS, selectableProps);
+  }
+
+  // Get all users and their access for this experiment
+  async getExperimentUsers(experimentId) {
+    const experimentUsers = await this.find({ experiment_id: experimentId });
+
+    if (_.isEmpty(experimentUsers)) {
+      throw new NotFoundError('Experiment not found');
+    }
+
+    return experimentUsers;
   }
 
   async createNewExperimentPermissions(userId, experimentId) {

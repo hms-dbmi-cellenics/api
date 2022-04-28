@@ -3,6 +3,7 @@ const BasicModel = require('./BasicModel')();
 const stub = {
   createNewExperimentPermissions: jest.fn(),
   canAccessExperiment: jest.fn(),
+  getExperimentUsers: jest.fn(),
   ...BasicModel,
 };
 
