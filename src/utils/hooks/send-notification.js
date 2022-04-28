@@ -16,7 +16,8 @@ const sendNotification = async (message) => {
     logger.log('No authJWT token in message, skipping status check for notifications...');
     return;
   }
-  const user = await authenticationMiddlewareSocketIO(authJWT);
+
+  const user = await authenticationMiddlewareSocketIO(authJWT, true);
 
   const { experimentId } = message;
   const statusRes = await getPipelineStatus(experimentId, process);
