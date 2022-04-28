@@ -21,7 +21,7 @@ module.exports = {
     (req, res, next) => deleteSample(req, res).catch(next),
   ],
   'sample#getSamples': [
-    // expressAuthorizationMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => getSamples(req, res).catch(next),
   ],
 };
