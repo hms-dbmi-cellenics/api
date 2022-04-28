@@ -570,6 +570,38 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPError'
                 
+  '/access/{experimentId}':
+    get:
+      summary: Get the users with access to an experiment
+      operationId: get-access
+      x-eov-operation-id: access#getExperimentUsers
+      x-eov-operation-handler: routes/access
+      description: Returns the users with access to the experiment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: array
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  role:
+                    type: string
+                required:
+                  - name
+                  - email
+                  - role
+        '404':
+          description: Experiment not found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
 components:
   schemas:
     CreateExperiment:
