@@ -7,32 +7,44 @@ kc.loadFromDefault();
 
 const logger = getLogger();
 
+// getAvailablePods retrieves pods not assigned already to an activityID given a selector
+const getAvailablePods = async (namespace, statusSelector) => {
+  const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+
+  const pods = await k8sApi.listNamespacedPod(namespace, null, null, null, statusSelector, '!experimentId,!run');
+  return pods.body.items;
+};
+
+
 const createWorkerResources = async (service) => {
   const { sandboxId } = config;
   const { experimentId } = service.workRequest;
   const namespace = `worker-${sandboxId}`;
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
-  const [assignedPods, unassignedPods] = await Promise.all(
-    [
-      k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', `experimentId=${experimentId}`),
+  const assignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', `experimentId=${experimentId}`);
 
-      // Look for items without an experimentId or run label. Run is used by the cleanup operator
-      // so this prevents us from scheduling it as a worker by accident.
-      k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', '!experimentId,!run'),
-    ],
-  );
 
   if (assignedPods.body.items.length > 0) {
     logger.log(`Experiment ${experimentId} already assigned a worker, skipping creation...`);
     return;
   }
 
-  if (unassignedPods.body.items.length === 0) {
-    throw new Error(`Experiment ${experimentId} cannot be launched as there are no available running workers.`);
+  // try to get an available pod which is already running
+  let pods = await getAvailablePods(namespace, 'status.phase=Running');
+  if (pods.length < 1) {
+    logger.log('no running pods available, trying to select pods still being created');
+    pods = await getAvailablePods(namespace, 'status.phase=ContainerCreating');
+  }
+  if (pods.length < 1) {
+    logger.log('no pods in creation process available, trying to select pods still pending');
+    pods = await getAvailablePods(namespace, 'status.phase=Pending');
   }
 
-  const pods = unassignedPods.body.items;
+  if (pods.length < 1) {
+    throw new Error(`Experiment ${experimentId} cannot be launched as there are no available workers.`);
+  }
+
   logger.log(pods.length, `unassigned candidate pods found for experiment ${experimentId}. Selecting one...`);
 
   // Select a pod to run this experiment on.
