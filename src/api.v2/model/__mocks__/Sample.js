@@ -1,6 +1,7 @@
 const BasicModel = require('./BasicModel')();
 
 const stub = {
+  getSamples: jest.fn(),
   ...BasicModel,
 };
 
