@@ -133,7 +133,7 @@ class PipelineService {
       const { input: { sampleUuid, taskName } } = message;
 
       output = await this.getS3Output(message);
-      console.log('OUTPUT IS ', output);
+
       await this.updatePlotData(taskName, experimentId, output);
       await this.updateProcessingConfig(taskName, experimentId, output, sampleUuid);
     }
