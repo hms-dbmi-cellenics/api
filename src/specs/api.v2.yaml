@@ -86,7 +86,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'        
+                $ref: '#/components/schemas/HTTPError'   
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'     
         '404':
           description: Not found error.
           content:
@@ -119,6 +125,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'                
         '404':
           description: Not found error.
           content:
