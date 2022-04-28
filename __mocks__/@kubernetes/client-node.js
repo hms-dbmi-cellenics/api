@@ -22,12 +22,9 @@ const mockApi = {
   })),
 };
 
-k8s.KubeConfig.mockImplementation(() => {
-  console.debug('mocking the constructor');
-  return {
-    loadFromDefault: jest.fn(),
-    makeApiClient: jest.fn(() => mockApi),
-  };
-});
+k8s.KubeConfig.mockImplementation(() => ({
+  loadFromDefault: jest.fn(),
+  makeApiClient: jest.fn(() => mockApi),
+}));
 
 module.exports = k8s;
