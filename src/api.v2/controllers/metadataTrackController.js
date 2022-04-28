@@ -52,8 +52,25 @@ const patchSampleInMetadataTrackValue = async (req, res) => {
   res.json(OK());
 };
 
+const deleteMetadataTrack = async (req, res) => {
+  const {
+    params: { experimentId, metadataTrackKey },
+  } = req;
+
+  logger.log(`Creating metadata track ${metadataTrackKey} in experiment ${experimentId}`);
+
+  await new MetadataTrack().deleteAnyMatches(
+    { experiment_id: experimentId, key: metadataTrackKey },
+  );
+
+  logger.log(`Finished creating metadata track ${metadataTrackKey} in experiment ${experimentId}`);
+
+  res.json(OK());
+};
+
 module.exports = {
   createMetadataTrack,
   patchMetadataTrack,
   patchSampleInMetadataTrackValue,
+  deleteMetadataTrack,
 };

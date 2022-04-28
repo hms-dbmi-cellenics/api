@@ -74,6 +74,13 @@ class BasicModel {
       .where({ id })
       .timeout(this.timeout);
   }
+
+  deleteAnyMatches(filters) {
+    return this.sql.del()
+      .from(this.tableName)
+      .where(filters)
+      .timeout(this.timeout);
+  }
 }
 
 module.exports = BasicModel;
