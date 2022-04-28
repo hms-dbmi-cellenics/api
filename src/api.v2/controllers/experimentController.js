@@ -35,9 +35,7 @@ const getExperiment = async (req, res) => {
 
 const createExperiment = async (req, res) => {
   const { params: { experimentId }, user, body } = req;
-
   const { name, description } = body;
-
   logger.log('Creating experiment');
 
   await sqlClient.get().transaction(async (trx) => {
@@ -46,13 +44,11 @@ const createExperiment = async (req, res) => {
   });
 
   logger.log(`Finished creating experiment ${experimentId}`);
-
   res.json(OK());
 };
 
 const patchExperiment = async (req, res) => {
   const { params: { experimentId }, body } = req;
-
   logger.log(`Patching experiment ${experimentId}`);
 
   const snakeCasedKeysToPatch = _.mapKeys(body, (_value, key) => _.snakeCase(key));
@@ -60,7 +56,6 @@ const patchExperiment = async (req, res) => {
   await new Experiment().updateById(experimentId, snakeCasedKeysToPatch);
 
   logger.log(`Finished patching experiment ${experimentId}`);
-
   res.json(OK());
 };
 
@@ -69,7 +64,6 @@ const updateSamplePosition = async (req, res) => {
     params: { experimentId },
     body: { newPosition, oldPosition },
   } = req;
-
   logger.log(`Reordering sample in ${experimentId} from position ${oldPosition} to ${newPosition}`);
 
   if (oldPosition === newPosition) {
@@ -82,7 +76,6 @@ const updateSamplePosition = async (req, res) => {
   await new Experiment().updateSamplePosition(experimentId, oldPosition, newPosition);
 
   logger.log(`Finished reordering samples in ${experimentId}`);
-
   res.json(OK());
 };
 
@@ -91,6 +84,8 @@ const getProcessingConfig = async (req, res) => {
   logger.log('Getting processing config for experiment ', experimentId);
 
   const result = await new Experiment().getProcessingConfig(experimentId);
+
+  logger.log('Finished getting processing config for experiment ', experimentId);
   res.json(result);
 };
 
@@ -99,12 +94,13 @@ const updateProcessingConfig = async (req, res) => {
   logger.log('Updating processing config for experiment ', experimentId);
 
   await new Experiment().updateProcessingConfig(experimentId, body);
+
+  logger.log('Finished updating processing config for experiment ', experimentId);
   res.json(OK());
 };
 
 const getBackendStatus = async (req, res) => {
   const { experimentId } = req.params;
-
   logger.log(`Getting backend status for experiment ${experimentId}`);
 
   const [{ gem2s }, { qc }, { worker }] = await Promise.all(
@@ -121,8 +117,7 @@ const getBackendStatus = async (req, res) => {
     worker,
   };
 
-  logger.log(`Got backend status for experiment ${experimentId} successfully`);
-
+  logger.log(`Finished getting backend status for experiment ${experimentId} successfully`);
   res.json(formattedResponse);
 };
 

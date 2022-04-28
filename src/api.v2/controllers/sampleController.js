@@ -16,7 +16,6 @@ const createSample = async (req, res) => {
     params: { experimentId, sampleId },
     body: { name, sampleTechnology },
   } = req;
-
   logger.log('Creating sample');
 
   await sqlClient.get().transaction(async (trx) => {
@@ -33,13 +32,11 @@ const createSample = async (req, res) => {
   });
 
   logger.log(`Finished creating sample ${sampleId} for experiment ${experimentId}`);
-
   res.json(OK());
 };
 
 const patchSample = async (req, res) => {
   const { params: { experimentId, sampleId }, body } = req;
-
   logger.log(`Patching sample ${sampleId} in experiment ${experimentId}`);
 
   const snakeCasedKeysToPatch = _.mapKeys(body, (_value, key) => _.snakeCase(key));
@@ -47,13 +44,11 @@ const patchSample = async (req, res) => {
   await new Sample().updateById(sampleId, snakeCasedKeysToPatch);
 
   logger.log(`Finished patching sample ${sampleId} in experiment ${experimentId}`);
-
   res.json(OK());
 };
 
 const deleteSample = async (req, res) => {
   const { params: { experimentId, sampleId } } = req;
-
   logger.log(`Deleting sample ${sampleId} from experiment ${experimentId}`);
 
   await sqlClient.get().transaction(async (trx) => {
@@ -62,7 +57,6 @@ const deleteSample = async (req, res) => {
   });
 
   logger.log(`Finished deleting sample ${sampleId} from experiment ${experimentId}`);
-
   res.json(OK());
 };
 

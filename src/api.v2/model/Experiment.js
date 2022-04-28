@@ -110,6 +110,8 @@ class Experiment extends BasicModel {
   async updateSamplePosition(
     experimentId, oldPosition, newPosition,
   ) {
+    // If we are working within a transaction then
+    // keep using that one instead of starting a subtransaction
     const trx = await this.sql.transaction();
 
     try {
