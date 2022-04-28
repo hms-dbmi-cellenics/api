@@ -68,7 +68,7 @@ class BasicModel {
       .timeout(this.timeout);
   }
 
-  destroy(id) {
+  delete(id) {
     return this.sql.del()
       .from(this.tableName)
       .where({ id })

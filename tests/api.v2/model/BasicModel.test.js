@@ -95,12 +95,26 @@ describe('model/BasicModel', () => {
     expect(mockSqlClient.timeout).toHaveBeenCalledWith(4000);
   });
 
-  it('destroy works correctly', async () => {
-    await new BasicModel(mockSqlClient, mockTableName, ['id', 'name']).destroy('mockId');
+  it('delete works correctly', async () => {
+    await new BasicModel(mockSqlClient, mockTableName, ['id', 'name']).delete('mockId');
 
     expect(mockSqlClient.del).toHaveBeenCalled();
     expect(mockSqlClient.from).toHaveBeenCalledWith(mockTableName);
     expect(mockSqlClient.where).toHaveBeenCalledWith({ id: 'mockId' });
+    expect(mockSqlClient.timeout).toHaveBeenCalledWith(4000);
+  });
+
+  it('deleteAnyMatches works correctly', async () => {
+    const mockKey = 'aKey';
+    const mockExperimentId = 'anExperimentId';
+
+    await new BasicModel(mockSqlClient, mockTableName, ['key', 'experiment_id', 'name']).deleteAnyMatches({ key: mockKey, experiment_id: mockExperimentId });
+
+    expect(mockSqlClient.del).toHaveBeenCalled();
+    expect(mockSqlClient.from).toHaveBeenCalledWith(mockTableName);
+    expect(mockSqlClient.where).toHaveBeenCalledWith(
+      { key: mockKey, experiment_id: mockExperimentId },
+    );
     expect(mockSqlClient.timeout).toHaveBeenCalledWith(4000);
   });
 });
