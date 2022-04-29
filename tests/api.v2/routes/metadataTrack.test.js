@@ -11,7 +11,7 @@ jest.mock('../../../src/api.v2/controllers/metadataTrackController', () => ({
   createMetadataTrack: jest.fn(),
   patchMetadataTrack: jest.fn(),
   deleteMetadataTrack: jest.fn(),
-  patchSampleInMetadataTrackValue: jest.fn(),
+  patchValueForSample: jest.fn(),
 }));
 
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
@@ -117,7 +117,7 @@ describe('tests for metadata track routes', () => {
   });
 
   it('Patching the value a sample has in a metadata track works', async (done) => {
-    metadataTrackController.patchSampleInMetadataTrackValue.mockImplementationOnce((req, res) => {
+    metadataTrackController.patchValueForSample.mockImplementationOnce((req, res) => {
       res.json(OK());
       return Promise.resolve();
     });
@@ -137,7 +137,7 @@ describe('tests for metadata track routes', () => {
   });
 
   it('Patching the value a sample has in a metadata track with invalid request body fails', async (done) => {
-    metadataTrackController.patchSampleInMetadataTrackValue.mockImplementationOnce((req, res) => {
+    metadataTrackController.patchValueForSample.mockImplementationOnce((req, res) => {
       res.json(OK());
       return Promise.resolve();
     });

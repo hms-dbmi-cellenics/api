@@ -31,14 +31,34 @@ const patchMetadataTrack = async (req, res) => {
     .update({ experiment_id: experimentId, key: oldKey }, { key });
 
   if (result.length === 0) {
-    throw new NotFoundError(`Metadata track ${oldKey} doesn't exist`);
+    throw new NotFoundError(`Metadata track ${oldKey} not found`);
   }
 
   logger.log(`Finished patching metadata track ${oldKey} in experiment ${experimentId}, changed to ${key}`);
   res.json(OK());
 };
 
-const patchSampleInMetadataTrackValue = async (req, res) => {
+const deleteMetadataTrack = async (req, res) => {
+  const {
+    params: { experimentId, metadataTrackKey },
+  } = req;
+
+  logger.log(`Creating metadata track ${metadataTrackKey} in experiment ${experimentId}`);
+
+  const result = await new MetadataTrack().delete(
+    { experiment_id: experimentId, key: metadataTrackKey },
+  );
+
+  if (result.length === 0) {
+    throw new NotFoundError(`Metadata track ${metadataTrackKey} not found`);
+  }
+
+  logger.log(`Finished creating metadata track ${metadataTrackKey} in experiment ${experimentId}`);
+
+  res.json(OK());
+};
+
+const patchValueForSample = async (req, res) => {
   const {
     params: { experimentId, sampleId, metadataTrackKey },
     body: { value },
@@ -52,25 +72,9 @@ const patchSampleInMetadataTrackValue = async (req, res) => {
   res.json(OK());
 };
 
-const deleteMetadataTrack = async (req, res) => {
-  const {
-    params: { experimentId, metadataTrackKey },
-  } = req;
-
-  logger.log(`Creating metadata track ${metadataTrackKey} in experiment ${experimentId}`);
-
-  await new MetadataTrack().deleteAnyMatches(
-    { experiment_id: experimentId, key: metadataTrackKey },
-  );
-
-  logger.log(`Finished creating metadata track ${metadataTrackKey} in experiment ${experimentId}`);
-
-  res.json(OK());
-};
-
 module.exports = {
   createMetadataTrack,
   patchMetadataTrack,
-  patchSampleInMetadataTrackValue,
   deleteMetadataTrack,
+  patchValueForSample,
 };

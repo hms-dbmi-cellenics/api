@@ -1,7 +1,7 @@
 const {
   createMetadataTrack,
   patchMetadataTrack,
-  patchSampleInMetadataTrackValue,
+  patchValueForSample,
   deleteMetadataTrack,
 } = require('../controllers/metadataTrackController');
 
@@ -18,7 +18,7 @@ module.exports = {
   ],
   'metadataTrack#patchSampleInMetadataTrackValue': [
     expressAuthorizationMiddleware,
-    (req, res, next) => patchSampleInMetadataTrackValue(req, res).catch(next),
+    (req, res, next) => patchValueForSample(req, res).catch(next),
   ],
   'metadataTrack#deleteMetadataTrack': [
     expressAuthorizationMiddleware,

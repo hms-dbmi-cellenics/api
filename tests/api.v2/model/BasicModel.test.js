@@ -95,8 +95,8 @@ describe('model/BasicModel', () => {
     expect(mockSqlClient.timeout).toHaveBeenCalledWith(4000);
   });
 
-  it('delete works correctly', async () => {
-    await new BasicModel(mockSqlClient, mockTableName, ['id', 'name']).delete('mockId');
+  it('deleteById works correctly', async () => {
+    await new BasicModel(mockSqlClient, mockTableName, ['id', 'name']).deleteById('mockId');
 
     expect(mockSqlClient.del).toHaveBeenCalled();
     expect(mockSqlClient.from).toHaveBeenCalledWith(mockTableName);
@@ -104,12 +104,12 @@ describe('model/BasicModel', () => {
     expect(mockSqlClient.timeout).toHaveBeenCalledWith(4000);
   });
 
-  it('deleteAnyMatches works correctly', async () => {
+  it('delete works correctly', async () => {
     const mockKey = 'aKey';
     const mockExperimentId = 'anExperimentId';
 
     await new BasicModel(mockSqlClient, mockTableName, ['key', 'experiment_id', 'name'])
-      .deleteAnyMatches({ key: mockKey, experiment_id: mockExperimentId });
+      .delete({ key: mockKey, experiment_id: mockExperimentId });
 
     expect(mockSqlClient.del).toHaveBeenCalled();
     expect(mockSqlClient.from).toHaveBeenCalledWith(mockTableName);
