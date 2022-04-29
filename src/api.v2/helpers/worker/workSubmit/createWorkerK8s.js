@@ -8,13 +8,16 @@ kc.loadFromDefault();
 const logger = getLogger();
 
 // getAvailablePods retrieves pods not assigned already to an activityID given a selector
-const getAvailablePods = async (namespace, statusSelector) => {
+const getPods = async (namespace, statusSelector, labelSelector) => {
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
-  const pods = await k8sApi.listNamespacedPod(namespace, null, null, null, statusSelector, '!experimentId,!run');
+  const pods = await k8sApi.listNamespacedPod(
+    namespace, null, null, null, statusSelector, labelSelector,
+  );
   return pods.body.items;
 };
 
+const getAvailablePods = async (namespace, statusSelector) => getPods(namespace, statusSelector, '!experimentId,!run');
 
 const createWorkerResources = async (service) => {
   const { sandboxId } = config;
@@ -22,16 +25,15 @@ const createWorkerResources = async (service) => {
   const namespace = `worker-${sandboxId}`;
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
-  const assignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', `experimentId=${experimentId}`);
+  const assignedPods = await getPods(namespace, 'status.phase=Running', `experimentId=${experimentId}`);
 
-
-  if (assignedPods.body.items.length === 1) {
+  if (assignedPods.length === 1) {
     const { metadata: { name, creationTimestamp }, status: { phase } } = assignedPods[0];
     logger.log(`Experiment ${experimentId} already assigned a worker, skipping creation...`);
     return { name, creationTimestamp, phase };
   }
 
-  if (assignedPods.body.items.length > 1) {
+  if (assignedPods.length > 1) {
     logger.error(`Experiment ${experimentId} has two workers pods assigned.`);
     return {};
   }
