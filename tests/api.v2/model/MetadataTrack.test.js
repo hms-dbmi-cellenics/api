@@ -6,6 +6,8 @@ jest.mock('../../../src/sql/sqlClient', () => ({
 }));
 
 const MetadataTrack = require('../../../src/api.v2/model/MetadataTrack');
+const BasicModel = require('../../../src/api.v2/model/BasicModel');
+
 const tableNames = require('../../../src/api.v2/model/tableNames');
 
 describe('model/userAccess', () => {
@@ -54,6 +56,46 @@ describe('model/userAccess', () => {
     expect(mockTrx.into.mock.calls).toMatchSnapshot('intoParams');
     expect(mockTrx.insert.mock.calls).toMatchSnapshot('insertParams');
     expect(mockTrx).not.toHaveBeenCalledWith(tableNames.SAMPLE_IN_METADATA_TRACK_MAP);
+  });
+
+  it('patchValueForSample works correctly', async () => {
+    const experimentId = 'mockExperimentId';
+    const key = 'mockKey';
+    const sampleId = 'mockSampleId';
+    const value = 'mockValue';
+
+    const metadataTrackId = 'mockMetadataTrackId';
+
+    const mockFind = jest.spyOn(BasicModel.prototype, 'find')
+      .mockImplementationOnce(() => Promise.resolve([{ id: metadataTrackId }]));
+
+
+
+    await new MetadataTrack().patchValueForSample(experimentId, sampleId, key, value);
+
+    expect(mockFind).toHaveBeenCalledWith({ experiment_id: experimentId, key });
+
+    expect(mockSqlClient.update).toHaveBeenCalledWith({ value });
+    expect(mockSqlClient.where).toHaveBeenCalledWith(
+      { metadata_track_id: metadataTrackId, sample_id: sampleId },
+    );
+    expect(mockSqlClient.returning).toHaveBeenCalledWith(['metadata_track_id']);
+  });
+
+  it('patchValueForSample throws if the track-sample map doesn\'t exist', async () => {
+    const experimentId = 'mockExperimentId';
+    const key = 'mockKey';
+    const sampleId = 'mockSampleId';
+    const value = 'mockValue';
+
+    const mockFind = jest.spyOn(BasicModel.prototype, 'find')
+      .mockImplementationOnce(() => Promise.resolve([]));
+
+    await expect(
+      new MetadataTrack().patchValueForSample(experimentId, sampleId, key, value),
+    ).rejects.toThrow();
+
+    expect(mockFind).toHaveBeenCalledWith({ experiment_id: experimentId, key });
   });
 
   it('createNewExperimentPermissions works correctly when experiment has metadata tracks', async () => {
