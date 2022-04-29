@@ -23,12 +23,6 @@ const pendingWorker = {
   },
 };
 
-const mockEmptyList = {
-  body: {
-    items: [],
-  },
-};
-
 const buildWorkerResponse = (workers) => ({
   body: {
     items: workers,
@@ -108,6 +102,7 @@ describe('tests for the pipeline-assign service', () => {
     const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
     k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([]));
     k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([]));
+    k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([]));
     k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([pendingWorker]));
     const req = {
       workRequest: {
@@ -123,7 +118,7 @@ describe('tests for the pipeline-assign service', () => {
     expect(phase).toEqual(worker.status.phase);
   });
 
-  it('returns empty object if two workers are assigned', async () => {
+  it('returns a worker if two workers are assigned', async () => {
     const kc = new k8s.KubeConfig();
     kc.loadFromDefault();
 
@@ -135,8 +130,12 @@ describe('tests for the pipeline-assign service', () => {
       },
     };
 
-    const podInfo = await createWorkerK8s(req);
-    expect(podInfo).toEqual({});
+    const { name, creationTimestamp, phase } = await createWorkerK8s(req);
+
+    const worker = runningWorker;
+    expect(name).toEqual(worker.metadata.name);
+    expect(creationTimestamp).toEqual(worker.metadata.creationTimestamp);
+    expect(phase).toEqual(worker.status.phase);
   });
 
   it('throws exception if no workers are available', async () => {
