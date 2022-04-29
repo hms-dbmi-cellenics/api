@@ -108,7 +108,8 @@ describe('model/BasicModel', () => {
     const mockKey = 'aKey';
     const mockExperimentId = 'anExperimentId';
 
-    await new BasicModel(mockSqlClient, mockTableName, ['key', 'experiment_id', 'name']).deleteAnyMatches({ key: mockKey, experiment_id: mockExperimentId });
+    await new BasicModel(mockSqlClient, mockTableName, ['key', 'experiment_id', 'name'])
+      .deleteAnyMatches({ key: mockKey, experiment_id: mockExperimentId });
 
     expect(mockSqlClient.del).toHaveBeenCalled();
     expect(mockSqlClient.from).toHaveBeenCalledWith(mockTableName);
