@@ -19,6 +19,9 @@ module.exports = () => {
     as: jest.fn().mockReturnThis(),
     into: jest.fn().mockReturnThis(),
     timeout: jest.fn().mockReturnThis(),
+    andWhere: jest.fn().mockReturnThis(),
+    whereExists: jest.fn().mockReturnThis(),
+    ref: jest.fn(),
   };
 
   const queriesInTrx = _.cloneDeep(queries);

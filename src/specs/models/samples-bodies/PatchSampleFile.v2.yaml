@@ -1,0 +1,9 @@
+title: Patch sample file
+description: Data for patching a sample file, can only be uploadStatus
+type: object
+properties:
+  uploadStatus:
+    type: string
+required: 
+  - uploadStatus
+additionalProperties: false

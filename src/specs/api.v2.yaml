@@ -485,7 +485,123 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
+  '/experiments/{experimentId}/samples/{sampleId}/sampleFiles/{sampleFileType}':
+    post:
+      summary: Create a new file for a sample
+      description: Set a new file for a sample, returns signed url to upload sample file
+      operationId: createFile
+      x-eov-operation-id: sampleFile#create
+      x-eov-operation-handler: routes/sampleFile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSampleFile'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+    patch:
+      summary: Update a sample files property
+      operationId: patchFile
+      x-eov-operation-id: sampleFile#patch
+      x-eov-operation-handler: routes/sampleFile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchSampleFile'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+                
+  '/access/{experimentId}':
+    get:
+      summary: Get the users with access to an experiment
+      operationId: get-access
+      x-eov-operation-id: access#getExperimentUsers
+      x-eov-operation-handler: routes/access
+      description: Returns the users with access to the experiment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: array
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  role:
+                    type: string
+                required:
+                  - name
+                  - email
+                  - role
+        '404':
+          description: Experiment not found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
 components:
   schemas:
     CreateExperiment:
@@ -500,6 +616,10 @@ components:
       $ref: './models/experiment-bodies/GetAllExperiments.v2.yaml'
     CreateSample:
       $ref: './models/samples-bodies/CreateSample.v2.yaml'
+    CreateSampleFile:
+      $ref: './models/samples-bodies/CreateSampleFile.v2.yaml'
+    PatchSampleFile:
+      $ref: './models/samples-bodies/PatchSampleFile.v2.yaml'
     HTTPSuccess:
       $ref: './models/HTTPSuccess.v1.yaml'
     HTTPError:
