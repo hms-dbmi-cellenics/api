@@ -39,7 +39,6 @@ class MetadataTrack extends BasicModel {
       const valuesToInsert = sampleIds.map(({ id: sampleId }) => ({
         metadata_track_id: metadataTrackId,
         sample_id: sampleId,
-        value: 'N.A.',
       }));
 
       await trx(tableNames.SAMPLE_IN_METADATA_TRACK_MAP).insert(valuesToInsert);
@@ -58,7 +57,6 @@ class MetadataTrack extends BasicModel {
     const valuesToInsert = tracks.map(({ id }) => ({
       metadata_track_id: id,
       sample_id: sampleId,
-      value: 'N.A.',
     }));
 
     await this.sql(tableNames.SAMPLE_IN_METADATA_TRACK_MAP).insert(valuesToInsert);
