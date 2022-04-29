@@ -25,13 +25,16 @@ const createWorkerResources = async (service) => {
   const assignedPods = await k8sApi.listNamespacedPod(namespace, null, null, null, 'status.phase=Running', `experimentId=${experimentId}`);
 
 
-  if (assignedPods.body.items.length > 0) {
+  if (assignedPods.body.items.length === 1) {
+    const { metadata: { name, creationTimestamp }, status: { phase } } = assignedPods[0];
     logger.log(`Experiment ${experimentId} already assigned a worker, skipping creation...`);
-    return;
+    return { name, creationTimestamp, phase };
   }
 
-  const allPods = await getAvailablePods(namespace, null);
-  console.log('all worker pods: ', allPods);
+  if (assignedPods.body.items.length > 1) {
+    logger.error(`Experiment ${experimentId} has two workers pods assigned.`);
+    return {};
+  }
 
   // try to get an available pod which is already running
   let pods = await getAvailablePods(namespace, 'status.phase=Running');
@@ -52,7 +55,7 @@ const createWorkerResources = async (service) => {
 
   // Select a pod to run this experiment on.
   const selectedPod = parseInt(experimentId, 16) % pods.length;
-  const { name } = pods[selectedPod].metadata;
+  const { metadata: { name, creationTimestamp }, status: { phase } } = pods[selectedPod];
   logger.log('Pod number', selectedPod, ' with name', name, 'chosen');
 
   const patch = [
@@ -72,6 +75,8 @@ const createWorkerResources = async (service) => {
         'content-type': 'application/json-patch+json',
       },
     });
+
+  return { name, creationTimestamp, phase };
 };
 
 module.exports = createWorkerResources;

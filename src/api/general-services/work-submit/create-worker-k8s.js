@@ -37,9 +37,6 @@ const createWorkerResources = async (service) => {
     return {};
   }
 
-  const allPods = await getAvailablePods(namespace, null);
-  console.log('all worker pods: ', allPods);
-
   // try to get an available pod which is already running
   let pods = await getAvailablePods(namespace, 'status.phase=Running');
   if (pods.length < 1) {
