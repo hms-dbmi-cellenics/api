@@ -268,6 +268,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+    delete:
+      summary: Delete an experiment
+      description: Delete an experiment
+      operationId: deleteExperiment
+      x-eov-operation-id: experiment#deleteExperiment
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: Get experiment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   '/experiments/{experimentId}/backendStatus':
     get:
       summary: Get backend status for an experiment
