@@ -16,6 +16,7 @@ jest.mock('../../../src/api.v2/controllers/experimentController', () => ({
   getExperiment: jest.fn(),
   createExperiment: jest.fn(),
   patchExperiment: jest.fn(),
+  deleteExperiment: jest.fn(),
   updateSamplePosition: jest.fn(),
   getProcessingConfig: jest.fn(),
   updateProcessingConfig: jest.fn(),
@@ -165,6 +166,34 @@ describe('tests for experiment route', () => {
         return done();
       });
   });
+
+  it('deleteExperiment valid body works', async (done) => {
+    const experimentId = 'experiment-id';
+
+    const body = {
+      notifyByEmail: true,
+    };
+
+    experimentController.deleteExperiment.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+
+    request(app)
+      .delete(`/v2/experiments/${experimentId}`)
+      .send(body)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
+
 
   it('updateSamplePosition valid body works', async (done) => {
     const experimentId = 'experiment-id';
