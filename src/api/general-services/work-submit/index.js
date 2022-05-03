@@ -92,7 +92,7 @@ class WorkSubmitService {
     if (config.clusterEnv === 'development' || config.clusterEnv === 'test') {
       logger.log('Not creating a worker because we are running locally...');
 
-      return;
+      return {};
     }
 
     let numTries = 0;
@@ -100,8 +100,8 @@ class WorkSubmitService {
     while (true) {
       try {
         // eslint-disable-next-line no-await-in-loop
-        await createWorkerResources(this);
-        break;
+        const podInfo = await createWorkerResources(this);
+        return podInfo;
       } catch (e) {
         if (e.response && e.response.statusCode === 422) {
           logger.log('Could not assign experiment to worker (potential race condition), trying again...');
@@ -118,12 +118,15 @@ class WorkSubmitService {
   }
 
   async submitWork() {
-    await Promise.all([
+    const result = await Promise.all([
       this.createWorker(),
       this.getQueueAndHandleMessage(),
     ]);
 
+    const podInfo = result[0];
+
     AWSXRay.getSegment().addAnnotation('result', 'success-worker');
+    return podInfo;
   }
 }
 
