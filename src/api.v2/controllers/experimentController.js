@@ -63,7 +63,7 @@ const deleteExperiment = async (req, res) => {
   const { params: { experimentId } } = req;
   logger.log(`Deleting experiment ${experimentId}`);
 
-  const result = await new Experiment().destroy(experimentId);
+  const result = await new Experiment().deleteById(experimentId);
 
   if (result.length === 0) {
     throw new NotFoundError(`Experiment ${experimentId} not found`);

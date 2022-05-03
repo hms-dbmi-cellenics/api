@@ -146,11 +146,11 @@ describe('experimentController', () => {
   it('deleteExperiment works correctly', async () => {
     const mockReq = { params: { experimentId: mockExperiment.id } };
 
-    experimentInstance.destroy.mockImplementationOnce(() => Promise.resolve([{ id: 'mockExperiment.id' }]));
+    experimentInstance.deleteById.mockImplementationOnce(() => Promise.resolve([{ id: 'mockExperiment.id' }]));
 
     await experimentController.deleteExperiment(mockReq, mockRes);
 
-    expect(experimentInstance.destroy).toHaveBeenCalledWith(mockExperiment.id);
+    expect(experimentInstance.deleteById).toHaveBeenCalledWith(mockExperiment.id);
 
     expect(mockRes.json).toHaveBeenCalledWith(OK());
   });
@@ -158,7 +158,7 @@ describe('experimentController', () => {
   it('deleteExperiment throws if experiment was not found', async () => {
     const mockReq = { params: { experimentId: mockExperiment.id } };
 
-    experimentInstance.destroy.mockImplementationOnce(() => Promise.resolve([]));
+    experimentInstance.deleteById.mockImplementationOnce(() => Promise.resolve([]));
 
     await expect(
       experimentController.deleteExperiment(mockReq, mockRes),
@@ -166,7 +166,7 @@ describe('experimentController', () => {
       new NotFoundError(`Experiment ${mockExperiment.id} not found`),
     );
 
-    expect(experimentInstance.destroy).toHaveBeenCalledWith(mockExperiment.id);
+    expect(experimentInstance.deleteById).toHaveBeenCalledWith(mockExperiment.id);
 
     expect(mockRes.json).not.toHaveBeenCalled();
   });
