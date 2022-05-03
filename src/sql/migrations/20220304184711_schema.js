@@ -112,6 +112,8 @@ exports.up = async (knex) => {
       table.increments('id', { primaryKey: true });
       table.uuid('experiment_id').references('experiment.id').onDelete('CASCADE').notNullable();
       table.string('key');
+
+      table.unique(['experiment_id', 'key']);
     });
 
   await knex.schema
@@ -128,7 +130,7 @@ exports.up = async (knex) => {
     .createTable('sample_in_metadata_track_map', (table) => {
       table.integer('metadata_track_id').references('metadata_track.id').onDelete('CASCADE').notNullable();
       table.uuid('sample_id').references('sample.id').onDelete('CASCADE').notNullable();
-      table.string('value').notNullable();
+      table.string('value').defaultTo('N.A.');
 
       table.primary(['metadata_track_id', 'sample_id']);
     });
