@@ -1,0 +1,177 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`model/userAccess createNewMetadataTrack skips insert into SAMPLE_IN_METADATA_TRACK_MAP when there are no samples: fromParams 1`] = `
+Array [
+  Array [
+    "sample",
+  ],
+]
+`;
+
+exports[`model/userAccess createNewMetadataTrack skips insert into SAMPLE_IN_METADATA_TRACK_MAP when there are no samples: insertParams 1`] = `
+Array [
+  Array [
+    Object {
+      "experiment_id": "mockExperimentId",
+      "key": "mockKey",
+    },
+  ],
+]
+`;
+
+exports[`model/userAccess createNewMetadataTrack skips insert into SAMPLE_IN_METADATA_TRACK_MAP when there are no samples: insertParams 2`] = `
+Array [
+  Array [
+    Object {
+      "experiment_id": "mockExperimentId",
+      "key": "mockKey",
+    },
+  ],
+]
+`;
+
+exports[`model/userAccess createNewMetadataTrack skips insert into SAMPLE_IN_METADATA_TRACK_MAP when there are no samples: intoParams 1`] = `
+Array [
+  Array [
+    "metadata_track",
+  ],
+]
+`;
+
+exports[`model/userAccess createNewMetadataTrack skips insert into SAMPLE_IN_METADATA_TRACK_MAP when there are no samples: returningParams 1`] = `
+Array [
+  Array [
+    Array [
+      "id",
+    ],
+  ],
+]
+`;
+
+exports[`model/userAccess createNewMetadataTrack skips insert into SAMPLE_IN_METADATA_TRACK_MAP when there are no samples: selectParams 1`] = `
+Array [
+  Array [
+    Array [
+      "id",
+    ],
+  ],
+]
+`;
+
+exports[`model/userAccess createNewMetadataTrack skips insert into SAMPLE_IN_METADATA_TRACK_MAP when there are no samples: whereParams 1`] = `
+Array [
+  Array [
+    Object {
+      "experiment_id": "mockExperimentId",
+    },
+  ],
+]
+`;
+
+exports[`model/userAccess createNewMetadataTrack works correctly when there are samples: fromParams 1`] = `
+Array [
+  Array [
+    "sample",
+  ],
+]
+`;
+
+exports[`model/userAccess createNewMetadataTrack works correctly when there are samples: insertParams 1`] = `
+Array [
+  Array [
+    Object {
+      "experiment_id": "mockExperimentId",
+      "key": "mockKey",
+    },
+  ],
+  Array [
+    Array [
+      Object {
+        "metadata_track_id": "metadataTrackId1",
+        "sample_id": "sampleId1",
+      },
+      Object {
+        "metadata_track_id": "metadataTrackId1",
+        "sample_id": "sampleId2",
+      },
+      Object {
+        "metadata_track_id": "metadataTrackId1",
+        "sample_id": "sampleId3",
+      },
+      Object {
+        "metadata_track_id": "metadataTrackId1",
+        "sample_id": "sampleId4",
+      },
+    ],
+  ],
+]
+`;
+
+exports[`model/userAccess createNewMetadataTrack works correctly when there are samples: insertParams 2`] = `
+Array [
+  Array [
+    Object {
+      "experiment_id": "mockExperimentId",
+      "key": "mockKey",
+    },
+  ],
+  Array [
+    Array [
+      Object {
+        "metadata_track_id": "metadataTrackId1",
+        "sample_id": "sampleId1",
+      },
+      Object {
+        "metadata_track_id": "metadataTrackId1",
+        "sample_id": "sampleId2",
+      },
+      Object {
+        "metadata_track_id": "metadataTrackId1",
+        "sample_id": "sampleId3",
+      },
+      Object {
+        "metadata_track_id": "metadataTrackId1",
+        "sample_id": "sampleId4",
+      },
+    ],
+  ],
+]
+`;
+
+exports[`model/userAccess createNewMetadataTrack works correctly when there are samples: intoParams 1`] = `
+Array [
+  Array [
+    "metadata_track",
+  ],
+]
+`;
+
+exports[`model/userAccess createNewMetadataTrack works correctly when there are samples: returningParams 1`] = `
+Array [
+  Array [
+    Array [
+      "id",
+    ],
+  ],
+]
+`;
+
+exports[`model/userAccess createNewMetadataTrack works correctly when there are samples: selectParams 1`] = `
+Array [
+  Array [
+    Array [
+      "id",
+    ],
+  ],
+]
+`;
+
+exports[`model/userAccess createNewMetadataTrack works correctly when there are samples: whereParams 1`] = `
+Array [
+  Array [
+    Object {
+      "experiment_id": "mockExperimentId",
+    },
+  ],
+]
+`;
