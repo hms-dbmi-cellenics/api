@@ -57,17 +57,8 @@ const getConnectionParams = async (environment, rdsSandboxId) => {
 
   const token = await promisifiedGetAuthToken(signer);
 
-  console.log('tokenDebug');
-  console.log(token);
-
   // Token expires in 15 minutes https://aws.amazon.com/premiumsupport/knowledge-center/users-connect-rds-iam/
   const tokenExpiration = new Date().getTime() + 15 * 60000;
-
-  console.log('tokenExpirationDebug');
-  console.log(tokenExpiration);
-
-  console.log('DatenowDebug');
-  console.log(Date.now());
 
   return {
     host: endpoint,
