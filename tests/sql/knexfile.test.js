@@ -15,13 +15,14 @@ describe('knexfile', () => {
 
     const res = await knexfile();
 
-    expect(getConnectionParams).toHaveBeenCalled();
-
     expect(res.staging).toBeTruthy();
-
-    expect(res.staging.connection).toEqual(mockConnectionParams);
-
+    expect(res.staging.connection).toBeTruthy();
     expect(res).toMatchSnapshot();
+
+    const connectionParams = await res.staging.connection();
+    expect(connectionParams).toEqual(mockConnectionParams);
+
+    expect(getConnectionParams).toHaveBeenCalled();
   });
 });
 
