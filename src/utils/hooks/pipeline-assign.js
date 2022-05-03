@@ -32,7 +32,7 @@ const patchPod = async (message) => {
     pods = await getAvailablePods(namespace, 'status.phase=ContainerCreating');
   }
   if (pods.length < 1) {
-    logger.log('no creating pods available, trying to select pods still pending');
+    logger.log('no pods in creation process available, trying to select pods still pending');
     pods = await getAvailablePods(namespace, 'status.phase=Pending');
   }
 
