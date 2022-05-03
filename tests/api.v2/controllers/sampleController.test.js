@@ -91,7 +91,7 @@ describe('sampleController', () => {
   it('deleteSample works correctly', async () => {
     const mockReq = { params: { experimentId: mockExperimentId, sampleId: mockSampleId } };
 
-    sampleInstance.destroy.mockImplementationOnce(() => Promise.resolve());
+    sampleInstance.deleteById.mockImplementationOnce(() => Promise.resolve());
     experimentInstance.deleteSample.mockImplementationOnce(() => Promise.resolve());
 
     await sampleController.deleteSample(mockReq, mockRes);
@@ -106,7 +106,7 @@ describe('sampleController', () => {
     expect(Experiment).not.toHaveBeenCalledWith(mockSqlClient);
     expect(Sample).not.toHaveBeenCalledWith(mockSqlClient);
 
-    expect(sampleInstance.destroy).toHaveBeenCalledWith(mockSampleId);
+    expect(sampleInstance.deleteById).toHaveBeenCalledWith(mockSampleId);
     expect(experimentInstance.deleteSample).toHaveBeenCalledWith(mockExperimentId, mockSampleId);
 
     expect(mockRes.json).toHaveBeenCalledWith(OK());

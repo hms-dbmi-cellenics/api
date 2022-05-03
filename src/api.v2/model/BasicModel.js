@@ -68,10 +68,19 @@ class BasicModel {
       .timeout(this.timeout);
   }
 
-  destroy(id) {
+  deleteById(id) {
     return this.sql.del()
       .from(this.tableName)
       .where({ id })
+      .returning(this.selectableProps)
+      .timeout(this.timeout);
+  }
+
+  delete(filters) {
+    return this.sql.del()
+      .from(this.tableName)
+      .where(filters)
+      .returning(this.selectableProps)
       .timeout(this.timeout);
   }
 }
