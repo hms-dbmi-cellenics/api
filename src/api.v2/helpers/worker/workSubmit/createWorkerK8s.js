@@ -17,7 +17,6 @@ const getPods = async (namespace, statusSelector, labelSelector) => {
   return pods.body.items;
 };
 
-const getAvailablePods = async (namespace, statusSelector) => getPods(namespace, statusSelector, '!experimentId,!run');
 
 const getAssignedPods = async (experimentId, namespace) => {
 // check if there's already a running pod for this experiment
@@ -35,17 +34,26 @@ const getAssignedPods = async (experimentId, namespace) => {
   return [];
 };
 
+const getAvailablePods = async (namespace) => {
+  let pods = await getPods(namespace, 'status.phase=Running', '!experimentId,!run');
+  if (pods.length < 1) {
+    logger.log('no running pods available, trying to select pods still pending');
+    pods = await getPods(namespace, 'status.phase=Pending', '!experimentId,!run');
+  }
+  return pods;
+};
+
 const createWorkerResources = async (service) => {
   const { sandboxId } = config;
   const { experimentId } = service.workRequest;
   const namespace = `worker-${sandboxId}`;
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
-  // // check if there's already a running pod for this experiment
+  // // check if there's already as assigned pod to this experiment
   const assignedPods = await getAssignedPods(experimentId, namespace);
   if (assignedPods.length > 0) {
     if (assignedPods.length > 1) {
-      logger.error(`Experiment ${experimentId} has two running workers pods assigned.`);
+      logger.error(`Experiment ${experimentId} has two workers pods assigned.`);
     }
 
     const { metadata: { name, creationTimestamp }, status: { phase } } = assignedPods[0];
@@ -53,13 +61,7 @@ const createWorkerResources = async (service) => {
     return { name, creationTimestamp, phase };
   }
 
-  // try to get an available pod which is already running
-  let pods = await getAvailablePods(namespace, 'status.phase=Running');
-  if (pods.length < 1) {
-    logger.log('no running pods available, trying to select pods still pending');
-    pods = await getAvailablePods(namespace, 'status.phase=Pending');
-  }
-
+  const pods = await getAvailablePods(namespace);
   if (pods.length < 1) {
     throw new Error(`Experiment ${experimentId} cannot be launched as there are no available workers.`);
   }
