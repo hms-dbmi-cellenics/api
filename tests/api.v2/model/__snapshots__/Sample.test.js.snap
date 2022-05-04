@@ -140,8 +140,10 @@ Array [
   ],
   Array [
     "sample_in_metadata_track_map as sm_map",
-    "s.id",
-    "sm_map.sample_id",
+    Object {
+      "m.id": "sm_map.metadata_track_id",
+      "s.id": "sm_map.sample_id",
+    },
   ],
 ]
 `;
