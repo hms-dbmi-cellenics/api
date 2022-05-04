@@ -6,42 +6,23 @@ properties:
     type: string
   name:
     type: string
-  projectUuid:
+  sampleTechnology:
     type: string
-  type:
+  createdAt:
     type: string
-    pattern: 10X Chromium
-  createdDate:
-    type: string
-  lastModified:
+  updatedAt:
     nullable: true
     type: string
-  complete:
-    type: boolean
-  error:
-    type: boolean
-  fileNames:
-    type: array
-    items:
-      type: string
   files:
     description: Container of data for files that together represent the sample
     type: object
-    additionalProperties:
-      $ref: ./SampleFile.v1.yaml
-    properties:
-      lastModified:
-        type: string
   metadata:
     type: object
 
 required:
   - name
-  - projectUuid
   - id
-  - createdDate
-  - lastModified
-  - complete
-  - error
-  - fileNames
+  - createdAt
+  - updatedAt
   - files
+  - sampleTechnology
