@@ -84,6 +84,7 @@ class Experiment extends BasicModel {
           )} as pipelines`,
         ),
       ])
+      .queryContext({ camelCaseExceptions: ['pipelines'] })
       .from(mainQuery)
       .groupBy(experimentFields)
       .first();

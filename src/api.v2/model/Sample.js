@@ -28,7 +28,10 @@ class Sample extends BasicModel {
       .from(sql.select([...sampleFieldsWithAlias, 'm.key', 'sm_map.value'])
         .from({ s: tableNames.SAMPLE })
         .leftJoin(`${tableNames.METADATA_TRACK} as m`, 's.experiment_id', 'm.experiment_id')
-        .leftJoin(`${tableNames.SAMPLE_IN_METADATA_TRACK_MAP} as sm_map`, 's.id', 'sm_map.sample_id')
+        .leftJoin(`${tableNames.SAMPLE_IN_METADATA_TRACK_MAP} as sm_map`, function () {
+          this.on('s.id', '=', 'sm_map.sample_id')
+            .andOn('m.id', '=', 'sm_map.metadata_track_id');
+        })
         .where('s.experiment_id', experimentId)
         .as('mainQuery'))
       .groupBy(sampleFields)
@@ -49,6 +52,7 @@ class Sample extends BasicModel {
       .as('select_sample_file');
 
     const result = await this.sql.select('*')
+      .queryContext({ camelCaseExceptions: ['metadata'] })
       .from(metadataQuery)
       .join(fileNamesQuery, 'select_metadata.id', 'select_sample_file.id');
 
