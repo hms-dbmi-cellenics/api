@@ -1,0 +1,149 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`model/Sample Get samples works correctly 1`] = `
+Array [
+  Array [
+    "s.experiment_id",
+    "mockExperimentId",
+  ],
+  Array [
+    "s.experiment_id",
+    "mockExperimentId",
+  ],
+]
+`;
+
+exports[`model/Sample Get samples works correctly 2`] = `
+Array [
+  Array [
+    Object {
+      "s": "sample",
+    },
+  ],
+  Array [
+    [MockFunction],
+  ],
+  Array [
+    Object {
+      "s": "sample",
+    },
+  ],
+  Array [
+    [MockFunction],
+  ],
+  Array [
+    [MockFunction],
+  ],
+]
+`;
+
+exports[`model/Sample Get samples works correctly 3`] = `
+Array [
+  Array [
+    Array [
+      "id",
+      "experiment_id",
+      "name",
+      "sample_technology",
+      "created_at",
+      "updated_at",
+      [MockFunction],
+    ],
+  ],
+  Array [
+    Array [
+      "s.id",
+      "s.experiment_id",
+      "s.name",
+      "s.sample_technology",
+      "s.created_at",
+      "s.updated_at",
+      "m.key",
+      "sm_map.value",
+    ],
+  ],
+  Array [
+    Array [
+      "id",
+      [MockFunction],
+    ],
+  ],
+  Array [
+    Array [
+      "sf.sample_file_type",
+      "sf.size",
+      "sf.upload_status",
+      "s.id",
+    ],
+  ],
+  Array [
+    "*",
+  ],
+]
+`;
+
+exports[`model/Sample Get samples works correctly 4`] = `
+Array [
+  Array [
+    "sample_to_sample_file_map as sf_map",
+    "s.id",
+    "sf_map.sample_id",
+  ],
+  Array [
+    "sample_file as sf",
+    "sf.id",
+    "sf_map.sample_file_id",
+  ],
+  Array [
+    [MockFunction],
+    "select_metadata.id",
+    "select_sample_file.id",
+  ],
+]
+`;
+
+exports[`model/Sample Get samples works correctly 5`] = `
+Array [
+  Array [
+    Array [
+      "id",
+      "experiment_id",
+      "name",
+      "sample_technology",
+      "created_at",
+      "updated_at",
+    ],
+  ],
+  Array [
+    "id",
+  ],
+]
+`;
+
+exports[`model/Sample Get samples works correctly 6`] = `
+Array [
+  Array [
+    "undefined as metadata",
+  ],
+  Array [
+    "jsonb_object_agg(sample_file_type,json_build_object('sample_file_type',sample_file_type,'size',size,'upload_status',upload_status)) as files",
+  ],
+]
+`;
+
+exports[`model/Sample Get samples works correctly 7`] = `
+Array [
+  Array [
+    "metadata_track as m",
+    "s.experiment_id",
+    "m.experiment_id",
+  ],
+  Array [
+    "sample_in_metadata_track_map as sm_map",
+    Object {
+      "m.id": "sm_map.metadata_track_id",
+      "s.id": "sm_map.sample_id",
+    },
+  ],
+]
+`;

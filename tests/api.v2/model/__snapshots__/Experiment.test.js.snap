@@ -8,7 +8,7 @@ Array [
         WHERE pipeline_type IS NOT NULL
       ),
       '{}'::jsonb
-    ) as pipelines",
+    ) as pipelines,}), as pipelines",
 ]
 `;
 
