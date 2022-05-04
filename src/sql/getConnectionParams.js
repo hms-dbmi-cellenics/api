@@ -2,6 +2,12 @@ const AWS = require('../utils/requireAWS');
 
 const config = require('../config');
 
+const promisifiedGetAuthToken = async (signer) => (
+  new Promise((resolve, reject) => {
+    signer.getAuthToken({}, (err, token) => (err ? reject(err) : resolve(token)));
+  })
+);
+
 const getRDSEndpoint = async (rdsClient, environment, rdsSandboxId) => {
   const clusterId = `aurora-cluster-${environment}-${rdsSandboxId}`;
 
@@ -49,7 +55,7 @@ const getConnectionParams = async (environment, rdsSandboxId) => {
     username,
   });
 
-  const token = signer.getAuthToken();
+  const token = await promisifiedGetAuthToken(signer);
 
   // Token expires in 15 minutes https://aws.amazon.com/premiumsupport/knowledge-center/users-connect-rds-iam/
   const tokenExpiration = new Date().getTime() + 15 * 60000;

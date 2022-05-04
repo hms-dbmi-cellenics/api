@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Sample apiv2 model Get samples works correctly 1`] = `
+exports[`model/Sample Get samples works correctly 1`] = `
 Array [
   Array [
     "s.experiment_id",
@@ -13,7 +13,7 @@ Array [
 ]
 `;
 
-exports[`Sample apiv2 model Get samples works correctly 2`] = `
+exports[`model/Sample Get samples works correctly 2`] = `
 Array [
   Array [
     Object {
@@ -37,7 +37,7 @@ Array [
 ]
 `;
 
-exports[`Sample apiv2 model Get samples works correctly 3`] = `
+exports[`model/Sample Get samples works correctly 3`] = `
 Array [
   Array [
     Array [
@@ -84,7 +84,7 @@ Array [
 ]
 `;
 
-exports[`Sample apiv2 model Get samples works correctly 4`] = `
+exports[`model/Sample Get samples works correctly 4`] = `
 Array [
   Array [
     "sample_to_sample_file_map as sf_map",
@@ -104,7 +104,7 @@ Array [
 ]
 `;
 
-exports[`Sample apiv2 model Get samples works correctly 5`] = `
+exports[`model/Sample Get samples works correctly 5`] = `
 Array [
   Array [
     Array [
@@ -122,16 +122,10 @@ Array [
 ]
 `;
 
-exports[`Sample apiv2 model Get samples works correctly 6`] = `
+exports[`model/Sample Get samples works correctly 6`] = `
 Array [
   Array [
-    "COALESCE(
-      jsonb_object_agg(key, value)
-      FILTER(
-        WHERE key IS NOT NULL
-      ),
-      '{}'::jsonb
-    ) as metadata",
+    "undefined as metadata",
   ],
   Array [
     "jsonb_object_agg(sample_file_type,json_build_object('sample_file_type',sample_file_type,'s3_path',s3_path,'size',size,'valid',valid,'upload_status',upload_status)) as files",
@@ -139,7 +133,7 @@ Array [
 ]
 `;
 
-exports[`Sample apiv2 model Get samples works correctly 7`] = `
+exports[`model/Sample Get samples works correctly 7`] = `
 Array [
   Array [
     "metadata_track as m",

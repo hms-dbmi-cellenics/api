@@ -4,7 +4,7 @@ const sqlClient = require('../../../src/sql/sqlClient');
 const helpers = require('../../../src/sql/helpers');
 
 const validSamplesOrderResult = ['sampleId1', 'sampleId2', 'sampleId3', 'sampleId4'];
-const getProcessingConfigResponse = require('../mocks/data/getProcessingConfigResponse');
+const getProcessingConfigResponse = require('../mocks/data/getProcessingConfigResponse.json');
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 const BasicModel = require('../../../src/api.v2/model/BasicModel');
 

@@ -19,7 +19,6 @@ class Sample extends BasicModel {
 
   async getSamples(experimentId) {
     const { sql } = this;
-
     const fieldsWithMetadata = [...sampleFields, sql.raw(
       `${replaceNullsWithObject('jsonb_object_agg(key, value)', 'key')} as metadata`,
     )];
@@ -44,7 +43,7 @@ class Sample extends BasicModel {
     )])
       .from(sql.select([...sampleFileFieldsWithAlias, 's.id'])
         .from({ s: tableNames.SAMPLE })
-        .join(`${tableNames.SAMPLE_TO_SAMPLE_FILE} as sf_map`, 's.id', 'sf_map.sample_id')
+        .join(`${tableNames.SAMPLE_TO_SAMPLE_FILE_MAP} as sf_map`, 's.id', 'sf_map.sample_id')
         .join(`${tableNames.SAMPLE_FILE} as sf`, 'sf.id', 'sf_map.sample_file_id')
         .where('s.experiment_id', experimentId)
         .as('mainQuery'))
@@ -56,6 +55,31 @@ class Sample extends BasicModel {
       .join(fileNamesQuery, 'select_metadata.id', 'select_sample_file.id');
 
     return result;
+  }
+
+  async setNewFile(sampleId, sampleFileId, sampleFileType) {
+    await this.sql.transaction(async (trx) => {
+      // Remove references to previous sample file for sampleFileType (if they exist)
+      await trx.del()
+        .from({ sf_map: tableNames.SAMPLE_TO_SAMPLE_FILE_MAP })
+        .where({ sample_id: sampleId })
+        .andWhere(
+          'sample_file_id',
+          '=',
+          trx.select(['id'])
+            .from({ sf: tableNames.SAMPLE_FILE })
+            .where('sf.id', '=', trx.ref('sf_map.sample_file_id'))
+            .andWhere('sf.sample_file_type', '=', sampleFileType),
+        );
+
+      // Add new sample file reference
+      await trx(tableNames.SAMPLE_TO_SAMPLE_FILE_MAP).insert(
+        {
+          sample_id: sampleId,
+          sample_file_id: sampleFileId,
+        },
+      );
+    });
   }
 }
 

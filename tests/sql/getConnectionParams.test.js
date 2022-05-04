@@ -39,6 +39,11 @@ const testSandboxId = 'test';
 describe('getConnectionParams', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers('modern');
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it('Creates correct params in development environment', async () => {
@@ -56,7 +61,12 @@ describe('getConnectionParams', () => {
   it('Creates correct params in staging environment', async () => {
     mockDescribeDBClusterEndpoints.mockReturnValueOnce({ promise: () => Promise.resolve({ DBClusterEndpoints: [{ Endpoint: 'endpointName' }] }) });
 
-    mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
+    mockGetAuthTokenSpy.mockImplementation((params, callback) => {
+      callback(null, 'passwordToken');
+    });
+
+    const timeOfRun = new Date('2017-01-01');
+    jest.setSystemTime(timeOfRun);
 
     const params = await getConnectionParams('staging', testSandboxId);
 
@@ -72,12 +82,25 @@ describe('getConnectionParams', () => {
     expect(mockGetAuthTokenSpy).toHaveBeenCalled();
 
     expect(params).toEqual(rdsParams);
+
+    // Connection not expired
+    expect(params.expirationChecker()).toEqual(false);
+
+    // Connection not expired after 14 minutes
+    jest.setSystemTime(new Date(timeOfRun.getTime() + 14 * 60000));
+    expect(params.expirationChecker()).toEqual(false);
+
+    // Connection expired after 15 minutes
+    jest.setSystemTime(new Date(timeOfRun.getTime() + 15 * 60000));
+    expect(params.expirationChecker()).toEqual(true);
   });
 
   it('Creates correct params in production environment', async () => {
     mockDescribeDBClusterEndpoints.mockReturnValueOnce({ promise: () => Promise.resolve({ DBClusterEndpoints: [{ Endpoint: 'endpointName' }] }) });
 
-    mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
+    mockGetAuthTokenSpy.mockImplementation((params, callback) => {
+      callback(null, 'passwordToken');
+    });
 
     const params = await getConnectionParams('production', testSandboxId);
 
@@ -99,7 +122,9 @@ describe('getConnectionParams', () => {
     mockDescribeDBClusterEndpoints
       .mockReturnValueOnce({ promise: () => Promise.resolve({ DBClusterEndpoints: [] }) });
 
-    mockGetAuthTokenSpy.mockReturnValueOnce('passwordToken');
+    mockGetAuthTokenSpy.mockImplementation((params, callback) => {
+      callback(null, 'passwordToken');
+    });
 
     await expect(getConnectionParams('staging', testSandboxId)).rejects.toThrow();
 
