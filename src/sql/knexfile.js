@@ -26,10 +26,8 @@ const fetchConfiguration = async (environment, rdsSandboxId) => ({
   [environment]: {
     client: 'postgresql',
     connection: async () => await getConnectionParams(environment, rdsSandboxId),
-    postProcessResponse: (result, queryContext = {}) => {
-      console.log('resultDebug'); console.log(result); return (
-        recursiveCamelcase(result, queryContext.camelCaseExceptions));
-    },
+    postProcessResponse: (result, queryContext = {}) => (
+      recursiveCamelcase(result, queryContext.camelCaseExceptions)),
   },
 });
 

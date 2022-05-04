@@ -4,7 +4,7 @@ const Experiment = require('../model/Experiment');
 const UserAccess = require('../model/UserAccess');
 
 const getLogger = require('../../utils/getLogger');
-const { OK } = require('../../utils/responses');
+const { OK, NotFoundError } = require('../../utils/responses');
 const sqlClient = require('../../sql/sqlClient');
 
 const constants = require('../helpers/pipeline/constants');
@@ -56,6 +56,21 @@ const patchExperiment = async (req, res) => {
   await new Experiment().updateById(experimentId, snakeCasedKeysToPatch);
 
   logger.log(`Finished patching experiment ${experimentId}`);
+  res.json(OK());
+};
+
+const deleteExperiment = async (req, res) => {
+  const { params: { experimentId } } = req;
+  logger.log(`Deleting experiment ${experimentId}`);
+
+  const result = await new Experiment().deleteById(experimentId);
+
+  if (result.length === 0) {
+    throw new NotFoundError(`Experiment ${experimentId} not found`);
+  }
+
+
+  logger.log(`Finished deleting experiment ${experimentId}`);
   res.json(OK());
 };
 
@@ -127,6 +142,7 @@ module.exports = {
   createExperiment,
   updateProcessingConfig,
   patchExperiment,
+  deleteExperiment,
   updateSamplePosition,
   getProcessingConfig,
   getBackendStatus,
