@@ -14,4 +14,14 @@ const collapseKeyIntoArray = (
     .groupBy(rootFields)
 );
 
-module.exports = { collapseKeyIntoArray };
+const replaceNullsWithObject = (object, nullableKey) => (
+  `COALESCE(
+      ${object}
+      FILTER(
+        WHERE ${nullableKey} IS NOT NULL
+      ),
+      '{}'::jsonb
+    )`
+);
+
+module.exports = { collapseKeyIntoArray, replaceNullsWithObject };

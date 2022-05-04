@@ -141,4 +141,11 @@ describe('sampleController', () => {
 
     expect(mockRes.json).toHaveBeenCalledWith(OK());
   });
+
+  it('Get samples works correctly', async () => {
+    const mockReq = { params: { experimentId: mockExperimentId } };
+    sampleInstance.getSamples.mockImplementationOnce(() => Promise.resolve());
+    await sampleController.getSamples(mockReq, mockRes);
+    expect(sampleInstance.getSamples).toHaveBeenCalledWith(mockExperimentId);
+  });
 });
