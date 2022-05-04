@@ -19,12 +19,12 @@ class Sample extends BasicModel {
 
   async getSamples(experimentId) {
     const { sql } = this;
-    const fieldsWithMetadata = [...sampleFields, sql.raw(
-      `${replaceNullsWithObject('jsonb_object_agg(key, value)', 'key')} as metadata`,
-    )];
+
+    const metadataObject = `${replaceNullsWithObject('jsonb_object_agg(key, value)', 'key')} as metadata`;
+
     const sampleFieldsWithAlias = sampleFields.map((field) => `s.${field}`);
 
-    const metadataQuery = sql.select(fieldsWithMetadata)
+    const metadataQuery = sql.select([...sampleFields, sql.raw(metadataObject)])
       .from(sql.select([...sampleFieldsWithAlias, 'm.key', 'sm_map.value'])
         .from({ s: tableNames.SAMPLE })
         .leftJoin(`${tableNames.METADATA_TRACK} as m`, 's.experiment_id', 'm.experiment_id')
@@ -34,13 +34,11 @@ class Sample extends BasicModel {
       .groupBy(sampleFields)
       .as('select_metadata');
 
-    const sampleFileFields = ['sample_file_type', 's3_path', 'size', 'valid', 'upload_status'];
+    const sampleFileFields = ['sample_file_type', 'size', 'upload_status'];
     const sampleFileFieldsWithAlias = sampleFileFields.map((field) => `sf.${field}`);
     const fileObjectFormatted = sampleFileFields.map((field) => [`'${field}'`, field]);
-
-    const fileNamesQuery = sql.select(['id', sql.raw(
-      `jsonb_object_agg(sample_file_type,json_build_object(${fileObjectFormatted})) as files`,
-    )])
+    const sampleFileObject = `jsonb_object_agg(sample_file_type,json_build_object(${fileObjectFormatted})) as files`;
+    const fileNamesQuery = sql.select(['id', sql.raw(sampleFileObject)])
       .from(sql.select([...sampleFileFieldsWithAlias, 's.id'])
         .from({ s: tableNames.SAMPLE })
         .join(`${tableNames.SAMPLE_TO_SAMPLE_FILE_MAP} as sf_map`, 's.id', 'sf_map.sample_id')

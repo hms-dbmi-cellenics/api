@@ -69,7 +69,7 @@ const getSamples = async (req, res) => {
 
   logger.log(`Finished getting samples for experiment ${experimentId}`);
 
-  res.json(OK(samples));
+  res.json(samples);
 };
 
 module.exports = {
