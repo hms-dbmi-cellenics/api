@@ -8,16 +8,11 @@ const getPipelineStatus = require('../getPipelineStatus');
 // const { createGem2SPipeline } = require('../general-services/pipeline-manage');
 const { createGem2SPipeline } = require('../pipelineConstruct');
 
-const sendNotification = require('../../../../utils/hooks/send-notification');
-const saveProcessingConfigFromGem2s = require('../../../../utils/hooks/save-gem2s-processing-config');
-const runQCPipeline = require('../../../../utils/hooks/run-qc-pipeline');
+const sendNotification = require('../hooks/sendNotification');
 const validateRequest = require('../../../../utils/schema-validator');
 const PipelineHook = require('../../../../utils/hooks/hookRunner');
 const getLogger = require('../../../../utils/getLogger');
 
-// const ExperimentService = require('./experiment');
-// const ProjectsService = require('./projects');
-// const SamplesService = require('./samples');
 const Sample = require('../../../model/Sample');
 const Experiment = require('../../../model/Experiment');
 const ExperimentExecution = require('../../../model/ExperimentExecution');
@@ -26,7 +21,23 @@ const logger = getLogger();
 
 const pipelineHook = new PipelineHook();
 
-pipelineHook.register('uploadToAWS', [saveProcessingConfigFromGem2s, runQCPipeline]);
+const saveProcessingConfigFromGem2s = ({ experimentId, item }) => {
+  new Experiment().updateById(experimentId, { processing_config: item });
+};
+
+const continueToQC = () => {
+  // const continueToQC = (payload) => {
+  // const { experimentId } = payload;
+  // we need to change this once we rework the pipeline message response
+  // const authJWT = payload.authJWT || payload.input.authJWT;
+  // await createQCPipeline(experimentId, [], authJWT);
+};
+
+pipelineHook.register('uploadToAWS', [
+  saveProcessingConfigFromGem2s,
+  continueToQC,
+]);
+
 pipelineHook.registerAll([sendNotification]);
 
 class Gem2sService {
@@ -60,44 +71,13 @@ class Gem2sService {
 
     logger.log('Generating task params');
 
-
-    // {
-    //   "projectId": "a9035f6a-86b9-4a5a-b582-48352f14f231",
-    //     "experimentName": "asdsadsada",
-    //       "organism": null,
-    //         "input": {
-    //     "type": "10x"
-    //   },
-    //   "sampleIds": [
-    //     "a99a1e4f-d37e-42d1-8b69-efb479041179",
-    //     "05642f61-fe30-4a4f-acf8-490af7aa14a7",
-    //     "182c8a9a-d975-4489-97ba-df16a004aed9"
-    //   ],
-    //     "sampleNames": [
-    //       "KO",
-    //       "WT1",
-    //       "WT2"
-    //     ],
-    //       "authJWT": "Bearer eyJr",
-    //         "metadata": {
-    //     "Track_1": [
-    //       "N",
-    //       "WT",
-    //       "WT"
-    //     ]
-    //   }
-    // }
-
-    const getS3Paths = (files) => ({
-      matrix10x: files.matrix10x.s3Path,
-      barcodes10x: files.barcodes10x.s3Path,
-      features10x: files.features10x.s3Path,
-    });
-
-
-    // Experiment
-    // Samples
-    // Values for sample in metadata track
+    const getS3Paths = (files) => (
+      {
+        matrix10x: files.matrix10x.s3Path,
+        barcodes10x: files.barcodes10x.s3Path,
+        features10x: files.features10x.s3Path,
+      }
+    );
 
     const [experimentRes, samples] = await Promise.all([
       new Experiment().findById(experimentId),
@@ -114,11 +94,12 @@ class Gem2sService {
     const taskParams = {
       projectId: experimentId,
       experimentName: experiment.name,
-      organism: null, // experiment.meta.organism,
+      organism: null,
       input: { type: samples[0].sampleTechnology },
       sampleIds: experiment.samplesOrder,
       sampleNames: _.map(samplesInOrder, 'name'),
       sampleS3Paths: s3Paths,
+      apiVersion: 'v2',
       authJWT,
     };
 
@@ -160,6 +141,14 @@ class Gem2sService {
       execution_arn: executionArn,
     };
 
+    await new ExperimentExecution().upsert(
+      {
+        experiment_id: experimentId,
+        pipeline_type: 'gem2s',
+      },
+      newExecution,
+    );
+
     await new ExperimentExecution().update(
       { experiment_id: experimentId, pipeline_type: 'gem2s' },
       newExecution,
@@ -172,6 +161,7 @@ class Gem2sService {
 
   static async gem2sResponse(io, message) {
     AWSXRay.getSegment().addMetadata('message', message);
+
     // Fail hard if there was an error.
     await validateRequest(message, 'GEM2SResponse.v1.yaml');
 
@@ -180,8 +170,10 @@ class Gem2sService {
     const { experimentId } = message;
 
     const messageForClient = _.cloneDeep(message);
+
     // Make sure authJWT doesn't get back to the client
     delete messageForClient.authJWT;
+    delete messageForClient.input.authJWT;
 
     await Gem2sService.sendUpdateToSubscribed(experimentId, messageForClient, io);
   }

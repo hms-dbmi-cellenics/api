@@ -7,6 +7,7 @@ const sendFailedSlackMessage = require('../send-failed-slack-message');
 const ExperimentService = require('../../api/route-services/experiment');
 const config = require('../../config');
 const buildPipelineStatusEmailBody = require('../emailTemplates/buildPipelineStatusEmailBody');
+const { OLD_QC_NAME_TO_BE_REMOVED } = require('../constants');
 
 const logger = getLogger();
 
@@ -26,13 +27,15 @@ const sendNotification = async (message) => {
 
   if (status === FAILED && ['production', 'test'].includes(config.clusterEnv)) {
     try {
-      await sendFailedSlackMessage(message, user, experiment);
+      const stateMachineArn = process === 'qc' ? experiment.meta[OLD_QC_NAME_TO_BE_REMOVED].stateMachineArn : experiment.meta[process].stateMachineArn;
+
+      await sendFailedSlackMessage(message, user, process, stateMachineArn);
     } catch (e) {
       logger.error('Error sending slack message ', e);
     }
   }
   if (experiment.notifyByEmail
-      && ((process === QC_PROCESS_NAME && status === SUCCEEDED)
+    && ((process === QC_PROCESS_NAME && status === SUCCEEDED)
       || status === FAILED)) {
     try {
       const emailParams = buildPipelineStatusEmailBody(message.experimentId, status, user);

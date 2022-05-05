@@ -4,6 +4,7 @@ const parseSNSMessage = require('../../utils/parse-sns-message');
 const getLogger = require('../../utils/getLogger');
 
 const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
+const { handleResponse: handleResponseApiV2 } = require('../../api.v2/controllers/gem2sController');
 
 const logger = getLogger();
 
@@ -32,6 +33,13 @@ module.exports = {
     }
 
     const { io, parsedMessage } = result;
+
+    // Temporary until we have sns v2 topic
+    if (parsedMessage.input.apiVersion === 'v2') {
+      handleResponseApiV2(req, res);
+      return;
+    }
+
     const isSnsNotification = parsedMessage !== undefined;
     if (isSnsNotification) {
       try {
@@ -46,6 +54,8 @@ module.exports = {
         return;
       }
     }
+
+
 
     res.status(200).send('ok');
   },

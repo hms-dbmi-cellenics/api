@@ -60,6 +60,7 @@ class Gem2sService {
       input: { type: experiment.meta.type },
       sampleIds: experiment.sampleIds,
       sampleNames: experiment.sampleIds.map((sampleId) => samples[sampleId].name),
+      apiVersion: 'v1',
       authJWT,
     };
 
