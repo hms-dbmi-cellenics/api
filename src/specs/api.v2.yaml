@@ -828,7 +828,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-                
+  '/experiments/{experimentId}/gem2s':
+    post:
+      summary: Get the users with access to an experiment
+      operationId: runGem2s
+      x-eov-operation-id: gem2s#run
+      x-eov-operation-handler: routes/gem2s
+      description: Triggers a new gem2s run
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paramsHash:
+                    type: string
+                additionalProperties: false
+        '404':
+          description: Experiment not found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
   '/access/{experimentId}':
     get:
       summary: Get the users with access to an experiment

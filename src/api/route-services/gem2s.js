@@ -84,7 +84,6 @@ class Gem2sService {
     return taskParams;
   }
 
-
   static async gem2sCreate(experimentId, body, authJWT) {
     logger.log('Creating GEM2S params...');
     const { paramsHash } = body;

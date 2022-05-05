@@ -7,7 +7,7 @@ const recursiveCamelcase = (result, camelCaseExceptions = [], skip = false) => (
   _.transform(result, (acc, value, key, target) => {
     let camelKey;
 
-    if (_.isArray(target) || skip) {
+    if (_.isArray(target) || skip || !key.includes('_')) {
       camelKey = key;
     } else {
       camelKey = _.camelCase(key);
