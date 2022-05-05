@@ -9,9 +9,7 @@ const getObject = async (params) => {
 
   try {
     const outputObject = await s3.getObject(params).promise();
-
-    const data = JSON.parse(outputObject.Body.toString());
-
+    const data = outputObject.Body.toString();
     return data;
   } catch (e) {
     if (e.code === 'NoSuchKey') {
