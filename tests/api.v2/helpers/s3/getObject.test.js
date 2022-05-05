@@ -4,7 +4,7 @@ const getS3Client = require('../../../../src/api.v2/helpers/s3/getS3Client');
 
 const NotFoundError = require('../../../../src/utils/responses/NotFoundError');
 
-jest.mock('../../../../src/api.v2/helpers/s3/S3Client', () => jest.fn(() => ({
+jest.mock('../../../../src/api.v2/helpers/s3/getS3Client', () => jest.fn(() => ({
   getObject: jest.fn(() => (
     {
       promise: () => Promise.resolve({
