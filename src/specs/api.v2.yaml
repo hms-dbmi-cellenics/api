@@ -367,6 +367,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+    delete:
+      summary: Delete an experiment
+      description: Delete an experiment
+      operationId: deleteExperiment
+      x-eov-operation-id: experiment#deleteExperiment
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: Get experiment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   '/experiments/{experimentId}/backendStatus':
     get:
       summary: Get backend status for an experiment
@@ -407,7 +444,43 @@ paths:
         in: path
         required: true
         description: ID of the experiment
-  
+  '/experiments/{experimentId}/samples':
+    get:
+      summary: Get samples for an experiment
+      operationId: getSamples
+      x-eov-operation-id: sample#getSamples
+      x-eov-operation-handler: routes/sample
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSamples'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   '/experiments/{experimentId}/samples/{sampleId}':
     post:
       summary: Create sample
@@ -889,6 +962,9 @@ components:
       $ref: './models/experiment-bodies/GetAllExperiments.v2.yaml'
     CreateSample:
       $ref: './models/samples-bodies/CreateSample.v2.yaml'
+    GetSamples:
+      items:
+        $ref: ./models/samples-bodies/Sample.v2.yaml
     CreateSampleFile:
       $ref: './models/samples-bodies/CreateSampleFile.v2.yaml'
     PatchSampleFile:

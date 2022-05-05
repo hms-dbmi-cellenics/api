@@ -31,7 +31,7 @@ const getExperimentResponse = require('../mocks/data/getExperimentResponse.json'
 const getAllExperimentsResponse = require('../mocks/data/getAllExperimentsResponse.json');
 
 const experimentController = require('../../../src/api.v2/controllers/experimentController');
-const { OK } = require('../../../src/utils/responses');
+const { OK, NotFoundError } = require('../../../src/utils/responses');
 
 const mockReqCreateExperiment = {
   params: {
@@ -141,6 +141,34 @@ describe('experimentController', () => {
     );
 
     expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
+
+  it('deleteExperiment works correctly', async () => {
+    const mockReq = { params: { experimentId: mockExperiment.id } };
+
+    experimentInstance.deleteById.mockImplementationOnce(() => Promise.resolve([{ id: 'mockExperiment.id' }]));
+
+    await experimentController.deleteExperiment(mockReq, mockRes);
+
+    expect(experimentInstance.deleteById).toHaveBeenCalledWith(mockExperiment.id);
+
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
+
+  it('deleteExperiment throws if experiment was not found', async () => {
+    const mockReq = { params: { experimentId: mockExperiment.id } };
+
+    experimentInstance.deleteById.mockImplementationOnce(() => Promise.resolve([]));
+
+    await expect(
+      experimentController.deleteExperiment(mockReq, mockRes),
+    ).rejects.toThrow(
+      new NotFoundError(`Experiment ${mockExperiment.id} not found`),
+    );
+
+    expect(experimentInstance.deleteById).toHaveBeenCalledWith(mockExperiment.id);
+
+    expect(mockRes.json).not.toHaveBeenCalled();
   });
 
   it('updateSamplePosition works correctly', async () => {

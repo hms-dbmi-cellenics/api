@@ -2,12 +2,11 @@ const _ = require('lodash');
 
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
-const { collapseKeyIntoArray } = require('../../sql/helpers');
+const { collapseKeyIntoArray, replaceNullsWithObject } = require('../../sql/helpers');
 
 const { NotFoundError } = require('../../utils/responses');
 
 const tableNames = require('./tableNames');
-
 
 const getLogger = require('../../utils/getLogger');
 
@@ -75,16 +74,6 @@ class Experiment extends BasicModel {
       return acum;
     }, []);
 
-    const replaceNullsWithObject = (object, nullableKey) => (
-      `COALESCE(
-      ${object}
-      FILTER(
-        WHERE ${nullableKey} IS NOT NULL
-      ),
-      '{}'::jsonb
-    )`
-    );
-
     const result = await this.sql
       .select([
         ...experimentFields,
@@ -95,6 +84,7 @@ class Experiment extends BasicModel {
           )} as pipelines`,
         ),
       ])
+      .queryContext({ camelCaseExceptions: ['pipelines'] })
       .from(mainQuery)
       .groupBy(experimentFields)
       .first();
