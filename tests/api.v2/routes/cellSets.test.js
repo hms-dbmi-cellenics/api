@@ -4,7 +4,7 @@ const request = require('supertest');
 const expressLoader = require('../../../src/loaders/express');
 
 const cellSetsController = require('../../../src/api.v2/controllers/cellSetsController');
-const { NotFoundError, OK } = require('../../../src/utils/responses');
+const { NotFoundError } = require('../../../src/utils/responses');
 
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
 jest.mock('../../../src/api.v2/controllers/cellSetsController');
@@ -13,25 +13,6 @@ const endpoint = '/v2/experiments/mockExperimentId/cellSets';
 
 const mockPatch = {
   key: '05e036a5-a2ae-4909-99e1-c3b927a584e3', name: 'New Cluster', color: '#3957ff', type: 'cellSets', cellIds: [438, 444, 713, 822, 192, 576, 675],
-};
-
-const mockCellSet = {
-  cellSets: [
-    {
-      key: 'louvain',
-      name: 'Louvain',
-      children: [{
-        key: 'louvain-0',
-        name: 'Louvain 0',
-        children: [1, 2, 4],
-      }],
-    },
-    {
-      key: 'scratchpad',
-      name: 'Scratchpad',
-      children: [],
-    },
-  ],
 };
 
 describe('Cell sets endpoint', () => {
