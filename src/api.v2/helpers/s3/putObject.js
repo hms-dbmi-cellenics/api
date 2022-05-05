@@ -1,5 +1,5 @@
 const NotFoundError = require('../../../utils/responses/NotFoundError');
-const getS3Client = require('./S3Client');
+const getS3Client = require('./getS3Client');
 
 const pubObject = async (params) => {
   if (!params.Bucket) throw new Error('Bucket is required');
