@@ -116,10 +116,8 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  allOf:
-                    - $ref: '#/components/schemas/CellSets'
+                type: object
+                properties: {}
         '401':
           description: The request lacks authentication credentials.
           content:
