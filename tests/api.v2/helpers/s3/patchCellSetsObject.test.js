@@ -71,7 +71,7 @@ describe('patchCellSetsObject', () => {
     expect(result).toBeUndefined();
   });
 
-  it.only('Throws an error if the JSON merger result is not correct', async () => {
+  it('Throws an error if the JSON merger result is not correct', async () => {
     // Should fail validation because cellIds is not an array
     const malformedPatch = [
       {
