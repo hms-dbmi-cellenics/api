@@ -4,6 +4,8 @@ const bucketNames = require('./bucketNames');
 const getObject = require('./getObject');
 const putObject = require('./putObject');
 
+const validateRequest = require('../../../utils/schema-validator');
+
 const patchCellSetsObject = async (experimentId, patch) => {
   const initialCellSet = await getObject({
     Bucket: bucketNames.CELL_SETS,
@@ -23,12 +25,14 @@ const patchCellSetsObject = async (experimentId, patch) => {
     [cellSetsList, patch],
   ).filter((x) => x !== undefined);
 
-  const patchedCellSet = JSON.stringify({ cellSets: patchedArray });
+  const patchedCellSet = { cellSets: patchedArray };
+
+  await validateRequest(patchedCellSet, 'cell-sets-bodies/CellSets.v2.yaml');
 
   await putObject({
     Bucket: bucketNames.CELL_SETS,
     Key: experimentId,
-    Body: patchedCellSet,
+    Body: JSON.stringify(patchedCellSet),
   });
 };
 
