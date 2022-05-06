@@ -81,12 +81,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  cellSets:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/CellSets'
+                $ref: '#/components/schemas/CellSets'
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -913,7 +908,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-                
+
   '/access/{experimentId}':
     get:
       summary: Get the users with access to an experiment
