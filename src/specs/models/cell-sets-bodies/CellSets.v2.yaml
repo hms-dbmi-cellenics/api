@@ -1,23 +1,10 @@
-title: Cell Sets Object
-type: object
+title: Cell Sets object
 description: Schema for CellSets object
+type: object
 properties:
-  key:
-    type: string
-    format: int32
-  name:
-    type: string
-  rootNode:
-    type: boolean
-  children:
-    oneOf:
-      - minItems: 0
-        maxItems: 0
-        items: {}
-      - minItems: 1
-        items:
-          $ref: ./CellSets.v2.yaml
+  cellSets:
     type: array
+    items:
+      $ref: ./CellSetClass.v2.yaml
 required:
-  - key
-  - name
+  - cellSets
