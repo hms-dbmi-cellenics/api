@@ -4,13 +4,16 @@ const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 const { collapseKeyIntoArray, replaceNullsWithObject } = require('../../sql/helpers');
 
-const { NotFoundError } = require('../../utils/responses');
-
+const { NotFoundError, BadRequestError } = require('../../utils/responses');
+const { formatExperimentId } = require('../helpers/v1Compatibility');
 const tableNames = require('./tableNames');
 
 const getLogger = require('../../utils/getLogger');
+const bucketNames = require('../helpers/s3/bucketNames');
+const { getSignedUrl } = require('../../utils/aws/s3');
 
 const logger = getLogger('[ExperimentModel] - ');
+const downloadTypes = require('../../utils/downloadTypes');
 
 const experimentFields = [
   'id',
@@ -168,6 +171,42 @@ class Experiment extends BasicModel {
         samples_order: this.sql.raw(`samples_order - '${sampleId}'`),
       })
       .where('id', experimentId);
+  }
+
+  /* eslint-disable class-methods-use-this */
+  async getDownloadLink(experimentId, downloadType) {
+    let bucket;
+    let objectKey;
+    let downloadedFileName;
+
+    const filenamePrefix = experimentId.split('-')[0];
+
+    // Also defined in UI repo in utils/downloadTypes
+    switch (downloadType) {
+      case downloadTypes.PROCESSED_SEURAT_OBJECT:
+        bucket = bucketNames.PROCESSED_MATRIX;
+        objectKey = `${formatExperimentId(experimentId)}/r.rds`;
+        downloadedFileName = `${filenamePrefix}_processed_matrix.rds`;
+        break;
+      case downloadTypes.RAW_SEURAT_OBJECT:
+        bucket = bucketNames.RAW_SEURAT;
+        objectKey = `${formatExperimentId(experimentId)}/r.rds`;
+        downloadedFileName = `${filenamePrefix}_raw_matrix.rds`;
+        break;
+      default:
+        throw new BadRequestError('Invalid download type requested');
+    }
+
+    const params = {
+      Bucket: bucket,
+      Key: objectKey,
+      ResponseContentDisposition: `attachment; filename ="${downloadedFileName}"`,
+      Expires: 120,
+    };
+
+    const signedUrl = getSignedUrl('getObject', params);
+    console.log('SIGNED URL', signedUrl);
+    return signedUrl;
   }
 }
 

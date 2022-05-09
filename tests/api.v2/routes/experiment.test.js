@@ -20,6 +20,7 @@ jest.mock('../../../src/api.v2/controllers/experimentController', () => ({
   updateSamplePosition: jest.fn(),
   getProcessingConfig: jest.fn(),
   updateProcessingConfig: jest.fn(),
+  downloadData: jest.fn(),
 }));
 
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
@@ -293,6 +294,24 @@ describe('tests for experiment route', () => {
     });
     request(app)
       .put(`/v2/experiments/${experimentId}/processingConfig`)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Download data works', (done) => {
+    const experimentId = 'experiment-id';
+    const downloadType = 'processed_seurat_object';
+    experimentController.downloadData.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+    request(app)
+      .get(`/v2/experiments/${experimentId}/download/${downloadType}`)
       .expect(200)
       .end((err) => {
         if (err) {

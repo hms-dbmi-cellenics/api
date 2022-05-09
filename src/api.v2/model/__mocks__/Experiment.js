@@ -8,6 +8,7 @@ const stub = {
   getProcessingConfig: jest.fn(),
   addSample: jest.fn(),
   deleteSample: jest.fn(),
+  getDownloadLink: jest.fn(),
   ...BasicModel,
 };
 

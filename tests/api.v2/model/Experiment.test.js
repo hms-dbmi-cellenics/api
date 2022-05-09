@@ -7,6 +7,7 @@ const validSamplesOrderResult = ['sampleId1', 'sampleId2', 'sampleId3', 'sampleI
 const getProcessingConfigResponse = require('../mocks/data/getProcessingConfigResponse.json');
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 const BasicModel = require('../../../src/api.v2/model/BasicModel');
+const { mockS3GetSignedUrl } = require('../../test-utils/mockAWSServices');
 
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
@@ -213,5 +214,32 @@ describe('model/Experiment', () => {
     mockSqlClient.where.mockImplementationOnce(() => { Promise.resolve(); });
     await new Experiment().updateProcessingConfig(mockExperimentId, mockBody);
     expect(mockSqlClient.where).toHaveBeenCalledWith('id', mockExperimentId);
+  });
+
+  it('downloadData returns signed url when the correct download type is given', async () => {
+    const signedUrlSpy = mockS3GetSignedUrl();
+
+    const experimentId = 'someExperiment-UUID-with-several-parts';
+    const filenamePrefix = experimentId.split('-')[0];
+    const expectedFileName = `${filenamePrefix}_processed_matrix.rds`;
+
+    await new Experiment().getDownloadLink(experimentId, 'processed_seurat_object');
+
+    expect(signedUrlSpy).toHaveBeenCalledWith(
+      'getObject',
+      {
+        Bucket: 'processed-matrix-test',
+        Expires: 120,
+        Key: `${experimentId}/r.rds`,
+        ResponseContentDisposition: `attachment; filename ="${expectedFileName}"`,
+      },
+    );
+  });
+
+  it('downloadData throws error incorrect download type is given', async () => {
+    new Experiment().getDownloadLink('12345', 'invalid type')
+      .catch((error) => {
+        expect(error.message).toMatch(/Invalid download type requested/gi);
+      });
   });
 });
