@@ -255,7 +255,7 @@ class ExperimentService {
      */
     const patchedArray = jsonMerger.mergeObjects(
       [cellSetsList, patch],
-    ).filter((x) => x !== undefined);
+    );
 
     const response = await this.updateCellSets(experimentId, patchedArray);
 
