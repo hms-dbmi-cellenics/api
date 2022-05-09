@@ -1,6 +1,7 @@
 const getExperimentUsers = require('../helpers/access/getExperimentUsers');
 const createUserInvite = require('../helpers/access/createUserInvite');
 const removeAccess = require('../helpers/access/removeAccess');
+const postRegistrationHandler = require('../helpers/access/postRegistrationHandler');
 
 const OK = require('../../utils/responses/OK');
 const getLogger = require('../../utils/getLogger');
@@ -44,8 +45,20 @@ const revokeAccess = async (req, res) => {
   res.json(OK());
 };
 
+const postRegistration = async (req, res) => {
+  const { userEmail, userId } = req.body;
+
+  logger.log(`Handling post-registration for userId ${userId}`);
+  await postRegistrationHandler(userEmail, userId);
+
+  logger.log(`Handling post-registration for userId ${userId}`);
+
+  res.json(OK());
+};
+
 module.exports = {
   getUserAccess,
   inviteUser,
   revokeAccess,
+  postRegistration,
 };
