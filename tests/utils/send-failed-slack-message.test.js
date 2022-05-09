@@ -1,4 +1,5 @@
 const fetchMock = require('jest-fetch-mock');
+const { GEM2S_PROCESS_NAME, QC_PROCESS_NAME } = require('../../src/utils/constants');
 const sendFailedSlackMessage = require('../../src/utils/send-failed-slack-message');
 const { USER } = require('../test-utils/constants');
 
@@ -7,16 +8,9 @@ fetchMock.enableFetchMocks();
 jest.mock('../../src/utils/crypt', () => ({
   getWebhookUrl: () => 'http://mockSlackHook.com/asdasd',
 }));
-const experiment = {
-  meta: {
-    pipeline: {
-      stateMachineArn: 'qcArn',
-    },
-    gem2s: {
-      stateMachineArn: 'gem2sArn',
-    },
-  },
-};
+
+const qcStateMachineArn = 'qcArn';
+const gem2sStateMachineArn = 'gem2sArn';
 
 describe('sendFailedSlackMessage', () => {
   beforeEach(() => {
@@ -34,7 +28,7 @@ describe('sendFailedSlackMessage', () => {
       experimentId: 'asd123',
     };
 
-    await sendFailedSlackMessage(message, USER, experiment);
+    await sendFailedSlackMessage(message, USER, QC_PROCESS_NAME, qcStateMachineArn);
     expect(fetch.mock.calls).toMatchSnapshot();
   });
 
@@ -47,7 +41,7 @@ describe('sendFailedSlackMessage', () => {
       },
       experimentId: 'anotherExpId',
     };
-    await sendFailedSlackMessage(message, USER, experiment);
+    await sendFailedSlackMessage(message, USER, GEM2S_PROCESS_NAME, gem2sStateMachineArn);
     expect(fetch.mock.calls).toMatchSnapshot();
   });
 });
