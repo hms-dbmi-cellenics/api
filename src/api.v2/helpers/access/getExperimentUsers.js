@@ -1,18 +1,10 @@
-const config = require('../../../config');
+const { getAwsUserAttributesByEmail } = require('../../../utils/aws/user');
 
 const UserAccess = require('../../model/UserAccess');
 
 const AccessRole = require('../../../utils/enums/AccessRole');
 
-const { cognitoISP } = config;
-
-const getAwsUserAttributesByEmail = async (email) => {
-  const poolId = await config.awsUserPoolIdPromise;
-  const user = await cognitoISP.adminGetUser({ UserPoolId: poolId, Username: email }).promise();
-  return user.UserAttributes;
-};
-
-const getUserRoles = async (experimentId) => {
+const getExperimentUsers = async (experimentId) => {
   const userData = await new UserAccess().getExperimentUsers(experimentId);
 
   // Remove admin from user list
@@ -39,4 +31,4 @@ const getUserRoles = async (experimentId) => {
   return experimentUsers;
 };
 
-module.exports = getUserRoles;
+module.exports = getExperimentUsers;
