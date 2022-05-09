@@ -36,7 +36,7 @@ describe('User access endpoint', () => {
   });
 
   it('Getting list of users to an existing experiment returns 200', async (done) => {
-    accessController.getExperimentUsers.mockImplementationOnce((req, res) => {
+    accessController.getUserAccess.mockImplementationOnce((req, res) => {
       res.json(mockUsersList);
       Promise.resolve();
     });
@@ -53,7 +53,7 @@ describe('User access endpoint', () => {
   });
 
   it('Getting list of users to an unexisting experiment returns 404', async (done) => {
-    accessController.getExperimentUsers.mockImplementationOnce(() => {
+    accessController.getUserAccess.mockImplementationOnce(() => {
       throw new NotFoundError('Experiment not found');
     });
 

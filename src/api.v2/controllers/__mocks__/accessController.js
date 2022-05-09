@@ -1,5 +1,9 @@
-const mockGetExperimentUsers = jest.fn();
+const mockGetUserAccess = jest.fn();
+const mockInviteUser = jest.fn();
+const mockRevokeAccess = jest.fn();
 
 module.exports = {
-  getExperimentUsers: mockGetExperimentUsers,
+  getUserAccess: mockGetUserAccess,
+  inviteUser: mockInviteUser,
+  revokeAccess: mockRevokeAccess,
 };
