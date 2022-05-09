@@ -2,7 +2,6 @@
 const roles = require('../../../src/api.v2/helpers/roles');
 
 const { mockSqlClient } = require('../mocks/getMockSqlClient')();
-const { getAwsUserAttributesByEmail } = require('../../../src/utils/aws/user');
 
 jest.mock('../../../src/api.v2/helpers/roles');
 jest.mock('../../../src/sql/sqlClient', () => ({
@@ -21,32 +20,37 @@ jest.mock('../../../src/utils/aws/user', () => ({
 
 const BasicModel = require('../../../src/api.v2/model/BasicModel');
 const UserAccess = require('../../../src/api.v2/model/UserAccess');
+const AccessRole = require('../../../src/utils/enums/AccessRole');
+
+const mockUserId = '1234-5678-9012-3456';
+const mockExperimentId = 'experimentId';
+const mockRole = 'mockRole';
 
 const mockUserAccessCreateResults = [
   [{
     userId: 'mockAdminSub',
-    experimentId: 'mockExperimentId',
-    accessRole: 'owner',
+    experimentId: mockExperimentId,
+    accessRole: AccessRole.OWNER,
     updatedAt: '1910-03-23 21:06:00.573142+00',
   }],
   [{
-    userId: 'someUser',
-    experimentId: 'mockExperimentId',
-    accessRole: 'owner',
+    userId: mockUserId,
+    experimentId: mockExperimentId,
+    accessRole: AccessRole.OWNER,
     updatedAt: '1910-03-23 21:06:00.573142+00',
   }],
 ];
 
-const mockGetExperimentUsersResults = [
+const mockGetUserAccessResults = [
   {
     userId: 'mockAdminSub',
-    experimentId: 'mockExperimentId',
-    accessRole: 'admin',
+    experimentId: mockExperimentId,
+    accessRole: AccessRole.ADMIN,
     updatedAt: '1910-03-23 21:06:00.573142+00',
   },
   {
-    userId: 'someUser',
-    experimentId: 'mockExperimentId',
+    userId: mockUserId,
+    experimentId: mockExperimentId,
     accessRole: 'owner',
     updatedAt: '1910-03-23 21:06:00.573142+00',
   },
@@ -57,11 +61,11 @@ describe('model/userAccess', () => {
     jest.clearAllMocks();
   });
 
-  it('getExperimentUsers work correctly', async () => {
+  it('getUserAccess work correctly', async () => {
     const experimentId = 'experimentId';
 
     const mockFind = jest.spyOn(BasicModel.prototype, 'find')
-      .mockImplementationOnce(() => Promise.resolve(mockGetExperimentUsersResults));
+      .mockImplementationOnce(() => Promise.resolve(mockGetUserAccessResults));
 
     const result = await new UserAccess().getExperimentUsers(experimentId);
 
@@ -71,7 +75,7 @@ describe('model/userAccess', () => {
     expect(result).toMatchSnapshot();
   });
 
-  it('getExperimentUsers throws a not found error if experiment does not exist', async () => {
+  it('getUserAccess throws a not found error if experiment does not exist', async () => {
     const experimentId = 'experimentId';
 
     const mockFind = jest.spyOn(BasicModel.prototype, 'find')
@@ -83,6 +87,35 @@ describe('model/userAccess', () => {
 
     expect(mockFind).toHaveBeenCalledWith({ experiment_id: experimentId });
     expect(mockFind).toHaveBeenCalledTimes(1);
+  });
+
+  it('grantAccess work correctly', async () => {
+    const mockCreate = jest.spyOn(BasicModel.prototype, 'create')
+      .mockImplementationOnce(() => Promise.resolve());
+
+    await expect(
+      new UserAccess().grantAccess(mockUserId, mockExperimentId, mockRole),
+    );
+
+    expect(mockCreate).toHaveBeenCalledWith({
+      user_id: mockUserId,
+      experiment_id: mockExperimentId,
+      access_role: mockRole,
+    });
+    expect(mockCreate).toHaveBeenCalledTimes(1);
+  });
+
+  it('removeAccess work correctly', async () => {
+    const mockDelete = jest.spyOn(BasicModel.prototype, 'delete')
+      .mockImplementationOnce(() => Promise.resolve());
+
+    await new UserAccess().removeAccess(mockUserId, mockExperimentId);
+
+    expect(mockDelete).toHaveBeenCalledWith({
+      user_id: mockUserId,
+      experiment_id: mockExperimentId,
+    });
+    expect(mockDelete).toHaveBeenCalledTimes(1);
   });
 
   it('createNewExperimentPermissions works correctly', async () => {
