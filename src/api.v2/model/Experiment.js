@@ -205,7 +205,7 @@ class Experiment extends BasicModel {
     };
 
     const signedUrl = getSignedUrl('getObject', params);
-    console.log('SIGNED URL', signedUrl);
+
     return signedUrl;
   }
 }
