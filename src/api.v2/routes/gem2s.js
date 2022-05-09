@@ -7,8 +7,7 @@ module.exports = {
     expressAuthorizationMiddleware,
     (req, res, next) => runGem2s(req, res).catch(next),
   ],
-  'gem2s#response': [
-    expressAuthorizationMiddleware,
-    (req, res, next) => handleResponse(req, res).catch(next),
-  ],
+  'gem2s#response': (req, res, next) => {
+    handleResponse(req, res).catch(next);
+  },
 };
