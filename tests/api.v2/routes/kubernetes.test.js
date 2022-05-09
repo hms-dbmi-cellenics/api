@@ -67,7 +67,7 @@ const express = require('express');
 const request = require('supertest');
 const expressLoader = require('../../../src/loaders/express');
 
-describe('tests for experiment route', () => {
+describe('tests for kubernetes route', () => {
   let app = null;
 
   beforeEach(async () => {
