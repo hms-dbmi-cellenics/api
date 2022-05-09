@@ -968,13 +968,10 @@ paths:
               properties:
                 userEmail:
                   type: string
-                projectUuid:
-                  type: string
                 role:
                   type: string
               required:
                 - userEmail
-                - projectUuid
                 - role
     delete:
       summary: Revoke access to users
@@ -1005,7 +1002,6 @@ paths:
         content:
           application/json:
             schema:
-              description: ''
               type: object
               properties:
                 userEmail:
