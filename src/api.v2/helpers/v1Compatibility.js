@@ -1,3 +1,3 @@
-const formatExperimentId = (experimentId) => experimentId.replaceAll('-', '');
+const formatExperimentId = (experimentId) => experimentId.replace(/-/g, '');
 
 module.exports = { formatExperimentId };

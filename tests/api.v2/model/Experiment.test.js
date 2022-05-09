@@ -8,6 +8,7 @@ const getProcessingConfigResponse = require('../mocks/data/getProcessingConfigRe
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 const BasicModel = require('../../../src/api.v2/model/BasicModel');
 const { mockS3GetSignedUrl } = require('../../test-utils/mockAWSServices');
+const { formatExperimentId } = require('../../../src/api.v2/helpers/v1Compatibility');
 
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
@@ -230,7 +231,7 @@ describe('model/Experiment', () => {
       {
         Bucket: 'processed-matrix-test',
         Expires: 120,
-        Key: `${experimentId}/r.rds`,
+        Key: `${formatExperimentId(experimentId)}/r.rds`,
         ResponseContentDisposition: `attachment; filename ="${expectedFileName}"`,
       },
     );
