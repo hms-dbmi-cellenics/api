@@ -136,8 +136,6 @@ paths:
                 - type: object
         description: The patch in the format declared by boschni/json-merger. Note the explicit naming of the content subtype (boschni-json-merger+json) which must be used to explicitly acknowledge the format.
 
-
-
   '/experiments/{experimentId}/processingConfig':
     get:
       summary: Get processing configuration for an experiment
