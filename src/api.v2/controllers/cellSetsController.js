@@ -24,7 +24,7 @@ const getCellSets = async (req, res) => {
 
   logger.log(`Finished getting cell sets for experiment ${experimentId}`);
 
-  res.json(cellSets);
+  res.send(cellSets);
 };
 
 const patchCellSets = async (req, res) => {

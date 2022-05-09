@@ -13,6 +13,7 @@ jest.mock('../../../src/api.v2/helpers/s3/patchCellSetsObject');
 
 const mockRes = {
   json: jest.fn(),
+  send: jest.fn(),
 };
 
 const mockCellSets = {
@@ -83,7 +84,7 @@ describe('cellSetsController', () => {
       Key: formatExperimentId(mockExperimentId),
     });
 
-    expect(mockRes.json).toHaveBeenCalledWith(mockCellSets);
+    expect(mockRes.send).toHaveBeenCalledWith(mockCellSets);
   });
 
   it('patchCellSetsObject works correctly', async () => {
