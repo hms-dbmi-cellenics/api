@@ -1,8 +1,8 @@
 // @ts-nocheck
-const getUserRoles = require('../../../src/api.v2/helpers/access/getUserRoles');
+const getExperimentUsers = require('../../../src/api.v2/helpers/access/getExperimentUsers');
 const userAccessController = require('../../../src/api.v2/controllers/accessController');
 
-jest.mock('../../../src/api.v2/helpers/access/getUserRoles');
+jest.mock('../../../src/api.v2/helpers/access/getExperimentUsers');
 
 const mockRes = {
   json: jest.fn(),
@@ -29,13 +29,13 @@ describe('accessController', () => {
   it('getExperimentUsers works correctly', async () => {
     const mockReq = { params: { experimentId: 'mockExperimentId' } };
 
-    getUserRoles.mockImplementationOnce(
+    getExperimentUsers.mockImplementationOnce(
       () => Promise.resolve(mockUsersList),
     );
 
-    await userAccessController.getExperimentUsers(mockReq, mockRes);
+    await userAccessController.getUserAccess(mockReq, mockRes);
 
-    expect(getUserRoles).toHaveBeenCalledWith('mockExperimentId');
+    expect(getExperimentUsers).toHaveBeenCalledWith('mockExperimentId');
     expect(mockRes.json).toHaveBeenCalledWith(mockUsersList);
   });
 });
