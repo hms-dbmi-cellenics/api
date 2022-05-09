@@ -33,14 +33,6 @@ describe('tests for experiment route', () => {
     app = mockApp.app;
   });
 
-  afterEach(() => {
-    /**
-     * Most important since b'coz of caching, the mocked implementations sometimes does not reset
-     */
-    jest.resetModules();
-    jest.restoreAllMocks();
-  });
-
   it('Creating a new experiment results in a successful response', async (done) => {
     experimentController.createExperiment.mockImplementationOnce((req, res) => {
       res.json(OK());
