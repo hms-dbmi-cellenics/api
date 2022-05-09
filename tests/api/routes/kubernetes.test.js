@@ -75,14 +75,6 @@ describe('tests for kubernetes route', () => {
     app = mockApp.app;
   });
 
-  afterEach(() => {
-    /**
-     * Most important since b'coz of caching, the mocked implementations sometimes does not reset
-     */
-    jest.resetModules();
-    jest.restoreAllMocks();
-  });
-
   it('sending a remove request works', async (done) => {
     request(app)
       .post('/v1/kubernetesEvents')
