@@ -12,7 +12,7 @@ const patchCellSetsObject = async (experimentId, patch) => {
     Key: experimentId,
   });
 
-  const { cellSets: prePatchCellSets } = currentCellSet;
+  const { cellSets: prePatchCellSets } = JSON.parse(currentCellSet);
 
   /**
    * The $remove operation will replace the element in the array with an
