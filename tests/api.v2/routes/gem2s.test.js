@@ -30,7 +30,7 @@ describe('tests for gem2s route', () => {
     jest.restoreAllMocks();
   });
 
-  it.only('Creating a new gem2s run results in a successful response', async (done) => {
+  it('Creating a new gem2s run results in a successful response', async (done) => {
     gem2sController.runGem2s.mockImplementationOnce((req, res) => {
       res.json(OK());
       return Promise.resolve();
@@ -105,7 +105,7 @@ describe('tests for gem2s route', () => {
     request(app)
       .post('/v2/gem2sResults')
       .send(mockBody)
-      .expect(400)
+      .expect(200)
       .end((err) => {
         if (err) {
           return done(err);
