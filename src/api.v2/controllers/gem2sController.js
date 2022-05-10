@@ -5,16 +5,19 @@ const { gem2sCreate, gem2sResponse } = require('../helpers/pipeline/gem2s');
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 
-const logger = getLogger('[AccessController] - ');
+const logger = getLogger('[Gem2sController] - ');
 
 const runGem2s = async (req, res) => {
   const { experimentId } = req.params;
 
-  logger.log(`Running gem2s for experiment ${experimentId}`);
+  logger.log(`Starting gem2s for experiment ${experimentId}`);
 
   const newExecution = gem2sCreate(experimentId, req.body, req.headers.authorization);
 
-  // logger.log(`S for experiment ${experimentId}`);
+  logger.log(`Started gem2s for experiment ${experimentId} successfully, `);
+  logger.log('New executions data:');
+  logger.log(JSON.stringify(newExecution));
+
   res.json(newExecution);
 };
 

@@ -24,6 +24,11 @@ Array [
     "input": Object {
       "type": "10x",
     },
+    "metadata": Object {
+      "Track_1": Array [
+        "N.A.",
+      ],
+    },
     "organism": null,
     "projectId": "mockExperimentId",
     "sampleIds": Array [
@@ -57,7 +62,7 @@ Array [
             "DownloadGem",
           ],
           "error": false,
-          "paramsHash": "26ad7a4511235d14b30f2a0d06fcb55fcd6d5649",
+          "paramsHash": "mockParamsHash",
           "startDate": "2022-05-10T16:30:16.268Z",
           "status": "RUNNING",
           "stopDate": null,

@@ -54,7 +54,7 @@ describe('gem2sCreate', () => {
     sampleTechnology: '10x',
     createdAt: '2022-05-10 15:41:10.057808+00',
     updatedAt: '2022-05-10 15:41:10.057808+00',
-    metadata: {},
+    metadata: { Track_1: 'N.A.' },
     files: {
       matrix10x: {
         size: 5079737, s3Path: '68f74995-3689-401a-90e0-145e08049cd5', uploadStatus: 'uploaded', sampleFileType: 'matrix10x',
@@ -103,7 +103,7 @@ const mockGetPipelineStatusResponse = {
       status: 'RUNNING',
       error: false,
       completedSteps: ['DownloadGem'],
-      paramsHash: '26ad7a4511235d14b30f2a0d06fcb55fcd6d5649', // pragma: allowlist secret
+      paramsHash: 'mockParamsHash',
     },
   },
 };
