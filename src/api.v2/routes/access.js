@@ -2,6 +2,7 @@ const {
   getUserAccess,
   inviteUser,
   revokeAccess,
+  postRegistration,
 } = require('../controllers/accessController');
 
 const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
@@ -18,5 +19,9 @@ module.exports = {
   'access#revokeAccess': [
     expressAuthorizationMiddleware,
     (req, res, next) => revokeAccess(req, res).catch(next),
+  ],
+  'access#postRegister': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => postRegistration(req, res).catch(next),
   ],
 };

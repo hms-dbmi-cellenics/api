@@ -1008,6 +1008,35 @@ paths:
               required:
                 - userEmail
         description: email of the user to remove from experiment
+  '/access/post-register':
+    post:
+      summary: Add access for newly registered users
+      operationId: postRegister
+      x-eov-operation-id: access#postRegister
+      x-eov-operation-handler: routes/access
+      description: Register access for newly registered user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: 'JSON object containing the message payload'
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  userEmail:
+                    type: string
+        '500':
+          description: 'Message sent can not be parsed as a JSON'
+          content:
+            content:
+              text/plain:
+                schemas:
+                  type: string
+                  pattern: nok
+
 components:
   schemas:
     CreateExperiment:
