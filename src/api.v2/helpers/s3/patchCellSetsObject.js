@@ -23,7 +23,7 @@ const patchCellSetsObject = async (experimentId, patch) => {
    */
   const patchedCellSetslist = jsonMerger.mergeObjects(
     [prePatchCellSets, patch],
-  ).filter((x) => x !== undefined);
+  );
 
   const patchedCellSets = { cellSets: patchedCellSetslist };
 
