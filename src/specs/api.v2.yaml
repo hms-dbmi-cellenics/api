@@ -1014,7 +1014,7 @@ paths:
       summary: Endpoint for handling post-registration
       description: Endpoint for handling post-registartion.
       operationId: postRegistration
-      x-eov-operation-id: postRegistration
+      x-eov-operation-id: access#postRegistration
       x-eov-operation-handler: routes/access
       responses:
         '200':
