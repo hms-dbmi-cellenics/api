@@ -142,11 +142,6 @@ const gem2sCreate = async (experimentId, body, authJWT) => {
     newExecution,
   );
 
-  await new ExperimentExecution().update(
-    { experiment_id: experimentId, pipeline_type: 'gem2s' },
-    newExecution,
-  );
-
   logger.log('GEM2S params saved.');
 
   return newExecution;
