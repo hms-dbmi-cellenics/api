@@ -158,26 +158,26 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'        
+                $ref: '#/components/schemas/HTTPError'
         '401':
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'   
+                $ref: '#/components/schemas/HTTPError'
         '403':
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'     
+                $ref: '#/components/schemas/HTTPError'
         '404':
           description: Not found error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-        
+
     put:
       summary: Update processing configuration for an experiment
       description: Update processing configuration for an experiment
@@ -208,14 +208,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'                
+                $ref: '#/components/schemas/HTTPError'
         '404':
           description: Not found error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-        
+
   '/experiments':
     get:
       summary: Get all experiments
@@ -610,7 +610,7 @@ paths:
             schema:
               type: object
               properties:
-                oldPosition: 
+                oldPosition:
                   type: integer
                 newPosition:
                   type: integer
@@ -1008,6 +1008,28 @@ paths:
               required:
                 - userEmail
         description: email of the user to remove from experiment
+  /kubernetesEvents:
+    post:
+      summary: Monitoring of kubernetes cluster events
+      description: Events from Kubernetes Event Exporter relayed to the API.
+      operationId: receiveKubernetesEvent
+      x-eov-operation-id: kubernetes#event
+      x-eov-operation-handler: routes/kubernetes
+      responses:
+        '200':
+          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: ok
+        '500':
+          description: The data sent by the server could not be parsed as JSON.
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: nok
 components:
   schemas:
     CreateExperiment:

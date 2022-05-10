@@ -77,7 +77,7 @@ describe('tests for kubernetes route', () => {
 
   it('sending a remove request works', async (done) => {
     request(app)
-      .post('/v1/kubernetesEvents')
+      .post('/v2/kubernetesEvents')
       .send(removeRequest)
       .expect(200)
       .end((err) => {
@@ -91,7 +91,7 @@ describe('tests for kubernetes route', () => {
 
   it('sending an empty request works', async (done) => {
     request(app)
-      .post('/v1/kubernetesEvents')
+      .post('/v2/kubernetesEvents')
       .send(undefined)
       .expect(500)
       .end((err) => done(err));
