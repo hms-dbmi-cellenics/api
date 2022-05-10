@@ -57,6 +57,7 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
   }
 
   logger.log('Sending to all clients subscribed to experiment', experimentId);
+
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
 
@@ -73,12 +74,11 @@ const generateGem2sParams = async (experimentId, authJWT) => {
     }
   );
 
-  const [experimentRes, samples] = await Promise.all([
-    new Experiment().findById(experimentId),
+  const [experiment, samples] = await Promise.all([
+    new Experiment().findById(experimentId).first(),
     new Sample().getSamples(experimentId),
   ]);
 
-  const experiment = experimentRes[0];
   const samplesInOrder = experiment.samplesOrder.map(
     (sampleId) => _.find(samples, { id: sampleId }),
   );
