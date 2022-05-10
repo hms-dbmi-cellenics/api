@@ -11,8 +11,6 @@ const runGem2s = async (req, res) => {
   const { experimentId } = req.params;
 
   logger.log(`Running gem2s for experiment ${experimentId}`);
-  // const users = await getUserRoles(experimentId);
-  // const { experimentId } = req.params;
 
   const newExecution = Gem2sService.gem2sCreate(experimentId, req.body, req.headers.authorization);
 
