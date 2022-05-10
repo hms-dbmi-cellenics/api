@@ -158,26 +158,26 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'        
+                $ref: '#/components/schemas/HTTPError'
         '401':
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'   
+                $ref: '#/components/schemas/HTTPError'
         '403':
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'     
+                $ref: '#/components/schemas/HTTPError'
         '404':
           description: Not found error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-        
+
     put:
       summary: Update processing configuration for an experiment
       description: Update processing configuration for an experiment
@@ -208,14 +208,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'                
+                $ref: '#/components/schemas/HTTPError'
         '404':
           description: Not found error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-        
+
   '/experiments':
     get:
       summary: Get all experiments
@@ -610,7 +610,7 @@ paths:
             schema:
               type: object
               properties:
-                oldPosition: 
+                oldPosition:
                   type: integer
                 newPosition:
                   type: integer
@@ -910,7 +910,7 @@ paths:
   '/access/{experimentId}':
     get:
       summary: Get the users with access to an experiment
-      operationId: getAccess
+      operationId: get-access
       x-eov-operation-id: access#getExperimentUsers
       x-eov-operation-handler: routes/access
       description: Returns the users with access to the experiment
@@ -939,104 +939,28 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-    put:
-      summary: Add user to an experiment
-      operationId: inviteUser
-      x-eov-operation-id: access#inviteUser
-      x-eov-operation-handler: routes/access
-      description: Adds permissions for the user email for the experiment from the body
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPSuccess.v1.yaml
-        '404':
-          description: User not found
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                userEmail:
-                  type: string
-                role:
-                  type: string
-              required:
-                - userEmail
-                - role
-    delete:
-      summary: Revoke access to users
-      operationId: deleteAccess
-      x-eov-operation-id: access#revokeAccess
-      x-eov-operation-handler: routes/access
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPSuccess.v1.yaml
-        '404':
-          description: Role not found
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
-        '403':
-          description: The user does not have permissions to revoke the role.
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
-      description: Delete a role for a user in experiment
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                userEmail:
-                  type: string
-                  minLength: 1
-              required:
-                - userEmail
-        description: email of the user to remove from experiment
-  '/access/post-registration':
+  /kubernetesEvents:
     post:
-      summary: Add access for newly registered users
-      operationId: postRegister
-      x-eov-operation-id: access#postRegister
-      x-eov-operation-handler: routes/access
-      description: Register access for newly registered user
+      summary: Monitoring of kubernetes cluster events
+      description: Events from Kubernetes Event Exporter relayed to the API.
+      operationId: receiveKubernetesEvent
+      x-eov-operation-id: kubernetes#event
+      x-eov-operation-handler: routes/kubernetes
       responses:
         '200':
-          description: OK
+          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
           content:
-            application/json:
+            text/plain:
               schema:
-                description: 'JSON object containing the message payload'
-                type: object
-                properties:
-                  userId:
-                    type: string
-                  userEmail:
-                    type: string
+                type: string
+                pattern: ok
         '500':
-          description: 'Message sent can not be parsed as a JSON'
+          description: The data sent by the server could not be parsed as JSON.
           content:
-            content:
-              text/plain:
-                schemas:
-                  type: string
-                  pattern: nok
-
+            text/plain:
+              schema:
+                type: string
+                pattern: nok
 components:
   schemas:
     CreateExperiment:

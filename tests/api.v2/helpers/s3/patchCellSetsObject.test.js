@@ -8,7 +8,7 @@ jest.mock('../../../../src/api.v2/helpers/s3/putObject');
 
 const mockExperimentId = 'mock-experiment-id';
 
-const mockCellSets = {
+const mockCellSets = JSON.stringify({
   cellSets: [
     {
       key: 'louvain',
@@ -27,7 +27,7 @@ const mockCellSets = {
       ],
     },
   ],
-};
+});
 
 const mockPatch = [
   {
