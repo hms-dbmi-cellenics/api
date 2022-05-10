@@ -6,6 +6,8 @@ const Validator = require('swagger-model-validator');
 const yaml = require('js-yaml');
 const _ = require('lodash');
 
+const BadRequestError = require('./responses/BadRequestError');
+
 const getLogger = require('./getLogger');
 
 const logger = getLogger();
@@ -42,7 +44,7 @@ const validateRequest = async (request, schemaPath) => {
 
   if (!validation.valid) {
     logger.log(`Validation error for: ${request}`);
-    throw new Error(validation.errors[0]);
+    throw new BadRequestError(validation.errors[0]);
   }
 };
 
