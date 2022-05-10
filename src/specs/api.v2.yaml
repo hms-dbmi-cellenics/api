@@ -58,6 +58,84 @@ paths:
                   - env
                   - clusterEnv
       description: Returns a status on the health of the API.
+
+  '/experiments/{experimentId}/cellSets':
+    parameters:
+      - name: experimentId
+        in: path
+        description: ID of experiment to find cell sets of.
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - experiments
+      summary: Get cell sets for experiment
+      description: Returns a hirearchical view of cell sets in the experiment.
+      operationId: getExperimentCellSets
+      x-eov-operation-id: cellSets#getCellSets
+      x-eov-operation-handler: routes/cellSets
+      responses:
+        '200':
+          description: 'Request successful, hierarchy returned below.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CellSets'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Experiment not found.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+    patch:
+      summary: ''
+      operationId: patchExperimentCellSets
+      x-eov-operation-id: cellSets#patchCellSets
+      x-eov-operation-handler: routes/cellSets
+      responses:
+        '200':
+          description: Update to object in response successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: Performs a partial update on the experiment's cell sets.
+      requestBody:
+        content:
+          application/boschni-json-merger+json:
+            schema:
+              oneOf:
+                - type: array
+                  items: {}
+                - type: object
+        description: The patch in the format declared by boschni/json-merger. Note the explicit naming of the content subtype (boschni-json-merger+json) which must be used to explicitly acknowledge the format.
+
   '/experiments/{experimentId}/processingConfig':
     get:
       summary: Get processing configuration for an experiment
@@ -80,26 +158,26 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'        
+                $ref: '#/components/schemas/HTTPError'
         '401':
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'   
+                $ref: '#/components/schemas/HTTPError'
         '403':
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'     
+                $ref: '#/components/schemas/HTTPError'
         '404':
           description: Not found error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-        
+
     put:
       summary: Update processing configuration for an experiment
       description: Update processing configuration for an experiment
@@ -130,14 +208,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'                
+                $ref: '#/components/schemas/HTTPError'
         '404':
           description: Not found error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-        
+
   '/experiments':
     get:
       summary: Get all experiments
@@ -532,7 +610,7 @@ paths:
             schema:
               type: object
               properties:
-                oldPosition: 
+                oldPosition:
                   type: integer
                 newPosition:
                   type: integer
@@ -916,13 +994,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: The data sent by the server could not be parsed as JSON.
-          content:
-            text/plain:
-              schema:
-                type: string
-                pattern: nok
       description: |-
         Results from Step Function pipeline steps are relayed to the API through this endpoint.
 
@@ -933,7 +1004,28 @@ paths:
       tags:
         - work
     parameters: []
-  
+  /kubernetesEvents:
+    post:
+      summary: Monitoring of kubernetes cluster events
+      description: Events from Kubernetes Event Exporter relayed to the API.
+      operationId: receiveKubernetesEvent
+      x-eov-operation-id: kubernetes#event
+      x-eov-operation-handler: routes/kubernetes
+      responses:
+        '200':
+          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: ok
+        '500':
+          description: The data sent by the server could not be parsed as JSON.
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: nok
 components:
   schemas:
     CreateExperiment:
@@ -955,6 +1047,8 @@ components:
       $ref: './models/samples-bodies/CreateSampleFile.v2.yaml'
     PatchSampleFile:
       $ref: './models/samples-bodies/PatchSampleFile.v2.yaml'
+    CellSets:
+      $ref: ./models/cell-sets-bodies/CellSets.v2.yaml
     HTTPSuccess:
       $ref: './models/HTTPSuccess.v1.yaml'
     HTTPError:
