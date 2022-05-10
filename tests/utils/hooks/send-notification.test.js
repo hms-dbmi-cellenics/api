@@ -20,6 +20,15 @@ jest.mock('../../../src/utils/send-email', () => jest.fn());
 const experimentsService = new ExperimentService();
 fetchMock.enableFetchMocks();
 
+const meta = {
+  pipeline: {
+    stateMachineArn: 'qcArn',
+  },
+  gem2s: {
+    stateMachineArn: 'gem2sArn',
+  },
+};
+
 describe('send-notification ', () => {
   const message = {
     experimentId: 'mockexp',
@@ -48,9 +57,8 @@ describe('send-notification ', () => {
   });
 
   it('Sends email and slack message if user toggled notifications on failed process', async () => {
-    experimentsService.getExperimentData.mockReturnValue({
-      notifyByEmail: true,
-    });
+    experimentsService.getExperimentData.mockReturnValue({ notifyByEmail: true, meta });
+
     const newMessage = {
       ...message,
       input: {
@@ -58,20 +66,21 @@ describe('send-notification ', () => {
         processName: 'qc',
       },
     };
+
     getPipelineStatus.mockReturnValue({
       qc: {
         status: FAILED,
       },
     });
+
     await sendNotification(newMessage);
+
     expect(sendEmail).toHaveBeenCalledTimes(1);
     expect(sendFailedSlackMessage).toHaveBeenCalledTimes(1);
   });
 
   it('Sends email on success if toggled, does not send slack message ', async () => {
-    experimentsService.getExperimentData.mockReturnValue({
-      notifyByEmail: true,
-    });
+    experimentsService.getExperimentData.mockReturnValue({ notifyByEmail: true, meta });
     const newMessage = {
       ...message,
       input: {
@@ -90,9 +99,7 @@ describe('send-notification ', () => {
   });
 
   it('Does not send email on success if user has not toggled notifications', async () => {
-    experimentsService.getExperimentData.mockReturnValue({
-      notifyByEmail: false,
-    });
+    experimentsService.getExperimentData.mockReturnValue({ notifyByEmail: false, meta });
     const newMessage = {
       ...message,
       input: {
