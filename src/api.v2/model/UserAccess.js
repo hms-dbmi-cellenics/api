@@ -38,21 +38,34 @@ class UserAccess extends BasicModel {
     return experimentUsers;
   }
 
+  async addToInviteAccess(userId, experimentId, role) {
+    return await this.sql
+      .insert({ user_id: userId, experiment_id: experimentId, access_role: role })
+      .into(tableNames.INVITE_ACCESS);
+  }
+
+  async grantAccess(userId, experimentId, role) {
+    return await this.create(
+      { user_id: userId, experiment_id: experimentId, access_role: role },
+    );
+  }
+
+  async removeAccess(userId, experimentId) {
+    return await this.delete({ experiment_id: experimentId, user_id: userId });
+  }
+
   async createNewExperimentPermissions(userId, experimentId) {
     logger.log('Setting up access permissions for experiment');
 
-    await this.create(
-      { user_id: config.adminSub, experiment_id: experimentId, access_role: AccessRole.ADMIN },
-    );
+    // Create admin permissions
+    await this.grantAccess(config.adminSub, experimentId, AccessRole.ADMIN);
 
     if (userId === config.adminSub) {
       logger.log('User is the admin, so only creating admin access');
       return;
     }
 
-    await this.create(
-      { user_id: userId, experiment_id: experimentId, access_role: AccessRole.OWNER },
-    );
+    await this.grantAccess(userId, experimentId, AccessRole.OWNER);
   }
 
   async canAccessExperiment(userId, experimentId, url, method) {
