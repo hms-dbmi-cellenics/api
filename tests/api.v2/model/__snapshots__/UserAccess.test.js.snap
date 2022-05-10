@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`model/userAccess getUserAccess work correctly 1`] = `
+exports[`model/userAccess getExperimentUsers work correctly 1`] = `
 Array [
   Object {
     "accessRole": "admin",
-    "experimentId": "experimentId",
+    "experimentId": "mockExperimentId",
     "updatedAt": "1910-03-23 21:06:00.573142+00",
     "userId": "mockAdminSub",
   },
   Object {
     "accessRole": "owner",
-    "experimentId": "experimentId",
+    "experimentId": "mockExperimentId",
     "updatedAt": "1910-03-23 21:06:00.573142+00",
-    "userId": "1234-5678-9012-3456",
+    "userId": "someUser",
   },
 ]
 `;
