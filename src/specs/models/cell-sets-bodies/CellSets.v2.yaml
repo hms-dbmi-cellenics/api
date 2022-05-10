@@ -1,0 +1,10 @@
+title: Cell Sets object
+description: Schema for CellSets object
+type: object
+properties:
+  cellSets:
+    type: array
+    items:
+      $ref: ./CellSetClass.v2.yaml
+required:
+  - cellSets

@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`patchCellSetsObject Works correctly 1`] = `
+Object {
+  "Body": "{\\"cellSets\\":[{\\"key\\":\\"louvain\\",\\"name\\":\\"louvain clusters\\",\\"rootNode\\":true,\\"type\\":\\"cellSets\\",\\"children\\":[{\\"key\\":\\"louvain-0\\",\\"name\\":\\"Cluster 0\\",\\"rootNode\\":false,\\"type\\":\\"cellSets\\",\\"color\\":\\"#77aadd\\",\\"cellIds\\":[0,1,2,3]},{\\"key\\":\\"new-cluster-1\\",\\"name\\":\\"New Cluster 1\\",\\"rootNode\\":false,\\"color\\":\\"#3957ff\\",\\"type\\":\\"cellSets\\",\\"cellIds\\":[4,5,6]}]}]}",
+  "Bucket": "cell-sets-test",
+  "Key": "mock-experiment-id",
+}
+`;

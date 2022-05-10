@@ -58,6 +58,84 @@ paths:
                   - env
                   - clusterEnv
       description: Returns a status on the health of the API.
+
+  '/experiments/{experimentId}/cellSets':
+    parameters:
+      - name: experimentId
+        in: path
+        description: ID of experiment to find cell sets of.
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - experiments
+      summary: Get cell sets for experiment
+      description: Returns a hirearchical view of cell sets in the experiment.
+      operationId: getExperimentCellSets
+      x-eov-operation-id: cellSets#getCellSets
+      x-eov-operation-handler: routes/cellSets
+      responses:
+        '200':
+          description: 'Request successful, hierarchy returned below.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CellSets'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Experiment not found.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+    patch:
+      summary: ''
+      operationId: patchExperimentCellSets
+      x-eov-operation-id: cellSets#patchCellSets
+      x-eov-operation-handler: routes/cellSets
+      responses:
+        '200':
+          description: Update to object in response successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: Performs a partial update on the experiment's cell sets.
+      requestBody:
+        content:
+          application/boschni-json-merger+json:
+            schema:
+              oneOf:
+                - type: array
+                  items: {}
+                - type: object
+        description: The patch in the format declared by boschni/json-merger. Note the explicit naming of the content subtype (boschni-json-merger+json) which must be used to explicitly acknowledge the format.
+
   '/experiments/{experimentId}/processingConfig':
     get:
       summary: Get processing configuration for an experiment
@@ -832,7 +910,7 @@ paths:
   '/access/{experimentId}':
     get:
       summary: Get the users with access to an experiment
-      operationId: get-access
+      operationId: getAccess
       x-eov-operation-id: access#getExperimentUsers
       x-eov-operation-handler: routes/access
       description: Returns the users with access to the experiment
@@ -861,6 +939,75 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+    put:
+      summary: Add user to an experiment
+      operationId: inviteUser
+      x-eov-operation-id: access#inviteUser
+      x-eov-operation-handler: routes/access
+      description: Adds permissions for the user email for the experiment from the body
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userEmail:
+                  type: string
+                role:
+                  type: string
+              required:
+                - userEmail
+                - role
+    delete:
+      summary: Revoke access to users
+      operationId: deleteAccess
+      x-eov-operation-id: access#revokeAccess
+      x-eov-operation-handler: routes/access
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '404':
+          description: Role not found
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The user does not have permissions to revoke the role.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: Delete a role for a user in experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userEmail:
+                  type: string
+                  minLength: 1
+              required:
+                - userEmail
+        description: email of the user to remove from experiment
   /kubernetesEvents:
     post:
       summary: Monitoring of kubernetes cluster events
@@ -883,7 +1030,6 @@ paths:
               schema:
                 type: string
                 pattern: nok
-
 components:
   schemas:
     CreateExperiment:
@@ -905,6 +1051,8 @@ components:
       $ref: './models/samples-bodies/CreateSampleFile.v2.yaml'
     PatchSampleFile:
       $ref: './models/samples-bodies/PatchSampleFile.v2.yaml'
+    CellSets:
+      $ref: ./models/cell-sets-bodies/CellSets.v2.yaml
     HTTPSuccess:
       $ref: './models/HTTPSuccess.v1.yaml'
     HTTPError:
