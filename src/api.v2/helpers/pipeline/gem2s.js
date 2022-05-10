@@ -8,18 +8,19 @@ const getPipelineStatus = require('./getPipelineStatus');
 // const { createGem2SPipeline } = require('../general-services/pipeline-manage');
 const { createGem2SPipeline } = require('./pipelineConstruct');
 
-const sendNotification = require('./hooks/sendNotification');
-const validateRequest = require('../../../utils/schema-validator');
-const PipelineHook = require('../../../utils/hooks/hookRunner');
-const getLogger = require('../../../utils/getLogger');
-
 const Sample = require('../../model/Sample');
 const Experiment = require('../../model/Experiment');
 const ExperimentExecution = require('../../model/ExperimentExecution');
 
+const sendNotification = require('./hooks/sendNotification');
+const HookRunner = require('./hooks/HookRunner');
+
+const validateRequest = require('../../../utils/schema-validator');
+const getLogger = require('../../../utils/getLogger');
+
 const logger = getLogger();
 
-const pipelineHook = new PipelineHook();
+const hookRunner = new HookRunner();
 
 const saveProcessingConfigFromGem2s = ({ experimentId, item }) => {
   new Experiment().updateById(experimentId, { processing_config: item });
@@ -33,12 +34,12 @@ const continueToQC = () => {
   // await createQCPipeline(experimentId, [], authJWT);
 };
 
-pipelineHook.register('uploadToAWS', [
+hookRunner.register('uploadToAWS', [
   saveProcessingConfigFromGem2s,
   continueToQC,
 ]);
 
-pipelineHook.registerAll([sendNotification]);
+hookRunner.registerAll([sendNotification]);
 
 const sendUpdateToSubscribed = async (experimentId, message, io) => {
   const statusRes = await getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME);
@@ -59,13 +60,6 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
 };
 
 const generateGem2sParams = async (experimentId, authJWT) => {
-  // const experiment = await (new ExperimentService()).getExperimentData(experimentId);
-  // const samples = await (new SamplesService()).getSamplesByExperimentId(experimentId);
-
-  // const {
-  //   metadataKeys,
-  // } = await new ProjectsService().getProject(experiment.projectId);
-
   const defaultMetadataValue = 'N.A.';
 
   logger.log('Generating task params');
@@ -164,7 +158,7 @@ const gem2sResponse = async (io, message) => {
   // Fail hard if there was an error.
   await validateRequest(message, 'GEM2SResponse.v1.yaml');
 
-  await pipelineHook.run(message);
+  await hookRunner.run(message);
 
   const { experimentId } = message;
 
@@ -176,7 +170,6 @@ const gem2sResponse = async (io, message) => {
 
   await sendUpdateToSubscribed(experimentId, messageForClient, io);
 };
-
 
 module.exports = {
   gem2sCreate,
