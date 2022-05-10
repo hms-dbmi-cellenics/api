@@ -1,7 +1,7 @@
 const AWSXRay = require('aws-xray-sdk');
 
 // const getUserRoles = require('../helpers/access/getUserRoles');
-const Gem2sService = require('../helpers/pipeline/gem2s/Gem2sService');
+const { gem2sCreate, gem2sResponse } = require('../helpers/pipeline/gem2s');
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 
@@ -12,7 +12,7 @@ const runGem2s = async (req, res) => {
 
   logger.log(`Running gem2s for experiment ${experimentId}`);
 
-  const newExecution = Gem2sService.gem2sCreate(experimentId, req.body, req.headers.authorization);
+  const newExecution = gem2sCreate(experimentId, req.body, req.headers.authorization);
 
   // logger.log(`S for experiment ${experimentId}`);
   res.json(newExecution);
@@ -35,7 +35,7 @@ const handleResponse = async (req, res) => {
   const isSnsNotification = parsedMessage !== undefined;
   if (isSnsNotification) {
     try {
-      await Gem2sService.gem2sResponse(io, parsedMessage);
+      await gem2sResponse(io, parsedMessage);
     } catch (e) {
       logger.error(
         'gem2s pipeline response handler failed with error: ', e,
