@@ -906,30 +906,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-  '/experiments/{experimentId}/gem2s':
-    post:
-      summary: Get the users with access to an experiment
-      operationId: runGem2s
-      x-eov-operation-id: gem2s#run
-      x-eov-operation-handler: routes/gem2s
-      description: Triggers a new gem2s run
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  paramsHash:
-                    type: string
-                additionalProperties: false
-        '404':
-          description: Experiment not found
-          content:
-            application/json:
-              schema:
-                $ref: ./models/HTTPError.v1.yaml
   '/access/{experimentId}':
     get:
       summary: Get the users with access to an experiment
@@ -962,6 +938,43 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+  '/experiments/{experimentId}/gem2s':
+    post:
+      summary: Run gem2s
+      operationId: runGem2s
+      x-eov-operation-id: gem2s#run
+      x-eov-operation-handler: routes/gem2s
+      description: Triggers a new gem2s run
+      requestBody: 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                paramsHash:
+                  type: string
+              required:
+                - paramsHash
+              additionalProperties: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Experiment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   /gem2sResults:
     post:
       operationId: receiveGem2sResponse
@@ -974,12 +987,10 @@ paths:
           text/plain:
             schema:
               type: string
-            examples: {}
           application/json:
             schema:
               type: object
               properties: {}
-            examples: {}
       responses:
         '200':
           description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
@@ -988,12 +999,6 @@ paths:
               schema:
                 type: string
                 pattern: ok
-        '401':
-          description: The request lacks authentication credentials.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPError'
       description: |-
         Results from Step Function pipeline steps are relayed to the API through this endpoint.
 
