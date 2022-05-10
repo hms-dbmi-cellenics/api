@@ -15,12 +15,14 @@ const HookRunner = require('./hooks/HookRunner');
 const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
 
-const logger = getLogger();
+const logger = getLogger('[Gem2sService] - ');
 
 const hookRunner = new HookRunner();
 
 const saveProcessingConfigFromGem2s = ({ experimentId, item }) => {
+  logger.log('Saving processing config for gem2s');
   new Experiment().updateById(experimentId, { processing_config: item });
+  logger.log('Finished saving processing config for gem2s');
 };
 
 const continueToQC = () => {
@@ -40,6 +42,7 @@ hookRunner.registerAll([sendNotification]);
 
 const sendUpdateToSubscribed = async (experimentId, message, io) => {
   const statusRes = await getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME);
+
   // Concatenate into a proper response.
   const response = {
     ...message,
@@ -52,6 +55,7 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
     logger.log(`Error in ${constants.GEM2S_PROCESS_NAME} received`);
     AWSXRay.getSegment().addError(error);
   }
+
   logger.log('Sending to all clients subscribed to experiment', experimentId);
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
@@ -59,7 +63,7 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
 const generateGem2sParams = async (experimentId, authJWT) => {
   const defaultMetadataValue = 'N.A.';
 
-  logger.log('Generating task params');
+  logger.log('Generating gem2s params');
 
   const getS3Paths = (files) => (
     {
