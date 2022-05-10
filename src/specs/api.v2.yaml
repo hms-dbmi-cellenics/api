@@ -1008,7 +1008,7 @@ paths:
               required:
                 - userEmail
         description: email of the user to remove from experiment
-  '/access/post-register':
+  '/access/post-registration':
     post:
       summary: Add access for newly registered users
       operationId: postRegister
