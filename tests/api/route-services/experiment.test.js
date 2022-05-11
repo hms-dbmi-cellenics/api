@@ -420,7 +420,7 @@ describe('tests for the experiment service', () => {
 
     mockDynamoGetItem({ projectId });
 
-    (new ExperimentService()).downloadData('12345', 'processed_seurat_object')
+    (new ExperimentService()).downloadData('12345', 'processed-matrix')
       .then(() => {
         expect(signedUrlSpy).toHaveBeenCalledWith(
           'getObject',

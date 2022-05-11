@@ -7,13 +7,13 @@ const { collapseKeyIntoArray, replaceNullsWithObject } = require('../../sql/help
 const { NotFoundError, BadRequestError } = require('../../utils/responses');
 const { formatExperimentId } = require('../helpers/v1Compatibility');
 const tableNames = require('./tableNames');
+const config = require('../../config');
 
 const getLogger = require('../../utils/getLogger');
 const bucketNames = require('../helpers/s3/bucketNames');
 const { getSignedUrl } = require('../../utils/aws/s3');
 
 const logger = getLogger('[ExperimentModel] - ');
-const downloadTypes = require('../../utils/downloadTypes');
 
 const experimentFields = [
   'id',
@@ -174,22 +174,19 @@ class Experiment extends BasicModel {
 
   /* eslint-disable class-methods-use-this */
   async getDownloadLink(experimentId, downloadType) {
-    let bucket;
-    let objectKey;
     let downloadedFileName;
+    const { clusterEnv } = config;
 
     const filenamePrefix = experimentId.split('-')[0];
+    const requestedBucketName = `${downloadType}-${clusterEnv}`;
+    const objectKey = `${formatExperimentId(experimentId)}/r.rds`;
 
     // Also defined in UI repo in utils/downloadTypes
-    switch (downloadType) {
-      case downloadTypes.PROCESSED_SEURAT_OBJECT:
-        bucket = bucketNames.PROCESSED_MATRIX;
-        objectKey = `${formatExperimentId(experimentId)}/r.rds`;
+    switch (requestedBucketName) {
+      case bucketNames.PROCESSED_MATRIX:
         downloadedFileName = `${filenamePrefix}_processed_matrix.rds`;
         break;
-      case downloadTypes.RAW_SEURAT_OBJECT:
-        bucket = bucketNames.RAW_SEURAT;
-        objectKey = `${formatExperimentId(experimentId)}/r.rds`;
+      case bucketNames.RAW_SEURAT:
         downloadedFileName = `${filenamePrefix}_raw_matrix.rds`;
         break;
       default:
@@ -197,7 +194,7 @@ class Experiment extends BasicModel {
     }
 
     const params = {
-      Bucket: bucket,
+      Bucket: requestedBucketName,
       Key: objectKey,
       ResponseContentDisposition: `attachment; filename ="${downloadedFileName}"`,
       Expires: 120,

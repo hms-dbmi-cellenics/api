@@ -224,8 +224,8 @@ describe('model/Experiment', () => {
     const filenamePrefix = experimentId.split('-')[0];
     const expectedFileName = `${filenamePrefix}_processed_matrix.rds`;
 
-    await new Experiment().getDownloadLink(experimentId, 'processed_seurat_object');
-    await new Experiment().getDownloadLink(experimentId, 'raw_seurat_object');
+    await new Experiment().getDownloadLink(experimentId, 'processed-matrix');
+    await new Experiment().getDownloadLink(experimentId, 'biomage-source');
 
     expect(signedUrlSpy).toHaveBeenCalledWith(
       'getObject',
