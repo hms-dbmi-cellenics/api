@@ -181,7 +181,6 @@ class Experiment extends BasicModel {
     const requestedBucketName = `${downloadType}-${clusterEnv}`;
     const objectKey = `${formatExperimentId(experimentId)}/r.rds`;
 
-    // Also defined in UI repo in utils/downloadTypes
     switch (requestedBucketName) {
       case bucketNames.PROCESSED_MATRIX:
         downloadedFileName = `${filenamePrefix}_processed_matrix.rds`;

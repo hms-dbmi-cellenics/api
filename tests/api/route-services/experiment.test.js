@@ -435,6 +435,9 @@ describe('tests for the experiment service', () => {
   });
 
   it('downloadData throws error incorrect download type is given', async (done) => {
+    const projectId = 'someProject-UUID-with-several-parts';
+    mockDynamoGetItem({ projectId });
+
     (new ExperimentService()).downloadData('12345', 'invalid type')
       .catch((error) => {
         expect(error.message).toMatch(/Invalid download type requested/gi);

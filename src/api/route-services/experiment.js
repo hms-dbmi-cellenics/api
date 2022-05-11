@@ -10,7 +10,6 @@ const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 const { getSignedUrl } = require('../../utils/aws/s3');
 
 const constants = require('../general-services/pipeline-manage/constants');
-const downloadTypes = require('../../utils/downloadTypes');
 
 const {
   getExperimentAttributes,
@@ -342,7 +341,6 @@ class ExperimentService {
     logger.log(`Providing download link for download ${downloadType} for experiment ${experimentId}`);
 
     let downloadedFileName = '';
-    if (!Object.values(downloadTypes).includes(downloadType)) throw new BadRequestError('Invalid download type requested');
 
     const { projectId } = await getExperimentAttributes(this.experimentsTableName, experimentId, ['projectId']);
 
@@ -350,8 +348,6 @@ class ExperimentService {
     const requestedBucketName = `${downloadType}-${config.clusterEnv}`;
     const objectKey = `${experimentId}/r.rds`;
 
-    // Also defined in UI repo in utils/downloadTypes
-    // eslint-disable-next-line default-case
     switch (requestedBucketName) {
       case this.processedMatrixBucketName:
         downloadedFileName = `${filenamePrefix}_processed_matrix.rds`;
@@ -359,6 +355,8 @@ class ExperimentService {
       case this.rawSeuratBucketName:
         downloadedFileName = `${filenamePrefix}_raw_matrix.rds`;
         break;
+      default:
+        throw new BadRequestError('Invalid download type requested');
     }
 
     const params = {

@@ -6,7 +6,7 @@ const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 const getPipelineStatus = require('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 const getWorkerStatus = require('../../../src/api.v2/helpers/worker/getWorkerStatus');
 
-const downloadTypes = require('../../../src/utils/downloadTypes');
+const bucketNames = require('../../../src/api.v2/helpers/s3/bucketNames');
 
 const experimentInstance = Experiment();
 const userAccessInstance = UserAccess();
@@ -258,12 +258,12 @@ describe('experimentController', () => {
     const mockReq = {
       params: {
         experimentId: mockExperiment.id,
-        type: downloadTypes.PROCESSED_SEURAT_OBJECT,
+        type: bucketNames.PROCESSED_MATRIX,
       },
     };
 
     await experimentController.downloadData(mockReq, mockRes);
     expect(experimentInstance.getDownloadLink)
-      .toHaveBeenCalledWith(mockExperiment.id, downloadTypes.PROCESSED_SEURAT_OBJECT);
+      .toHaveBeenCalledWith(mockExperiment.id, bucketNames.PROCESSED_MATRIX);
   });
 });
