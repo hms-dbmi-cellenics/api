@@ -939,6 +939,35 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+'/workResults/{experimentId}/{ETag}':
+    get:
+      summary: Get the work results from S3
+      operationId: getWorkResults
+      x-eov-operation-id: work#getResults
+      x-eov-operation-handler: routes/work
+      description: 'On success, returns a signed url with the uploaded worker results in S3'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signedUrl:
+                    type: string
+        '403':
+          description: The user does not have permissions to view the work results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: The work results were not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   /kubernetesEvents:
     post:
       summary: Monitoring of kubernetes cluster events
