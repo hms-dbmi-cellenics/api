@@ -6,7 +6,7 @@ const UserAccess = require('../../../../src/api.v2/model/UserAccess');
 
 const AccessRole = require('../../../../src/utils/enums/AccessRole');
 
-const getExperimentUsers = require('../../../../src/api.v2/helpers/access/getExperimentUsers');
+const getUserRoles = require('../../../../src/api.v2/helpers/access/getUserRoles');
 
 const { cognitoISP } = config;
 
@@ -59,7 +59,7 @@ describe('getUserRoles', () => {
       (user) => user.accessRole === AccessRole.ADMIN,
     );
 
-    const result = await getExperimentUsers(experimentId);
+    const result = await getUserRoles(experimentId);
 
     expect(mockUserAccess.getExperimentUsers).toHaveBeenCalledWith(experimentId);
     expect(mockUserAccess.getExperimentUsers).toHaveBeenCalledTimes(1);
@@ -73,7 +73,7 @@ describe('getUserRoles', () => {
   it('getUserRoles throws a server error if there is an error fetching Cognito user data', async () => {
     cognitoISP.adminGetUser.mockReturnValueOnce(Promise.reject(new Error('Error fetching user data')));
 
-    await expect(getExperimentUsers(experimentId)).rejects.toThrow();
+    await expect(getUserRoles(experimentId)).rejects.toThrow();
 
     expect(mockUserAccess.getExperimentUsers).toHaveBeenCalledWith(experimentId);
     expect(mockUserAccess.getExperimentUsers).toHaveBeenCalledTimes(1);
