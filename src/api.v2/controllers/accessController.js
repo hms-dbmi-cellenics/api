@@ -58,7 +58,7 @@ const postRegistration = async (req, res) => {
     return;
   }
 
-  const { userEmail, userId } = data.userInfo;
+  const { userEmail, userId } = data;
 
   logger.log(`Handling post-registration for user ${userEmail}`);
   await postRegistrationHandler(userEmail, userId);

@@ -1045,15 +1045,12 @@ paths:
             schema:
               type: object
               properties:
-                userInfo:
-                  type: object
-                  properties:
-                    userEmail:
-                      type: string
-                      minLength: 1
-                    userId:
-                      type: string
-                      minLength: 1
+                userEmail:
+                  type: string
+                  minLength: 1
+                userId:
+                  type: string
+                  minLength: 1
   /kubernetesEvents:
     post:
       summary: Monitoring of kubernetes cluster events
