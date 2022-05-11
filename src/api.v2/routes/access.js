@@ -21,7 +21,6 @@ module.exports = {
     (req, res, next) => revokeAccess(req, res).catch(next),
   ],
   'access#postRegistration': [
-    expressAuthorizationMiddleware,
     (req, res, next) => postRegistration(req, res).catch(next),
   ],
 };

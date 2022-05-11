@@ -1018,20 +1018,42 @@ paths:
       x-eov-operation-handler: routes/access
       responses:
         '200':
-          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
+          description: OK
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                pattern: ok
+                $ref: ./models/HTTPSuccess.v1.yaml
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
         '500':
-          description: The data sent by the server could not be parsed as JSON.
+          description: Internal Server Error
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                pattern: nok
-
+                $ref: '#/components/schemas/HTTPError'
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+            examples: {}
+          application/json:
+            schema:
+              type: object
+              properties:
+                userInfo:
+                  type: object
+                  properties:
+                    userEmail:
+                      type: string
+                      minLength: 1
+                    userId:
+                      type: string
+                      minLength: 1
   /kubernetesEvents:
     post:
       summary: Monitoring of kubernetes cluster events

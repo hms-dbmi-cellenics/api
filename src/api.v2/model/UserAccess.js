@@ -51,15 +51,15 @@ class UserAccess extends BasicModel {
       .from(tableNames.INVITE_ACCESS)
       .where({ user_email: userEmail });
 
-    const insertPromise = records.forEach((record) => {
-      this.create({
-        user_id: userId,
-        experiment_id: record.experiment_id,
-        access_role: record.access_role,
-      });
-    });
+    const insertPromise = records.map((record) => this.create({
+      user_id: userId,
+      experiment_id: record.experimentId,
+      access_role: record.accessRole,
+    }));
 
     await Promise.all(insertPromise);
+
+    await this.sql.del().from(tableNames.INVITE_ACCESS).where({ user_email: userEmail });
   }
 
   async grantAccess(userId, experimentId, role) {

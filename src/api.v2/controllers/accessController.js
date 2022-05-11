@@ -1,3 +1,5 @@
+const parseSNSMessage = require('../../utils/parse-sns-message');
+
 const getExperimentUsers = require('../helpers/access/getExperimentUsers');
 const createUserInvite = require('../helpers/access/createUserInvite');
 const removeAccess = require('../helpers/access/removeAccess');
@@ -46,12 +48,22 @@ const revokeAccess = async (req, res) => {
 };
 
 const postRegistration = async (req, res) => {
-  const { userEmail, userId } = req.body;
+  let data;
 
-  logger.log(`Handling post-registration for userId ${userId}`);
+  try {
+    const { parsedMessage } = await parseSNSMessage(req);
+    data = parsedMessage;
+  } catch (e) {
+    logger.error('Parsing initial SNS message failed:', e);
+    return;
+  }
+
+  const { userEmail, userId } = data.userInfo;
+
+  logger.log(`Handling post-registration for user ${userEmail}`);
   await postRegistrationHandler(userEmail, userId);
 
-  logger.log(`Handling post-registration for userId ${userId}`);
+  logger.log(`Finished handling post-registration for user ${userEmail}`);
 
   res.json(OK());
 };
