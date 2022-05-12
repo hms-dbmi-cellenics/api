@@ -38,9 +38,9 @@ class UserAccess extends BasicModel {
     return experimentUsers;
   }
 
-  async addToInviteAccess(userId, experimentId, role) {
+  async addToInviteAccess(userEmail, experimentId, role) {
     return await this.sql
-      .insert({ user_id: userId, experiment_id: experimentId, access_role: role })
+      .insert({ user_email: userEmail, experiment_id: experimentId, access_role: role })
       .into(tableNames.INVITE_ACCESS);
   }
 
