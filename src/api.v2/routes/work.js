@@ -1,5 +1,5 @@
-const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
 const getWorkResults = require('../helpers/worker/getWorkResults');
+const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
 
 module.exports = {
   'work#getResults': [

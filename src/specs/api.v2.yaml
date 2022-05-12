@@ -939,7 +939,7 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
-'/workResults/{experimentId}/{ETag}':
+  '/workResults/{experimentId}/{ETag}':
     get:
       summary: Get the work results from S3
       operationId: getWorkResults
