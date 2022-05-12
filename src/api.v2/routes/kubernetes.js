@@ -1,7 +1,6 @@
 const AWSXRay = require('aws-xray-sdk');
 const k8s = require('@kubernetes/client-node');
 const getLogger = require('../../utils/getLogger');
-const { OK } = require('../../utils/responses');
 
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
@@ -24,7 +23,7 @@ module.exports = {
         logger.log(`removing pod ${name} in ${namespace}`);
         await k8sApi.deleteNamespacedPod(name, namespace);
       }
-      res.json(OK());
+      res.status(200).send('ok');
     } catch (e) {
       logger.error('error processing k8s event', e);
       AWSXRay.getSegment().addError(e);
