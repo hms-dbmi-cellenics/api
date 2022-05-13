@@ -104,4 +104,28 @@ describe('User access endpoint', () => {
         return done();
       });
   });
+
+  it('Post-user registration endpoint works correctly', async (done) => {
+    accessController.postRegistration.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      Promise.resolve();
+    });
+
+    const mockUserInfo = JSON.stringify({
+      userId: 'mockUserId',
+      userEmail: 'user@example.com',
+    });
+
+    request(app)
+      .post('/v2/access/post-registration')
+      .send(mockUserInfo)
+      .set('Content-type', 'application/json')
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
 });

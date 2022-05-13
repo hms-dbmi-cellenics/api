@@ -45,7 +45,6 @@ class UserAccess extends BasicModel {
   }
 
   async registerNewUserAccess(userEmail, userId) {
-    // Create new user access
     const records = await this.sql
       .select(['experiment_id', 'access_role'])
       .from(tableNames.INVITE_ACCESS)
