@@ -11,6 +11,14 @@ Array [
 ]
 `;
 
+exports[`accessController postRegistration works correctly 1`] = `
+Array [
+  Object {
+    "body": "{\\"userId\\":\\"mockUserId\\",\\"userEmail\\":\\"user@example.com\\"}",
+  },
+]
+`;
+
 exports[`accessController revokeAccess works correctly 1`] = `
 Array [
   "mockExperimentId",
