@@ -78,7 +78,7 @@ describe('tests for gem2s route', () => {
       });
   });
 
-  it('Sedning a gem2sResult results in a successful response', async (done) => {
+  it('Sending a gem2sResult results in a successful response', async (done) => {
     gem2sController.handleResponse.mockImplementationOnce((req, res) => {
       res.json(OK());
       return Promise.resolve();
