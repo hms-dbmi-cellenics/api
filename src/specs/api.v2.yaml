@@ -989,6 +989,13 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
   /gem2sResults:
     post:
+      summary: Retrieve results from pipeline step functions
+      description: |-
+        Results from Step Function pipeline steps are relayed to the API through this endpoint.
+
+        Note that this endpoint is only exposed to AWS SNS, and since it has a specific communication protocol with limited feedback, the schema defined here is designed to be liberally enforceable. This endpoint is also used by SNS to handle subscribe/unsubscribe events.
+
+        The actual JSON passed by SNS is found in the `PipelineResponse` model, which is to be validated by the API.
       operationId: receiveGem2sResponse
       x-eov-operation-id: gem2s#response
       x-eov-operation-handler: routes/gem2s
@@ -1011,13 +1018,13 @@ paths:
               schema:
                 type: string
                 pattern: ok
-      description: |-
-        Results from Step Function pipeline steps are relayed to the API through this endpoint.
-
-        Note that this endpoint is only exposed to AWS SNS, and since it has a specific communication protocol with limited feedback, the schema defined here is designed to be liberally enforceable. This endpoint is also used by SNS to handle subscribe/unsubscribe events.
-
-        The actual JSON passed by SNS is found in the `PipelineResponse` model, which is to be validated by the API.
-      summary: Retrieve results from pipeline step functions
+        '500':
+          description: The data sent by the server could not be parsed as JSON.
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: nok
       tags:
         - work
     parameters: []
