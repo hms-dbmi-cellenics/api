@@ -1,6 +1,5 @@
 const AWSXRay = require('aws-xray-sdk');
 
-// const getUserRoles = require('../helpers/access/getUserRoles');
 const { gem2sCreate, gem2sResponse } = require('../helpers/pipeline/gem2s');
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parse-sns-message');
