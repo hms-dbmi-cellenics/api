@@ -939,6 +939,44 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+  '/experiments/{experimentId}/download/{type}':
+    get:
+      summary: Download data according to the requested type
+      operationId: downloadExperimentData
+      x-eov-operation-id: experiment#downloadData
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: Download request successful.
+          content:
+            application/json:
+              schema:
+                type: string
+                description: signed URL of the resource
+        '400':
+          description: Invalid download type request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Invalid experiment ID or download type specified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   /kubernetesEvents:
     post:
       summary: Monitoring of kubernetes cluster events
