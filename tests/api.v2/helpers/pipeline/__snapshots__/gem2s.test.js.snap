@@ -37,13 +37,13 @@ Array [
     "sampleNames": Array [
       "WT1",
     ],
-    "sampleS3Paths": Array [
-      Object {
+    "sampleS3Paths": Object {
+      "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
         "barcodes10x": "37d9e601-9278-437c-a776-40fe94680833",
         "features10x": "1ee00087-e98a-4390-a3cb-392a3f6d09d8",
         "matrix10x": "68f74995-3689-401a-90e0-145e08049cd5",
       },
-    ],
+    },
   },
 ]
 `;
