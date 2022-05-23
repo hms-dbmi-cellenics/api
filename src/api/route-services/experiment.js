@@ -10,7 +10,6 @@ const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 const { getSignedUrl } = require('../../utils/aws/s3');
 
 const constants = require('../general-services/pipeline-manage/constants');
-const downloadTypes = require('../../utils/downloadTypes');
 
 const {
   getExperimentAttributes,
@@ -341,32 +340,27 @@ class ExperimentService {
   async downloadData(experimentId, downloadType) {
     logger.log(`Providing download link for download ${downloadType} for experiment ${experimentId}`);
 
-    let objectKey = '';
-    let bucket = '';
     let downloadedFileName = '';
 
-    if (!Object.values(downloadTypes).includes(downloadType)) throw new BadRequestError('Invalid download type requested');
-
     const { projectId } = await getExperimentAttributes(this.experimentsTableName, experimentId, ['projectId']);
-    const filenamePrefix = projectId.split('-')[0];
 
-    // Also defined in UI repo in utils/downloadTypes
-    // eslint-disable-next-line default-case
-    switch (downloadType) {
-      case downloadTypes.PROCESSED_SEURAT_OBJECT:
-        bucket = this.processedMatrixBucketName;
-        objectKey = `${experimentId}/r.rds`;
+    const filenamePrefix = projectId.split('-')[0];
+    const requestedBucketName = `${downloadType}-${config.clusterEnv}`;
+    const objectKey = `${experimentId}/r.rds`;
+
+    switch (requestedBucketName) {
+      case this.processedMatrixBucketName:
         downloadedFileName = `${filenamePrefix}_processed_matrix.rds`;
         break;
-      case downloadTypes.RAW_SEURAT_OBJECT:
-        bucket = this.rawSeuratBucketName;
-        objectKey = `${experimentId}/r.rds`;
+      case this.rawSeuratBucketName:
         downloadedFileName = `${filenamePrefix}_raw_matrix.rds`;
         break;
+      default:
+        throw new BadRequestError('Invalid download type requested');
     }
 
     const params = {
-      Bucket: bucket,
+      Bucket: requestedBucketName,
       Key: objectKey,
       ResponseContentDisposition: `attachment; filename ="${downloadedFileName}"`,
       Expires: 120,
