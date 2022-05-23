@@ -78,7 +78,12 @@ const generateGem2sParams = async (experimentId, authJWT) => {
     (sampleId) => _.find(samples, { id: sampleId }),
   );
 
-  const s3Paths = _.map(samplesInOrder, 'files').map(getS3Paths);
+  const s3Paths = {};
+  experiment.samplesOrder.forEach((sampleId) => {
+    const { files } = _.find(samples, { id: sampleId });
+
+    s3Paths[sampleId] = getS3Paths(files);
+  });
 
   const taskParams = {
     projectId: experimentId,
