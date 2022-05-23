@@ -1,6 +1,7 @@
 const AWSXRay = require('aws-xray-sdk');
 
 const { gem2sCreate, gem2sResponse } = require('../helpers/pipeline/gem2s');
+const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 
@@ -17,7 +18,7 @@ const runGem2s = async (req, res) => {
   logger.log('New executions data:');
   logger.log(JSON.stringify(newExecution));
 
-  res.json(newExecution);
+  res.json(OK());
 };
 
 const handleResponse = async (req, res) => {
