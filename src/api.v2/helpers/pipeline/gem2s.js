@@ -26,11 +26,6 @@ const saveProcessingConfigFromGem2s = ({ experimentId, item }) => {
 };
 
 const continueToQC = () => {
-  // const continueToQC = (payload) => {
-  // const { experimentId } = payload;
-  // we need to change this once we rework the pipeline message response
-  // const authJWT = payload.authJWT || payload.input.authJWT;
-  // await createQCPipeline(experimentId, [], authJWT);
 };
 
 hookRunner.register('uploadToAWS', [
