@@ -1,8 +1,9 @@
 // @ts-nocheck
 const gem2sController = require('../../../src/api.v2/controllers/gem2sController');
 
-const gem2s = require('../../../src/api.v2/helpers/pipeline/gem2s');
+const { OK } = require('../../../src/utils/responses');
 
+const gem2s = require('../../../src/api.v2/helpers/pipeline/gem2s');
 const parseSNSMessage = require('../../../src/utils/parse-sns-message');
 
 jest.mock('../../../src/api.v2/helpers/pipeline/gem2s');
@@ -38,7 +39,7 @@ describe('gem2sController', () => {
     );
 
     // Response is ok
-    expect(mockRes.json).toHaveBeenCalledWith(newExecution);
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
   });
 
   it('handleResponse works correctly', async () => {
