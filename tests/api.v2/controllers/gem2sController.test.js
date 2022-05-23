@@ -80,7 +80,7 @@ describe('gem2sController', () => {
     expect(mockJsonSend).toHaveBeenCalledWith('nok');
   });
 
-  it('handleResponse throws when gem2sResponse fails', async () => {
+  it('handleResponse returns nok when gem2sResponse fails', async () => {
     const experimentId = 'experimentId';
 
     const io = 'mockIo';
