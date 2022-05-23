@@ -62,7 +62,7 @@ describe('gem2sController', () => {
     expect(mockJsonSend).toHaveBeenCalledWith('ok');
   });
 
-  it('handleResponse throws when parseSNSMessage fails', async () => {
+  it('handleResponse returns nok when parseSNSMessage fails', async () => {
     const experimentId = 'experimentId';
 
     parseSNSMessage.mockImplementationOnce(() => Promise.reject(new Error('Invalid sns message')));
