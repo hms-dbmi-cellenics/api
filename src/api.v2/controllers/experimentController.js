@@ -136,6 +136,15 @@ const getBackendStatus = async (req, res) => {
   res.json(formattedResponse);
 };
 
+const downloadData = async (req, res) => {
+  const { experimentId, type: downloadType } = req.params;
+
+  logger.log(`Providing download link for download ${downloadType} for experiment ${experimentId}`);
+
+  const downloadLink = await new Experiment().getDownloadLink(experimentId, downloadType);
+  res.json(downloadLink);
+};
+
 module.exports = {
   getAllExperiments,
   getExperiment,
@@ -146,4 +155,5 @@ module.exports = {
   updateSamplePosition,
   getProcessingConfig,
   getBackendStatus,
+  downloadData,
 };
