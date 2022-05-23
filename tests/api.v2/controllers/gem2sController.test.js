@@ -75,7 +75,7 @@ describe('gem2sController', () => {
 
     expect(gem2s.gem2sResponse).not.toHaveBeenCalled();
 
-    // Resposne is nok
+    // Response is nok
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockJsonSend).toHaveBeenCalledWith('nok');
   });
@@ -97,7 +97,7 @@ describe('gem2sController', () => {
     expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
     expect(gem2s.gem2sResponse).toHaveBeenCalledWith(io, parsedMessage);
 
-    // Resposne is nok
+    // Response is nok
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockJsonSend).toHaveBeenCalledWith('nok');
   });
