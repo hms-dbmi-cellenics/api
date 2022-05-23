@@ -37,5 +37,9 @@ spec:
     ingress:
       annotations:
         alb.ingress.kubernetes.io/healthcheck-path: /v1/health
-
-    # filled in by CI. do not modify.
+  valuesFrom:
+  - configMapKeyRef:
+      name: account-config
+      namespace: flux
+      key: account-config.yaml
+  # filled in by CI. do not modify.
