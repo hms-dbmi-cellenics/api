@@ -1026,6 +1026,40 @@ paths:
                 type: string
                 pattern: nok
     parameters: []
+  /pipelineResults:
+    post:
+      summary: Placeholder endpoint for qc, necessary so subscriptions to sns work
+      # operationId: receiveGem2sResponse
+      # x-eov-operation-id: gem2s#response
+      # x-eov-operation-handler: routes/gem2s
+      requestBody:
+        description: 'The results from the execution of a pipeline step, sent via SNS.'
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        '200':
+          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: ok
+    #     '500':
+    #       description: The data sent by the server could not be parsed as JSON.
+    #       content:
+    #         text/plain:
+    #           schema:
+    #             type: string
+    #             pattern: nok
+    # parameters: []
+  
   '/experiments/{experimentId}/download/{type}':
     get:
       summary: Download data according to the requested type
