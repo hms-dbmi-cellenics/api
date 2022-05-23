@@ -1029,9 +1029,9 @@ paths:
   /pipelineResults:
     post:
       summary: Placeholder endpoint for qc, necessary so subscriptions to sns work
-      # operationId: receiveGem2sResponse
-      # x-eov-operation-id: gem2s#response
-      # x-eov-operation-handler: routes/gem2s
+      operationId: receiveQCResponse
+      x-eov-operation-id: qc#response
+      x-eov-operation-handler: routes/qc
       requestBody:
         description: 'The results from the execution of a pipeline step, sent via SNS.'
         required: true
