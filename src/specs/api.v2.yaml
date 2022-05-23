@@ -1025,8 +1025,6 @@ paths:
               schema:
                 type: string
                 pattern: nok
-      tags:
-        - work
     parameters: []
   '/experiments/{experimentId}/download/{type}':
     get:

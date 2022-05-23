@@ -27,7 +27,9 @@ const sendNotification = async (message) => {
 
   if (status === FAILED && ['production', 'test'].includes(config.clusterEnv)) {
     try {
-      const stateMachineArn = process === 'qc' ? experiment.meta[OLD_QC_NAME_TO_BE_REMOVED].stateMachineArn : experiment.meta[process].stateMachineArn;
+      const stateMachineArn = process === QC_PROCESS_NAME
+        ? experiment.meta[OLD_QC_NAME_TO_BE_REMOVED].stateMachineArn
+        : experiment.meta[process].stateMachineArn;
 
       await sendFailedSlackMessage(message, user, process, stateMachineArn);
     } catch (e) {
