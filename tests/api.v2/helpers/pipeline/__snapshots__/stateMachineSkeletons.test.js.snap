@@ -159,7 +159,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation-v2",
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
         "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
         "MessageAttributes": {
           "type": {
@@ -349,7 +349,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation-v2",
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
         "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
         "MessageAttributes": {
           "type": {
@@ -740,7 +740,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation-v2",
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
         "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
         "MessageAttributes": {
           "type": {
@@ -985,7 +985,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation-v2",
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation",
         "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
         "MessageAttributes": {
           "type": {
