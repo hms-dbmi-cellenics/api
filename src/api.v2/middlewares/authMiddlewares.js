@@ -1,6 +1,13 @@
 // See details at https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-verifying-a-jwt.html
 // for how JWT verification works with Cognito.
+const util = require('util');
+const jwt = require('jsonwebtoken');
+const jwkToPem = require('jwk-to-pem');
+const AWSXRay = require('aws-xray-sdk');
 const { UnauthorizedError, UnauthenticatedError } = require('../../utils/responses');
+const config = require('../../config');
+const CacheSingleton = require('../../cache');
+const { CacheMissError } = require('../../cache/cache-utils');
 
 const UserAccess = require('../model/UserAccess');
 
@@ -60,8 +67,48 @@ const expressAuthenticationOnlyMiddleware = async (req, res, next) => {
   next();
 };
 
+const authenticationMiddlewareSocketIO = async (authHeader, ignoreExpiration = false) => {
+  const poolId = await config.awsUserPoolIdPromise;
+  const cache = CacheSingleton.get();
+
+  const issuer = `https://cognito-idp.${config.awsRegion}.amazonaws.com/${poolId}`;
+  const token = authHeader.split(' ')[1];
+  const jwtVerify = util.promisify(jwt.verify);
+
+  const result = await jwtVerify(
+    token,
+    (header, callback) => {
+      const { kid } = header;
+
+      cache.get(kid)
+        .then(({ pem }) => callback(null, pem))
+        .catch((e) => {
+          if (!(e instanceof CacheMissError)) {
+            throw e;
+          }
+
+          fetch(`${issuer}/.well-known/jwks.json`).then((res) => res.json()).then(({ keys }) => {
+            const secret = keys.find((key) => key.kid === kid);
+            const pem = jwkToPem(secret);
+
+            cache.set(kid, { pem }, 3600 * 48);
+            callback(null, pem);
+          });
+        });
+    },
+    {
+      ignoreExpiration,
+      algorithms: ['RS256'],
+      issuer,
+    },
+  );
+  AWSXRay.getSegment().setUser(result.sub);
+  return result;
+};
+
 module.exports = {
   expressAuthorizationMiddleware,
   expressAuthenticationOnlyMiddleware,
+  authenticationMiddlewareSocketIO,
   authorize,
 };
