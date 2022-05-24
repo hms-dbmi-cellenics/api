@@ -2,7 +2,7 @@ const {
   createExperiment, getExperiment, patchExperiment, deleteExperiment,
   updateSamplePosition, getAllExperiments,
   getProcessingConfig, updateProcessingConfig,
-  getBackendStatus,
+  getBackendStatus, downloadData,
 } = require('../controllers/experimentController');
 
 const { expressAuthenticationOnlyMiddleware, expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
@@ -43,5 +43,9 @@ module.exports = {
   'experiment#getBackendStatus': [
     expressAuthorizationMiddleware,
     (req, res, next) => getBackendStatus(req, res).catch(next),
+  ],
+  'experiment#downloadData': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => downloadData(req, res).catch(next),
   ],
 };

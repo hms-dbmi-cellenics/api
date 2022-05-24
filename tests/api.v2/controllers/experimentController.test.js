@@ -6,6 +6,8 @@ const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 const getPipelineStatus = require('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 const getWorkerStatus = require('../../../src/api.v2/helpers/worker/getWorkerStatus');
 
+const bucketNames = require('../../../src/api.v2/helpers/s3/bucketNames');
+
 const experimentInstance = Experiment();
 const userAccessInstance = UserAccess();
 
@@ -250,5 +252,18 @@ describe('experimentController', () => {
     expect(getPipelineStatus).toHaveBeenCalledWith(mockExperiment.id, 'gem2s');
     expect(getPipelineStatus).toHaveBeenCalledWith(mockExperiment.id, 'qc');
     expect(getWorkerStatus).toHaveBeenCalledWith(mockExperiment.id);
+  });
+
+  it('Get download link works correctly', async () => {
+    const mockReq = {
+      params: {
+        experimentId: mockExperiment.id,
+        type: bucketNames.PROCESSED_MATRIX,
+      },
+    };
+
+    await experimentController.downloadData(mockReq, mockRes);
+    expect(experimentInstance.getDownloadLink)
+      .toHaveBeenCalledWith(mockExperiment.id, bucketNames.PROCESSED_MATRIX);
   });
 });
