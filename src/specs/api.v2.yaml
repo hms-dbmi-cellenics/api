@@ -959,7 +959,7 @@ paths:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
         '403':
-          description: The authenticated user is not authorized to view this resource.
+          description: The authenticated user does not have permissions to add users to this resource
           content:
             application/json:
               schema:

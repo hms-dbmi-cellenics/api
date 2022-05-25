@@ -4,7 +4,9 @@ const request = require('supertest');
 const expressLoader = require('../../../src/loaders/express');
 
 const accessController = require('../../../src/api.v2/controllers/accessController');
-const { NotFoundError, OK } = require('../../../src/utils/responses');
+const {
+  UnauthenticatedError, UnauthorizedError, NotFoundError, OK,
+} = require('../../../src/utils/responses');
 const AccessRole = require('../../../src/utils/enums/AccessRole');
 
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
@@ -87,6 +89,40 @@ describe('User access endpoint', () => {
       });
   });
 
+  it('Adding a new user to without authentication returns 401', async (done) => {
+    accessController.inviteUser.mockImplementationOnce((req, res) => {
+      throw new UnauthenticatedError('The request does not contain an authentication token.');
+    });
+
+    request(app)
+      .put('/v2/access/mockExperimentId')
+      .send({ userEmail: 'user@example.com', role: AccessRole.ADMIN })
+      .expect(401)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Adding a new user to an unauthorized experiment returns 403', async (done) => {
+    accessController.inviteUser.mockImplementationOnce((req, res) => {
+      throw new UnauthorizedError('The user does not have access to this experiment.');
+    });
+
+    request(app)
+      .put('/v2/access/mockExperimentId')
+      .send({ userEmail: 'user@example.com', role: AccessRole.ADMIN })
+      .expect(403)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
   it('Removing user access from an experiment returns a 200', async (done) => {
     accessController.revokeAccess.mockImplementationOnce((req, res) => {
       res.json(OK());
@@ -97,6 +133,40 @@ describe('User access endpoint', () => {
       .delete('/v2/access/mockExperimentId')
       .send({ userEmail: 'user@example.com' })
       .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Removing user access without authentication returns 401', async (done) => {
+    accessController.revokeAccess.mockImplementationOnce((req, res) => {
+      throw new UnauthenticatedError('The request does not contain an authentication token.');
+    });
+
+    request(app)
+      .delete('/v2/access/mockExperimentId')
+      .send({ userEmail: 'user@example.com' })
+      .expect(401)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Removing user access to an unauthorized experiment returns 403', async (done) => {
+    accessController.revokeAccess.mockImplementationOnce((req, res) => {
+      throw new UnauthorizedError('The user does not have access to this experiment.');
+    });
+
+    request(app)
+      .delete('/v2/access/mockExperimentId')
+      .send({ userEmail: 'user@example.com' })
+      .expect(403)
       .end((err) => {
         if (err) {
           return done(err);
