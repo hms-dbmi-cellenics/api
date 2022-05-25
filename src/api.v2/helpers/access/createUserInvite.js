@@ -13,26 +13,23 @@ const logger = getLogger('[AccessModel] - ');
 
 const createUserInvite = async (experimentId, userEmail, role, inviterUser) => {
   let userAttributes;
+  let emailBody;
+
   try {
     userAttributes = await getAwsUserAttributesByEmail(userEmail);
+
+    const userSub = userAttributes.find((attr) => attr.Name === 'sub').Value;
+    new UserAccess().grantAccess(userSub, experimentId, role);
+    emailBody = buildUserInvitedEmailBody(userEmail, experimentId, inviterUser);
   } catch (e) {
     if (e.code !== 'UserNotFoundException') {
       throw e;
     }
 
     logger.log('User has not yet signed up, inviting new user');
-  }
 
-
-  let emailBody;
-  if (!userAttributes) {
     new UserAccess().addToInviteAccess(userEmail, experimentId, role);
     emailBody = buildUserInvitedNotRegisteredEmailBody(userEmail, inviterUser);
-    // User is added to experiment after they registered using post-register-lambda defined in IAC.
-  } else {
-    const userSub = userAttributes.find((attr) => attr.Name === 'sub').Value;
-    new UserAccess().grantAccess(userSub, experimentId, role);
-    emailBody = buildUserInvitedEmailBody(userEmail, experimentId, inviterUser);
   }
 
   await sendEmail(emailBody);
