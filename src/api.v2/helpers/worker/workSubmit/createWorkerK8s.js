@@ -1,6 +1,7 @@
 const k8s = require('@kubernetes/client-node');
 const config = require('../../../../config');
 const getLogger = require('../../../../utils/getLogger');
+const formatExperimentId = require('../../../../utils/v1Compatibility/formatExperimentId');
 
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
@@ -45,7 +46,10 @@ const getAvailablePods = async (namespace) => {
 
 const createWorkerResources = async (service) => {
   const { sandboxId } = config;
-  const { experimentId } = service.workRequest;
+
+  // assigned worker experimenId string needs to be without dashes
+  const experimentId = formatExperimentId(service.experimentId);
+
   const namespace = `worker-${sandboxId}`;
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
