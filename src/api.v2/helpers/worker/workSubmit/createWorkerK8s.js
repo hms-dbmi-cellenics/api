@@ -47,8 +47,8 @@ const getAvailablePods = async (namespace) => {
 const createWorkerResources = async (service) => {
   const { sandboxId } = config;
 
-  // assigned worker experimenId string needs to be without dashes
-  const experimentId = formatExperimentId(service.experimentId);
+  // assigned worker experimentId string needs to be without dashes
+  const experimentId = formatExperimentId(service.workRequest.experimentId);
 
   const namespace = `worker-${sandboxId}`;
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
