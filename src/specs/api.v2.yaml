@@ -952,6 +952,18 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPSuccess.v1.yaml
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '404':
           description: User not found
           content:
@@ -983,14 +995,20 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPSuccess.v1.yaml
-        '404':
-          description: Role not found
+        '401':
+          description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
         '403':
           description: The user does not have permissions to revoke the role.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Role not found
           content:
             application/json:
               schema:
