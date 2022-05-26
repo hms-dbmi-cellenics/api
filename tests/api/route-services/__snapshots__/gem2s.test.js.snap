@@ -70,6 +70,7 @@ exports[`gem2s gem2sResponse - Should return message if message is valid 1`] = `
 
 exports[`gem2s generateGem2sParams - Should generate GEM2S taskParams correctly 1`] = `
 Object {
+  "apiVersion": "v1",
   "authJWT": "mockAuthJwtToken",
   "experimentName": "New experiment",
   "input": Object {

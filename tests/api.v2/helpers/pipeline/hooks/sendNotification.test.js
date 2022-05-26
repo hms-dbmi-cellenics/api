@@ -1,27 +1,32 @@
 const fetchMock = require('jest-fetch-mock');
-const sendNotification = require('../../../src/utils/hooks/send-notification');
-const getPipelineStatus = require('../../../src/api/general-services/pipeline-status');
-const { FAILED, SUCCEEDED } = require('../../../src/api/general-services/pipeline-manage/constants');
-const sendFailedSlackMessage = require('../../../src/utils/send-failed-slack-message');
-const sendEmail = require('../../../src/utils/send-email');
-const ExperimentService = require('../../../src/api/route-services/experiment');
 
-jest.mock('../../../src/utils/authMiddlewares', () => ({
+const sendNotification = require('../../../../../src/api.v2/helpers/pipeline/hooks/sendNotification');
+
+const Experiment = require('../../../../../src/api.v2/model/Experiment');
+
+const getPipelineStatus = require('../../../../../src/api.v2/helpers/pipeline/getPipelineStatus');
+
+const { FAILED, SUCCEEDED } = require('../../../../../src/api.v2/helpers/pipeline/constants');
+
+const sendFailedSlackMessage = require('../../../../../src/utils/send-failed-slack-message');
+const sendEmail = require('../../../../../src/utils/send-email');
+
+jest.mock('../../../../../src/api.v2/middlewares/authMiddlewares', () => ({
   authenticationMiddlewareSocketIO: () => ({
     name: 'FirstName LastName',
     email: 'mockEmail@email.lol',
   }),
 }));
-jest.mock('../../../src/api/route-services/experiment');
-jest.mock('../../../src/api/general-services/pipeline-status');
-jest.mock('../../../src/utils/send-failed-slack-message', () => jest.fn());
-jest.mock('../../../src/utils/send-email', () => jest.fn());
+jest.mock('../../../../../src/api.v2/model/Experiment');
+jest.mock('../../../../../src/api.v2/helpers/pipeline/getPipelineStatus');
+jest.mock('../../../../../src/utils/send-failed-slack-message', () => jest.fn());
+jest.mock('../../../../../src/utils/send-email', () => jest.fn());
 
-const experimentsService = new ExperimentService();
+const experimentInstance = new Experiment();
 fetchMock.enableFetchMocks();
 
-const meta = {
-  pipeline: {
+const pipelines = {
+  qc: {
     stateMachineArn: 'qcArn',
   },
   gem2s: {
@@ -40,12 +45,16 @@ describe('send-notification ', () => {
   };
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     fetchMock.mockResponse(JSON.stringify({ ok: true }));
     sendFailedSlackMessage.mockReset();
     sendEmail.mockReset();
   });
 
   it('Sends slack notification on failed process', async () => {
+    experimentInstance.getExperimentData.mockReturnValue({ notifyByEmail: false, pipelines });
+
     getPipelineStatus.mockReturnValue({
       gem2s: {
         status: FAILED,
@@ -57,7 +66,7 @@ describe('send-notification ', () => {
   });
 
   it('Sends email and slack message if user toggled notifications on failed process', async () => {
-    experimentsService.getExperimentData.mockReturnValue({ notifyByEmail: true, meta });
+    experimentInstance.getExperimentData.mockReturnValue({ notifyByEmail: true, pipelines });
 
     const newMessage = {
       ...message,
@@ -80,7 +89,7 @@ describe('send-notification ', () => {
   });
 
   it('Sends email on success if toggled, does not send slack message ', async () => {
-    experimentsService.getExperimentData.mockReturnValue({ notifyByEmail: true, meta });
+    experimentInstance.getExperimentData.mockReturnValue({ notifyByEmail: true, pipelines });
     const newMessage = {
       ...message,
       input: {
@@ -99,7 +108,7 @@ describe('send-notification ', () => {
   });
 
   it('Does not send email on success if user has not toggled notifications', async () => {
-    experimentsService.getExperimentData.mockReturnValue({ notifyByEmail: false, meta });
+    experimentInstance.getExperimentData.mockReturnValue({ notifyByEmail: false, pipelines });
     const newMessage = {
       ...message,
       input: {
