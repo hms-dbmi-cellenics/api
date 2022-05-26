@@ -906,7 +906,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
   '/access/{experimentId}':
     get:
       summary: Get the users with access to an experiment
@@ -939,6 +938,128 @@ paths:
             application/json:
               schema:
                 $ref: ./models/HTTPError.v1.yaml
+  '/experiments/{experimentId}/gem2s':
+    post:
+      summary: Run gem2s
+      operationId: runGem2s
+      x-eov-operation-id: gem2s#run
+      x-eov-operation-handler: routes/gem2s
+      description: Triggers a new gem2s run
+      requestBody: 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                paramsHash:
+                  type: string
+              required:
+                - paramsHash
+              additionalProperties: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Experiment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+  /gem2sResults:
+    post:
+      summary: Retrieve results from pipeline step functions
+      description: |-
+        Results from Step Function pipeline steps are relayed to the API through this endpoint.
+
+        Note that this endpoint is only exposed to AWS SNS, and since it has a specific communication protocol with limited feedback, the schema defined here is designed to be liberally enforceable. This endpoint is also used by SNS to handle subscribe/unsubscribe events.
+
+        The actual JSON passed by SNS is found in the `PipelineResponse` model, which is to be validated by the API.
+      operationId: receiveGem2sResponse
+      x-eov-operation-id: gem2s#response
+      x-eov-operation-handler: routes/gem2s
+      requestBody:
+        description: 'The results from the execution of a pipeline step, sent via SNS.'
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        '200':
+          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: ok
+        '500':
+          description: The data sent by the server could not be parsed as JSON.
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: nok
+    parameters: []
+  /pipelineResults:
+    post:
+      summary: Placeholder endpoint for qc, necessary so subscriptions to sns work
+      operationId: receiveQCResponse
+      x-eov-operation-id: qc#response
+      x-eov-operation-handler: routes/qc
+      requestBody:
+        description: 'The results from the execution of a pipeline step, sent via SNS.'
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        '200':
+          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: ok
+    #     '500':
+    #       description: The data sent by the server could not be parsed as JSON.
+    #       content:
+    #         text/plain:
+    #           schema:
+    #             type: string
+    #             pattern: nok
+    # parameters: []
+  
   '/experiments/{experimentId}/download/{type}':
     get:
       summary: Download data according to the requested type

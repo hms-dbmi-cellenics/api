@@ -28,6 +28,7 @@ const requestPod = (context, step) => {
   const {
     environment, accountId, sandboxId, activityArn, experimentId, processName,
   } = context;
+
   const activityId = getActivityId(activityArn);
 
   const requestPodMessage = buildPodRequest(sandboxId,

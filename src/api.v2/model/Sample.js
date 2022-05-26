@@ -1,5 +1,6 @@
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
+
 const { replaceNullsWithObject } = require('../../sql/helpers');
 const tableNames = require('./tableNames');
 
@@ -34,7 +35,7 @@ class Sample extends BasicModel {
       .groupBy(sampleFields)
       .as('select_metadata');
 
-    const sampleFileFields = ['sample_file_type', 'size', 'upload_status'];
+    const sampleFileFields = ['sample_file_type', 'size', 'upload_status', 's3_path'];
     const sampleFileFieldsWithAlias = sampleFileFields.map((field) => `sf.${field}`);
     const fileObjectFormatted = sampleFileFields.map((field) => [`'${field}'`, field]);
     const sampleFileObject = `jsonb_object_agg(sample_file_type,json_build_object(${fileObjectFormatted})) as files`;

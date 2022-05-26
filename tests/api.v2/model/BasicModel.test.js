@@ -73,6 +73,25 @@ describe('model/BasicModel', () => {
     expect(mockSqlClient.timeout).toHaveBeenCalledWith(4000);
   });
 
+  it('upsert works correctly', async () => {
+    const mockRowKey = 'mockKey';
+    const newDescription = 'newDescription';
+
+    await new BasicModel(
+      mockSqlClient, mockTableName, ['id', 'key', 'description', 'name'],
+    ).upsert(
+      { id: mockRowId, key: mockRowKey },
+      { description: newDescription },
+    );
+
+    expect(mockSqlClient.insert)
+      .toHaveBeenCalledWith({ id: mockRowId, key: mockRowKey, description: newDescription });
+    expect(mockSqlClient.into).toHaveBeenCalledWith(mockTableName);
+    expect(mockSqlClient.timeout).toHaveBeenCalledWith(4000);
+    expect(mockSqlClient.onConflict).toHaveBeenCalledWith(['id', 'key']);
+    expect(mockSqlClient.merge).toHaveBeenCalled();
+  });
+
   it('update works correctly', async () => {
     await new BasicModel(mockSqlClient, mockTableName, ['id', 'name']).update(
       { key_1: 'key_1_val', key_2: 'key_2_val' }, { name: 'newNameUpdated' },
