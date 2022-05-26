@@ -955,6 +955,12 @@ paths:
                 properties:
                   signedUrl:
                     type: string
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
         '403':
           description: The user does not have permissions to view the work results.
           content:
@@ -963,6 +969,10 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
         '404':
           description: The work results were not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   '/experiments/{experimentId}/gem2s':
     post:
       summary: Run gem2s

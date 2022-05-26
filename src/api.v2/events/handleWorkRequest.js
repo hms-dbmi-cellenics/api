@@ -20,7 +20,7 @@ const handleWorkRequest = async (workRequest) => {
     throw e;
   }
 
-  await validateRequest(workRequest, 'WorkRequest.v1.yaml');
+  await validateRequest(workRequest, 'WorkRequest.v2.yaml');
   const { timeout } = workRequest;
 
   if (Date.parse(timeout) <= Date.now()) {
