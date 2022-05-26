@@ -45,20 +45,26 @@ class UserAccess extends BasicModel {
   }
 
   async registerNewUserAccess(userEmail, userId) {
+    logger.log(`Registering access for user ${userEmail}`);
+
     const records = await this.sql
       .select(['experiment_id', 'access_role'])
       .from(tableNames.INVITE_ACCESS)
       .where({ user_email: userEmail });
 
-    const insertPromise = records.map((record) => this.create({
+    const createUserPromise = records.map((record) => this.create({
       user_id: userId,
       experiment_id: record.experimentId,
       access_role: record.accessRole,
     }));
 
-    await Promise.all(insertPromise);
+    await Promise.all(createUserPromise);
+
+    logger.log(`Access successfully added for user ${userEmail}`);
 
     await this.sql.del().from(tableNames.INVITE_ACCESS).where({ user_email: userEmail });
+
+    logger.log(`Invitation record deleted for user ${userEmail}`);
   }
 
   async grantAccess(userId, experimentId, role) {
