@@ -1,7 +1,7 @@
 const UserAccess = require('../../model/UserAccess');
 
 const { getAwsUserAttributesByEmail } = require('../../../utils/aws/user');
-const sendEmail = require('../../../utils/send-email');
+const sendEmail = require('../../../utils/sendEmail');
 const buildUserInvitedEmailBody = require('../../../utils/emailTemplates/buildUserInvitedEmailBody');
 const buildUserInvitedNotRegisteredEmailBody = require('../../../utils/emailTemplates/buildUserInvitedNotRegisteredEmailBody');
 

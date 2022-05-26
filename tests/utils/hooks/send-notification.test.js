@@ -3,7 +3,7 @@ const sendNotification = require('../../../src/utils/hooks/send-notification');
 const getPipelineStatus = require('../../../src/api/general-services/pipeline-status');
 const { FAILED, SUCCEEDED } = require('../../../src/api/general-services/pipeline-manage/constants');
 const sendFailedSlackMessage = require('../../../src/utils/send-failed-slack-message');
-const sendEmail = require('../../../src/utils/send-email');
+const sendEmail = require('../../../src/utils/sendEmail');
 const ExperimentService = require('../../../src/api/route-services/experiment');
 
 jest.mock('../../../src/utils/authMiddlewares', () => ({
@@ -15,7 +15,7 @@ jest.mock('../../../src/utils/authMiddlewares', () => ({
 jest.mock('../../../src/api/route-services/experiment');
 jest.mock('../../../src/api/general-services/pipeline-status');
 jest.mock('../../../src/utils/send-failed-slack-message', () => jest.fn());
-jest.mock('../../../src/utils/send-email', () => jest.fn());
+jest.mock('../../../src/utils/sendEmail', () => jest.fn());
 
 const experimentsService = new ExperimentService();
 fetchMock.enableFetchMocks();
