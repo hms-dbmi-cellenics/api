@@ -26,7 +26,7 @@ const createUserInvite = async (experimentId, userEmail, role, inviterUser) => {
       throw e;
     }
 
-    logger.log('User has not yet signed up, inviting new user');
+    logger.log('Invited user does not have an account yet. Sending invitation email.');
 
     new UserAccess().addToInviteAccess(userEmail, experimentId, role);
     emailBody = buildUserInvitedNotRegisteredEmailBody(userEmail, inviterUser);
