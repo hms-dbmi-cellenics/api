@@ -18,8 +18,8 @@ const createUserInvite = async (experimentId, userEmail, role, inviterUser) => {
   try {
     userAttributes = await getAwsUserAttributesByEmail(userEmail);
 
-    const userSub = userAttributes.find((attr) => attr.Name === 'sub').Value;
-    new UserAccess().grantAccess(userSub, experimentId, role);
+    const userId = userAttributes.find((attr) => attr.Name === 'sub').Value;
+    new UserAccess().grantAccess(userId, experimentId, role);
     emailBody = buildUserInvitedEmailBody(userEmail, experimentId, inviterUser);
   } catch (e) {
     if (e.code !== 'UserNotFoundException') {
