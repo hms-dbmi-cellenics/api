@@ -73,6 +73,7 @@ Array [
       "sf.sample_file_type",
       "sf.size",
       "sf.upload_status",
+      "sf.s3_path",
       "s.id",
     ],
   ],
@@ -126,7 +127,7 @@ Array [
     "undefined as metadata",
   ],
   Array [
-    "jsonb_object_agg(sample_file_type,json_build_object('sample_file_type',sample_file_type,'size',size,'upload_status',upload_status)) as files",
+    "jsonb_object_agg(sample_file_type,json_build_object('sample_file_type',sample_file_type,'size',size,'upload_status',upload_status,'s3_path',s3_path)) as files",
   ],
 ]
 `;

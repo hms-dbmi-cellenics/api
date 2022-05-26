@@ -52,6 +52,14 @@ class BasicModel {
       .timeout(this.timeout);
   }
 
+  upsert(primaryKey, props) {
+    return this.sql.insert({ ...primaryKey, ...props })
+      .into(this.tableName)
+      .timeout(this.timeout)
+      .onConflict(Object.keys(primaryKey))
+      .merge();
+  }
+
   updateById(id, props) {
     return this.sql.update(props)
       .from(this.tableName)

@@ -60,6 +60,7 @@ class Gem2sService {
       input: { type: experiment.meta.type },
       sampleIds: experiment.sampleIds,
       sampleNames: experiment.sampleIds.map((sampleId) => samples[sampleId].name),
+      apiVersion: 'v1',
       authJWT,
     };
 
@@ -83,7 +84,6 @@ class Gem2sService {
 
     return taskParams;
   }
-
 
   static async gem2sCreate(experimentId, body, authJWT) {
     logger.log('Creating GEM2S params...');

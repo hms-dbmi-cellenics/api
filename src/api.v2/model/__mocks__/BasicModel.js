@@ -4,6 +4,7 @@ const stub = {
   find: jest.fn(),
   findOne: jest.fn(),
   findById: jest.fn(),
+  upsert: jest.fn(),
   update: jest.fn(),
   updateById: jest.fn(),
   delete: jest.fn(),

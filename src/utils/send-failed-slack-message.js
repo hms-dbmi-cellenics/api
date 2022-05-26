@@ -2,12 +2,9 @@ const { getWebhookUrl } = require('./crypt');
 const getLogger = require('./getLogger');
 
 const logger = getLogger();
-const sendFailedSlackMessage = async (message, user, experiment) => {
+const sendFailedSlackMessage = async (message, user, process, stateMachineArn) => {
   const { experimentId } = message;
 
-  const process = message.input.processName;
-  // THIS NEEDS TO CHANGE ONCE WE CHANGE THE NAME TO QC IN EXPERIMENTS/META
-  const stateMachineArn = process === 'qc' ? experiment.meta.pipeline.stateMachineArn : experiment.meta[process].stateMachineArn;
   const userContext = [
     {
       type: 'mrkdwn',
