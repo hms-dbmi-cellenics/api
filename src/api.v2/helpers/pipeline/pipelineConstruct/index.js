@@ -5,21 +5,21 @@ const _ = require('lodash');
 const AWSXRay = require('aws-xray-sdk');
 const fetch = require('node-fetch');
 const { v4: uuidv4 } = require('uuid');
-const AWS = require('../../../../utils/requireAWS');
-const config = require('../../../../config');
-const getLogger = require('../../../../utils/getLogger');
-const ExperimentService = require('../../../../api/route-services/experiment');
-const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('./skeletons');
-const { getQcStepsToRun } = require('./qcHelpers');
-const constructPipelineStep = require('./constructors/constructPipelineStep');
-const asyncTimer = require('../../../../utils/asyncTimer');
 
+const config = require('../../../../config');
 const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../constants');
 
+const Experiment = require('../../../model/Experiment');
+
+const AWS = require('../../../../utils/requireAWS');
+const getLogger = require('../../../../utils/getLogger');
+const asyncTimer = require('../../../../utils/asyncTimer');
+
+const constructPipelineStep = require('./constructors/constructPipelineStep');
+const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('./skeletons');
+const { getQcStepsToRun } = require('./qcHelpers');
+
 const logger = getLogger();
-
-const experimentService = new ExperimentService();
-
 
 const getPipelineArtifacts = async () => {
   const response = await fetch(
@@ -184,10 +184,9 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
   logger.log(`Fetching processing settings for ${experimentId}`);
 
-  const {
-    processingConfig,
-    sampleIds,
-  } = await experimentService.getAttributesToCreateQCPipeline(experimentId);
+  const experiment = await new Experiment().findById(experimentId).first();
+  const { processingConfig, samplesOrder } = experiment;
+
   if (processingConfigUpdates.length) {
     processingConfigUpdates.forEach(({ name, body }) => {
       if (!processingConfig[name]) {
@@ -206,14 +205,14 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   const mergedProcessingConfig = _.cloneDeepWith(processingConfig, (o) => {
     if (_.isObject(o) && !o.dataIntegration && !o.embeddingSettings && typeof o.enabled === 'boolean') {
       // Find which samples have sample-specific configurations.
-      const sampleConfigs = _.intersection(Object.keys(o), sampleIds);
+      const sampleConfigs = _.intersection(Object.keys(o), samplesOrder);
 
       // Get an object that is only the "raw" configuration.
       const rawConfig = _.omit(o, sampleConfigs);
 
       const result = {};
 
-      sampleIds.forEach((sample) => {
+      samplesOrder.forEach((sample) => {
         result[sample] = _.merge({}, rawConfig, o[sample]);
       });
 
@@ -253,7 +252,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
 
   const execInput = {
-    samples: sampleIds.map((sampleUuid, index) => ({ sampleUuid, index })),
+    samples: samplesOrder.map((sampleUuid, index) => ({ sampleUuid, index })),
   };
 
   const executionArn = await executeStateMachine(stateMachineArn, execInput);

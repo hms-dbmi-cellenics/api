@@ -3,7 +3,7 @@ const AWSXRay = require('aws-xray-sdk');
 
 const constants = require('./constants');
 const getPipelineStatus = require('./getPipelineStatus');
-const { createGem2SPipeline } = require('./pipelineConstruct');
+const { createGem2SPipeline, createQCPipeline } = require('./pipelineConstruct');
 
 const Sample = require('../../model/Sample');
 const Experiment = require('../../model/Experiment');
@@ -25,11 +25,29 @@ const saveProcessingConfigFromGem2s = ({ experimentId, item }) => {
   logger.log('Finished saving processing config for gem2s');
 };
 
-const continueToQC = () => {
+const continueToQC = async (payload) => {
+  saveProcessingConfigFromGem2s(payload);
+
+  logger.log('Starting qc run because gem2s finished successfully');
+
+  const { experimentId } = payload;
+  // we need to change this once we rework the pipeline message response
+  const authJWT = payload.authJWT || payload.input.authJWT;
+  await createQCPipeline(experimentId, [], authJWT);
+  // const qcHandle = await createQCPipeline(experimentId, [], authJWT);
+
+  // await new ExperimentExecution().upsert(
+  //   {
+  //     experiment_id: experimentId,
+  //     pipeline_type: 'qc',
+  //   },
+  //   qcHandle,
+  // );
+
+  logger.log('Started qc successfully');
 };
 
 hookRunner.register('uploadToAWS', [
-  saveProcessingConfigFromGem2s,
   continueToQC,
 ]);
 
