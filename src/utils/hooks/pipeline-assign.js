@@ -87,7 +87,7 @@ const assignPodToPipeline = async (message) => {
 
 
   try {
-  // remove pipeline pods already assigned to this experiment
+    // remove pipeline pods already assigned to this experiment
     await deleteExperimentPods(experimentId);
   } catch (e) {
     logger.error(`Failed to remove pods for experiment ${experimentId}: ${e}`);

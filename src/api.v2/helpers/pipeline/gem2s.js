@@ -34,15 +34,20 @@ const continueToQC = async (payload) => {
   // we need to change this once we rework the pipeline message response
   const authJWT = payload.authJWT || payload.input.authJWT;
   await createQCPipeline(experimentId, [], authJWT);
-  // const qcHandle = await createQCPipeline(experimentId, [], authJWT);
 
-  // await new ExperimentExecution().upsert(
-  //   {
-  //     experiment_id: experimentId,
-  //     pipeline_type: 'qc',
-  //   },
-  //   qcHandle,
-  // );
+  const { stateMachineArn, executionArn } = await createQCPipeline(experimentId, [], authJWT);
+
+  await new ExperimentExecution().upsert(
+    {
+      experiment_id: experimentId,
+      pipeline_type: 'qc',
+    },
+    {
+      params_hash: null,
+      state_machine_arn: stateMachineArn,
+      execution_arn: executionArn,
+    },
+  );
 
   logger.log('Started qc successfully');
 };
