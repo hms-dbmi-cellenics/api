@@ -185,6 +185,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   logger.log(`Fetching processing settings for ${experimentId}`);
 
   const experiment = await new Experiment().findById(experimentId).first();
+
   const { processingConfig, samplesOrder } = experiment;
 
   if (processingConfigUpdates.length) {
@@ -240,6 +241,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     config.clusterEnv,
     qcSteps,
   );
+
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);

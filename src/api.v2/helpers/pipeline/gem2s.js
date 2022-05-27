@@ -19,9 +19,9 @@ const logger = getLogger('[Gem2sService] - ');
 
 const hookRunner = new HookRunner();
 
-const saveProcessingConfigFromGem2s = ({ experimentId, item }) => {
+const saveProcessingConfigFromGem2s = async ({ experimentId, item }) => {
   logger.log('Saving processing config for gem2s');
-  new Experiment().updateById(experimentId, { processing_config: item });
+  await new Experiment().updateById(experimentId, { processing_config: item.processingConfig });
   logger.log('Finished saving processing config for gem2s');
 };
 
