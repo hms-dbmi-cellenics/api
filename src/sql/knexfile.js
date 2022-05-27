@@ -3,6 +3,11 @@ const _ = require('lodash');
 const config = require('../config');
 const getConnectionParams = require('./getConnectionParams');
 
+// This was necessary because all of processingConfig is camelcase except for
+// absolute_theshold, which breaks the camelcase we had assumed
+// Consider migrating the property absolute_threshold to absoluteThreshold instead of doing this
+const processingConfigExceptions = ['methodSettings'];
+
 const recursiveCamelcase = (result, camelCaseExceptions = [], skip = false) => (
   _.transform(result, (acc, value, key, target) => {
     let camelKey;
@@ -27,7 +32,10 @@ const fetchConfiguration = async (environment, rdsSandboxId) => ({
     client: 'postgresql',
     connection: async () => await getConnectionParams(environment, rdsSandboxId),
     postProcessResponse: (result, queryContext = {}) => (
-      recursiveCamelcase(result, queryContext.camelCaseExceptions)),
+      recursiveCamelcase(
+        result,
+        [queryContext.camelCaseExceptions, ...processingConfigExceptions],
+      )),
   },
 });
 
