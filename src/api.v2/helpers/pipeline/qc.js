@@ -26,7 +26,6 @@ hookRunner.register(constants.ASSIGN_POD_TO_PIPELINE, [assignPodToPipeline]);
 hookRunner.registerAll([sendNotification]);
 hookRunner.register('configureEmbedding', [cleanupPods]);
 
-
 const getS3Output = async (message) => {
   const { output: { bucket, key } } = message;
   const s3 = new AWS.S3();

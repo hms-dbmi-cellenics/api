@@ -1,12 +1,14 @@
 // const { OK } = require('../../utils/responses');
 const AWSXRay = require('aws-xray-sdk');
 
-const getLogger = require('../../utils/getLogger');
-const parseSNSMessage = require('../../utils/parse-sns-message');
+const ExperimentExecution = require('../model/ExperimentExecution');
 
 const getExperimentBackendStatus = require('../helpers/backendStatus/getExperimentBackendStatus');
 const { createQCPipeline } = require('../helpers/pipeline/pipelineConstruct');
 const { handleQCResponse } = require('../helpers/pipeline/qc');
+
+const getLogger = require('../../utils/getLogger');
+const parseSNSMessage = require('../../utils/parse-sns-message');
 
 const logger = getLogger('[QCController] - ');
 
@@ -28,18 +30,26 @@ const runQC = async (req, res) => {
 
   logger.log(`Starting qc for experiment ${experimentId}`);
 
-  const data = await createQCPipeline(
+  const { stateMachineArn, executionArn } = await createQCPipeline(
     req.params.experimentId,
     processingConfig || [],
     req.headers.authorization,
   );
 
-  // const experimentService = new ExperimentService();
-  // await experimentService.saveQCHandle(req.params.experimentId, data);
+  await new ExperimentExecution().upsert(
+    {
+      experiment_id: experimentId,
+      pipeline_type: 'qc',
+    },
+    {
+      state_machine_arn: stateMachineArn,
+      execution_arn: executionArn,
+    },
+  );
 
   logger.log(`Started qc for experiment ${experimentId} successfully, `);
 
-  res.json(data);
+  res.json({ stateMachineArn, executionArn });
 };
 
 const handleResponse = async (req, res) => {

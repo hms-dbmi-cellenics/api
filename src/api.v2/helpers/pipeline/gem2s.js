@@ -43,7 +43,6 @@ const continueToQC = async (payload) => {
       pipeline_type: 'qc',
     },
     {
-      params_hash: null,
       state_machine_arn: stateMachineArn,
       execution_arn: executionArn,
     },
