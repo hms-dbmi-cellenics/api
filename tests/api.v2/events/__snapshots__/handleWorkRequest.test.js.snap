@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Handle work socket callback Failing submits a work-response with error 1`] = `
+Array [
+  "WorkResponse-invalid",
+  Object {
+    "request": Object {
+      "Authorization": "Bearer some-token",
+      "experimentId": "experimentid11111111111111111111",
+      "uuid": "invalid",
+    },
+    "response": Object {
+      "cacheable": false,
+      "error": "invalid request",
+      "trace": undefined,
+    },
+    "results": Array [],
+  },
+]
+`;
+
+exports[`Handle work socket callback submits work 1`] = `
+Array [
+  "WorkerInfo-experimentid11111111111111111111",
+  Object {
+    "response": Object {
+      "podInfo": [MockFunction],
+      "trace": undefined,
+    },
+  },
+]
+`;
