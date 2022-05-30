@@ -1,39 +1,75 @@
 const AWSXRay = require('aws-xray-sdk');
-const WorkSubmitService = require('../helpers/worker/workSubmit');
-const validateRequest = require('../../utils/schema-validator');
-const getPipelineStatus = require('../helpers/pipeline/getPipelineStatus');
+const validateAndSubmitWork = require('./validateAndSubmitWork');
+const getLogger = require('../../utils/getLogger');
+const config = require('../../config');
+const { authenticationMiddlewareSocketIO, authorize } = require('../middlewares/authMiddlewares');
 
-const pipelineConstants = require('../helpers/pipeline/constants');
+const logger = getLogger();
 
-const handleWorkRequest = async (workRequest) => {
-  const { experimentId } = workRequest;
+const handleWorkRequest = (socket, data) => {
+  const segment = new AWSXRay.Segment(`API-${config.clusterEnv}-${config.sandboxId}`);
+  const ns = AWSXRay.getNamespace();
 
-  // Check if pipeline is runnning
-  const { qc: { status: qcPipelineStatus } } = await getPipelineStatus(
-    experimentId, pipelineConstants.QC_PROCESS_NAME,
-  );
+  ns.runPromise(async () => {
+    AWSXRay.capturePromise();
+    AWSXRay.setSegment(segment);
 
-  if (qcPipelineStatus !== pipelineConstants.SUCCEEDED) {
-    const e = new Error(`Work request can not be handled because pipeline is ${qcPipelineStatus}`);
+    logger.log(`[REQ ??, SOCKET ${socket.id}] Work submitted from client.`);
+    logger.log(`[REQ ??, SOCKET ${socket.id}] ${JSON.stringify(data, null, 2)}`);
 
-    AWSXRay.getSegment().addError(e);
-    throw e;
-  }
+    const { uuid, Authorization, experimentId } = data;
 
-  await validateRequest(workRequest, 'WorkRequest.v2.yaml');
-  const { timeout } = workRequest;
+    segment.addMetadata('request', data);
+    segment.addAnnotation('podName', config.podName);
+    segment.addAnnotation('sandboxId', config.sandboxId);
+    segment.addAnnotation('experimentId', experimentId);
 
-  if (Date.parse(timeout) <= Date.now()) {
-    // Annotate current segment as expired.
-    AWSXRay.getSegment().addAnnotation('result', 'error-timeout');
+    segment.addIncomingRequestData({
+      request: {
+        method: 'POST',
+        url: `socketio://api-${config.sandboxId}-${config.clusterEnv}/${experimentId}/WorkRequest`,
+      },
+    });
 
-    throw new Error(`Request timed out at ${timeout}.`);
-  }
+    try {
+      // Authenticate and authorize the user
+      if (!Authorization) {
+        throw new Error('Authentication token must be present.');
+      }
+      const jwtClaim = await authenticationMiddlewareSocketIO(Authorization, socket);
+      // socket.emit('asd', () => {});
+      const { sub: userId } = jwtClaim;
+      await authorize(userId, 'socket', null, experimentId);
 
-  const workSubmitService = new WorkSubmitService(workRequest);
-  const podInfo = await workSubmitService.submitWork();
-  return podInfo;
+      const podInfo = await validateAndSubmitWork(data);
+      console.log('SUBMITTED THAT SHIT!!');
+      socket.emit(`WorkerInfo-${experimentId}`, {
+        response: {
+          podInfo,
+          trace: AWSXRay.getSegment().trace_id,
+        },
+      });
+      console.log('SUBMITTED THAT SHIT!!!!!! yeah');
+    } catch (e) {
+      logger.log(`[REQ ??, SOCKET ${socket.id}] Error while processing WorkRequest event.`);
+      logger.trace(e);
+      segment.addError(e);
+      console.log('ERROR WAS', e);
+
+      socket.emit(`WorkResponse-${uuid}`, {
+        request: { ...data },
+        results: [],
+        response: {
+          cacheable: false,
+          error: e.message,
+          trace: AWSXRay.getSegment().trace_id,
+        },
+      });
+      console.log('emitted!!');
+      logger.log(`[REQ ??, SOCKET ${socket.id}] Error sent back to client.`);
+    }
+
+    segment.close();
+  });
 };
-
-
 module.exports = handleWorkRequest;
