@@ -2,9 +2,11 @@ const validateAndSubmitWork = require('../../../src/api.v2/events/validateAndSub
 const CacheSingleton = require('../../../src/cache');
 const getPipelineStatus = require('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 const pipelineConstants = require('../../../src/api.v2/helpers/pipeline/constants');
+const WorkSubmitService = require('../../../src/api.v2/helpers/worker/workSubmit')();
 
 jest.mock('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 jest.mock('../../../src/cache');
+jest.mock('../../../src/api.v2/helpers/worker/workSubmit');
 
 describe('handleWorkRequest', () => {
   afterEach(() => {
@@ -150,5 +152,17 @@ describe('handleWorkRequest', () => {
         'Work request can not be handled because pipeline is RUNNING',
       );
     }
+  });
+
+  it('Submits work request when correct request and and pipeline status are present', async () => {
+    const workRequest = {
+      ETag: '12345',
+      socketId: '6789',
+      experimentId: 'my-experiment',
+      timeout: '2099-01-01T00:00:00Z',
+      body: { name: 'GetEmbedding', type: 'umap', config: { minimumDistance: 0, distanceMetric: 'euclidean' } },
+    };
+    await validateAndSubmitWork(workRequest);
+    expect(WorkSubmitService.submitWork).toHaveBeenCalled();
   });
 });

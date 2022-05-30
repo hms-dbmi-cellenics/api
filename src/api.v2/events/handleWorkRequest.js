@@ -11,6 +11,7 @@ const handleWorkRequest = async (socket, data, xraySegment) => {
   try {
     // Authenticate and authorize the user
     if (!Authorization) {
+      console.log('THROWING NOW');
       throw new Error('Authentication token must be present.');
     }
     const jwtClaim = await authenticationMiddlewareSocketIO(Authorization, socket);

@@ -36,4 +36,10 @@ describe('Handle work socket callback', () => {
     expect(mockSocket.emit.mock.calls[0]).toMatchSnapshot();
     expect(mockXraySegment.addError).toHaveBeenCalled();
   });
+
+  it('data without authorization also throws an error', async () => {
+    delete data.Authorization;
+    await handleWorkRequest(mockSocket, data, mockXraySegment);
+    expect(mockSocket.emit.mock.calls[0]).toMatchSnapshot();
+  });
 });

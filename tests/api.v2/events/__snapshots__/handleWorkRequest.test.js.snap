@@ -19,6 +19,24 @@ Array [
 ]
 `;
 
+exports[`Handle work socket callback data without authorization also throws an error 1`] = `
+Array [
+  "WorkResponse-invalid",
+  Object {
+    "request": Object {
+      "experimentId": "experimentid11111111111111111111",
+      "uuid": "invalid",
+    },
+    "response": Object {
+      "cacheable": false,
+      "error": "Authentication token must be present.",
+      "trace": undefined,
+    },
+    "results": Array [],
+  },
+]
+`;
+
 exports[`Handle work socket callback submits work 1`] = `
 Array [
   "WorkerInfo-experimentid11111111111111111111",
