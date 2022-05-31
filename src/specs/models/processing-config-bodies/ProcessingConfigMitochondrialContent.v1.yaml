@@ -17,7 +17,7 @@ properties:
       methodSettings:
         type: object
         properties:
-          absolute_threshold:
+          absoluteThreshold:
             type: object
             properties:
               maxFraction:
@@ -39,7 +39,7 @@ additionalProperties:
         methodSettings:
           type: object
           properties:
-            absolute_threshold:
+            absoluteThreshold:
               type: object
               properties:
                 maxFraction:

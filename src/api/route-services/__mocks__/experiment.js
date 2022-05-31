@@ -88,9 +88,9 @@ const mockUpdateProcessingConfig = jest.fn(
           filterSettings: { minCellSize: 10800, binStep: 200 },
           enabled: true,
         },
-        readAlignment: { filterSettings: { method: 'absolute_threshold', methodSettings: { absolute_threshold: { bandwidth: -1, filterThreshold: 0.5 } } }, enabled: true },
+        readAlignment: { filterSettings: { method: 'absoluteThreshold', methodSettings: { absoluteThreshold: { bandwidth: -1, filterThreshold: 0.5 } } }, enabled: true },
         classifier: { filterSettings: { FDR: 0.05 }, enabled: true, prefiltered: false },
-        mitochondrialContent: { filterSettings: { method: 'absolute_threshold', methodSettings: { absolute_threshold: { maxFraction: 0.1, binStep: 0.05 } } }, enabled: true },
+        mitochondrialContent: { filterSettings: { method: 'absoluteThreshold', methodSettings: { absoluteThreshold: { maxFraction: 0.1, binStep: 0.05 } } }, enabled: true },
         configureEmbedding: { embeddingSettings: { method: 'tsne', methodSettings: { tsne: { perplexity: 30, learningRate: 200 }, umap: { minimumDistance: 0.1, distanceMetric: 'euclidean' } } }, clusteringSettings: { method: 'louvain', methodSettings: { louvain: { resolution: 0.5 } } } },
         numGenesVsNumUmis: {
           filterSettings: {

@@ -3,15 +3,11 @@ const _ = require('lodash');
 const config = require('../config');
 const getConnectionParams = require('./getConnectionParams');
 
-// This was necessary because all of processingConfig is camelcase except for
-// absolute_theshold, which breaks the camelcase we had assumed
-// Consider migrating the property absolute_threshold to absoluteThreshold instead of doing this
-const processingConfigExceptions = ['methodSettings'];
-
 const recursiveCamelcase = (result, camelCaseExceptions = [], skip = false) => (
   _.transform(result, (acc, value, key, target) => {
     let camelKey;
 
+    // The filter of underscore is necessary because we don't want to camelcase sample ids
     if (_.isArray(target) || skip || !key.includes('_')) {
       camelKey = key;
     } else {
@@ -34,7 +30,7 @@ const fetchConfiguration = async (environment, rdsSandboxId) => ({
     postProcessResponse: (result, queryContext = {}) => (
       recursiveCamelcase(
         result,
-        [queryContext.camelCaseExceptions, ...processingConfigExceptions],
+        queryContext.camelCaseExceptions,
       )),
   },
 });
