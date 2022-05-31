@@ -19,21 +19,17 @@ const logger = getLogger('[Gem2sService] - ');
 
 const hookRunner = new HookRunner();
 
-const saveProcessingConfigFromGem2s = async ({ experimentId, item }) => {
-  logger.log('Saving processing config for gem2s');
-  await new Experiment().updateById(experimentId, { processing_config: item.processingConfig });
-  logger.log('Finished saving processing config for gem2s');
-};
-
 const continueToQC = async (payload) => {
-  saveProcessingConfigFromGem2s(payload);
+  const { experimentId, item } = payload;
 
-  logger.log('Starting qc run because gem2s finished successfully');
+  await new Experiment().updateById(experimentId, { processing_config: item.processingConfig });
 
-  const { experimentId } = payload;
+  logger.log(`Experiment: ${experimentId}. Saved processing config received from gem2s`);
+
+  logger.log(`Experiment: ${experimentId}. Starting qc run because gem2s finished successfully`);
+
   // we need to change this once we rework the pipeline message response
   const authJWT = payload.authJWT || payload.input.authJWT;
-  await createQCPipeline(experimentId, [], authJWT);
 
   const { stateMachineArn, executionArn } = await createQCPipeline(experimentId, [], authJWT);
 
