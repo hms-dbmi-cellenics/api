@@ -1,8 +1,6 @@
 // const { OK } = require('../../utils/responses');
 const AWSXRay = require('aws-xray-sdk');
 
-const ExperimentExecution = require('../model/ExperimentExecution');
-
 const { createQCPipeline } = require('../helpers/pipeline/pipelineConstruct');
 const { handleQCResponse } = require('../helpers/pipeline/qc');
 
@@ -23,17 +21,6 @@ const runQC = async (req, res) => {
     req.headers.authorization,
   );
 
-  await new ExperimentExecution().upsert(
-    {
-      experiment_id: experimentId,
-      pipeline_type: 'qc',
-    },
-    {
-      state_machine_arn: stateMachineArn,
-      execution_arn: executionArn,
-    },
-  );
-
   logger.log(`Started qc for experiment ${experimentId} successfully, `);
 
   res.json({ stateMachineArn, executionArn });
@@ -52,6 +39,7 @@ const handleResponse = async (req, res) => {
   }
 
   const { io, parsedMessage } = result;
+
   const isSnsNotification = parsedMessage !== undefined;
   if (isSnsNotification) {
     try {

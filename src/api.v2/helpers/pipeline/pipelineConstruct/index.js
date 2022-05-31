@@ -10,6 +10,7 @@ const config = require('../../../../config');
 const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../constants');
 
 const Experiment = require('../../../model/Experiment');
+const ExperimentExecution = require('../../../model/ExperimentExecution');
 
 const AWS = require('../../../../utils/requireAWS');
 const getLogger = require('../../../../utils/getLogger');
@@ -259,6 +260,17 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
 
   const executionArn = await executeStateMachine(stateMachineArn, execInput);
   logger.log(`Execution with ARN ${executionArn} created.`);
+
+  await new ExperimentExecution().upsert(
+    {
+      experiment_id: experimentId,
+      pipeline_type: 'qc',
+    },
+    {
+      state_machine_arn: stateMachineArn,
+      execution_arn: executionArn,
+    },
+  );
 
   return { stateMachineArn, executionArn };
 };
