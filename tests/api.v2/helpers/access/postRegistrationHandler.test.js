@@ -26,6 +26,7 @@ describe('postRegistrationHandler', () => {
     const mockUserId = 'mock-user-email';
 
     const mockMessage = {
+      msg: { Type: 'Notification' },
       parsedMessage: {
         userEmail: mockUserEmail,
         userId: mockUserId,
@@ -38,6 +39,20 @@ describe('postRegistrationHandler', () => {
 
     expect(mockUserAccess.registerNewUserAccess).toHaveBeenCalledWith(mockUserEmail, mockUserId);
     expect(mockUserAccess.registerNewUserAccess).toHaveBeenCalledTimes(1);
+  });
+
+  it('Does not proceed to registration if SNS message is subscription confirmation', async () => {
+    const mockSubscriptionConfirmation = {
+      msg: {
+        type: 'SubsciprtionConfirmation',
+      },
+    };
+
+    parseSNSMessage.mockImplementationOnce(() => Promise.resolve(mockSubscriptionConfirmation));
+
+    await postRegistrationHandler(experimentId);
+
+    expect(mockUserAccess.registerNewUserAccess).not.toHaveBeenCalled();
   });
 
   it('Does not do anything on invalid SNS message', async () => {
