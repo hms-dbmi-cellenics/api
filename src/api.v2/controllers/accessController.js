@@ -37,10 +37,10 @@ const revokeAccess = async (req, res) => {
   const { experimentId } = req.params;
   const { userEmail } = req.body;
 
-  logger.log(`Deleting user access from experiment ${experimentId}`);
+  logger.log(`Removing access for user ${userEmail} from experiment ${experimentId}`);
   await removeAccess(experimentId, userEmail);
 
-  logger.log(`User access deleted from experiment ${experimentId}`);
+  logger.log(`Access of user ${userEmail} deleted from experiment ${experimentId}`);
 
   res.json(OK());
 };
