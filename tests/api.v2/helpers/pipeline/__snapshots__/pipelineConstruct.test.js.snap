@@ -115,6 +115,21 @@ Array [
 
 exports[`test for pipeline services Create QC pipeline works 3`] = `
 Array [
+  Array [
+    Object {
+      "experiment_id": "testExperimentId",
+      "pipeline_type": "qc",
+    },
+    Object {
+      "execution_arn": "test-machine",
+      "state_machine_arn": "test-machine",
+    },
+  ],
+]
+`;
+
+exports[`test for pipeline services Create QC pipeline works 4`] = `
+Array [
   Object {
     "type": "return",
     "value": Object {

@@ -4,8 +4,10 @@ const AWS = require('../../../../src/utils/requireAWS');
 const { getQcPipelineStepNames } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/skeletons');
 
 const Experiment = require('../../../../src/api.v2/model/Experiment');
+const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
 
 const experimentInstance = new Experiment();
+const experimentExecutionInstance = new ExperimentExecution();
 
 const mockStepNames = getQcPipelineStepNames();
 
@@ -23,6 +25,7 @@ jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/qcHelpers',
 jest.mock('../../../../src/utils/asyncTimer');
 
 jest.mock('../../../../src/api.v2/model/Experiment');
+jest.mock('../../../../src/api.v2/model/ExperimentExecution');
 
 const mockExperimentRow = {
   samplesOrder: ['oneSample', 'otherSample'],
@@ -124,7 +127,8 @@ describe('test for pipeline services', () => {
 
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
 
-    expect(experimentInstance.findById).toHaveBeenCalled();
+    expect(experimentInstance.findById).toHaveBeenCalledWith('testExperimentId');
+    expect(experimentExecutionInstance.upsert.mock.calls).toMatchSnapshot();
 
     expect(createActivitySpy).toHaveBeenCalled();
     expect(startExecutionSpy).toHaveBeenCalled();
