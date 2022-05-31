@@ -3,65 +3,41 @@ const _ = require('lodash');
 const AWS = require('../../../../src/utils/requireAWS');
 const { getQcPipelineStepNames } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/skeletons');
 
+const Experiment = require('../../../../src/api.v2/model/Experiment');
+
+const experimentInstance = new Experiment();
+
 const mockStepNames = getQcPipelineStepNames();
 
 const { createQCPipeline, createGem2SPipeline } = jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
-
-jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/qcHelpers', () => ({
-  getQcStepsToRun: jest.fn(() => mockStepNames),
-}));
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
   randomBytes: () => Buffer.from('asdfg'),
 }));
+
+jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/qcHelpers', () => ({
+  getQcStepsToRun: jest.fn(() => mockStepNames),
+}));
+
 jest.mock('../../../../src/utils/asyncTimer');
 
-const MockExperimentData = {
-  Item: {
-    sampleIds: {
-      L: [
-        {
-          S: 'oneSample',
+jest.mock('../../../../src/api.v2/model/Experiment');
+
+const mockExperimentRow = {
+  samplesOrder: ['oneSample', 'otherSample'],
+  processingConfig: {
+    doubletScores: {
+      enabled: true,
+      filterSettings: {
+        oneSetting: 1,
+      },
+      oneSample: {
+        filterSettings: {
+          oneSetting: 1,
         },
-        {
-          S: 'otherSample',
-        },
-      ],
-    },
-    processingConfig: {
-      M: {
-        doubletScores: {
-          M: {
-            enabled: {
-              BOOL: true,
-            },
-            filterSettings: {
-              M: {
-                oneSetting: {
-                  N: 1,
-                },
-              },
-            },
-            oneSample: {
-              M: {
-                filterSettings: {
-                  M: {
-                    oneSetting: {
-                      N: 1,
-                    },
-                  },
-                },
-                defaultFilterSettings: {
-                  M: {
-                    oneSetting: {
-                      N: 1,
-                    },
-                  },
-                },
-              },
-            },
-          },
+        defaultFilterSettings: {
+          oneSetting: 1,
         },
       },
     },
@@ -139,20 +115,16 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-machine' });
     });
 
-    const getExperimentDataSpy = jest.fn((x) => x);
-    AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
-      if (params.TableName.match('experiments')) {
-        getExperimentDataSpy(params);
-        callback(null, MockExperimentData);
-      }
-    });
+    experimentInstance.findById.mockReturnValueOnce(
+      { first: () => Promise.resolve(mockExperimentRow) },
+    );
 
     await createQCPipeline('testExperimentId', processingConfigUpdate);
     expect(describeClusterSpy).toMatchSnapshot();
 
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
 
-    expect(getExperimentDataSpy).toHaveBeenCalled();
+    expect(experimentInstance.findById).toHaveBeenCalled();
 
     expect(createActivitySpy).toHaveBeenCalled();
     expect(startExecutionSpy).toHaveBeenCalled();
@@ -200,13 +172,9 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-machine' });
     });
 
-    const getExperimentDataSpy = jest.fn((x) => x);
-    AWSMock.mock('DynamoDB', 'getItem', (params, callback) => {
-      if (params.TableName.match('experiments')) {
-        getExperimentDataSpy(params);
-        callback(null, MockExperimentData);
-      }
-    });
+    experimentInstance.findById.mockReturnValueOnce(
+      { first: () => Promise.resolve(mockExperimentRow) },
+    );
 
     await createQCPipeline('testExperimentId', processingConfigUpdate);
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
@@ -244,6 +212,10 @@ describe('test for pipeline services', () => {
       startExecutionSpy(params);
       callback(null, { executionArn: 'test-execution' });
     });
+
+    experimentInstance.findById.mockReturnValueOnce(
+      { first: () => Promise.resolve(mockExperimentRow) },
+    );
 
     createQCPipeline.waitForDefinitionToPropagate = () => true;
 
