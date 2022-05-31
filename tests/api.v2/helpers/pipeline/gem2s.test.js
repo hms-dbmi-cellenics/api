@@ -27,9 +27,13 @@ jest.mock('../../../../src/api.v2/helpers/pipeline/hooks/HookRunner');
 
 jest.mock('../../../../src/utils/schema-validator');
 
+const uploadToAWSPayload = require('../../mocks/data/gem2sUploadToAWSPayload.json');
+
 const experimentInstance = Experiment();
 const sampleInstance = Sample();
 const experimentExecutionInstance = ExperimentExecution();
+
+const hookRunnerInstance = HookRunner();
 
 describe('gem2sCreate', () => {
   const experimentId = 'mockExperimentId';
@@ -72,7 +76,10 @@ describe('gem2sCreate', () => {
   const mockExecutionArn = 'mockExecutionArn';
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    experimentInstance.findById.mockClear();
+    sampleInstance.getSamples.mockClear();
+    experimentExecutionInstance.upsert.mockClear();
+    pipelineConstruct.createGem2SPipeline.mockClear();
 
     experimentInstance.findById.mockReturnValueOnce({
       first: jest.fn(() => Promise.resolve(mockExperiment)),
@@ -115,22 +122,47 @@ describe('gem2sResponse', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
-
     io.sockets = { emit: jest.fn() };
+
+    experimentInstance.updateById.mockClear();
+    pipelineConstruct.createQCPipeline.mockClear();
+    experimentExecutionInstance.upsert.mockClear();
 
     getPipelineStatus.mockReturnValueOnce(mockGetPipelineStatusResponse);
   });
 
   it('works correctly', async () => {
-    const mockHookRunnerInstance = HookRunner();
-
     await gem2sResponse(io, message);
 
     expect(validateRequest).toHaveBeenCalledWith(message, 'GEM2SResponse.v1.yaml');
-    expect(mockHookRunnerInstance.run).toHaveBeenCalledWith(message);
+    expect(hookRunnerInstance.run).toHaveBeenCalledWith(message);
 
     expect(getPipelineStatus).toHaveBeenCalledWith(experimentId, constants.GEM2S_PROCESS_NAME);
     expect(io.sockets.emit.mock.calls[0]).toMatchSnapshot();
+  });
+
+  it('Starts a QC run when gem2s finishes', async () => {
+    const stateMachineArn = 'mockStateMachineArn';
+    const executionArn = 'mockExecutionArn';
+
+    pipelineConstruct.createQCPipeline.mockImplementationOnce(
+      () => Promise.resolve({ stateMachineArn, executionArn }),
+    );
+
+    // There's a hook registered on the uploadToAWS step
+    expect(hookRunnerInstance.register.mock.calls[0][0]).toEqual('uploadToAWS');
+
+    const hookedFunctions = hookRunnerInstance.register.mock.calls[0][1];
+
+    expect(hookedFunctions).toHaveLength(1);
+
+    // calling the hookedFunction triggers QC
+    await hookedFunctions[0](uploadToAWSPayload);
+
+    expect(experimentInstance.updateById.mock.calls).toMatchSnapshot();
+
+    expect(pipelineConstruct.createQCPipeline.mock.calls).toMatchSnapshot();
+
+    expect(experimentExecutionInstance.upsert.mock.calls).toMatchSnapshot();
   });
 });
