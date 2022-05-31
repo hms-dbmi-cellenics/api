@@ -3,7 +3,6 @@ const AWSXRay = require('aws-xray-sdk');
 
 const ExperimentExecution = require('../model/ExperimentExecution');
 
-const getExperimentBackendStatus = require('../helpers/backendStatus/getExperimentBackendStatus');
 const { createQCPipeline } = require('../helpers/pipeline/pipelineConstruct');
 const { handleQCResponse } = require('../helpers/pipeline/qc');
 
@@ -11,18 +10,6 @@ const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 
 const logger = getLogger('[QCController] - ');
-
-const getQCState = async (req, res) => {
-  const { experimentId } = req.params;
-
-  logger.log(`Getting backend status for experiment ${experimentId}`);
-
-  // The changes to add gem2s status will be obsoleted once agi's PR is merged in
-  const data = await getExperimentBackendStatus(experimentId);
-
-  logger.log(`Finished getting backend status for experiment ${experimentId}`);
-  res.json(data);
-};
 
 const runQC = async (req, res) => {
   const { experimentId } = req.params;
@@ -84,7 +71,6 @@ const handleResponse = async (req, res) => {
 };
 
 module.exports = {
-  getQCState,
   runQC,
   handleResponse,
 };

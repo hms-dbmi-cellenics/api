@@ -1089,14 +1089,13 @@ paths:
               schema:
                 type: string
                 pattern: ok
-    #     '500':
-    #       description: The data sent by the server could not be parsed as JSON.
-    #       content:
-    #         text/plain:
-    #           schema:
-    #             type: string
-    #             pattern: nok
-    # parameters: []
+        '500':
+          description: The data sent by the server could not be parsed as JSON.
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: nok
   
   '/experiments/{experimentId}/download/{type}':
     get:
