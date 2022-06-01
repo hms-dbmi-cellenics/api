@@ -41,10 +41,10 @@ describe('postRegistrationHandler', () => {
     expect(mockUserAccess.registerNewUserAccess).toHaveBeenCalledTimes(1);
   });
 
-  it('Does not proceed to registration if SNS message is subscription confirmation', async () => {
+  it('Does not proceed to registration if SNS message is not notification', async () => {
     const mockSubscriptionConfirmation = {
       msg: {
-        type: 'SubsciprtionConfirmation',
+        type: 'SubscriptionConfirmation',
       },
     };
 
