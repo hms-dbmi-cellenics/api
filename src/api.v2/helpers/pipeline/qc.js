@@ -11,10 +11,8 @@ const { cleanupPods } = require('../../../utils/hooks/pod-cleanup');
 const constants = require('./constants');
 const getPipelineStatus = require('./getPipelineStatus');
 
-// const ExperimentService = require('./experiment');
-// const PipelineHook = require('../../utils/hooks/hookRunner');
-
 const Experiment = require('../../model/Experiment');
+const Plot = require('../../model/Plot');
 
 const sendNotification = require('./hooks/sendNotification');
 
@@ -39,24 +37,25 @@ const getS3Output = async (message) => {
   return JSON.parse(outputObject.Body.toString());
 };
 
-// const updatePlotData = async (taskName, experimentId, output) => {
-//   if (output.plotDataKeys) {
-//     const plotConfigUploads = Object.entries(output.plotDataKeys).map(([plotUuid, objKey]) => (
-//       plotsTableService.updatePlotDataKey(
-//         experimentId,
-//         plotUuid,
-//         objKey,
-//       )
-//     ));
+const updatePlotData = async (taskName, experimentId, output) => {
+  if (output.plotDataKeys) {
+    const plotConfigUploads = Object.entries(output.plotDataKeys)
+      .map(async ([plotUuid, s3DataKey]) => (
+        await new Plot().upsert(
+          { id: plotUuid, experiment_id: experimentId },
+          { s3_data_key: s3DataKey },
+        )
+      ));
 
-//     logger.log('Uploading plotData for', taskName, 'to DynamoDB');
+    logger.log('Uploading plotData for', taskName, 'to DynamoDB');
 
-//     // Promise.all stops if it encounters errors.
-//     // This handles errors so that error in one upload does not stop others
-//     // Resulting promise resolves to an array with the resolve/reject value of p
-//     Promise.all(plotConfigUploads.map((p) => p.catch((e) => e)));
-//   }
-// };
+    // Promise.all stops if it encounters errors.
+    // This handles errors so that error in one upload does not stop others
+    await Promise.all(
+      plotConfigUploads.map((p) => p.catch((e) => logger.error(e))),
+    );
+  }
+};
 
 const updateProcessingConfig = async (taskName, experimentId, output, sampleUuid) => {
   // TODO the processing config validation was not being enforced because the 'anyOf' requirement
@@ -139,7 +138,7 @@ const handleQCResponse = async (io, message) => {
 
     output = await getS3Output(message);
 
-    // await updatePlotData(taskName, experimentId, output);
+    await updatePlotData(taskName, experimentId, output);
     await updateProcessingConfig(taskName, experimentId, output, sampleUuid);
   }
   // we want to send the update to the subscribed both in successful and error case

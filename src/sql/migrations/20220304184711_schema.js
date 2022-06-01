@@ -139,7 +139,7 @@ exports.up = async (knex) => {
     .createTable('plot', (table) => {
       table.string('id').notNullable();
       table.uuid('experiment_id').references('experiment.id').onDelete('CASCADE').notNullable();
-      table.jsonb('config').notNullable();
+      table.jsonb('config').defaultTo(JSON.stringify({}));
       table.string('s3_data_key').nullable();
 
       table.primary(['id', 'experiment_id']);
