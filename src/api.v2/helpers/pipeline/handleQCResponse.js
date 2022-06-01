@@ -3,18 +3,17 @@ const validateRequest = require('../../../utils/schema-validator');
 const AWS = require('../../../utils/requireAWS');
 const getLogger = require('../../../utils/getLogger');
 
-const { assignPodToPipeline } = require('../../../utils/hooks/pipeline-assign');
 
 const HookRunner = require('./hooks/HookRunner');
-const { cleanupPods } = require('../../../utils/hooks/pod-cleanup');
+const assignPodToPipeline = require('./hooks/assignPodToPipeline');
+const { cleanupPods } = require('./hooks/podCleanup');
+const sendNotification = require('./hooks/sendNotification');
 
 const constants = require('./constants');
 const getPipelineStatus = require('./getPipelineStatus');
 
 const Experiment = require('../../model/Experiment');
 const Plot = require('../../model/Plot');
-
-const sendNotification = require('./hooks/sendNotification');
 
 const logger = getLogger();
 
