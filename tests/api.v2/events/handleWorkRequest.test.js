@@ -40,7 +40,6 @@ describe('Handle work socket callback', () => {
 
   it('data without authorization also throws an error', async () => {
     delete data.Authorization;
-    validateAndSubmitWork.mockReturnValue(() => Promise.reject());
     await handleWorkRequest(mockSocket, data, mockXraySegment);
     expect(mockSocket.emit.mock.calls[0]).toMatchSnapshot();
   });
