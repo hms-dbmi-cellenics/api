@@ -145,6 +145,4 @@ const handleQCResponse = async (io, message) => {
   await sendUpdateToSubscribed(experimentId, message, output, error, io);
 };
 
-module.exports = {
-  handleQCResponse,
-};
+module.exports = handleQCResponse;

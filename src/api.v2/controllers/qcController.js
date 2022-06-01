@@ -2,7 +2,7 @@
 const AWSXRay = require('aws-xray-sdk');
 
 const { createQCPipeline } = require('../helpers/pipeline/pipelineConstruct');
-const { handleQCResponse } = require('../helpers/pipeline/qc');
+const handleQCResponse = require('../helpers/pipeline/handleQCResponse');
 
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parse-sns-message');
