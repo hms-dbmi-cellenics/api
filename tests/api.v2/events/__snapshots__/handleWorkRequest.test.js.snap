@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Handle work socket callback Failing submits a work-response with error 1`] = `
+exports[`Handle work socket callback If the worker fails, the API emits a work-response with error 1`] = `
 Array [
-  "WorkResponse-invalid",
+  "WorkResponse-someuuid-asd-asd-asdddasa",
   Object {
     "request": Object {
       "Authorization": "Bearer some-token",
       "experimentId": "experimentid11111111111111111111",
-      "uuid": "invalid",
+      "uuid": "someuuid-asd-asd-asdddasa",
     },
     "response": Object {
       "cacheable": false,
-      "error": "invalid request",
+      "error": "fail",
       "trace": undefined,
     },
     "results": Array [],
@@ -19,13 +19,23 @@ Array [
 ]
 `;
 
+exports[`Handle work socket callback If the worker fails, the API emits a work-response with error 2`] = `
+Array [
+  Object {
+    "Authorization": "Bearer some-token",
+    "experimentId": "experimentid11111111111111111111",
+    "uuid": "someuuid-asd-asd-asdddasa",
+  },
+]
+`;
+
 exports[`Handle work socket callback data without authorization also throws an error 1`] = `
 Array [
-  "WorkResponse-invalid",
+  "WorkResponse-someuuid-asd-asd-asdddasa",
   Object {
     "request": Object {
       "experimentId": "experimentid11111111111111111111",
-      "uuid": "invalid",
+      "uuid": "someuuid-asd-asd-asdddasa",
     },
     "response": Object {
       "cacheable": false,
@@ -42,9 +52,19 @@ Array [
   "WorkerInfo-experimentid11111111111111111111",
   Object {
     "response": Object {
-      "podInfo": [MockFunction],
+      "podInfo": undefined,
       "trace": undefined,
     },
+  },
+]
+`;
+
+exports[`Handle work socket callback submits work 2`] = `
+Array [
+  Object {
+    "Authorization": "Bearer some-token",
+    "experimentId": "experimentid11111111111111111111",
+    "uuid": "someuuid-asd-asd-asdddasa",
   },
 ]
 `;
