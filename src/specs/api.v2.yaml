@@ -87,19 +87,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
         '403':
           description: The authenticated user is not authorized to view this resource.
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
         '404':
           description: Experiment not found.
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
     patch:
       summary: ''
       operationId: patchExperimentCellSets
@@ -118,13 +118,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
         '403':
           description: The authenticated user is not authorized to view this resource.
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
       description: Performs a partial update on the experiment's cell sets.
       requestBody:
         content:
@@ -415,19 +415,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
         '403':
           description: The authenticated user is not authorized to view this resource.
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
         '404':
           description: Experiment not found.
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
     parameters:
       - schema:
           type: string
@@ -909,7 +909,7 @@ paths:
   '/access/{experimentId}':
     get:
       summary: Get the users with access to an experiment
-      operationId: get-access
+      operationId: getAccess
       x-eov-operation-id: access#getExperimentUsers
       x-eov-operation-handler: routes/access
       description: Returns the users with access to the experiment
@@ -937,7 +937,138 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
+    put:
+      summary: Add user to an experiment
+      operationId: inviteUser
+      x-eov-operation-id: access#inviteUser
+      x-eov-operation-handler: routes/access
+      description: Adds permissions for the user email for the experiment from the body
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: The authenticated user does not have permissions to add users to this resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userEmail:
+                  type: string
+                role:
+                  type: string
+              required:
+                - userEmail
+                - role
+    delete:
+      summary: Revoke access to users
+      operationId: deleteAccess
+      x-eov-operation-id: access#revokeAccess
+      x-eov-operation-handler: routes/access
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: The user does not have permissions to revoke the role.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Role not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      description: Delete a role for a user in experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userEmail:
+                  type: string
+                  minLength: 1
+              required:
+                - userEmail
+        description: email of the user to remove from experiment
+
+  /access/post-registration:
+    post:
+      summary: Endpoint for handling post-registration
+      description: Endpoint for handling post-registartion.
+      operationId: postRegistration
+      x-eov-operation-id: access#postRegistration
+      x-eov-operation-handler: routes/access
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+            examples: {}
+          application/json:
+            schema:
+              type: object
+              properties:
+                userEmail:
+                  type: string
+                  minLength: 1
+                userId:
+                  type: string
+                  minLength: 1
+                
   '/workResults/{experimentId}/{ETag}':
     get:
       summary: Get the work results from S3
@@ -1027,9 +1158,7 @@ paths:
       summary: Retrieve results from pipeline step functions
       description: |-
         Results from Step Function pipeline steps are relayed to the API through this endpoint.
-
         Note that this endpoint is only exposed to AWS SNS, and since it has a specific communication protocol with limited feedback, the schema defined here is designed to be liberally enforceable. This endpoint is also used by SNS to handle subscribe/unsubscribe events.
-
         The actual JSON passed by SNS is found in the `PipelineResponse` model, which is to be validated by the API.
       operationId: receiveGem2sResponse
       x-eov-operation-id: gem2s#response
@@ -1086,15 +1215,15 @@ paths:
               schema:
                 type: string
                 pattern: ok
-  #     '500':
-  #       description: The data sent by the server could not be parsed as JSON.
-  #       content:
-  #         text/plain:
-  #           schema:
-  #             type: string
-  #             pattern: nok
-  # parameters: []
-  
+        '500':
+          description: The data sent by the server could not be parsed as JSON.
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: nok
+    parameters: []
+
   '/experiments/{experimentId}/download/{type}':
     get:
       summary: Download data according to the requested type
@@ -1133,6 +1262,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+
   /kubernetesEvents:
     post:
       summary: Monitoring of kubernetes cluster events
@@ -1155,6 +1285,7 @@ paths:
               schema:
                 type: string
                 pattern: nok
+
 components:
   schemas:
     CreateExperiment:

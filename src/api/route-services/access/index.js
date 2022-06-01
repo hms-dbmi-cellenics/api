@@ -15,7 +15,7 @@ const { isRoleAuthorized } = require('./roles');
 const { getAwsUserAttributesByEmail } = require('../../../utils/aws/user');
 
 const logger = getLogger('[AccessService] - ');
-const sendEmail = require('../../../utils/send-email');
+const sendEmail = require('../../../utils/sendEmail');
 const buildUserInvitedEmailBody = require('../../../utils/emailTemplates/buildUserInvitedEmailBody');
 const buildUserInvitedNotRegisteredEmailBody = require('../../../utils/emailTemplates/buildUserInvitedNotRegisteredEmailBody');
 
