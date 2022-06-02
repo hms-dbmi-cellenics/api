@@ -216,51 +216,5 @@ describe('handleQCResponse module', () => {
           response: { error: true },
         }));
     });
-
-    it('fails when output config is not valid', async () => {
-      // missing required "filterSettings"
-      const s3output = {
-        Body: JSON.stringify({
-          config: {
-            auto: true,
-          },
-        }),
-      };
-      const s3Spy = mockS3GetObject(s3output);
-
-      experimentInstance.findById.mockReturnValueOnce(
-        { first: () => Promise.resolve({ processingConfig: fake.CELL_SIZE_PROCESSING_CONFIG }) },
-      );
-
-      const message = {
-        input: {
-          experimentId: fake.EXPERIMENT_ID,
-          taskName: 'cellSizeDistribution',
-          sampleUuid: fake.SAMPLE_UUID,
-        },
-        output: {
-          bucket: fake.S3_BUCKET,
-          key: fake.S3_KEY,
-        },
-        response: { error: false },
-        experimentId: fake.EXPERIMENT_ID,
-      };
-
-      await validateRequest(s3output, 'ProcessingConfigBodies.v1.yaml');
-      // TODO reenable this part of the test when schema validation is uncommented
-      // try {
-      //   await PipelineService.qcResponse(mockIO, message);
-      // } catch (e) {
-      //   expect(e.message).toMatch(
-      //     /^Error: config is not a valid target for anyOf/,
-      //   );
-      // }
-
-      // // Download output from S3
-      // expect(s3Spy).toHaveBeenCalledTimes(1);
-      // // Update processing settings in dynamoDB
-      // expect(dynamoDbSpy).not.toHaveBeenCalledTimes(1);
-      // expect(mockSocket.emit).not.toHaveBeenCalled();
-    });
   });
 });
