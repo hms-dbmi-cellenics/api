@@ -1,0 +1,29 @@
+title: Get Expression Cell Sets
+type: object
+description: Work request body for the Get Expression Cell Sets task.
+properties:
+  name:
+    type: string
+    pattern: GetExpressionCellSets
+    description: The name of the work submitted. Should be `GetExpressionCellSets`.
+  genesConfig:
+    type: array
+    description: Array of genes and filters to create the cell sets.
+    items:
+      type: object
+      properties:
+        geneName:
+          type: string
+          description: Name of the gene
+        comparisonType:
+          type: string
+          description: Comparison type
+          enum:
+            - greaterThan
+            - lessThan
+        thresholdValue:
+          type: number
+          description: Threshold value
+required:
+  - name
+  - genesConfig

@@ -1,0 +1,8 @@
+title: Get mitochondrial content data
+type: object
+description: A worker schema to get mitochondrial content.
+properties:
+  name:
+    type: string
+    pattern: GetMitochondrialContent
+    description: The name of the work submitted. Should be `GetMitochondrialContent`.

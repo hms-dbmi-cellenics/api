@@ -2,6 +2,7 @@
 const {
   expressAuthorizationMiddleware,
   authorize,
+  expressAuthenticationOnlyMiddleware,
 } = require('../../../src/api.v2/middlewares/authMiddlewares');
 
 const { UnauthorizedError, UnauthenticatedError } = require('../../../src/utils/responses');
@@ -89,5 +90,17 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     await expressAuthorizationMiddleware(req, {}, next);
     expect(next).toBeCalledWith(expect.any(UnauthenticatedError));
+  });
+
+  it('expressAuthenticationOnlyMiddleware works correctly', async () => {
+    const next = jest.fn();
+    const req = { user: 'someuserid-xd-123' };
+    await expressAuthenticationOnlyMiddleware(req, {}, next);
+    expect(next).toBeCalled();
+  });
+  it('expressAuthenticationOnlyMiddleware should fail if req.user is empty', async () => {
+    const next = jest.fn();
+    const req = { user: null };
+    await expect(expressAuthenticationOnlyMiddleware(req, {}, next)).rejects;
   });
 });

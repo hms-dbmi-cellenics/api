@@ -1,0 +1,36 @@
+title: Cluster Cells
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the work. Must be `ClusterCells`.
+    pattern: ClusterCells
+  cellSetName:
+    type: string
+    description: The name under which the cell set group should be saved.
+  config:
+    type: object
+    properties:
+      resolution:
+        type: number
+        minimum: 0
+        maximum: 2
+        description: Resolution used to calculate the clustering. Range 0 - 2. Default 0.5 
+    required:
+      - resolution
+  type:
+    type: string
+    description: The type of clustering algorithm to use.
+    enum:
+      - louvain
+      - leiden
+  cellSetKey:
+    type: string
+    description: The key under which the cell set should be saved.
+required:
+  - name
+  - cellSetName
+  - type
+  - config
+  - cellSetKey
+description: Work request body for the Cluster Cells task.

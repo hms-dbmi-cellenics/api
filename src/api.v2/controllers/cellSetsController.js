@@ -13,13 +13,13 @@ const logger = getLogger('[CellSetsController] - ');
 const getCellSets = async (req, res) => {
   let { experimentId } = req.params;
 
-  experimentId = experimentId.replace(/-/g, '');
+  experimentId = formatExperimentId(experimentId);
 
   logger.log(`Getting cell sets for experiment ${experimentId}`);
 
   const cellSets = await getS3Object({
     Bucket: bucketNames.CELL_SETS,
-    Key: formatExperimentId(experimentId),
+    Key: experimentId,
   });
 
   logger.log(`Finished getting cell sets for experiment ${experimentId}`);

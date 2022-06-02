@@ -1,0 +1,8 @@
+title: Get doublet score data
+type: object
+description: A worker schema to get doublet score.
+properties:
+  name:
+    type: string
+    pattern: GetDoubletScore
+    description: The name of the work submitted. Should be `GetDoubletScore`.

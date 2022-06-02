@@ -1,0 +1,75 @@
+title: Get embedding
+description: Work request body for the Get Embedding task.
+allOf:
+  - properties:
+      name:
+        type: string
+        example: GetEmbedding
+        pattern: GetEmbedding
+        description: The name of this work -- must be `GetEmbedding`.
+  - oneOf:
+    - $ref: '#/definitions/umap'
+    - $ref: '#/definitions/tsne'
+    - $ref: '#/definitions/pca'
+
+definitions:
+  umap:
+    type: object
+    required: 
+      - type
+      - config
+    properties:
+      type:
+        type: string
+        pattern: umap
+        example: umap
+      config:
+        description: Configuration values for umap
+        type: object
+        properties:
+          minimumDistance:
+            type: number
+            description: Defines how tightly the embedding is allowed to compress points together.
+            minimum: 0
+          distanceMetric:
+            type: string
+            description: The selected method used to measure distance
+            enum:
+              - euclidean
+              - cosine
+        required:
+          - minimumDistance
+          - distanceMetric
+  tsne:
+    type: object
+    required: 
+      - type
+      - config
+    properties:
+      type:
+        type: string
+        pattern: tsne
+        example: tsne
+      config:
+        description: Configuration values for tsne
+        type: object
+        properties:
+          perplexity:
+            type: number
+            minimum: 0
+            exclusiveMinimum: true
+          learningRate:
+            type: number
+            minimum: 0
+        required:
+          - perplexity
+          - learningRate
+  pca:
+    type: object
+    required:
+      - type
+    properties:
+      type:
+        type: string
+        pattern: pca
+        example: pca

@@ -117,7 +117,6 @@ const authenticationMiddlewareSocketIO = async (authHeader, ignoreExpiration = f
       issuer,
     },
   );
-
   AWSXRay.getSegment().setUser(result.sub);
   return result;
 };
