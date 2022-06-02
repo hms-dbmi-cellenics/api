@@ -11,6 +11,10 @@ const mockSegment = {
   close: () => null,
 };
 
+const mockGetNamespace = {
+  runPromise: async (func) => await func(),
+};
+mockAWSXray.getNamespace = () => mockGetNamespace;
 mockAWSXray.getSegment = () => mockSegment;
 mockAWSXray.captureAsyncFunc = (name, fn) => {
   fn(mockSegment);

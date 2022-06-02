@@ -8,7 +8,7 @@ const getPipelineStatus = require('../getPipelineStatus');
 const Experiment = require('../../../model/Experiment');
 
 const getLogger = require('../../../../utils/getLogger');
-const sendEmail = require('../../../../utils/send-email');
+const sendEmail = require('../../../../utils/sendEmail');
 const sendFailedSlackMessage = require('../../../../utils/send-failed-slack-message');
 const config = require('../../../../config');
 const buildPipelineStatusEmailBody = require('../../../../utils/emailTemplates/buildPipelineStatusEmailBody');

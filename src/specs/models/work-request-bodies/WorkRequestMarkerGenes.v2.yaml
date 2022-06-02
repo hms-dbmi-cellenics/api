@@ -1,0 +1,18 @@
+title: Get Marker Genes
+description: Work request body for getting the Marker Genes.
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the work. Must be `MarkerHeatmap`.
+    pattern: MarkerHeatmap
+  nGenes:
+    type: number
+    description: Amount of marker genes to get
+  cellSetKey:
+    type: string
+    description: Cell set key to be be used in the heatmap
+required:
+  - name
+  - nGenes
+  - cellSetKey

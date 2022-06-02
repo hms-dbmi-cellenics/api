@@ -1,0 +1,19 @@
+title: Gene Expression
+type: object
+properties:
+  name:
+    type: string
+    description: The name of this task. Must be `GeneExpression`.
+    pattern: GeneExpression
+  genes:
+    type: array
+    description: A list of genes to compute expression data for.
+    items:
+      type: string
+  scale:
+    type: boolean
+    description: Whether to perform feature scaling (normalization to unit variance and zero mean). Defaults to `false` if not specified.
+    default: 'false'
+required:
+  - name
+  - genes

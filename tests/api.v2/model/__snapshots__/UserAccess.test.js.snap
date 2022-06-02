@@ -1,18 +1,85 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`model/userAccess addToInvite access works correctly: insertParams 1`] = `
+Array [
+  Array [
+    Object {
+      "access_role": "mockRole",
+      "experiment_id": "1234-5678-9012-1234",
+      "user_email": "1234-5678-9012-1234@example.com",
+    },
+  ],
+]
+`;
+
+exports[`model/userAccess addToInvite access works correctly: intoParams 1`] = `
+Array [
+  Array [
+    "invite_access",
+  ],
+]
+`;
+
 exports[`model/userAccess getExperimentUsers work correctly 1`] = `
 Array [
   Object {
     "accessRole": "admin",
-    "experimentId": "mockExperimentId",
+    "experimentId": "experimentId",
     "updatedAt": "1910-03-23 21:06:00.573142+00",
     "userId": "mockAdminSub",
   },
   Object {
     "accessRole": "owner",
-    "experimentId": "mockExperimentId",
+    "experimentId": "experimentId",
     "updatedAt": "1910-03-23 21:06:00.573142+00",
-    "userId": "someUser",
+    "userId": "1234-5678-9012-1234",
+  },
+]
+`;
+
+exports[`model/userAccess registerNewUserAccess access works correctly: fromParams 1`] = `
+Array [
+  "invite_access",
+]
+`;
+
+exports[`model/userAccess registerNewUserAccess access works correctly: fromParams 2`] = `
+Array [
+  "invite_access",
+]
+`;
+
+exports[`model/userAccess registerNewUserAccess access works correctly: insertParams 1`] = `
+Array [
+  Object {
+    "access_role": undefined,
+    "experiment_id": undefined,
+    "user_id": "1234-5678-9012-1234",
+  },
+]
+`;
+
+exports[`model/userAccess registerNewUserAccess access works correctly: selectParams 1`] = `
+Array [
+  Array [
+    "experiment_id",
+    "access_role",
+  ],
+]
+`;
+
+exports[`model/userAccess registerNewUserAccess access works correctly: whereParams 1`] = `
+Array [
+  Object {
+    "user_email": "1234-5678-9012-1234@example.com",
+  },
+]
+`;
+
+exports[`model/userAccess registerNewUserAccess access works correctly: whereParams 2`] = `
+Array [
+  Object {
+    "user_email": "1234-5678-9012-1234@example.com",
   },
 ]
 `;
