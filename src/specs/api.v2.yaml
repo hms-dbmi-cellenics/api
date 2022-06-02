@@ -1153,6 +1153,88 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+  '/experiments/{experimentId}/plots/{plotUuid}':
+    parameters:
+      - schema:
+          type: string
+        name: plotUuid
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: experimentId
+        in: path
+        required: true
+    get:
+      summary: Get a plot or table config
+      operationId: getPlotTable
+      x-eov-operation-id: plots#get
+      x-eov-operation-handler: routes/plots
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlotTableConfig'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Experiment/plot not found.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+      description: Reads a plot and table for a given experiment with the data specified.
+    put:
+      summary: Update a plot or table config
+      operationId: updatePlotTable
+      x-eov-operation-id: plots#update
+      x-eov-operation-handler: routes/plots
+      responses:
+        '200':
+          description: Update to object in response successful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlotTableConfig'
+        '201':
+          description: New resource created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlotTableConfig'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
+        '404':
+          description: Invalid experiment ID specified.
+      description: Updates a plot and table for a given experiment with the data specified.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlotTableConfig'
+        description: The new configuration to update the old one by.
   /gem2sResults:
     post:
       summary: Retrieve results from pipeline step functions
@@ -1309,6 +1391,8 @@ components:
       $ref: './models/samples-bodies/PatchSampleFile.v2.yaml'
     CellSets:
       $ref: ./models/cell-sets-bodies/CellSets.v2.yaml
+    PlotTableConfig:
+      $ref: ./models/plots-bodies/PlotConfig.v2.yaml
     HTTPSuccess:
       $ref: './models/HTTPSuccess.v1.yaml'
     HTTPError:
