@@ -3,15 +3,15 @@ const {
   updatePlotConfig,
 } = require('../controllers/plotController');
 
-// const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
+const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
 
 module.exports = {
   'plots#get': [
-    // expressAuthorizationMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => getPlotConfig(req, res).catch(next),
   ],
   'plots#update': [
-    // expressAuthorizationMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => updatePlotConfig(req, res).catch(next),
   ],
 };

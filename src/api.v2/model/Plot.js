@@ -26,9 +26,11 @@ class Plot extends BasicModel {
       config: plotConfig,
     } = await this.findOne({ id: plotUuid, experiment_id: experimentId });
 
-    const bucketName = `plots-tables-${config.clusterEnv}`;
+    const result = { config: plotConfig };
+
 
     if (s3DataKey) {
+      const bucketName = `plots-tables-${config.clusterEnv}`;
       const plotDataObject = await getObject({
         Bucket: bucketName,
         Key: s3DataKey,
@@ -37,13 +39,13 @@ class Plot extends BasicModel {
       const output = JSON.parse(plotDataObject);
 
       if (output.plotData) {
-        await validateRequest(output, 'plots-tables-schemas/PlotData.v1.yaml');
+        await validateRequest(output, 'plots-bodies/PlotData.v2.yaml');
       }
 
-      plotConfig.plotData = output.plotData || {};
+      result.plotData = output.plotData || [];
     }
 
-    return plotConfig;
+    return result;
   }
 
   async updateConfig(experimentId, plotUuid, plotConfig) {
