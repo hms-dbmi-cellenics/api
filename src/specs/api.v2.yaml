@@ -1176,7 +1176,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PlotTableConfig'
+                $ref: '#/components/schemas/PlotConfig'
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -1207,13 +1207,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PlotTableConfig'
+                $ref: './models/HTTPSuccess.v1.yaml'
         '201':
           description: New resource created.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PlotTableConfig'
+                $ref: './models/HTTPSuccess.v1.yaml'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: ./models/HTTPError.v1.yaml
         '401':
           description: The request lacks authentication credentials.
           content:
@@ -1233,7 +1239,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PlotTableConfig'
+              $ref: '#/components/schemas/PlotConfig'
         description: The new configuration to update the old one by.
   /gem2sResults:
     post:
@@ -1391,7 +1397,7 @@ components:
       $ref: './models/samples-bodies/PatchSampleFile.v2.yaml'
     CellSets:
       $ref: ./models/cell-sets-bodies/CellSets.v2.yaml
-    PlotTableConfig:
+    PlotConfig:
       $ref: ./models/plots-bodies/PlotConfig.v2.yaml
     HTTPSuccess:
       $ref: './models/HTTPSuccess.v1.yaml'

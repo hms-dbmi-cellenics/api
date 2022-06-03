@@ -6,7 +6,7 @@ const Plot = require('../model/Plot');
 const logger = getLogger('[PlotTablesController] - ');
 
 const getPlotConfig = async (req, res) => {
-  const { params: { experimentId, plotUuid } } = req;
+  const { experimentId, plotUuid } = req.params;
   logger.log(`Getting plot config for plot ${plotUuid}`);
 
   const result = await new Plot().getConfig(experimentId, plotUuid);
@@ -16,7 +16,7 @@ const getPlotConfig = async (req, res) => {
 };
 
 const updatePlotConfig = async (req, res) => {
-  const { params: { experimentId, plotUuid } } = req.params;
+  const { experimentId, plotUuid } = req.params;
   const { config } = req.body;
 
   logger.log(`Updating config for plot ${plotUuid}`);
