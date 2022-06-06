@@ -63,9 +63,6 @@ const fetchConfiguration = async (environment, rdsSandboxId) => ({
 
       const { result: processedResponse } = postProcessResponsePipeline({ result, queryContext });
 
-      console.log('processedResponseDebug');
-      console.log(processedResponse);
-
       return processedResponse;
     },
   },

@@ -57,9 +57,6 @@ class Experiment extends BasicModel {
     const result = await collapseKeyIntoArray(mainQuery, [...fields], 'key', 'metadataKeys', this.sql);
 
     result.forEach((experiment) => {
-      console.log('experimentDebug');
-      console.log(experiment);
-
       // eslint-disable-next-line no-param-reassign
       experiment.id = withoutDashes(experiment.id);
     });
