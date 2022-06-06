@@ -3,7 +3,7 @@ const { OK } = require('../../utils/responses');
 
 const Plot = require('../model/Plot');
 
-const logger = getLogger('[PlotTablesController] - ');
+const logger = getLogger('[Plot Controller] - ');
 
 const getPlotConfig = async (req, res) => {
   const { experimentId, plotUuid } = req.params;

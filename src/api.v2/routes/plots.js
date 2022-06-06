@@ -3,7 +3,7 @@ const {
   updatePlotConfig,
 } = require('../controllers/plotController');
 
-const { expressAuthorizationMiddleware } = require('../../utils/authMiddlewares');
+const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
 
 module.exports = {
   'plots#get': [

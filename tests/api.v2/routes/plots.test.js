@@ -12,7 +12,7 @@ jest.mock('../../../src/api.v2/controllers/plotController', () => ({
   updatePlotConfig: jest.fn(),
 }));
 
-jest.mock('../../../src/utils/authMiddlewares');
+jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
 
 let app = null;
 
