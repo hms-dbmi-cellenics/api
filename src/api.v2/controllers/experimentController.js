@@ -34,6 +34,7 @@ const getExperiment = async (req, res) => {
 const createExperiment = async (req, res) => {
   const { params: { experimentId }, user, body } = req;
   const { name, description } = body;
+
   logger.log('Creating experiment');
 
   await sqlClient.get().transaction(async (trx) => {
