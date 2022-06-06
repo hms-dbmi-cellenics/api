@@ -1,6 +1,8 @@
 // const { OK } = require('../../utils/responses');
 const AWSXRay = require('aws-xray-sdk');
 
+const { OK } = require('../../utils/responses');
+
 const { createQCPipeline } = require('../helpers/pipeline/pipelineConstruct');
 const handleQCResponse = require('../helpers/pipeline/handleQCResponse');
 
@@ -15,7 +17,7 @@ const runQC = async (req, res) => {
 
   logger.log(`Starting qc for experiment ${experimentId}`);
 
-  const { stateMachineArn, executionArn } = await createQCPipeline(
+  await createQCPipeline(
     req.params.experimentId,
     processingConfig || [],
     req.headers.authorization,
@@ -23,7 +25,7 @@ const runQC = async (req, res) => {
 
   logger.log(`Started qc for experiment ${experimentId} successfully, `);
 
-  res.json({ stateMachineArn, executionArn });
+  res.json(OK());
 };
 
 const handleResponse = async (req, res) => {

@@ -1,6 +1,8 @@
 // @ts-nocheck
 const qcController = require('../../../src/api.v2/controllers/qcController');
 
+const { OK } = require('../../../src/utils/responses');
+
 const handleQCResponse = require('../../../src/api.v2/helpers/pipeline/handleQCResponse');
 const pipelineConstruct = require('../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 
@@ -87,7 +89,7 @@ describe('qcController', () => {
     );
 
     // Response is ok
-    expect(mockRes.json).toHaveBeenCalledWith(newExecution);
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
   });
 
 
@@ -110,7 +112,7 @@ describe('qcController', () => {
     );
 
     // Response is ok
-    expect(mockRes.json).toHaveBeenCalledWith(newExecution);
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
   });
 
   it('handleResponse works correctly', async () => {
