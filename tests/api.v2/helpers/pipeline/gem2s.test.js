@@ -126,7 +126,6 @@ describe('gem2sResponse', () => {
 
     experimentInstance.updateById.mockClear();
     pipelineConstruct.createQCPipeline.mockClear();
-    experimentExecutionInstance.upsert.mockClear();
 
     getPipelineStatus.mockReturnValueOnce(mockGetPipelineStatusResponse);
   });
@@ -162,7 +161,5 @@ describe('gem2sResponse', () => {
     expect(experimentInstance.updateById.mock.calls).toMatchSnapshot();
 
     expect(pipelineConstruct.createQCPipeline.mock.calls).toMatchSnapshot();
-
-    expect(experimentExecutionInstance.upsert.mock.calls).toMatchSnapshot();
   });
 });

@@ -254,21 +254,6 @@ Array [
 ]
 `;
 
-exports[`gem2sResponse Starts a QC run when gem2s finishes 3`] = `
-Array [
-  Array [
-    Object {
-      "experiment_id": "06d50e28-cc96-2624-900c-e0e9a0995598",
-      "pipeline_type": "qc",
-    },
-    Object {
-      "execution_arn": "mockExecutionArn",
-      "state_machine_arn": "mockStateMachineArn",
-    },
-  ],
-]
-`;
-
 exports[`gem2sResponse works correctly 1`] = `
 Array [
   "ExperimentUpdates-mockExperimentId",

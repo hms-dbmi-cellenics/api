@@ -271,8 +271,6 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
       execution_arn: executionArn,
     },
   );
-
-  return { stateMachineArn, executionArn };
 };
 
 const createGem2SPipeline = async (experimentId, taskParams) => {

@@ -48,7 +48,7 @@ const handleResponse = async (req, res) => {
       await handleQCResponse(io, parsedMessage);
     } catch (e) {
       logger.error(
-        'pipeline response handler failed with error: ', e,
+        'qc pipeline response handler failed with error: ', e,
       );
 
       AWSXRay.getSegment().addError(e);
