@@ -36,7 +36,7 @@ const getS3Output = async (message) => {
   return JSON.parse(outputObject.Body.toString());
 };
 
-const updatePlotData = async (taskName, experimentId, output) => {
+const updatePlotDataKeys = async (taskName, experimentId, output) => {
   if (output.plotDataKeys) {
     const plotConfigUploads = Object.entries(output.plotDataKeys)
       .map(async ([plotUuid, s3DataKey]) => (
@@ -46,7 +46,7 @@ const updatePlotData = async (taskName, experimentId, output) => {
         )
       ));
 
-    logger.log('Uploading plotData for', taskName, 'to DynamoDB');
+    logger.log(`Uploading plot data s3 keys for ${taskName} to sql`);
 
     // Promise.all stops if it encounters errors.
     // This handles errors so that error in one upload does not stop others
@@ -137,7 +137,7 @@ const handleQCResponse = async (io, message) => {
 
     output = await getS3Output(message);
 
-    await updatePlotData(taskName, experimentId, output);
+    await updatePlotDataKeys(taskName, experimentId, output);
     await updateProcessingConfig(taskName, experimentId, output, sampleUuid);
   }
   // we want to send the update to the subscribed both in successful and error case
