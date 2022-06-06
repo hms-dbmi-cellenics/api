@@ -37,7 +37,7 @@ const getOutputFromS3 = async (message) => {
 };
 
 const updatePlotDataKeys = async (taskName, experimentId, output) => {
-  if (output.plotDataKeys) {
+  if (output && output.plotDataKeys) {
     const plotConfigUploads = Object.entries(output.plotDataKeys)
       .map(async ([plotUuid, s3DataKey]) => (
         await new Plot().upsert(
