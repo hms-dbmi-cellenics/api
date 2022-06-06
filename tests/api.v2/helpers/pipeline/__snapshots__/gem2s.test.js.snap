@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`gem2sCreate works correctly 1`] = `
+exports[`createGem2sPipeline works correctly 1`] = `
 Array [
   Object {
     "experiment_id": "mockExperimentId",
@@ -14,7 +14,7 @@ Array [
 ]
 `;
 
-exports[`gem2sCreate works correctly 2`] = `
+exports[`createGem2sPipeline works correctly 2`] = `
 Array [
   "mockExperimentId",
   Object {

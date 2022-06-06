@@ -126,7 +126,7 @@ const generateGem2sParams = async (experimentId, authJWT) => {
   return taskParams;
 };
 
-const gem2sCreate = async (experimentId, body, authJWT) => {
+const createGem2sPipeline = async (experimentId, body, authJWT) => {
   logger.log('Creating GEM2S params...');
   const { paramsHash } = body;
 
@@ -155,7 +155,7 @@ const gem2sCreate = async (experimentId, body, authJWT) => {
   return newExecution;
 };
 
-const gem2sResponse = async (io, message) => {
+const handleGem2sResponse = async (io, message) => {
   AWSXRay.getSegment().addMetadata('message', message);
 
   // Fail hard if there was an error.
@@ -175,6 +175,6 @@ const gem2sResponse = async (io, message) => {
 };
 
 module.exports = {
-  gem2sCreate,
-  gem2sResponse,
+  createGem2sPipeline,
+  handleGem2sResponse,
 };

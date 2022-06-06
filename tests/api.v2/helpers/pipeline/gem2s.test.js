@@ -1,7 +1,7 @@
 // @ts-nocheck
 const io = require('socket.io-client');
 
-const { gem2sCreate, gem2sResponse } = require('../../../../src/api.v2/helpers/pipeline/gem2s');
+const { createGem2sPipeline, handleGem2sResponse } = require('../../../../src/api.v2/helpers/pipeline/gem2s');
 
 const Experiment = require('../../../../src/api.v2/model/Experiment');
 const Sample = require('../../../../src/api.v2/model/Sample');
@@ -35,7 +35,7 @@ const experimentExecutionInstance = ExperimentExecution();
 
 const hookRunnerInstance = HookRunner();
 
-describe('gem2sCreate', () => {
+describe('createGem2sPipeline', () => {
   const experimentId = 'mockExperimentId';
   const paramsHash = 'mockParamsHash';
   const authJWT = 'mockAuthJWT';
@@ -93,7 +93,7 @@ describe('gem2sCreate', () => {
   });
 
   it('works correctly', async () => {
-    await gem2sCreate(experimentId, { paramsHash }, authJWT);
+    await createGem2sPipeline(experimentId, { paramsHash }, authJWT);
 
     expect(experimentInstance.findById).toHaveBeenCalledWith(experimentId);
     expect(sampleInstance.getSamples).toHaveBeenCalledWith(experimentId);
@@ -131,7 +131,7 @@ describe('gem2sResponse', () => {
   });
 
   it('works correctly', async () => {
-    await gem2sResponse(io, message);
+    await handleGem2sResponse(io, message);
 
     expect(validateRequest).toHaveBeenCalledWith(message, 'GEM2SResponse.v1.yaml');
     expect(hookRunnerInstance.run).toHaveBeenCalledWith(message);
