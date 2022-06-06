@@ -23,7 +23,7 @@ hookRunner.register(constants.ASSIGN_POD_TO_PIPELINE, [assignPodToPipeline]);
 hookRunner.registerAll([sendNotification]);
 hookRunner.register('configureEmbedding', [cleanupPods]);
 
-const getS3Output = async (message) => {
+const getOutputFromS3 = async (message) => {
   const { output: { bucket, key } } = message;
   const s3 = new AWS.S3();
   const outputObject = await s3.getObject(
@@ -56,7 +56,7 @@ const updatePlotDataKeys = async (taskName, experimentId, output) => {
   }
 };
 
-const updateProcessingConfig = async (taskName, experimentId, output, sampleUuid) => {
+const updateProcessingConfigWithQCStep = async (taskName, experimentId, output, sampleUuid) => {
   // TODO the processing config validation was not being enforced because the 'anyOf' requirement
   // was not being correctly applied. This needs to be refactored together with the
   // pipeline and ideally while unifying the qc & gem2s responses.
@@ -130,18 +130,18 @@ const handleQCResponse = async (io, message) => {
   const { experimentId } = message;
   const { error = false } = message.response || {};
 
-  let output = null;
+  let qcStepOutput = null;
   // if there aren't errors proceed with the updates
   if (!error && 'output' in message) {
     const { input: { sampleUuid, taskName } } = message;
 
-    output = await getS3Output(message);
+    qcStepOutput = await getOutputFromS3(message);
 
-    await updatePlotDataKeys(taskName, experimentId, output);
-    await updateProcessingConfig(taskName, experimentId, output, sampleUuid);
+    await updatePlotDataKeys(taskName, experimentId, qcStepOutput);
+    await updateProcessingConfigWithQCStep(taskName, experimentId, qcStepOutput, sampleUuid);
   }
   // we want to send the update to the subscribed both in successful and error case
-  await sendUpdateToSubscribed(experimentId, message, output, error, io);
+  await sendUpdateToSubscribed(experimentId, message, qcStepOutput, error, io);
 };
 
 module.exports = handleQCResponse;
