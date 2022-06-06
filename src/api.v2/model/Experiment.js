@@ -26,6 +26,8 @@ const experimentFields = [
   'updated_at',
 ];
 
+const withoutDashes = (uuid) => uuid.replace(/-/gi, '');
+
 class Experiment extends BasicModel {
   constructor(sql = sqlClient.get()) {
     super(sql, tableNames.EXPERIMENT, experimentFields);
@@ -53,6 +55,14 @@ class Experiment extends BasicModel {
     }
 
     const result = await collapseKeyIntoArray(mainQuery, [...fields], 'key', 'metadataKeys', this.sql);
+
+    result.forEach((experiment) => {
+      console.log('experimentDebug');
+      console.log(experiment);
+
+      // eslint-disable-next-line no-param-reassign
+      experiment.id = withoutDashes(experiment.id);
+    });
 
     return result;
   }
@@ -91,9 +101,12 @@ class Experiment extends BasicModel {
       .groupBy(experimentFields)
       .first();
 
-    if (_.isEmpty(result)) {
+    if (_.isNil(result)) {
       throw new NotFoundError('Experiment not found');
     }
+
+    // eslint-disable-next-line no-param-reassign
+    result.id = withoutDashes(result.id);
 
     return result;
   }
