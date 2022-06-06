@@ -24,7 +24,7 @@ describe('gem2sController', () => {
     const experimentId = 'experimentId';
     const newExecution = 'mockNewExecution';
 
-    gem2s.gem2sCreate.mockReturnValue(newExecution);
+    gem2s.createGem2sPipeline.mockReturnValue(newExecution);
 
     const mockReq = {
       params: { experimentId },
@@ -34,7 +34,7 @@ describe('gem2sController', () => {
 
     await gem2sController.runGem2s(mockReq, mockRes);
 
-    expect(gem2s.gem2sCreate).toHaveBeenCalledWith(
+    expect(gem2s.createGem2sPipeline).toHaveBeenCalledWith(
       experimentId, mockReq.body, mockReq.headers.authorization,
     );
 
@@ -55,7 +55,7 @@ describe('gem2sController', () => {
     await gem2sController.handleResponse(mockReq, mockRes);
 
     expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
-    expect(gem2s.gem2sResponse).toHaveBeenCalledWith(io, parsedMessage);
+    expect(gem2s.handleGem2sResponse).toHaveBeenCalledWith(io, parsedMessage);
 
     // Response is ok
     expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -73,7 +73,7 @@ describe('gem2sController', () => {
 
     expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
 
-    expect(gem2s.gem2sResponse).not.toHaveBeenCalled();
+    expect(gem2s.handleGem2sResponse).not.toHaveBeenCalled();
 
     // Response is nok
     expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -88,14 +88,14 @@ describe('gem2sController', () => {
 
     parseSNSMessage.mockReturnValue({ io, parsedMessage });
 
-    gem2s.gem2sResponse.mockImplementationOnce(() => Promise.reject(new Error('Some error with gem2sResponse')));
+    gem2s.handleGem2sResponse.mockImplementationOnce(() => Promise.reject(new Error('Some error with gem2sResponse')));
 
     const mockReq = { params: { experimentId } };
 
     await gem2sController.handleResponse(mockReq, mockRes);
 
     expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
-    expect(gem2s.gem2sResponse).toHaveBeenCalledWith(io, parsedMessage);
+    expect(gem2s.handleGem2sResponse).toHaveBeenCalledWith(io, parsedMessage);
 
     // Response is nok
     expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -115,7 +115,7 @@ describe('gem2sController', () => {
     await gem2sController.handleResponse(mockReq, mockRes);
 
     expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
-    expect(gem2s.gem2sResponse).not.toHaveBeenCalled();
+    expect(gem2s.handleGem2sResponse).not.toHaveBeenCalled();
 
     // Response is ok
     expect(mockRes.status).toHaveBeenCalledWith(200);

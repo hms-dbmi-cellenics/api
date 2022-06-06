@@ -7,6 +7,7 @@ const recursiveCamelcase = (result, camelCaseExceptions = [], skip = false) => (
   _.transform(result, (acc, value, key, target) => {
     let camelKey;
 
+    // The filter of underscore is necessary because we don't want to camelcase sample ids
     if (_.isArray(target) || skip || !key.includes('_')) {
       camelKey = key;
     } else {
@@ -27,7 +28,10 @@ const fetchConfiguration = async (environment, rdsSandboxId) => ({
     client: 'postgresql',
     connection: async () => await getConnectionParams(environment, rdsSandboxId),
     postProcessResponse: (result, queryContext = {}) => (
-      recursiveCamelcase(result, queryContext.camelCaseExceptions)),
+      recursiveCamelcase(
+        result,
+        queryContext.camelCaseExceptions,
+      )),
   },
 });
 

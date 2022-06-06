@@ -1,22 +1,29 @@
+// const { OK } = require('../../utils/responses');
 const AWSXRay = require('aws-xray-sdk');
 
-const { createGem2sPipeline, handleGem2sResponse } = require('../helpers/pipeline/gem2s');
 const { OK } = require('../../utils/responses');
+
+const { createQCPipeline } = require('../helpers/pipeline/pipelineConstruct');
+const handleQCResponse = require('../helpers/pipeline/handleQCResponse');
+
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parse-sns-message');
 
-const logger = getLogger('[Gem2sController] - ');
+const logger = getLogger('[QCController] - ');
 
-const runGem2s = async (req, res) => {
+const runQC = async (req, res) => {
   const { experimentId } = req.params;
+  const { processingConfig } = req.body;
 
-  logger.log(`Starting gem2s for experiment ${experimentId}`);
+  logger.log(`Starting qc for experiment ${experimentId}`);
 
-  const newExecution = await createGem2sPipeline(experimentId, req.body, req.headers.authorization);
+  await createQCPipeline(
+    req.params.experimentId,
+    processingConfig || [],
+    req.headers.authorization,
+  );
 
-  logger.log(`Started gem2s for experiment ${experimentId} successfully, `);
-  logger.log('New executions data:');
-  logger.log(JSON.stringify(newExecution));
+  logger.log(`Started qc for experiment ${experimentId} successfully, `);
 
   res.json(OK());
 };
@@ -38,10 +45,10 @@ const handleResponse = async (req, res) => {
   const isSnsNotification = parsedMessage !== undefined;
   if (isSnsNotification) {
     try {
-      await handleGem2sResponse(io, parsedMessage);
+      await handleQCResponse(io, parsedMessage);
     } catch (e) {
       logger.error(
-        'gem2s pipeline response handler failed with error: ', e,
+        'qc pipeline response handler failed with error: ', e,
       );
 
       AWSXRay.getSegment().addError(e);
@@ -54,6 +61,6 @@ const handleResponse = async (req, res) => {
 };
 
 module.exports = {
-  runGem2s,
+  runQC,
   handleResponse,
 };
