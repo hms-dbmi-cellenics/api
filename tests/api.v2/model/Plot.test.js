@@ -74,11 +74,14 @@ describe('model/Plot', () => {
       plotTitle: 'mockPlotTitle',
     };
 
-    const mockUpdate = jest.spyOn(BasicModel.prototype, 'update');
+    const mockUpsert = jest.spyOn(BasicModel.prototype, 'upsert');
 
     await new Plot().updateConfig(mockExperimentId, mockPlotUuid, mockConfig);
 
-    expect(mockUpdate).toHaveBeenCalledTimes(1);
-    expect(mockUpdate).toHaveBeenCalledWith({ id: mockPlotUuid, experiment_id: mockExperimentId }, { config: mockConfig });
+    expect(mockUpsert).toHaveBeenCalledTimes(1);
+    expect(mockUpsert).toHaveBeenCalledWith(
+      { id: mockPlotUuid, experiment_id: mockExperimentId },
+      { config: mockConfig },
+    );
   });
 });
