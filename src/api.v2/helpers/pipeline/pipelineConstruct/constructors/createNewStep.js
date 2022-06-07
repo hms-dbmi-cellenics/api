@@ -30,6 +30,7 @@ const getQCParams = (task, context, stepArgs) => {
     ...perSample ? { 'sampleUuid.$': '$.sampleUuid' } : { sampleUuid: '' },
     ...uploadCountMatrix ? { uploadCountMatrix: true } : { uploadCountMatrix: false },
     authJWT: context.authJWT,
+    apiVersion: 'v2',
   };
 };
 

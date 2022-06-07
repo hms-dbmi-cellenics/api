@@ -1213,31 +1213,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './models/HTTPSuccess.v1.yaml'
+                $ref: '#/components/schemas/HTTPSuccess'
         '201':
           description: New resource created.
           content:
             application/json:
               schema:
-                $ref: './models/HTTPSuccess.v1.yaml'
+                $ref: '#/components/schemas/HTTPSuccess'
         '400':
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
         '401':
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
         '403':
           description: The authenticated user is not authorized to view this resource.
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
         '404':
           description: Invalid experiment ID specified.
       description: Updates a plot and table for a given experiment with the data specified.
@@ -1247,6 +1247,46 @@ paths:
             schema:
               $ref: '#/components/schemas/PlotConfig'
         description: The new configuration to update the old one by.
+
+  '/experiments/{experimentId}/qc':
+    parameters:
+      - schema:
+          type: string
+        name: experimentId
+        in: path
+        required: true
+    post:
+      summary: Run qc
+      description: Triggers a new qc run
+      operationId: runQC
+      x-eov-operation-id: qc#run
+      x-eov-operation-handler: routes/qc
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Experiment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
   /gem2sResults:
     post:
       summary: Retrieve results from pipeline step functions
@@ -1316,8 +1356,6 @@ paths:
               schema:
                 type: string
                 pattern: nok
-    parameters: []
-
   '/experiments/{experimentId}/download/{type}':
     get:
       summary: Download data according to the requested type

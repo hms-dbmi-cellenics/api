@@ -3,7 +3,7 @@ const createNewStep = require('./createNewStep');
 const createNewJobIfNotExist = require('./createNewJobIfNotExist');
 const {
   requestPod, waitForPod,
-} = require('./assignPodToPipeline');
+} = require('./requestAssignPodToPipeline');
 
 const constructPipelineStep = (context, step) => {
   const { XStepType: stepType, XConstructorArgs: args } = step;

@@ -19,7 +19,7 @@ class Plot extends BasicModel {
   constructor(sql = sqlClient.get()) {
     super(sql, tableNames.PLOT, selectableProps);
   }
-
+  
   async getConfig(experimentId, plotUuid) {
     const {
       s3DataKey,

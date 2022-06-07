@@ -3,7 +3,7 @@ const AWSXRay = require('aws-xray-sdk');
 
 const constants = require('./constants');
 const getPipelineStatus = require('./getPipelineStatus');
-const { createGem2SPipeline } = require('./pipelineConstruct');
+const { createGem2SPipeline, createQCPipeline } = require('./pipelineConstruct');
 
 const Sample = require('../../model/Sample');
 const Experiment = require('../../model/Experiment');
@@ -19,17 +19,24 @@ const logger = getLogger('[Gem2sService] - ');
 
 const hookRunner = new HookRunner();
 
-const saveProcessingConfigFromGem2s = ({ experimentId, item }) => {
-  logger.log('Saving processing config for gem2s');
-  new Experiment().updateById(experimentId, { processing_config: item });
-  logger.log('Finished saving processing config for gem2s');
-};
+const continueToQC = async (payload) => {
+  const { experimentId, item } = payload;
 
-const continueToQC = () => {
+  await new Experiment().updateById(experimentId, { processing_config: item.processingConfig });
+
+  logger.log(`Experiment: ${experimentId}. Saved processing config received from gem2s`);
+
+  logger.log(`Experiment: ${experimentId}. Starting qc run because gem2s finished successfully`);
+
+  // we need to change this once we rework the pipeline message response
+  const authJWT = payload.authJWT || payload.input.authJWT;
+
+  await createQCPipeline(experimentId, [], authJWT);
+
+  logger.log('Started qc successfully');
 };
 
 hookRunner.register('uploadToAWS', [
-  saveProcessingConfigFromGem2s,
   continueToQC,
 ]);
 
@@ -119,7 +126,7 @@ const generateGem2sParams = async (experimentId, authJWT) => {
   return taskParams;
 };
 
-const gem2sCreate = async (experimentId, body, authJWT) => {
+const createGem2sPipeline = async (experimentId, body, authJWT) => {
   logger.log('Creating GEM2S params...');
   const { paramsHash } = body;
 
@@ -148,7 +155,7 @@ const gem2sCreate = async (experimentId, body, authJWT) => {
   return newExecution;
 };
 
-const gem2sResponse = async (io, message) => {
+const handleGem2sResponse = async (io, message) => {
   AWSXRay.getSegment().addMetadata('message', message);
 
   // Fail hard if there was an error.
@@ -168,6 +175,6 @@ const gem2sResponse = async (io, message) => {
 };
 
 module.exports = {
-  gem2sCreate,
-  gem2sResponse,
+  createGem2sPipeline,
+  handleGem2sResponse,
 };

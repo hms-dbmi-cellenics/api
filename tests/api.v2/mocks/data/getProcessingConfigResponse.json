@@ -257,7 +257,7 @@
           "auto": true,
           "enabled": true,
           "filterSettings": {
-            "method": "absolute_threshold",
+            "method": "absoluteThreshold",
             "methodSettings": {
               "absoluteThreshold": {
                 "binStep": 0.05,
@@ -271,7 +271,7 @@
           
             "enabled": true,
             "filterSettings": {
-              "method": "absolute_threshold",
+              "method": "absoluteThreshold",
               "methodSettings": {
                 "absoluteThreshold": {
                   "binStep": 0.05,
@@ -280,7 +280,7 @@
               }
             },
             "defaultFilterSettings": {
-              "method": "absolute_threshold",
+              "method": "absoluteThreshold",
               "methodSettings": {
                 "absoluteThreshold": {
                   "binStep": 0.05,
@@ -295,7 +295,7 @@
           
             "enabled": true,
             "filterSettings": {
-              "method": "absolute_threshold",
+              "method": "absoluteThreshold",
               "methodSettings": {
                 "absoluteThreshold": {
                   "binStep": 0.05,
@@ -304,7 +304,7 @@
               }
             },
             "defaultFilterSettings": {
-              "method": "absolute_threshold",
+              "method": "absoluteThreshold",
               "methodSettings": {
                 "absoluteThreshold": {
                   "binStep": 0.05,
@@ -319,7 +319,7 @@
           
             "enabled": true,
             "filterSettings": {
-              "method": "absolute_threshold",
+              "method": "absoluteThreshold",
               "methodSettings": {
                 "absoluteThreshold": {
                   "binStep": 0.05,
@@ -328,7 +328,7 @@
               }
             },
             "defaultFilterSettings": {
-              "method": "absolute_threshold",
+              "method": "absoluteThreshold",
               "methodSettings": {
                 "absoluteThreshold": {
                   "binStep": 0.05,

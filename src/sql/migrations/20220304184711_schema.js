@@ -60,7 +60,7 @@ exports.up = async (knex) => {
 
   await knex.schema
     .createTable('experiment', (table) => {
-      table.uuid('id').primary();
+      table.string('id').primary();
       table.string('name').notNullable();
       table.text('description').notNullable();
       table.jsonb('processing_config').defaultTo(JSON.stringify({}));
@@ -74,7 +74,7 @@ exports.up = async (knex) => {
 
   await knex.schema
     .createTable('experiment_execution', (table) => {
-      table.uuid('experiment_id').references('experiment.id').onDelete('CASCADE');
+      table.string('experiment_id').references('experiment.id').onDelete('CASCADE');
       nativeEnum(table, 'pipeline_type').notNullable();
       table.string('params_hash').nullable();
       table.string('state_machine_arn').notNullable();
@@ -87,7 +87,7 @@ exports.up = async (knex) => {
   await knex.schema
     .createTable('sample', (table) => {
       table.uuid('id').primary();
-      table.uuid('experiment_id').notNullable().references('experiment.id').onDelete('CASCADE');
+      table.string('experiment_id').notNullable().references('experiment.id').onDelete('CASCADE');
       table.string('name').notNullable();
       nativeEnum(table, 'sample_technology').notNullable();
       table.timestamps(true, true);
@@ -110,7 +110,7 @@ exports.up = async (knex) => {
   await knex.schema
     .createTable('metadata_track', (table) => {
       table.increments('id', { primaryKey: true });
-      table.uuid('experiment_id').references('experiment.id').onDelete('CASCADE').notNullable();
+      table.string('experiment_id').references('experiment.id').onDelete('CASCADE').notNullable();
       table.string('key');
 
       table.unique(['experiment_id', 'key']);
@@ -138,8 +138,8 @@ exports.up = async (knex) => {
   await knex.schema
     .createTable('plot', (table) => {
       table.string('id').notNullable();
-      table.uuid('experiment_id').references('experiment.id').onDelete('CASCADE').notNullable();
-      table.jsonb('config').notNullable();
+      table.string('experiment_id').references('experiment.id').onDelete('CASCADE').notNullable();
+      table.jsonb('config').defaultTo(JSON.stringify({}));
       table.string('s3_data_key').nullable();
 
       table.primary(['id', 'experiment_id']);
@@ -148,7 +148,7 @@ exports.up = async (knex) => {
   await knex.schema
     .createTable('invite_access', (table) => {
       table.string('user_email', 255).notNullable();
-      table.uuid('experiment_id').notNullable().references('experiment.id');
+      table.string('experiment_id').notNullable().references('experiment.id');
       nativeEnum(table, 'access_role').notNullable();
       table.timestamp('updated_at').defaultTo(knex.fn.now());
 
@@ -160,7 +160,7 @@ exports.up = async (knex) => {
   await knex.schema
     .createTable('user_access', (table) => {
       table.uuid('user_id').notNullable();
-      table.uuid('experiment_id').references('experiment.id').onDelete('CASCADE');
+      table.string('experiment_id').references('experiment.id').onDelete('CASCADE');
       nativeEnum(table, 'access_role').notNullable();
       table.timestamp('updated_at').defaultTo(knex.fn.now());
 

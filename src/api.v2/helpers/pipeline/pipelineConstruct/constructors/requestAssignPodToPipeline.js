@@ -43,7 +43,7 @@ const requestPod = (context, step) => {
     Type: 'Task',
     Resource: 'arn:aws:states:::sns:publish',
     Parameters: {
-      TopicArn: `arn:aws:sns:${config.awsRegion}:${accountId}:work-results-${environment}-${sandboxId}`,
+      TopicArn: `arn:aws:sns:${config.awsRegion}:${accountId}:work-results-${environment}-${sandboxId}-v2`,
       Message: JSON.stringify(requestPodMessage),
       MessageAttributes: {
         type: {
