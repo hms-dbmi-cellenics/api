@@ -26,7 +26,7 @@ class Plot extends BasicModel {
     const result = await this.findOne({ id: plotUuid, experiment_id: experimentId });
 
     if (_.isNil(result)) {
-      throw new NotFoundError(`Plot ${plotUuid} in experiment ${experimentId}`);
+      throw new NotFoundError(`Plot ${plotUuid} in experiment ${experimentId} not found`);
     }
 
     const { s3DataKey = null, config: plotConfig } = result;

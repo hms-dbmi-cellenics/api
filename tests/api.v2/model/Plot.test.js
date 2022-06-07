@@ -12,6 +12,7 @@ jest.mock('../../../src/sql/sqlClient', () => ({
 
 const Plot = require('../../../src/api.v2/model/Plot');
 const BasicModel = require('../../../src/api.v2/model/BasicModel');
+const { NotFoundError } = require('../../../src/utils/responses');
 
 const mockExperimentId = 'mockExperimentId';
 const mockPlotUuid = 'mockPlotUuid';
@@ -22,7 +23,7 @@ describe('model/Plot', () => {
     jest.clearAllMocks();
   });
 
-  it('Get plot config works correctly', async () => {
+  it('getConfig works correctly', async () => {
     const mockConfig = { some: 'config' };
     const mockS3DataKey = 'mock/plot/data/key';
     const mockPlotData = [1, 2, 3];
@@ -48,7 +49,7 @@ describe('model/Plot', () => {
     expect(result).toEqual({ config: mockConfig, plotData: mockPlotData });
   });
 
-  it('Does not download plot data from S3 if plot does not have plot data', async () => {
+  it('getConfig does not download plot data from S3 if plot does not have plot data', async () => {
     const mockConfig = { some: 'config' };
 
     const mockFindOne = jest.spyOn(BasicModel.prototype, 'findOne')
@@ -68,7 +69,19 @@ describe('model/Plot', () => {
     expect(result).toEqual({ config: mockConfig });
   });
 
-  it('Update plot config works correctly', async () => {
+  it('getConfig throws not found error if the plot was not found', async () => {
+    jest.spyOn(BasicModel.prototype, 'findOne').mockImplementationOnce(() => Promise.resolve(null));
+
+    await expect(
+      new Plot().getConfig(mockExperimentId, mockPlotUuid),
+    ).rejects.toThrow(
+      new NotFoundError(`Plot ${mockPlotUuid} in experiment ${mockExperimentId} not found`),
+    );
+
+    expect(getObject).not.toHaveBeenCalled();
+  });
+
+  it('updateConfig works correctly', async () => {
     const mockConfig = {
       legend: { enabled: true },
       plotTitle: 'mockPlotTitle',
