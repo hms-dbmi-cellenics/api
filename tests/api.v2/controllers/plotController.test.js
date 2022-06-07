@@ -1,3 +1,4 @@
+// Disable semantic check because linter doesn't recognize jest mocks
 // @ts-nocheck
 const plotController = require('../../../src/api.v2/controllers/plotController');
 const Plot = require('../../../src/api.v2/model/Plot');
@@ -21,7 +22,7 @@ describe('plotController', () => {
     jest.clearAllMocks();
   });
 
-  it('saving plot works correctly', async () => {
+  it('getting plot works correctly', async () => {
     const mockConfig = {
       experimentId: mockExperimentId,
       plotUuid: mockPlotUuid,

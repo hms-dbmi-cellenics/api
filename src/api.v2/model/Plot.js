@@ -1,11 +1,10 @@
-const config = require('../../config');
-
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 
 const validateRequest = require('../../utils/schema-validator');
 
 const tableNames = require('./tableNames');
+const bucketNames = require('../helpers/s3/bucketNames');
 const getObject = require('../helpers/s3/getObject');
 
 const selectableProps = [
@@ -19,7 +18,7 @@ class Plot extends BasicModel {
   constructor(sql = sqlClient.get()) {
     super(sql, tableNames.PLOT, selectableProps);
   }
-  
+
   async getConfig(experimentId, plotUuid) {
     const {
       s3DataKey,
@@ -30,9 +29,8 @@ class Plot extends BasicModel {
 
 
     if (s3DataKey) {
-      const bucketName = `plots-tables-${config.clusterEnv}`;
       const plotDataObject = await getObject({
-        Bucket: bucketName,
+        Bucket: bucketNames.PLOTS,
         Key: s3DataKey,
       });
 
