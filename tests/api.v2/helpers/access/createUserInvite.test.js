@@ -42,8 +42,6 @@ describe('creatUserInvite', () => {
 
     expect(sendEmail).toHaveBeenCalledTimes(1);
 
-    console.log('*** calls', sendEmail.mock.calls);
-
     const emailBody = sendEmail.mock.calls[0][0];
 
     expect(emailBody).toMatchSnapshot();

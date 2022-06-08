@@ -1,9 +1,9 @@
 /* eslint-disable no-await-in-loop */
 const k8s = require('@kubernetes/client-node');
-const getLogger = require('../getLogger');
-const validateRequest = require('../schema-validator');
-const constants = require('../../api/general-services/pipeline-manage/constants');
-const { deleteExperimentPods } = require('./pod-cleanup');
+const getLogger = require('../../../../utils/getLogger');
+const validateRequest = require('../../../../utils/schema-validator');
+const constants = require('../constants');
+const { deleteExperimentPods } = require('./podCleanup');
 
 const logger = getLogger();
 
@@ -17,6 +17,7 @@ const getAvailablePods = async (namespace, statusSelector) => {
   const pods = await k8sApi.listNamespacedPod(namespace, null, null, null, statusSelector, '!activityId,type=pipeline');
   return pods.body.items;
 };
+
 
 const patchPod = async (message) => {
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
@@ -100,4 +101,4 @@ const assignPodToPipeline = async (message) => {
   }
 };
 
-module.exports = { assignPodToPipeline };
+module.exports = assignPodToPipeline;

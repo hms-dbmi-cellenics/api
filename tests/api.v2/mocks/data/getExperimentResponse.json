@@ -220,9 +220,9 @@
             "auto": true,
             "enabled": true,
             "filterSettings": {
-                "method": "absolute_threshold",
+                "method": "absoluteThreshold",
                 "methodSettings": {
-                    "absolute_threshold": {
+                    "absoluteThreshold": {
                         "binStep": 0.05,
                         "maxFraction": 0.1
                     }
@@ -232,18 +232,18 @@
                 "auto": true,
                 "enabled": true,
                 "filterSettings": {
-                    "method": "absolute_threshold",
+                    "method": "absoluteThreshold",
                     "methodSettings": {
-                        "absolute_threshold": {
+                        "absoluteThreshold": {
                             "binStep": 0.05,
                             "maxFraction": 0.1
                         }
                     }
                 },
                 "defaultFilterSettings": {
-                    "method": "absolute_threshold",
+                    "method": "absoluteThreshold",
                     "methodSettings": {
-                        "absolute_threshold": {
+                        "absoluteThreshold": {
                             "binStep": 0.05,
                             "maxFraction": 0.1
                         }
@@ -254,18 +254,18 @@
                 "auto": true,
                 "enabled": true,
                 "filterSettings": {
-                    "method": "absolute_threshold",
+                    "method": "absoluteThreshold",
                     "methodSettings": {
-                        "absolute_threshold": {
+                        "absoluteThreshold": {
                             "binStep": 0.05,
                             "maxFraction": 0.1
                         }
                     }
                 },
                 "defaultFilterSettings": {
-                    "method": "absolute_threshold",
+                    "method": "absoluteThreshold",
                     "methodSettings": {
-                        "absolute_threshold": {
+                        "absoluteThreshold": {
                             "binStep": 0.05,
                             "maxFraction": 0.1
                         }

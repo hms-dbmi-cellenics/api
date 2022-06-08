@@ -159,8 +159,6 @@ describe('model/userAccess', () => {
 
     await new UserAccess().createNewExperimentPermissions(mockUserId, mockExperimentId);
 
-    console.log('*** test', mockCreate.mock.calls);
-
     expect(mockCreate).toHaveBeenCalledWith({ access_role: roles.ADMIN, experiment_id: mockExperimentId, user_id: mockAdminUserId });
     expect(mockCreate).toHaveBeenCalledWith({ access_role: roles.OWNER, experiment_id: mockExperimentId, user_id: mockUserId });
     expect(mockCreate).toHaveBeenCalledTimes(2);
