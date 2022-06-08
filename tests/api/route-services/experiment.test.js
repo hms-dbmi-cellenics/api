@@ -160,7 +160,7 @@ describe('tests for the experiment service', () => {
         expect(data).toEqual(jsData);
         expect(getObjectSpy).toHaveBeenCalledWith(
           {
-            Bucket: 'cell-sets-test',
+            Bucket: 'cell-sets-test-242905224710',
             Key: '12345',
           },
         );
@@ -178,7 +178,7 @@ describe('tests for the experiment service', () => {
         expect(returnValue).toEqual(testDataToPut);
         expect(putObjectSpy).toHaveBeenCalledWith(
           {
-            Bucket: 'cell-sets-test',
+            Bucket: 'cell-sets-test-242905224710',
             Key: '12345',
             Body: JSON.stringify({ cellSets: testDataToPut }),
           },
@@ -206,7 +206,7 @@ describe('tests for the experiment service', () => {
         );
         expect(s3DeleteFnSpy).toHaveBeenCalledWith(
           {
-            Bucket: 'biomage-filtered-cells-test',
+            Bucket: 'biomage-filtered-cells-test-242905224710',
             Key: experimentId,
           },
         );
@@ -425,7 +425,7 @@ describe('tests for the experiment service', () => {
         expect(signedUrlSpy).toHaveBeenCalledWith(
           'getObject',
           {
-            Bucket: 'processed-matrix-test',
+            Bucket: 'processed-matrix-test-242905224710',
             Expires: 120,
             Key: '12345/r.rds',
             ResponseContentDisposition: `attachment; filename ="${expectedFileName}"`,

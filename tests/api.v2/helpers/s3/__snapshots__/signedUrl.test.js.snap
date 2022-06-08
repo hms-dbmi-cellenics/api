@@ -6,7 +6,7 @@ exports[`getSampleFileUploadUrl works correctly with metadata cellrangerVersion 
     Array [
       "putObject",
       Object {
-        "Bucket": "biomage-originals-test",
+        "Bucket": "biomage-originals-test-242905224710",
         "Expires": 3600,
         "Key": "mockSampleFileId",
       },
@@ -14,7 +14,7 @@ exports[`getSampleFileUploadUrl works correctly with metadata cellrangerVersion 
     Array [
       "putObject",
       Object {
-        "Bucket": "biomage-originals-test",
+        "Bucket": "biomage-originals-test-242905224710",
         "Expires": 3600,
         "Key": "mockSampleFileId",
         "Metadata": Object {
@@ -42,7 +42,7 @@ exports[`getSampleFileUploadUrl works correctly without metadata 1`] = `
     Array [
       "putObject",
       Object {
-        "Bucket": "biomage-originals-test",
+        "Bucket": "biomage-originals-test-242905224710",
         "Expires": 3600,
         "Key": "mockSampleFileId",
       },
