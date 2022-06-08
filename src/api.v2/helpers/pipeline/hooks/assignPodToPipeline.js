@@ -70,9 +70,6 @@ const patchPod = async (message) => {
 };
 
 const assignPodToPipeline = async (message) => {
-  console.log('messageDebug');
-  console.log(message);
-
   // this checks should be refactored and cleaned once the gem2s / qc spec refactors are done
   // and we can be sure that taskName is always present at the top-level of all the message
   // instead of inside input

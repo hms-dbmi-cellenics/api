@@ -112,9 +112,6 @@ describe('handleQCResponse module', () => {
 
       expect(hookRunnerInstance.run).toHaveBeenCalled();
 
-      console.log('mockSocketemitDebug');
-      console.log(mockSocket.emit);
-
       expect(mockSocket.emit).toHaveBeenCalledWith(`ExperimentUpdates-${fake.EXPERIMENT_ID}`,
         expect.objectContaining({
           type: constants.QC_PROCESS_NAME,

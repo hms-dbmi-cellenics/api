@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 
@@ -6,6 +8,7 @@ const validateRequest = require('../../utils/schema-validator');
 const tableNames = require('./tableNames');
 const bucketNames = require('../helpers/s3/bucketNames');
 const getObject = require('../helpers/s3/getObject');
+const { NotFoundError } = require('../../utils/responses');
 
 const selectableProps = [
   'id',
@@ -20,13 +23,15 @@ class Plot extends BasicModel {
   }
 
   async getConfig(experimentId, plotUuid) {
-    const {
-      s3DataKey,
-      config: plotConfig,
-    } = await this.findOne({ id: plotUuid, experiment_id: experimentId });
+    const result = await this.findOne({ id: plotUuid, experiment_id: experimentId });
 
-    const result = { config: plotConfig };
+    if (_.isNil(result)) {
+      throw new NotFoundError(`Plot ${plotUuid} in experiment ${experimentId} not found`);
+    }
 
+    const { s3DataKey = null, config: plotConfig } = result;
+
+    const response = { config: plotConfig };
 
     if (s3DataKey) {
       const plotDataObject = await getObject({
@@ -40,14 +45,14 @@ class Plot extends BasicModel {
         await validateRequest(output, 'plots-bodies/PlotData.v2.yaml');
       }
 
-      result.plotData = output.plotData || [];
+      response.plotData = output.plotData || [];
     }
 
-    return result;
+    return response;
   }
 
   async updateConfig(experimentId, plotUuid, plotConfig) {
-    return await this.update({ id: plotUuid, experiment_id: experimentId }, { config: plotConfig });
+    return await this.upsert({ id: plotUuid, experiment_id: experimentId }, { config: plotConfig });
   }
 }
 
