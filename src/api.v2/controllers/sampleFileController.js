@@ -51,13 +51,13 @@ const patchFile = async (req, res) => {
 };
 
 const getS3DownloadUrl = async (req, res) => {
-  const { experimentId, sampleId, fileType } = req.params;
+  const { experimentId, sampleId, sampleFileType } = req.params;
 
-  logger.log(`Creating downloadUrl for ${fileType} for sample ${sampleId} in experiment ${experimentId}`);
+  logger.log(`Creating downloadUrl for ${sampleFileType} for sample ${sampleId} in experiment ${experimentId}`);
 
-  const signedUrl = await getSampleFileDownloadUrl(experimentId, sampleId, fileType);
+  const signedUrl = await getSampleFileDownloadUrl(experimentId, sampleId, sampleFileType);
 
-  logger.log(`Finished creating downloadUrl for ${fileType} for sample ${sampleId} in experiment ${experimentId}`);
+  logger.log(`Finished creating downloadUrl for ${sampleFileType} for sample ${sampleId} in experiment ${experimentId}`);
 
   res.json(signedUrl);
 };

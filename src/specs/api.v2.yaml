@@ -650,7 +650,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPError'
 
-  '/experiments/{experimentId}/samples/{sampleId}/files/{fileType}/downloadUrl':
+  '/experiments/{experimentId}/samples/{sampleId}/files/{sampleFileType}/downloadUrl':
     get:
       summary: Get file download url
       description: Get temporary s3 download url for file
