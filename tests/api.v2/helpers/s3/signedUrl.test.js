@@ -1,8 +1,14 @@
+// @ts-nocheck
+const SampleFile = require('../../../../src/api.v2/model/SampleFile');
 const signedUrl = require('../../../../src/api.v2/helpers/s3/signedUrl');
 
-const { getSignedUrl, getSampleFileUploadUrl } = signedUrl;
-
 const AWS = require('../../../../src/utils/requireAWS');
+const { NotFoundError } = require('../../../../src/utils/responses');
+
+const { getSignedUrl, getSampleFileUploadUrl, getSampleFileDownloadUrl } = signedUrl;
+const sampleFileInstance = new SampleFile();
+
+jest.mock('../../../../src/api.v2/model/SampleFile');
 
 jest.mock('../../../../src/utils/requireAWS', () => ({
   S3: jest.fn(),
@@ -91,5 +97,60 @@ describe('getSampleFileUploadUrl', () => {
 
     expect(response).toEqual(signedUrlResponse);
     expect(signedUrlSpy).toMatchSnapshot();
+  });
+});
+
+
+describe('getSampleFileDownloadUrl', () => {
+  const experimentId = 'mockExperimentId';
+  const sampleId = 'mockSampleId';
+  const fileType = 'features10x';
+
+  const signedUrlResponse = 'signedUrl';
+
+  const signedUrlSpy = jest.fn();
+
+  beforeEach(() => {
+    signedUrlSpy.mockReturnValueOnce(signedUrlResponse);
+
+    AWS.S3.mockReset();
+    AWS.S3.mockImplementation(() => ({
+      getSignedUrl: signedUrlSpy,
+    }));
+  });
+
+  it('works correctly', async () => {
+    const files = [
+      {
+        id: 'id1', sampleFileType: 'matrix10x', size: 12, s3Path: '124', uploadStatus: 'uploaded', uploadedAt: '2',
+      },
+      {
+        id: 'id0', sampleFileType: 'features10x', size: 12, s3Path: '123', uploadStatus: 'uploaded', uploadedAt: '1',
+      },
+    ];
+
+    sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
+
+    const response = await getSampleFileDownloadUrl(experimentId, sampleId, fileType);
+
+    expect(response).toEqual(signedUrlResponse);
+    expect(signedUrlSpy).toMatchSnapshot();
+  });
+
+  it('Throws not found if it doesnt find a matching file', async () => {
+    const files = [
+      {
+        id: 'id1', sampleFileType: 'matrix10x', size: 12, s3Path: '124', uploadStatus: 'uploaded', uploadedAt: '2',
+      },
+      {
+        id: 'id0', sampleFileType: 'barcodes10x', size: 12, s3Path: '123', uploadStatus: 'uploaded', uploadedAt: '1',
+      },
+    ];
+
+    sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
+
+    await expect(getSampleFileDownloadUrl(experimentId, sampleId, fileType)).rejects.toThrow(
+      new NotFoundError(`File ${fileType} from sample ${sampleId} from experiment ${experimentId} not found`),
+    );
   });
 });
