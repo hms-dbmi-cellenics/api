@@ -41,6 +41,12 @@ const getSampleFileUploadUrl = (sampleFileId, metadata) => {
   return signedUrl;
 };
 
+const fileNameToReturn = {
+  matrix10x: 'matrix.mtx.gz',
+  barcodes10x: 'barcodes.tsv.gz',
+  features10x: 'features.tsv.gz',
+};
+
 const getSampleFileDownloadUrl = async (experimentId, sampleId, fileType) => {
   const allFiles = await new SampleFile().allFilesForSample(sampleId);
 
@@ -50,11 +56,10 @@ const getSampleFileDownloadUrl = async (experimentId, sampleId, fileType) => {
     throw new NotFoundError(`File ${fileType} from sample ${sampleId} from experiment ${experimentId} not found`);
   }
 
-  const { s3Path } = matchingFile;
-
   const params = {
     Bucket: bucketNames.SAMPLE_FILES,
-    Key: s3Path,
+    Key: matchingFile.s3Path,
+    ResponseContentDisposition: `attachment; filename="${fileNameToReturn[fileType]}"`,
   };
 
   const signedUrl = getSignedUrl('getObject', params);
