@@ -1,7 +1,11 @@
+const _ = require('lodash');
+
 const AWS = require('../../../utils/requireAWS');
 const config = require('../../../config');
 
 const bucketNames = require('./bucketNames');
+const SampleFile = require('../../model/SampleFile');
+const { NotFoundError } = require('../../../utils/responses');
 
 const getSignedUrl = (operation, params) => {
   if (!params.Bucket) throw new Error('Bucket is required');
@@ -37,4 +41,25 @@ const getSampleFileUploadUrl = (sampleFileId, metadata) => {
   return signedUrl;
 };
 
-module.exports = { getSampleFileUploadUrl, getSignedUrl };
+const getSampleFileDownloadUrl = async (experimentId, sampleId, fileType) => {
+  const allFiles = await new SampleFile().allFilesForSample(sampleId);
+
+  const matchingFile = allFiles.find(({ sampleFileType }) => sampleFileType === fileType);
+
+  if (_.isNil(matchingFile)) {
+    throw new NotFoundError(`File ${fileType} from sample ${sampleId} from experiment ${experimentId} not found`);
+  }
+
+  const { s3Path } = matchingFile;
+
+  const params = {
+    Bucket: bucketNames.SAMPLE_FILES,
+    Key: s3Path,
+  };
+
+  const signedUrl = getSignedUrl('getObject', params);
+
+  return signedUrl;
+};
+
+module.exports = { getSampleFileUploadUrl, getSampleFileDownloadUrl, getSignedUrl };

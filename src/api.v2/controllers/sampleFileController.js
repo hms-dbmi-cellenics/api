@@ -3,7 +3,7 @@ const sqlClient = require('../../sql/sqlClient');
 const Sample = require('../model/Sample');
 const SampleFile = require('../model/SampleFile');
 
-const { getSampleFileUploadUrl } = require('../helpers/s3/signedUrl');
+const { getSampleFileUploadUrl, getSampleFileDownloadUrl } = require('../helpers/s3/signedUrl');
 const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 
@@ -50,6 +50,18 @@ const patchFile = async (req, res) => {
   res.json(OK());
 };
 
+const getS3DownloadUrl = async (req, res) => {
+  const { experimentId, sampleId, fileType } = req.params;
+
+  logger.log(`Creating downloadUrl for ${fileType} for sample ${sampleId} in experiment ${experimentId}`);
+
+  const signedUrl = await getSampleFileDownloadUrl(experimentId, sampleId, fileType);
+
+  logger.log(`Finished creating downloadUrl for ${fileType} for sample ${sampleId} in experiment ${experimentId}`);
+
+  res.json(signedUrl);
+};
+
 module.exports = {
-  createFile, patchFile,
+  createFile, patchFile, getS3DownloadUrl,
 };
