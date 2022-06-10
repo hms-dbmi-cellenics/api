@@ -109,4 +109,31 @@ describe('sampleFileController', () => {
     // Response is generated signed url
     expect(mockRes.json).toHaveBeenCalledWith(OK());
   });
+
+  it('getS3DownloadUrl works correctly', async () => {
+    const experimentId = 'experimentId';
+    const sampleId = 'sampleId';
+    const sampleFileType = 'features10x';
+
+    const uploadStatus = 'uploaded';
+
+    const mockReq = {
+      params: { experimentId, sampleId, sampleFileType },
+      body: { uploadStatus },
+    };
+
+    const signedUrlString = 'mockSignedUrl';
+    signedUrl.getSampleFileDownloadUrl.mockImplementationOnce(
+      () => Promise.resolve(signedUrlString),
+    );
+
+    await sampleFileController.getS3DownloadUrl(mockReq, mockRes);
+
+    expect(signedUrl.getSampleFileDownloadUrl).toHaveBeenCalledWith(
+      experimentId, sampleId, sampleFileType,
+    );
+
+    // Response is generated signed url
+    expect(mockRes.json).toHaveBeenCalledWith(signedUrlString);
+  });
 });

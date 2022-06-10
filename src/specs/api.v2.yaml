@@ -650,6 +650,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPError'
 
+  '/experiments/{experimentId}/samples/{sampleId}/files/{sampleFileType}/downloadUrl':
+    get:
+      summary: Get file download url
+      description: Get temporary s3 download url for file
+      operationId: downloadSampleFileUrl
+      x-eov-operation-id: sampleFile#downloadUrl
+      x-eov-operation-handler: routes/sampleFile
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Experiment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
   '/experiments/{experimentId}/metadataTracks/{metadataTrackKey}':
     post:
       summary: Creates a new metadata track
@@ -1394,7 +1427,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
   /kubernetesEvents:
     post:
       summary: Monitoring of kubernetes cluster events
