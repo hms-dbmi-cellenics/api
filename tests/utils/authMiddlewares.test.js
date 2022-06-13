@@ -4,6 +4,7 @@ const {
   checkAuthExpiredMiddleware,
   expressAuthorizationMiddleware,
   authorize,
+  expressAuthenticationOnlyMiddleware,
 } = require('../../src/utils/authMiddlewares');
 const { UnauthorizedError, UnauthenticatedError, MaintenanceModeError } = require('../../src/utils/responses');
 const fake = require('../test-utils/constants');
@@ -54,7 +55,7 @@ describe('Tests for authorization/authentication middlewares', () => {
     expect(next).toBeCalledWith();
   });
 
-  it('Express middleware can reject normal users in maintenance mode', async () => {
+  it('expressAuthorizationMiddleware can reject normal users in maintenance mode', async () => {
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
       user: fake.USER,
@@ -65,6 +66,21 @@ describe('Tests for authorization/authentication middlewares', () => {
     const next = jest.fn();
 
     await expressAuthorizationMiddleware(req, {}, next);
+
+    expect(next).toBeCalledWith(expect.any(MaintenanceModeError));
+  });
+
+  it('expressAuthenticationOnlyMiddleware can reject normal users in maintenance mode', async () => {
+    const req = {
+      params: { experimentId: fake.EXPERIMENT_ID },
+      user: fake.USER,
+      url: fake.RESOURCE_V2,
+      method: 'POST',
+    };
+
+    const next = jest.fn();
+
+    await expressAuthenticationOnlyMiddleware(req, {}, next);
 
     expect(next).toBeCalledWith(expect.any(MaintenanceModeError));
   });

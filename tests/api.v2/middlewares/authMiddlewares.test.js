@@ -78,7 +78,7 @@ describe('Tests for authorization/authentication middlewares', () => {
     );
   });
 
-  it('Express middleware can reject normal users in maintenance mode', async () => {
+  it('expressAuthorizationMiddleware can reject normal users in maintenance mode', async () => {
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
       user: { email: fake.USER.email, sub: 'allowed-user-id' },
@@ -93,6 +93,21 @@ describe('Tests for authorization/authentication middlewares', () => {
     expect(next).toBeCalledWith(expect.any(MaintenanceModeError));
 
     expect(UserAccessModel.canAccessExperiment).not.toHaveBeenCalled();
+  });
+
+  it('expressAuthenticationOnlyMiddleware can reject normal users in maintenance mode', async () => {
+    const req = {
+      params: { experimentId: fake.EXPERIMENT_ID },
+      user: fake.USER,
+      url: fake.RESOURCE_V2,
+      method: 'POST',
+    };
+
+    const next = jest.fn();
+
+    await expressAuthenticationOnlyMiddleware(req, {}, next);
+
+    expect(next).toBeCalledWith(expect.any(MaintenanceModeError));
   });
 
   it('Express middleware can reject unauthenticated requests', async () => {
