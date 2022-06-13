@@ -178,7 +178,7 @@ class Experiment extends BasicModel {
     const { clusterEnv } = config;
 
     const filenamePrefix = experimentId.split('-')[0];
-    const requestedBucketName = `${downloadType}-${clusterEnv}-242905224710`;
+    const requestedBucketName = `${downloadType}-${clusterEnv}-${config.accountId}`;
     const objectKey = `${formatExperimentId(experimentId)}/r.rds`;
 
     switch (requestedBucketName) {

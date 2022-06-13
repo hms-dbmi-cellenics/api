@@ -44,7 +44,7 @@ const validateTagMatching = async (experimentId, params) => {
 
 const getWorkResults = async (experimentId, ETag) => {
   const params = {
-    Bucket: `worker-results-${config.clusterEnv}`,
+    Bucket: `worker-results-${config.clusterEnv}-${config.accountId}`,
     Key: ETag,
   };
 

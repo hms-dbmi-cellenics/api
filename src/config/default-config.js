@@ -61,6 +61,7 @@ async function getAwsAccountId() {
 
 const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
+  accountId: process.env.NODE_ENV === 'development' ? '000000000000' : '242905224710',
   clusterEnv: process.env.CLUSTER_ENV || 'development',
   sandboxId: process.env.SANDBOX_ID || 'default',
   rdsSandboxId: process.env.RDS_SANDBOX_ID || 'default',

@@ -11,6 +11,7 @@ function getAwsAccountId() {
 module.exports = {
   port: 3000,
   clusterEnv: 'test',
+  accountId: 242905224710,
   awsRegion: 'eu-west-1',
   podName: 'test',
   sandboxId: 'default',
