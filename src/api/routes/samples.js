@@ -68,8 +68,7 @@ module.exports = {
       const { projectUuid, sampleUuid, fileName } = req.params;
 
       try {
-        const downloadUrl = samplesService
-          .getS3DownloadUrl(projectUuid, sampleUuid, fileName);
+        const downloadUrl = samplesService.getS3DownloadUrl(projectUuid, sampleUuid, fileName);
 
         res.json(downloadUrl);
       } catch (e) {

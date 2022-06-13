@@ -22,6 +22,35 @@ describe('model/Sample', () => {
     jest.clearAllMocks();
   });
 
+  it('allFilesForSample works correctly', async () => {
+    const mockSampleFileIdObjects = [{ sampleFileId: 'id1' }, { sampleFileId: 'id2' }];
+    const mockSampleFileIds = ['id1', 'id2'];
+
+    const files = [
+      {
+        id: mockSampleFileIds[0], sampleFileType: 'features10x', size: 12, s3Path: '123', uploadStatus: 'uploaded', uploadedAt: '1',
+      },
+      {
+        id: mockSampleFileIds[1], sampleFileType: 'matrix10x', size: 12, s3Path: '124', uploadStatus: 'uploaded', uploadedAt: '2',
+      },
+    ];
+
+    mockSqlClient.where.mockReturnValueOnce(mockSampleFileIdObjects);
+    mockSqlClient.whereIn.mockReturnValueOnce(files);
+
+    const result = await new SampleFile().allFilesForSample(mockSampleId);
+
+    expect(result).toEqual(files);
+
+    expect(mockSqlClient).toHaveBeenCalledWith(tableNames.SAMPLE_TO_SAMPLE_FILE_MAP);
+    expect(mockSqlClient.select).toHaveBeenCalledWith('sample_file_id');
+    expect(mockSqlClient.where).toHaveBeenCalledWith({ sample_id: mockSampleId });
+
+    expect(mockSqlClient).toHaveBeenCalledWith(tableNames.SAMPLE_FILE);
+    expect(mockSqlClient.select).toHaveBeenCalledWith();
+    expect(mockSqlClient.whereIn).toHaveBeenCalledWith('id', mockSampleFileIds);
+  });
+
   it('updateUploadStatus works correctly if valid params are passed', async () => {
     const mockUploadStatus = 'fileNotFound';
 

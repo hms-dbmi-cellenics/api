@@ -1,6 +1,7 @@
 // @ts-nocheck
 const express = require('express');
 const request = require('supertest');
+const { get } = require('http');
 const expressLoader = require('../../../src/loaders/express');
 
 const { OK } = require('../../../src/utils/responses');
@@ -10,6 +11,7 @@ const sampleFileController = require('../../../src/api.v2/controllers/sampleFile
 jest.mock('../../../src/api.v2/controllers/sampleFileController', () => ({
   createFile: jest.fn(),
   patchFile: jest.fn(),
+  getS3DownloadUrl: jest.fn(),
 }));
 
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
@@ -133,6 +135,29 @@ describe('tests for experiment route', () => {
       .patch(`/v2/experiments/${experimentId}/samples/${sampleId}/sampleFiles/${sampleFileType}`)
       .send(patchFileBody)
       .expect(400)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
+  it('Getting a sample file download url results in a successful response', async (done) => {
+    sampleFileController.getS3DownloadUrl.mockImplementationOnce((req, res) => {
+      res.json('mockSignedUrl');
+      return Promise.resolve();
+    });
+
+    const experimentId = 'experiment-id';
+    const sampleId = 'sample-id';
+    const sampleFileType = 'features.tsv.gz';
+
+    request(app)
+      .get(`/v2/experiments/${experimentId}/samples/${sampleId}/files/${sampleFileType}/downloadUrl`)
+      .expect(200)
       .end((err) => {
         if (err) {
           return done(err);
