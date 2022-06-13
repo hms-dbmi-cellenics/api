@@ -6,7 +6,7 @@ exports[`getSampleFileDownloadUrl works correctly 1`] = `
     Array [
       "getObject",
       Object {
-        "Bucket": "biomage-originals-test",
+        "Bucket": "biomage-originals-test-242905224710",
         "Key": "123",
         "ResponseContentDisposition": "attachment; filename=\\"features.tsv.gz\\"",
       },
