@@ -57,6 +57,13 @@ const USER = {
   email: 'johncena@gmail.com',
   sub: '032cdb44-0cd3-4d58-af21-850kp0b95ac7',
 };
+
+const DEV_USER = {
+  name: 'The Rock',
+  email: 'therock@biomage.net',
+  sub: '132cdb44-0cd3-4d58-af21-850kp0b95ac7',
+};
+
 // Try to use realistic values but DO NOT USE real ones.
 module.exports = Object.freeze({
   SOCKET_ENDPOINT: 'localhost:5000',
@@ -77,4 +84,5 @@ module.exports = Object.freeze({
   CELL_SIZE_PROCESSING_CONFIG,
   S3_WORKER_RESULT,
   USER,
+  DEV_USER,
 });

@@ -5,7 +5,7 @@ const {
   expressAuthenticationOnlyMiddleware,
 } = require('../../../src/api.v2/middlewares/authMiddlewares');
 
-const { UnauthorizedError, UnauthenticatedError } = require('../../../src/utils/responses');
+const { UnauthorizedError, UnauthenticatedError, MaintenanceModeError } = require('../../../src/utils/responses');
 const fake = require('../../test-utils/constants');
 
 const UserAccessModel = require('../../../src/api.v2/model/UserAccess')();
@@ -20,14 +20,14 @@ describe('Tests for authorization/authentication middlewares', () => {
   it('Authorized user can proceed', async () => {
     UserAccessModel.canAccessExperiment.mockImplementationOnce(() => true);
 
-    const result = await authorize(fake.USER.sub, 'sockets', null, fake.EXPERIMENT_ID);
+    const result = await authorize(fake.DEV_USER.sub, 'sockets', null, fake.EXPERIMENT_ID);
     expect(result).toEqual(true);
   });
 
   it('Unauthorized user cannot proceed', async () => {
     UserAccessModel.canAccessExperiment.mockImplementationOnce(() => false);
 
-    await expect(authorize(fake.USER.sub, 'sockets', null, fake.EXPERIMENT_ID)).rejects;
+    await expect(authorize(fake.DEV_USER.sub, 'sockets', null, fake.EXPERIMENT_ID)).rejects;
   });
 
   it('Express middleware can authorize correct users', async () => {
@@ -35,7 +35,7 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
-      user: { sub: 'allowed-user-id' },
+      user: { email: fake.DEV_USER.email, sub: 'allowed-user-id' },
       url: fake.RESOURCE_V2,
       method: 'POST',
     };
@@ -59,7 +59,7 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
-      user: { sub: 'allowed-user-id' },
+      user: { email: fake.DEV_USER.email, sub: 'allowed-user-id' },
       url: fake.RESOURCE_V2,
       method: 'POST',
     };
@@ -76,6 +76,38 @@ describe('Tests for authorization/authentication middlewares', () => {
       '/v2/experiments',
       'POST',
     );
+  });
+
+  it('expressAuthorizationMiddleware can reject normal users in maintenance mode', async () => {
+    const req = {
+      params: { experimentId: fake.EXPERIMENT_ID },
+      user: { email: fake.USER.email, sub: 'allowed-user-id' },
+      url: fake.RESOURCE_V2,
+      method: 'POST',
+    };
+
+    const next = jest.fn();
+
+    await expressAuthorizationMiddleware(req, {}, next);
+
+    expect(next).toBeCalledWith(expect.any(MaintenanceModeError));
+
+    expect(UserAccessModel.canAccessExperiment).not.toHaveBeenCalled();
+  });
+
+  it('expressAuthenticationOnlyMiddleware can reject normal users in maintenance mode', async () => {
+    const req = {
+      params: { experimentId: fake.EXPERIMENT_ID },
+      user: fake.USER,
+      url: fake.RESOURCE_V2,
+      method: 'POST',
+    };
+
+    const next = jest.fn();
+
+    await expressAuthenticationOnlyMiddleware(req, {}, next);
+
+    expect(next).toBeCalledWith(expect.any(MaintenanceModeError));
   });
 
   it('Express middleware can reject unauthenticated requests', async () => {
