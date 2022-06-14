@@ -12,7 +12,7 @@ const config = require('../../config');
 const CacheSingleton = require('../../cache');
 const { CacheMissError } = require('../../cache/cache-utils');
 
-const { UnauthorizedError, UnauthenticatedError, MaintenanceModeError } = require('../../utils/responses');
+const { UnauthorizedError, UnauthenticatedError } = require('../../utils/responses');
 
 const UserAccess = require('../model/UserAccess');
 
@@ -46,12 +46,6 @@ const authorize = async (userId, resource, method, experimentId) => {
   throw new UnauthorizedError(`User ${userId} does not have access to experiment ${experimentId}.`);
 };
 
-const throwIfNotBiomageTeam = (req) => {
-  if (!req.user.email.endsWith('@biomage.net')) {
-    throw new MaintenanceModeError('Maintenance mode');
-  }
-};
-
 /**
  * Wrapper for the general authorization middleware for use in Express.
  * Calls `authorize()` internally.
@@ -63,8 +57,6 @@ const expressAuthorizationMiddleware = async (req, res, next) => {
   }
 
   try {
-    throwIfNotBiomageTeam(req);
-
     await authorize(req.user.sub, req.url, req.method, req.params.experimentId);
     next();
   } catch (e) {
@@ -77,14 +69,6 @@ const expressAuthenticationOnlyMiddleware = async (req, res, next) => {
     next(new UnauthenticatedError('The request does not contain an authentication token.'));
     return;
   }
-
-  try {
-    throwIfNotBiomageTeam(req);
-  } catch (e) {
-    next(e);
-    return;
-  }
-
   next();
 };
 

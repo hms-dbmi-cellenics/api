@@ -4,9 +4,8 @@ const {
   checkAuthExpiredMiddleware,
   expressAuthorizationMiddleware,
   authorize,
-  expressAuthenticationOnlyMiddleware,
 } = require('../../src/utils/authMiddlewares');
-const { UnauthorizedError, UnauthenticatedError, MaintenanceModeError } = require('../../src/utils/responses');
+const { UnauthorizedError, UnauthenticatedError } = require('../../src/utils/responses');
 const fake = require('../test-utils/constants');
 
 const {
@@ -19,7 +18,7 @@ describe('Tests for authorization/authentication middlewares', () => {
   const data = {
     experimentId: fake.EXPERIMENT_ID,
     projectUuid: '23456',
-    userId: fake.DEV_USER.sub,
+    userId: fake.USER.sub,
     role: 'owner',
   };
 
@@ -30,14 +29,14 @@ describe('Tests for authorization/authentication middlewares', () => {
   it('Authorized user can proceed', async () => {
     mockDynamoGetItem(data);
 
-    const result = await authorize(fake.DEV_USER.sub, 'sockets', null, fake.EXPERIMENT_ID);
+    const result = await authorize(fake.USER.sub, 'sockets', null, fake.EXPERIMENT_ID);
     expect(result).toEqual(true);
   });
 
   it('Unauthorized user cannot proceed', async () => {
     mockDynamoGetItem(data);
 
-    await expect(authorize(fake.DEV_USER.sub, 'sockets', null, fake.EXPERIMENT_ID)).rejects;
+    await expect(authorize(fake.USER.sub, 'sockets', null, fake.EXPERIMENT_ID)).rejects;
   });
 
   it('Express middleware can authorize correct users', async () => {
@@ -45,7 +44,7 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
-      user: fake.DEV_USER,
+      user: fake.USER,
       url: fake.RESOURCE_V1,
       method: 'POST',
     };
@@ -55,42 +54,12 @@ describe('Tests for authorization/authentication middlewares', () => {
     expect(next).toBeCalledWith();
   });
 
-  it('expressAuthorizationMiddleware can reject normal users in maintenance mode', async () => {
-    const req = {
-      params: { experimentId: fake.EXPERIMENT_ID },
-      user: fake.USER,
-      url: fake.RESOURCE_V2,
-      method: 'POST',
-    };
-
-    const next = jest.fn();
-
-    await expressAuthorizationMiddleware(req, {}, next);
-
-    expect(next).toBeCalledWith(expect.any(MaintenanceModeError));
-  });
-
-  it('expressAuthenticationOnlyMiddleware can reject normal users in maintenance mode', async () => {
-    const req = {
-      params: { experimentId: fake.EXPERIMENT_ID },
-      user: fake.USER,
-      url: fake.RESOURCE_V2,
-      method: 'POST',
-    };
-
-    const next = jest.fn();
-
-    await expressAuthenticationOnlyMiddleware(req, {}, next);
-
-    expect(next).toBeCalledWith(expect.any(MaintenanceModeError));
-  });
-
   it('checkAuth accepts expired tokens for patch cellsets', async () => {
     mockDynamoGetItem(data);
 
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
-      user: fake.DEV_USER,
+      user: fake.USER,
       url: `/v1/experiments/${fake.EXPERIMENT_ID}/cellSets`,
       method: 'PATCH',
       ip: '::ffff:127.0.0.1',
@@ -106,7 +75,7 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
-      user: fake.DEV_USER,
+      user: 'another-user-id',
       url: fake.RESOURCE_V1,
       method: 'POST',
     };
