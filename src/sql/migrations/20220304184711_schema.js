@@ -148,7 +148,7 @@ exports.up = async (knex) => {
   await knex.schema
     .createTable('invite_access', (table) => {
       table.string('user_email', 255).notNullable();
-      table.string('experiment_id').notNullable().references('experiment.id');
+      table.string('experiment_id').notNullable().references('experiment.id').onDelete('CASCADE');
       nativeEnum(table, 'access_role').notNullable();
       table.timestamp('updated_at').defaultTo(knex.fn.now());
 
