@@ -205,7 +205,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
           aws-region: eu-west-1
 
       - id: login-ecr
@@ -264,7 +264,7 @@ jobs:
           | yq w -d1 - metadata.labels.sandboxId "$SANDBOX_ID" \
           | yq w -d1 - "metadata.annotations[filter.fluxcd.io/chart-image]" "$IMAGE_GLOB" \
           | yq w -d1 - spec.releaseName "$DEPLOYMENT_NAME" \
-          | yq w -d1 - spec.chart.ref "$CHART_REF" \
+          | yq w -d1 - spec.chart.ref "1932-remove-account-specific-hardcodings" \
           | yq w -d1 - spec.values.kubernetes.env "$KUBERNETES_ENV" \
           | yq w -d1 - spec.values.biomageCi.repo "$GITHUB_REPOSITORY" \
           | yq w -d1 - spec.values.biomageCi.sandboxId "$SANDBOX_ID" \

@@ -35,6 +35,12 @@ if (!process.env.K8S_ENV) {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 }
 
+console.log('processenvAWS_REGIONDebug');
+console.log(process.env.AWS_REGION);
+
+console.log('processenvAWS_DEFAULT_REGIONDebug');
+console.log(process.env.AWS_DEFAULT_REGION);
+
 const awsRegion = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || 'eu-west-1';
 
 const cognitoISP = new AWS.CognitoIdentityServiceProvider({
