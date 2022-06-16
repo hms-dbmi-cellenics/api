@@ -11,7 +11,7 @@ const experimentExecutionInstance = ExperimentExecution();
 
 jest.mock('../../../../src/api.v2/model/ExperimentExecution');
 
-jest.useFakeTimers('modern').setSystemTime(new Date('2020-01-01').getTime());
+jest.useFakeTimers('modern').setSystemTime(new Date(pipelineConstants.EXPIRED_EXECUTION_DATE).getTime());
 
 const {
   GEM2S_PROCESS_NAME, QC_PROCESS_NAME,
@@ -348,12 +348,10 @@ describe('pipelineStatus', () => {
         EXECUTION_DOES_NOT_EXIST_NULL_SQL_ID, GEM2S_PROCESS_NAME,
       );
 
-      const ninetyDaysAgo = new Date(new Date().setDate(new Date().getDate() - 90));
-
       const expected = {
         [GEM2S_PROCESS_NAME]: {
-          startDate: ninetyDaysAgo,
-          stopDate: ninetyDaysAgo,
+          startDate: pipelineConstants.EXPIRED_EXECUTION_DATE,
+          stopDate: pipelineConstants.EXPIRED_EXECUTION_DATE,
           status: 'SUCCEEDED',
           completedSteps: [
             'DownloadGem',
