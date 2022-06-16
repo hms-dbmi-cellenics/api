@@ -25,7 +25,7 @@ const ACCESS_DENIED = 'AccessDeniedException';
 
 // Custom date to return if execution history can no longer be found in StepFunctions
 // because AWS deletes execution history more than 90 days after the execution is completed
-const EXPIRED_EXECUTION_DATE = '2020-01-01T00:00:00.000Z';
+const EXPIRED_EXECUTION_DATE = '2019-05-19T00:00:00.000Z';
 
 module.exports = {
   QC_PROCESS_NAME,
