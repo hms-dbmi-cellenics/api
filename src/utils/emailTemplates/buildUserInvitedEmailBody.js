@@ -1,5 +1,7 @@
+const config = require('../../config');
+
 const buildUserInvitedEmailBody = (email, experimentId, inviterUser) => {
-  const link = `scp.biomage.net/experiments/${experimentId}/data-exploration`;
+  const link = `${config.domainName}/experiments/${experimentId}/data-exploration`;
 
   const messageToSend = `
         <html>

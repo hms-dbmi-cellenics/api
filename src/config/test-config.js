@@ -12,6 +12,7 @@ module.exports = {
   port: 3000,
   clusterEnv: 'test',
   awsRegion: 'eu-west-1',
+  domainName: 'mockDomainName.com',
   podName: 'test',
   sandboxId: 'default',
   adminSub: 'mockAdminSub',
