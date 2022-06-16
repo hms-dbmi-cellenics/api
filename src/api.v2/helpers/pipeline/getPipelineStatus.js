@@ -4,6 +4,7 @@ const AWS = require('../../../utils/requireAWS');
 const ExperimentExecution = require('../../model/ExperimentExecution');
 
 const config = require('../../../config');
+const { EXPIRED_EXECUTION_DATE } = require('./constants');
 const getLogger = require('../../../utils/getLogger');
 const pipelineConstants = require('./constants');
 const { getPipelineStepNames } = require('./pipelineConstruct/skeletons');
@@ -263,11 +264,10 @@ const getPipelineStatus = async (experimentId, processName) => {
         + 'doesn\'t have its latest execution stored in sql.',
       );
 
-      // we set as date 90 days ago which is when the state machine expire in production, in
-      // staging dev we don't care about this
-      const ninetyDaysAgo = new Date(new Date().setDate(new Date().getDate() - 90));
+      // we set a custom date that can be used by the UI to reliably generate ETag
+      const fixedPipelineDate = EXPIRED_EXECUTION_DATE;
 
-      return buildCompletedStatus(processName, ninetyDaysAgo, paramsHash);
+      return buildCompletedStatus(processName, fixedPipelineDate, paramsHash);
     }
 
     throw e;
