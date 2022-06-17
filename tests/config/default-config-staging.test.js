@@ -14,6 +14,11 @@ describe('default-config', () => {
     process.env = OLD_ENV;
   });
 
+  afterAll(() => {
+    jest.clearAllMocks();
+    process.env = OLD_ENV;
+  });
+
   it('Returns correct values for staging default', () => {
     const stagingEnvironment = 'staging';
     process.env.K8S_ENV = stagingEnvironment;

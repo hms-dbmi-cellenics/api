@@ -17,6 +17,7 @@ Object {
     },
   },
   "corsOriginUrl": "https://ui-mockedSandboxId.scp-staging.biomage.net",
+  "domainName": "scp-staging.biomage.net",
   "githubToken": undefined,
   "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/staging/mockedSandboxId.yaml",
   "pipelineNamespace": "pipeline-mockedSandboxId",
