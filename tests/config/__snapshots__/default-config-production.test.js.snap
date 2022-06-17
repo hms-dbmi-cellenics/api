@@ -6,21 +6,7 @@ Object {
   "api": Object {
     "prefix": "/",
   },
-  "awsAccountIdPromise": Promise {
-    Symbol(async_id_symbol): 15933,
-    Symbol(trigger_async_id_symbol): 15901,
-    Symbol(destroyed): Object {
-      "destroyed": false,
-    },
-  },
   "awsRegion": "eu-west-1",
-  "awsUserPoolIdPromise": Promise {
-    Symbol(async_id_symbol): 15934,
-    Symbol(trigger_async_id_symbol): 15901,
-    Symbol(destroyed): Object {
-      "destroyed": false,
-    },
-  },
   "cachingEnabled": true,
   "clusterEnv": "production",
   "cognitoISP": Object {

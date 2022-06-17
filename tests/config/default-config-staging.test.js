@@ -2,6 +2,7 @@
 const _ = require('lodash');
 
 const AWS = require('aws-sdk');
+const isPromise = require('../../src/utils/isPromise');
 
 jest.mock('aws-sdk');
 jest.mock('../../src/utils/getLogger');
@@ -52,6 +53,10 @@ describe('default-config', () => {
 
     const defaultConfig = jest.requireActual('../../src/config/default-config');
 
-    expect(defaultConfig).toMatchSnapshot();
+    const defaultConfigEntries = Object.entries(defaultConfig);
+    const filteredEntries = defaultConfigEntries.filter(([, value]) => !isPromise(value));
+    const defaultConfigFiltered = Object.fromEntries(filteredEntries);
+
+    expect(defaultConfigFiltered).toMatchSnapshot();
   });
 });
