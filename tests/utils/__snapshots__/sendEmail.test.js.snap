@@ -22,7 +22,7 @@ Array [
             <p>Thanks for using Cellenics! <br/>
               
       Unfortunately, when trying to run the analysis the data processing failed for your experiment: <br/>
-      <a href=\\"mockDomainName.com/experiments/other-id/data-processing\\">mockDomainName.com/experiments/other-id/data-processing</a> <br/>
+      <a href=\\"https://scp.mockDomainName.com/experiments/other-id/data-processing\\">https://scp.mockDomainName.com/experiments/other-id/data-processing</a> <br/>
       We are working hard to identify and fix the issue. We will let you know as soon as your data is ready to explore. <br/>
       <br/><br/>
                 The Biomage Team 
@@ -42,7 +42,7 @@ Array [
             <p>Thanks for using Cellenics! <br/>
               
       Unfortunately, when trying to run the analysis the data processing failed for your experiment: <br/>
-      <a href=\\"mockDomainName.com/experiments/other-id/data-processing\\">mockDomainName.com/experiments/other-id/data-processing</a> <br/>
+      <a href=\\"https://scp.mockDomainName.com/experiments/other-id/data-processing\\">https://scp.mockDomainName.com/experiments/other-id/data-processing</a> <br/>
       We are working hard to identify and fix the issue. We will let you know as soon as your data is ready to explore. <br/>
       <br/><br/>
                 The Biomage Team 
@@ -86,7 +86,7 @@ Array [
             <p>Thanks for using Cellenics! <br/>
               
       The data processing pipeline has completed successfully and your data is now ready to explore:<br/>
-      <a href=\\"mockDomainName.com/experiments/other-id/data-processing\\">mockDomainName.com/experiments/other-id/data-processing</a>
+      <a href=\\"https://scp.mockDomainName.com/experiments/other-id/data-processing\\">https://scp.mockDomainName.com/experiments/other-id/data-processing</a>
       Happy analysing! <br/><br/><br/>
                 The Biomage Team 
               <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>
@@ -105,7 +105,7 @@ Array [
             <p>Thanks for using Cellenics! <br/>
               
       The data processing pipeline has completed successfully and your data is now ready to explore:<br/>
-      <a href=\\"mockDomainName.com/experiments/other-id/data-processing\\">mockDomainName.com/experiments/other-id/data-processing</a>
+      <a href=\\"https://scp.mockDomainName.com/experiments/other-id/data-processing\\">https://scp.mockDomainName.com/experiments/other-id/data-processing</a>
       Happy analysing! <br/><br/><br/>
                 The Biomage Team 
               <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>
