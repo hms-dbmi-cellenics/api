@@ -11,6 +11,7 @@ const githubOrganisationName = 'hms-dbmi-cellenics';
 // If we are, assign NODE_ENV based on the Github (AWS/k8s cluster) environment.
 // If NODE_ENV is set, that will take precedence over the Github
 // environment.
+
 if (process.env.K8S_ENV && !process.env.NODE_ENV) {
   switch (process.env.K8S_ENV) {
     case 'staging':
@@ -20,6 +21,7 @@ if (process.env.K8S_ENV && !process.env.NODE_ENV) {
     case 'production':
       process.env.NODE_ENV = 'production';
       process.env.CLUSTER_ENV = process.env.K8S_ENV;
+
       break;
     default:
       // We are probably on a review branch or other deployment.
@@ -42,6 +44,7 @@ const domainName = process.env.DOMAIN_NAME || 'localhost:5000';
 const cognitoISP = new AWS.CognitoIdentityServiceProvider({
   region: awsRegion,
 });
+
 async function getAwsPoolId() {
   const { UserPools } = await cognitoISP.listUserPools({ MaxResults: 60 }).promise();
   // when k8s is undefined we are in development where we use staging user pool so we set
@@ -61,6 +64,8 @@ async function getAwsAccountId() {
   const data = await sts.getCallerIdentity({}).promise();
   return data.Account;
 }
+
+
 
 const config = {
   port: parseInt(process.env.PORT, 10) || 3000,

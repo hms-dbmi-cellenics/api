@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`default-config Returns correct values for staging sandboxid 1`] = `
+Object {
+  "adminSub": "0b17683f-363b-4466-b2e2-5bf11c38a76e",
+  "api": Object {
+    "prefix": "/",
+  },
+  "awsAccountIdPromise": Promise {},
+  "awsRegion": "eu-west-1",
+  "awsUserPoolIdPromise": Promise {},
+  "cachingEnabled": false,
+  "clusterEnv": "staging",
+  "cognitoISP": Object {
+    "listUserPools": Object {
+      "promise": [MockFunction],
+    },
+  },
+  "corsOriginUrl": "https://ui-mockedSandboxId.scp-staging.biomage.net",
+  "githubToken": undefined,
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/staging/mockedSandboxId.yaml",
+  "pipelineNamespace": "pipeline-mockedSandboxId",
+  "podName": "local",
+  "port": 3000,
+  "rdsSandboxId": "default",
+  "sandboxId": "mockedSandboxId",
+  "workerInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/staging/mockedSandboxId.yaml",
+  "workerNamespace": "worker-mockedSandboxId",
+}
+`;
