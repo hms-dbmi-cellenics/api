@@ -44,6 +44,8 @@ const validateTagMatching = async (experimentId, params) => {
 };
 
 const getWorkResults = async (experimentId, ETag) => {
+  logger.log(`Getting worker result for experiment: ${experimentId}, Etag: ${ETag}`);
+
   const params = {
     Bucket: `worker-results-${config.clusterEnv}`,
     Key: ETag,
@@ -51,6 +53,8 @@ const getWorkResults = async (experimentId, ETag) => {
   const formattedExperimentId = formatExperimentId(experimentId);
 
   await validateTagMatching(formattedExperimentId, params);
+
+  logger.log(`Found worker results for experiment: ${experimentId}, Etag: ${ETag}`);
 
   const signedUrl = getSignedUrl('getObject', params);
   return { signedUrl };
