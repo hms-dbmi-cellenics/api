@@ -52,7 +52,7 @@ const getWorkResults = async (experimentId, ETag) => {
   const formattedExperimentId = formatExperimentId(experimentId);
 
   await validateTagMatching(formattedExperimentId, params);
-
+  console.log('GETTING WORK RESULTS IWTH PARAMS ', params);
   logger.log(`Found worker results for experiment: ${experimentId}, Etag: ${ETag}`);
 
   const signedUrl = getSignedUrl('getObject', params);
