@@ -6,7 +6,7 @@ exports[`getSampleFileDownloadUrl works correctly 1`] = `
     Array [
       "getObject",
       Object {
-        "Bucket": "biomage-originals-test",
+        "Bucket": "biomage-originals-test-242905224710",
         "Key": "123",
         "ResponseContentDisposition": "attachment; filename=\\"features.tsv.gz\\"",
       },
@@ -27,7 +27,7 @@ exports[`getSampleFileUploadUrl works correctly with metadata cellrangerVersion 
     Array [
       "putObject",
       Object {
-        "Bucket": "biomage-originals-test",
+        "Bucket": "biomage-originals-test-242905224710",
         "Expires": 3600,
         "Key": "mockSampleFileId",
       },
@@ -35,7 +35,7 @@ exports[`getSampleFileUploadUrl works correctly with metadata cellrangerVersion 
     Array [
       "putObject",
       Object {
-        "Bucket": "biomage-originals-test",
+        "Bucket": "biomage-originals-test-242905224710",
         "Expires": 3600,
         "Key": "mockSampleFileId",
         "Metadata": Object {
@@ -63,7 +63,7 @@ exports[`getSampleFileUploadUrl works correctly without metadata 1`] = `
     Array [
       "putObject",
       Object {
-        "Bucket": "biomage-originals-test",
+        "Bucket": "biomage-originals-test-242905224710",
         "Expires": 3600,
         "Key": "mockSampleFileId",
       },
