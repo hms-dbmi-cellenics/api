@@ -230,7 +230,7 @@ describe('model/Experiment', () => {
     expect(signedUrlSpy).toHaveBeenCalledWith(
       'getObject',
       {
-        Bucket: 'processed-matrix-test',
+        Bucket: 'processed-matrix-test-242905224710',
         Expires: 120,
         Key: `${formatExperimentId(experimentId)}/r.rds`,
         ResponseContentDisposition: `attachment; filename ="${expectedFileName}"`,

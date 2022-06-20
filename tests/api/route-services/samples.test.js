@@ -147,7 +147,7 @@ describe('tests for the samples service', () => {
     const deleteS3FnSpy = mockS3DeleteObjects({ Errors: [] });
 
     const s3DeleteParams = {
-      Bucket: 'biomage-originals-test',
+      Bucket: 'biomage-originals-test-242905224710',
       Delete: {
         Objects: [
           { Key: 'project-1/sampleUuid-1/barcodes.tsv.gz' },

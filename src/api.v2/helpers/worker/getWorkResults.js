@@ -1,9 +1,8 @@
-const config = require('../../../config');
 const AWS = require('../../../utils/requireAWS');
 const getLogger = require('../../../utils/getLogger');
 const { UnauthorizedError, NotFoundError, InternalServerError } = require('../../../utils/responses');
 const formatExperimentId = require('../../../utils/v1Compatibility/formatExperimentId');
-
+const { WORKER_RESULTS } = require('../s3/bucketNames');
 const { getSignedUrl } = require('../../../utils/aws/s3');
 
 const logger = getLogger();
@@ -47,13 +46,13 @@ const getWorkResults = async (experimentId, ETag) => {
   logger.log(`Getting worker result for experiment: ${experimentId}, Etag: ${ETag}`);
 
   const params = {
-    Bucket: `worker-results-${config.clusterEnv}`,
+    Bucket: WORKER_RESULTS,
     Key: ETag,
   };
   const formattedExperimentId = formatExperimentId(experimentId);
 
   await validateTagMatching(formattedExperimentId, params);
-
+  console.log('GETTING WORK RESULTS IWTH PARAMS ', params);
   logger.log(`Found worker results for experiment: ${experimentId}, Etag: ${ETag}`);
 
   const signedUrl = getSignedUrl('getObject', params);

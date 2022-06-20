@@ -1,6 +1,6 @@
 
 const { fileExists } = require('../../../utils/aws/s3');
-const config = require('../../../config');
+const { FILTERED_CELLS } = require('../../../api.v2/helpers/s3/bucketNames');
 
 const filterToStepName = {
   classifier: 'ClassifierFilterMap',
@@ -26,10 +26,9 @@ const stepNames = [
 // checks whether an experiment has available filtered cell IDs in S3
 // meaning it can be started from any step in the QC pipeline without
 // needing to re-run previous steps
-const hasFilteredCellIdsAvailable = async (experimentId) => {
-  const bucket = `biomage-filtered-cells-${config.clusterEnv}`;
-  return await fileExists(bucket, experimentId);
-};
+const hasFilteredCellIdsAvailable = async (experimentId) => (
+  await fileExists(FILTERED_CELLS, experimentId)
+);
 
 // getFirstQCStep returns which is the first step of the QC to be run
 // processingConfigUpdates is not ordered

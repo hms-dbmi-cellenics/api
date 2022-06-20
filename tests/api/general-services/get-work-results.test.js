@@ -18,7 +18,7 @@ describe('Get worker results signed url', () => {
 
     await getWorkResults(fake.EXPERIMENT_ID, 'mockETag');
     expect(s3Spy).toHaveBeenCalled();
-    expect(signedUrlSpy).toHaveBeenCalledWith('getObject', { Bucket: 'worker-results-test', Key: 'mockETag' });
+    expect(signedUrlSpy).toHaveBeenCalledWith('getObject', { Bucket: 'worker-results-test-242905224710', Key: 'mockETag' });
   });
 
   it('Non-existent key throws a NotFoundError', async () => {
