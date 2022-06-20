@@ -1,3 +1,5 @@
+const config = require('../../../../../config');
+
 const createNewJobIfNotExist = (context, step) => {
   const { accountId, activityArn, processName } = context;
 
@@ -6,7 +8,7 @@ const createNewJobIfNotExist = (context, step) => {
     Type: 'Task',
     Resource: 'arn:aws:states:::lambda:invoke',
     Parameters: {
-      FunctionName: `arn:aws:lambda:eu-west-1:${accountId}:function:local-container-launcher`,
+      FunctionName: `arn:aws:lambda:${config.awsRegion}:${accountId}:function:local-container-launcher`,
       Payload: {
         image: 'biomage-pipeline-runner',
         name: `${processName}-runner`,

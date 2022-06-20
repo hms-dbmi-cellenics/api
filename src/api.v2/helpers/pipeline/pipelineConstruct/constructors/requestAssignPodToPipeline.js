@@ -23,7 +23,6 @@ const buildPodRequest = (sandboxId, experimentId, taskName, processName, activit
   },
 });
 
-
 const requestPod = (context, step) => {
   const {
     environment, accountId, sandboxId, activityArn, experimentId, processName,
