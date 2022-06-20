@@ -480,6 +480,7 @@ paths:
   '/experiments/{experimentId}/samples':
     get:
       summary: Get samples for an experiment
+      description: Get samples for an experiment
       operationId: getSamples
       x-eov-operation-id: sample#getSamples
       x-eov-operation-handler: routes/sample
@@ -524,6 +525,7 @@ paths:
   '/experiments/{experimentId}/samples/{sampleId}':
     post:
       summary: Create sample
+      description: Create sample for an experiment
       operationId: createSample
       x-eov-operation-id: sample#createSample
       x-eov-operation-handler: routes/sample
@@ -578,6 +580,7 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
     patch:
       summary: Patch sample
+      description: Patch sample for an experiment
       operationId: patchSample
       x-eov-operation-id: sample#patchSample
       x-eov-operation-handler: routes/sample
@@ -637,6 +640,7 @@ paths:
 
     delete:
       summary: Delete sample
+      description: Delete sample for an experiment
       operationId: deleteSample
       x-eov-operation-id: sample#deleteSample
       x-eov-operation-handler: routes/sample
@@ -1091,6 +1095,7 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
     patch:
       summary: Update a sample files property
+      description: Update property of a sample file
       operationId: patchFile
       x-eov-operation-id: sampleFile#patch
       x-eov-operation-handler: routes/sampleFile
@@ -1612,6 +1617,7 @@ paths:
   /pipelineResults:
     post:
       summary: Placeholder endpoint for qc, necessary so subscriptions to sns work
+      description: Placeholder endpoint for qc, necessary so subscriptions to sns work
       operationId: receiveQCResponse
       x-eov-operation-id: qc#response
       x-eov-operation-handler: routes/qc
@@ -1644,6 +1650,7 @@ paths:
   '/experiments/{experimentId}/download/{type}':
     get:
       summary: Download data according to the requested type
+      description: Download data according to the requested type
       operationId: downloadExperimentData
       x-eov-operation-id: experiment#downloadData
       x-eov-operation-handler: routes/experiment
