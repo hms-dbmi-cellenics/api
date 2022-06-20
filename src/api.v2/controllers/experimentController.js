@@ -19,6 +19,12 @@ const getAllExperiments = async (req, res) => {
   res.json(data);
 };
 
+const getAllExampleExperiments = async (req, res) => {
+  const data = await new Experiment().getAllExampleExperiments();
+
+  res.json(data);
+};
+
 const getExperiment = async (req, res) => {
   const { params: { experimentId } } = req;
 
@@ -129,11 +135,27 @@ const downloadData = async (req, res) => {
   logger.log(`Providing download link for download ${downloadType} for experiment ${experimentId}`);
 
   const downloadLink = await new Experiment().getDownloadLink(experimentId, downloadType);
+
+  logger.log(`Finished providing download link for download ${downloadType} for experiment ${experimentId}`);
   res.json(downloadLink);
+};
+
+const cloneExperiment = async (req, res) => {
+  const { experimentId } = req.params;
+
+  logger.log(`Cloning experiment ${experimentId}`);
+
+  const cloneExperimentId = await new Experiment().createClone(experimentId);
+  // const downloadLink = await new SampleFile().getDownloadLink(experimentId, downloadType);
+
+  logger.log(`Finished cloning experiment ${experimentId}, new expeirment's id is ${cloneExperimentId}`);
+
+  res.json(cloneExperimentId);
 };
 
 module.exports = {
   getAllExperiments,
+  getAllExampleExperiments,
   getExperiment,
   createExperiment,
   updateProcessingConfig,
@@ -143,4 +165,5 @@ module.exports = {
   getProcessingConfig,
   getBackendStatus,
   downloadData,
+  cloneExperiment,
 };

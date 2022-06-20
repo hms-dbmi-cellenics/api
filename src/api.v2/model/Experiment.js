@@ -43,18 +43,25 @@ class Experiment extends BasicModel {
     ];
 
     const aliasedExperimentFields = fields.map((field) => `e.${field}`);
-    function mainQuery() {
-      this.select([...aliasedExperimentFields, 'm.key'])
+
+    const result = await collapseKeyIntoArray(
+      this.sql.select([...aliasedExperimentFields, 'm.key'])
         .from(tableNames.USER_ACCESS)
         .where('user_id', userId)
         .join(`${tableNames.EXPERIMENT} as e`, 'e.id', `${tableNames.USER_ACCESS}.experiment_id`)
         .leftJoin(`${tableNames.METADATA_TRACK} as m`, 'e.id', 'm.experiment_id')
-        .as('mainQuery');
-    }
-
-    const result = await collapseKeyIntoArray(mainQuery, [...fields], 'key', 'metadataKeys', this.sql);
+        .as('mainQuery'), [...fields],
+      'key',
+      'metadataKeys',
+      this.sql,
+    );
 
     return result;
+  }
+
+  async getAllExampleExperiments() {
+    const noOwnerExperiments = '00000000-0000-0000-0000-000000000000';
+    return this.getAllExperiments(noOwnerExperiments);
   }
 
   async getExperimentData(experimentId) {

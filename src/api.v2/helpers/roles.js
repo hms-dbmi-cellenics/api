@@ -19,7 +19,9 @@ const allowedResources = {
     '/experiments/(?<experimentId>.*)/plots-tables/(?<plotUuid>.*)',
     '/experiments/(?<experimentId>.*)/cellSets',
   ],
-  [VIEWER]: [],
+  [VIEWER]: [
+    '/experiments/(?<experimentId>.*)/clone',
+  ],
 };
 const isRoleAuthorized = (role, resource, method) => {
   // if no valid role is provided, return not authorized
