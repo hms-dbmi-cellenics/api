@@ -205,7 +205,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
           aws-region: eu-west-1
 
       - id: login-ecr
@@ -242,7 +242,7 @@ jobs:
             KUBERNETES_ENV="staging"
             IMAGE_TAG="$REF_DASHED-$GITHUB_SHA"
             IMAGE_GLOB="glob:$REF_DASHED-*"
-            REPLICA_COUNT="4"
+            REPLICA_COUNT="2"
           fi
 
           if [ "${{ matrix.environment }}" = "staging" ]; then
