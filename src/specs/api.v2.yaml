@@ -101,7 +101,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPError'
     patch:
-      summary: ''
+      summary: Patch cell sets of an experiment
+      description: Performs a partial update on the experiment's cell sets.
       operationId: patchExperimentCellSets
       x-eov-operation-id: cellSets#patchCellSets
       x-eov-operation-handler: routes/cellSets
@@ -125,7 +126,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-      description: Performs a partial update on the experiment's cell sets.
       requestBody:
         content:
           application/boschni-json-merger+json:
@@ -1175,7 +1175,7 @@ paths:
           content:
             application/json:
               schema:
-                description: ''
+                description: Array of experiment users
                 type: array
                 properties:
                   name:
