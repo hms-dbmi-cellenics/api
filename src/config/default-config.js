@@ -11,6 +11,7 @@ const githubOrganisationName = 'hms-dbmi-cellenics';
 // If we are, assign NODE_ENV based on the Github (AWS/k8s cluster) environment.
 // If NODE_ENV is set, that will take precedence over the Github
 // environment.
+
 if (process.env.K8S_ENV && !process.env.NODE_ENV) {
   switch (process.env.K8S_ENV) {
     case 'staging':
@@ -20,6 +21,7 @@ if (process.env.K8S_ENV && !process.env.NODE_ENV) {
     case 'production':
       process.env.NODE_ENV = 'production';
       process.env.CLUSTER_ENV = process.env.K8S_ENV;
+
       break;
     default:
       // We are probably on a review branch or other deployment.
@@ -35,10 +37,14 @@ if (!process.env.K8S_ENV) {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 }
 
-const awsRegion = process.env.AWS_DEFAULT_REGION || 'eu-west-1';
+const awsRegion = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || 'eu-west-1';
+
+const domainName = process.env.DOMAIN_NAME || 'localhost:5000';
+
 const cognitoISP = new AWS.CognitoIdentityServiceProvider({
   region: awsRegion,
 });
+
 async function getAwsPoolId() {
   const { UserPools } = await cognitoISP.listUserPools({ MaxResults: 60 }).promise();
   // when k8s is undefined we are in development where we use staging user pool so we set
@@ -59,6 +65,8 @@ async function getAwsAccountId() {
   return data.Account;
 }
 
+
+
 const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
   accountId: process.env.NODE_ENV === 'development' ? '000000000000' : '242905224710',
@@ -69,6 +77,7 @@ const config = {
   workerNamespace: `worker-${process.env.SANDBOX_ID || 'default'}`,
   pipelineNamespace: `pipeline-${process.env.SANDBOX_ID || 'default'}`,
   awsRegion,
+  domainName,
   awsAccountIdPromise: getAwsAccountId(),
   awsUserPoolIdPromise: getAwsPoolId(),
   cognitoISP,
@@ -79,7 +88,7 @@ const config = {
   workerInstanceConfigUrl: `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/production/worker.yaml`,
   pipelineInstanceConfigUrl: `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/production/pipeline.yaml`,
   cachingEnabled: true,
-  corsOriginUrl: 'https://scp.biomage.net',
+  corsOriginUrl: `https://${domainName}`,
   adminSub: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
 };
 
@@ -89,7 +98,7 @@ if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
   config.workerInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/worker.yaml`;
   config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/pipeline.yaml`;
   config.cachingEnabled = false;
-  config.corsOriginUrl = 'https://ui-default.scp-staging.biomage.net';
+  config.corsOriginUrl = `https://ui-default.${domainName}`;
   config.adminSub = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
 }
 
@@ -98,7 +107,7 @@ if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
   config.workerInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/${config.sandboxId}.yaml`;
   config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/${config.sandboxId}.yaml`;
   config.cachingEnabled = false;
-  config.corsOriginUrl = `https://ui-${config.sandboxId}.scp-staging.biomage.net`;
+  config.corsOriginUrl = `https://ui-${config.sandboxId}.${domainName}`;
   config.adminSub = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
 }
 

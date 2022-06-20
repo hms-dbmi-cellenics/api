@@ -13,6 +13,8 @@ module.exports = {
   clusterEnv: 'test',
   accountId: 242905224710,
   awsRegion: 'eu-west-1',
+  corsOriginUrl: 'https://scp.mockDomainName.com',
+  domainName: 'scp.mockDomainName.com',
   podName: 'test',
   sandboxId: 'default',
   adminSub: 'mockAdminSub',
