@@ -137,8 +137,6 @@ class Sample extends BasicModel {
         });
 
         Object.entries(sample.metadata).forEach(([key, value]) => {
-          console.log('valueDebug');
-          console.log(value);
           const { id } = _.find(metadataTracks, ({ key: currentKey }) => currentKey === key);
           metadataValueMapRows.push({ metadata_track_id: id, sample_id: toSampleId, value });
         });
