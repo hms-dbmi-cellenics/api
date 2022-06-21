@@ -5,6 +5,7 @@ const _ = require('lodash');
 const AWSXRay = require('aws-xray-sdk');
 const fetch = require('node-fetch');
 const { v4: uuidv4 } = require('uuid');
+const util = require('util');
 
 const config = require('../../../../config');
 const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../constants');
@@ -253,6 +254,8 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
 
   const stateMachineArn = await createNewStateMachine(context, stateMachine, QC_PROCESS_NAME);
   logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
+  logger.log('Context:', util.inspect(context, { showHidden: false, depth: null, colors: false }));
+  logger.log('State machine:', util.inspect(stateMachine, { showHidden: false, depth: null, colors: false }));
 
   const execInput = {
     samples: samplesOrder.map((sampleUuid, index) => ({ sampleUuid, index })),
@@ -302,6 +305,8 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
 
   const stateMachineArn = await createNewStateMachine(context, stateMachine, GEM2S_PROCESS_NAME);
   logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
+  logger.log('Context:', util.inspect(context, { showHidden: false, depth: null, colors: false }));
+  logger.log('State machine:', util.inspect(stateMachine, { showHidden: false, depth: null, colors: false }));
 
   const executionArn = await executeStateMachine(stateMachineArn);
   logger.log(`Execution with ARN ${executionArn} created.`);
