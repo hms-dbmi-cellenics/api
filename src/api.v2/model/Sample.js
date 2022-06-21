@@ -38,6 +38,11 @@ class Sample extends BasicModel {
     const sampleFileFields = ['sample_file_type', 'size', 'upload_status', 's3_path'];
     const sampleFileFieldsWithAlias = sampleFileFields.map((field) => `sf.${field}`);
     const fileObjectFormatted = sampleFileFields.map((field) => [`'${field}'`, field]);
+
+    // Add sample file id (needs to go separate to avoid conflict with sample id)
+    sampleFileFieldsWithAlias.push('sf.id as sf_id');
+    fileObjectFormatted.push(['\'id\'', 'sf_id']);
+
     const sampleFileObject = `jsonb_object_agg(sample_file_type,json_build_object(${fileObjectFormatted})) as files`;
     const fileNamesQuery = sql.select(['id', sql.raw(sampleFileObject)])
       .from(sql.select([...sampleFileFieldsWithAlias, 's.id'])
