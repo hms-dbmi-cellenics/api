@@ -971,7 +971,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-  '/experiments/{experimentId}/clone':
+  '/experiments/{experimentId}/clone/{toExperimentId}':
     post:
       summary: Clone an experiment
       description: Clone an experiment, returns the id of the new experiment

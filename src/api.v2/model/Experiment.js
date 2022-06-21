@@ -60,8 +60,8 @@ class Experiment extends BasicModel {
   }
 
   async getAllExampleExperiments() {
-    const noOwnerExperiments = '00000000-0000-0000-0000-000000000000';
-    return this.getAllExperiments(noOwnerExperiments);
+    const publicAccessId = '00000000-0000-0000-0000-000000000000';
+    return this.getAllExperiments(publicAccessId);
   }
 
   async getExperimentData(experimentId) {

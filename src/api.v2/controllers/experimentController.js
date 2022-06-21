@@ -8,6 +8,8 @@ const { OK, NotFoundError } = require('../../utils/responses');
 const sqlClient = require('../../sql/sqlClient');
 
 const getExperimentBackendStatus = require('../helpers/backendStatus/getExperimentBackendStatus');
+const Sample = require('../model/Sample');
+const MetadataTrack = require('../model/MetadataTrack');
 
 const logger = getLogger('[ExperimentController] - ');
 
@@ -141,16 +143,28 @@ const downloadData = async (req, res) => {
 };
 
 const cloneExperiment = async (req, res) => {
-  const { experimentId } = req.params;
+  const {
+    params: { experimentId: fromExperimentId, toExperimentId },
+  } = req;
 
-  logger.log(`Cloning experiment ${experimentId}`);
+  logger.log(`Cloning experiment ${fromExperimentId} into ${toExperimentId}`);
 
-  const cloneExperimentId = await new Experiment().createClone(experimentId);
-  // const downloadLink = await new SampleFile().getDownloadLink(experimentId, downloadType);
+  // toExperiment might have metadata tracks,
+  // we want to start from an empty one so clear them out
+  await new MetadataTrack().delete({ experiment_id: toExperimentId });
 
-  logger.log(`Finished cloning experiment ${experimentId}, new expeirment's id is ${cloneExperimentId}`);
+  const { samplesOrder } = await new Experiment().findById(fromExperimentId).first();
 
-  res.json(cloneExperimentId);
+  const newSampleIds = await new Sample().copyTo(fromExperimentId, toExperimentId, samplesOrder);
+
+  await new Experiment().updateById(
+    toExperimentId,
+    { samples_order: JSON.stringify(newSampleIds) },
+  );
+
+  logger.log(`Finished cloning experiment ${fromExperimentId}, new expeirment's id is ${toExperimentId}`);
+
+  res.json(OK());
 };
 
 module.exports = {

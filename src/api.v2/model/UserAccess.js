@@ -91,11 +91,17 @@ class UserAccess extends BasicModel {
     await this.grantAccess(userId, experimentId, AccessRole.OWNER);
   }
 
+
   async canAccessExperiment(userId, experimentId, url, method) {
+    const publicAccessId = '00000000-0000-0000-0000-000000000000';
+
     const result = await this.sql(tableNames.USER_ACCESS)
-      .first()
+      // Check if user has access
       .where({ experiment_id: experimentId, user_id: userId })
-      .from(tableNames.USER_ACCESS);
+      // Or if it is a public access experiment
+      .orWhere({ experiment_id: experimentId, user_id: publicAccessId })
+      .from(tableNames.USER_ACCESS)
+      .first();
 
     // If there is no entry for this user and role, then user definitely doesn't have access
     if (_.isNil(result)) {
