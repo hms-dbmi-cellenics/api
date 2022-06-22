@@ -162,12 +162,12 @@ const cloneExperiment = async (req, res) => {
     samplesToCloneIds = samplesOrder;
   }
 
-  const cloneSamplesOrder = await new Sample()
+  const clonedSamplesOrder = await new Sample()
     .copyTo(fromExperimentId, toExperimentId, samplesToCloneIds);
 
   await new Experiment().updateById(
     toExperimentId,
-    { samples_order: JSON.stringify(cloneSamplesOrder) },
+    { samples_order: JSON.stringify(clonedSamplesOrder) },
   );
 
   logger.log(`Finished cloning experiment ${fromExperimentId}, new expeirment's id is ${toExperimentId}`);
