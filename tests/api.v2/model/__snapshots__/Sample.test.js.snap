@@ -150,7 +150,7 @@ Array [
 ]
 `;
 
-exports[`model/Sample copyTo works correctly if valid params are passed 1`] = `
+exports[`model/Sample copyTo works correctly 1`] = `
 Array [
   Array [
     Array [
@@ -179,6 +179,34 @@ Array [
   Array [
     Array [
       Object {
+        "sample_file_id": "2afe253f-5542-4a90-9fc9-17acdc3ecaf1",
+        "sample_id": "mock-uuid",
+      },
+      Object {
+        "sample_file_id": "59b8221d-dd3f-4bb9-ad9d-1166471e7143",
+        "sample_id": "mock-uuid",
+      },
+      Object {
+        "sample_file_id": "415323cb-72dc-4f42-b452-c12422ea042f",
+        "sample_id": "mock-uuid",
+      },
+      Object {
+        "sample_file_id": "d5c957b9-a6cb-4828-8ee6-1f9da8cacb6a",
+        "sample_id": "mock-uuid",
+      },
+      Object {
+        "sample_file_id": "d52a84a8-4669-41b3-a8d1-38e16ddbf522",
+        "sample_id": "mock-uuid",
+      },
+      Object {
+        "sample_file_id": "5b8ec36c-0f06-4a65-b924-da5189c89b7b",
+        "sample_id": "mock-uuid",
+      },
+    ],
+  ],
+  Array [
+    Array [
+      Object {
         "metadata_track_id": 0,
         "sample_id": "mock-uuid",
         "value": "N.A.1",
@@ -187,6 +215,38 @@ Array [
         "metadata_track_id": 0,
         "sample_id": "mock-uuid",
         "value": "N.A.",
+      },
+    ],
+  ],
+]
+`;
+
+exports[`model/Sample copyTo works correctly 2`] = `
+Array [
+  Array [
+    Array [
+      "id",
+      "key",
+    ],
+  ],
+]
+`;
+
+exports[`model/Sample copyTo works correctly if experiment has no metadata tracks 1`] = `
+Array [
+  Array [
+    Array [
+      Object {
+        "experiment_id": "toExperimentIdMock",
+        "id": "mock-uuid",
+        "name": "KO",
+        "sample_technology": "10x",
+      },
+      Object {
+        "experiment_id": "toExperimentIdMock",
+        "id": "mock-uuid",
+        "name": "WT1",
+        "sample_technology": "10x",
       },
     ],
   ],
@@ -221,13 +281,4 @@ Array [
 ]
 `;
 
-exports[`model/Sample copyTo works correctly if valid params are passed 2`] = `
-Array [
-  Array [
-    Array [
-      "id",
-      "key",
-    ],
-  ],
-]
-`;
+exports[`model/Sample copyTo works correctly if experiment has no metadata tracks 2`] = `Array []`;
