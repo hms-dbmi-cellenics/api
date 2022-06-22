@@ -3,6 +3,8 @@ const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 
 const Sample = require('../../../src/api.v2/model/Sample');
 
+const getSamplesResponse = require('../mocks/data/getSamplesResponse.json');
+
 const mockExperimentId = 'mockExperimentId';
 // @ts-nocheck
 // Disabled ts because it doesn't recognize jest mocks
@@ -64,5 +66,30 @@ describe('model/Sample', () => {
       sample_id: mockSampleId,
       sample_file_id: mockSampleFileId,
     });
+  });
+
+  it('copyTo works correctly if valid params are passed', async () => {
+    const fromExperimentId = 'fromExperimentIdMock';
+    const toExperimentId = 'toExperimentIdMock';
+    const samplesOrder = Object.values(getSamplesResponse).map((sample) => sample.id);
+
+    mockTrx.returning.mockImplementationOnce(() => Promise.resolve([{ id: 0, key: 'Track0' }]));
+
+    const getSamplesSpy = jest.spyOn(Sample.prototype, 'getSamples')
+      .mockImplementationOnce(() => Promise.resolve(getSamplesResponse));
+
+
+    await new Sample().copyTo(fromExperimentId, toExperimentId, samplesOrder);
+
+
+    expect(getSamplesSpy).toHaveBeenCalledWith(fromExperimentId);
+
+    expect(mockTrx).toHaveBeenCalledWith(tableNames.METADATA_TRACK);
+    expect(mockTrx).toHaveBeenCalledWith(tableNames.SAMPLE);
+    expect(mockTrx).toHaveBeenCalledWith(tableNames.SAMPLE_IN_METADATA_TRACK_MAP);
+    expect(mockTrx).toHaveBeenCalledWith(tableNames.SAMPLE_TO_SAMPLE_FILE_MAP);
+
+    expect(mockTrx.insert.mock.calls).toMatchSnapshot();
+    expect(mockTrx.returning.mock.calls).toMatchSnapshot();
   });
 });

@@ -1,0 +1,70 @@
+[
+  {
+      "id": "4058acff-3dd4-4a0b-9bff-bb4c1b9a69e5",
+      "experimentId": "d3031abeeac4aaf94f05a9b543779e09",
+      "name": "KO",
+      "sampleTechnology": "10x",
+      "createdAt": "2022-06-22 17:35:40.427554+00",
+      "updatedAt": "2022-06-22 17:35:40.427554+00",
+      "metadata": {
+          "Track0": "N.A.1"
+      },
+      "files": {
+          "matrix10x": {
+              "id": "2afe253f-5542-4a90-9fc9-17acdc3ecaf1",
+              "size": 25581681,
+              "s3Path": "2afe253f-5542-4a90-9fc9-17acdc3ecaf1",
+              "uploadStatus": "uploaded",
+              "sampleFileType": "matrix10x"
+          },
+          "barcodes10x": {
+              "id": "59b8221d-dd3f-4bb9-ad9d-1166471e7143",
+              "size": 21715,
+              "s3Path": "59b8221d-dd3f-4bb9-ad9d-1166471e7143",
+              "uploadStatus": "uploaded",
+              "sampleFileType": "barcodes10x"
+          },
+          "features10x": {
+              "id": "415323cb-72dc-4f42-b452-c12422ea042f",
+              "size": 279361,
+              "s3Path": "415323cb-72dc-4f42-b452-c12422ea042f",
+              "uploadStatus": "uploaded",
+              "sampleFileType": "features10x"
+          }
+      }
+  },
+  {
+      "id": "908b7d7a-e1fe-4285-82b0-47c4cf7cc2bf",
+      "experimentId": "d3031abeeac4aaf94f05a9b543779e09",
+      "name": "WT1",
+      "sampleTechnology": "10x",
+      "createdAt": "2022-06-22 17:44:02.155432+00",
+      "updatedAt": "2022-06-22 17:44:02.155432+00",
+      "metadata": {
+          "Track0": "N.A."
+      },
+      "files": {
+          "matrix10x": {
+              "id": "d5c957b9-a6cb-4828-8ee6-1f9da8cacb6a",
+              "size": 5079737,
+              "s3Path": "d5c957b9-a6cb-4828-8ee6-1f9da8cacb6a",
+              "uploadStatus": "uploaded",
+              "sampleFileType": "matrix10x"
+          },
+          "barcodes10x": {
+              "id": "d52a84a8-4669-41b3-a8d1-38e16ddbf522",
+              "size": 5331,
+              "s3Path": "d52a84a8-4669-41b3-a8d1-38e16ddbf522",
+              "uploadStatus": "uploaded",
+              "sampleFileType": "barcodes10x"
+          },
+          "features10x": {
+              "id": "5b8ec36c-0f06-4a65-b924-da5189c89b7b",
+              "size": 279361,
+              "s3Path": "5b8ec36c-0f06-4a65-b924-da5189c89b7b",
+              "uploadStatus": "uploaded",
+              "sampleFileType": "features10x"
+          }
+      }
+  }
+]
