@@ -27,6 +27,7 @@ jest.mock('../../../src/sql/helpers', () => ({
 }));
 
 const Experiment = require('../../../src/api.v2/model/Experiment');
+const constants = require('../../../src/utils/constants');
 
 const mockExperimentId = 'mockExperimentId';
 const mockSampleId = 'mockSampleId';
@@ -57,6 +58,18 @@ describe('model/Experiment', () => {
     expect(mockSqlClient.join).toHaveBeenCalledWith('experiment as e', 'e.id', 'user_access.experiment_id');
     expect(mockSqlClient.leftJoin).toHaveBeenCalledWith('metadata_track as m', 'e.id', 'm.experiment_id');
     expect(mockSqlClient.as).toHaveBeenCalledWith('mainQuery');
+  });
+
+  it('getAllExampleExperiments works correctly', async () => {
+    const expectedResult = { isMockResult: true };
+
+    const getAllExperimentsSpy = jest.spyOn(Experiment.prototype, 'getAllExperiments')
+      .mockImplementationOnce(() => Promise.resolve(expectedResult));
+
+    const result = await new Experiment().getAllExampleExperiments('mockUserId');
+
+    expect(result).toBe(expectedResult);
+    expect(getAllExperimentsSpy).toHaveBeenCalledWith(constants.PUBLIC_ACCESS_ID);
   });
 
   it('getExperimentData works correctly', async () => {
