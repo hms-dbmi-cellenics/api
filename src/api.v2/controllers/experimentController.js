@@ -153,13 +153,15 @@ const cloneExperiment = async (req, res) => {
   // we want to start from an empty one so clear them out
   await new MetadataTrack().delete({ experiment_id: toExperimentId });
 
+  // Get samples order so we preserve the relative order of the original samples in the cloned ones
   const { samplesOrder } = await new Experiment().findById(fromExperimentId).first();
 
-  const newSampleIds = await new Sample().copyTo(fromExperimentId, toExperimentId, samplesOrder);
+  const cloneSamplesOrder = await new Sample()
+    .copyTo(fromExperimentId, toExperimentId, samplesOrder);
 
   await new Experiment().updateById(
     toExperimentId,
-    { samples_order: JSON.stringify(newSampleIds) },
+    { samples_order: JSON.stringify(cloneSamplesOrder) },
   );
 
   logger.log(`Finished cloning experiment ${fromExperimentId}, new expeirment's id is ${toExperimentId}`);
