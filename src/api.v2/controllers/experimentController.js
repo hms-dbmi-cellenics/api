@@ -149,8 +149,8 @@ const cloneExperiment = async (req, res) => {
 
   logger.log(`Cloning experiment ${fromExperimentId} into ${toExperimentId}`);
 
-  // toExperiment might have metadata tracks,
-  // we want to start from an empty one so clear them out
+  // toExperiment might have pre existing metadata tracks,
+  // we want to start without any old ones so we clear them out
   await new MetadataTrack().delete({ experiment_id: toExperimentId });
 
   // Get samples order so we preserve the relative order of the original samples in the cloned ones
