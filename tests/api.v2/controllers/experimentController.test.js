@@ -1,6 +1,8 @@
 // @ts-nocheck
 const Experiment = require('../../../src/api.v2/model/Experiment');
+const Sample = require('../../../src/api.v2/model/Sample');
 const UserAccess = require('../../../src/api.v2/model/UserAccess');
+const MetadataTrack = require('../../../src/api.v2/model/MetadataTrack');
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 
 const getPipelineStatus = require('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
@@ -9,6 +11,8 @@ const getWorkerStatus = require('../../../src/api.v2/helpers/worker/getWorkerSta
 const bucketNames = require('../../../src/api.v2/helpers/s3/bucketNames');
 
 const experimentInstance = Experiment();
+const sampleTrackInstance = Sample();
+const metadataTrackInstance = MetadataTrack();
 const userAccessInstance = UserAccess();
 
 const mockExperiment = {
@@ -22,7 +26,10 @@ const mockExperiment = {
 };
 
 jest.mock('../../../src/api.v2/model/Experiment');
+jest.mock('../../../src/api.v2/model/Sample');
 jest.mock('../../../src/api.v2/model/UserAccess');
+jest.mock('../../../src/api.v2/model/MetadataTrack');
+
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
 }));
@@ -70,7 +77,7 @@ describe('experimentController', () => {
     expect(mockRes.json).toHaveBeenCalledWith(getAllExperimentsResponse);
   });
 
-  it('getAllExperiments works correctly', async () => {
+  it('getAllExampleExperiments works correctly', async () => {
     const mockReq = { user: { sub: 'mockUserId' } };
 
     experimentInstance.getAllExampleExperiments.mockImplementationOnce(
@@ -278,5 +285,72 @@ describe('experimentController', () => {
     await experimentController.downloadData(mockReq, mockRes);
     expect(experimentInstance.getDownloadLink)
       .toHaveBeenCalledWith(mockExperiment.id, bucketNames.PROCESSED_MATRIX);
+  });
+
+  it('cloneExperiment works correctly when samplesSubsetIds is provided', async () => {
+    const toExperimentId = 'toExperimentIdMock';
+    const samplesSubsetIds = ['mockSample2', 'mockSample3'];
+    const clonedSamplesSubsetIds = ['mockClonedSample2', 'mockClonedSample3'];
+
+    const mockReq = {
+      params: { experimentId: mockExperiment.id, toExperimentId },
+      body: { samplesSubsetIds },
+    };
+
+    metadataTrackInstance.delete.mockImplementationOnce(() => Promise.resolve());
+    sampleTrackInstance.copyTo.mockImplementationOnce(
+      () => Promise.resolve(clonedSamplesSubsetIds),
+    );
+    experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
+
+    await experimentController.cloneExperiment(mockReq, mockRes);
+
+    expect(metadataTrackInstance.delete).toHaveBeenCalledWith({ experiment_id: toExperimentId });
+
+    expect(sampleTrackInstance.copyTo)
+      .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, samplesSubsetIds);
+
+    expect(experimentInstance.updateById).toHaveBeenCalledWith(
+      toExperimentId,
+      { samples_order: JSON.stringify(clonedSamplesSubsetIds) },
+    );
+
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
+
+  it('cloneExperiment works correctly when samplesSubsetIds is NOT provided', async () => {
+    const toExperimentId = 'toExperimentIdMock';
+    const allSampleIds = ['mockSample1', 'mockSample2', 'mockSample3', 'mockSample4'];
+    const clonedSamplesIds = ['mockClonedSample1', 'mockClonedSample2', 'mockClonedSample3', 'mockClonedSample4'];
+
+    const mockReq = {
+      params: { experimentId: mockExperiment.id, toExperimentId },
+      body: {},
+    };
+
+    experimentInstance.findById.mockReturnValueOnce(
+      { first: () => Promise.resolve({ samplesOrder: allSampleIds }) },
+    );
+    metadataTrackInstance.delete.mockImplementationOnce(() => Promise.resolve());
+    sampleTrackInstance.copyTo.mockImplementationOnce(
+      () => Promise.resolve(clonedSamplesIds),
+    );
+    experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
+
+    await experimentController.cloneExperiment(mockReq, mockRes);
+
+    expect(experimentInstance.findById).toHaveBeenCalledWith(mockExperiment.id);
+
+    expect(metadataTrackInstance.delete).toHaveBeenCalledWith({ experiment_id: toExperimentId });
+
+    expect(sampleTrackInstance.copyTo)
+      .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, allSampleIds);
+
+    expect(experimentInstance.updateById).toHaveBeenCalledWith(
+      toExperimentId,
+      { samples_order: JSON.stringify(clonedSamplesIds) },
+    );
+
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
   });
 });
