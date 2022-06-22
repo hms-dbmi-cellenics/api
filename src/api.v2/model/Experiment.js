@@ -12,6 +12,7 @@ const config = require('../../config');
 const getLogger = require('../../utils/getLogger');
 const bucketNames = require('../helpers/s3/bucketNames');
 const { getSignedUrl } = require('../../utils/aws/s3');
+const constants = require('../../utils/constants');
 
 const logger = getLogger('[ExperimentModel] - ');
 
@@ -60,8 +61,7 @@ class Experiment extends BasicModel {
   }
 
   async getAllExampleExperiments() {
-    const publicAccessId = '00000000-0000-0000-0000-000000000000';
-    return this.getAllExperiments(publicAccessId);
+    return this.getAllExperiments(constants.PUBLIC_ACCESS_ID);
   }
 
   async getExperimentData(experimentId) {

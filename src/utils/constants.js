@@ -23,6 +23,8 @@ const NOT_CREATED = 'NOT_CREATED';
 const EXECUTION_DOES_NOT_EXIST = 'ExecutionDoesNotExist';
 const ACCESS_DENIED = 'AccessDeniedException';
 
+const PUBLIC_ACCESS_ID = '00000000-0000-0000-0000-000000000000';
+
 module.exports = {
   QC_PROCESS_NAME,
   GEM2S_PROCESS_NAME,
@@ -36,4 +38,5 @@ module.exports = {
   EXECUTION_DOES_NOT_EXIST,
   ACCESS_DENIED,
   ASSIGN_POD_TO_PIPELINE,
+  PUBLIC_ACCESS_ID,
 };

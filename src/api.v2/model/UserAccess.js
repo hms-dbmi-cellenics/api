@@ -19,6 +19,7 @@ const selectableProps = [
 ];
 
 const getLogger = require('../../utils/getLogger');
+const constants = require('../../utils/constants');
 
 const logger = getLogger('[UserAccessModel] - ');
 
@@ -93,13 +94,11 @@ class UserAccess extends BasicModel {
 
 
   async canAccessExperiment(userId, experimentId, url, method) {
-    const publicAccessId = '00000000-0000-0000-0000-000000000000';
-
     const result = await this.sql(tableNames.USER_ACCESS)
       // Check if user has access
       .where({ experiment_id: experimentId, user_id: userId })
       // Or if it is a public access experiment
-      .orWhere({ experiment_id: experimentId, user_id: publicAccessId })
+      .orWhere({ experiment_id: experimentId, user_id: constants.PUBLIC_ACCESS_ID })
       .from(tableNames.USER_ACCESS)
       .first();
 
