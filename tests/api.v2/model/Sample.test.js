@@ -1,3 +1,4 @@
+// @ts-nocheck
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 
 const Sample = require('../../../src/api.v2/model/Sample');

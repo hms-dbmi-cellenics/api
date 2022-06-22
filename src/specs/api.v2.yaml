@@ -1193,6 +1193,18 @@ paths:
       operationId: cloneExperiment
       x-eov-operation-id: experiment#clone
       x-eov-operation-handler: routes/experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: If samplesSubsetIds is sent then the cloned experiment only contains the subset samples instead of all of them
+              type: object
+              properties:
+                samplesSubsetIds:
+                  type: array
+                  items:
+                    type: string   
+              additionalProperties: false
       responses:
         '200':
           description: Clone experiment

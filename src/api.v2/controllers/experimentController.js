@@ -145,6 +145,7 @@ const downloadData = async (req, res) => {
 const cloneExperiment = async (req, res) => {
   const {
     params: { experimentId: fromExperimentId, toExperimentId },
+    body: { samplesSubsetIds = null },
   } = req;
 
   logger.log(`Cloning experiment ${fromExperimentId} into ${toExperimentId}`);
@@ -153,11 +154,16 @@ const cloneExperiment = async (req, res) => {
   // we want to start without any old tracks so clear them out
   await new MetadataTrack().delete({ experiment_id: toExperimentId });
 
-  // Get samples order so we preserve the relative order of the original samples in the cloned ones
-  const { samplesOrder } = await new Experiment().findById(fromExperimentId).first();
+  let samplesToCloneIds = samplesSubsetIds;
+  if (!samplesToCloneIds) {
+    // Get samples order so we preserve
+    // the relative order of the original samples in the cloned ones
+    const { samplesOrder } = await new Experiment().findById(fromExperimentId).first();
+    samplesToCloneIds = samplesOrder;
+  }
 
   const cloneSamplesOrder = await new Sample()
-    .copyTo(fromExperimentId, toExperimentId, samplesOrder);
+    .copyTo(fromExperimentId, toExperimentId, samplesToCloneIds);
 
   await new Experiment().updateById(
     toExperimentId,
