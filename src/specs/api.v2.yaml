@@ -101,7 +101,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPError'
     patch:
-      summary: ''
+      summary: Patch cell sets of an experiment
+      description: Performs a partial update on the experiment's cell sets.
       operationId: patchExperimentCellSets
       x-eov-operation-id: cellSets#patchCellSets
       x-eov-operation-handler: routes/cellSets
@@ -125,7 +126,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-      description: Performs a partial update on the experiment's cell sets.
       requestBody:
         content:
           application/boschni-json-merger+json:
@@ -143,6 +143,13 @@ paths:
       operationId: getProcessingConfig
       x-eov-operation-id: experiment#getProcessingConfig
       x-eov-operation-handler: routes/experiment
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
       responses:
         '200':
           description: get processing configuration for an experiment
@@ -184,6 +191,13 @@ paths:
       operationId: updateProcessingConfig
       x-eov-operation-id: experiment#updateProcessingConfig
       x-eov-operation-handler: routes/experiment
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
       responses:
         '200':
           description: Processing configuration for an experiment
@@ -255,6 +269,13 @@ paths:
       operationId: getExperiment
       x-eov-operation-id: experiment#getExperiment
       x-eov-operation-handler: routes/experiment
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
       responses:
         '200':
           description: Get experiment
@@ -292,6 +313,13 @@ paths:
       operationId: createExperiment
       x-eov-operation-id: experiment#createExperiment
       x-eov-operation-handler: routes/experiment
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
       requestBody:
         content:
           application/json:
@@ -322,6 +350,13 @@ paths:
       operationId: patchExperiment
       x-eov-operation-id: experiment#patchExperiment
       x-eov-operation-handler: routes/experiment
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
       requestBody:
         content:
           application/json:
@@ -364,6 +399,13 @@ paths:
       operationId: deleteExperiment
       x-eov-operation-id: experiment#deleteExperiment
       x-eov-operation-handler: routes/experiment
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
       responses:
         '200':
           description: Get experiment
@@ -438,9 +480,17 @@ paths:
   '/experiments/{experimentId}/samples':
     get:
       summary: Get samples for an experiment
+      description: Get samples for an experiment
       operationId: getSamples
       x-eov-operation-id: sample#getSamples
       x-eov-operation-handler: routes/sample
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
       responses:
         '200':
           description: OK
@@ -475,9 +525,23 @@ paths:
   '/experiments/{experimentId}/samples/{sampleId}':
     post:
       summary: Create sample
+      description: Create sample for an experiment
       operationId: createSample
       x-eov-operation-id: sample#createSample
       x-eov-operation-handler: routes/sample
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+        - name: sampleId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the sample
       requestBody:
         content:
           application/json:
@@ -516,9 +580,23 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
     patch:
       summary: Patch sample
+      description: Patch sample for an experiment
       operationId: patchSample
       x-eov-operation-id: sample#patchSample
       x-eov-operation-handler: routes/sample
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+        - name: sampleId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the sample
       requestBody:
         content:
           application/json:
@@ -562,9 +640,23 @@ paths:
 
     delete:
       summary: Delete sample
+      description: Delete sample for an experiment
       operationId: deleteSample
       x-eov-operation-id: sample#deleteSample
       x-eov-operation-handler: routes/sample
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+        - name: sampleId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the sample
       responses:
         '200':
           description: Success
@@ -604,6 +696,13 @@ paths:
       operationId: updateSamplePosition
       x-eov-operation-id: experiment#updateSamplePosition
       x-eov-operation-handler: routes/experiment
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
       requestBody:
         content:
           application/json:
@@ -657,6 +756,25 @@ paths:
       operationId: downloadSampleFileUrl
       x-eov-operation-id: sampleFile#downloadUrl
       x-eov-operation-handler: routes/sampleFile
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+        - name: sampleId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the sample
+        - name: sampleFileType
+          schema:
+            type: string
+          in: path
+          required: true
+          description: Type of sample file
       responses:
         '200':
           description: OK
@@ -690,6 +808,19 @@ paths:
       operationId: createMetadataTrack
       x-eov-operation-id: metadataTrack#createMetadataTrack
       x-eov-operation-handler: routes/metadataTrack
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+        - name: metadataTrackKey
+          schema:
+            type: string
+          in: path
+          required: true
+          description: Name of the metadata track
       responses:
         '200':
           description: Success
@@ -727,6 +858,19 @@ paths:
       operationId: patchMetadataTrack
       x-eov-operation-id: metadataTrack#patchMetadataTrack
       x-eov-operation-handler: routes/metadataTrack
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+        - name: metadataTrackKey
+          schema:
+            type: string
+          in: path
+          required: true
+          description: Name of the metadata track
       requestBody:
         content:
           application/json:
@@ -775,6 +919,19 @@ paths:
       operationId: deleteMetadataTrack
       x-eov-operation-id: metadataTrack#deleteMetadataTrack
       x-eov-operation-handler: routes/metadataTrack
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+        - name: metadataTrackKey
+          schema:
+            type: string
+          in: path
+          required: true
+          description: Name of the metadata track
       responses:
         '200':
           description: Success
@@ -809,10 +966,29 @@ paths:
   '/experiments/{experimentId}/samples/{sampleId}/metadataTracks/{metadataTrackKey}':
     patch:
       summary: Updates the value that a sample has in a metadata track in particular
-      description: Updates a metadata tracks properties
-      operationId: patchMetadataTrack
+      description: Updates a sample's metadata tracks value
+      operationId: patchSampleInMetadataTrackValue
       x-eov-operation-id: metadataTrack#patchSampleInMetadataTrackValue
       x-eov-operation-handler: routes/metadataTrack
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+        - name: sampleId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: Id of the sample
+        - name: metadataTrackKey
+          schema:
+            type: string
+          in: path
+          required: true
+          description: Name of the metadata track
       requestBody:
         content:
           application/json:
@@ -860,6 +1036,25 @@ paths:
       summary: Create a new file for a sample
       description: Set a new file for a sample, returns signed url to upload sample file
       operationId: createFile
+      parameters:
+        - name: experimentId
+          required: true
+          in: path
+          description: ID of the experiment.
+          schema:
+            type: string
+        - name: sampleId
+          in: path
+          description: ID of the sample.
+          required: true
+          schema:
+            type: string
+        - name: sampleFileType
+          in: path
+          description: Type of the file.
+          required: true
+          schema:
+            type: string
       x-eov-operation-id: sampleFile#create
       x-eov-operation-handler: routes/sampleFile
       requestBody:
@@ -900,9 +1095,29 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
     patch:
       summary: Update a sample files property
+      description: Update property of a sample file
       operationId: patchFile
       x-eov-operation-id: sampleFile#patch
       x-eov-operation-handler: routes/sampleFile
+      parameters:
+        - name: experimentId
+          required: true
+          in: path
+          description: ID of the experiment.
+          schema:
+            type: string
+        - name: sampleId
+          in: path
+          description: ID of the sample.
+          required: true
+          schema:
+            type: string
+        - name: sampleFileType
+          in: path
+          description: Type of the file.
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -939,6 +1154,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+
   '/access/{experimentId}':
     get:
       summary: Get the users with access to an experiment
@@ -946,13 +1162,20 @@ paths:
       x-eov-operation-id: access#getExperimentUsers
       x-eov-operation-handler: routes/access
       description: Returns the users with access to the experiment
+      parameters:
+        - name: experimentId
+          required: true
+          in: path
+          description: ID of the experiment.
+          schema:
+            type: string
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                description: ''
+                description: Array of experiment users
                 type: array
                 properties:
                   name:
@@ -977,6 +1200,13 @@ paths:
       x-eov-operation-id: access#inviteUser
       x-eov-operation-handler: routes/access
       description: Adds permissions for the user email for the experiment from the body
+      parameters:
+        - name: experimentId
+          required: true
+          in: path
+          description: ID of the experiment.
+          schema:
+            type: string
       responses:
         '200':
           description: OK
@@ -1020,6 +1250,13 @@ paths:
       operationId: deleteAccess
       x-eov-operation-id: access#revokeAccess
       x-eov-operation-handler: routes/access
+      parameters:
+        - name: experimentId
+          required: true
+          in: path
+          description: ID of the experiment.
+          schema:
+            type: string
       responses:
         '200':
           description: OK
@@ -1101,7 +1338,7 @@ paths:
                 userId:
                   type: string
                   minLength: 1
-                
+
   '/workResults/{experimentId}/{ETag}':
     get:
       summary: Get the work results from S3
@@ -1109,6 +1346,19 @@ paths:
       x-eov-operation-id: work#getResults
       x-eov-operation-handler: routes/work
       description: 'On success, returns a signed url with the uploaded worker results in S3'
+      parameters:
+        - name: experimentId
+          description: Id of the experiment
+          schema:
+            type: string
+          in: path
+          required: true
+        - name: ETag
+          description: ETag of the work result object
+          schema:
+            type: string
+          in: path
+          required: true
       responses:
         '200':
           description: OK
@@ -1144,6 +1394,13 @@ paths:
       x-eov-operation-id: gem2s#run
       x-eov-operation-handler: routes/gem2s
       description: Triggers a new gem2s run
+      parameters:
+        - name: experimentId
+          description: Id of the experiment
+          schema:
+            type: string
+          in: path
+          required: true
       requestBody: 
         content:
           application/json:
@@ -1215,25 +1472,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
         '401':
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
         '403':
           description: The authenticated user is not authorized to view this resource.
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
         '404':
           description: Experiment/plot not found.
           content:
             application/json:
               schema:
-                $ref: ./models/HTTPError.v1.yaml
+                $ref: '#/components/schemas/HTTPError'
       description: Reads a plot and table for a given experiment with the data specified.
     put:
       summary: Update a plot or table config
@@ -1360,6 +1617,7 @@ paths:
   /pipelineResults:
     post:
       summary: Placeholder endpoint for qc, necessary so subscriptions to sns work
+      description: Placeholder endpoint for qc, necessary so subscriptions to sns work
       operationId: receiveQCResponse
       x-eov-operation-id: qc#response
       x-eov-operation-handler: routes/qc
@@ -1392,9 +1650,23 @@ paths:
   '/experiments/{experimentId}/download/{type}':
     get:
       summary: Download data according to the requested type
+      description: Download data according to the requested type
       operationId: downloadExperimentData
       x-eov-operation-id: experiment#downloadData
       x-eov-operation-handler: routes/experiment
+      parameters:
+        - name: experimentId
+          description: Id of the experiment
+          schema:
+            type: string
+          in: path
+          required: true
+        - name: type
+          description: Type of file to download
+          schema:
+            type: string
+          in: path
+          required: true
       responses:
         '200':
           description: Download request successful.
@@ -1427,6 +1699,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+
   /kubernetesEvents:
     post:
       summary: Monitoring of kubernetes cluster events
