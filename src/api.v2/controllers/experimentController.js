@@ -15,34 +15,36 @@ const logger = getLogger('[ExperimentController] - ');
 
 const getAllExperiments = async (req, res) => {
   const { user: { sub: userId } } = req;
+  console.log(`Getting all experiments for user: ${userId}`);
 
   const data = await new Experiment().getAllExperiments(userId);
 
+  console.log(`Finished getting all experiments for user: ${userId}, length: ${data.length}`);
   res.json(data);
 };
 
 const getAllExampleExperiments = async (req, res) => {
+  console.log('Getting example experiments');
+
   const data = await new Experiment().getAllExampleExperiments();
 
+  console.log(`Finished getting example experiments, length: ${data.length}`);
   res.json(data);
 };
 
 const getExperiment = async (req, res) => {
   const { params: { experimentId } } = req;
-
   logger.log(`Getting experiment ${experimentId}`);
 
   const data = await new Experiment().getExperimentData(experimentId);
 
   logger.log(`Finished getting experiment ${experimentId}`);
-
   res.json(data);
 };
 
 const createExperiment = async (req, res) => {
   const { params: { experimentId }, user, body } = req;
   const { name, description } = body;
-
   logger.log('Creating experiment');
 
   await sqlClient.get().transaction(async (trx) => {
@@ -75,7 +77,6 @@ const deleteExperiment = async (req, res) => {
   if (result.length === 0) {
     throw new NotFoundError(`Experiment ${experimentId} not found`);
   }
-
 
   logger.log(`Finished deleting experiment ${experimentId}`);
   res.json(OK());
