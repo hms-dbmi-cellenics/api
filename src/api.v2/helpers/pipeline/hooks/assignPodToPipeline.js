@@ -45,7 +45,7 @@ const patchPod = async (message) => {
   // Select a pod to run this experiment on.
   const selectedPod = parseInt(experimentId, 16) % pods.length;
   const { name } = pods[selectedPod].metadata;
-  logger.log('Pod number', selectedPod, ' with name', name, 'chosen');
+  logger.log('Pod ', selectedPod, ' named ', name, ' assigned to ', experimentId);
 
   const patch = [
     { op: 'test', path: '/metadata/labels/activityId', value: null },
