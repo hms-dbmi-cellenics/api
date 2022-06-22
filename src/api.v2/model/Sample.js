@@ -109,9 +109,12 @@ class Sample extends BasicModel {
     const metadataValueMapRows = [];
 
     await this.sql.transaction(async (trx) => {
-      const metadataTracks = await trx(tableNames.METADATA_TRACK)
-        .insert(metadataTrackKeys.map((key) => ({ experiment_id: toExperimentId, key })))
-        .returning(['id', 'key']);
+      let metadataTracks = [];
+      if (metadataTrackKeys.length > 0) {
+        metadataTracks = await trx(tableNames.METADATA_TRACK)
+          .insert(metadataTrackKeys.map((key) => ({ experiment_id: toExperimentId, key })))
+          .returning(['id', 'key']);
+      }
 
       // Copy each sample in order so
       // the new samples we create follow the same order
@@ -143,8 +146,11 @@ class Sample extends BasicModel {
       });
 
       await trx(tableNames.SAMPLE).insert(sampleRows);
-      await trx(tableNames.SAMPLE_IN_METADATA_TRACK_MAP).insert(metadataValueMapRows);
       await trx(tableNames.SAMPLE_TO_SAMPLE_FILE_MAP).insert(sampleFileMapRows);
+
+      if (metadataValueMapRows.length > 0) {
+        await trx(tableNames.SAMPLE_IN_METADATA_TRACK_MAP).insert(metadataValueMapRows);
+      }
     });
 
     return newSampleIds;
