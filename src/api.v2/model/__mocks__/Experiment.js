@@ -9,6 +9,7 @@ const stub = {
   addSample: jest.fn(),
   deleteSample: jest.fn(),
   getDownloadLink: jest.fn(),
+  getAllExampleExperiments: jest.fn(),
   ...BasicModel,
 };
 
