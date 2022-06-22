@@ -47,20 +47,7 @@ describe('model/Experiment', () => {
     expect(queryResult).toEqual(expectedResult);
 
     expect(sqlClient.get).toHaveBeenCalled();
-    expect(helpers.collapseKeyIntoArray).toHaveBeenCalledWith(
-      expect.any(Function),
-      ['id', 'name', 'description', 'samples_order', 'notify_by_email', 'created_at', 'updated_at'],
-      'key',
-      'metadataKeys',
-      mockSqlClient,
-    );
-
-
-    // Check that mainQuery is correct
-    const mainQuery = helpers.collapseKeyIntoArray.mock.calls[0][0];
-
-    jest.clearAllMocks();
-    await mainQuery.bind(mockSqlClient)();
+    expect(helpers.collapseKeyIntoArray.mock.calls).toMatchSnapshot();
 
     expect(mockSqlClient.select).toHaveBeenCalledWith(
       ['e.id', 'e.name', 'e.description', 'e.samples_order', 'e.notify_by_email', 'e.created_at', 'e.updated_at', 'm.key'],
