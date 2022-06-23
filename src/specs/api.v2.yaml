@@ -266,8 +266,8 @@ paths:
     get:
       summary: Get all example experiments
       description: Get all experiments that are for demonstration
-      operationId: getAllExampleExperiments
-      x-eov-operation-id: experiment#getAllExampleExperiments
+      operationId: getExampleExperiments
+      x-eov-operation-id: experiment#getExampleExperiments
       x-eov-operation-handler: routes/experiment
       responses:
         '200':

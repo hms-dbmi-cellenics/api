@@ -77,16 +77,16 @@ describe('experimentController', () => {
     expect(mockRes.json).toHaveBeenCalledWith(getAllExperimentsResponse);
   });
 
-  it('getAllExampleExperiments works correctly', async () => {
+  it('getExampleExperiments works correctly', async () => {
     const mockReq = { user: { sub: 'mockUserId' } };
 
-    experimentInstance.getAllExampleExperiments.mockImplementationOnce(
+    experimentInstance.getExampleExperiments.mockImplementationOnce(
       () => Promise.resolve(getAllExperimentsResponse),
     );
 
-    await experimentController.getAllExampleExperiments(mockReq, mockRes);
+    await experimentController.getExampleExperiments(mockReq, mockRes);
 
-    expect(experimentInstance.getAllExampleExperiments).toHaveBeenCalled();
+    expect(experimentInstance.getExampleExperiments).toHaveBeenCalled();
     expect(mockRes.json).toHaveBeenCalledWith(getAllExperimentsResponse);
   });
 

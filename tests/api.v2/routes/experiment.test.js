@@ -22,7 +22,7 @@ jest.mock('../../../src/api.v2/controllers/experimentController', () => ({
   getProcessingConfig: jest.fn(),
   updateProcessingConfig: jest.fn(),
   downloadData: jest.fn(),
-  getAllExampleExperiments: jest.fn(),
+  getExampleExperiments: jest.fn(),
   cloneExperiment: jest.fn(),
 }));
 
@@ -316,8 +316,8 @@ describe('tests for experiment route', () => {
       });
   });
 
-  it('getAllExampleExperiments results in a successful response', async (done) => {
-    experimentController.getAllExampleExperiments.mockImplementationOnce((req, res) => {
+  it('getExampleExperiments results in a successful response', async (done) => {
+    experimentController.getExampleExperiments.mockImplementationOnce((req, res) => {
       res.json(getExperimentResponse);
       return Promise.resolve();
     });

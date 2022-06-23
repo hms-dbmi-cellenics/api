@@ -1,5 +1,5 @@
 const {
-  getAllExperiments, getAllExampleExperiments,
+  getAllExperiments, getExampleExperiments,
   createExperiment, getExperiment, patchExperiment, deleteExperiment, cloneExperiment,
   getProcessingConfig, updateProcessingConfig,
   updateSamplePosition,
@@ -13,9 +13,9 @@ module.exports = {
     expressAuthenticationOnlyMiddleware,
     (req, res, next) => getAllExperiments(req, res).catch(next),
   ],
-  'experiment#getAllExampleExperiments': [
+  'experiment#getExampleExperiments': [
     expressAuthenticationOnlyMiddleware,
-    (req, res, next) => getAllExampleExperiments(req, res).catch(next),
+    (req, res, next) => getExampleExperiments(req, res).catch(next),
   ],
   'experiment#getExperiment': [
     expressAuthorizationMiddleware,

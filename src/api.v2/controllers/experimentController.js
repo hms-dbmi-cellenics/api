@@ -22,10 +22,10 @@ const getAllExperiments = async (req, res) => {
   res.json(data);
 };
 
-const getAllExampleExperiments = async (req, res) => {
+const getExampleExperiments = async (req, res) => {
   logger.log('Getting example experiments');
 
-  const data = await new Experiment().getAllExampleExperiments();
+  const data = await new Experiment().getExampleExperiments();
 
   logger.log(`Finished getting example experiments, length: ${data.length}`);
   res.json(data);
@@ -181,7 +181,7 @@ const cloneExperiment = async (req, res) => {
 
 module.exports = {
   getAllExperiments,
-  getAllExampleExperiments,
+  getExampleExperiments,
   getExperiment,
   createExperiment,
   updateProcessingConfig,

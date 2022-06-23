@@ -60,13 +60,13 @@ describe('model/Experiment', () => {
     expect(mockSqlClient.as).toHaveBeenCalledWith('mainQuery');
   });
 
-  it('getAllExampleExperiments works correctly', async () => {
+  it('getExampleExperiments works correctly', async () => {
     const expectedResult = { isMockResult: true };
 
     const getAllExperimentsSpy = jest.spyOn(Experiment.prototype, 'getAllExperiments')
       .mockImplementationOnce(() => Promise.resolve(expectedResult));
 
-    const result = await new Experiment().getAllExampleExperiments('mockUserId');
+    const result = await new Experiment().getExampleExperiments('mockUserId');
 
     expect(result).toBe(expectedResult);
     expect(getAllExperimentsSpy).toHaveBeenCalledWith(constants.PUBLIC_ACCESS_ID);
