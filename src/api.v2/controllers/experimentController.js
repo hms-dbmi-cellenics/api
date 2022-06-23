@@ -160,7 +160,7 @@ const cloneExperiment = async (req, res) => {
   let toExperimentId;
 
   await sqlClient.get().transaction(async (trx) => {
-    toExperimentId = await new Experiment(trx).copyFrom(fromExperimentId);
+    toExperimentId = await new Experiment(trx).createCopy(fromExperimentId);
     await new UserAccess(trx).createNewExperimentPermissions(userId, toExperimentId);
   });
 

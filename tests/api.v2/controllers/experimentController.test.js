@@ -288,16 +288,18 @@ describe('experimentController', () => {
   });
 
   it('cloneExperiment works correctly when samplesSubsetIds is provided', async () => {
-    const toExperimentId = 'toExperimentIdMock';
     const samplesSubsetIds = ['mockSample2', 'mockSample3'];
     const clonedSamplesSubsetIds = ['mockClonedSample2', 'mockClonedSample3'];
+    const userId = 'mockUserId';
+    const toExperimentId = 'mockToExperimentId';
 
     const mockReq = {
-      params: { experimentId: mockExperiment.id, toExperimentId },
+      params: { experimentId: mockExperiment.id },
       body: { samplesSubsetIds },
+      user: { sub: userId },
     };
 
-    metadataTrackInstance.delete.mockImplementationOnce(() => Promise.resolve());
+    experimentInstance.createCopy.mockImplementationOnce(() => Promise.resolve(toExperimentId));
     sampleTrackInstance.copyTo.mockImplementationOnce(
       () => Promise.resolve(clonedSamplesSubsetIds),
     );
@@ -305,33 +307,40 @@ describe('experimentController', () => {
 
     await experimentController.cloneExperiment(mockReq, mockRes);
 
-    expect(metadataTrackInstance.delete).toHaveBeenCalledWith({ experiment_id: toExperimentId });
+    // Creates new experiment
+    expect(experimentInstance.createCopy).toHaveBeenCalledWith(mockExperiment.id);
+    expect(userAccessInstance.createNewExperimentPermissions)
+      .toHaveBeenCalledWith(userId, toExperimentId);
 
+    // Creates copy samples for new experiment
     expect(sampleTrackInstance.copyTo)
       .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, samplesSubsetIds);
 
+    // Sets created sample in experiment
     expect(experimentInstance.updateById).toHaveBeenCalledWith(
       toExperimentId,
       { samples_order: JSON.stringify(clonedSamplesSubsetIds) },
     );
 
-    expect(mockRes.json).toHaveBeenCalledWith(OK());
+    expect(mockRes.json).toHaveBeenCalledWith(toExperimentId);
   });
 
   it('cloneExperiment works correctly when samplesSubsetIds is NOT provided', async () => {
-    const toExperimentId = 'toExperimentIdMock';
     const allSampleIds = ['mockSample1', 'mockSample2', 'mockSample3', 'mockSample4'];
     const clonedSamplesIds = ['mockClonedSample1', 'mockClonedSample2', 'mockClonedSample3', 'mockClonedSample4'];
+    const userId = 'mockUserId';
+    const toExperimentId = 'mockToExperimentId';
 
     const mockReq = {
-      params: { experimentId: mockExperiment.id, toExperimentId },
+      params: { experimentId: mockExperiment.id },
       body: {},
+      user: { sub: userId },
     };
 
+    experimentInstance.createCopy.mockImplementationOnce(() => Promise.resolve(toExperimentId));
     experimentInstance.findById.mockReturnValueOnce(
       { first: () => Promise.resolve({ samplesOrder: allSampleIds }) },
     );
-    metadataTrackInstance.delete.mockImplementationOnce(() => Promise.resolve());
     sampleTrackInstance.copyTo.mockImplementationOnce(
       () => Promise.resolve(clonedSamplesIds),
     );
@@ -341,16 +350,21 @@ describe('experimentController', () => {
 
     expect(experimentInstance.findById).toHaveBeenCalledWith(mockExperiment.id);
 
-    expect(metadataTrackInstance.delete).toHaveBeenCalledWith({ experiment_id: toExperimentId });
+    // Creates new experiment
+    expect(experimentInstance.createCopy).toHaveBeenCalledWith(mockExperiment.id);
+    expect(userAccessInstance.createNewExperimentPermissions)
+      .toHaveBeenCalledWith(userId, toExperimentId);
 
+    // Creates copy samples for new experiment
     expect(sampleTrackInstance.copyTo)
       .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, allSampleIds);
 
+    // Sets created sample in experiment
     expect(experimentInstance.updateById).toHaveBeenCalledWith(
       toExperimentId,
       { samples_order: JSON.stringify(clonedSamplesIds) },
     );
 
-    expect(mockRes.json).toHaveBeenCalledWith(OK());
+    expect(mockRes.json).toHaveBeenCalledWith(toExperimentId);
   });
 });

@@ -106,7 +106,7 @@ class Experiment extends BasicModel {
     return result;
   }
 
-  async copyFrom(fromExperimentId) {
+  async createCopy(fromExperimentId) {
     const toExperimentId = uuidv4().replace(/-/g, '');
 
     const { sql } = this;
