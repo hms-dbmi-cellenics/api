@@ -1186,7 +1186,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-  '/experiments/{experimentId}/clone/{toExperimentId}':
+  '/experiments/{experimentId}/clone':
     post:
       summary: Clone an experiment
       description: Clone an experiment, returns the id of the new experiment
@@ -1211,7 +1211,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
+                type: string
         '400':
           description: Bad Request
           content:

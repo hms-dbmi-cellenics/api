@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { v4: uuidv4 } = require('uuid');
 
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
@@ -103,6 +104,26 @@ class Experiment extends BasicModel {
     }
 
     return result;
+  }
+
+  async copyFrom(fromExperimentId) {
+    const toExperimentId = uuidv4().replace(/-/g, '');
+
+    const { sql } = this;
+
+    await sql
+      .insert(
+        sql(tableNames.EXPERIMENT)
+          .select(
+            sql.raw('? as id', [toExperimentId]),
+            'name',
+            'description',
+          )
+          .where({ id: fromExperimentId }),
+      )
+      .into(sql.raw(`${tableNames.EXPERIMENT} (id, name, description)`));
+
+    return toExperimentId;
   }
 
   // Sets samples_order as an array that has the sample in oldPosition moved to newPosition

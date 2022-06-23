@@ -18,10 +18,10 @@ const allowedResources = {
     'socket',
     '/experiments/(?<experimentId>.*)/plots-tables/(?<plotUuid>.*)',
     '/experiments/(?<experimentId>.*)/cellSets',
-    '/experiments/(?<experimentId>.*)/clone/.*',
+    '/experiments/(?<experimentId>.*)/clone',
   ],
   [VIEWER]: [
-    '/experiments/(?<experimentId>.*)/clone/.*',
+    '/experiments/(?<experimentId>.*)/clone',
   ],
 };
 const isRoleAuthorized = (role, resource, method) => {

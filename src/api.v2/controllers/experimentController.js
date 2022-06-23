@@ -9,26 +9,25 @@ const sqlClient = require('../../sql/sqlClient');
 
 const getExperimentBackendStatus = require('../helpers/backendStatus/getExperimentBackendStatus');
 const Sample = require('../model/Sample');
-const MetadataTrack = require('../model/MetadataTrack');
 
 const logger = getLogger('[ExperimentController] - ');
 
 const getAllExperiments = async (req, res) => {
   const { user: { sub: userId } } = req;
-  console.log(`Getting all experiments for user: ${userId}`);
+  logger.log(`Getting all experiments for user: ${userId}`);
 
   const data = await new Experiment().getAllExperiments(userId);
 
-  console.log(`Finished getting all experiments for user: ${userId}, length: ${data.length}`);
+  logger.log(`Finished getting all experiments for user: ${userId}, length: ${data.length}`);
   res.json(data);
 };
 
 const getAllExampleExperiments = async (req, res) => {
-  console.log('Getting example experiments');
+  logger.log('Getting example experiments');
 
   const data = await new Experiment().getAllExampleExperiments();
 
-  console.log(`Finished getting example experiments, length: ${data.length}`);
+  logger.log(`Finished getting example experiments, length: ${data.length}`);
   res.json(data);
 };
 
@@ -151,15 +150,21 @@ const cloneExperiment = async (req, res) => {
   };
 
   const {
-    params: { experimentId: fromExperimentId, toExperimentId },
+    params: { experimentId: fromExperimentId },
     body: { samplesSubsetIds = await getAllSampleIds(fromExperimentId) },
+    user: { sub: userId },
   } = req;
 
-  logger.log(`Cloning experiment ${fromExperimentId} into ${toExperimentId}`);
+  logger.log(`Creating experiment to clone ${fromExperimentId} to`);
 
-  // toExperiment might be an old experiment with metadata tracks,
-  // we want to start without any old tracks so clear them out
-  await new MetadataTrack().delete({ experiment_id: toExperimentId });
+  let toExperimentId;
+
+  await sqlClient.get().transaction(async (trx) => {
+    toExperimentId = await new Experiment(trx).copyFrom(fromExperimentId);
+    await new UserAccess(trx).createNewExperimentPermissions(userId, toExperimentId);
+  });
+
+  logger.log(`Cloning experiment ${fromExperimentId} into ${toExperimentId}`);
 
   const clonedSamplesOrder = await new Sample()
     .copyTo(fromExperimentId, toExperimentId, samplesSubsetIds);
@@ -171,7 +176,7 @@ const cloneExperiment = async (req, res) => {
 
   logger.log(`Finished cloning experiment ${fromExperimentId}, new expeirment's id is ${toExperimentId}`);
 
-  res.json(OK());
+  res.json(toExperimentId);
 };
 
 module.exports = {
