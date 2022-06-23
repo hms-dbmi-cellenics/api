@@ -174,7 +174,7 @@ const cloneExperiment = async (req, res) => {
     { samples_order: JSON.stringify(clonedSamplesOrder) },
   );
 
-  logger.log(`Finished cloning experiment ${fromExperimentId}, new expeirment's id is ${toExperimentId}`);
+  logger.log(`Finished cloning experiment ${fromExperimentId}, new experiment's id is ${toExperimentId}`);
 
   res.json(toExperimentId);
 };
