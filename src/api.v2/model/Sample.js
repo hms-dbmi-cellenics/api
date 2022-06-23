@@ -98,11 +98,11 @@ class Sample extends BasicModel {
    * @param {*} toExperimentId
    */
   async copyTo(fromExperimentId, toExperimentId, samplesOrder) {
-    const result = await this.getSamples(fromExperimentId);
+    const fromSamples = await this.getSamples(fromExperimentId);
 
     const newSampleIds = [];
 
-    const metadataTrackKeys = Object.keys(result[0].metadata);
+    const metadataTrackKeys = Object.keys(fromSamples[0].metadata);
 
     const sampleRows = [];
     const sampleFileMapRows = [];
@@ -119,7 +119,7 @@ class Sample extends BasicModel {
       // Copy each sample in order so
       // the new samples we create follow the same order
       samplesOrder.forEach((fromSampleId) => {
-        const sample = result.find(({ id }) => id === fromSampleId);
+        const sample = fromSamples.find(({ id }) => id === fromSampleId);
 
         const toSampleId = uuidv4();
 
