@@ -287,15 +287,15 @@ describe('experimentController', () => {
       .toHaveBeenCalledWith(mockExperiment.id, bucketNames.PROCESSED_MATRIX);
   });
 
-  it('cloneExperiment works correctly when samplesSubsetIds is provided', async () => {
-    const samplesSubsetIds = ['mockSample2', 'mockSample3'];
+  it('cloneExperiment works correctly when samplesToCloneIds is provided', async () => {
+    const samplesToCloneIds = ['mockSample2', 'mockSample3'];
     const clonedSamplesSubsetIds = ['mockClonedSample2', 'mockClonedSample3'];
     const userId = 'mockUserId';
     const toExperimentId = 'mockToExperimentId';
 
     const mockReq = {
       params: { experimentId: mockExperiment.id },
-      body: { samplesSubsetIds },
+      body: { samplesToCloneIds },
       user: { sub: userId },
     };
 
@@ -314,7 +314,7 @@ describe('experimentController', () => {
 
     // Creates copy samples for new experiment
     expect(sampleTrackInstance.copyTo)
-      .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, samplesSubsetIds);
+      .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, samplesToCloneIds);
 
     // Sets created sample in experiment
     expect(experimentInstance.updateById).toHaveBeenCalledWith(
@@ -325,7 +325,7 @@ describe('experimentController', () => {
     expect(mockRes.json).toHaveBeenCalledWith(toExperimentId);
   });
 
-  it('cloneExperiment works correctly when samplesSubsetIds is NOT provided', async () => {
+  it('cloneExperiment works correctly when samplesToCloneIds is NOT provided', async () => {
     const allSampleIds = ['mockSample1', 'mockSample2', 'mockSample3', 'mockSample4'];
     const clonedSamplesIds = ['mockClonedSample1', 'mockClonedSample2', 'mockClonedSample3', 'mockClonedSample4'];
     const userId = 'mockUserId';

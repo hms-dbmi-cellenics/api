@@ -151,7 +151,7 @@ const cloneExperiment = async (req, res) => {
 
   const {
     params: { experimentId: fromExperimentId },
-    body: { samplesSubsetIds = await getAllSampleIds(fromExperimentId) },
+    body: { samplesToCloneIds = await getAllSampleIds(fromExperimentId) },
     user: { sub: userId },
   } = req;
 
@@ -167,7 +167,7 @@ const cloneExperiment = async (req, res) => {
   logger.log(`Cloning experiment ${fromExperimentId} into ${toExperimentId}`);
 
   const clonedSamplesOrder = await new Sample()
-    .copyTo(fromExperimentId, toExperimentId, samplesSubsetIds);
+    .copyTo(fromExperimentId, toExperimentId, samplesToCloneIds);
 
   await new Experiment().updateById(
     toExperimentId,

@@ -1197,10 +1197,10 @@ paths:
         content:
           application/json:
             schema:
-              description: If samplesSubsetIds is sent then the cloned experiment only contains the subset samples instead of all of them
+              description: If samplesToCloneIds is sent then the cloned experiment only contains the subset samples instead of all of them
               type: object
               properties:
-                samplesSubsetIds:
+                samplesToCloneIds:
                   type: array
                   items:
                     type: string   

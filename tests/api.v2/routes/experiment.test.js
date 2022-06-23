@@ -360,7 +360,7 @@ describe('tests for experiment route', () => {
   it('cloneExperiment results in a successful response with a valid body', async (done) => {
     const experimentId = 'fromExperimentId';
 
-    const body = { samplesSubsetIds: ['sampleId1', 'sampleId2'] };
+    const body = { samplesToCloneIds: ['sampleId1', 'sampleId2'] };
 
     experimentController.cloneExperiment.mockImplementationOnce((req, res) => {
       res.json(OK());
