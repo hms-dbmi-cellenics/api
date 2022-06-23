@@ -92,7 +92,7 @@ class Sample extends BasicModel {
   }
 
   /**
-   * Creates copy samples from one experiment to another one
+   * Copies samples from one experiment to another one
    *
    * @param {*} fromExperimentId
    * @param {*} toExperimentId
