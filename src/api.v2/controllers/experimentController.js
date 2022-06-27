@@ -8,33 +8,42 @@ const { OK, NotFoundError } = require('../../utils/responses');
 const sqlClient = require('../../sql/sqlClient');
 
 const getExperimentBackendStatus = require('../helpers/backendStatus/getExperimentBackendStatus');
+const Sample = require('../model/Sample');
 
 const logger = getLogger('[ExperimentController] - ');
 
 const getAllExperiments = async (req, res) => {
   const { user: { sub: userId } } = req;
+  logger.log(`Getting all experiments for user: ${userId}`);
 
   const data = await new Experiment().getAllExperiments(userId);
 
+  logger.log(`Finished getting all experiments for user: ${userId}, length: ${data.length}`);
+  res.json(data);
+};
+
+const getExampleExperiments = async (req, res) => {
+  logger.log('Getting example experiments');
+
+  const data = await new Experiment().getExampleExperiments();
+
+  logger.log(`Finished getting example experiments, length: ${data.length}`);
   res.json(data);
 };
 
 const getExperiment = async (req, res) => {
   const { params: { experimentId } } = req;
-
   logger.log(`Getting experiment ${experimentId}`);
 
   const data = await new Experiment().getExperimentData(experimentId);
 
   logger.log(`Finished getting experiment ${experimentId}`);
-
   res.json(data);
 };
 
 const createExperiment = async (req, res) => {
   const { params: { experimentId }, user, body } = req;
   const { name, description } = body;
-
   logger.log('Creating experiment');
 
   await sqlClient.get().transaction(async (trx) => {
@@ -67,7 +76,6 @@ const deleteExperiment = async (req, res) => {
   if (result.length === 0) {
     throw new NotFoundError(`Experiment ${experimentId} not found`);
   }
-
 
   logger.log(`Finished deleting experiment ${experimentId}`);
   res.json(OK());
@@ -129,11 +137,51 @@ const downloadData = async (req, res) => {
   logger.log(`Providing download link for download ${downloadType} for experiment ${experimentId}`);
 
   const downloadLink = await new Experiment().getDownloadLink(experimentId, downloadType);
+
+  logger.log(`Finished providing download link for download ${downloadType} for experiment ${experimentId}`);
   res.json(downloadLink);
+};
+
+
+const cloneExperiment = async (req, res) => {
+  const getAllSampleIds = async (experimentId) => {
+    const { samplesOrder } = await new Experiment().findById(experimentId).first();
+    return samplesOrder;
+  };
+
+  const {
+    params: { experimentId: fromExperimentId },
+    body: { samplesToCloneIds = await getAllSampleIds(fromExperimentId) },
+    user: { sub: userId },
+  } = req;
+
+  logger.log(`Creating experiment to clone ${fromExperimentId} to`);
+
+  let toExperimentId;
+
+  await sqlClient.get().transaction(async (trx) => {
+    toExperimentId = await new Experiment(trx).createCopy(fromExperimentId);
+    await new UserAccess(trx).createNewExperimentPermissions(userId, toExperimentId);
+  });
+
+  logger.log(`Cloning experiment ${fromExperimentId} into ${toExperimentId}`);
+
+  const clonedSamplesOrder = await new Sample()
+    .copyTo(fromExperimentId, toExperimentId, samplesToCloneIds);
+
+  await new Experiment().updateById(
+    toExperimentId,
+    { samples_order: JSON.stringify(clonedSamplesOrder) },
+  );
+
+  logger.log(`Finished cloning experiment ${fromExperimentId}, new experiment's id is ${toExperimentId}`);
+
+  res.json(toExperimentId);
 };
 
 module.exports = {
   getAllExperiments,
+  getExampleExperiments,
   getExperiment,
   createExperiment,
   updateProcessingConfig,
@@ -143,4 +191,5 @@ module.exports = {
   getProcessingConfig,
   getBackendStatus,
   downloadData,
+  cloneExperiment,
 };

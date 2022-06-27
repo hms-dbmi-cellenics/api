@@ -243,7 +243,39 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetAllExperiments'
+                $ref: '#/components/schemas/ExperimentsList'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+  '/experiments/examples':
+    get:
+      summary: Get all example experiments
+      description: Get all experiments that are for demonstration
+      operationId: getExampleExperiments
+      x-eov-operation-id: experiment#getExampleExperiments
+      x-eov-operation-handler: routes/experiment
+      responses:
+        '200':
+          description: All experiments that the user can acess
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExperimentsList'
         '400':
           description: Bad Request
           content:
@@ -1154,7 +1186,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
+  '/experiments/{experimentId}/clone':
+    post:
+      summary: Clone an experiment
+      description: Clone an experiment, returns the id of the new experiment
+      operationId: cloneExperiment
+      x-eov-operation-id: experiment#clone
+      x-eov-operation-handler: routes/experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: If samplesToCloneIds is sent then the cloned experiment only contains the subset samples instead of all of them
+              type: object
+              properties:
+                samplesToCloneIds:
+                  type: array
+                  items:
+                    type: string   
+              additionalProperties: false
+      responses:
+        '200':
+          description: Clone experiment
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   '/access/{experimentId}':
     get:
       summary: Get the users with access to an experiment
@@ -1733,8 +1814,8 @@ components:
       $ref: './models/experiment-bodies/PatchExperiment.v2.yaml'
     ProcessingConfig:
       $ref: './models/experiment-bodies/ProcessingConfig.v2.yaml'
-    GetAllExperiments:
-      $ref: './models/experiment-bodies/GetAllExperiments.v2.yaml'
+    ExperimentsList:
+      $ref: './models/experiment-bodies/ExperimentsList.v2.yaml'
     CreateSample:
       $ref: './models/samples-bodies/CreateSample.v2.yaml'
     GetSamples:

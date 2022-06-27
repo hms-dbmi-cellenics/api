@@ -1,5 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`model/Experiment getAllExperiments works correctly 1`] = `
+Array [
+  Array [
+    [MockFunction],
+    Array [
+      "id",
+      "name",
+      "description",
+      "samples_order",
+      "notify_by_email",
+      "created_at",
+      "updated_at",
+    ],
+    "key",
+    "metadataKeys",
+    [MockFunction],
+  ],
+]
+`;
+
 exports[`model/Experiment getExperimentData works correctly 1`] = `
 Array [
   "COALESCE(

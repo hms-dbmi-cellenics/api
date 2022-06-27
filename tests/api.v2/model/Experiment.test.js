@@ -27,6 +27,7 @@ jest.mock('../../../src/sql/helpers', () => ({
 }));
 
 const Experiment = require('../../../src/api.v2/model/Experiment');
+const constants = require('../../../src/utils/constants');
 
 const mockExperimentId = 'mockExperimentId';
 const mockSampleId = 'mockSampleId';
@@ -47,20 +48,7 @@ describe('model/Experiment', () => {
     expect(queryResult).toEqual(expectedResult);
 
     expect(sqlClient.get).toHaveBeenCalled();
-    expect(helpers.collapseKeyIntoArray).toHaveBeenCalledWith(
-      expect.any(Function),
-      ['id', 'name', 'description', 'samples_order', 'notify_by_email', 'created_at', 'updated_at'],
-      'key',
-      'metadataKeys',
-      mockSqlClient,
-    );
-
-
-    // Check that mainQuery is correct
-    const mainQuery = helpers.collapseKeyIntoArray.mock.calls[0][0];
-
-    jest.clearAllMocks();
-    await mainQuery.bind(mockSqlClient)();
+    expect(helpers.collapseKeyIntoArray.mock.calls).toMatchSnapshot();
 
     expect(mockSqlClient.select).toHaveBeenCalledWith(
       ['e.id', 'e.name', 'e.description', 'e.samples_order', 'e.notify_by_email', 'e.created_at', 'e.updated_at', 'm.key'],
@@ -70,6 +58,18 @@ describe('model/Experiment', () => {
     expect(mockSqlClient.join).toHaveBeenCalledWith('experiment as e', 'e.id', 'user_access.experiment_id');
     expect(mockSqlClient.leftJoin).toHaveBeenCalledWith('metadata_track as m', 'e.id', 'm.experiment_id');
     expect(mockSqlClient.as).toHaveBeenCalledWith('mainQuery');
+  });
+
+  it('getExampleExperiments works correctly', async () => {
+    const expectedResult = { isMockResult: true };
+
+    const getAllExperimentsSpy = jest.spyOn(Experiment.prototype, 'getAllExperiments')
+      .mockImplementationOnce(() => Promise.resolve(expectedResult));
+
+    const result = await new Experiment().getExampleExperiments('mockUserId');
+
+    expect(result).toBe(expectedResult);
+    expect(getAllExperimentsSpy).toHaveBeenCalledWith(constants.PUBLIC_ACCESS_ID);
   });
 
   it('getExperimentData works correctly', async () => {

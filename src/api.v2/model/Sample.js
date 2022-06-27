@@ -1,3 +1,7 @@
+const _ = require('lodash');
+
+const { v4: uuidv4 } = require('uuid');
+
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 
@@ -38,6 +42,11 @@ class Sample extends BasicModel {
     const sampleFileFields = ['sample_file_type', 'size', 'upload_status', 's3_path'];
     const sampleFileFieldsWithAlias = sampleFileFields.map((field) => `sf.${field}`);
     const fileObjectFormatted = sampleFileFields.map((field) => [`'${field}'`, field]);
+
+    // Add sample file id (needs to go separate to avoid conflict with sample id)
+    sampleFileFieldsWithAlias.push('sf.id as sf_id');
+    fileObjectFormatted.push(['\'id\'', 'sf_id']);
+
     const sampleFileObject = `jsonb_object_agg(sample_file_type,json_build_object(${fileObjectFormatted})) as files`;
     const fileNamesQuery = sql.select(['id', sql.raw(sampleFileObject)])
       .from(sql.select([...sampleFileFieldsWithAlias, 's.id'])
@@ -80,6 +89,71 @@ class Sample extends BasicModel {
         },
       );
     });
+  }
+
+  /**
+   * Copies samples from one experiment to another one
+   *
+   * @param {*} fromExperimentId
+   * @param {*} toExperimentId
+   */
+  async copyTo(fromExperimentId, toExperimentId, samplesOrder) {
+    const fromSamples = await this.getSamples(fromExperimentId);
+
+    const newSampleIds = [];
+
+    const metadataTrackKeys = Object.keys(fromSamples[0].metadata);
+
+    const sampleRows = [];
+    const sampleFileMapRows = [];
+    const metadataValueMapRows = [];
+
+    await this.sql.transaction(async (trx) => {
+      let metadataTracks = [];
+      if (metadataTrackKeys.length > 0) {
+        metadataTracks = await trx(tableNames.METADATA_TRACK)
+          .insert(metadataTrackKeys.map((key) => ({ experiment_id: toExperimentId, key })))
+          .returning(['id', 'key']);
+      }
+
+      // Copy each sample in order so
+      // the new samples we create follow the same order
+      samplesOrder.forEach((fromSampleId) => {
+        const sample = fromSamples.find(({ id }) => id === fromSampleId);
+
+        const toSampleId = uuidv4();
+
+        newSampleIds.push(toSampleId);
+
+        sampleRows.push({
+          id: toSampleId,
+          experiment_id: toExperimentId,
+          name: sample.name,
+          sample_technology: sample.sampleTechnology,
+        });
+
+        Object.entries(sample.files).forEach(([, file]) => {
+          sampleFileMapRows.push({
+            sample_id: toSampleId,
+            sample_file_id: file.id,
+          });
+        });
+
+        Object.entries(sample.metadata).forEach(([key, value]) => {
+          const { id } = _.find(metadataTracks, ({ key: currentKey }) => currentKey === key);
+          metadataValueMapRows.push({ metadata_track_id: id, sample_id: toSampleId, value });
+        });
+      });
+
+      await trx(tableNames.SAMPLE).insert(sampleRows);
+      await trx(tableNames.SAMPLE_TO_SAMPLE_FILE_MAP).insert(sampleFileMapRows);
+
+      if (metadataValueMapRows.length > 0) {
+        await trx(tableNames.SAMPLE_IN_METADATA_TRACK_MAP).insert(metadataValueMapRows);
+      }
+    });
+
+    return newSampleIds;
   }
 }
 

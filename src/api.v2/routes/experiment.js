@@ -1,7 +1,8 @@
 const {
-  createExperiment, getExperiment, patchExperiment, deleteExperiment,
-  updateSamplePosition, getAllExperiments,
+  getAllExperiments, getExampleExperiments,
+  createExperiment, getExperiment, patchExperiment, deleteExperiment, cloneExperiment,
   getProcessingConfig, updateProcessingConfig,
+  updateSamplePosition,
   getBackendStatus, downloadData,
 } = require('../controllers/experimentController');
 
@@ -11,6 +12,10 @@ module.exports = {
   'experiment#getAllExperiments': [
     expressAuthenticationOnlyMiddleware,
     (req, res, next) => getAllExperiments(req, res).catch(next),
+  ],
+  'experiment#getExampleExperiments': [
+    expressAuthenticationOnlyMiddleware,
+    (req, res, next) => getExampleExperiments(req, res).catch(next),
   ],
   'experiment#getExperiment': [
     expressAuthorizationMiddleware,
@@ -47,5 +52,9 @@ module.exports = {
   'experiment#downloadData': [
     expressAuthorizationMiddleware,
     (req, res, next) => downloadData(req, res).catch(next),
+  ],
+  'experiment#clone': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => cloneExperiment(req, res).catch(next),
   ],
 };

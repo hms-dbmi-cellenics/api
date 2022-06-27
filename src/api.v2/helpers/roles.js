@@ -18,8 +18,11 @@ const allowedResources = {
     'socket',
     '/experiments/(?<experimentId>.*)/plots-tables/(?<plotUuid>.*)',
     '/experiments/(?<experimentId>.*)/cellSets',
+    '/experiments/(?<experimentId>.*)/clone',
   ],
-  [VIEWER]: [],
+  [VIEWER]: [
+    '/experiments/(?<experimentId>.*)/clone',
+  ],
 };
 const isRoleAuthorized = (role, resource, method) => {
   // if no valid role is provided, return not authorized

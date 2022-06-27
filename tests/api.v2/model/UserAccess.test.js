@@ -22,6 +22,7 @@ jest.mock('../../../src/utils/aws/user', () => ({
 const BasicModel = require('../../../src/api.v2/model/BasicModel');
 const UserAccess = require('../../../src/api.v2/model/UserAccess');
 const AccessRole = require('../../../src/utils/enums/AccessRole');
+const constants = require('../../../src/utils/constants');
 
 const mockAdminUserId = testConfig.adminSub;
 const mockUserId = '1234-5678-9012-1234';
@@ -200,17 +201,20 @@ describe('model/userAccess', () => {
     const url = 'url';
     const method = 'method';
 
-    mockSqlClient.from.mockImplementationOnce(() => ({ accessRole: 'roleThatIsOk' }));
+    mockSqlClient.first.mockImplementationOnce(() => ({ accessRole: 'roleThatIsOk' }));
 
     roles.isRoleAuthorized.mockImplementationOnce(() => true);
 
-    const result = await new UserAccess().canAccessExperiment(mockUserId, mockExperimentId, url, method);
-
+    const result = await new UserAccess()
+      .canAccessExperiment(mockUserId, mockExperimentId, url, method);
 
     expect(mockSqlClient.first).toHaveBeenCalled();
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
     expect(mockSqlClient.where).toHaveBeenCalledWith(
       { experiment_id: mockExperimentId, user_id: mockUserId },
+    );
+    expect(mockSqlClient.orWhere).toHaveBeenCalledWith(
+      { experiment_id: mockExperimentId, user_id: constants.PUBLIC_ACCESS_ID },
     );
 
     expect(roles.isRoleAuthorized).toHaveBeenCalledWith('roleThatIsOk', url, method);
@@ -221,7 +225,7 @@ describe('model/userAccess', () => {
     const url = 'url';
     const method = 'method';
 
-    mockSqlClient.from.mockImplementationOnce(() => undefined);
+    mockSqlClient.first.mockImplementationOnce(() => undefined);
 
     const result = await new UserAccess().canAccessExperiment(mockUserId, mockExperimentId, url, method);
 
@@ -229,6 +233,9 @@ describe('model/userAccess', () => {
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
     expect(mockSqlClient.where).toHaveBeenCalledWith(
       { experiment_id: mockExperimentId, user_id: mockUserId },
+    );
+    expect(mockSqlClient.orWhere).toHaveBeenCalledWith(
+      { experiment_id: mockExperimentId, user_id: constants.PUBLIC_ACCESS_ID },
     );
 
     expect(roles.isRoleAuthorized).not.toHaveBeenCalled();
@@ -240,7 +247,7 @@ describe('model/userAccess', () => {
     const url = 'url';
     const method = 'method';
 
-    mockSqlClient.from.mockImplementationOnce(() => ({ accessRole: 'roleThatIsNotOk' }));
+    mockSqlClient.first.mockImplementationOnce(() => ({ accessRole: 'roleThatIsNotOk' }));
 
     roles.isRoleAuthorized.mockImplementationOnce(() => false);
 
@@ -250,6 +257,9 @@ describe('model/userAccess', () => {
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
     expect(mockSqlClient.where).toHaveBeenCalledWith(
       { experiment_id: mockExperimentId, user_id: mockUserId },
+    );
+    expect(mockSqlClient.orWhere).toHaveBeenCalledWith(
+      { experiment_id: mockExperimentId, user_id: constants.PUBLIC_ACCESS_ID },
     );
 
     expect(roles.isRoleAuthorized).toHaveBeenCalledWith('roleThatIsNotOk', url, method);

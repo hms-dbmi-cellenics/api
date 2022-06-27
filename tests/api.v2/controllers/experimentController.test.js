@@ -1,6 +1,8 @@
 // @ts-nocheck
 const Experiment = require('../../../src/api.v2/model/Experiment');
+const Sample = require('../../../src/api.v2/model/Sample');
 const UserAccess = require('../../../src/api.v2/model/UserAccess');
+const MetadataTrack = require('../../../src/api.v2/model/MetadataTrack');
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 
 const getPipelineStatus = require('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
@@ -9,6 +11,8 @@ const getWorkerStatus = require('../../../src/api.v2/helpers/worker/getWorkerSta
 const bucketNames = require('../../../src/api.v2/helpers/s3/bucketNames');
 
 const experimentInstance = Experiment();
+const sampleTrackInstance = Sample();
+const metadataTrackInstance = MetadataTrack();
 const userAccessInstance = UserAccess();
 
 const mockExperiment = {
@@ -22,7 +26,10 @@ const mockExperiment = {
 };
 
 jest.mock('../../../src/api.v2/model/Experiment');
+jest.mock('../../../src/api.v2/model/Sample');
 jest.mock('../../../src/api.v2/model/UserAccess');
+jest.mock('../../../src/api.v2/model/MetadataTrack');
+
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
 }));
@@ -67,6 +74,19 @@ describe('experimentController', () => {
     await experimentController.getAllExperiments(mockReq, mockRes);
 
     expect(experimentInstance.getAllExperiments).toHaveBeenCalledWith('mockUserId');
+    expect(mockRes.json).toHaveBeenCalledWith(getAllExperimentsResponse);
+  });
+
+  it('getExampleExperiments works correctly', async () => {
+    const mockReq = { user: { sub: 'mockUserId' } };
+
+    experimentInstance.getExampleExperiments.mockImplementationOnce(
+      () => Promise.resolve(getAllExperimentsResponse),
+    );
+
+    await experimentController.getExampleExperiments(mockReq, mockRes);
+
+    expect(experimentInstance.getExampleExperiments).toHaveBeenCalled();
     expect(mockRes.json).toHaveBeenCalledWith(getAllExperimentsResponse);
   });
 
@@ -265,5 +285,86 @@ describe('experimentController', () => {
     await experimentController.downloadData(mockReq, mockRes);
     expect(experimentInstance.getDownloadLink)
       .toHaveBeenCalledWith(mockExperiment.id, bucketNames.PROCESSED_MATRIX);
+  });
+
+  it('cloneExperiment works correctly when samplesToCloneIds is provided', async () => {
+    const samplesToCloneIds = ['mockSample2', 'mockSample3'];
+    const clonedSamplesSubsetIds = ['mockClonedSample2', 'mockClonedSample3'];
+    const userId = 'mockUserId';
+    const toExperimentId = 'mockToExperimentId';
+
+    const mockReq = {
+      params: { experimentId: mockExperiment.id },
+      body: { samplesToCloneIds },
+      user: { sub: userId },
+    };
+
+    experimentInstance.createCopy.mockImplementationOnce(() => Promise.resolve(toExperimentId));
+    sampleTrackInstance.copyTo.mockImplementationOnce(
+      () => Promise.resolve(clonedSamplesSubsetIds),
+    );
+    experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
+
+    await experimentController.cloneExperiment(mockReq, mockRes);
+
+    // Creates new experiment
+    expect(experimentInstance.createCopy).toHaveBeenCalledWith(mockExperiment.id);
+    expect(userAccessInstance.createNewExperimentPermissions)
+      .toHaveBeenCalledWith(userId, toExperimentId);
+
+    // Creates copy samples for new experiment
+    expect(sampleTrackInstance.copyTo)
+      .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, samplesToCloneIds);
+
+    // Sets created sample in experiment
+    expect(experimentInstance.updateById).toHaveBeenCalledWith(
+      toExperimentId,
+      { samples_order: JSON.stringify(clonedSamplesSubsetIds) },
+    );
+
+    expect(mockRes.json).toHaveBeenCalledWith(toExperimentId);
+  });
+
+  it('cloneExperiment works correctly when samplesToCloneIds is NOT provided', async () => {
+    const allSampleIds = ['mockSample1', 'mockSample2', 'mockSample3', 'mockSample4'];
+    const clonedSamplesIds = ['mockClonedSample1', 'mockClonedSample2', 'mockClonedSample3', 'mockClonedSample4'];
+    const userId = 'mockUserId';
+    const toExperimentId = 'mockToExperimentId';
+
+    const mockReq = {
+      params: { experimentId: mockExperiment.id },
+      body: {},
+      user: { sub: userId },
+    };
+
+    experimentInstance.createCopy.mockImplementationOnce(() => Promise.resolve(toExperimentId));
+    experimentInstance.findById.mockReturnValueOnce(
+      { first: () => Promise.resolve({ samplesOrder: allSampleIds }) },
+    );
+    sampleTrackInstance.copyTo.mockImplementationOnce(
+      () => Promise.resolve(clonedSamplesIds),
+    );
+    experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
+
+    await experimentController.cloneExperiment(mockReq, mockRes);
+
+    expect(experimentInstance.findById).toHaveBeenCalledWith(mockExperiment.id);
+
+    // Creates new experiment
+    expect(experimentInstance.createCopy).toHaveBeenCalledWith(mockExperiment.id);
+    expect(userAccessInstance.createNewExperimentPermissions)
+      .toHaveBeenCalledWith(userId, toExperimentId);
+
+    // Creates copy samples for new experiment
+    expect(sampleTrackInstance.copyTo)
+      .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, allSampleIds);
+
+    // Sets created sample in experiment
+    expect(experimentInstance.updateById).toHaveBeenCalledWith(
+      toExperimentId,
+      { samples_order: JSON.stringify(clonedSamplesIds) },
+    );
+
+    expect(mockRes.json).toHaveBeenCalledWith(toExperimentId);
   });
 });

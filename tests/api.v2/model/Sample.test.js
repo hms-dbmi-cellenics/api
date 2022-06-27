@@ -1,6 +1,11 @@
+// @ts-nocheck
+const _ = require('lodash');
+
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 
 const Sample = require('../../../src/api.v2/model/Sample');
+
+const getSamplesResponse = require('../mocks/data/getSamplesResponse.json');
 
 const mockExperimentId = 'mockExperimentId';
 // @ts-nocheck
@@ -63,5 +68,62 @@ describe('model/Sample', () => {
       sample_id: mockSampleId,
       sample_file_id: mockSampleFileId,
     });
+  });
+
+  it('copyTo works correctly', async () => {
+    const fromExperimentId = 'fromExperimentIdMock';
+    const toExperimentId = 'toExperimentIdMock';
+    const samplesOrder = Object.values(getSamplesResponse).map((sample) => sample.id);
+
+    mockTrx.returning.mockImplementationOnce(() => Promise.resolve([{ id: 0, key: 'Track0' }]));
+
+    const getSamplesSpy = jest.spyOn(Sample.prototype, 'getSamples')
+      .mockImplementationOnce(() => Promise.resolve(getSamplesResponse));
+
+
+    await new Sample().copyTo(fromExperimentId, toExperimentId, samplesOrder);
+
+
+    expect(getSamplesSpy).toHaveBeenCalledWith(fromExperimentId);
+
+    expect(mockTrx).toHaveBeenCalledWith(tableNames.METADATA_TRACK);
+    expect(mockTrx).toHaveBeenCalledWith(tableNames.SAMPLE);
+    expect(mockTrx).toHaveBeenCalledWith(tableNames.SAMPLE_IN_METADATA_TRACK_MAP);
+    expect(mockTrx).toHaveBeenCalledWith(tableNames.SAMPLE_TO_SAMPLE_FILE_MAP);
+
+    expect(mockTrx.insert.mock.calls).toMatchSnapshot();
+    expect(mockTrx.returning.mock.calls).toMatchSnapshot();
+  });
+
+  it('copyTo works correctly if experiment has no metadata tracks', async () => {
+    const fromExperimentId = 'fromExperimentIdMock';
+    const toExperimentId = 'toExperimentIdMock';
+
+    const noMetadataGetSamplesResponse = _.cloneDeep(getSamplesResponse);
+    noMetadataGetSamplesResponse.forEach((sample) => {
+      // eslint-disable-next-line no-param-reassign
+      sample.metadata = {};
+    });
+
+    const samplesOrder = Object.values(noMetadataGetSamplesResponse).map((sample) => sample.id);
+
+    mockTrx.returning.mockImplementationOnce(() => Promise.resolve([{ id: 0, key: 'Track0' }]));
+
+    const getSamplesSpy = jest.spyOn(Sample.prototype, 'getSamples')
+      .mockImplementationOnce(() => Promise.resolve(noMetadataGetSamplesResponse));
+
+
+    await new Sample().copyTo(fromExperimentId, toExperimentId, samplesOrder);
+
+
+    expect(getSamplesSpy).toHaveBeenCalledWith(fromExperimentId);
+
+    expect(mockTrx).toHaveBeenCalledWith(tableNames.SAMPLE);
+    expect(mockTrx).toHaveBeenCalledWith(tableNames.SAMPLE_TO_SAMPLE_FILE_MAP);
+    expect(mockTrx).not.toHaveBeenCalledWith(tableNames.METADATA_TRACK);
+    expect(mockTrx).not.toHaveBeenCalledWith(tableNames.SAMPLE_IN_METADATA_TRACK_MAP);
+
+    expect(mockTrx.insert.mock.calls).toMatchSnapshot();
+    expect(mockTrx.returning.mock.calls).toMatchSnapshot();
   });
 });

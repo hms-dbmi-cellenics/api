@@ -6,9 +6,11 @@ const stub = {
   updateSamplePosition: jest.fn(),
   updateProcessingConfig: jest.fn(),
   getProcessingConfig: jest.fn(),
+  createCopy: jest.fn(),
   addSample: jest.fn(),
   deleteSample: jest.fn(),
   getDownloadLink: jest.fn(),
+  getExampleExperiments: jest.fn(),
   ...BasicModel,
 };
 

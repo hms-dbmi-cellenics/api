@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { v4: uuidv4 } = require('uuid');
 
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
@@ -12,6 +13,7 @@ const config = require('../../config');
 const getLogger = require('../../utils/getLogger');
 const bucketNames = require('../helpers/s3/bucketNames');
 const { getSignedUrl } = require('../../utils/aws/s3');
+const constants = require('../../utils/constants');
 
 const logger = getLogger('[ExperimentModel] - ');
 
@@ -43,18 +45,28 @@ class Experiment extends BasicModel {
     ];
 
     const aliasedExperimentFields = fields.map((field) => `e.${field}`);
-    function mainQuery() {
-      this.select([...aliasedExperimentFields, 'm.key'])
-        .from(tableNames.USER_ACCESS)
-        .where('user_id', userId)
-        .join(`${tableNames.EXPERIMENT} as e`, 'e.id', `${tableNames.USER_ACCESS}.experiment_id`)
-        .leftJoin(`${tableNames.METADATA_TRACK} as m`, 'e.id', 'm.experiment_id')
-        .as('mainQuery');
-    }
 
-    const result = await collapseKeyIntoArray(mainQuery, [...fields], 'key', 'metadataKeys', this.sql);
+    const mainQuery = this.sql
+      .select([...aliasedExperimentFields, 'm.key'])
+      .from(tableNames.USER_ACCESS)
+      .where('user_id', userId)
+      .join(`${tableNames.EXPERIMENT} as e`, 'e.id', `${tableNames.USER_ACCESS}.experiment_id`)
+      .leftJoin(`${tableNames.METADATA_TRACK} as m`, 'e.id', 'm.experiment_id')
+      .as('mainQuery');
+
+    const result = await collapseKeyIntoArray(
+      mainQuery,
+      [...fields],
+      'key',
+      'metadataKeys',
+      this.sql,
+    );
 
     return result;
+  }
+
+  async getExampleExperiments() {
+    return this.getAllExperiments(constants.PUBLIC_ACCESS_ID);
   }
 
   async getExperimentData(experimentId) {
@@ -96,6 +108,26 @@ class Experiment extends BasicModel {
     }
 
     return result;
+  }
+
+  async createCopy(fromExperimentId) {
+    const toExperimentId = uuidv4().replace(/-/g, '');
+
+    const { sql } = this;
+
+    await sql
+      .insert(
+        sql(tableNames.EXPERIMENT)
+          .select(
+            sql.raw('? as id', [toExperimentId]),
+            'name',
+            'description',
+          )
+          .where({ id: fromExperimentId }),
+      )
+      .into(sql.raw(`${tableNames.EXPERIMENT} (id, name, description)`));
+
+    return toExperimentId;
   }
 
   // Sets samples_order as an array that has the sample in oldPosition moved to newPosition
