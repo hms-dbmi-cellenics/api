@@ -46,7 +46,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
@@ -61,7 +60,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
@@ -76,7 +74,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
@@ -91,7 +88,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
@@ -106,7 +102,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
@@ -121,7 +116,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
@@ -136,7 +130,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
@@ -243,7 +236,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
@@ -258,7 +250,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
@@ -273,7 +264,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
@@ -288,7 +278,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
@@ -303,7 +292,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
@@ -318,7 +306,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
@@ -333,7 +320,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
@@ -440,7 +426,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
@@ -455,7 +440,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
@@ -470,7 +454,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
@@ -485,7 +468,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
@@ -500,7 +482,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
@@ -515,7 +496,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
@@ -530,7 +510,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
@@ -601,7 +580,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
@@ -627,7 +605,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
@@ -653,7 +630,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
@@ -679,7 +655,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
@@ -705,7 +680,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
@@ -723,7 +697,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
@@ -738,7 +711,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
@@ -853,7 +825,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
@@ -879,7 +850,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
@@ -905,7 +875,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
@@ -931,7 +900,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
@@ -957,7 +925,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
@@ -975,7 +942,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
@@ -990,7 +956,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
@@ -1105,7 +1070,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
@@ -1131,7 +1095,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
@@ -1157,7 +1120,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
@@ -1183,7 +1145,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
@@ -1209,7 +1170,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
             "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
-            "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
@@ -1227,7 +1187,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
@@ -1242,7 +1201,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
-      "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
