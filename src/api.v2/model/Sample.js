@@ -8,6 +8,10 @@ const sqlClient = require('../../sql/sqlClient');
 const { replaceNullsWithObject } = require('../../sql/helpers');
 const tableNames = require('./tableNames');
 
+const getLogger = require('../../utils/getLogger');
+
+const logger = getLogger('[SampleModel] - ');
+
 const sampleFields = [
   'id',
   'experiment_id',
@@ -98,6 +102,11 @@ class Sample extends BasicModel {
    * @param {*} toExperimentId
    */
   async copyTo(fromExperimentId, toExperimentId, samplesOrder) {
+    if (samplesOrder.length === 0) {
+      logger.log(`${fromExperimentId} doesnt have any samples to copy to ${toExperimentId}`);
+      return [];
+    }
+
     const fromSamples = await this.getSamples(fromExperimentId);
 
     const newSampleIds = [];
