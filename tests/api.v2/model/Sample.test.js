@@ -126,4 +126,22 @@ describe('model/Sample', () => {
     expect(mockTrx.insert.mock.calls).toMatchSnapshot();
     expect(mockTrx.returning.mock.calls).toMatchSnapshot();
   });
+
+  it('copyTo works correctly if experiment has no samples', async () => {
+    const fromExperimentId = 'fromExperimentIdMock';
+    const toExperimentId = 'toExperimentIdMock';
+
+    const samplesOrder = [];
+
+    const copiedSamplesOrder = await new Sample().copyTo(
+      fromExperimentId, toExperimentId, samplesOrder,
+    );
+
+    expect(copiedSamplesOrder).toHaveLength(0);
+
+    expect(mockTrx).not.toHaveBeenCalledWith(tableNames.SAMPLE);
+    expect(mockTrx).not.toHaveBeenCalledWith(tableNames.SAMPLE_TO_SAMPLE_FILE_MAP);
+    expect(mockTrx).not.toHaveBeenCalledWith(tableNames.METADATA_TRACK);
+    expect(mockTrx).not.toHaveBeenCalledWith(tableNames.SAMPLE_IN_METADATA_TRACK_MAP);
+  });
 });
