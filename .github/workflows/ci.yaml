@@ -205,7 +205,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
 
       - id: login-ecr
@@ -291,19 +291,6 @@ jobs:
           enforce_admins: false
           retries: 8
 
-      - name: Push production/develop release to iac for deployment
-        if:
-          (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
-        uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-        with:
-          source_file: '${{ steps.fill-metadata.outputs.deployment-name }}.yaml'
-          destination_repo: '${{ github.repository_owner }}/iac'
-          destination_folder: 'releases/${{ steps.fill-metadata.outputs.kubernetes-env }}'
-          user_email: 'ci@biomage.net'
-          user_name: 'Biomage CI/CD'
-
       - name: Push production/develop template to releases
         if:
           (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
@@ -325,19 +312,6 @@ jobs:
           REF_DASHED: ${{ steps.fill-metadata.outputs.ref-dashed }}
         run: |-
           mv $DEPLOYMENT_NAME.yaml $REF_DASHED.yaml
-
-      - name: Push staging deployment template to iac
-        if:
-          (github.event_name == 'pull_request' || github.event_name == 'push') && matrix.environment == 'staging'
-        uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-        with:
-          source_file: '${{ steps.fill-metadata.outputs.ref-dashed }}.yaml'
-          destination_repo: '${{ github.repository_owner }}/iac'
-          destination_folder: 'releases/staging-candidates/${{ steps.fill-metadata.outputs.deployment-name }}'
-          user_email: 'ci@biomage.net'
-          user_name: 'Biomage CI/CD'
 
       - name: Push staging deployment template to releases
         if:
