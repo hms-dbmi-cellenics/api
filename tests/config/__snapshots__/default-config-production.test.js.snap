@@ -2,11 +2,11 @@
 
 exports[`default-config Returns correct values for production 1`] = `
 Object {
-  "accountId": "242905224710",
   "adminSub": "032abd44-0cd3-4d58-af21-850ca0b95ac7",
   "api": Object {
     "prefix": "/",
   },
+  "awsAccountId": "000000000000",
   "awsRegion": "eu-west-1",
   "cachingEnabled": true,
   "clusterEnv": "production",

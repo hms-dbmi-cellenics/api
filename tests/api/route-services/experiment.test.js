@@ -2,6 +2,7 @@ const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../../src/utils/requireAWS');
 
 const constants = require('../../../src/api/general-services/pipeline-manage/constants');
+const config = require('../../../src/config');
 
 const ExperimentService = require('../../../src/api/route-services/experiment');
 const {
@@ -160,7 +161,7 @@ describe('tests for the experiment service', () => {
         expect(data).toEqual(jsData);
         expect(getObjectSpy).toHaveBeenCalledWith(
           {
-            Bucket: 'cell-sets-test-242905224710',
+            Bucket: `cell-sets-test-${config.awsAccountId}`,
             Key: '12345',
           },
         );
@@ -178,7 +179,7 @@ describe('tests for the experiment service', () => {
         expect(returnValue).toEqual(testDataToPut);
         expect(putObjectSpy).toHaveBeenCalledWith(
           {
-            Bucket: 'cell-sets-test-242905224710',
+            Bucket: `cell-sets-test-${config.awsAccountId}`,
             Key: '12345',
             Body: JSON.stringify({ cellSets: testDataToPut }),
           },
@@ -206,7 +207,7 @@ describe('tests for the experiment service', () => {
         );
         expect(s3DeleteFnSpy).toHaveBeenCalledWith(
           {
-            Bucket: 'biomage-filtered-cells-test-242905224710',
+            Bucket: `biomage-filtered-cells-test-${config.awsAccountId}`,
             Key: experimentId,
           },
         );
@@ -425,7 +426,7 @@ describe('tests for the experiment service', () => {
         expect(signedUrlSpy).toHaveBeenCalledWith(
           'getObject',
           {
-            Bucket: 'processed-matrix-test-242905224710',
+            Bucket: `processed-matrix-test-${config.awsAccountId}`,
             Expires: 120,
             Key: '12345/r.rds',
             ResponseContentDisposition: `attachment; filename ="${expectedFileName}"`,

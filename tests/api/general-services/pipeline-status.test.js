@@ -4,6 +4,7 @@ const constants = require('../../../src/api/general-services/pipeline-manage/con
 const { fullHistory, singleIterationHistory, noPodsToDeleteHistory } = require('./pipeline-status.test.data');
 const pipelineStatus = require('../../../src/api/general-services/pipeline-status');
 const pipelineConstants = require('../../../src/api/general-services/pipeline-manage/constants');
+const config = require('../../../src/config');
 
 
 const {
@@ -279,7 +280,7 @@ describe('pipelineStatus', () => {
 
   AWSMock.mock('StepFunctions', 'describeExecution', (params, callback) => {
     const successfulExecution = {
-      stateMachineArn: 'arn:aws:states:eu-west-1:242905224710:execution:biomage-gem2s-development-11111444448882220044as80023023942342311',
+      stateMachineArn: `arn:aws:states:eu-west-1:${config.awsAccountId}:execution:biomage-gem2s-development-11111444448882220044as80023023942342311`,
       startDate: new Date(0),
       stopDate: new Date(0),
       status: constants.SUCCEEDED,

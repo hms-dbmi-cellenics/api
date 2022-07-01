@@ -180,8 +180,8 @@ const buildStateMachineDefinition = (skeleton, context) => {
 };
 
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) => {
-  const accountId = await config.awsAccountIdPromise;
-  const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
+  const accountId = config.awsAccountId;
+  const roleArn = `arn:aws:iam::${config.awsAccountId}:role/state-machine-role-${config.clusterEnv}`;
   logger.log(`Fetching processing settings for ${experimentId}`);
 
   const {
@@ -263,7 +263,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
 };
 
 const createGem2SPipeline = async (experimentId, taskParams) => {
-  const accountId = await config.awsAccountIdPromise;
+  const accountId = config.awsAccountId;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
   const context = {

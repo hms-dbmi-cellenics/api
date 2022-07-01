@@ -3,6 +3,7 @@ const { UnauthorizedError, NotFoundError, InternalServerError } = require('../..
 const getWorkResults = require('../../../../src/api.v2/helpers/worker/getWorkResults');
 const { mockS3GetObjectTagging, mockS3GetSignedUrl } = require('../../../test-utils/mockAWSServices');
 const fake = require('../../../test-utils/constants');
+const config = require('../../../../src/config');
 
 const tags = { TagSet: [{ Key: 'experimentId', Value: fake.EXPERIMENT_ID }, { Key: 'otherTag', Value: 'mockOtherTag' }] };
 
@@ -18,7 +19,7 @@ describe('getWorkResults', () => {
 
     await getWorkResults(fake.EXPERIMENT_ID, 'mockETag');
     expect(s3Spy).toHaveBeenCalled();
-    expect(signedUrlSpy).toHaveBeenCalledWith('getObject', { Bucket: 'worker-results-test-242905224710', Key: 'mockETag' });
+    expect(signedUrlSpy).toHaveBeenCalledWith('getObject', { Bucket: `worker-results-test-${config.awsAccountId}`, Key: 'mockETag' });
   });
 
   it('Non-existent key throws a NotFoundError', async () => {

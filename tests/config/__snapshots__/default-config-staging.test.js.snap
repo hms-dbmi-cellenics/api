@@ -2,11 +2,11 @@
 
 exports[`default-config Returns correct values for staging default 1`] = `
 Object {
-  "accountId": "242905224710",
   "adminSub": "0b17683f-363b-4466-b2e2-5bf11c38a76e",
   "api": Object {
     "prefix": "/",
   },
+  "awsAccountId": "000000000000",
   "awsRegion": "eu-west-1",
   "cachingEnabled": false,
   "clusterEnv": "staging",

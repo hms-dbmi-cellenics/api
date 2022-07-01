@@ -1,6 +1,7 @@
 const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../../src/utils/requireAWS');
 const WorkSubmitService = require('../../../src/api/general-services/work-submit');
+const config = require('../../../src/config');
 
 jest.mock('@kubernetes/client-node');
 
@@ -29,7 +30,7 @@ describe('tests for the work-submit service', () => {
       expect(sendMessageSpy).toHaveBeenCalledWith(
         {
           MessageBody: JSON.stringify(workRequest),
-          QueueUrl: 'https://sqs.eu-west-1.amazonaws.com/test-account-id/queue-job-1cd932135df1889ebf59575eb8fbe4b6c29858ee-test.fifo',
+          QueueUrl: `https://sqs.eu-west-1.amazonaws.com/${config.awsAccountId}/queue-job-1cd932135df1889ebf59575eb8fbe4b6c29858ee-test.fifo`,
           MessageGroupId: 'work',
         },
       );

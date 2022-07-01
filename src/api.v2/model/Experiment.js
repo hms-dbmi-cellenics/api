@@ -210,7 +210,7 @@ class Experiment extends BasicModel {
     const { clusterEnv } = config;
 
     const filenamePrefix = experimentId.split('-')[0];
-    const requestedBucketName = `${downloadType}-${clusterEnv}-${config.accountId}`;
+    const requestedBucketName = `${downloadType}-${clusterEnv}-${config.awsAccountId}`;
     const objectKey = `${formatExperimentId(experimentId)}/r.rds`;
 
     switch (requestedBucketName) {
