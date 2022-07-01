@@ -44,7 +44,7 @@ describe('model/Plot', () => {
     expect(mockFindOne).toHaveBeenCalledWith({ id: mockPlotUuid, experiment_id: mockExperimentId });
 
     expect(getObject).toHaveBeenCalledTimes(1);
-    expect(getObject).toHaveBeenCalledWith({ Bucket: `plots-tables-${config.clusterEnv}-242905224710`, Key: mockS3DataKey });
+    expect(getObject).toHaveBeenCalledWith({ Bucket: `plots-tables-${config.clusterEnv}-${config.awsAccountId}`, Key: mockS3DataKey });
 
     expect(result).toEqual({ config: mockConfig, plotData: mockPlotData });
   });

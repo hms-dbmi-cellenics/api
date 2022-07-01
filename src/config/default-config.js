@@ -56,20 +56,10 @@ async function getAwsPoolId() {
   return poolId;
 }
 
-async function getAwsAccountId() {
-  const sts = new AWS.STS({
-    region: awsRegion,
-  });
-
-  const data = await sts.getCallerIdentity({}).promise();
-  return data.Account;
-}
-
-
 
 const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
-  accountId: process.env.NODE_ENV === 'development' ? '000000000000' : '242905224710',
+  awsAccountId: process.env.AWS_ACCOUNT_ID || '000000000000',
   clusterEnv: process.env.CLUSTER_ENV || 'development',
   sandboxId: process.env.SANDBOX_ID || 'default',
   rdsSandboxId: process.env.RDS_SANDBOX_ID || 'default',
@@ -78,7 +68,6 @@ const config = {
   pipelineNamespace: `pipeline-${process.env.SANDBOX_ID || 'default'}`,
   awsRegion,
   domainName,
-  awsAccountIdPromise: getAwsAccountId(),
   awsUserPoolIdPromise: getAwsPoolId(),
   cognitoISP,
   githubToken: process.env.READONLY_API_TOKEN_GITHUB,
@@ -119,7 +108,6 @@ if (config.clusterEnv === 'development') {
   const endpoint = 'http://localhost:4566';
   logger.log(`Running development cluster on ${endpoint}, patching AWS to use InfraMock endpoint...`);
   config.cachingEnabled = false;
-  config.awsAccountIdPromise = (async () => '000000000000')();
   AWS.config.update({
     endpoint,
     sslEnabled: false,

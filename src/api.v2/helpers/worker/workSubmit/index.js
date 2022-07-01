@@ -71,9 +71,7 @@ class WorkSubmitService {
       if (config.clusterEnv === 'development') {
         queueUrls.push('http://localhost:4566/000000000000/development-queue.fifo');
       } else {
-        const accountId = await config.awsAccountIdPromise;
-
-        queueUrls.push(`https://sqs.${config.awsRegion}.amazonaws.com/${accountId}/${this.workQueueName}`);
+        queueUrls.push(`https://sqs.${config.awsRegion}.amazonaws.com/${config.awsAccountId}/${this.workQueueName}`);
       }
 
       await Promise.all(queueUrls.map((queueUrl) => this.sendMessageToQueue(queueUrl)));

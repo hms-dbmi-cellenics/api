@@ -29,7 +29,7 @@ Array [
         "level": "OFF",
       },
       "name": "biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
+      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
       "tags": Array [
         Object {
           "key": "experimentId",
@@ -92,7 +92,7 @@ Array [
         "level": "OFF",
       },
       "name": "biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
+      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
       "tags": Array [
         Object {
           "key": "experimentId",
@@ -155,7 +155,7 @@ Array [
         "level": "OFF",
       },
       "name": "biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
+      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
       "tags": Array [
         Object {
           "key": "experimentId",
@@ -181,8 +181,8 @@ Array [
   Object {
     "type": "return",
     "value": Object {
-      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
-      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
+      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
     },
   },
 ]
@@ -194,7 +194,7 @@ Array [
     "type": "return",
     "value": Object {
       "input": "{\\"retries\\":[\\"retry\\"]}",
-      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
       "traceHeader": undefined,
     },
   },
@@ -227,7 +227,7 @@ Array [
                   "taskName": "cellSizeDistribution",
                   "uploadCountMatrix": false,
                 },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
+                "Resource": "arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid",
                 "ResultPath": null,
                 "TimeoutSeconds": 10800,
                 "Type": "Task",
@@ -256,7 +256,7 @@ Array [
                   "taskName": "classifier",
                   "uploadCountMatrix": false,
                 },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
+                "Resource": "arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid",
                 "ResultPath": null,
                 "TimeoutSeconds": 10800,
                 "Type": "Task",
@@ -280,7 +280,7 @@ Array [
             "taskName": "configureEmbedding",
             "uploadCountMatrix": false,
           },
-          "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
+          "Resource": "arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid",
           "ResultPath": null,
           "TimeoutSeconds": 10800,
           "Type": "Task",
@@ -298,7 +298,7 @@ Array [
             "taskName": "dataIntegration",
             "uploadCountMatrix": true,
           },
-          "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
+          "Resource": "arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid",
           "ResultPath": null,
           "TimeoutSeconds": 10800,
           "Type": "Task",
@@ -337,7 +337,7 @@ Array [
                   "taskName": "doubletScores",
                   "uploadCountMatrix": false,
                 },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
+                "Resource": "arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid",
                 "ResultPath": null,
                 "TimeoutSeconds": 10800,
                 "Type": "Task",
@@ -370,7 +370,7 @@ Array [
                   "taskName": "mitochondrialContent",
                   "uploadCountMatrix": false,
                 },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
+                "Resource": "arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid",
                 "ResultPath": null,
                 "TimeoutSeconds": 10800,
                 "Type": "Task",
@@ -399,7 +399,7 @@ Array [
                   "taskName": "numGenesVsNumUmis",
                   "uploadCountMatrix": false,
                 },
-                "Resource": "arn:aws:states:eu-west-1:test-account-id:activity:pipeline-test-mock-uuid",
+                "Resource": "arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid",
                 "ResultPath": null,
                 "TimeoutSeconds": 10800,
                 "Type": "Task",
@@ -421,7 +421,7 @@ Array [
                 "StringValue": "PipelineResponse",
               },
             },
-            "TopicArn": "arn:aws:sns:eu-west-1:test-account-id:work-results-test-default",
+            "TopicArn": "arn:aws:sns:eu-west-1:000000000000:work-results-test-default",
           },
           "Resource": "arn:aws:states:::sns:publish",
           "ResultPath": null,
@@ -523,7 +523,7 @@ Array [
         "level": "OFF",
       },
       "name": "biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
+      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
       "tags": Array [
         Object {
           "key": "experimentId",
@@ -549,8 +549,8 @@ Array [
   Object {
     "type": "return",
     "value": Object {
-      "roleArn": "arn:aws:iam::test-account-id:role/state-machine-role-test",
-      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
+      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
     },
   },
 ]
@@ -562,7 +562,7 @@ Array [
     "type": "return",
     "value": Object {
       "input": "{\\"samples\\":[{\\"sampleUuid\\":\\"oneSample\\",\\"index\\":0},{\\"sampleUuid\\":\\"otherSample\\",\\"index\\":1}],\\"retries\\":[\\"retry\\"]}",
-      "stateMachineArn": "arn:aws:states:eu-west-1:test-account-id:stateMachine:biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
       "traceHeader": undefined,
     },
   },

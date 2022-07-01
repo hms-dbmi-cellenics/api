@@ -34,10 +34,10 @@ const logger = getLogger('[ExperimentService] - ');
 class ExperimentService {
   constructor() {
     this.experimentsTableName = `experiments-${config.clusterEnv}`;
-    this.cellSetsBucketName = `cell-sets-${config.clusterEnv}-${config.accountId}`;
-    this.processedMatrixBucketName = `processed-matrix-${config.clusterEnv}-${config.accountId}`;
-    this.rawSeuratBucketName = `biomage-source-${config.clusterEnv}-${config.accountId}`;
-    this.filteredCellsBucketName = `biomage-filtered-cells-${config.clusterEnv}-${config.accountId}`;
+    this.cellSetsBucketName = `cell-sets-${config.clusterEnv}-${config.awsAccountId}`;
+    this.processedMatrixBucketName = `processed-matrix-${config.clusterEnv}-${config.awsAccountId}`;
+    this.rawSeuratBucketName = `biomage-source-${config.clusterEnv}-${config.awsAccountId}`;
+    this.filteredCellsBucketName = `biomage-filtered-cells-${config.clusterEnv}-${config.awsAccountId}`;
   }
 
   async getExperimentData(experimentId) {
@@ -345,7 +345,7 @@ class ExperimentService {
     const { projectId } = await getExperimentAttributes(this.experimentsTableName, experimentId, ['projectId']);
 
     const filenamePrefix = projectId.split('-')[0];
-    const requestedBucketName = `${downloadType}-${config.clusterEnv}-${config.accountId}`;
+    const requestedBucketName = `${downloadType}-${config.clusterEnv}-${config.awsAccountId}`;
     const objectKey = `${experimentId}/r.rds`;
 
     switch (requestedBucketName) {

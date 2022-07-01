@@ -19,7 +19,7 @@ class SamplesService {
   constructor() {
     this.experimentsTableName = `experiments-${config.clusterEnv}`;
     this.samplesTableName = `samples-${config.clusterEnv}`;
-    this.sampleFilesBucketName = `biomage-originals-${config.clusterEnv}-${config.accountId}`;
+    this.sampleFilesBucketName = `biomage-originals-${config.clusterEnv}-${config.awsAccountId}`;
     this.projectsTableName = `projects-${config.clusterEnv}`;
   }
 

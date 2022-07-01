@@ -6,7 +6,7 @@ const validateRequest = require('../../utils/schema-validator');
 class PlotsTablesService {
   constructor() {
     this.tableName = `plots-tables-${config.clusterEnv}`;
-    this.bucketName = `plots-tables-${config.clusterEnv}-${config.accountId}`;
+    this.bucketName = `plots-tables-${config.clusterEnv}-${config.awsAccountId}`;
   }
 
   async create(experimentId, plotUuid, data) {
