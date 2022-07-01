@@ -108,7 +108,6 @@ if (config.clusterEnv === 'development') {
   const endpoint = 'http://localhost:4566';
   logger.log(`Running development cluster on ${endpoint}, patching AWS to use InfraMock endpoint...`);
   config.cachingEnabled = false;
-  config.awsAccountId = '000000000000';
   AWS.config.update({
     endpoint,
     sslEnabled: false,
