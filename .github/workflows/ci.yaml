@@ -118,6 +118,13 @@ jobs:
           # and turn it into `refs-heads-master`
           REF_ID=$(echo $GITHUB_REF | sed 's/\//-/g')
 
+          echo "Job details"
+          echo "${{ github.event_name }}"
+          echo "${{ github.event.action }}"
+          echo "$REF_ID"
+          echo "$GITHUB_REF"
+          echo "$GITHUB_SHA"
+          echo "${{ github.event.pull_request.head.sha }}"
           # the final tag is something like:
           # refs-heads-master-a4f8bc313dae
           # this is what we push to ECR
