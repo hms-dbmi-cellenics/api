@@ -54,13 +54,7 @@ const sendFailedSlackMessage = async (message, user, process, stateMachineArn) =
       },
     ],
   };
-
-  const webhookUrl = getWebhookUrl();
-
-  console.log('*** webhookURL', webhookUrl);
-  console.log('*** feedbackData', JSON.stringify(feedbackData));
-
-  const r = await fetch(webhookUrl, {
+  const r = await fetch(getWebhookUrl(), {
     method: 'POST',
     body: JSON.stringify(feedbackData),
   });
