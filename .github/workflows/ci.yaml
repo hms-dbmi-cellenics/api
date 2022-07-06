@@ -106,6 +106,8 @@ jobs:
     name: Build Docker container
     runs-on: ubuntu-20.04
     needs: test
+    outputs:
+      commit-sha: ${{ steps.ref.outputs.tag }}
     steps:
       - id: checkout
         name: Check out source code
@@ -246,7 +248,7 @@ jobs:
             RDS_SANDBOX_ID="default"
             CHART_REF="master"
             KUBERNETES_ENV="staging"
-            IMAGE_TAG="$REF_DASHED-$GITHUB_SHA"
+            IMAGE_TAG="$REF_DASHED-$COMMIT_SHA"
             IMAGE_GLOB="glob:$REF_DASHED-*"
             REPLICA_COUNT="2"
           fi
@@ -256,7 +258,7 @@ jobs:
             RDS_SANDBOX_ID="STAGING_RDS_SANDBOX_ID"
             CHART_REF="STAGING_CHART_REF"
             KUBERNETES_ENV="staging"
-            IMAGE_TAG="$REF_DASHED-$GITHUB_SHA"
+            IMAGE_TAG="$REF_DASHED-$COMMIT_SHA"
             IMAGE_GLOB="glob:$REF_DASHED-*"
             REPLICA_COUNT="1"
           fi
@@ -285,6 +287,7 @@ jobs:
           cat $DEPLOYMENT_NAME.yaml
         env:
           IMAGE_NAME: ${{ format('{0}/{1}:{2}', steps.login-ecr.outputs.registry, needs.build-docker.outputs.repo-name, needs.build-docker.outputs.tag) }}
+          COMMIT_SHA: ${{ needs.build-docker.outputs.commit-sha }}
 
 
       - id: disable-admin-enforcement
