@@ -10,7 +10,6 @@ const safeBatchGetItem = require('../../utils/safeBatchGetItem');
 const { getSignedUrl } = require('../../utils/aws/s3');
 
 const constants = require('../general-services/pipeline-manage/constants');
-const downloadTypes = require('../../utils/downloadTypes');
 
 const {
   getExperimentAttributes,
@@ -35,10 +34,10 @@ const logger = getLogger('[ExperimentService] - ');
 class ExperimentService {
   constructor() {
     this.experimentsTableName = `experiments-${config.clusterEnv}`;
-    this.cellSetsBucketName = `cell-sets-${config.clusterEnv}`;
-    this.processedMatrixBucketName = `processed-matrix-${config.clusterEnv}`;
-    this.rawSeuratBucketName = `biomage-source-${config.clusterEnv}`;
-    this.filteredCellsBucketName = `biomage-filtered-cells-${config.clusterEnv}`;
+    this.cellSetsBucketName = `cell-sets-${config.clusterEnv}-${config.awsAccountId}`;
+    this.processedMatrixBucketName = `processed-matrix-${config.clusterEnv}-${config.awsAccountId}`;
+    this.rawSeuratBucketName = `biomage-source-${config.clusterEnv}-${config.awsAccountId}`;
+    this.filteredCellsBucketName = `biomage-filtered-cells-${config.clusterEnv}-${config.awsAccountId}`;
   }
 
   async getExperimentData(experimentId) {
@@ -69,7 +68,7 @@ class ExperimentService {
         (experiment) => convertToJsObject(experiment),
       );
     } catch (e) {
-      if (e.statusCode === 400) throw new NotFoundError('Experiments not found');
+      if (e.statusCode === 400) throw new BadRequestError(e.message);
       throw e;
     }
   }
@@ -87,8 +86,6 @@ class ExperimentService {
       ':lastViewed': body.lastViewed,
       ':projectId': body.projectId,
       ':description': body.description,
-      ':input': body.input,
-      ':organism': body.organism,
       ':meta': body.meta || {},
       ':processingConfig': {},
       ':sampleIds': body.sampleIds,
@@ -243,6 +240,8 @@ class ExperimentService {
   }
 
   async patchCellSets(experimentId, patch) {
+    logger.log(`PATCH cell sets in s3 for experiment ${experimentId}`);
+
     const cellSetsObject = await this.getCellSets(experimentId);
     const { cellSets: cellSetsList } = cellSetsObject;
 
@@ -255,7 +254,7 @@ class ExperimentService {
      */
     const patchedArray = jsonMerger.mergeObjects(
       [cellSetsList, patch],
-    ).filter((x) => x !== undefined);
+    );
 
     const response = await this.updateCellSets(experimentId, patchedArray);
 
@@ -341,32 +340,27 @@ class ExperimentService {
   async downloadData(experimentId, downloadType) {
     logger.log(`Providing download link for download ${downloadType} for experiment ${experimentId}`);
 
-    let objectKey = '';
-    let bucket = '';
     let downloadedFileName = '';
 
-    if (!Object.values(downloadTypes).includes(downloadType)) throw new BadRequestError('Invalid download type requested');
-
     const { projectId } = await getExperimentAttributes(this.experimentsTableName, experimentId, ['projectId']);
-    const filenamePrefix = projectId.split('-')[0];
 
-    // Also defined in UI repo in utils/downloadTypes
-    // eslint-disable-next-line default-case
-    switch (downloadType) {
-      case downloadTypes.PROCESSED_SEURAT_OBJECT:
-        bucket = this.processedMatrixBucketName;
-        objectKey = `${experimentId}/r.rds`;
+    const filenamePrefix = projectId.split('-')[0];
+    const requestedBucketName = `${downloadType}-${config.clusterEnv}-${config.awsAccountId}`;
+    const objectKey = `${experimentId}/r.rds`;
+
+    switch (requestedBucketName) {
+      case this.processedMatrixBucketName:
         downloadedFileName = `${filenamePrefix}_processed_matrix.rds`;
         break;
-      case downloadTypes.RAW_SEURAT_OBJECT:
-        bucket = this.rawSeuratBucketName;
-        objectKey = `${experimentId}/r.rds`;
+      case this.rawSeuratBucketName:
         downloadedFileName = `${filenamePrefix}_raw_matrix.rds`;
         break;
+      default:
+        throw new BadRequestError('Invalid download type requested');
     }
 
     const params = {
-      Bucket: bucket,
+      Bucket: requestedBucketName,
       Key: objectKey,
       ResponseContentDisposition: `attachment; filename ="${downloadedFileName}"`,
       Expires: 120,
@@ -390,9 +384,9 @@ class ExperimentService {
     const dynamodb = createDynamoDbInstance();
 
     try {
-      await dynamodb.deleteItem(dynamoParams).send();
+      await dynamodb.deleteItem(dynamoParams).promise();
     } catch (e) {
-      if (e.statusCode === 404) throw NotFoundError(`Experiment not found in ${this.experimentsTableName}`);
+      if (e.statusCode === 404) throw new NotFoundError(`Experiment not found in ${this.experimentsTableName}`);
       throw e;
     }
   }

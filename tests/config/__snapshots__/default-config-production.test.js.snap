@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`default-config Returns correct values for production 1`] = `
+Object {
+  "adminSub": "032abd44-0cd3-4d58-af21-850ca0b95ac7",
+  "api": Object {
+    "prefix": "/",
+  },
+  "awsAccountId": "000000000000",
+  "awsRegion": "eu-west-1",
+  "cachingEnabled": true,
+  "clusterEnv": "production",
+  "cognitoISP": Object {
+    "listUserPools": Object {
+      "promise": [MockFunction],
+    },
+  },
+  "corsOriginUrl": "https://localhost:5000",
+  "domainName": "localhost:5000",
+  "githubToken": undefined,
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/production/pipeline.yaml",
+  "pipelineNamespace": "pipeline-default",
+  "podName": "local",
+  "port": 3000,
+  "rdsSandboxId": "default",
+  "sandboxId": "default",
+  "workerInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/production/worker.yaml",
+  "workerNamespace": "worker-default",
+}
+`;

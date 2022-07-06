@@ -1,0 +1,291 @@
+{
+    "id": "001db391-89a1-e514-6fce-6d864c641bd0",
+    "name": "GSE183716 - Covid19 MISC",
+    "description": "",
+    "samplesOrder": [
+        "a4d25ebe-e46a-4a57-8e02-edbd193a5f1b",
+        "bc777681-b253-4673-9ac0-2a8b19a55404"
+    ],
+    "notifyByEmail": true,
+    "processingConfig": {
+        "classifier": {
+            "auto": true,
+            "enabled": false,
+            "prefiltered": true,
+            "filterSettings": {
+                "FDR": 0.01
+            },
+            "a4d25ebe-e46a-4a57-8e02-edbd193a5f1b": {
+                "auto": true,
+                "enabled": false,
+                "prefiltered": true,
+                "filterSettings": {
+                    "FDR": 0.01
+                },
+                "defaultFilterSettings": {
+                    "FDR": 0.01
+                }
+            },
+            "bc777681-b253-4673-9ac0-2a8b19a55404": {
+                "auto": true,
+                "enabled": false,
+                "prefiltered": true,
+                "filterSettings": {
+                    "FDR": 0.01
+                },
+                "defaultFilterSettings": {
+                    "FDR": 0.01
+                }
+            }
+        },
+        "doubletScores": {
+            "auto": true,
+            "enabled": true,
+            "filterSettings": {
+                "binStep": 0.05,
+                "probabilityThreshold": 0.5
+            },
+            "a4d25ebe-e46a-4a57-8e02-edbd193a5f1b": {
+                "auto": true,
+                "enabled": true,
+                "filterSettings": {
+                    "binStep": 0.05,
+                    "probabilityThreshold": 0.4495137
+                },
+                "defaultFilterSettings": {
+                    "binStep": 0.05,
+                    "probabilityThreshold": 0.4495137
+                }
+            },
+            "bc777681-b253-4673-9ac0-2a8b19a55404": {
+                "auto": true,
+                "enabled": true,
+                "filterSettings": {
+                    "binStep": 0.05,
+                    "probabilityThreshold": 0.6213194
+                },
+                "defaultFilterSettings": {
+                    "binStep": 0.05,
+                    "probabilityThreshold": 0.6213194
+                }
+            }
+        },
+        "dataIntegration": {
+            "dataIntegration": {
+                "method": "harmony",
+                "methodSettings": {
+                    "fastmnn": {
+                        "numGenes": 2000,
+                        "normalisation": "logNormalize"
+                    },
+                    "harmony": {
+                        "numGenes": 2000,
+                        "normalisation": "logNormalize"
+                    },
+                    "seuratv4": {
+                        "numGenes": 2000,
+                        "normalisation": "logNormalize"
+                    },
+                    "unisample": {
+                        "numGenes": 2000,
+                        "normalisation": "logNormalize"
+                    }
+                }
+            },
+            "dimensionalityReduction": {
+                "method": "rpca",
+                "numPCs": 30,
+                "excludeGeneCategories": []
+            }
+        },
+        "numGenesVsNumUmis": {
+            "enabled": true,
+            "filterSettings": {
+                "regressionType": "gam",
+                "regressionTypeSettings": {
+                    "gam": {
+                        "p.level": 0.001
+                    }
+                }
+            },
+            "a4d25ebe-e46a-4a57-8e02-edbd193a5f1b": {
+                "auto": true,
+                "enabled": true,
+                "filterSettings": {
+                    "regressionType": "linear",
+                    "regressionTypeSettings": {
+                        "linear": {
+                            "p.level": 0.0001386194
+                        },
+                        "spline": {
+                            "p.level": 0.0001386194
+                        }
+                    }
+                },
+                "defaultFilterSettings": {
+                    "regressionType": "linear",
+                    "regressionTypeSettings": {
+                        "linear": {
+                            "p.level": 0.0001386194
+                        },
+                        "spline": {
+                            "p.level": 0.0001386194
+                        }
+                    }
+                }
+            },
+            "bc777681-b253-4673-9ac0-2a8b19a55404": {
+                "auto": true,
+                "enabled": true,
+                "filterSettings": {
+                    "regressionType": "linear",
+                    "regressionTypeSettings": {
+                        "linear": {
+                            "p.level": 0.0001264702
+                        },
+                        "spline": {
+                            "p.level": 0.0001264702
+                        }
+                    }
+                },
+                "defaultFilterSettings": {
+                    "regressionType": "linear",
+                    "regressionTypeSettings": {
+                        "linear": {
+                            "p.level": 0.0001264702
+                        },
+                        "spline": {
+                            "p.level": 0.0001264702
+                        }
+                    }
+                }
+            }
+        },
+        "configureEmbedding": {
+            "embeddingSettings": {
+                "method": "umap",
+                "methodSettings": {
+                    "tsne": {
+                        "perplexity": 30,
+                        "learningRate": 738.75
+                    },
+                    "umap": {
+                        "distanceMetric": "cosine",
+                        "minimumDistance": 0.3
+                    }
+                }
+            },
+            "clusteringSettings": {
+                "method": "louvain",
+                "methodSettings": {
+                    "louvain": {
+                        "resolution": 0.8
+                    }
+                }
+            }
+        },
+        "cellSizeDistribution": {
+            "auto": true,
+            "enabled": false,
+            "filterSettings": {
+                "binStep": 200,
+                "minCellSize": 1080
+            },
+            "a4d25ebe-e46a-4a57-8e02-edbd193a5f1b": {
+                "auto": true,
+                "enabled": false,
+                "filterSettings": {
+                    "binStep": 200,
+                    "minCellSize": 628
+                },
+                "defaultFilterSettings": {
+                    "binStep": 200,
+                    "minCellSize": 628
+                }
+            },
+            "bc777681-b253-4673-9ac0-2a8b19a55404": {
+                "auto": true,
+                "enabled": false,
+                "filterSettings": {
+                    "binStep": 200,
+                    "minCellSize": 630
+                },
+                "defaultFilterSettings": {
+                    "binStep": 200,
+                    "minCellSize": 630
+                }
+            }
+        },
+        "mitochondrialContent": {
+            "auto": true,
+            "enabled": true,
+            "filterSettings": {
+                "method": "absoluteThreshold",
+                "methodSettings": {
+                    "absoluteThreshold": {
+                        "binStep": 0.05,
+                        "maxFraction": 0.1
+                    }
+                }
+            },
+            "a4d25ebe-e46a-4a57-8e02-edbd193a5f1b": {
+                "auto": true,
+                "enabled": true,
+                "filterSettings": {
+                    "method": "absoluteThreshold",
+                    "methodSettings": {
+                        "absoluteThreshold": {
+                            "binStep": 0.05,
+                            "maxFraction": 0.1
+                        }
+                    }
+                },
+                "defaultFilterSettings": {
+                    "method": "absoluteThreshold",
+                    "methodSettings": {
+                        "absoluteThreshold": {
+                            "binStep": 0.05,
+                            "maxFraction": 0.1
+                        }
+                    }
+                }
+            },
+            "bc777681-b253-4673-9ac0-2a8b19a55404": {
+                "auto": true,
+                "enabled": true,
+                "filterSettings": {
+                    "method": "absoluteThreshold",
+                    "methodSettings": {
+                        "absoluteThreshold": {
+                            "binStep": 0.05,
+                            "maxFraction": 0.1
+                        }
+                    }
+                },
+                "defaultFilterSettings": {
+                    "method": "absoluteThreshold",
+                    "methodSettings": {
+                        "absoluteThreshold": {
+                            "binStep": 0.05,
+                            "maxFraction": 0.1
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "createdAt": "2021-10-26 14:12:23.666+00",
+    "updatedAt": "2021-10-26 14:51:30.974+00",
+    "pipelines": {
+        "qc": {
+            "paramsHash": null,
+            "executionArn": "arn:aws:states:eu-west-1:242905224710:execution:biomage-qc-production-bc6c4292d46112103828a19eb6027b7d236ec0c2:90ed77ea-d440-4fe0-98ee-4d3fa36ed855",
+            "stateMachineArn": "arn:aws:states:eu-west-1:242905224710:stateMachine:biomage-qc-production-bc6c4292d46112103828a19eb6027b7d236ec0c2"
+        },
+        "gem2s": {
+            "paramsHash": "ahash",
+            "executionArn": "arn:aws:states:eu-west-1:242905224710:execution:biomage-gem2s-production-bc6c4292d46112103828a19eb6027b7d236ec0c2:c270886a-12bc-404d-8a9d-d550cb48b685",
+            "stateMachineArn": "arn:aws:states:eu-west-1:242905224710:stateMachine:biomage-gem2s-production-bc6c4292d46112103828a19eb6027b7d236ec0c2"
+        }
+    }
+  }

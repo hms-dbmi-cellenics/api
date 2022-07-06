@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getSampleFileDownloadUrl works correctly 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "getObject",
+      Object {
+        "Bucket": "biomage-originals-test-000000000000",
+        "Key": "123",
+        "ResponseContentDisposition": "attachment; filename=\\"features.tsv.gz\\"",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": "signedUrl",
+    },
+  ],
+}
+`;
+
+exports[`getSampleFileUploadUrl works correctly with metadata cellrangerVersion 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "putObject",
+      Object {
+        "Bucket": "biomage-originals-test-000000000000",
+        "Expires": 3600,
+        "Key": "mockSampleFileId",
+      },
+    ],
+    Array [
+      "putObject",
+      Object {
+        "Bucket": "biomage-originals-test-000000000000",
+        "Expires": 3600,
+        "Key": "mockSampleFileId",
+        "Metadata": Object {
+          "cellranger_version": "v2",
+        },
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": "signedUrl",
+    },
+    Object {
+      "type": "return",
+      "value": "signedUrl",
+    },
+  ],
+}
+`;
+
+exports[`getSampleFileUploadUrl works correctly without metadata 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "putObject",
+      Object {
+        "Bucket": "biomage-originals-test-000000000000",
+        "Expires": 3600,
+        "Key": "mockSampleFileId",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": "signedUrl",
+    },
+  ],
+}
+`;

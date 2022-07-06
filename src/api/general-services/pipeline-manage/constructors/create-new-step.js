@@ -30,6 +30,7 @@ const getQCParams = (task, context, stepArgs) => {
     ...perSample ? { 'sampleUuid.$': '$.sampleUuid' } : { sampleUuid: '' },
     ...uploadCountMatrix ? { uploadCountMatrix: true } : { uploadCountMatrix: false },
     authJWT: context.authJWT,
+    apiVersion: 'v1',
   };
 };
 
@@ -69,6 +70,7 @@ const createNewStep = (context, step, stepArgs) => {
     Resource: activityArn,
     ResultPath: null,
     TimeoutSeconds: 10800,
+    HeartbeatSeconds: 90,
     Parameters: params,
     ...!step.End && { Next: step.XNextOnCatch || step.Next },
   };

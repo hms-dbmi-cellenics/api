@@ -62,18 +62,18 @@ const singleSampleProcessingConfig = (sampleId) => ({
     [sampleId]: {
       auto: true,
       filterSettings: {
-        method: 'absolute_threshold',
+        method: 'absoluteThreshold',
         methodSettings: {
-          absolute_threshold: {
+          absoluteThreshold: {
             maxFraction: 0.1,
             binStep: 0.05,
           },
         },
       },
       defaultFilterSettings: {
-        method: 'absolute_threshold',
+        method: 'absoluteThreshold',
         methodSettings: {
-          absolute_threshold: {
+          absoluteThreshold: {
             maxFraction: 0.1,
             binStep: 0.05,
           },

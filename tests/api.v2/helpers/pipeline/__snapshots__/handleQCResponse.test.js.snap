@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`handleQCResponse module handleQCResponse main function Updates processing config when output contains a valid config 1`] = `
+Array [
+  Array [
+    "experimentid11111111111111111111",
+  ],
+]
+`;
+
+exports[`handleQCResponse module handleQCResponse main function Updates processing config when output contains a valid config 2`] = `
+Array [
+  Array [
+    "experimentid11111111111111111111",
+    Array [
+      Object {
+        "body": Object {
+          "aaaaaaaa-bbbb-3333-4444-999999999999": Object {
+            "api_url": "http://api-url-to-our-url.api-to.etc.local:3000",
+            "auth_JWT": "Bearer Im your token man",
+            "auto": true,
+            "defaultFilterSettings": Object {
+              "binStep": 0.05,
+              "probabilityThreshold": 0.7622447,
+            },
+            "enabled": true,
+            "filterSettings": Object {
+              "binStep": 0.05,
+              "probabilityThreshold": 0.7622447,
+            },
+          },
+        },
+        "name": "classifier",
+      },
+    ],
+  ],
+]
+`;

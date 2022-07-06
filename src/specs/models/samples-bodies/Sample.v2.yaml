@@ -1,0 +1,28 @@
+title: Sample
+description: A single sample
+type: object
+properties:
+  id:
+    type: string
+  name:
+    type: string
+  sampleTechnology:
+    type: string
+  createdAt:
+    type: string
+  updatedAt:
+    nullable: true
+    type: string
+  files:
+    description: Container of data for files that together represent the sample
+    type: object
+  metadata:
+    type: object
+
+required:
+  - name
+  - id
+  - createdAt
+  - updatedAt
+  - files
+  - sampleTechnology

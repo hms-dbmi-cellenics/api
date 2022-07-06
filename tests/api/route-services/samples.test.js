@@ -1,6 +1,7 @@
 const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../../src/utils/requireAWS');
 const { OK } = require('../../../src/utils/responses');
+const config = require('../../../src/config');
 
 const SamplesService = require('../../../src/api/route-services/samples');
 const {
@@ -147,7 +148,7 @@ describe('tests for the samples service', () => {
     const deleteS3FnSpy = mockS3DeleteObjects({ Errors: [] });
 
     const s3DeleteParams = {
-      Bucket: 'biomage-originals-test',
+      Bucket: `biomage-originals-test-${config.awsAccountId}`,
       Delete: {
         Objects: [
           { Key: 'project-1/sampleUuid-1/barcodes.tsv.gz' },

@@ -6,6 +6,7 @@ const validateRequest = require('../../utils/schema-validator');
 class PlotsTablesService {
   constructor() {
     this.tableName = `plots-tables-${config.clusterEnv}`;
+    this.bucketName = `plots-tables-${config.clusterEnv}-${config.awsAccountId}`;
   }
 
   async create(experimentId, plotUuid, data) {
@@ -85,11 +86,10 @@ class PlotsTablesService {
   async readFromS3(plotDataKey) {
     // Download output from S3.
     const s3 = new AWS.S3();
-    const bucket = this.tableName;
 
     const outputObject = await s3.getObject(
       {
-        Bucket: bucket,
+        Bucket: this.bucketName,
         Key: plotDataKey,
       },
     ).promise();

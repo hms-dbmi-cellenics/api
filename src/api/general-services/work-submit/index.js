@@ -71,9 +71,7 @@ class WorkSubmitService {
       if (config.clusterEnv === 'development') {
         queueUrls.push('http://localhost:4566/000000000000/development-queue.fifo');
       } else {
-        const accountId = await config.awsAccountIdPromise;
-
-        queueUrls.push(`https://sqs.${config.awsRegion}.amazonaws.com/${accountId}/${this.workQueueName}`);
+        queueUrls.push(`https://sqs.${config.awsRegion}.amazonaws.com/${config.awsAccountId}/${this.workQueueName}`);
       }
 
       await Promise.all(queueUrls.map((queueUrl) => this.sendMessageToQueue(queueUrl)));
@@ -92,7 +90,7 @@ class WorkSubmitService {
     if (config.clusterEnv === 'development' || config.clusterEnv === 'test') {
       logger.log('Not creating a worker because we are running locally...');
 
-      return;
+      return {};
     }
 
     let numTries = 0;
@@ -100,8 +98,8 @@ class WorkSubmitService {
     while (true) {
       try {
         // eslint-disable-next-line no-await-in-loop
-        await createWorkerResources(this);
-        break;
+        const podInfo = await createWorkerResources(this);
+        return podInfo;
       } catch (e) {
         if (e.response && e.response.statusCode === 422) {
           logger.log('Could not assign experiment to worker (potential race condition), trying again...');
@@ -118,12 +116,15 @@ class WorkSubmitService {
   }
 
   async submitWork() {
-    await Promise.all([
+    const result = await Promise.all([
       this.createWorker(),
       this.getQueueAndHandleMessage(),
     ]);
 
+    const podInfo = result[0];
+
     AWSXRay.getSegment().addAnnotation('result', 'success-worker');
+    return podInfo;
   }
 }
 

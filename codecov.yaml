@@ -11,11 +11,14 @@ coverage:
       default:
         target: auto
         # don't allow new commits to decrease coverage
-        threshold: 0%
+        threshold: 0.01%
 
     patch:                    # measuring the coverage of new changes
       default:
         enabled: no
 
 ignore:
+  - "api/.eslintrc.js"
+  - "api/babel.config.js"
+  - "api/coverage/**/*"
   - "src/sql/migrations"

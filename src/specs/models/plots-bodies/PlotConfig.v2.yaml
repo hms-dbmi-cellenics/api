@@ -1,0 +1,8 @@
+title: Plots and tables configuration
+type: object
+description: A file specifying the configuration for a given plot/table.
+properties:
+  config:
+    type: object
+required:
+  - config

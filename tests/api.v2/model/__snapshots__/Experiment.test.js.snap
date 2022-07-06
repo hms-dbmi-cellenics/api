@@ -1,0 +1,401 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`model/Experiment getAllExperiments works correctly 1`] = `
+Array [
+  Array [
+    [MockFunction],
+    Array [
+      "id",
+      "name",
+      "description",
+      "samples_order",
+      "notify_by_email",
+      "created_at",
+      "updated_at",
+    ],
+    "key",
+    "metadataKeys",
+    [MockFunction],
+  ],
+]
+`;
+
+exports[`model/Experiment getExperimentData works correctly 1`] = `
+Array [
+  "COALESCE(
+      jsonb_object_agg(pipeline_type, jsonb_build_object('params_hash', params_hash, 'state_machine_arn', state_machine_arn, 'execution_arn', execution_arn))
+      FILTER(
+        WHERE pipeline_type IS NOT NULL
+      ),
+      '{}'::jsonb
+    ) as pipelines,}), as pipelines",
+]
+`;
+
+exports[`model/Experiment getProcessingConfig works 1`] = `
+Object {
+  "cellSizeDistribution": Object {
+    "auto": true,
+    "enabled": false,
+    "filterSettings": Object {
+      "binStep": 200,
+      "minCellSize": 1080,
+    },
+    "sample1Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "binStep": 200,
+        "minCellSize": 907,
+      },
+      "enabled": false,
+      "filterSettings": Object {
+        "binStep": 200,
+        "minCellSize": 907,
+      },
+    },
+    "sample2Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "binStep": 200,
+        "minCellSize": 623,
+      },
+      "enabled": false,
+      "filterSettings": Object {
+        "binStep": 200,
+        "minCellSize": 623,
+      },
+    },
+    "sample3Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "binStep": 200,
+        "minCellSize": 516,
+      },
+      "enabled": false,
+      "filterSettings": Object {
+        "binStep": 200,
+        "minCellSize": 516,
+      },
+    },
+  },
+  "classifier": Object {
+    "brandNewTries": "changing lmaolxdd",
+  },
+  "configureEmbedding": Object {
+    "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+    "clusteringSettings": Object {
+      "method": "louvain",
+      "methodSettings": Object {
+        "louvain": Object {
+          "resolution": 0.8,
+        },
+      },
+    },
+    "embeddingSettings": Object {
+      "method": "umap",
+      "methodSettings": Object {
+        "tsne": Object {
+          "learningRate": 938.9167,
+          "perplexity": 30,
+        },
+        "umap": Object {
+          "distanceMetric": "cosine",
+          "minimumDistance": 0.3,
+        },
+      },
+    },
+  },
+  "dataIntegration": Object {
+    "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+    "dataIntegration": Object {
+      "method": "harmony",
+      "methodSettings": Object {
+        "fastmnn": Object {
+          "normalisation": "logNormalize",
+          "numGenes": 2000,
+        },
+        "harmony": Object {
+          "normalisation": "logNormalize",
+          "numGenes": 2000,
+        },
+        "seuratv4": Object {
+          "normalisation": "logNormalize",
+          "numGenes": 2000,
+        },
+        "unisample": Object {
+          "normalisation": "logNormalize",
+          "numGenes": 2000,
+        },
+      },
+    },
+    "dimensionalityReduction": Object {
+      "excludeGeneCategories": Array [],
+      "method": "rpca",
+      "numPCs": 30,
+    },
+  },
+  "doubletScores": Object {
+    "auto": true,
+    "enabled": true,
+    "filterSettings": Object {
+      "binStep": 0.05,
+      "probabilityThreshold": 0.5,
+    },
+    "sample1Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "binStep": 0.05,
+        "probabilityThreshold": 0.3784758,
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "binStep": 0.05,
+        "probabilityThreshold": 0.3784758,
+      },
+    },
+    "sample2Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "binStep": 0.05,
+        "probabilityThreshold": 0.4101394,
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "binStep": 0.05,
+        "probabilityThreshold": 0.4101394,
+      },
+    },
+    "sample3Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "binStep": 0.05,
+        "probabilityThreshold": 0.7622447,
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "binStep": 0.05,
+        "probabilityThreshold": 0.7622447,
+      },
+    },
+  },
+  "mitochondrialContent": Object {
+    "auto": true,
+    "enabled": true,
+    "filterSettings": Object {
+      "method": "absoluteThreshold",
+      "methodSettings": Object {
+        "absoluteThreshold": Object {
+          "binStep": 0.05,
+          "maxFraction": 0.1,
+        },
+      },
+    },
+    "sample1Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "method": "absoluteThreshold",
+        "methodSettings": Object {
+          "absoluteThreshold": Object {
+            "binStep": 0.05,
+            "maxFraction": 0.1,
+          },
+        },
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "method": "absoluteThreshold",
+        "methodSettings": Object {
+          "absoluteThreshold": Object {
+            "binStep": 0.05,
+            "maxFraction": 0.1,
+          },
+        },
+      },
+    },
+    "sample2Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "method": "absoluteThreshold",
+        "methodSettings": Object {
+          "absoluteThreshold": Object {
+            "binStep": 0.05,
+            "maxFraction": 0.1,
+          },
+        },
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "method": "absoluteThreshold",
+        "methodSettings": Object {
+          "absoluteThreshold": Object {
+            "binStep": 0.05,
+            "maxFraction": 0.1,
+          },
+        },
+      },
+    },
+    "sample3Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "method": "absoluteThreshold",
+        "methodSettings": Object {
+          "absoluteThreshold": Object {
+            "binStep": 0.05,
+            "maxFraction": 0.1,
+          },
+        },
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "method": "absoluteThreshold",
+        "methodSettings": Object {
+          "absoluteThreshold": Object {
+            "binStep": 0.05,
+            "maxFraction": 0.1,
+          },
+        },
+      },
+    },
+  },
+  "numGenesVsNumUmis": Object {
+    "enabled": true,
+    "filterSettings": Object {
+      "regressionType": "gam",
+      "regressionTypeSettings": Object {
+        "gam": Object {
+          "pLevel": 0.001,
+        },
+      },
+    },
+    "sample1Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "regressionType": "linear",
+        "regressionTypeSettings": Object {
+          "linear": Object {
+            "pLevel": 0.00009066183,
+          },
+          "spline": Object {
+            "pLevel": 0.00009066183,
+          },
+        },
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "regressionType": "linear",
+        "regressionTypeSettings": Object {
+          "linear": Object {
+            "pLevel": 0.00009066183,
+          },
+          "spline": Object {
+            "pLevel": 0.00009066183,
+          },
+        },
+      },
+    },
+    "sample2Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "regressionType": "linear",
+        "regressionTypeSettings": Object {
+          "linear": Object {
+            "pLevel": 0.00009075234,
+          },
+          "spline": Object {
+            "pLevel": 0.00009075234,
+          },
+        },
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "regressionType": "linear",
+        "regressionTypeSettings": Object {
+          "linear": Object {
+            "pLevel": 0.00009075234,
+          },
+          "spline": Object {
+            "pLevel": 0.00009075234,
+          },
+        },
+      },
+    },
+    "sample3Id": Object {
+      "apiUrl": "http://api.api-default.svc.cluster.local:3000",
+      "auto": true,
+      "defaultFilterSettings": Object {
+        "regressionType": "linear",
+        "regressionTypeSettings": Object {
+          "linear": Object {
+            "pLevel": 0.00009180207,
+          },
+          "spline": Object {
+            "pLevel": 0.00009180207,
+          },
+        },
+      },
+      "enabled": true,
+      "filterSettings": Object {
+        "regressionType": "linear",
+        "regressionTypeSettings": Object {
+          "linear": Object {
+            "pLevel": 0.00009180207,
+          },
+          "spline": Object {
+            "pLevel": 0.00009180207,
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`model/Experiment updateSamplePosition rolls back if the parameters are invalid 1`] = `
+Array [
+  "(
+        SELECT jsonb_insert(samples_order - 0, '{10000}', samples_order -> 0, false)
+          FROM (
+            SELECT (samples_order)
+            FROM experiment e
+            WHERE e.id = 'mockExperimentId'
+          ) samples_order
+        )",
+]
+`;
+
+exports[`model/Experiment updateSamplePosition rolls back if the result is invalid 1`] = `
+Array [
+  "(
+        SELECT jsonb_insert(samples_order - 0, '{1}', samples_order -> 0, false)
+          FROM (
+            SELECT (samples_order)
+            FROM experiment e
+            WHERE e.id = 'mockExperimentId'
+          ) samples_order
+        )",
+]
+`;
+
+exports[`model/Experiment updateSamplePosition works correctly if valid params are passed 1`] = `
+Array [
+  "(
+        SELECT jsonb_insert(samples_order - 0, '{1}', samples_order -> 0, false)
+          FROM (
+            SELECT (samples_order)
+            FROM experiment e
+            WHERE e.id = 'mockExperimentId'
+          ) samples_order
+        )",
+]
+`;

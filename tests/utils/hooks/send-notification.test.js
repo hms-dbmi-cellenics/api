@@ -3,7 +3,7 @@ const sendNotification = require('../../../src/utils/hooks/send-notification');
 const getPipelineStatus = require('../../../src/api/general-services/pipeline-status');
 const { FAILED, SUCCEEDED } = require('../../../src/api/general-services/pipeline-manage/constants');
 const sendFailedSlackMessage = require('../../../src/utils/send-failed-slack-message');
-const sendEmail = require('../../../src/utils/send-email');
+const sendEmail = require('../../../src/utils/sendEmail');
 const ExperimentService = require('../../../src/api/route-services/experiment');
 
 jest.mock('../../../src/utils/authMiddlewares', () => ({
@@ -15,10 +15,19 @@ jest.mock('../../../src/utils/authMiddlewares', () => ({
 jest.mock('../../../src/api/route-services/experiment');
 jest.mock('../../../src/api/general-services/pipeline-status');
 jest.mock('../../../src/utils/send-failed-slack-message', () => jest.fn());
-jest.mock('../../../src/utils/send-email', () => jest.fn());
+jest.mock('../../../src/utils/sendEmail', () => jest.fn());
 
 const experimentsService = new ExperimentService();
 fetchMock.enableFetchMocks();
+
+const meta = {
+  pipeline: {
+    stateMachineArn: 'qcArn',
+  },
+  gem2s: {
+    stateMachineArn: 'gem2sArn',
+  },
+};
 
 describe('send-notification ', () => {
   const message = {
@@ -48,9 +57,8 @@ describe('send-notification ', () => {
   });
 
   it('Sends email and slack message if user toggled notifications on failed process', async () => {
-    experimentsService.getExperimentData.mockReturnValue({
-      notifyByEmail: true,
-    });
+    experimentsService.getExperimentData.mockReturnValue({ notifyByEmail: true, meta });
+
     const newMessage = {
       ...message,
       input: {
@@ -58,20 +66,21 @@ describe('send-notification ', () => {
         processName: 'qc',
       },
     };
+
     getPipelineStatus.mockReturnValue({
       qc: {
         status: FAILED,
       },
     });
+
     await sendNotification(newMessage);
+
     expect(sendEmail).toHaveBeenCalledTimes(1);
     expect(sendFailedSlackMessage).toHaveBeenCalledTimes(1);
   });
 
   it('Sends email on success if toggled, does not send slack message ', async () => {
-    experimentsService.getExperimentData.mockReturnValue({
-      notifyByEmail: true,
-    });
+    experimentsService.getExperimentData.mockReturnValue({ notifyByEmail: true, meta });
     const newMessage = {
       ...message,
       input: {
@@ -90,9 +99,7 @@ describe('send-notification ', () => {
   });
 
   it('Does not send email on success if user has not toggled notifications', async () => {
-    experimentsService.getExperimentData.mockReturnValue({
-      notifyByEmail: false,
-    });
+    experimentsService.getExperimentData.mockReturnValue({ notifyByEmail: false, meta });
     const newMessage = {
       ...message,
       input: {

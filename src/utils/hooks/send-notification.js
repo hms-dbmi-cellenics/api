@@ -2,11 +2,12 @@ const getLogger = require('../getLogger');
 const { authenticationMiddlewareSocketIO } = require('../authMiddlewares');
 const getPipelineStatus = require('../../api/general-services/pipeline-status');
 const { SUCCEEDED, FAILED, QC_PROCESS_NAME } = require('../../api/general-services/pipeline-manage/constants');
-const sendEmail = require('../send-email');
+const sendEmail = require('../sendEmail');
 const sendFailedSlackMessage = require('../send-failed-slack-message');
 const ExperimentService = require('../../api/route-services/experiment');
 const config = require('../../config');
 const buildPipelineStatusEmailBody = require('../emailTemplates/buildPipelineStatusEmailBody');
+const { OLD_QC_NAME_TO_BE_REMOVED } = require('../constants');
 
 const logger = getLogger();
 
@@ -16,7 +17,8 @@ const sendNotification = async (message) => {
     logger.log('No authJWT token in message, skipping status check for notifications...');
     return;
   }
-  const user = await authenticationMiddlewareSocketIO(authJWT);
+
+  const user = await authenticationMiddlewareSocketIO(authJWT, true);
 
   const { experimentId } = message;
   const statusRes = await getPipelineStatus(experimentId, process);
@@ -25,13 +27,17 @@ const sendNotification = async (message) => {
 
   if (status === FAILED && ['production', 'test'].includes(config.clusterEnv)) {
     try {
-      await sendFailedSlackMessage(message, user, experiment);
+      const stateMachineArn = process === QC_PROCESS_NAME
+        ? experiment.meta[OLD_QC_NAME_TO_BE_REMOVED].stateMachineArn
+        : experiment.meta[process].stateMachineArn;
+
+      await sendFailedSlackMessage(message, user, process, stateMachineArn);
     } catch (e) {
       logger.error('Error sending slack message ', e);
     }
   }
   if (experiment.notifyByEmail
-      && ((process === QC_PROCESS_NAME && status === SUCCEEDED)
+    && ((process === QC_PROCESS_NAME && status === SUCCEEDED)
       || status === FAILED)) {
     try {
       const emailParams = buildPipelineStatusEmailBody(message.experimentId, status, user);

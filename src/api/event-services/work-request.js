@@ -31,7 +31,8 @@ const handleWorkRequest = async (workRequest) => {
   }
 
   const workSubmitService = new WorkSubmitService(workRequest);
-  await workSubmitService.submitWork();
+  const podInfo = await workSubmitService.submitWork();
+  return podInfo;
 };
 
 

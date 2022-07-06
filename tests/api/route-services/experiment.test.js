@@ -2,6 +2,7 @@ const AWSMock = require('aws-sdk-mock');
 const AWS = require('../../../src/utils/requireAWS');
 
 const constants = require('../../../src/api/general-services/pipeline-manage/constants');
+const config = require('../../../src/config');
 
 const ExperimentService = require('../../../src/api/route-services/experiment');
 const {
@@ -17,19 +18,51 @@ const {
 
 jest.setTimeout(30000);
 
-const { OK, NotFoundError } = require('../../../src/utils/responses');
+jest.mock('../../../src/api/route-services/access', () => function () {
+  return { grantRole: jest.fn() };
+});
+
+const { OK, NotFoundError, BadRequestError } = require('../../../src/utils/responses');
 
 describe('tests for the experiment service', () => {
   afterEach(() => {
     AWSMock.restore('DynamoDB');
   });
 
+  it('Create experiment data works', async (done) => {
+    const user = {
+      sub: 'mock-user-sub',
+    };
+
+    const body = {
+      experimentName: 'test-123',
+      createdDate: '2022-01-01T00:00:00.000Z',
+      lastViewed: '2022-01-01T00:00:00.000Z',
+      projectId: 'mock-project-id',
+      description: 'Mock experiment',
+      meta: {},
+      sampleIds: '["sample-1", "sample-2"]',
+    };
+
+    const jsData = {
+      projectId: 'mock-project-id',
+    };
+
+    const fnSpy = mockDynamoUpdateItem(jsData);
+
+    (new ExperimentService()).createExperiment('12345', body, user)
+      .then((data) => {
+        expect(data).toEqual(OK());
+        const updateParam = fnSpy.mock.calls[0];
+        expect(updateParam).toMatchSnapshot();
+      })
+      .then(() => done());
+  });
 
   it('Get experiment data works', async (done) => {
     const jsData = {
       experimentId: '12345',
       experimentName: 'TGFB1 experiment',
-
     };
 
     const fnSpy = mockDynamoGetItem(jsData);
@@ -44,6 +77,22 @@ describe('tests for the experiment service', () => {
         });
       })
       .then(() => done());
+  });
+
+  it('Get experiment data throws NotFoundError if experiment is not found', async (done) => {
+    const errMsg = 'Experiment does not exist';
+    mockDynamoGetItem({}, new NotFoundError(errMsg));
+
+    (new ExperimentService()).getExperimentData('12345')
+      .then((returnValue) => {
+        expect(returnValue).toEqual(OK());
+      })
+      .then(() => done())
+      .catch((error) => {
+        expect(error instanceof NotFoundError).toEqual(true);
+        expect(error.message).toEqual(errMsg);
+        done();
+      });
   });
 
   it('Get list of experiments work', async (done) => {
@@ -75,6 +124,25 @@ describe('tests for the experiment service', () => {
       .then(() => done());
   });
 
+  it('Get list of experiments throws a 400 if there is an error fetching the data', (done) => {
+    const experimentIds = ['experiment-1', 'experiment-2', 'experiment-3'];
+
+    const errMsg = 'Some unknown error';
+
+    mockDynamoBatchGetItem([], new BadRequestError(errMsg));
+
+    (new ExperimentService()).getListOfExperiments(experimentIds)
+      .then((data) => {
+        expect(data).toEqual(experimentIds.map((experimentId) => ({ experimentId })));
+      })
+      .then(() => done())
+      .catch((error) => {
+        expect(error instanceof BadRequestError).toEqual(true);
+        expect(error.message).toEqual(errMsg);
+        done();
+      });
+  });
+
   it('Get cell sets works', async (done) => {
     const jsData = {
       cellSets: [
@@ -93,7 +161,7 @@ describe('tests for the experiment service', () => {
         expect(data).toEqual(jsData);
         expect(getObjectSpy).toHaveBeenCalledWith(
           {
-            Bucket: 'cell-sets-test',
+            Bucket: `cell-sets-test-${config.awsAccountId}`,
             Key: '12345',
           },
         );
@@ -111,7 +179,7 @@ describe('tests for the experiment service', () => {
         expect(returnValue).toEqual(testDataToPut);
         expect(putObjectSpy).toHaveBeenCalledWith(
           {
-            Bucket: 'cell-sets-test',
+            Bucket: `cell-sets-test-${config.awsAccountId}`,
             Key: '12345',
             Body: JSON.stringify({ cellSets: testDataToPut }),
           },
@@ -139,7 +207,7 @@ describe('tests for the experiment service', () => {
         );
         expect(s3DeleteFnSpy).toHaveBeenCalledWith(
           {
-            Bucket: 'biomage-filtered-cells-test',
+            Bucket: `biomage-filtered-cells-test-${config.awsAccountId}`,
             Key: experimentId,
           },
         );
@@ -353,12 +421,12 @@ describe('tests for the experiment service', () => {
 
     mockDynamoGetItem({ projectId });
 
-    (new ExperimentService()).downloadData('12345', 'processed_seurat_object')
+    (new ExperimentService()).downloadData('12345', 'processed-matrix')
       .then(() => {
         expect(signedUrlSpy).toHaveBeenCalledWith(
           'getObject',
           {
-            Bucket: 'processed-matrix-test',
+            Bucket: `processed-matrix-test-${config.awsAccountId}`,
             Expires: 120,
             Key: '12345/r.rds',
             ResponseContentDisposition: `attachment; filename ="${expectedFileName}"`,
@@ -368,6 +436,9 @@ describe('tests for the experiment service', () => {
   });
 
   it('downloadData throws error incorrect download type is given', async (done) => {
+    const projectId = 'someProject-UUID-with-several-parts';
+    mockDynamoGetItem({ projectId });
+
     (new ExperimentService()).downloadData('12345', 'invalid type')
       .catch((error) => {
         expect(error.message).toMatch(/Invalid download type requested/gi);

@@ -18,7 +18,7 @@ metadata:
 spec:
   releaseName: FILLED_IN_BY_CI
   chart:
-    git: git@github.com:hms-dbmi-cellenics/iac
+    git: https://github.com/hms-dbmi-cellenics/iac
     path: charts/nodejs
     ref: FILLED_IN_BY_CI
   values:
@@ -37,5 +37,9 @@ spec:
     ingress:
       annotations:
         alb.ingress.kubernetes.io/healthcheck-path: /v1/health
-
-    # filled in by CI. do not modify.
+  valuesFrom:
+  - configMapKeyRef:
+      name: account-config
+      namespace: flux
+      key: account-config.yaml
+  # filled in by CI. do not modify.

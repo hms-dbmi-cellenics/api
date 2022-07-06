@@ -4,9 +4,8 @@ exports[`knexfile Works correctly for staging 1`] = `
 Object {
   "staging": Object {
     "client": "postgresql",
-    "connection": Object {
-      "fake": true,
-    },
+    "connection": [Function],
+    "postProcessResponse": [Function],
   },
 }
 `;

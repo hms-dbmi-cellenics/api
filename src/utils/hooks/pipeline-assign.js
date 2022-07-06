@@ -18,7 +18,6 @@ const getAvailablePods = async (namespace, statusSelector) => {
   return pods.body.items;
 };
 
-
 const patchPod = async (message) => {
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
@@ -32,7 +31,7 @@ const patchPod = async (message) => {
     pods = await getAvailablePods(namespace, 'status.phase=ContainerCreating');
   }
   if (pods.length < 1) {
-    logger.log('no creating pods available, trying to select pods still pending');
+    logger.log('no pods in creation process available, trying to select pods still pending');
     pods = await getAvailablePods(namespace, 'status.phase=Pending');
   }
 
@@ -87,7 +86,7 @@ const assignPodToPipeline = async (message) => {
 
 
   try {
-  // remove pipeline pods already assigned to this experiment
+    // remove pipeline pods already assigned to this experiment
     await deleteExperimentPods(experimentId);
   } catch (e) {
     logger.error(`Failed to remove pods for experiment ${experimentId}: ${e}`);

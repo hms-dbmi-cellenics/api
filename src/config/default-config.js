@@ -11,6 +11,7 @@ const githubOrganisationName = 'hms-dbmi-cellenics';
 // If we are, assign NODE_ENV based on the Github (AWS/k8s cluster) environment.
 // If NODE_ENV is set, that will take precedence over the Github
 // environment.
+
 if (process.env.K8S_ENV && !process.env.NODE_ENV) {
   switch (process.env.K8S_ENV) {
     case 'staging':
@@ -20,6 +21,7 @@ if (process.env.K8S_ENV && !process.env.NODE_ENV) {
     case 'production':
       process.env.NODE_ENV = 'production';
       process.env.CLUSTER_ENV = process.env.K8S_ENV;
+
       break;
     default:
       // We are probably on a review branch or other deployment.
@@ -35,10 +37,14 @@ if (!process.env.K8S_ENV) {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 }
 
-const awsRegion = process.env.AWS_DEFAULT_REGION || 'eu-west-1';
+const awsRegion = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || 'eu-west-1';
+
+const domainName = process.env.DOMAIN_NAME || 'localhost:5000';
+
 const cognitoISP = new AWS.CognitoIdentityServiceProvider({
   region: awsRegion,
 });
+
 async function getAwsPoolId() {
   const { UserPools } = await cognitoISP.listUserPools({ MaxResults: 60 }).promise();
   // when k8s is undefined we are in development where we use staging user pool so we set
@@ -50,24 +56,18 @@ async function getAwsPoolId() {
   return poolId;
 }
 
-async function getAwsAccountId() {
-  const sts = new AWS.STS({
-    region: awsRegion,
-  });
-
-  const data = await sts.getCallerIdentity({}).promise();
-  return data.Account;
-}
 
 const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
+  awsAccountId: process.env.AWS_ACCOUNT_ID || '000000000000',
   clusterEnv: process.env.CLUSTER_ENV || 'development',
   sandboxId: process.env.SANDBOX_ID || 'default',
+  rdsSandboxId: process.env.RDS_SANDBOX_ID || 'default',
   podName: process.env.K8S_POD_NAME || 'local',
   workerNamespace: `worker-${process.env.SANDBOX_ID || 'default'}`,
   pipelineNamespace: `pipeline-${process.env.SANDBOX_ID || 'default'}`,
   awsRegion,
-  awsAccountIdPromise: getAwsAccountId(),
+  domainName,
   awsUserPoolIdPromise: getAwsPoolId(),
   cognitoISP,
   githubToken: process.env.READONLY_API_TOKEN_GITHUB,
@@ -77,7 +77,7 @@ const config = {
   workerInstanceConfigUrl: `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/production/worker.yaml`,
   pipelineInstanceConfigUrl: `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/production/pipeline.yaml`,
   cachingEnabled: true,
-  corsOriginUrl: 'https://scp.biomage.net',
+  corsOriginUrl: `https://${domainName}`,
   adminSub: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
 };
 
@@ -87,7 +87,7 @@ if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
   config.workerInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/worker.yaml`;
   config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/pipeline.yaml`;
   config.cachingEnabled = false;
-  config.corsOriginUrl = 'https://ui-default.scp-staging.biomage.net';
+  config.corsOriginUrl = `https://ui-default.${domainName}`;
   config.adminSub = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
 }
 
@@ -96,7 +96,7 @@ if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
   config.workerInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/${config.sandboxId}.yaml`;
   config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/${config.sandboxId}.yaml`;
   config.cachingEnabled = false;
-  config.corsOriginUrl = `https://ui-${config.sandboxId}.scp-staging.biomage.net`;
+  config.corsOriginUrl = `https://ui-${config.sandboxId}.${domainName}`;
   config.adminSub = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
 }
 
@@ -108,7 +108,6 @@ if (config.clusterEnv === 'development') {
   const endpoint = 'http://localhost:4566';
   logger.log(`Running development cluster on ${endpoint}, patching AWS to use InfraMock endpoint...`);
   config.cachingEnabled = false;
-  config.awsAccountIdPromise = (async () => '000000000000')();
   AWS.config.update({
     endpoint,
     sslEnabled: false,

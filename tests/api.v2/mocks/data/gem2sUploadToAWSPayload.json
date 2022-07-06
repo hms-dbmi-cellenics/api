@@ -1,0 +1,228 @@
+{
+  "item": {
+    "apiVersion": "2.0.0-data-ingest-seurat-rds-automated",
+    "experimentId": "06d50e28-cc96-2624-900c-e0e9a0995598",
+    "experimentName": "asdsadsada",
+    "meta": {
+      "organism": null,
+      "type": "10x"
+    },
+    "processingConfig": {
+      "cellSizeDistribution": {
+        "enabled": false,
+        "auto": true,
+        "filterSettings": {
+          "minCellSize": 1080,
+          "binStep": 200
+        },
+        "f87892f0-3403-4ba9-b871-c366e3fa855e": {
+          "enabled": false,
+          "auto": true,
+          "filterSettings": {
+            "minCellSize": 1044,
+            "binStep": 200
+          },
+          "defaultFilterSettings": {
+            "minCellSize": 1044,
+            "binStep": 200
+          }
+        }
+      },
+      "mitochondrialContent": {
+        "enabled": true,
+        "auto": true,
+        "filterSettings": {
+          "method": "absoluteThreshold",
+          "methodSettings": {
+            "absoluteThreshold": {
+              "maxFraction": 0.1,
+              "binStep": 0.3
+            }
+          }
+        },
+        "f87892f0-3403-4ba9-b871-c366e3fa855e": {
+          "auto": true,
+          "filterSettings": {
+            "method": "absoluteThreshold",
+            "methodSettings": {
+              "absoluteThreshold": {
+                "maxFraction": 0.07181329,
+                "binStep": 0.3
+              }
+            }
+          },
+          "defaultFilterSettings": {
+            "method": "absoluteThreshold",
+            "methodSettings": {
+              "absoluteThreshold": {
+                "maxFraction": 0.07181329,
+                "binStep": 0.3
+              }
+            }
+          }
+        }
+      },
+      "classifier": {
+        "enabled": false,
+        "prefiltered": true,
+        "auto": true,
+        "filterSettings": {
+          "FDR": 0.01
+        },
+        "f87892f0-3403-4ba9-b871-c366e3fa855e": {
+          "enabled": false,
+          "auto": true,
+          "filterSettings": {
+            "FDR": 0.01
+          },
+          "defaultFilterSettings": {
+            "FDR": 0.01
+          }
+        }
+      },
+      "numGenesVsNumUmis": {
+        "enabled": true,
+        "auto": true,
+        "filterSettings": {
+          "regressionType": "linear",
+          "regressionTypeSettings": {
+            "linear": {
+              "p.level": 0.001
+            },
+            "spline": {
+              "p.level": 0.001
+            }
+          }
+        },
+        "f87892f0-3403-4ba9-b871-c366e3fa855e": {
+          "enabled": true,
+          "auto": true,
+          "filterSettings": {
+            "regressionType": "linear",
+            "regressionTypeSettings": {
+              "linear": {
+                "p.level": 0.001
+              },
+              "spline": {
+                "p.level": 0.001
+              }
+            }
+          },
+          "defaultFilterSettings": {
+            "regressionType": "linear",
+            "regressionTypeSettings": {
+              "linear": {
+                "p.level": 0.001
+              },
+              "spline": {
+                "p.level": 0.001
+              }
+            }
+          }
+        }
+      },
+      "doubletScores": {
+        "enabled": true,
+        "auto": true,
+        "filterSettings": {
+          "probabilityThreshold": 0.5,
+          "binStep": 0.02
+        },
+        "f87892f0-3403-4ba9-b871-c366e3fa855e": {
+          "enabled": true,
+          "auto": true,
+          "filterSettings": {
+            "probabilityThreshold": 0.7622447,
+            "binStep": 0.02
+          },
+          "defaultFilterSettings": {
+            "probabilityThreshold": 0.7622447,
+            "binStep": 0.02
+          }
+        }
+      },
+      "dataIntegration": {
+        "dataIntegration": {
+          "method": "harmony",
+          "methodSettings": {
+            "seuratv4": {
+              "numGenes": 2000,
+              "normalisation": "logNormalize"
+            },
+            "unisample": {
+              "numGenes": 2000,
+              "normalisation": "logNormalize"
+            },
+            "harmony": {
+              "numGenes": 2000,
+              "normalisation": "logNormalize"
+            },
+            "fastmnn": {
+              "numGenes": 2000,
+              "normalisation": "logNormalize"
+            }
+          }
+        },
+        "dimensionalityReduction": {
+          "method": "rpca",
+          "numPCs": null,
+          "excludeGeneCategories": []
+        }
+      },
+      "configureEmbedding": {
+        "embeddingSettings": {
+          "method": "umap",
+          "methodSettings": {
+            "umap": {
+              "minimumDistance": 0.3,
+              "distanceMetric": "cosine"
+            },
+            "tsne": {
+              "perplexity": 9.18,
+              "learningRate": 200
+            }
+          }
+        },
+        "clusteringSettings": {
+          "method": "louvain",
+          "methodSettings": {
+            "louvain": {
+              "resolution": 0.8
+            }
+          }
+        }
+      }
+    }
+  },
+  "table": "experiments-development",
+  "taskName": "uploadToAWS",
+  "experimentId": "06d50e28-cc96-2624-900c-e0e9a0995598",
+  "authJWT": null,
+  "input": {
+    "projectId": "06d50e28-cc96-2624-900c-e0e9a0995598",
+    "experimentId": "06d50e28-cc96-2624-900c-e0e9a0995598",
+    "taskName": "uploadToAWS",
+    "processName": "gem2s",
+    "config": {},
+    "experimentName": "asdsadsada",
+    "organism": null,
+    "input": {
+      "type": "10x"
+    },
+    "sampleIds": [
+      "f87892f0-3403-4ba9-b871-c366e3fa855e"
+    ],
+    "sampleNames": [
+      "WT"
+    ],
+    "sampleS3Paths": {
+      "f87892f0-3403-4ba9-b871-c366e3fa855e": {
+        "matrix10x": "f6919cd0-a98d-471f-bd00-c98d98d4b00f",
+        "barcodes10x": "925e656b-3b56-40cf-b9c6-fa78d1145682",
+        "features10x": "2451aae8-2aa2-4611-a280-247c767968f2"
+      }
+    },
+    "apiVersion": "v2",
+    "authJWT": "Bearer someHugeHash"
+  }
+}

@@ -123,8 +123,14 @@ jobs:
           # this is what we push to ECR
           # we will also take semver'd tags like `1.0.0` and use them for releases
 
+          # In push & PR events we want the tag to contain the latest commit on the branch:
+          # in push events, the latest commit of the master branch is GITHUB_SHA
+          # in PR synch the latest commit of the branch is found in github.event.pull_request.head.sha instead
+
           if [ "${{ github.event_name }}" = "release" ] && [ "${{ github.event.action }}" = "released" ]; then
             echo "::set-output name=tag::${REF_ID/refs-tags-/}"
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "::set-output name=tag::$REF_ID-${{ github.event.pull_request.head.sha }}"
           else
             echo "::set-output name=tag::$REF_ID-$GITHUB_SHA"
           fi
@@ -227,6 +233,7 @@ jobs:
 
           if [ "${{ matrix.environment }}" = "production" ]; then
             SANDBOX_ID="default"
+            RDS_SANDBOX_ID="default"
             CHART_REF="master"
             KUBERNETES_ENV="production"
             IMAGE_TAG="${REF_DASHED/refs-tags-/}"
@@ -236,15 +243,17 @@ jobs:
 
           if [ "${{ matrix.environment }}" = "develop" ]; then
             SANDBOX_ID="default"
+            RDS_SANDBOX_ID="default"
             CHART_REF="master"
             KUBERNETES_ENV="staging"
             IMAGE_TAG="$REF_DASHED-$GITHUB_SHA"
             IMAGE_GLOB="glob:$REF_DASHED-*"
-            REPLICA_COUNT="4"
+            REPLICA_COUNT="2"
           fi
 
           if [ "${{ matrix.environment }}" = "staging" ]; then
             SANDBOX_ID="STAGING_SANDBOX_ID"
+            RDS_SANDBOX_ID="STAGING_RDS_SANDBOX_ID"
             CHART_REF="STAGING_CHART_REF"
             KUBERNETES_ENV="staging"
             IMAGE_TAG="$REF_DASHED-$GITHUB_SHA"
@@ -265,11 +274,12 @@ jobs:
           | yq w -d1 - spec.values.kubernetes.env "$KUBERNETES_ENV" \
           | yq w -d1 - spec.values.biomageCi.repo "$GITHUB_REPOSITORY" \
           | yq w -d1 - spec.values.biomageCi.sandboxId "$SANDBOX_ID" \
+          | yq w -d1 - spec.values.biomageCi.rdsSandboxId "$RDS_SANDBOX_ID" \
           | yq w -d1 - spec.values.image.registry "${{ steps.login-ecr.outputs.registry }}" \
           | yq w -d1 - spec.values.image.repository "$DEPLOYMENT_NAME" \
           | yq w -d1 - spec.values.image.tag "$IMAGE_TAG" \
           | yq w -d1 - spec.values.replicaCount $REPLICA_COUNT \
-          | yq w -d1 - spec.values.serviceAccount.iamRole "arn:aws:iam::${{ steps.setup-aws.outputs.aws-account-id }}:role/api-role-$KUBERNETES_ENV" \
+          | yq w -d1 - spec.values.serviceAccount.iamRole "api-role-$KUBERNETES_ENV" \
           > $DEPLOYMENT_NAME.yaml
 
           cat $DEPLOYMENT_NAME.yaml
@@ -287,7 +297,7 @@ jobs:
           enforce_admins: false
           retries: 8
 
-      - name: Push production/develop release to iac for deployment
+      - name: Push production/develop template to releases
         if:
           (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
         uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
@@ -295,8 +305,8 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
           source_file: '${{ steps.fill-metadata.outputs.deployment-name }}.yaml'
-          destination_repo: '${{ github.repository_owner }}/iac'
-          destination_folder: 'releases/${{ steps.fill-metadata.outputs.kubernetes-env }}'
+          destination_repo: '${{ github.repository_owner }}/releases'
+          destination_folder: '${{ steps.fill-metadata.outputs.kubernetes-env }}'
           user_email: 'ci@biomage.net'
           user_name: 'Biomage CI/CD'
 
@@ -309,7 +319,7 @@ jobs:
         run: |-
           mv $DEPLOYMENT_NAME.yaml $REF_DASHED.yaml
 
-      - name: Push staging deployment template to iac
+      - name: Push staging deployment template to releases
         if:
           (github.event_name == 'pull_request' || github.event_name == 'push') && matrix.environment == 'staging'
         uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
@@ -317,8 +327,8 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
           source_file: '${{ steps.fill-metadata.outputs.ref-dashed }}.yaml'
-          destination_repo: '${{ github.repository_owner }}/iac'
-          destination_folder: 'releases/staging-candidates/${{ steps.fill-metadata.outputs.deployment-name }}'
+          destination_repo: '${{ github.repository_owner }}/releases'
+          destination_folder: 'staging-candidates/${{ steps.fill-metadata.outputs.deployment-name }}'
           user_email: 'ci@biomage.net'
           user_name: 'Biomage CI/CD'
 

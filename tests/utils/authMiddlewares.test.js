@@ -1,6 +1,7 @@
 const AWSMock = require('aws-sdk-mock');
-const AWS = require('../../src/utils/requireAWS');
+
 const {
+  checkAuthExpiredMiddleware,
   expressAuthorizationMiddleware,
   authorize,
 } = require('../../src/utils/authMiddlewares');
@@ -11,7 +12,6 @@ const {
   mockDynamoGetItem,
   mockDynamoBatchGetItem,
 } = require('../test-utils/mockAWSServices');
-
 
 describe('Tests for authorization/authentication middlewares', () => {
   // Sample experiment permission data.
@@ -45,7 +45,7 @@ describe('Tests for authorization/authentication middlewares', () => {
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
       user: fake.USER,
-      url: fake.URL,
+      url: fake.RESOURCE_V1,
       method: 'POST',
     };
     const next = jest.fn();
@@ -54,13 +54,29 @@ describe('Tests for authorization/authentication middlewares', () => {
     expect(next).toBeCalledWith();
   });
 
+  it('checkAuth accepts expired tokens for patch cellsets', async () => {
+    mockDynamoGetItem(data);
+
+    const req = {
+      params: { experimentId: fake.EXPERIMENT_ID },
+      user: fake.USER,
+      url: `/v1/experiments/${fake.EXPERIMENT_ID}/cellSets`,
+      method: 'PATCH',
+      ip: '::ffff:127.0.0.1',
+    };
+    const next = jest.fn();
+
+    const ret = checkAuthExpiredMiddleware(req, {}, next);
+    expect(ret).toBe(null);
+  });
+
   it('Express middleware can reject incorrect users', async () => {
     mockDynamoGetItem({});
 
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
       user: 'another-user-id',
-      url: fake.URL,
+      url: fake.RESOURCE_V1,
       method: 'POST',
     };
     const next = jest.fn();
@@ -74,7 +90,7 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
-      url: fake.URL,
+      url: fake.RESOURCE_V1,
       method: 'POST',
     };
     const next = jest.fn();

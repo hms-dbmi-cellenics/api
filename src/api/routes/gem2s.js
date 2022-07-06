@@ -32,6 +32,7 @@ module.exports = {
     }
 
     const { io, parsedMessage } = result;
+
     const isSnsNotification = parsedMessage !== undefined;
     if (isSnsNotification) {
       try {
@@ -46,6 +47,8 @@ module.exports = {
         return;
       }
     }
+
+
 
     res.status(200).send('ok');
   },
