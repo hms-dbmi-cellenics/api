@@ -120,6 +120,7 @@ jobs:
           # This will take a ref like `refs/heads/master`
           # and turn it into `refs-heads-master`
           REF_ID=$(echo $GITHUB_REF | sed 's/\//-/g')
+          echo "::set-output name=ref-id::$REF_ID"
 
           # the final tag is something like:
           # refs-heads-master-a4f8bc313dae
