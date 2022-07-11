@@ -1,7 +1,7 @@
 const config = require('../../config');
 const {
   SUCCEEDED,
-} = require('../../api/general-services/pipeline-manage/constants');
+} = require('../../api.v2/helpers/pipeline/constants');
 
 const buildPipelineStatusEmailBody = (experimentId, status, user) => {
   const firstname = user.name.split(' ')[0];

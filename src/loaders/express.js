@@ -6,7 +6,7 @@ const http = require('http');
 const AWSXRay = require('aws-xray-sdk');
 const _ = require('lodash');
 const config = require('../config');
-const { authenticationMiddlewareExpress, checkAuthExpiredMiddleware } = require('../utils/authMiddlewares');
+const { authenticationMiddlewareExpress, checkAuthExpiredMiddleware } = require('../api.v2/middlewares/authMiddlewares');
 
 module.exports = async (app) => {
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
@@ -109,28 +109,22 @@ module.exports = async (app) => {
 
   app.use(checkAuthExpiredMiddleware);
 
-  ['v1', 'v2'].forEach((version) => {
-    // api and api.v2 could be renamed to api.v1 api.v2 once we focus on data model,
-    // for now leaving like this so we don't get merge conflicts
-    // with other changes that may come in on "api/"
-    const versionName = version === 'v1' ? 'api' : `api.${version}`;
+  const versionName = 'api.v2';
+  app.use(
+    OpenApiValidator.middleware({
+      apiSpec: path.join(__dirname, '..', 'specs', `${versionName}.yaml`),
+      validateRequests: true,
+      validateResponses: {
+        onError: (error) => {
+          console.log('Response body fails validation: ', error);
 
-    app.use(
-      OpenApiValidator.middleware({
-        apiSpec: path.join(__dirname, '..', 'specs', `${versionName}.yaml`),
-        validateRequests: true,
-        validateResponses: {
-          onError: (error) => {
-            console.log('Response body fails validation: ', error);
-
-            AWSXRay.getSegment().addMetadata('openApiValidationError', JSON.stringify(error));
-            AWSXRay.getSegment().addAnnotation('openApiValidationFailed', true);
-          },
+          AWSXRay.getSegment().addMetadata('openApiValidationError', JSON.stringify(error));
+          AWSXRay.getSegment().addAnnotation('openApiValidationFailed', true);
         },
-        operationHandlers: path.join(__dirname, '..', `${versionName}`),
-      }),
-    );
-  });
+      },
+      operationHandlers: path.join(__dirname, '..', `${versionName}`),
+    }),
+  );
 
   // Custom error handler.
   app.use((err, req, res, next) => {
