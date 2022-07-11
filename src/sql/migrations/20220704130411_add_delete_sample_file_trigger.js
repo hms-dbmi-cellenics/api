@@ -2,6 +2,9 @@ const getTemplateValues = (dbEnv) => {
   let body = '';
   let header = '';
 
+  // We skip creation of this trigger and function in development
+  // because it requires aws_commons and aws_lambda modules which are proprietary.
+  // So this trigger in development is empty.
   if (['production', 'staging'].includes(dbEnv)) {
     header = `
       CREATE EXTENSION IF NOT EXISTS aws_commons;
@@ -18,11 +21,10 @@ const getTemplateValues = (dbEnv) => {
 const createDeleteSampleFileTriggerFunc = (env) => {
   const { header, body } = getTemplateValues(env);
 
-
   const template = `
       ${header}
 
-      CREATE OR REPLACE FUNCTION public.delete_sample_file_on_sample_delete()
+      CREATE OR REPLACE FUNCTION public.delete_from_s3_on_sample_file_delete()
         RETURNS trigger
         LANGUAGE plpgsql
       AS $function$
@@ -32,9 +34,9 @@ const createDeleteSampleFileTriggerFunc = (env) => {
       END;
       $function$;
 
-      CREATE TRIGGER delete_file_after_sample_file_delete
+      CREATE TRIGGER delete_file_from_s3_after_sample_file_delete
       AFTER DELETE ON sample_file
-      FOR EACH ROW EXECUTE FUNCTION public.delete_sample_file_on_sample_delete();
+      FOR EACH ROW EXECUTE FUNCTION public.delete_from_s3_on_sample_file_delete();
     `;
 
   return template;
@@ -53,12 +55,10 @@ exports.up = async (knex) => {
 };
 
 exports.down = async (knex) => {
-  const deleteDeleteSampleFileTriggerFunc = `
+  await knex.raw(`
     DROP TRIGGER IF EXISTS delete_file_after_sample_file_delete ON sample_file;
     DROP FUNCTION IF EXISTS public.delete_sample_file_on_sample_delete;
     DROP EXTENSION IF EXISTS aws_lambda CASCADE;
-    DROP EXTENSION IF NOT EXISTS aws_commons CASCADE;
-  `;
-
-  await knex.raw(deleteDeleteSampleFileTriggerFunc);
+    DROP EXTENSION IF EXISTS aws_commons CASCADE;
+  `);
 };
