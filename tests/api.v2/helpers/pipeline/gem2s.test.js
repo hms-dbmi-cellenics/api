@@ -133,7 +133,7 @@ describe('gem2sResponse', () => {
   it('works correctly', async () => {
     await handleGem2sResponse(io, message);
 
-    expect(validateRequest).toHaveBeenCalledWith(message, 'GEM2SResponse.v1.yaml');
+    expect(validateRequest).toHaveBeenCalledWith(message, 'GEM2SResponse.v2.yaml');
     expect(hookRunnerInstance.run).toHaveBeenCalledWith(message);
 
     expect(getPipelineStatus).toHaveBeenCalledWith(experimentId, constants.GEM2S_PROCESS_NAME);

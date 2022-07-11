@@ -162,7 +162,7 @@ describe('handleQCResponse module', () => {
 
       await handleQCResponse(mockIO, message);
 
-      expect(validateRequest).toHaveBeenCalledWith(message, 'PipelineResponse.v1.yaml');
+      expect(validateRequest).toHaveBeenCalledWith(message, 'PipelineResponse.v2.yaml');
       expect(hookRunnerInstance.run).toHaveBeenCalledWith(message);
 
       expect(s3Spy).toHaveBeenCalledTimes(1);

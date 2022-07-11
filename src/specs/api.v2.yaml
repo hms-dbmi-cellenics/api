@@ -1830,6 +1830,6 @@ components:
     PlotConfig:
       $ref: ./models/plots-bodies/PlotConfig.v2.yaml
     HTTPSuccess:
-      $ref: './models/HTTPSuccess.v1.yaml'
+      $ref: './models/HTTPSuccess.v2.yaml'
     HTTPError:
-      $ref: './models/HTTPError.v1.yaml'
+      $ref: './models/HTTPError.v2.yaml'

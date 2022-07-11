@@ -123,7 +123,7 @@ const sendUpdateToSubscribed = async (experimentId, message, output, error, io) 
 const handleQCResponse = async (io, message) => {
   AWSXRay.getSegment().addMetadata('message', message);
 
-  await validateRequest(message, 'PipelineResponse.v1.yaml');
+  await validateRequest(message, 'PipelineResponse.v2.yaml');
 
   await hookRunner.run(message);
 

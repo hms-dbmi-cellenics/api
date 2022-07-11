@@ -3,7 +3,7 @@ const validateRequest = require('../../../src/utils/schema-validator');
 
 describe('Schema validator', () => {
   it('Validates the DotPlot work request correctly', async () => {
-    const schemaPath = '../../specs/models/work-request-bodies/WorkRequestDotPlot.v1.yaml';
+    const schemaPath = '../../specs/models/work-request-bodies/WorkRequestDotPlot.v2.yaml';
 
     const validBody = {
       name: 'DotPlot',
