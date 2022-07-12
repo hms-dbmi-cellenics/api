@@ -1,0 +1,17 @@
+title: Processing config bodies
+description: Valid processing config bodies.
+properties:
+    config:
+      anyOf:
+        - $ref: ./processing-config-bodies/ProcessingConfigCellSizeDistribution.v2.yaml
+        - $ref: ./processing-config-bodies/ProcessingConfigClassifier.v2.yaml
+        - $ref: ./processing-config-bodies/ProcessingConfigMitochondrialContent.v2.yaml
+        - $ref: ./processing-config-bodies/ProcessingConfigReadAlignment.v2.yaml
+        - $ref: ./processing-config-bodies/ProcessingConfigNumGenesVsNumUMIs.v2.yaml
+        - $ref: ./processing-config-bodies/ProcessingConfigDoubletScores.v2.yaml
+        - $ref: ./processing-config-bodies/ProcessingConfigDataIntegration.v2.yaml
+        - $ref: ./processing-config-bodies/ProcessingConfigConfigureEmbedding.v2.yaml
+        - $ref: ./processing-config-bodies/ProcessingConfigMeta.v2.yaml
+    # Add back when we are ready to really validate all this stuff
+    # required:
+    #   - config
