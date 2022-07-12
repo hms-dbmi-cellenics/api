@@ -12,6 +12,3 @@ properties:
         - $ref: ./processing-config-bodies/ProcessingConfigDataIntegration.v2.yaml
         - $ref: ./processing-config-bodies/ProcessingConfigConfigureEmbedding.v2.yaml
         - $ref: ./processing-config-bodies/ProcessingConfigMeta.v2.yaml
-    # Add back when we are ready to really validate all this stuff
-    # required:
-    #   - config
