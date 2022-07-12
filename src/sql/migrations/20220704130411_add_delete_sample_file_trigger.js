@@ -24,7 +24,7 @@ const createDeleteSampleFileTriggerFunc = (env) => {
   const template = `
       ${header}
 
-      CREATE OR REPLACE FUNCTION public.delete_from_s3_on_sample_file_delete()
+      CREATE OR REPLACE FUNCTION public.delete_file_from_s3_after_sample_file_delete()
         RETURNS trigger
         LANGUAGE plpgsql
       AS $function$
@@ -34,9 +34,9 @@ const createDeleteSampleFileTriggerFunc = (env) => {
       END;
       $function$;
 
-      CREATE TRIGGER delete_file_from_s3_after_sample_file_delete
+      CREATE TRIGGER delete_file_from_s3_after_sample_file_delete_trigger
       AFTER DELETE ON sample_file
-      FOR EACH ROW EXECUTE FUNCTION public.delete_from_s3_on_sample_file_delete();
+      FOR EACH ROW EXECUTE FUNCTION public.delete_file_from_s3_after_sample_file_delete();
     `;
 
   return template;
@@ -56,8 +56,8 @@ exports.up = async (knex) => {
 
 exports.down = async (knex) => {
   await knex.raw(`
-    DROP TRIGGER IF EXISTS delete_file_after_sample_file_delete ON sample_file;
-    DROP FUNCTION IF EXISTS public.delete_sample_file_on_sample_delete;
+    DROP TRIGGER IF EXISTS delete_file_from_s3_after_sample_file_delete_trigger ON sample_file;
+    DROP FUNCTION IF EXISTS public.delete_file_from_s3_after_sample_file_delete;
     DROP EXTENSION IF EXISTS aws_lambda CASCADE;
     DROP EXTENSION IF EXISTS aws_commons CASCADE;
   `);
