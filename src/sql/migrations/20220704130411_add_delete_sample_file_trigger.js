@@ -4,7 +4,6 @@ const getTemplateValues = (dbEnv) => {
 
   // We skip creation of this trigger and function in development
   // because it requires aws_commons and aws_lambda modules which are proprietary.
-  // So this trigger in development is empty.
   if (['production', 'staging'].includes(dbEnv)) {
     header = `
       CREATE EXTENSION IF NOT EXISTS aws_commons;
