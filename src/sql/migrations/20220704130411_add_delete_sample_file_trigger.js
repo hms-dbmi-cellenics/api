@@ -50,6 +50,11 @@ exports.up = async (knex) => {
     throw new Error('Environment variables AWS_REGION and AWS_ACCOUNT_ID are required');
   }
 
+  await knex.raw(`
+    GRANT USAGE ON SCHEMA aws_lambda TO api_role;
+    GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA aws_lambda TO api_role;
+  `);
+
   await knex.raw(createDeleteSampleFileTriggerFunc(process.env.NODE_ENV));
 };
 
