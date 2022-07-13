@@ -36,7 +36,7 @@ spec:
       enabled: false
     ingress:
       annotations:
-        alb.ingress.kubernetes.io/healthcheck-path: /v1/health
+        alb.ingress.kubernetes.io/healthcheck-path: /v2/health
   valuesFrom:
   - configMapKeyRef:
       name: account-config
