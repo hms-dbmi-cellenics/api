@@ -11,7 +11,7 @@ const getTemplateValues = (dbEnv) => {
     `;
 
     const triggerLambdaARN = `arn:aws:lambda:${process.env.AWS_REGION}:${process.env.AWS_ACCOUNT_ID}:function:delete-sample-file-lambda-${dbEnv}`;
-    body = `PERFORM aws_lambda.invoke('${triggerLambdaARN}', row_to_json(OLD));`;
+    body = `PERFORM aws_lambda.invoke('${triggerLambdaARN}', row_to_json(OLD), '${process.env.AWS_REGION}', 'Event');`;
   }
 
   return { body, header };
