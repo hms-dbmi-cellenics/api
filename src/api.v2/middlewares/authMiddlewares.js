@@ -16,6 +16,26 @@ const { UnauthorizedError, UnauthenticatedError } = require('../../utils/respons
 
 const UserAccess = require('../model/UserAccess');
 
+// Throws if the user isnt authenticated
+const checkUserAuthenticated = (req, next) => {
+  if (!req.user) {
+    next(new UnauthenticatedError('The request does not contain an authentication token.'));
+    return false;
+  }
+
+  return true;
+};
+
+// Throws if the user hasnt agreed to the privacy policy yet
+const checkForPrivacyPolicyAgreement = (req, next) => {
+  if (req.user['custom:agreed_terms'] !== 'true') {
+    next(new UnauthorizedError('The user hasnt agreed to the privacy policy yet.'));
+    return false;
+  }
+
+  return true;
+};
+
 /**
  * General authorization middleware. Resolves with nothing on
  * successful authorization, or an exception on unauthorized access.
@@ -51,10 +71,8 @@ const authorize = async (userId, resource, method, experimentId) => {
  * Calls `authorize()` internally.
  */
 const expressAuthorizationMiddleware = async (req, res, next) => {
-  if (!req.user) {
-    next(new UnauthenticatedError('The request does not contain an authentication token.'));
-    return;
-  }
+  if (!checkUserAuthenticated(req, next)) return;
+  if (!checkForPrivacyPolicyAgreement(req, next)) return;
 
   try {
     await authorize(req.user.sub, req.url, req.method, req.params.experimentId);
@@ -65,10 +83,9 @@ const expressAuthorizationMiddleware = async (req, res, next) => {
 };
 
 const expressAuthenticationOnlyMiddleware = async (req, res, next) => {
-  if (!req.user) {
-    next(new UnauthenticatedError('The request does not contain an authentication token.'));
-    return;
-  }
+  if (!checkUserAuthenticated(req, next)) return;
+  if (!checkForPrivacyPolicyAgreement(req, next)) return;
+
   next();
 };
 
