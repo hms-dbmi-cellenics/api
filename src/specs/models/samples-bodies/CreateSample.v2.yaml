@@ -4,15 +4,21 @@ type: object
 properties:
   name:
     type: string
+  valid:
+    type: boolean
+  validationMessage:
+    type: string
   sampleTechnology:
     allOf:
       - type: string
       - oneOf:
         - pattern: 10x
         - pattern: rhapsody
- 
+
 required:
   - name
+  - valid
+  - validationMessage
   - sampleTechnology
 
 additionalProperties: false

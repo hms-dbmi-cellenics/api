@@ -637,6 +637,10 @@ paths:
               properties:
                 name:
                   type: string
+                valid:
+                  type: boolean
+                validationMessage:
+                  type: string
               additionalProperties: false
       responses:
         '200':

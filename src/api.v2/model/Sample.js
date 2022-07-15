@@ -17,6 +17,8 @@ const sampleFields = [
   'experiment_id',
   'name',
   'sample_technology',
+  'valid',
+  'validation_message',
   'created_at',
   'updated_at',
 ];
