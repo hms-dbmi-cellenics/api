@@ -29,7 +29,9 @@ const checkUserAuthenticated = (req, next) => {
 
 // Throws if the user hasnt agreed to the privacy policy yet
 const checkForPrivacyPolicyAgreement = (req, next) => {
-  if (req.user['custom:agreed_terms'] !== 'true') {
+  const biomageDomainNames = ['scp.biomage.net', 'scp-staging.biomage.net'];
+
+  if (req.user['custom:agreed_terms'] !== 'true' && biomageDomainNames.includes(config.domainName)) {
     next(new NotAgreedToTermsError('The user hasnt agreed to the privacy policy yet.'));
     return false;
   }
