@@ -15,6 +15,7 @@ const { CacheMissError } = require('../../cache/cache-utils');
 const { UnauthorizedError, UnauthenticatedError } = require('../../utils/responses');
 
 const UserAccess = require('../model/UserAccess');
+const NotAgreedToTermsError = require('../../utils/responses/NotAgreedToTermsError');
 
 // Throws if the user isnt authenticated
 const checkUserAuthenticated = (req, next) => {
@@ -29,7 +30,7 @@ const checkUserAuthenticated = (req, next) => {
 // Throws if the user hasnt agreed to the privacy policy yet
 const checkForPrivacyPolicyAgreement = (req, next) => {
   if (req.user['custom:agreed_terms'] !== 'true') {
-    next(new UnauthorizedError('The user hasnt agreed to the privacy policy yet.'));
+    next(new NotAgreedToTermsError('The user hasnt agreed to the privacy policy yet.'));
     return false;
   }
 
