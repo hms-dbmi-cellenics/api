@@ -1,4 +1,9 @@
+const { DOMAIN_NAME } = require('../../api.v2/helpers/pipeline/constants');
 const config = require('../../config');
+
+const biomageMoreInfoText = `
+              More information about Cellenics can be found at <a href="https://biomage.net">biomage.net</a>.<br/><br/>
+              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>`;
 
 const buildUserInvitedNotRegisteredEmailBody = (email, inviterUser) => {
   const messageToSend = `
@@ -13,9 +18,7 @@ const buildUserInvitedNotRegisteredEmailBody = (email, inviterUser) => {
               Register at <a href="${config.corsOriginUrl}">${config.corsOriginUrl}</a> using this email address.<br/> <br/>
 
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
-              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
-              More information about Cellenics can be found at <a href="https://biomage.net">biomage.net</a>.<br/><br/>
-              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>
+              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>${biomageMoreInfoText}
               Best Regards, <br/>
               Cellenics team
             <p/>
@@ -43,7 +46,7 @@ const buildUserInvitedNotRegisteredEmailBody = (email, inviterUser) => {
         Data: 'Invitation to join a project in Cellenics',
       },
     },
-    Source: 'notification@biomage.net',
+    Source: config.domainName === DOMAIN_NAME.HMS ? 'alex_pickering@hms.harvard.edu' : 'notification@biomage.net',
   };
   return params;
 };
