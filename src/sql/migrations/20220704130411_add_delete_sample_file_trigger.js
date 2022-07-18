@@ -1,6 +1,7 @@
 const getTemplateValues = (dbEnv) => {
   let body = '';
   let header = '';
+  let footer = '';
 
   // We skip creation of this trigger and function in development
   // because it requires aws_commons and aws_lambda modules which are proprietary.
@@ -12,13 +13,18 @@ const getTemplateValues = (dbEnv) => {
 
     const triggerLambdaARN = `arn:aws:lambda:${process.env.AWS_REGION}:${process.env.AWS_ACCOUNT_ID}:function:delete-sample-file-lambda-${dbEnv}`;
     body = `PERFORM aws_lambda.invoke('${triggerLambdaARN}', row_to_json(OLD), '${process.env.AWS_REGION}', 'Event');`;
+
+    footer = `
+      GRANT USAGE ON SCHEMA aws_lambda TO api_role;
+      GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA aws_lambda TO api_role;
+    `;
   }
 
-  return { body, header };
+  return { header, body, footer };
 };
 
 const createDeleteSampleFileTriggerFunc = (env) => {
-  const { header, body } = getTemplateValues(env);
+  const { header, body, footer } = getTemplateValues(env);
 
   const template = `
       ${header}
@@ -36,6 +42,8 @@ const createDeleteSampleFileTriggerFunc = (env) => {
       CREATE TRIGGER delete_file_from_s3_after_sample_file_delete_trigger
       AFTER DELETE ON sample_file
       FOR EACH ROW EXECUTE FUNCTION public.delete_file_from_s3_after_sample_file_delete();
+
+      ${footer}
     `;
 
   return template;
@@ -51,11 +59,6 @@ exports.up = async (knex) => {
   }
 
   await knex.raw(createDeleteSampleFileTriggerFunc(process.env.NODE_ENV));
-
-  await knex.raw(`
-    GRANT USAGE ON SCHEMA aws_lambda TO api_role;
-    GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA aws_lambda TO api_role;
-  `);
 };
 
 exports.down = async (knex) => {
