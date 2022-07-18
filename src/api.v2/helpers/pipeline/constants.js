@@ -27,6 +27,12 @@ const ACCESS_DENIED = 'AccessDeniedException';
 // because AWS deletes execution history more than 90 days after the execution is completed
 const EXPIRED_EXECUTION_DATE = '2019-05-19T00:00:00.000Z';
 
+const DOMAIN_NAME = {
+  BIOMAGE: 'scp.biomage.net',
+  BIOMAGE_STAGING: 'scp-staging.biomage.net',
+  HMS: '???@??.net',
+};
+
 module.exports = {
   QC_PROCESS_NAME,
   GEM2S_PROCESS_NAME,
@@ -41,4 +47,5 @@ module.exports = {
   ACCESS_DENIED,
   ASSIGN_POD_TO_PIPELINE,
   EXPIRED_EXECUTION_DATE,
+  DOMAIN_NAME,
 };

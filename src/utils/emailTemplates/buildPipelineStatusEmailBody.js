@@ -2,6 +2,7 @@ const config = require('../../config');
 const {
   SUCCEEDED,
 } = require('../../api/general-services/pipeline-manage/constants');
+const { DOMAIN_NAME } = require('../../api.v2/helpers/pipeline/constants');
 
 const buildPipelineStatusEmailBody = (experimentId, status, user) => {
   const firstname = user.name.split(' ')[0];
@@ -23,7 +24,7 @@ const buildPipelineStatusEmailBody = (experimentId, status, user) => {
             <h3>Hello ${firstname},</h3>
             <p>Thanks for using Cellenics! <br/>
               ${status === SUCCEEDED ? successMessage : failMessage}<br/><br/>
-                The Biomage Team 
+                ${config.domainName === DOMAIN_NAME.HMS ? '' : 'The Biomage Team'}
               <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>
             <p/>
         </body>
