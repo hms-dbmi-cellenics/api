@@ -51,7 +51,7 @@ const buildPipelineStatusEmailBody = (experimentId, status, user) => {
         Data: 'Cellenics experiment status',
       },
     },
-    Source: 'notification@biomage.net',
+    Source: config.domainName === DOMAIN_NAME.HMS ? 'alex_pickering@hms.harvard.edu' : 'notification@biomage.net',
   };
   return params;
 };
