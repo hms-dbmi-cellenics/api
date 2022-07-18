@@ -8,6 +8,13 @@ exports.up = async (knex) => {
       table.boolean('valid');
       table.string('validation_message');
     });
+
+  await knex.raw('UPDATE "sample" SET "valid" = true');
+
+  await knex.schema
+    .alterTable('sample', async (table) => {
+      table.dropNullable('valid');
+    });
 };
 
 /**
