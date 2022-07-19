@@ -7,7 +7,7 @@ module.exports = {
   clusterEnv: 'test',
   awsAccountId: '000000000000',
   awsRegion: 'eu-west-1',
-  corsOriginUrl: 'https://scp.mockDomainName.com',
+  corsOriginUrl: 'https://scp.biomage.net',
   domainName: 'scp.biomage.net',
   podName: 'test',
   sandboxId: 'default',
