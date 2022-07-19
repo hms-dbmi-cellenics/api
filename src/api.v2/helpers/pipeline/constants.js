@@ -30,7 +30,7 @@ const EXPIRED_EXECUTION_DATE = '2019-05-19T00:00:00.000Z';
 const DOMAIN_NAME = {
   BIOMAGE: 'scp.biomage.net',
   BIOMAGE_STAGING: 'scp-staging.biomage.net',
-  HMS: '???@??.net',
+  HMS: 'cellenics.hms.harvard.edu',
 };
 
 module.exports = {
