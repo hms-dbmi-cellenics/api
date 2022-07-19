@@ -25,6 +25,8 @@ const ACCESS_DENIED = 'AccessDeniedException';
 
 const PUBLIC_ACCESS_ID = '00000000-0000-0000-0000-000000000000';
 
+const BIOMAGE_DOMAIN_NAMES = ['scp.biomage.net', 'scp-staging.biomage.net'];
+
 module.exports = {
   QC_PROCESS_NAME,
   GEM2S_PROCESS_NAME,
@@ -39,4 +41,5 @@ module.exports = {
   ACCESS_DENIED,
   ASSIGN_POD_TO_PIPELINE,
   PUBLIC_ACCESS_ID,
+  BIOMAGE_DOMAIN_NAMES,
 };
