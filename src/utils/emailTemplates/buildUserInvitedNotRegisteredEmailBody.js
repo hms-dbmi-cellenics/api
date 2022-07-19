@@ -1,11 +1,14 @@
 const { DOMAIN_NAME } = require('../../api.v2/helpers/pipeline/constants');
 const config = require('../../config');
 
-const biomageMoreInfoText = `
-              More information about Cellenics can be found at <a href="https://biomage.net">biomage.net</a>.<br/><br/>
-              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>`;
 
 const buildUserInvitedNotRegisteredEmailBody = (email, inviterUser) => {
+  const isHMS = config.domainName === DOMAIN_NAME.HMS;
+
+  const biomageMoreInfoText = isHMS ? '' : `
+                More information about Cellenics can be found at <a href="https://biomage.net">biomage.net</a>.<br/><br/>
+                If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>`;
+
   const messageToSend = `
         <html>
         <head>
@@ -46,7 +49,7 @@ const buildUserInvitedNotRegisteredEmailBody = (email, inviterUser) => {
         Data: 'Invitation to join a project in Cellenics',
       },
     },
-    Source: config.domainName === DOMAIN_NAME.HMS ? 'alex_pickering@hms.harvard.edu' : 'notification@biomage.net',
+    Source: isHMS ? 'alex_pickering@hms.harvard.edu' : 'notification@biomage.net',
   };
   return params;
 };
