@@ -1,0 +1,14 @@
+title: Get Trajectory Graph for Trajectory Analysis
+description: Work request body to get trajectory graph for Trajectory Analysis.
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the work. Must be `GetTrajectoryGraph`.
+    pattern: GetTrajectoryGraph
+    example: GetTrajectoryGraph
+  embeddingEtag:
+    type: string
+    description: Etag of the emebdding to be used in generating the graph
+required:
+  - name

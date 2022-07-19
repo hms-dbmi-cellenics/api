@@ -35,6 +35,7 @@ properties:
       - violin
       - markerHeatmap
       - DotPlot
+      - TrajectoryAnalysis
   config:
     type: object
 required:
