@@ -46,6 +46,7 @@ describe('creatUserInvite', () => {
 
     expect(emailBody).toMatchSnapshot();
   });
+
   it('Sends an invitation to sign up if user is not registered', async () => {
     getAwsUserAttributesByEmail.mockImplementationOnce(() => {
       const error = Object.assign(new Error('User not found'), { code: 'UserNotFoundException' });
@@ -74,5 +75,24 @@ describe('creatUserInvite', () => {
     expect(mockUserAccess.grantAccess).not.toHaveBeenCalled();
     expect(mockUserAccess.addToInviteAccess).not.toHaveBeenCalled();
     expect(sendEmail).not.toHaveBeenCalled();
+  });
+
+  it('Sends email without biomage links for HMS', async () => {
+    getAwsUserAttributesByEmail.mockImplementationOnce(() => [
+      { Name: 'sub', Value: 'mock-user-id' },
+      { Name: 'email_verified', Value: 'true' },
+      { Name: 'name', Value: 'Mock Invited' },
+      { Name: 'email', Value: 'invited@example.com' }]);
+
+    await createUserInvite(mockExperimentId, mockInvitedUserEmail, mockRole, mockInviterUser);
+
+    expect(mockUserAccess.grantAccess).toHaveBeenCalledWith('mock-user-id', mockExperimentId, mockRole);
+    expect(mockUserAccess.grantAccess).toHaveBeenCalledTimes(1);
+
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+
+    const emailBody = sendEmail.mock.calls[0][0];
+
+    expect(emailBody).toMatchSnapshot();
   });
 });

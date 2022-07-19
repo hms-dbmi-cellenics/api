@@ -6,8 +6,8 @@ const buildUserInvitedNotRegisteredEmailBody = (email, inviterUser) => {
   const isHMS = config.domainName === DOMAIN_NAME.HMS;
 
   const biomageMoreInfoText = isHMS ? '' : `
-                More information about Cellenics can be found at <a href="https://biomage.net">biomage.net</a>.<br/><br/>
-                If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>`;
+              More information about Cellenics can be found at <a href="https://biomage.net">biomage.net</a>.<br/><br/>
+              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>`;
 
   const messageToSend = `
         <html>
