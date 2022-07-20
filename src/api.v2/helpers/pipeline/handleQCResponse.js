@@ -9,7 +9,7 @@ const assignPodToPipeline = require('./hooks/assignPodToPipeline');
 const { cleanupPods } = require('./hooks/podCleanup');
 const sendNotification = require('./hooks/sendNotification');
 
-const constants = require('./constants');
+const constants = require('../../constants');
 const getPipelineStatus = require('./getPipelineStatus');
 
 const Experiment = require('../../model/Experiment');

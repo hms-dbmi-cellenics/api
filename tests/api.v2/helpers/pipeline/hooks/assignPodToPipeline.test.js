@@ -1,6 +1,6 @@
 
 const k8s = require('@kubernetes/client-node');
-const constants = require('../../../../../src/api.v2/helpers/pipeline/constants');
+const constants = require('../../../../../src/api.v2/constants');
 const fake = require('../../../../test-utils/constants');
 const { buildPodRequest } = require('../../../../../src/api.v2/helpers/pipeline/pipelineConstruct/constructors/requestAssignPodToPipeline');
 

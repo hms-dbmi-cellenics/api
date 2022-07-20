@@ -46,6 +46,7 @@ describe('creatUserInvite', () => {
 
     expect(emailBody).toMatchSnapshot();
   });
+
   it('Sends an invitation to sign up if user is not registered', async () => {
     getAwsUserAttributesByEmail.mockImplementationOnce(() => {
       const error = Object.assign(new Error('User not found'), { code: 'UserNotFoundException' });
