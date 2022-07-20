@@ -2,9 +2,11 @@ const config = require('../../config');
 const {
   SUCCEEDED,
 } = require('../../api/general-services/pipeline-manage/constants');
-const { DOMAIN_NAME } = require('../../api.v2/helpers/pipeline/constants');
+const { ACCOUNT_ID } = require('../../api.v2/constants');
 
 const buildPipelineStatusEmailBody = (experimentId, status, user) => {
+  const isHMS = config.awsAccountId === ACCOUNT_ID.HMS;
+
   const firstname = user.name.split(' ')[0];
   const link = `${config.corsOriginUrl}/experiments/${experimentId}/data-processing`;
   const successMessage = `
@@ -24,7 +26,7 @@ const buildPipelineStatusEmailBody = (experimentId, status, user) => {
             <h3>Hello ${firstname},</h3>
             <p>Thanks for using Cellenics! <br/>
               ${status === SUCCEEDED ? successMessage : failMessage}<br/><br/>
-                ${config.domainName === DOMAIN_NAME.HMS ? '' : 'The Biomage Team'}
+                ${isHMS ? '' : 'The Biomage Team'}
               <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>
             <p/>
         </body>
@@ -51,7 +53,7 @@ const buildPipelineStatusEmailBody = (experimentId, status, user) => {
         Data: 'Cellenics experiment status',
       },
     },
-    Source: config.domainName === DOMAIN_NAME.HMS ? 'alex_pickering@hms.harvard.edu' : 'notification@biomage.net',
+    Source: isHMS ? 'alex_pickering@hms.harvard.edu' : 'notification@biomage.net',
   };
   return params;
 };

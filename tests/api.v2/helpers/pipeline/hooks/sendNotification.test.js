@@ -6,7 +6,7 @@ const Experiment = require('../../../../../src/api.v2/model/Experiment');
 
 const getPipelineStatus = require('../../../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 
-const { FAILED, SUCCEEDED } = require('../../../../../src/api.v2/helpers/pipeline/constants');
+const { FAILED, SUCCEEDED } = require('../../../../../src/api.v2/constants');
 
 const sendFailedSlackMessage = require('../../../../../src/utils/send-failed-slack-message');
 const sendEmail = require('../../../../../src/utils/sendEmail');

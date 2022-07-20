@@ -1,5 +1,5 @@
 const config = require('../../../../../config');
-const constants = require('../../constants');
+const constants = require('../../../../constants');
 
 
 // the full activityArn is too long to be used as a tag (> 63 chars)

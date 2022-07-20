@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const util = require('util');
 
 const config = require('../../../../config');
-const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../constants');
+const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../../../constants');
 
 const Experiment = require('../../../model/Experiment');
 const ExperimentExecution = require('../../../model/ExperimentExecution');

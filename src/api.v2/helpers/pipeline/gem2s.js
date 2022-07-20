@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const AWSXRay = require('aws-xray-sdk');
 
-const constants = require('./constants');
+const constants = require('../../constants');
 const getPipelineStatus = require('./getPipelineStatus');
 const { createGem2SPipeline, createQCPipeline } = require('./pipelineConstruct');
 

@@ -1,4 +1,4 @@
-const pipelineConstants = require('../constants');
+const pipelineConstants = require('../../../constants');
 
 const responseTemplates = {
   gem2s: {

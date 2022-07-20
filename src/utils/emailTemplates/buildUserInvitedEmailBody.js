@@ -1,10 +1,10 @@
-const { DOMAIN_NAME } = require('../../api.v2/helpers/pipeline/constants');
+const { ACCOUNT_ID } = require('../../api.v2/constants');
 const config = require('../../config');
 
 const buildUserInvitedEmailBody = (email, experimentId, inviterUser) => {
   const link = `${config.domainName}/experiments/${experimentId}/data-exploration`;
 
-  const isHMS = config.domainName === DOMAIN_NAME.HMS;
+  const isHMS = config.awsAccountId === ACCOUNT_ID.HMS;
 
   const biomageMoreInfoText = isHMS ? '' : `
               More information about Cellenics can be found at <a href="https://biomage.net">biomage.net</a>.<br/><br/>

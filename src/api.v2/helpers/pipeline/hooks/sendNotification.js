@@ -2,7 +2,7 @@ const { authenticationMiddlewareSocketIO } = require('../../../middlewares/authM
 
 const {
   SUCCEEDED, FAILED, QC_PROCESS_NAME,
-} = require('../constants');
+} = require('../../../constants');
 
 const getPipelineStatus = require('../getPipelineStatus');
 const Experiment = require('../../../model/Experiment');
