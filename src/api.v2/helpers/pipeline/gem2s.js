@@ -159,7 +159,7 @@ const handleGem2sResponse = async (io, message) => {
   AWSXRay.getSegment().addMetadata('message', message);
 
   // Fail hard if there was an error.
-  await validateRequest(message, 'GEM2SResponse.v1.yaml');
+  await validateRequest(message, 'GEM2SResponse.v2.yaml');
 
   await hookRunner.run(message);
 

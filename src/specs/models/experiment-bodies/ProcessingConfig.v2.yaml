@@ -3,21 +3,21 @@ description: Schema for data processing configuration
 type: object
 properties:
   cellSizeDistribution:
-    $ref: ../processing-config-bodies/ProcessingConfigCellSizeDistribution.v1.yaml
+    $ref: ../processing-config-bodies/ProcessingConfigCellSizeDistribution.v2.yaml
   mitochondrialContent:
-    $ref: ../processing-config-bodies/ProcessingConfigMitochondrialContent.v1.yaml
+    $ref: ../processing-config-bodies/ProcessingConfigMitochondrialContent.v2.yaml
   classifier:
-    $ref: ../processing-config-bodies/ProcessingConfigClassifier.v1.yaml
+    $ref: ../processing-config-bodies/ProcessingConfigClassifier.v2.yaml
   numGenesVsNumUmis:
-    $ref: ../processing-config-bodies/ProcessingConfigNumGenesVsNumUMIs.v1.yaml
+    $ref: ../processing-config-bodies/ProcessingConfigNumGenesVsNumUMIs.v2.yaml
   doubletScores:
-    $ref: ../processing-config-bodies/ProcessingConfigDoubletScores.v1.yaml
+    $ref: ../processing-config-bodies/ProcessingConfigDoubletScores.v2.yaml
   dataIntegration:
-    $ref: ../processing-config-bodies/ProcessingConfigDataIntegration.v1.yaml
+    $ref: ../processing-config-bodies/ProcessingConfigDataIntegration.v2.yaml
   configureEmbedding:
-    $ref: ../processing-config-bodies/ProcessingConfigConfigureEmbedding.v1.yaml
+    $ref: ../processing-config-bodies/ProcessingConfigConfigureEmbedding.v2.yaml
   meta:
-    $ref: ../processing-config-bodies/ProcessingConfigMeta.v1.yaml
+    $ref: ../processing-config-bodies/ProcessingConfigMeta.v2.yaml
 required:
   - cellSizeDistribution
   - mitochondrialContent
@@ -26,3 +26,4 @@ required:
   - doubletScores
   - dataIntegration
   - configureEmbedding
+

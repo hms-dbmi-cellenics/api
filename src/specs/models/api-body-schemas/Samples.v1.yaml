@@ -1,5 +1,0 @@
-title: Sample object
-description: Schema for a sample object
-type: object
-additionalProperties:
-  $ref: ../samples-bodies/Sample.v1.yaml
