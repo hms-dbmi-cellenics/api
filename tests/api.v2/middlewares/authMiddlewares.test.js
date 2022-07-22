@@ -7,6 +7,7 @@ const {
 } = require('../../../src/api.v2/middlewares/authMiddlewares');
 
 const { UnauthorizedError, UnauthenticatedError } = require('../../../src/utils/responses');
+const NotAgreedToTermsError = require('../../../src/utils/responses/NotAgreedToTermsError');
 const fake = require('../../test-utils/constants');
 
 const UserAccessModel = require('../../../src/api.v2/model/UserAccess')();
@@ -36,7 +37,10 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
-      user: { sub: 'allowed-user-id' },
+      user: {
+        sub: 'allowed-user-id',
+        'custom:agreed_terms': 'true',
+      },
       url: fake.RESOURCE_V2,
       method: 'POST',
     };
@@ -60,7 +64,10 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
-      user: { sub: 'allowed-user-id' },
+      user: {
+        sub: 'allowed-user-id',
+        'custom:agreed_terms': 'true',
+      },
       url: fake.RESOURCE_V2,
       method: 'POST',
     };
@@ -93,12 +100,30 @@ describe('Tests for authorization/authentication middlewares', () => {
     expect(next).toBeCalledWith(expect.any(UnauthenticatedError));
   });
 
+  it('Express middleware can reject users that didnt agree to privacy policy', async () => {
+    UserAccessModel.canAccessExperiment.mockImplementationOnce(() => true);
+
+    const req = {
+      params: { experimentId: fake.EXPERIMENT_ID },
+      url: fake.RESOURCE_V1,
+      user: {
+        sub: 'allowed-user-id',
+      },
+      method: 'POST',
+    };
+    const next = jest.fn();
+
+    await expressAuthorizationMiddleware(req, {}, next);
+    expect(next).toBeCalledWith(expect.any(NotAgreedToTermsError));
+  });
+
   it('expressAuthenticationOnlyMiddleware works correctly', async () => {
     const next = jest.fn();
-    const req = { user: 'someuserid-xd-123' };
+    const req = { user: { sub: 'someuserid-xd-123' } };
     await expressAuthenticationOnlyMiddleware(req, {}, next);
     expect(next).toBeCalled();
   });
+
   it('expressAuthenticationOnlyMiddleware should fail if req.user is empty', async () => {
     const next = jest.fn();
     const req = { user: null };
@@ -155,5 +180,12 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     await expressAuthorizationMiddleware(req, {}, next);
     expect(next).toBeCalledWith(expect.any(UnauthenticatedError));
+  });
+  it('expressAuthenticationOnlyMiddleware should fail if privacy policy wasnt agreed on', async () => {
+    const next = jest.fn();
+    const req = { user: { sub: 'someuserid-xd-123' } };
+
+    await expressAuthenticationOnlyMiddleware(req, {}, next);
+    expect(next).toBeCalledWith(expect.any(NotAgreedToTermsError));
   });
 });

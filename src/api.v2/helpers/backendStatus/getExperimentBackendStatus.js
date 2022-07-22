@@ -1,4 +1,4 @@
-const constants = require('../pipeline/constants');
+const constants = require('../../constants');
 const getPipelineStatus = require('../pipeline/getPipelineStatus');
 const getWorkerStatus = require('../worker/getWorkerStatus');
 

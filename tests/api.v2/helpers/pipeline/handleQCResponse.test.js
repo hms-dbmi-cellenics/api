@@ -4,7 +4,7 @@ const AWSMock = require('aws-sdk-mock');
 const io = require('socket.io-client');
 
 const handleQCResponse = require('../../../../src/api.v2/helpers/pipeline/handleQCResponse');
-const constants = require('../../../../src/api.v2/helpers/pipeline/constants');
+const constants = require('../../../../src/api.v2/constants');
 
 const { mockS3GetObject } = require('../../../test-utils/mockAWSServices');
 const fake = require('../../../test-utils/constants');

@@ -1,5 +1,5 @@
 const config = require('../../../../../config');
-const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../../constants');
+const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../../../../constants');
 
 const createTask = (taskName, context) => {
   const {

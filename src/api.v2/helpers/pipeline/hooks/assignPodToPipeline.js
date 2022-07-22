@@ -2,7 +2,7 @@
 const k8s = require('@kubernetes/client-node');
 const getLogger = require('../../../../utils/getLogger');
 const validateRequest = require('../../../../utils/schema-validator');
-const constants = require('../constants');
+const constants = require('../../../constants');
 const { deleteExperimentPods } = require('./podCleanup');
 
 const logger = getLogger();

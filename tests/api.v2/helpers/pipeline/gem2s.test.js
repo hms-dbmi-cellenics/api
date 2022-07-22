@@ -13,7 +13,7 @@ const HookRunner = require('../../../../src/api.v2/helpers/pipeline/hooks/HookRu
 
 const validateRequest = require('../../../../src/utils/schema-validator');
 
-const constants = require('../../../../src/api.v2/helpers/pipeline/constants');
+const constants = require('../../../../src/api.v2/constants');
 
 jest.mock('socket.io-client');
 
