@@ -3,7 +3,7 @@ const WorkSubmitService = require('../helpers/worker/workSubmit');
 const validateRequest = require('../../utils/schema-validator');
 const getPipelineStatus = require('../helpers/pipeline/getPipelineStatus');
 
-const pipelineConstants = require('../helpers/pipeline/constants');
+const pipelineConstants = require('../constants');
 
 const validateAndSubmitWork = async (workRequest) => {
   const { experimentId } = workRequest;
