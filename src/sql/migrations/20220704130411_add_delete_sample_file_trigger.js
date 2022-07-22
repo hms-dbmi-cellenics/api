@@ -11,7 +11,7 @@ const getTemplateValues = (dbEnv) => {
     `;
 
     const triggerLambdaARN = `arn:aws:lambda:${process.env.AWS_REGION}:${process.env.AWS_ACCOUNT_ID}:function:delete-sample-file-lambda-${dbEnv}`;
-    body = `PERFORM aws_lambda.invoke('${triggerLambdaARN}', row_to_json(OLD));`;
+    body = `PERFORM aws_lambda.invoke('${triggerLambdaARN}', row_to_json(OLD), '${process.env.AWS_REGION}', 'Event');`;
   }
 
   return { body, header };
@@ -52,10 +52,12 @@ exports.up = async (knex) => {
 
   await knex.raw(createDeleteSampleFileTriggerFunc(process.env.NODE_ENV));
 
-  await knex.raw(`
+  if (['production', 'staging'].includes(process.env.NODE_ENV)) {
+    await knex.raw(`
     GRANT USAGE ON SCHEMA aws_lambda TO api_role;
     GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA aws_lambda TO api_role;
   `);
+  }
 };
 
 exports.down = async (knex) => {
