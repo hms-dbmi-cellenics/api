@@ -7,8 +7,9 @@ properties:
     description: Name of the work. Must be `GetTrajectoryGraph`.
     pattern: GetTrajectoryGraph
     example: GetTrajectoryGraph
-  embeddingEtag:
-    type: string
-    description: Etag of the emebdding to be used in generating the graph
+  configureEmbedding:
+    $ref: ../processing-config-bodies/ProcessingConfigConfigureEmbedding.v1.yaml
 required:
   - name
+  - configureEmbedding
+
