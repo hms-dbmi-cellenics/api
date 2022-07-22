@@ -109,10 +109,9 @@ module.exports = async (app) => {
 
   app.use(checkAuthExpiredMiddleware);
 
-  const versionName = 'api.v2';
   app.use(
     OpenApiValidator.middleware({
-      apiSpec: path.join(__dirname, '..', 'specs', `${versionName}.yaml`),
+      apiSpec: path.join(__dirname, '..', 'specs', 'api.v2.yaml'),
       validateRequests: true,
       validateResponses: {
         onError: (error) => {
@@ -122,7 +121,7 @@ module.exports = async (app) => {
           AWSXRay.getSegment().addAnnotation('openApiValidationFailed', true);
         },
       },
-      operationHandlers: path.join(__dirname, '..', `${versionName}`),
+      operationHandlers: path.join(__dirname, '..', 'api.v2'),
     }),
   );
 
