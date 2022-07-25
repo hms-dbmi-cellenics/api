@@ -5,10 +5,10 @@ CREATE OR REPLACE FUNCTION public.delete_sample_file_if_orphan()
 AS $function$
 BEGIN
   DELETE FROM sample_file
-  WHERE 
+  WHERE
     sample_file.id = OLD.sample_file_id AND
     NOT EXISTS(
-      SELECT FROM sample_to_sample_file_map sf_map 
+      SELECT FROM sample_to_sample_file_map sf_map
       WHERE sf_map.sample_file_id = OLD.sample_file_id AND NOT OLD.sample_id = sf_map.sample_id
     );
   RETURN OLD;
@@ -41,7 +41,7 @@ const setupEnums = async (knex) => {
   await knex.raw('CREATE TYPE sample_technology AS ENUM (\'10x\', \'rhapsody\');');
   await knex.raw('CREATE TYPE sample_file_type AS ENUM (\'features10x\', \'barcodes10x\', \'matrix10x\', \'rhapsody\');');
   await knex.raw(
-    'CREATE TYPE upload_status AS ENUM (\'uploaded\', \'uploading\', \'compressing\', \'uploadError\', \'fileNotFound\', \'fileReadError\', \'fileReadAborted\');',
+    'CREATE TYPE upload_status AS ENUM (\'invalidFormat\', \'uploaded\', \'uploading\', \'compressing\', \'uploadError\', \'fileNotFound\', \'fileReadError\', \'fileReadAborted\');',
   );
   await knex.raw('CREATE TYPE access_role AS ENUM (\'owner\', \'admin\', \'explorer\', \'viewer\');');
 };
