@@ -15,12 +15,12 @@ properties:
     description: |-
       The cell set for preliminary selection of cells to compare.
 
-      This must be a valid UUID of a cell set as found in DynamoDB. All operations in `DifferentialExpression` will only consider cells that are found in this cell set.
+      This must be a valid UUID of a cell set as found in the DB. All operations in `DifferentialExpression` will only consider cells that are found in this cell set.
 
       If not specified, no preliminary selection is done and the entire experiment is used as a basis for computation.
   cellSet:
     type: string
-    description: The first cell set differential expression is run on. This must be a valid UUID of a cell set as found in DynamoDB.
+    description: The first cell set differential expression is run on. This must be a valid UUID of a cell set as found in the DB.
   compareWith:
     type: string
     description: |-
