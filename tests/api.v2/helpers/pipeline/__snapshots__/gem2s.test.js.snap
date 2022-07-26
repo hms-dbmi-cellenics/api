@@ -18,7 +18,6 @@ exports[`createGem2sPipeline works correctly 2`] = `
 Array [
   "mockExperimentId",
   Object {
-    "apiVersion": "v2",
     "authJWT": "mockAuthJWT",
     "experimentName": "asdsadsada",
     "input": Object {

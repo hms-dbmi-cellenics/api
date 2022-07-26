@@ -100,7 +100,6 @@ const generateGem2sParams = async (experimentId, authJWT) => {
     sampleIds: experiment.samplesOrder,
     sampleNames: _.map(samplesInOrder, 'name'),
     sampleS3Paths: s3Paths,
-    apiVersion: 'v2',
     authJWT,
   };
 
