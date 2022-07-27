@@ -198,7 +198,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
         return;
       }
 
-      _.merge(processingConfig[name], body);
+      _.assign(processingConfig[name], body);
     });
   }
 
