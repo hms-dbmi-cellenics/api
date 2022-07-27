@@ -68,6 +68,9 @@ describe('test for pipeline services', () => {
       name: 'doubletScores',
       body: {
         oneSample: {
+          defaultFilterSettings: {
+            oneSetting: 1,
+          },
           filterSettings: {
             oneSetting: 7,
           },
