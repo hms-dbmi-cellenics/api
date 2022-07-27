@@ -1,0 +1,15 @@
+title: Get Img Plot
+description: A worker schema to get Imgplot 
+type: object
+
+properties:
+  name:
+    type: string
+    pattern: GetImgPlot
+    description: The name of the work submitted. Should be `GetImgPlot`.
+  type:
+    type: string
+  features:
+    type: string
+  plotSubType:
+    type: string

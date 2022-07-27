@@ -12,3 +12,4 @@ oneOf:
   - $ref: ./work-request-bodies/WorkRequestMarkerGenes.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestDotPlot.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestGetExpressionCellSets.v2.yaml
+  - $ref: ./work-request-bodies/WorkRequestImgPlot.v2.yaml
