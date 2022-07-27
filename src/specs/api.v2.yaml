@@ -100,6 +100,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
     patch:
       summary: Patch cell sets of an experiment
       description: Performs a partial update on the experiment's cell sets.
@@ -126,6 +133,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
       requestBody:
         content:
           application/boschni-json-merger+json:
@@ -184,6 +198,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
 
     put:
       summary: Update processing configuration for an experiment
@@ -229,6 +249,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
 
   '/experiments':
     get:
@@ -262,6 +288,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
   '/experiments/examples':
     get:
       summary: Get all example experiments
@@ -294,6 +327,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
   '/experiments/{experimentId}':
     get:
       summary: Get an experiment
@@ -339,6 +379,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
     post:
       summary: Create experiment
       description: Create a new experiment
@@ -376,6 +423,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
     patch:
       summary: Patch an experiment
       description: Update some properties in an experiment
@@ -425,6 +479,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
     delete:
       summary: Delete an experiment
       description: Delete an experiment
@@ -469,6 +530,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
   '/experiments/{experimentId}/backendStatus':
     get:
       summary: Get backend status for an experiment
@@ -502,6 +570,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
     parameters:
       - schema:
           type: string
@@ -509,6 +583,7 @@ paths:
         in: path
         required: true
         description: ID of the experiment
+        
   '/experiments/{experimentId}/samples':
     get:
       summary: Get samples for an experiment
@@ -554,6 +629,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
   '/experiments/{experimentId}/samples/{sampleId}':
     post:
       summary: Create sample
@@ -610,6 +692,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
     patch:
       summary: Patch sample
       description: Patch sample for an experiment
@@ -669,6 +758,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
 
     delete:
       summary: Delete sample
@@ -720,6 +815,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
 
   '/experiments/{experimentId}/samples/position':
     put:
@@ -780,6 +882,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
 
   '/experiments/{experimentId}/samples/{sampleId}/files/{sampleFileType}/downloadUrl':
     get:
@@ -832,7 +940,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   '/experiments/{experimentId}/metadataTracks/{metadataTrackKey}':
     post:
       summary: Creates a new metadata track
@@ -880,6 +993,12 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
         '404':
           description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
           content:
             application/json:
               schema:
@@ -945,6 +1064,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
     delete:
       summary: Deletes a metadata track
       description: Deletes a metadata track, no requestBody required
@@ -991,6 +1116,12 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
         '404':
           description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
           content:
             application/json:
               schema:
@@ -1063,6 +1194,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   '/experiments/{experimentId}/samples/{sampleId}/sampleFiles/{sampleFileType}':
     post:
       summary: Create a new file for a sample
@@ -1121,6 +1258,12 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
         '404':
           description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
           content:
             application/json:
               schema:
@@ -1186,6 +1329,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   '/experiments/{experimentId}/clone':
     post:
       summary: Clone an experiment
@@ -1232,6 +1381,12 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
         '404':
           description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
           content:
             application/json:
               schema:
@@ -1830,6 +1985,6 @@ components:
     PlotConfig:
       $ref: ./models/plots-bodies/PlotConfig.v2.yaml
     HTTPSuccess:
-      $ref: './models/HTTPSuccess.v1.yaml'
+      $ref: './models/HTTPSuccess.v2.yaml'
     HTTPError:
-      $ref: './models/HTTPError.v1.yaml'
+      $ref: './models/HTTPError.v2.yaml'

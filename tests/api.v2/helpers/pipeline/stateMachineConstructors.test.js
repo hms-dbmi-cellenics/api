@@ -1,4 +1,4 @@
-const constants = require('../../../../src/api.v2/helpers/pipeline/constants');
+const constants = require('../../../../src/api.v2/constants');
 const fake = require('../../../test-utils/constants');
 const { buildPodRequest } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/constructors/requestAssignPodToPipeline');
 const validateRequest = require('../../../../src/utils/schema-validator');
@@ -11,7 +11,7 @@ describe('Test for pipeline constructor services', () => {
       constants.GEM2S_PROCESS_NAME,
       fake.ACTIVITY_ID);
 
-    await validateRequest(message, 'PipelinePodRequest.v1.yaml');
+    await validateRequest(message, 'PipelinePodRequest.v2.yaml');
     expect(message).toMatchSnapshot();
   });
 });

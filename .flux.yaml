@@ -26,7 +26,7 @@ spec:
       externalPort: 3000
       internalPort: 3000
     readinessProbe:
-      path: "/v1/health"
+      path: "/v2/health"
     livenessProbe:
       probeType: tcpSocket
     resources:
@@ -36,7 +36,7 @@ spec:
       enabled: false
     ingress:
       annotations:
-        alb.ingress.kubernetes.io/healthcheck-path: /v1/health
+        alb.ingress.kubernetes.io/healthcheck-path: /v2/health
   valuesFrom:
   - configMapKeyRef:
       name: account-config

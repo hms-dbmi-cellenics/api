@@ -1,7 +1,0 @@
-title: Mitochondrial Content
-type: array
-items:
-  type: array
-  items:
-    type: number
-description: Response schema for gettin mitochondrial content. Return value is sorted by CellID in ascending order.

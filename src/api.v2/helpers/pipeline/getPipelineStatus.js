@@ -4,9 +4,9 @@ const AWS = require('../../../utils/requireAWS');
 const ExperimentExecution = require('../../model/ExperimentExecution');
 
 const config = require('../../../config');
-const { EXPIRED_EXECUTION_DATE } = require('./constants');
+const { EXPIRED_EXECUTION_DATE } = require('../../constants');
 const getLogger = require('../../../utils/getLogger');
-const pipelineConstants = require('./constants');
+const pipelineConstants = require('../../constants');
 const { getPipelineStepNames } = require('./pipelineConstruct/skeletons');
 
 const logger = getLogger();

@@ -2,7 +2,7 @@
 const k8s = require('@kubernetes/client-node');
 const getLogger = require('../../../../utils/getLogger');
 const validateRequest = require('../../../../utils/schema-validator');
-const constants = require('../constants');
+const constants = require('../../../constants');
 const { deleteExperimentPods } = require('./podCleanup');
 
 const logger = getLogger();
@@ -79,7 +79,7 @@ const assignPodToPipeline = async (message) => {
   }
 
   // validate that the message contains input
-  await validateRequest(message, 'PipelinePodRequest.v1.yaml');
+  await validateRequest(message, 'PipelinePodRequest.v2.yaml');
 
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
 

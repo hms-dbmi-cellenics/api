@@ -1,7 +1,7 @@
 const validateAndSubmitWork = require('../../../src/api.v2/events/validateAndSubmitWork');
 const CacheSingleton = require('../../../src/cache');
 const getPipelineStatus = require('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
-const pipelineConstants = require('../../../src/api.v2/helpers/pipeline/constants');
+const pipelineConstants = require('../../../src/api.v2/constants');
 const WorkSubmitService = require('../../../src/api.v2/helpers/worker/workSubmit')();
 
 jest.mock('../../../src/api.v2/helpers/pipeline/getPipelineStatus');

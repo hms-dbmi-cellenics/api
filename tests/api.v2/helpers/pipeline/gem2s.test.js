@@ -13,7 +13,7 @@ const HookRunner = require('../../../../src/api.v2/helpers/pipeline/hooks/HookRu
 
 const validateRequest = require('../../../../src/utils/schema-validator');
 
-const constants = require('../../../../src/api.v2/helpers/pipeline/constants');
+const constants = require('../../../../src/api.v2/constants');
 
 jest.mock('socket.io-client');
 
@@ -133,7 +133,7 @@ describe('gem2sResponse', () => {
   it('works correctly', async () => {
     await handleGem2sResponse(io, message);
 
-    expect(validateRequest).toHaveBeenCalledWith(message, 'GEM2SResponse.v1.yaml');
+    expect(validateRequest).toHaveBeenCalledWith(message, 'GEM2SResponse.v2.yaml');
     expect(hookRunnerInstance.run).toHaveBeenCalledWith(message);
 
     expect(getPipelineStatus).toHaveBeenCalledWith(experimentId, constants.GEM2S_PROCESS_NAME);

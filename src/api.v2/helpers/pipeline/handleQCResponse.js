@@ -9,7 +9,7 @@ const assignPodToPipeline = require('./hooks/assignPodToPipeline');
 const { cleanupPods } = require('./hooks/podCleanup');
 const sendNotification = require('./hooks/sendNotification');
 
-const constants = require('./constants');
+const constants = require('../../constants');
 const getPipelineStatus = require('./getPipelineStatus');
 
 const Experiment = require('../../model/Experiment');
@@ -60,7 +60,7 @@ const updateProcessingConfigWithQCStep = async (taskName, experimentId, output, 
   // TODO the processing config validation was not being enforced because the 'anyOf' requirement
   // was not being correctly applied. This needs to be refactored together with the
   // pipeline and ideally while unifying the qc & gem2s responses.
-  // await validateRequest(output, 'ProcessingConfigBodies.v1.yaml');
+  await validateRequest(output, 'ProcessingConfigBodies.v2.yaml');
 
   const experiment = new Experiment();
 
@@ -123,7 +123,7 @@ const sendUpdateToSubscribed = async (experimentId, message, output, error, io) 
 const handleQCResponse = async (io, message) => {
   AWSXRay.getSegment().addMetadata('message', message);
 
-  await validateRequest(message, 'PipelineResponse.v1.yaml');
+  await validateRequest(message, 'PipelineResponse.v2.yaml');
 
   await hookRunner.run(message);
 

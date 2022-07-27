@@ -4,7 +4,7 @@ const AWSMock = require('aws-sdk-mock');
 const io = require('socket.io-client');
 
 const handleQCResponse = require('../../../../src/api.v2/helpers/pipeline/handleQCResponse');
-const constants = require('../../../../src/api.v2/helpers/pipeline/constants');
+const constants = require('../../../../src/api.v2/constants');
 
 const { mockS3GetObject } = require('../../../test-utils/mockAWSServices');
 const fake = require('../../../test-utils/constants');
@@ -162,7 +162,7 @@ describe('handleQCResponse module', () => {
 
       await handleQCResponse(mockIO, message);
 
-      expect(validateRequest).toHaveBeenCalledWith(message, 'PipelineResponse.v1.yaml');
+      expect(validateRequest).toHaveBeenCalledWith(message, 'PipelineResponse.v2.yaml');
       expect(hookRunnerInstance.run).toHaveBeenCalledWith(message);
 
       expect(s3Spy).toHaveBeenCalledTimes(1);

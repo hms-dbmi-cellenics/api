@@ -23,9 +23,14 @@ const NOT_CREATED = 'NOT_CREATED';
 const EXECUTION_DOES_NOT_EXIST = 'ExecutionDoesNotExist';
 const ACCESS_DENIED = 'AccessDeniedException';
 
-const PUBLIC_ACCESS_ID = '00000000-0000-0000-0000-000000000000';
+// Custom date to return if execution history can no longer be found in StepFunctions
+// because AWS deletes execution history more than 90 days after the execution is completed
+const EXPIRED_EXECUTION_DATE = '2019-05-19T00:00:00.000Z';
 
-const BIOMAGE_DOMAIN_NAMES = ['scp.biomage.net', 'scp-staging.biomage.net'];
+const ACCOUNT_ID = {
+  BIOMAGE: '242905224710',
+  HMS: '160782110667',
+};
 
 module.exports = {
   QC_PROCESS_NAME,
@@ -40,6 +45,6 @@ module.exports = {
   EXECUTION_DOES_NOT_EXIST,
   ACCESS_DENIED,
   ASSIGN_POD_TO_PIPELINE,
-  PUBLIC_ACCESS_ID,
-  BIOMAGE_DOMAIN_NAMES,
+  EXPIRED_EXECUTION_DATE,
+  ACCOUNT_ID,
 };
