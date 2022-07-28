@@ -20,6 +20,7 @@ const getAvailablePods = async (namespace, statusSelector) => {
 
 
 const patchPod = async (message, size = '') => {
+  console.log('creating api client');
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
@@ -99,7 +100,7 @@ const assignPodToPipeline = async (message) => {
   try {
     // try to choose a free pod and assign it to the current pipeline
     // await patchPod(message);
-    const size = 'xl';
+    const size = process.env.SIZE;
     await patchPod(message, size);
   } catch (e) {
     logger.error(`Failed to assign pipeline pod to experiment ${experimentId}: ${e}`);
