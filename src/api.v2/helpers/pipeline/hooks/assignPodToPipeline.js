@@ -27,6 +27,7 @@ const patchPod = async (message, size = '') => {
   if (size !== '') {
     namespace = `${namespace}-${size}`;
   }
+  console.log(`namespace to query: ${namespace}`);
   // try to get an available pod which is already running
   let pods = await getAvailablePods(namespace, 'status.phase=Running');
   if (pods.length < 1) {
