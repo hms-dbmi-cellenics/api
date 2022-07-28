@@ -10,6 +10,14 @@ const logger = getLogger();
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
 
+const formatError = (error) => {
+  // if we have a kubernetes error, get the response message because
+  // the default error message (e.message) is not useful
+  if (error.statusCode && error.response && error.response.body) {
+    return `${error.statusCode}: ${error.response.body.message}`;
+  }
+  return error;
+};
 // getAvailablePods retrieves pods not assigned already to an activityID given a selector
 const getAvailablePods = async (namespace, statusSelector) => {
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
@@ -94,16 +102,16 @@ const assignPodToPipeline = async (message) => {
     // remove pipeline pods already assigned to this experiment
     await deleteExperimentPods(experimentId);
   } catch (e) {
-    logger.error(`Failed to remove pods for experiment ${experimentId}: ${e}`);
+    logger.error(`Failed to remove pods for experiment ${experimentId}. ${formatError(e)}`);
   }
 
   try {
     // try to choose a free pod and assign it to the current pipeline
-    // await patchPod(message);
+    // TODO improve how the size is assigned
     const size = process.env.SIZE;
     await patchPod(message, size);
   } catch (e) {
-    logger.error(`Failed to assign pipeline pod to experiment ${experimentId}: ${e}`);
+    logger.error(`Failed to assign pipeline pod to experiment ${experimentId}: ${formatError(e)}`);
   }
 };
 
