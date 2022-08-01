@@ -79,7 +79,7 @@ const assignPodToPipeline = async (message) => {
   }
 
   // validate that the message contains input
-  await validateRequest(message, 'PipelinePodRequest.v1.yaml');
+  await validateRequest(message, 'PipelinePodRequest.v2.yaml');
 
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
 

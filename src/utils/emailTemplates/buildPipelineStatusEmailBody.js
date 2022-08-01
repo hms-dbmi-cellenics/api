@@ -1,8 +1,6 @@
 const config = require('../../config');
-const {
-  SUCCEEDED,
-} = require('../../api/general-services/pipeline-manage/constants');
-const { ACCOUNT_ID } = require('../../api.v2/constants');
+
+const { ACCOUNT_ID, SUCCEEDED } = require('../../api.v2/constants');
 
 const buildPipelineStatusEmailBody = (experimentId, status, user) => {
   const isHMS = config.awsAccountId === ACCOUNT_ID.HMS;

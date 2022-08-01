@@ -11,7 +11,7 @@ properties:
       type: string
       description: A Bearer-style HTTP authentication token passed by the user that ran GEM2S.
     processingConfig:
-      $ref: './ProcessingConfig.v1.yaml#/properties/processingConfig'
+      $ref: './ProcessingConfig.v2.yaml#/properties'
     meta:
       type: object
     table:

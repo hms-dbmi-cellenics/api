@@ -11,7 +11,7 @@ describe('Test for pipeline constructor services', () => {
       constants.GEM2S_PROCESS_NAME,
       fake.ACTIVITY_ID);
 
-    await validateRequest(message, 'PipelinePodRequest.v1.yaml');
+    await validateRequest(message, 'PipelinePodRequest.v2.yaml');
     expect(message).toMatchSnapshot();
   });
 });
