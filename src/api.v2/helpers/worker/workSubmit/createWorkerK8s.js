@@ -1,7 +1,6 @@
 const k8s = require('@kubernetes/client-node');
 const config = require('../../../../config');
 const getLogger = require('../../../../utils/getLogger');
-const formatExperimentId = require('../../../../utils/v1Compatibility/formatExperimentId');
 
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
@@ -20,7 +19,7 @@ const getPods = async (namespace, statusSelector, labelSelector) => {
 
 
 const getAssignedPods = async (experimentId, namespace) => {
-// check if there's already a running pod for this experiment
+  // check if there's already a running pod for this experiment
   const assignedRunningPods = await getPods(namespace, 'status.phase=Running', `experimentId=${experimentId}`);
   if (assignedRunningPods.length > 0) {
     return assignedRunningPods;
@@ -46,9 +45,7 @@ const getAvailablePods = async (namespace) => {
 
 const createWorkerResources = async (service) => {
   const { sandboxId } = config;
-
-  // assigned worker experimentId string needs to be without dashes
-  const experimentId = formatExperimentId(service.workRequest.experimentId);
+  const { experimentId } = service.workRequest;
 
   const namespace = `worker-${sandboxId}`;
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
