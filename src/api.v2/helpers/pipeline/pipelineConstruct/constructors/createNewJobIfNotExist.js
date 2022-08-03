@@ -1,24 +1,74 @@
 const config = require('../../../../../config');
 
-const createNewJobIfNotExist = (context, step) => {
-  const { accountId, activityArn, processName } = context;
+const createNewLocalJobIfNotExist = (context, step) => {
+  const {
+    accountId, clusterInfo, pipelineArtifacts, experimentId, activityArn, processName,
+  } = context;
 
+  const MAX_HELMRELEASE_NAME_LENGTH = 53;
+  const releaseName = `${processName}-${experimentId}`.substring(0, MAX_HELMRELEASE_NAME_LENGTH - 1);
+
+  console.log('pipeline-artifacts');
+  console.log(pipelineArtifacts);
+  console.log('clusterInfo');
+  console.log(clusterInfo);
   return {
     ...step,
     Type: 'Task',
-    Resource: 'arn:aws:states:::lambda:invoke',
+    Comment: 'Attempts to create a Kubernetes Job+Service for the pipeline runner. Will swallow a 409 (already exists) error.',
+    Resource: 'arn:aws:states:::eks:call',
     Parameters: {
-      FunctionName: `arn:aws:lambda:${config.awsRegion}:${accountId}:function:local-container-launcher`,
-      Payload: {
-        image: 'biomage-pipeline-runner',
-        name: `${processName}-runner`,
-        detached: true,
-        activityArn,
+      ClusterName: clusterInfo.name,
+      CertificateAuthority: clusterInfo.certAuthority,
+      Endpoint: clusterInfo.endpoint,
+      Method: 'POST',
+      Path: `/apis/helm.fluxcd.io/v1/namespaces/${config.pipelineNamespace}/helmreleases`,
+      RequestBody: {
+        apiVersion: 'helm.fluxcd.io/v1',
+        kind: 'HelmRelease',
+        metadata: {
+          name: releaseName,
+          namespace: config.pipelineNamespace,
+          annotations: {
+            'fluxcd.io/automated': 'true',
+          },
+          labels: {
+            sandboxId: config.sandboxId,
+            type: 'pipeline',
+            experimentId,
+          },
+        },
+        spec: {
+          releaseName,
+          chart: {
+            git: 'git@github.com:biomage-ltd/pipeline',
+            path: 'pipeline-runner/chart',
+            ref: pipelineArtifacts.chartRef,
+          },
+          values: {
+            experimentId,
+            image: pipelineArtifacts['pipeline-runner'],
+            namespace: config.pipelineNamespace,
+            sandboxId: config.sandboxId,
+            awsAccountId: accountId,
+            clusterEnv: config.clusterEnv,
+            awsRegion: config.awsRegion,
+            activityArn,
+          },
+        },
       },
     },
+    Retry: [
+      {
+        ErrorEquals: ['EKS.409'],
+        IntervalSeconds: 1,
+        BackoffRate: 2.0,
+        MaxAttempts: 2,
+      },
+    ],
     Catch: [
       {
-        ErrorEquals: ['States.ALL'],
+        ErrorEquals: ['EKS.409'],
         ResultPath: '$.error-info',
         Next: step.XNextOnCatch || step.Next,
       },
@@ -26,4 +76,4 @@ const createNewJobIfNotExist = (context, step) => {
   };
 };
 
-module.exports = createNewJobIfNotExist;
+module.exports = createNewLocalJobIfNotExist;
