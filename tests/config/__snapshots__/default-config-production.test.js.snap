@@ -18,13 +18,12 @@ Object {
   "corsOriginUrl": "https://localhost:5000",
   "domainName": "localhost:5000",
   "githubToken": undefined,
-  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/production/pipeline.yaml",
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/releases/master/production/pipeline.yaml",
   "pipelineNamespace": "pipeline-default",
   "podName": "local",
   "port": 3000,
   "rdsSandboxId": "default",
   "sandboxId": "default",
-  "workerInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/production/worker.yaml",
   "workerNamespace": "worker-default",
 }
 `;

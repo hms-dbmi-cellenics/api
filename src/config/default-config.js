@@ -74,8 +74,7 @@ const config = {
   api: {
     prefix: '/',
   },
-  workerInstanceConfigUrl: `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/production/worker.yaml`,
-  pipelineInstanceConfigUrl: `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/production/pipeline.yaml`,
+  pipelineInstanceConfigUrl: `https://raw.githubusercontent.com/${githubOrganisationName}/releases/master/production/pipeline.yaml`,
   cachingEnabled: true,
   corsOriginUrl: `https://${domainName}`,
   adminSub: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
@@ -84,8 +83,7 @@ const config = {
 
 // We are in permanent develop staging environment
 if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
-  config.workerInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/worker.yaml`;
-  config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/pipeline.yaml`;
+  config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/releases/master/staging/pipeline.yaml`;
   config.cachingEnabled = false;
   config.corsOriginUrl = `https://ui-default.${domainName}`;
   config.adminSub = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
@@ -93,8 +91,7 @@ if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
 
 // We are in user staging environments
 if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
-  config.workerInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/${config.sandboxId}.yaml`;
-  config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/${config.sandboxId}.yaml`;
+  config.pipelineInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/releases/master/staging/${config.sandboxId}.yaml`;
   config.cachingEnabled = false;
   config.corsOriginUrl = `https://ui-${config.sandboxId}.${domainName}`;
   config.adminSub = '0b17683f-363b-4466-b2e2-5bf11c38a76e';

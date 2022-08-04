@@ -18,13 +18,12 @@ Object {
   "corsOriginUrl": "https://ui-default.scp-staging.biomage.net",
   "domainName": "scp-staging.biomage.net",
   "githubToken": undefined,
-  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/staging/pipeline.yaml",
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/releases/master/staging/pipeline.yaml",
   "pipelineNamespace": "pipeline-default",
   "podName": "local",
   "port": 3000,
   "rdsSandboxId": "default",
   "sandboxId": "default",
-  "workerInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/staging/worker.yaml",
   "workerNamespace": "worker-default",
 }
 `;
