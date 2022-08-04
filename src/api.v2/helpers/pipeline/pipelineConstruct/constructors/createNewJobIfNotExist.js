@@ -42,7 +42,7 @@ const createNewLocalJobIfNotExist = (context, step) => {
           releaseName,
           chart: {
             git: 'git@github.com:biomage-ltd/pipeline',
-            path: 'pipeline-runner/chart',
+            path: 'chart-infra-xl/',
             ref: pipelineArtifacts.chartRef,
           },
           values: {
