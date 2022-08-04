@@ -50,9 +50,14 @@ const createNewLocalJobIfNotExist = (context, step) => {
             image: pipelineArtifacts['pipeline-runner'],
             namespace: config.pipelineNamespace,
             sandboxId: config.sandboxId,
-            awsAccountId: accountId,
             clusterEnv: config.clusterEnv,
             awsRegion: config.awsRegion,
+            myAccount: {
+              accountId,
+            },
+            serviceAccount: {
+              iamRole: `pipeline-role-${config.clusterEnv}`,
+            },
             activityArn,
           },
         },
