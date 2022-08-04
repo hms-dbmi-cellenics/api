@@ -47,7 +47,7 @@ const createNewLocalJobIfNotExist = (context, step) => {
           },
           values: {
             experimentId,
-            image: pipelineArtifacts['pipeline-runner'],
+            image: pipelineArtifacts.pipelineRunner,
             namespace: config.pipelineNamespace,
             sandboxId: config.sandboxId,
             clusterEnv: config.clusterEnv,
