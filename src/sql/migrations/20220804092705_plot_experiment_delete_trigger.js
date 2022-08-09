@@ -20,7 +20,7 @@ const getTemplateValue = (dbEnv, key, bucketName) => {
   return body;
 };
 
-const createDeletePlotTriggerFunc = async (env) => {
+const createDeletePlotTriggerFunc = (env) => {
   const body = getTemplateValue(env, 's3_data_key', PLOTS);
 
   const template = `
@@ -51,7 +51,7 @@ const deleteSampleTrigger = () => {
   return query;
 };
 
-const createDeleteSampleFileTriggerFunc = async (env) => {
+const createDeleteSampleFileTriggerFunc = (env) => {
   const body = getTemplateValue(env, 's3_path', SAMPLE_FILES);
 
   const template = `
@@ -73,7 +73,7 @@ const createDeleteSampleFileTriggerFunc = async (env) => {
   return template;
 };
 
-const createDeleteFilteredCellsTriggerFunc = async (env) => {
+const createDeleteFilteredCellsTriggerFunc = (env) => {
   const body = getTemplateValue(env, 'id', FILTERED_CELLS);
 
   const template = `
@@ -94,7 +94,7 @@ const createDeleteFilteredCellsTriggerFunc = async (env) => {
   return template;
 };
 
-const createDeleteRawSeuratTriggerFunc = async (env) => {
+const createDeleteRawSeuratTriggerFunc = (env) => {
   const body = getTemplateValue(env, 'id', RAW_SEURAT);
 
   const template = `
@@ -115,7 +115,7 @@ const createDeleteRawSeuratTriggerFunc = async (env) => {
   return template;
 };
 
-const createDeleteProcessedMatrixTriggerFunc = async (env) => {
+const createDeleteProcessedMatrixTriggerFunc = (env) => {
   const body = getTemplateValue(env, 'id', PROCESSED_MATRIX);
   const template = `
       CREATE OR REPLACE FUNCTION public.delete_processed_matrix_from_s3_after_experiment_delete()
@@ -135,7 +135,7 @@ const createDeleteProcessedMatrixTriggerFunc = async (env) => {
   return template;
 };
 
-const createDeleteCellSetsTriggerFunc = async (env) => {
+const createDeleteCellSetsTriggerFunc = (env) => {
   const body = getTemplateValue(env, 'id', CELL_SETS);
   const template = `
       CREATE OR REPLACE FUNCTION public.delete_cell_sets_from_s3_after_experiment_delete()
