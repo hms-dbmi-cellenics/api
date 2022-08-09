@@ -150,7 +150,7 @@ const createDeleteCellSetsTriggerFunc = (env) => {
 
       CREATE TRIGGER delete_cell_sets_from_s3_after_experiment_delete_trigger
       AFTER DELETE ON experiment
-      FOR EACH ROW EXECUTE FUNCTION public.delete_cell_sets_from_s3_after_experiment_delete_delete();
+      FOR EACH ROW EXECUTE FUNCTION public.delete_cell_sets_from_s3_after_experiment_delete();
     `;
   return template;
 };
