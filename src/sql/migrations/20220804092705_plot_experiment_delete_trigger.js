@@ -1,5 +1,5 @@
 import {
-  PLOTS, SAMPLE_FILES, FILTERED_CELLS, RAW_SEURAT, PROCESSED_MATRIX,
+  PLOTS, SAMPLE_FILES, FILTERED_CELLS, RAW_SEURAT, PROCESSED_MATRIX, CELL_SETS,
 } from '../../api.v2/helpers/s3/bucketNames';
 
 const getGenericLambda = (env) => {
@@ -135,6 +135,26 @@ const createDeleteProcessedMatrixTriggerFunc = async (env) => {
   return template;
 };
 
+const createDeleteCellSetsTriggerFunc = async (env) => {
+  const body = getTemplateValue(env, 'id', CELL_SETS);
+  const template = `
+      CREATE OR REPLACE FUNCTION public.delete_cell_sets_from_s3_after_experiment_delete()
+        RETURNS trigger
+        LANGUAGE plpgsql
+      AS $function$
+      BEGIN
+        ${body}
+        return OLD;
+      END;
+      $function$;
+
+      CREATE TRIGGER delete_cell_sets_from_s3_after_experiment_delete_trigger
+      AFTER DELETE ON experiment
+      FOR EACH ROW EXECUTE FUNCTION public.delete_cell_sets_from_s3_after_experiment_delete_delete();
+    `;
+  return template;
+};
+
 exports.up = async (knex) => {
   if (!process.env.AWS_REGION) {
     throw new Error('Environment variables AWS_REGION and AWS_ACCOUNT_ID are required');
@@ -150,6 +170,7 @@ exports.up = async (knex) => {
   await knex.raw(createDeleteFilteredCellsTriggerFunc(process.env.NODE_ENV));
   await knex.raw(createDeleteRawSeuratTriggerFunc(process.env.NODE_ENV));
   await knex.raw(createDeleteProcessedMatrixTriggerFunc(process.env.NODE_ENV));
+  await knex.raw(createDeleteCellSetsTriggerFunc(process.env.NODE_ENV));
 };
 
 exports.down = async (knex) => {
@@ -164,5 +185,7 @@ exports.down = async (knex) => {
     DROP FUNCTION IF EXISTS public.delete_raw_seurat_from_s3_after_experiment_delete;
     DROP TRIGGER IF EXISTS delete_processed_matrix_from_s3_after_experiment_delete_trigger ON experiment;
     DROP FUNCTION IF EXISTS public.delete_processed_matrix_from_s3_after_experiment_delete;
+    DROP TRIGGER IF EXISTS delete_cell_sets_from_s3_after_experiment_delete_trigger ON experiment;
+    DROP FUNCTION IF EXISTS public.delete_cell_sets_from_s3_after_experiment_delete;
   `);
 };
