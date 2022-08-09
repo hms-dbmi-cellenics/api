@@ -21,7 +21,7 @@ const getTemplateValue = (dbEnv, key, bucketName) => {
 };
 
 const createDeletePlotTriggerFunc = async (env) => {
-  const body = getTemplateValue(env, 'experiment_id', PLOTS);
+  const body = getTemplateValue(env, 's3_data_key', PLOTS);
 
   const template = `
       CREATE OR REPLACE FUNCTION public.delete_file_from_s3_after_plot_delete()
