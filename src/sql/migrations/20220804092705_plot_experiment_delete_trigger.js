@@ -1,6 +1,6 @@
-import {
+const {
   PLOTS, SAMPLE_FILES, FILTERED_CELLS, RAW_SEURAT, PROCESSED_MATRIX, CELL_SETS,
-} from '../../api.v2/helpers/s3/bucketNames';
+} = require('../../api.v2/helpers/s3/bucketNames');
 
 const getGenericLambda = (env) => {
   const triggerLambdaARN = `arn:aws:lambda:${process.env.AWS_REGION}:${process.env.AWS_ACCOUNT_ID}:function:delete-s3-file-lambda-${env}`;
