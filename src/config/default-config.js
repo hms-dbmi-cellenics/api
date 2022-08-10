@@ -3,7 +3,7 @@ const getLogger = require('../utils/getLogger');
 
 const logger = getLogger();
 
-const githubOrganisationName = 'hms-dbmi-cellenics';
+const githubOrganisationName = 'biomage-org';
 
 // If we are not deployed on Github (AWS/k8s), the environment is given by
 // NODE_ENV, or development if NODE_ENV is not set.
