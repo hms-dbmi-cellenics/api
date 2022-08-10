@@ -2,26 +2,28 @@ const {
   PLOTS, SAMPLE_FILES, FILTERED_CELLS, RAW_SEURAT, PROCESSED_MATRIX, CELL_SETS,
 } = require('../../api.v2/helpers/s3/bucketNames');
 
-const getGenericLambda = (env) => {
-  const triggerLambdaARN = `arn:aws:lambda:${process.env.AWS_REGION}:${process.env.AWS_ACCOUNT_ID}:function:delete-s3-file-lambda-${env}`;
-  return triggerLambdaARN;
-};
-
-const getTemplateValue = (dbEnv, key, bucketName) => {
+const getTriggerFunction = (dbEnv, key, bucketName) => {
   let body = '';
+  const triggerLambdaARN = `arn:aws:lambda:${process.env.AWS_REGION}:${process.env.AWS_ACCOUNT_ID}:function:delete-s3-file-lambda-${dbEnv}`;
+
+  // removing the environment and account id from the bucket name. When making a migration, the environment would be development,
+  // due to the fact that the migration is ran locally, so we need to add the environment and accountID in the lambda itself
+  let bucketNameWithoutEnvironmentAndAccID = bucketName.split('-');
+  bucketNameWithoutEnvironmentAndAccID.pop();
+  bucketNameWithoutEnvironmentAndAccID.pop();
+  bucketNameWithoutEnvironmentAndAccID = bucketNameWithoutEnvironmentAndAccID.join('-');
 
   // We skip creation of the triggers and functions in development
   // because it requires aws_commons and aws_lambda modules which are proprietary.
   if (['production', 'staging'].includes(dbEnv)) {
-    const lambdaArn = getGenericLambda(dbEnv);
-    body = `PERFORM aws_lambda.invoke('${lambdaArn}', json_build_object('key',${key}, 'bucketName', ${bucketName}), '${process.env.AWS_REGION}', 'Event');`;
+    body = `PERFORM aws_lambda.invoke('${triggerLambdaARN}', json_build_object('key',OLD.${key}, 'bucketName', '${bucketNameWithoutEnvironmentAndAccID}'), '${process.env.AWS_REGION}', 'Event');`;
   }
 
   return body;
 };
 
 const createDeletePlotTriggerFunc = (env) => {
-  const body = getTemplateValue(env, 's3_data_key', PLOTS);
+  const body = getTriggerFunction(env, 's3_data_key', PLOTS);
 
   const template = `
       CREATE OR REPLACE FUNCTION public.delete_file_from_s3_after_plot_delete()
@@ -52,7 +54,7 @@ const deleteSampleTrigger = () => {
 };
 
 const createDeleteSampleFileTriggerFunc = (env) => {
-  const body = getTemplateValue(env, 's3_path', SAMPLE_FILES);
+  const body = getTriggerFunction(env, 's3_path', SAMPLE_FILES);
 
   const template = `
       CREATE OR REPLACE FUNCTION public.delete_file_from_s3_after_sample_delete()
@@ -74,7 +76,7 @@ const createDeleteSampleFileTriggerFunc = (env) => {
 };
 
 const createDeleteFilteredCellsTriggerFunc = (env) => {
-  const body = getTemplateValue(env, 'id', FILTERED_CELLS);
+  const body = getTriggerFunction(env, 'id', FILTERED_CELLS);
 
   const template = `
       CREATE OR REPLACE FUNCTION public.delete_filtered_cells_from_s3_after_experiment_delete()
@@ -95,7 +97,7 @@ const createDeleteFilteredCellsTriggerFunc = (env) => {
 };
 
 const createDeleteRawSeuratTriggerFunc = (env) => {
-  const body = getTemplateValue(env, 'id', RAW_SEURAT);
+  const body = getTriggerFunction(env, 'id', RAW_SEURAT);
 
   const template = `
       CREATE OR REPLACE FUNCTION public.delete_raw_seurat_from_s3_after_experiment_delete()
@@ -116,7 +118,7 @@ const createDeleteRawSeuratTriggerFunc = (env) => {
 };
 
 const createDeleteProcessedMatrixTriggerFunc = (env) => {
-  const body = getTemplateValue(env, 'id', PROCESSED_MATRIX);
+  const body = getTriggerFunction(env, 'id', PROCESSED_MATRIX);
   const template = `
       CREATE OR REPLACE FUNCTION public.delete_processed_matrix_from_s3_after_experiment_delete()
         RETURNS trigger
@@ -136,7 +138,7 @@ const createDeleteProcessedMatrixTriggerFunc = (env) => {
 };
 
 const createDeleteCellSetsTriggerFunc = (env) => {
-  const body = getTemplateValue(env, 'id', CELL_SETS);
+  const body = getTriggerFunction(env, 'id', CELL_SETS);
   const template = `
       CREATE OR REPLACE FUNCTION public.delete_cell_sets_from_s3_after_experiment_delete()
         RETURNS trigger
