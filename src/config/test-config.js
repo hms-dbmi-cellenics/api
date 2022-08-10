@@ -1,4 +1,4 @@
-const githubOrganisationName = 'hms-dbmi-cellenics';
+const githubOrganisationName = 'biomage-org';
 
 process.env.NODE_ENV = 'test';
 
