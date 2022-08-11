@@ -178,14 +178,19 @@ exports.down = async (knex) => {
   await knex.raw(`
     DROP TRIGGER IF EXISTS delete_file_from_s3_after_plot_delete_trigger ON plot;
     DROP FUNCTION IF EXISTS public.delete_file_from_s3_after_plot_delete;
+
     DROP TRIGGER IF EXISTS delete_file_from_s3_after_sample_delete_trigger ON sample_file;
     DROP FUNCTION IF EXISTS public.delete_file_from_s3_after_sample_delete;
+
     DROP TRIGGER IF EXISTS delete_filtered_cells_from_s3_after_experiment_delete_trigger ON experiment;
     DROP FUNCTION IF EXISTS public.delete_filtered_cells_from_s3_after_experiment_delete;
+
     DROP TRIGGER IF EXISTS delete_raw_seurat_from_s3_after_experiment_delete_trigger ON experiment;
     DROP FUNCTION IF EXISTS public.delete_raw_seurat_from_s3_after_experiment_delete;
+
     DROP TRIGGER IF EXISTS delete_processed_matrix_from_s3_after_experiment_delete_trigger ON experiment;
     DROP FUNCTION IF EXISTS public.delete_processed_matrix_from_s3_after_experiment_delete;
+    
     DROP TRIGGER IF EXISTS delete_cell_sets_from_s3_after_experiment_delete_trigger ON experiment;
     DROP FUNCTION IF EXISTS public.delete_cell_sets_from_s3_after_experiment_delete;
   `);
