@@ -11,6 +11,8 @@ items:
       type: string
     notifyByEmail:
       type: boolean
+    qcRerunDisabled:
+      type: boolean
     samplesOrder:
       type: array
       items:
@@ -28,6 +30,7 @@ items:
     - name
     - description
     - notifyByEmail
+    - qcRerunDisabled
     - samplesOrder
     - metadataKeys
     - createdAt
