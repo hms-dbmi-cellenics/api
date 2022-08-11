@@ -6,17 +6,16 @@ const getTriggerFunction = (dbEnv, key, bucketName) => {
   let body = '';
   const triggerLambdaARN = `arn:aws:lambda:${process.env.AWS_REGION}:${process.env.AWS_ACCOUNT_ID}:function:delete-s3-file-lambda-${dbEnv}`;
 
-  // removing the environment and account id from the bucket name. When making a migration, the environment would be development,
-  // due to the fact that the migration is ran locally, so we need to add the environment and accountID in the lambda itself
-  let bucketNameWithoutEnvironmentAndAccID = bucketName.split('-');
-  bucketNameWithoutEnvironmentAndAccID.pop();
-  bucketNameWithoutEnvironmentAndAccID.pop();
-  bucketNameWithoutEnvironmentAndAccID = bucketNameWithoutEnvironmentAndAccID.join('-');
+  // Removing the environment and account id from the bucket name.
+  // When making a migration, the environment would be development,
+  // due to the fact that the migration is ran locally,
+  // so we need to add the environment and accountID in the lambda itself
+  const rawBucketName = bucketName.split('-').slice(0, -2).join('-');
 
   // We skip creation of the triggers and functions in development
   // because it requires aws_commons and aws_lambda modules which are proprietary.
   if (['production', 'staging'].includes(dbEnv)) {
-    body = `PERFORM aws_lambda.invoke('${triggerLambdaARN}', json_build_object('key',OLD.${key}, 'bucketName', '${bucketNameWithoutEnvironmentAndAccID}'), '${process.env.AWS_REGION}', 'Event');`;
+    body = `PERFORM aws_lambda.invoke('${triggerLambdaARN}', json_build_object('key',OLD.${key}, 'bucketName', '${rawBucketName}'), '${process.env.AWS_REGION}', 'Event');`;
   }
 
   return body;
