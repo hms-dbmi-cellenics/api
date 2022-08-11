@@ -112,7 +112,7 @@ class Experiment extends BasicModel {
     return result;
   }
 
-  async createCopy(fromExperimentId) {
+  async createCopy(fromExperimentId, name = null) {
     const toExperimentId = uuidv4().replace(/-/g, '');
 
     const { sql } = this;
@@ -122,7 +122,8 @@ class Experiment extends BasicModel {
         sql(tableNames.EXPERIMENT)
           .select(
             sql.raw('? as id', [toExperimentId]),
-            'name',
+            // Clone the original name if no new name is provided
+            name ? sql.raw('? as name', [name]) : 'name',
             'description',
           )
           .where({ id: fromExperimentId }),
