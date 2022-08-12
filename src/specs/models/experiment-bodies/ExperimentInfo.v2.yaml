@@ -13,8 +13,8 @@ properties:
       type: string
   notifyByEmail:
     type: boolean
-  qcRerunDisabled:
-    type: boolean
+  pipelineVersion:
+    type: number
   processingConfig:
     anyOf:
       - type: object
@@ -65,7 +65,7 @@ required:
   - samplesOrder
   - processingConfig
   - notifyByEmail
-  - qcRerunDisabled
+  - pipelineVersion
   - pipelines
   - createdAt
   - updatedAt

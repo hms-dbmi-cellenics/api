@@ -56,7 +56,6 @@ async function getAwsPoolId() {
   return poolId;
 }
 
-
 const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
   awsAccountId: process.env.AWS_ACCOUNT_ID || '000000000000',

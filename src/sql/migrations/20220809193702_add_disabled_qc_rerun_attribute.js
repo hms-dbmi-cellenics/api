@@ -4,7 +4,7 @@
  */
 exports.up = async (knex) => {
   await knex.schema.alterTable('experiment', (table) => {
-    table.boolean('qc_rerun_disabled').notNullable().defaultTo(false);
+    table.integer('pipeline_version').notNullable().defaultTo(1);
   });
 };
 
@@ -14,6 +14,6 @@ exports.up = async (knex) => {
  */
 exports.down = async (knex) => {
   await knex.schema.alterTable('experiment', (table) => {
-    table.dropColumn('qc_rerun_disabled');
+    table.dropColumn('pipeline_version');
   });
 };

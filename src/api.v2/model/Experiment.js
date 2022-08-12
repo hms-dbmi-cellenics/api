@@ -24,7 +24,7 @@ const experimentFields = [
   'samples_order',
   'processing_config',
   'notify_by_email',
-  'qc_rerun_disabled',
+  'pipeline_version',
   'created_at',
   'updated_at',
 ];
@@ -41,7 +41,7 @@ class Experiment extends BasicModel {
       'description',
       'samples_order',
       'notify_by_email',
-      'qc_rerun_disabled',
+      'pipeline_version',
       'created_at',
       'updated_at',
     ];
