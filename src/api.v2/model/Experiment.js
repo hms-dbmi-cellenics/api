@@ -65,6 +65,7 @@ class Experiment extends BasicModel {
     return result;
   }
 
+
   async getExampleExperiments() {
     return this.getAllExperiments(constants.PUBLIC_ACCESS_ID);
   }
