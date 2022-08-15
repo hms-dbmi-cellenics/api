@@ -52,7 +52,7 @@ describe('model/Experiment', () => {
     expect(helpers.collapseKeyIntoArray.mock.calls).toMatchSnapshot();
 
     expect(mockSqlClient.select).toHaveBeenCalledWith(
-      ['e.id', 'e.name', 'e.description', 'e.samples_order', 'e.notify_by_email', 'e.created_at', 'e.updated_at', 'm.key'],
+      ['e.id', 'e.name', 'e.description', 'e.samples_order', 'e.notify_by_email', 'e.pipeline_version', 'e.created_at', 'e.updated_at', 'm.key'],
     );
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
     expect(mockSqlClient.where).toHaveBeenCalledWith('user_id', 'mockUserId');
@@ -76,7 +76,8 @@ describe('model/Experiment', () => {
   it('getExperimentData works correctly', async () => {
     const experimentFields = [
       'id', 'name', 'description',
-      'samples_order', 'processing_config', 'notify_by_email',
+      'samples_order', 'processing_config',
+      'notify_by_email', 'pipeline_version',
       'created_at', 'updated_at',
     ];
 
