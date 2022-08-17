@@ -264,8 +264,8 @@ describe('model/Experiment', () => {
   });
 
   it('getProcessingConfig throws an error if there is no matching experiment', async () => {
-    jest.spyOn(BasicModel.prototype, 'find')
-      .mockImplementationOnce(() => Promise.resolve({}));
+    jest.spyOn(BasicModel.prototype, 'findOne')
+      .mockImplementationOnce(() => Promise.resolve(undefined));
 
     expect(async () => {
       await new Experiment().getProcessingConfig(mockExperimentId);
