@@ -34,7 +34,7 @@ const pipelines = {
   },
 };
 
-describe('send-notification ', () => {
+describe('sendNotification ', () => {
   const message = {
     experimentId: 'mockexp',
     input: {

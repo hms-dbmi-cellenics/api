@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`updatePipelineVersion Works correctly 1`] = `
+Array [
+  Array [
+    "mockexp",
+    Object {
+      "pipeline_version": 2,
+    },
+  ],
+]
+`;
