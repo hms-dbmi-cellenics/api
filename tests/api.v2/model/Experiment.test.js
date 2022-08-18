@@ -15,6 +15,10 @@ jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
 }));
 
+jest.mock('uuid', () => ({
+  v4: jest.fn(() => 'mockNewExperimentId'),
+}));
+
 jest.mock('../../../src/sql/helpers', () => ({
   collapseKeysIntoObject: jest.fn(),
   collapseKeyIntoArray: jest.fn(),
@@ -32,6 +36,7 @@ const constants = require('../../../src/utils/constants');
 
 const mockExperimentId = 'mockExperimentId';
 const mockSampleId = 'mockSampleId';
+const mockExperimentName = 'mockNewName';
 
 describe('model/Experiment', () => {
   beforeEach(() => {
@@ -52,7 +57,7 @@ describe('model/Experiment', () => {
     expect(helpers.collapseKeyIntoArray.mock.calls).toMatchSnapshot();
 
     expect(mockSqlClient.select).toHaveBeenCalledWith(
-      ['e.id', 'e.name', 'e.description', 'e.samples_order', 'e.notify_by_email', 'e.created_at', 'e.updated_at', 'm.key'],
+      ['e.id', 'e.name', 'e.description', 'e.samples_order', 'e.notify_by_email', 'e.pipeline_version', 'e.created_at', 'e.updated_at', 'm.key'],
     );
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
     expect(mockSqlClient.where).toHaveBeenCalledWith('user_id', 'mockUserId');
@@ -76,7 +81,8 @@ describe('model/Experiment', () => {
   it('getExperimentData works correctly', async () => {
     const experimentFields = [
       'id', 'name', 'description',
-      'samples_order', 'processing_config', 'notify_by_email',
+      'samples_order', 'processing_config',
+      'notify_by_email', 'pipeline_version',
       'created_at', 'updated_at',
     ];
 
@@ -117,6 +123,58 @@ describe('model/Experiment', () => {
     mockSqlClient.first.mockReturnValueOnce({});
 
     await expect(new Experiment().getExperimentData(mockExperimentId)).rejects.toThrow(new Error('Experiment not found'));
+  });
+
+  it('createCopy works correctly', async () => {
+    mockSqlClient.raw.mockImplementation((template, values) => {
+      if (values && values.length) return template.replace('?', values[0]);
+      return template;
+    });
+
+    mockSqlClient.where.mockImplementationOnce(() => 'mockQuery');
+
+    const expectedResult = await new Experiment().createCopy(mockExperimentId, mockExperimentName);
+
+    expect(expectedResult).toEqual('mockNewExperimentId');
+
+    expect(sqlClient.get).toHaveBeenCalled();
+
+    expect(mockSqlClient.insert).toHaveBeenCalledWith('mockQuery');
+
+    expect(mockSqlClient.select).toHaveBeenCalledWith(
+      'mockNewExperimentId as id',
+      'mockNewName as name',
+      'description',
+    );
+
+    expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
+    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description)');
+  });
+
+  it('createCopy works correctly without a name', async () => {
+    mockSqlClient.raw.mockImplementation((template, values) => {
+      if (values && values.length) return template.replace('?', values[0]);
+      return template;
+    });
+
+    mockSqlClient.where.mockImplementationOnce(() => 'mockQuery');
+
+    const expectedResult = await new Experiment().createCopy(mockExperimentId);
+
+    expect(expectedResult).toEqual('mockNewExperimentId');
+
+    expect(sqlClient.get).toHaveBeenCalled();
+
+    expect(mockSqlClient.insert).toHaveBeenCalledWith('mockQuery');
+
+    expect(mockSqlClient.select).toHaveBeenCalledWith(
+      'mockNewExperimentId as id',
+      'name',
+      'description',
+    );
+
+    expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
+    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description)');
   });
 
   it('updateSamplePosition works correctly if valid params are passed', async () => {
@@ -203,6 +261,15 @@ describe('model/Experiment', () => {
     const result = await new Experiment().getProcessingConfig(mockExperimentId);
     expect(mockFind).toHaveBeenCalledWith({ id: mockExperimentId });
     expect(result).toMatchSnapshot();
+  });
+
+  it('getProcessingConfig throws an error if there is no matching experiment', async () => {
+    jest.spyOn(BasicModel.prototype, 'findOne')
+      .mockImplementationOnce(() => Promise.resolve(undefined));
+
+    expect(async () => {
+      await new Experiment().getProcessingConfig(mockExperimentId);
+    }).rejects.toThrow();
   });
 
   it('updateProcessingConfig works', async () => {
