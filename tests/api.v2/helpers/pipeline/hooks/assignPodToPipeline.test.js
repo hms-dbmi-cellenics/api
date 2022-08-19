@@ -46,7 +46,7 @@ k8s.KubeConfig.mockImplementation(() => {
 
 const assignPodToPipeline = require('../../../../../src/api.v2/helpers/pipeline/hooks/assignPodToPipeline');
 
-describe('tests for the pipeline-assign service', () => {
+describe('assignPodToPipeline', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
