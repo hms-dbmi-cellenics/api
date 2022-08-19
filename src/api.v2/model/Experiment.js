@@ -24,6 +24,7 @@ const experimentFields = [
   'samples_order',
   'processing_config',
   'notify_by_email',
+  'pipeline_version',
   'created_at',
   'updated_at',
 ];
@@ -40,6 +41,7 @@ class Experiment extends BasicModel {
       'description',
       'samples_order',
       'notify_by_email',
+      'pipeline_version',
       'created_at',
       'updated_at',
     ];
@@ -64,6 +66,7 @@ class Experiment extends BasicModel {
 
     return result;
   }
+
 
   async getExampleExperiments() {
     return this.getAllExperiments(constants.PUBLIC_ACCESS_ID);
@@ -110,7 +113,7 @@ class Experiment extends BasicModel {
     return result;
   }
 
-  async createCopy(fromExperimentId) {
+  async createCopy(fromExperimentId, name = null) {
     const toExperimentId = uuidv4().replace(/-/g, '');
 
     const { sql } = this;
@@ -120,7 +123,8 @@ class Experiment extends BasicModel {
         sql(tableNames.EXPERIMENT)
           .select(
             sql.raw('? as id', [toExperimentId]),
-            'name',
+            // Clone the original name if no new name is provided
+            name ? sql.raw('? as name', [name]) : 'name',
             'description',
           )
           .where({ id: fromExperimentId }),
