@@ -6,7 +6,6 @@ const sqlClient = require('../../sql/sqlClient');
 const { collapseKeyIntoArray, replaceNullsWithObject } = require('../../sql/helpers');
 
 const { NotFoundError, BadRequestError } = require('../../utils/responses');
-const { formatExperimentId } = require('../helpers/v1Compatibility');
 const tableNames = require('./tableNames');
 const config = require('../../config');
 
@@ -215,7 +214,7 @@ class Experiment extends BasicModel {
 
     const filenamePrefix = experimentId.split('-')[0];
     const requestedBucketName = `${downloadType}-${clusterEnv}-${config.awsAccountId}`;
-    const objectKey = `${formatExperimentId(experimentId)}/r.rds`;
+    const objectKey = `${experimentId}/r.rds`;
 
     switch (requestedBucketName) {
       case bucketNames.PROCESSED_MATRIX:
