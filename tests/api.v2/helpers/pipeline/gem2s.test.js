@@ -79,6 +79,7 @@ describe('createGem2sPipeline', () => {
     experimentInstance.findById.mockClear();
     sampleInstance.getSamples.mockClear();
     experimentExecutionInstance.upsert.mockClear();
+    experimentExecutionInstance.delete.mockClear();
     pipelineConstruct.createGem2SPipeline.mockClear();
 
     experimentInstance.findById.mockReturnValueOnce({
@@ -98,6 +99,7 @@ describe('createGem2sPipeline', () => {
     expect(experimentInstance.findById).toHaveBeenCalledWith(experimentId);
     expect(sampleInstance.getSamples).toHaveBeenCalledWith(experimentId);
     expect(experimentExecutionInstance.upsert.mock.calls[0]).toMatchSnapshot();
+    expect(experimentExecutionInstance.delete.mock.calls[0]).toMatchSnapshot();
     expect(pipelineConstruct.createGem2SPipeline.mock.calls[0]).toMatchSnapshot();
   });
 });
