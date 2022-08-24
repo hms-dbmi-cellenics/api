@@ -1,9 +1,9 @@
+const { WORKER_RESULTS } = require('../s3/bucketNames');
+
 const AWS = require('../../../utils/requireAWS');
 const getLogger = require('../../../utils/getLogger');
-const { UnauthorizedError, NotFoundError, InternalServerError } = require('../../../utils/responses');
-const formatExperimentId = require('../../../utils/v1Compatibility/formatExperimentId');
-const { WORKER_RESULTS } = require('../s3/bucketNames');
 const { getSignedUrl } = require('../../../utils/aws/s3');
+const { UnauthorizedError, NotFoundError, InternalServerError } = require('../../../utils/responses');
 
 const logger = getLogger();
 
@@ -36,7 +36,7 @@ const validateTagMatching = async (experimentId, params) => {
   }
 
   const experimentIdTag = objectTagging.TagSet.filter((tag) => tag.Key === 'experimentId')[0].Value;
-  if (formatExperimentId(experimentIdTag) !== experimentId) {
+  if (experimentIdTag !== experimentId) {
     throw new UnauthorizedError(`User was authorized for experiment ${experimentId} but the requested `
       + `worker results belong to experiment ${experimentIdTag}.`);
   }
@@ -49,9 +49,8 @@ const getWorkResults = async (experimentId, ETag) => {
     Bucket: WORKER_RESULTS,
     Key: ETag,
   };
-  const formattedExperimentId = formatExperimentId(experimentId);
 
-  await validateTagMatching(formattedExperimentId, params);
+  await validateTagMatching(experimentId, params);
   logger.log(`Found worker results for experiment: ${experimentId}, Etag: ${ETag}`);
 
   const signedUrl = getSignedUrl('getObject', params);

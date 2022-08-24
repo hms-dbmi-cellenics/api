@@ -6,8 +6,6 @@ const getS3Object = require('../../../src/api.v2/helpers/s3/getObject');
 const patchCellSetsObject = require('../../../src/api.v2/helpers/s3/patchCellSetsObject');
 const { OK } = require('../../../src/utils/responses');
 
-const formatExperimentId = require('../../../src/utils/v1Compatibility/formatExperimentId');
-
 jest.mock('../../../src/api.v2/helpers/s3/getObject');
 jest.mock('../../../src/api.v2/helpers/s3/patchCellSetsObject');
 
@@ -18,24 +16,24 @@ const mockRes = {
 
 const mockCellSets = {
   cellSets:
-  [
-    {
-      key: 'louvain',
-      name: 'louvain clusters',
-      rootNode: true,
-      type: 'cellSets',
-      children: [
-        {
-          key: 'louvain-0',
-          name: 'Cluster 0',
-          rootNode: false,
-          type: 'cellSets',
-          color: '#77aadd',
-          cellIds: [0, 1, 2, 3],
-        },
-      ],
-    },
-  ],
+    [
+      {
+        key: 'louvain',
+        name: 'louvain clusters',
+        rootNode: true,
+        type: 'cellSets',
+        children: [
+          {
+            key: 'louvain-0',
+            name: 'Cluster 0',
+            rootNode: false,
+            type: 'cellSets',
+            color: '#77aadd',
+            cellIds: [0, 1, 2, 3],
+          },
+        ],
+      },
+    ],
 };
 
 const mockPatch = [
@@ -46,17 +44,17 @@ const mockPatch = [
         children: [
           {
             $insert:
+            {
+              index: '-',
+              value:
               {
-                index: '-',
-                value:
-                  {
-                    key: 'new-cluster-1',
-                    name: 'New Cluster 1',
-                    color: '#3957ff',
-                    type: 'cellSets',
-                    cellIds: [4, 5, 6],
-                  },
+                key: 'new-cluster-1',
+                name: 'New Cluster 1',
+                color: '#3957ff',
+                type: 'cellSets',
+                cellIds: [4, 5, 6],
               },
+            },
           },
         ],
       },
@@ -81,7 +79,7 @@ describe('cellSetsController', () => {
 
     expect(getS3Object).toHaveBeenCalledWith({
       Bucket: bucketNames.CELL_SETS,
-      Key: formatExperimentId(mockExperimentId),
+      Key: mockExperimentId,
     });
 
     expect(mockRes.send).toHaveBeenCalledWith(mockCellSets);
@@ -100,7 +98,7 @@ describe('cellSetsController', () => {
     await cellSetsController.patchCellSets(mockReq, mockRes);
 
     expect(patchCellSetsObject).toHaveBeenCalledWith(
-      formatExperimentId(mockExperimentId),
+      mockExperimentId,
       mockPatch,
     );
 
