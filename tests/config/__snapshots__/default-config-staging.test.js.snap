@@ -17,7 +17,6 @@ Object {
   },
   "corsOriginUrl": "https://ui-default.scp-staging.biomage.net",
   "domainName": "scp-staging.biomage.net",
-  "githubToken": undefined,
   "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/iac/master/releases/staging/pipeline.yaml",
   "pipelineNamespace": "pipeline-default",
   "podName": "local",
