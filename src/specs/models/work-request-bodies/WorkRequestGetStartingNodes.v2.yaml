@@ -1,0 +1,40 @@
+title: Get Starting Nodes for Trajectory Analysis
+description: Work request body to get starting nodes for Trajectory Analysis.
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the work. Must be `GetStartingNodes`.
+    pattern: GetStartingNodes
+    example: GetStartingNodes
+  embedding:
+    type: object
+    properties:
+      ETag:
+        type: string
+      method:
+        type: string
+      methodSettings:
+        oneOf:
+          - properties:
+              distanceMetric:
+                type: number
+              minimumDistance:
+                type: number
+          - properties:
+              learningRate:
+                type: number
+              perplexity:
+                type: number
+        type: object
+  clustering:
+    type: object
+    properties:
+      method:
+        type: string
+      resolution:
+        type: number
+required:
+  - name
+  - embedding
+  - clustering
