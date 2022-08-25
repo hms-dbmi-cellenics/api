@@ -14,6 +14,19 @@ properties:
         type: string
       method:
         type: string
+      methodSettings:
+        oneOf:
+          - properties:
+              distanceMetric:
+                type: number
+              minimumDistance:
+                type: number
+          - properties:
+              learningRate:
+                type: number
+              perplexity:
+                type: number
+        type: object
   clustering:
     type: object
     properties:
