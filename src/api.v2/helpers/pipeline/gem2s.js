@@ -141,13 +141,20 @@ const createGem2sPipeline = async (experimentId, body, authJWT) => {
     execution_arn: executionArn,
   };
 
-  await new ExperimentExecution().upsert(
+  const experimentExecutionClient = new ExperimentExecution();
+
+  await experimentExecutionClient.upsert(
     {
       experiment_id: experimentId,
       pipeline_type: 'gem2s',
     },
     newExecution,
   );
+
+  await experimentExecutionClient.delete({
+    experiment_id: experimentId,
+    pipeline_type: 'qc',
+  });
 
   logger.log('GEM2S params saved.');
 
