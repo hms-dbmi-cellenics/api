@@ -2,6 +2,7 @@ const AWS = require('aws-sdk');
 const getLogger = require('../utils/getLogger');
 
 const logger = getLogger();
+const { ADMIN_SUB } = require('../api.v2/constants');
 
 const githubOrganisationName = 'hms-dbmi-cellenics';
 
@@ -78,9 +79,8 @@ const config = {
   pipelineInstanceConfigUrl: `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/production/pipeline.yaml`,
   cachingEnabled: true,
   corsOriginUrl: `https://${domainName}`,
-  adminSub: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
+  adminSub: ADMIN_SUB[process.env.AWS_ACCOUNT_ID],
 };
-
 
 // We are in permanent develop staging environment
 if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
