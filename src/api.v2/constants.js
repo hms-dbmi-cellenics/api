@@ -33,7 +33,7 @@ const ACCOUNT_ID = {
 };
 
 const ADMIN_SUB = {
-  [ACCOUNT_ID.Biomage]: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
+  [ACCOUNT_ID.BIOMAGE]: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
   [ACCOUNT_ID.HMS]: 'a01e8bcc-c9a2-4c56-bd66-39de93764be8',
 
 };
