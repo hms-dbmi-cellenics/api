@@ -82,7 +82,6 @@ const config = {
   adminSub: ADMIN_SUB[process.env.AWS_ACCOUNT_ID],
 };
 
-
 // We are in permanent develop staging environment
 if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
   config.workerInstanceConfigUrl = `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/worker.yaml`;

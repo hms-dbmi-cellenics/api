@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`default-config Returns correct values for production 1`] = `
+exports[`default-config Returns correct values for BIOMAGE production 1`] = `
 Object {
   "adminSub": "032abd44-0cd3-4d58-af21-850ca0b95ac7",
   "api": Object {
     "prefix": "/",
   },
-  "awsAccountId": "000000000000",
+  "awsAccountId": "242905224710",
   "awsRegion": "eu-west-1",
   "cachingEnabled": true,
   "clusterEnv": "production",
@@ -14,6 +14,34 @@ Object {
     "listUserPools": Object {
       "promise": [MockFunction],
     },
+  },
+  "corsOriginUrl": "https://localhost:5000",
+  "domainName": "localhost:5000",
+  "githubToken": undefined,
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/production/pipeline.yaml",
+  "pipelineNamespace": "pipeline-default",
+  "podName": "local",
+  "port": 3000,
+  "rdsSandboxId": "default",
+  "sandboxId": "default",
+  "workerInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/production/worker.yaml",
+  "workerNamespace": "worker-default",
+}
+`;
+
+exports[`default-config Returns correct values for HMS production 1`] = `
+Object {
+  "adminSub": "a01e8bcc-c9a2-4c56-bd66-39de93764be8",
+  "api": Object {
+    "prefix": "/",
+  },
+  "awsAccountId": "160782110667",
+  "awsRegion": "eu-west-1",
+  "cachingEnabled": true,
+  "clusterEnv": "production",
+  "cognitoISP": mockConstructor {
+    "CALL_EVENTS_BUBBLE": [MockFunction],
+    "MONITOR_EVENTS_BUBBLE": [MockFunction],
   },
   "corsOriginUrl": "https://localhost:5000",
   "domainName": "localhost:5000",
