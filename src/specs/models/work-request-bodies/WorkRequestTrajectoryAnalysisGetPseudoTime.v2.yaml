@@ -43,4 +43,4 @@ required:
   - embedding
   - clustering
   - rootNodes
-
+additionalProperties: false
