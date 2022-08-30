@@ -69,7 +69,6 @@ const config = {
   domainName,
   awsUserPoolIdPromise: getAwsPoolId(),
   cognitoISP,
-  githubToken: process.env.READONLY_API_TOKEN_GITHUB,
   api: {
     prefix: '/',
   },
