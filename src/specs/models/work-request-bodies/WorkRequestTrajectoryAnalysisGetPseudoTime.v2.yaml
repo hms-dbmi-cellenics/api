@@ -4,9 +4,9 @@ type: object
 properties:
   name:
     type: string
-    description: Name of the work. Must be `GetPseudoTime`.
-    pattern: GetPseudoTime
-    example: GetPseudoTime
+    description: Name of the work. Must be `GetTrajectoryAnalysisPseudoTime`.
+    pattern: GetTrajectoryAnalysisPseudoTime
+    example: GetTrajectoryAnalysisPseudoTime
   embedding:
     type: object
     properties:
