@@ -12,5 +12,5 @@ oneOf:
   - $ref: ./work-request-bodies/WorkRequestDoubletScores.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestMarkerGenes.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestDotPlot.v2.yaml
-  - $ref: ./work-request-bodies/WorkRequestGetStartingNodes.v2.yaml
+  - $ref: ./work-request-bodies/WorkRequestTrajectoryAnalysisGetStartingNodes.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestTrajectoryAnalysisGetPseudoTime.v2.yaml
