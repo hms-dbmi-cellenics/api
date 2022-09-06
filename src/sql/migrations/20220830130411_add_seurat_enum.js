@@ -7,7 +7,6 @@ exports.up = async (knex) => {
     DROP TYPE IF EXISTS sample_technology;
     ALTER TYPE sample_technology_temp RENAME TO sample_technology;
     
-
     CREATE TYPE sample_file_type_temp AS ENUM ('features10x','barcodes10x','matrix10x', 'rhapsody', 'seurat');
     ALTER TABLE sample_file
       ALTER COLUMN sample_file_type DROP DEFAULT,
