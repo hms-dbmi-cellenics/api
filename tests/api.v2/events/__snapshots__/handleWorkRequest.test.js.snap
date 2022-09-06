@@ -6,7 +6,7 @@ Array [
   Object {
     "request": Object {
       "Authorization": "Bearer some-token",
-      "experimentId": "experimentid11111111111111111111",
+      "experimentId": "experi-mentid-11111111-1111111-11111",
       "uuid": "someuuid-asd-asd-asdddasa",
     },
     "response": Object {
@@ -23,7 +23,7 @@ exports[`Handle work socket callback If the worker fails, the API emits a work-r
 Array [
   Object {
     "Authorization": "Bearer some-token",
-    "experimentId": "experimentid11111111111111111111",
+    "experimentId": "experi-mentid-11111111-1111111-11111",
     "uuid": "someuuid-asd-asd-asdddasa",
   },
 ]
@@ -34,7 +34,7 @@ Array [
   "WorkResponse-someuuid-asd-asd-asdddasa",
   Object {
     "request": Object {
-      "experimentId": "experimentid11111111111111111111",
+      "experimentId": "experi-mentid-11111111-1111111-11111",
       "uuid": "someuuid-asd-asd-asdddasa",
     },
     "response": Object {
@@ -49,7 +49,7 @@ Array [
 
 exports[`Handle work socket callback submits work 1`] = `
 Array [
-  "WorkerInfo-experimentid11111111111111111111",
+  "WorkerInfo-experi-mentid-11111111-1111111-11111",
   Object {
     "response": Object {
       "podInfo": undefined,
@@ -63,7 +63,7 @@ exports[`Handle work socket callback submits work 2`] = `
 Array [
   Object {
     "Authorization": "Bearer some-token",
-    "experimentId": "experimentid11111111111111111111",
+    "experimentId": "experi-mentid-11111111-1111111-11111",
     "uuid": "someuuid-asd-asd-asdddasa",
   },
 ]

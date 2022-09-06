@@ -53,7 +53,7 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     expect(UserAccessModel.canAccessExperiment).toHaveBeenCalledWith(
       'allowed-user-id',
-      'experimentid11111111111111111111',
+      fake.EXPERIMENT_ID,
       '/v2/experiments',
       'POST',
     );
@@ -80,7 +80,7 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     expect(UserAccessModel.canAccessExperiment).toHaveBeenCalledWith(
       'allowed-user-id',
-      'experimentid11111111111111111111',
+      fake.EXPERIMENT_ID,
       '/v2/experiments',
       'POST',
     );
