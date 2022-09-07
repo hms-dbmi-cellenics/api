@@ -293,6 +293,9 @@ const getPipelineStatus = async (experimentId, processName) => {
     case pipelineConstants.GEM2S_PROCESS_NAME:
       completedSteps = gem2sPipelineSteps.slice(0, gem2sPipelineSteps.indexOf(lastExecuted) + 1);
       break;
+    case pipelineConstants.SEURAT_PROCESS_NAME:
+      completedSteps = seuratPipelineSteps.slice(0, seuratPipelineSteps.indexOf(lastExecuted) + 1);
+      break;
     default:
       logger.error(`unknown process name ${processName}`);
   }
