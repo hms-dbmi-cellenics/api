@@ -30,6 +30,11 @@ const gem2sPipelineSteps = [
   'PrepareExperiment',
   'UploadToAWS'];
 
+const seuratPipelineSteps = [
+  'DownloadSeurat',
+  'PreProcessing',
+  'UploadToAWS'];
+
 // pipelineStepNames are the names of pipeline steps for which we
 // want to report the progress back to the user
 // does not include steps used to initialize the infrastructure (like pod deletion assignation)
@@ -76,6 +81,9 @@ const buildCompletedStatus = (processName, date, paramsHash) => {
   switch (processName) {
     case pipelineConstants.GEM2S_PROCESS_NAME:
       completedSteps = gem2sPipelineSteps;
+      break;
+    case pipelineConstants.SEURAT_PROCESS_NAME:
+      completedSteps = seuratPipelineSteps;
       break;
     case pipelineConstants.QC_PROCESS_NAME:
       completedSteps = qcPipelineSteps;
