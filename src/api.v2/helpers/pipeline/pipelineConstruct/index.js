@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const util = require('util');
 
 const config = require('../../../../config');
-const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../../../constants');
+const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SEURAT_PROCESS_NAME } = require('../../../constants');
 
 const Experiment = require('../../../model/Experiment');
 const ExperimentExecution = require('../../../model/ExperimentExecution');
@@ -18,7 +18,7 @@ const getLogger = require('../../../../utils/getLogger');
 const asyncTimer = require('../../../../utils/asyncTimer');
 
 const constructPipelineStep = require('./constructors/constructPipelineStep');
-const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('./skeletons');
+const { getGem2sPipelineSkeleton, getQcPipelineSkeleton, getSeuratPipelineSkeleton } = require('./skeletons');
 const { getQcStepsToRun } = require('./qcHelpers');
 
 const logger = getLogger();
@@ -313,10 +313,48 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
 
   return { stateMachineArn, executionArn };
 };
+const createSeuratObjectPipeline = async (experimentId, taskParams) => {
+  const accountId = config.awsAccountId;
+  const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
+
+  const context = {
+    taskParams,
+    experimentId,
+    accountId,
+    roleArn,
+    processName: SEURAT_PROCESS_NAME,
+    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
+    pipelineArtifacts: await getPipelineArtifacts(),
+    clusterInfo: await getClusterInfo(),
+    sandboxId: config.sandboxId,
+    processingConfig: {},
+    environment: config.clusterEnv,
+  };
+
+  const seuratPipelineSkeleton = getSeuratPipelineSkeleton(config.clusterEnv);
+  logger.log('Skeleton constructed, now building state machine definition...');
+
+  const stateMachine = buildStateMachineDefinition(seuratPipelineSkeleton, context);
+  logger.log('State machine definition built, now creating activity if not already present...');
+
+  const activityArn = await createActivity(context);
+  logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
+
+  const stateMachineArn = await createNewStateMachine(context, stateMachine, SEURAT_PROCESS_NAME);
+  logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
+  logger.log('Context:', util.inspect(context, { showHidden: false, depth: null, colors: false }));
+  logger.log('State machine:', util.inspect(stateMachine, { showHidden: false, depth: null, colors: false }));
+
+  const executionArn = await executeStateMachine(stateMachineArn);
+  logger.log(`Execution with ARN ${executionArn} created.`);
+
+  return { stateMachineArn, executionArn };
+};
 
 
 module.exports = {
   createQCPipeline,
   createGem2SPipeline,
+  createSeuratObjectPipeline,
   buildStateMachineDefinition,
 };

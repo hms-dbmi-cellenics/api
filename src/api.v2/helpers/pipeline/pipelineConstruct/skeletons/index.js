@@ -1,5 +1,6 @@
 const { buildQCPipelineSteps, qcPipelineSteps } = require('./qcPipelineSkeleton');
 const { gem2SPipelineSteps } = require('./gem2sPipelineSkeleton');
+const { seuratPipelineSteps } = require('./seuratPipelineSkeleton');
 
 
 const createLocalPipeline = (nextStep) => ({
@@ -53,6 +54,11 @@ const getPipelineStepNames = () => {
 // if there are map states with nested substeps it returns those sub-steps too
 const getQcPipelineStepNames = () => getSkeletonStepNames(qcPipelineSteps);
 
+
+// getSeuratStepNames returns the names of the seurat pipeline steps
+// if there are map states with nested substeps it returns those sub-steps too
+const getSeuratPipelineStepNames = () => getSkeletonStepNames(seuratPipelineSteps);
+
 const buildInitialSteps = (clusterEnv, nextStep) => {
   // if we are running locally launch a pipeline job
   if (clusterEnv === 'development') {
@@ -80,6 +86,15 @@ const getGem2sPipelineSkeleton = (clusterEnv) => ({
   },
 });
 
+const getSeuratPipelineSkeleton = (clusterEnv) => ({
+  Comment: `Seurat Pipeline for clusterEnv '${clusterEnv}'`,
+  StartAt: getStateMachineFirstStep(clusterEnv),
+  States: {
+    ...buildInitialSteps(clusterEnv, 'DownloadSeurat'),
+    ...seuratPipelineSteps,
+  },
+});
+
 const getQcPipelineSkeleton = (clusterEnv, qcSteps) => ({
   Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
   StartAt: getStateMachineFirstStep(clusterEnv),
@@ -93,6 +108,8 @@ const getQcPipelineSkeleton = (clusterEnv, qcSteps) => ({
 module.exports = {
   getPipelineStepNames,
   getQcPipelineStepNames,
+  getSeuratPipelineStepNames,
   getGem2sPipelineSkeleton,
   getQcPipelineSkeleton,
+  getSeuratPipelineSkeleton,
 };
