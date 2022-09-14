@@ -46,18 +46,14 @@ const getSkeletonStepNames = (skeleton) => {
 const getPipelineStepNames = () => {
   const gem2sStepNames = getSkeletonStepNames(gem2SPipelineSteps);
   const qcStepNames = getSkeletonStepNames(qcPipelineSteps);
+  const seuratStepNames = getSkeletonStepNames(seuratPipelineSteps);
 
-  return gem2sStepNames.concat(qcStepNames);
+  return gem2sStepNames.concat(qcStepNames).concat(seuratStepNames);
 };
 
 // getPipelineStepNames returns the names of the QC pipeline steps
 // if there are map states with nested substeps it returns those sub-steps too
 const getQcPipelineStepNames = () => getSkeletonStepNames(qcPipelineSteps);
-
-
-// getSeuratStepNames returns the names of the seurat pipeline steps
-// if there are map states with nested substeps it returns those sub-steps too
-const getSeuratPipelineStepNames = () => getSkeletonStepNames(seuratPipelineSteps);
 
 const buildInitialSteps = (clusterEnv, nextStep) => {
   // if we are running locally launch a pipeline job
@@ -108,7 +104,6 @@ const getQcPipelineSkeleton = (clusterEnv, qcSteps) => ({
 module.exports = {
   getPipelineStepNames,
   getQcPipelineStepNames,
-  getSeuratPipelineStepNames,
   getGem2sPipelineSkeleton,
   getQcPipelineSkeleton,
   getSeuratPipelineSkeleton,

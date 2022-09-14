@@ -32,8 +32,8 @@ const gem2sPipelineSteps = [
 
 const seuratPipelineSteps = [
   'DownloadSeurat',
-  'PreProcessing',
-  'UploadToAWS'];
+  'ProcessSeurat',
+  'UploadSeuratToAWS'];
 
 // pipelineStepNames are the names of pipeline steps for which we
 // want to report the progress back to the user
@@ -282,10 +282,10 @@ const getPipelineStatus = async (experimentId, processName) => {
   }
 
   const events = await getExecutionHistory(stepFunctions, executionArn);
-
   error = checkError(events);
   const executedSteps = getStepsFromExecutionHistory(events);
   const lastExecuted = executedSteps[executedSteps.length - 1];
+
   switch (processName) {
     case pipelineConstants.QC_PROCESS_NAME:
       completedSteps = qcPipelineSteps.slice(0, qcPipelineSteps.indexOf(lastExecuted) + 1);

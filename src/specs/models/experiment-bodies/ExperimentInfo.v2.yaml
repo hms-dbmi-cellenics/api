@@ -41,6 +41,22 @@ properties:
           - paramsHash
           - stateMachineArn
           - executionArn
+      seurat:
+        # Couldn't import PipelineExecution.v2.yaml twice for some reason
+        nullable: true
+        type: object
+        properties:
+          paramsHash:
+            nullable: true
+            type: string
+          stateMachineArn:
+            type: string
+          executionArn:
+            type: string
+        required:
+          - paramsHash
+          - stateMachineArn
+          - executionArn
       qc:
         nullable: true
         type: object

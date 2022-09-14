@@ -4,23 +4,23 @@ const seuratPipelineSteps = {
     XConstructorArgs: {
       taskName: 'downloadSeurat',
     },
-    Next: 'PreProcessing',
+    Next: 'ProcessSeurat',
   },
-  PreProcessing: {
+  ProcessSeurat: {
     XStepType: 'create-new-step',
     XConstructorArgs: {
-      taskName: 'preprocSeurat',
+      taskName: 'processSeurat',
     },
-    Next: 'UploadToAWS',
+    Next: 'UploadSeuratToAWS',
   },
-  UploadToAWS: {
+  UploadSeuratToAWS: {
     XStepType: 'create-new-step',
     XConstructorArgs: {
-      taskName: 'uploadToAWS',
+      taskName: 'uploadSeuratToAWS',
     },
-    Next: 'EndOfGem2S',
+    Next: 'EndOfSeurat',
   },
-  EndOfGem2S: {
+  EndOfSeurat: {
     Type: 'Pass',
     End: true,
   },

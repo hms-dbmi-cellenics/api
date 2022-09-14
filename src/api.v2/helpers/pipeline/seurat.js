@@ -9,6 +9,7 @@ const Sample = require('../../model/Sample');
 const Experiment = require('../../model/Experiment');
 const ExperimentExecution = require('../../model/ExperimentExecution');
 
+const sendNotification = require('./hooks/sendNotification');
 const HookRunner = require('./hooks/HookRunner');
 
 const validateRequest = require('../../../utils/schema-validator');
@@ -18,6 +19,20 @@ const logger = getLogger('[SeuratService] - ');
 
 const hookRunner = new HookRunner();
 
+const updateProcessingConfig = async (payload) => {
+  const { experimentId, item } = payload;
+
+  await new Experiment().updateById(experimentId, { processing_config: item.processingConfig });
+
+  logger.log(`Experiment: ${experimentId}. Saved processing config received from seurat`);
+};
+
+hookRunner.register('uploadSeuratToAWS', [
+  updateProcessingConfig,
+]);
+
+
+hookRunner.registerAll([sendNotification]);
 
 const sendUpdateToSubscribed = async (experimentId, message, io) => {
   const statusRes = await getPipelineStatus(experimentId, constants.SEURAT_PROCESS_NAME);
@@ -134,7 +149,7 @@ const handleSeuratResponse = async (io, message) => {
   AWSXRay.getSegment().addMetadata('message', message);
 
   // Fail hard if there was an error.
-  await validateRequest(message, 'SEURATResponse.v2.yaml');
+  await validateRequest(message, 'SeuratResponse.v2.yaml');
 
   await hookRunner.run(message);
 

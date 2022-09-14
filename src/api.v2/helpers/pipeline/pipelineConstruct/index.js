@@ -313,6 +313,7 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
 
   return { stateMachineArn, executionArn };
 };
+
 const createSeuratObjectPipeline = async (experimentId, taskParams) => {
   const accountId = config.awsAccountId;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;

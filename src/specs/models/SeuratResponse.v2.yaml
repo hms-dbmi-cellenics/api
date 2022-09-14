@@ -1,4 +1,4 @@
-title: SEURAT response
+title: Seurat response
 description: This is the format the seurat clients communicate the result of a seurat run.
 properties:
     experimentId:
