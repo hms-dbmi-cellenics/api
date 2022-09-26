@@ -22,7 +22,73 @@ const getSignedUrl = (operation, params) => {
   return s3.getSignedUrl(operation, params);
 };
 
-const getSampleFileUploadUrl = (sampleFileId, metadata) => {
+const FILE_CHUNK_SIZE = 10000000;
+
+const getMultipartSignedUrls = async (operation, params, size) => {
+  if (!params.Bucket) throw new Error('Bucket is required');
+  if (!params.Key) throw new Error('Key is required');
+
+  const S3Config = {
+    apiVersion: '2006-03-01',
+    signatureVersion: 'v4',
+    region: config.awsRegion,
+  };
+
+  const s3 = new AWS.S3(S3Config);
+
+  const { UploadId } = await s3.createMultipartUpload(params).promise();
+
+  const baseParams = {
+    ...params,
+    UploadId,
+  };
+
+  const promises = [];
+
+  // TODO: based on size
+  const parts = Math.ceil(size / FILE_CHUNK_SIZE);
+
+
+  for (let i = 0; i < parts; i += 1) {
+    promises.push(
+      s3.getSignedUrlPromise('uploadPart', {
+        ...baseParams,
+        PartNumber: i + 1,
+      }),
+    );
+  }
+
+  const signedUrls = await Promise.all(promises);
+
+  return {
+    signedUrls,
+    UploadId,
+  };
+};
+
+
+const completeMultiPartUpload = async (sampleFileId, parts, uploadId) => {
+  const params = {
+    Bucket: bucketNames.SAMPLE_FILES,
+    Key: `${sampleFileId}`,
+    UploadId: uploadId,
+    MultipartUpload: { Parts: parts },
+  };
+
+
+  const S3Config = {
+    apiVersion: '2006-03-01',
+    signatureVersion: 'v4',
+    region: config.awsRegion,
+  };
+
+  const s3 = new AWS.S3(S3Config);
+
+
+  await s3.completeMultipartUpload(params).promise();
+};
+
+const getSampleFileUploadUrls = async (sampleFileId, metadata, size) => {
   const params = {
     Bucket: bucketNames.SAMPLE_FILES,
     Key: `${sampleFileId}`,
@@ -36,9 +102,8 @@ const getSampleFileUploadUrl = (sampleFileId, metadata) => {
     };
   }
 
-  const signedUrl = getSignedUrl('putObject', params);
-
-  return signedUrl;
+  const signedUrls = await getMultipartSignedUrls('putObject', params, size);
+  return signedUrls;
 };
 
 const fileNameToReturn = {
@@ -67,4 +132,10 @@ const getSampleFileDownloadUrl = async (experimentId, sampleId, fileType) => {
   return signedUrl;
 };
 
-module.exports = { getSampleFileUploadUrl, getSampleFileDownloadUrl, getSignedUrl };
+module.exports = {
+  getSampleFileUploadUrls,
+  getSampleFileDownloadUrl,
+  getSignedUrl,
+  getMultipartSignedUrls,
+  completeMultiPartUpload,
+};

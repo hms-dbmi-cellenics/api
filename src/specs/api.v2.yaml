@@ -1237,7 +1237,7 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: object
         '400':
           description: Bad Request
           content:
@@ -1298,6 +1298,66 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchSampleFile'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+  /completeMultipartUpload:
+    post:
+      summary: Complete a multipart upload
+      description: Complete a multipart upload of a sample file
+      operationId: completeMultipart
+      x-eov-operation-id: sampleFile#completeMultipart
+      x-eov-operation-handler: routes/sampleFile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: information here
+              type: object
+              properties:
+                sampleFileId:
+                  type: string
+                uploadId:
+                  type: string
+                parts:
+                  type: array
+                  items:
+                    type: object   
+              additionalProperties: false
       responses:
         '200':
           description: Success

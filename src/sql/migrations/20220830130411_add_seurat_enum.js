@@ -20,6 +20,8 @@ exports.up = async (knex) => {
       ALTER COLUMN pipeline_type TYPE pipeline_type_temp USING pipeline_type::text::pipeline_type_temp;
     DROP TYPE IF EXISTS pipeline_type;
     ALTER TYPE pipeline_type_temp RENAME TO pipeline_type;
+
+    ALTER TABLE sample_file ALTER COLUMN size TYPE BIGINT;
   `);
 };
 
@@ -45,6 +47,8 @@ exports.down = async (knex) => {
       ALTER COLUMN pipeline_type TYPE pipeline_type_temp USING pipeline_type::text::pipeline_type_temp;
     DROP TYPE IF EXISTS pipeline_type;
     ALTER TYPE pipeline_type_temp RENAME TO pipeline_type;
+
+    ALTER TABLE sample_file ALTER COLUMN size TYPE INT;
   `);
 };
 

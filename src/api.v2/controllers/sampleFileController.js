@@ -3,7 +3,7 @@ const sqlClient = require('../../sql/sqlClient');
 const Sample = require('../model/Sample');
 const SampleFile = require('../model/SampleFile');
 
-const { getSampleFileUploadUrl, getSampleFileDownloadUrl } = require('../helpers/s3/signedUrl');
+const { getSampleFileUploadUrls, getSampleFileDownloadUrl, completeMultiPartUpload } = require('../helpers/s3/signedUrl');
 const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 
@@ -24,17 +24,17 @@ const createFile = async (req, res) => {
     upload_status: 'uploading',
   };
 
-  let signedUrl;
+  let signedUrls;
 
   await sqlClient.get().transaction(async (trx) => {
     await new SampleFile(trx).create(newSampleFile);
     await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType);
 
-    signedUrl = getSampleFileUploadUrl(sampleFileId, metadata);
+    signedUrls = await getSampleFileUploadUrls(sampleFileId, metadata, size);
   });
 
   logger.log(`Finished creating sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
-  res.json(signedUrl);
+  res.json(signedUrls);
 };
 
 const patchFile = async (req, res) => {
@@ -47,6 +47,15 @@ const patchFile = async (req, res) => {
   await new SampleFile().updateUploadStatus(sampleId, sampleFileType, uploadStatus);
 
   logger.log(`Finished patching sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
+  res.json(OK());
+};
+
+const completeMultipart = async (req, res) => {
+  const {
+    body: { parts, uploadId, sampleFileId },
+  } = req;
+
+  completeMultiPartUpload(sampleFileId, parts, uploadId);
   res.json(OK());
 };
 
@@ -63,5 +72,5 @@ const getS3DownloadUrl = async (req, res) => {
 };
 
 module.exports = {
-  createFile, patchFile, getS3DownloadUrl,
+  createFile, patchFile, getS3DownloadUrl, completeMultipart,
 };
