@@ -324,17 +324,19 @@ Array [
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
                   "config": Object {
+                    "enabled": true,
+                    "filterSettings": Object {
+                      "oneSetting": 1,
+                    },
                     "oneSample": Object {
                       "defaultFilterSettings": Object {
                         "oneSetting": 1,
                       },
-                      "enabled": true,
                       "filterSettings": Object {
                         "oneSetting": 7,
                       },
                     },
                     "otherSample": Object {
-                      "enabled": true,
                       "filterSettings": Object {
                         "oneSetting": 15,
                       },
