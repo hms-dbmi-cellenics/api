@@ -1,6 +1,5 @@
 const deleteCompletedJobs = require('./deleteCompleteJobs');
 const createNewStep = require('./createNewStep');
-const createNewLocalJobIfNotExist = require('./createNewLocalJobIfNotExist');
 const createNewJobIfNotExist = require('./createNewJobIfNotExist');
 const {
   requestPod, waitForPod,
@@ -13,9 +12,6 @@ const constructPipelineStep = (context, step) => {
     // Local steps
     case 'delete-completed-jobs': {
       return deleteCompletedJobs(context, step);
-    }
-    case 'create-new-local-job-if-not-exist': {
-      return createNewLocalJobIfNotExist(context, step);
     }
     // create new job for big datasets in aws
     case 'create-new-job-if-not-exist': {

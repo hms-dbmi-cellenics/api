@@ -222,7 +222,6 @@
         "features10x": "2451aae8-2aa2-4611-a280-247c767968f2"
       }
     },
-    "apiVersion": "v2",
     "authJWT": "Bearer someHugeHash"
   }
 }

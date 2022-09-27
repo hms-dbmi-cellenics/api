@@ -53,7 +53,7 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     expect(UserAccessModel.canAccessExperiment).toHaveBeenCalledWith(
       'allowed-user-id',
-      'experimentid11111111111111111111',
+      fake.EXPERIMENT_ID,
       '/v2/experiments',
       'POST',
     );
@@ -80,7 +80,7 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     expect(UserAccessModel.canAccessExperiment).toHaveBeenCalledWith(
       'allowed-user-id',
-      'experimentid11111111111111111111',
+      fake.EXPERIMENT_ID,
       '/v2/experiments',
       'POST',
     );
@@ -91,7 +91,7 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
-      url: fake.RESOURCE_V1,
+      url: fake.RESOURCE_V2,
       method: 'POST',
     };
     const next = jest.fn();
@@ -105,7 +105,7 @@ describe('Tests for authorization/authentication middlewares', () => {
 
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
-      url: fake.RESOURCE_V1,
+      url: fake.RESOURCE_V2,
       user: {
         sub: 'allowed-user-id',
       },
@@ -147,7 +147,7 @@ describe('Tests for authorization/authentication middlewares', () => {
   it('Express middleware can reject unauthenticated requests', async () => {
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
-      url: fake.RESOURCE_V1,
+      url: fake.RESOURCE_V2,
       method: 'POST',
     };
     const next = jest.fn();

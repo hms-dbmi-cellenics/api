@@ -3,7 +3,7 @@ const getLogger = require('../utils/getLogger');
 
 const logger = getLogger();
 
-const githubOrganisationName = 'hms-dbmi-cellenics';
+const githubOrganisationName = 'biomage-org';
 
 // If we are not deployed on Github (AWS/k8s), the environment is given by
 // NODE_ENV, or development if NODE_ENV is not set.
@@ -56,7 +56,6 @@ async function getAwsPoolId() {
   return poolId;
 }
 
-
 const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
   awsAccountId: process.env.AWS_ACCOUNT_ID || '000000000000',
@@ -70,7 +69,6 @@ const config = {
   domainName,
   awsUserPoolIdPromise: getAwsPoolId(),
   cognitoISP,
-  githubToken: process.env.READONLY_API_TOKEN_GITHUB,
   api: {
     prefix: '/',
   },

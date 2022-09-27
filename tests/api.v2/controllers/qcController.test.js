@@ -24,7 +24,6 @@ const processingConfigUpdate = [{
     'f87892f0-3403-4ba9-b871-c366e3fa855e': {
       auto: false,
       enabled: true,
-      apiVersion: 'v2',
       filterSettings: { regressionType: 'linear', regressionTypeSettings: { linear: { 'p.level': 0.00095 }, spline: { 'p.level': 0.001 } } },
       defaultFilterSettings: { regressionType: 'linear', regressionTypeSettings: { linear: { 'p.level': 0.001 }, spline: { 'p.level': 0.001 } } },
     },
@@ -39,7 +38,6 @@ const qcResponsePayload = {
     taskName: 'configureEmbedding',
     processName: 'qc',
     config: {
-      apiVersion: 'v2',
       embeddingSettings:
       {
         method: 'umap',
@@ -53,7 +51,6 @@ const qcResponsePayload = {
     sampleUuid: '',
     uploadCountMatrix: false,
     authJWT: 'Bearer someLongAndConfusingString',
-    apiVersion: 'v2',
   },
   output: { bucket: 'worker-results-development', key: 'de2f3434-dc63-4007-907b-28d3e72b140d' },
   response: { error: false },

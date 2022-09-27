@@ -5,7 +5,7 @@ info:
   description: The main Node.js pipeline API.
   license:
     name: MIT
-    url: 'https://github.com/hms-dbmi-cellenics/api/blob/master/LICENSE'
+    url: 'https://github.com/biomage-org/api/blob/master/LICENSE'
   contact:
     name: Biomage Ltd.
 servers:
@@ -1352,7 +1352,9 @@ paths:
                 samplesToCloneIds:
                   type: array
                   items:
-                    type: string   
+                    type: string
+                name:
+                  type: string
               additionalProperties: false
       responses:
         '200':
@@ -1360,7 +1362,7 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                $ref: '#/components/schemas/ExperimentInfo'
         '400':
           description: Bad Request
           content:

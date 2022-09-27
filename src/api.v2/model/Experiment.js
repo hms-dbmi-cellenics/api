@@ -6,7 +6,6 @@ const sqlClient = require('../../sql/sqlClient');
 const { collapseKeyIntoArray, replaceNullsWithObject } = require('../../sql/helpers');
 
 const { NotFoundError, BadRequestError } = require('../../utils/responses');
-const { formatExperimentId } = require('../helpers/v1Compatibility');
 const tableNames = require('./tableNames');
 const config = require('../../config');
 
@@ -24,6 +23,7 @@ const experimentFields = [
   'samples_order',
   'processing_config',
   'notify_by_email',
+  'pipeline_version',
   'created_at',
   'updated_at',
 ];
@@ -40,6 +40,7 @@ class Experiment extends BasicModel {
       'description',
       'samples_order',
       'notify_by_email',
+      'pipeline_version',
       'created_at',
       'updated_at',
     ];
@@ -64,6 +65,7 @@ class Experiment extends BasicModel {
 
     return result;
   }
+
 
   async getExampleExperiments() {
     return this.getAllExperiments(constants.PUBLIC_ACCESS_ID);
@@ -110,8 +112,8 @@ class Experiment extends BasicModel {
     return result;
   }
 
-  async createCopy(fromExperimentId) {
-    const toExperimentId = uuidv4().replace(/-/g, '');
+  async createCopy(fromExperimentId, name = null) {
+    const toExperimentId = uuidv4();
 
     const { sql } = this;
 
@@ -120,7 +122,8 @@ class Experiment extends BasicModel {
         sql(tableNames.EXPERIMENT)
           .select(
             sql.raw('? as id', [toExperimentId]),
-            'name',
+            // Clone the original name if no new name is provided
+            name ? sql.raw('? as name', [name]) : 'name',
             'description',
           )
           .where({ id: fromExperimentId }),
@@ -211,7 +214,7 @@ class Experiment extends BasicModel {
 
     const filenamePrefix = experimentId.split('-')[0];
     const requestedBucketName = `${downloadType}-${clusterEnv}-${config.awsAccountId}`;
-    const objectKey = `${formatExperimentId(experimentId)}/r.rds`;
+    const objectKey = `${experimentId}/r.rds`;
 
     switch (requestedBucketName) {
       case bucketNames.PROCESSED_MATRIX:

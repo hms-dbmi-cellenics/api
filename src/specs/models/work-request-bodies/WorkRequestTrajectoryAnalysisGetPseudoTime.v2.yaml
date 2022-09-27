@@ -1,0 +1,46 @@
+title: Get PseudoTime for Trajectory Analysis
+description: Work request body to get the pseudotime values for the Trajectory Analysis.
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the work. Must be `GetTrajectoryAnalysisPseudoTime`.
+    pattern: GetTrajectoryAnalysisPseudoTime
+    example: GetTrajectoryAnalysisPseudoTime
+  embedding:
+    type: object
+    properties:
+      ETag:
+        type: string
+      method:
+        type: string
+      methodSettings:
+        oneOf:
+          - properties:
+              distanceMetric:
+                type: number
+              minimumDistance:
+                type: number
+          - properties:
+              learningRate:
+                type: number
+              perplexity:
+                type: number
+        type: object
+  clustering:
+    type: object
+    properties:
+      method:
+        type: string
+      resolution:
+        type: number
+  rootNodes:
+    type: array
+    items:
+      type: string
+required:
+  - name
+  - embedding
+  - clustering
+  - rootNodes
+additionalProperties: false

@@ -1,8 +1,6 @@
 const { buildQCPipelineSteps, qcPipelineSteps } = require('./qcPipelineSkeleton');
 const { gem2SPipelineSteps } = require('./gem2sPipelineSkeleton');
 
-const size = process.env.SIZE;
-
 
 const createLocalPipeline = (nextStep) => ({
   DeleteCompletedPipelineWorker: {
@@ -11,14 +9,6 @@ const createLocalPipeline = (nextStep) => ({
     ResultPath: null,
   },
   LaunchNewPipelineWorker: {
-    XStepType: 'create-new-local-job-if-not-exist',
-    Next: nextStep,
-    ResultPath: null,
-  },
-});
-
-const createNewJobPipeline = (nextStep) => ({
-  LaunchNewPipelineJob: {
     XStepType: 'create-new-job-if-not-exist',
     Next: nextStep,
     ResultPath: null,
@@ -68,10 +58,6 @@ const buildInitialSteps = (clusterEnv, nextStep) => {
   if (clusterEnv === 'development') {
     return createLocalPipeline(nextStep);
   }
-
-  if (size === 'xl') {
-    return createNewJobPipeline(nextStep);
-  }
   // if we are in aws assign a pod to the pipeline
   return assignPipelineToPod(nextStep);
 };
@@ -80,9 +66,7 @@ const getStateMachineFirstStep = (clusterEnv) => {
   if (clusterEnv === 'development') {
     return 'DeleteCompletedPipelineWorker';
   }
-  if (size === 'xl') {
-    return 'LaunchNewPipelineJob';
-  }
+
   return 'RequestPod';
 };
 
