@@ -9,6 +9,7 @@ Object {
     "processName": "gem2s",
     "sandboxId": "default",
   },
+  "podSize": "default",
   "taskName": "assignPodToPipeline",
 }
 `;

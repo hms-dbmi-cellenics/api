@@ -188,7 +188,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
 
   const experiment = await new Experiment().findById(experimentId).first();
 
-  const { processingConfig, samplesOrder } = experiment;
+  const { processingConfig, samplesOrder, podSize } = experiment;
 
   if (processingConfigUpdates.length) {
     processingConfigUpdates.forEach(({ name, body }) => {
@@ -227,6 +227,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     experimentId,
     accountId,
     roleArn,
+    podSize,
     processName: QC_PROCESS_NAME,
     activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
     pipelineArtifacts: await getPipelineArtifacts(),
@@ -280,11 +281,15 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
   const accountId = config.awsAccountId;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
+  const experiment = await new Experiment().findById(experimentId).first();
+  const { podSize } = experiment;
+
   const context = {
     taskParams,
     experimentId,
     accountId,
     roleArn,
+    podSize,
     processName: GEM2S_PROCESS_NAME,
     activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
     pipelineArtifacts: await getPipelineArtifacts(),

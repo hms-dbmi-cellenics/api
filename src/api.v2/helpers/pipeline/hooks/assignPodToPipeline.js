@@ -30,30 +30,31 @@ const getAvailablePods = async (namespace, statusSelector) => {
 const patchPod = async (message) => {
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
-  const { experimentId, input: { sandboxId, activityId, processName } } = message;
-  const namespace = `pipeline-${sandboxId}`;
-
+  const { experimentId, podSize, input: { sandboxId, activityId, processName } } = message;
+  let namespace = `pipeline-${sandboxId}`;
+  if (podSize !== 'default') {
+    namespace = `${namespace}-${podSize}`;
+  }
   // try to get an available pod which is already running
   let pods = await getAvailablePods(namespace, 'status.phase=Running');
   if (pods.length < 1) {
-    logger.log('no running pods available, trying to select pods still being created');
+    logger.log(`patchPod: no running pods available in ${namespace}`);
     pods = await getAvailablePods(namespace, 'status.phase=ContainerCreating');
   }
   if (pods.length < 1) {
-    logger.log('no pods in creation process available, trying to select pods still pending');
+    logger.log(`patchPod: no pods in creation process available in ${namespace}`);
     pods = await getAvailablePods(namespace, 'status.phase=Pending');
   }
 
   if (pods.length < 1) {
-    throw new Error('no unassigned pods available');
+    throw new Error(`patchPod: no unassigned pods available in ${namespace}`);
   }
 
-  logger.log(pods.length, 'unassigned candidate pods found. Selecting one...');
+  logger.log(`patchPod: ${pods.length} unassigned candidate pods found`);
 
   // Select a pod to run this experiment on.
   const selectedPod = parseInt(experimentId, 16) % pods.length;
   const { name } = pods[selectedPod].metadata;
-  logger.log('Pod ', selectedPod, ' named ', name, ' assigned to ', experimentId);
 
   const patch = [
     { op: 'test', path: '/metadata/labels/activityId', value: null },
@@ -75,6 +76,8 @@ const patchPod = async (message) => {
         'content-type': 'application/json-patch+json',
       },
     });
+
+  logger.log(`patchPod: assigned ${selectedPod} ${name} to ${experimentId}`);
 };
 
 const assignPodToPipeline = async (message) => {
@@ -89,9 +92,9 @@ const assignPodToPipeline = async (message) => {
   // validate that the message contains input
   await validateRequest(message, 'PipelinePodRequest.v2.yaml');
 
-  const { experimentId, input: { sandboxId, activityId, processName } } = message;
+  const { experimentId, podSize, input: { sandboxId, activityId, processName } } = message;
 
-  logger.log(`Trying to assign pod to ${processName} pipeline for experiment ${experimentId} in sandbox ${sandboxId} for activity ${activityId}`);
+  logger.log(`Trying to assign pod ${podSize} to ${processName} pipeline for experiment ${experimentId} in sandbox ${sandboxId} for activity ${activityId}`);
 
 
   try {
