@@ -32,7 +32,7 @@ const patchPod = async (message) => {
 
   const { experimentId, podSize, input: { sandboxId, activityId, processName } } = message;
   let namespace = `pipeline-${sandboxId}`;
-  if (podSize !== 'default') {
+  if (podSize && podSize !== 'default') {
     namespace = `${namespace}-${podSize}`;
   }
   // try to get an available pod which is already running
