@@ -328,13 +328,11 @@ Array [
                       "defaultFilterSettings": Object {
                         "oneSetting": 1,
                       },
-                      "enabled": true,
                       "filterSettings": Object {
                         "oneSetting": 7,
                       },
                     },
                     "otherSample": Object {
-                      "enabled": true,
                       "filterSettings": Object {
                         "oneSetting": 15,
                       },
