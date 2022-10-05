@@ -11,7 +11,7 @@ const config = require('../../config');
 
 const getLogger = require('../../utils/getLogger');
 const bucketNames = require('../helpers/s3/bucketNames');
-const { getSignedUrl } = require('../../utils/aws/s3');
+const { getSignedUrl } = require('../helpers/s3/signedUrl');
 const constants = require('../../utils/constants');
 
 const logger = getLogger('[ExperimentModel] - ');
@@ -234,7 +234,7 @@ class Experiment extends BasicModel {
       Expires: 120,
     };
 
-    const signedUrl = getSignedUrl('getObject', params);
+    const signedUrl = await getSignedUrl('getObject', params);
 
     return signedUrl;
   }
