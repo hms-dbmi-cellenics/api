@@ -88,12 +88,18 @@ describe('model/userAccess', () => {
     const sampleId = 'mockSampleId';
     const value = 'mockValue';
 
+    const metadataTrackId = 'mockMetadataTrackId';
+
+    // Find returns an existing experiment
     const mockFind = jest.spyOn(BasicModel.prototype, 'find')
-      .mockImplementationOnce(() => Promise.resolve([]));
+      .mockImplementationOnce(() => Promise.resolve([{ id: metadataTrackId }]));
+
+    // But there are no values to be updated
+    mockSqlClient.returning.mockImplementationOnce(() => Promise.resolve([]));
 
     await expect(
       new MetadataTrack().patchValueForSample(experimentId, sampleId, key, value),
-    ).rejects.toThrow();
+    ).rejects.toMatchSnapshot();
 
     expect(mockFind).toHaveBeenCalledWith({ experiment_id: experimentId, key });
   });
