@@ -1,14 +1,7 @@
-const AWS = require('../../../utils/requireAWS');
-const config = require('../../../config');
+const getS3Client = require('./getS3Client');
 
 const fileExists = async (bucket, prefix) => {
-  const S3Config = {
-    apiVersion: '2006-03-01',
-    signatureVersion: 'v4',
-    region: config.awsRegion,
-  };
-
-  const s3 = new AWS.S3(S3Config);
+  const s3 = getS3Client();
 
   // Using async/await (untested)
   const params = {
