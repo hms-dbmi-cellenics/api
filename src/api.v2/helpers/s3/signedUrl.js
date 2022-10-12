@@ -7,7 +7,7 @@ const bucketNames = require('./bucketNames');
 const SampleFile = require('../../model/SampleFile');
 const { NotFoundError } = require('../../../utils/responses');
 
-const getSignedUrl = (operation, params) => {
+const getSignedUrl = async (operation, params) => {
   if (!params.Bucket) throw new Error('Bucket is required');
   if (!params.Key) throw new Error('Key is required');
 
@@ -19,10 +19,10 @@ const getSignedUrl = (operation, params) => {
 
   const s3 = new AWS.S3(S3Config);
 
-  return s3.getSignedUrl(operation, params);
+  return s3.getSignedUrlPromise(operation, params);
 };
 
-const getSampleFileUploadUrl = (sampleFileId, metadata) => {
+const getSampleFileUploadUrl = async (sampleFileId, metadata) => {
   const params = {
     Bucket: bucketNames.SAMPLE_FILES,
     Key: `${sampleFileId}`,
@@ -36,7 +36,7 @@ const getSampleFileUploadUrl = (sampleFileId, metadata) => {
     };
   }
 
-  const signedUrl = getSignedUrl('putObject', params);
+  const signedUrl = await getSignedUrl('putObject', params);
 
   return signedUrl;
 };
@@ -62,7 +62,7 @@ const getSampleFileDownloadUrl = async (experimentId, sampleId, fileType) => {
     ResponseContentDisposition: `attachment; filename="${fileNameToReturn[fileType]}"`,
   };
 
-  const signedUrl = getSignedUrl('getObject', params);
+  const signedUrl = await getSignedUrl('getObject', params);
 
   return signedUrl;
 };

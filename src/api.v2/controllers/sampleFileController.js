@@ -30,7 +30,7 @@ const createFile = async (req, res) => {
     await new SampleFile(trx).create(newSampleFile);
     await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType);
 
-    signedUrl = getSampleFileUploadUrl(sampleFileId, metadata);
+    signedUrl = await getSampleFileUploadUrl(sampleFileId, metadata);
   });
 
   logger.log(`Finished creating sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);

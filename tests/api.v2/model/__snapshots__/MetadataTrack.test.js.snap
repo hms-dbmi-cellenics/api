@@ -175,3 +175,5 @@ Array [
   ],
 ]
 `;
+
+exports[`model/userAccess patchValueForSample throws if the track-sample map doesn't exist 1`] = `[Error: Metadata track mockKey or sample mockSampleId don't exist]`;

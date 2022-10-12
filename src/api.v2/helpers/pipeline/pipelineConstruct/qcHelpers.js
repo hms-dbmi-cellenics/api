@@ -1,5 +1,5 @@
 
-const { fileExists } = require('../../../../utils/aws/s3');
+const { fileExists } = require('../../s3/fileExists');
 const { FILTERED_CELLS } = require('../../s3/bucketNames');
 
 const filterToStepName = {
