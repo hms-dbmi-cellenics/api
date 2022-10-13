@@ -3,7 +3,7 @@ const { getQcStepsToRun } = require('../../../../../src/api.v2/helpers/pipeline/
 const { buildQCPipelineSteps } = require('../../../../../src/api.v2/helpers/pipeline/pipelineConstruct/skeletons/qcPipelineSkeleton');
 const fake = require('../../../../test-utils/constants');
 
-jest.mock('../../../../../src/utils/aws/s3', () => ({
+jest.mock('../../../../../src/api.v2/helpers/s3/fileExists', () => ({
   fileExists: jest.fn(() => true),
 }));
 
