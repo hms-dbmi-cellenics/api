@@ -15,7 +15,7 @@ jest.mock('../../../../src/utils/requireAWS', () => ({
 }));
 
 describe('getSignedUrl', () => {
-  const signedUrlSpy = jest.fn();
+  const signedUrlPromiseSpy = jest.fn();
 
   const testParams = {
     Bucket: 'test-bucket',
@@ -25,13 +25,13 @@ describe('getSignedUrl', () => {
   beforeEach(() => {
     AWS.S3.mockReset();
     AWS.S3.mockImplementation(() => ({
-      getSignedUrl: signedUrlSpy,
+      getSignedUrlPromise: signedUrlPromiseSpy,
     }));
   });
 
   it('Should call S3 signed url correctly', () => {
     getSignedUrl('getObject', testParams);
-    expect(signedUrlSpy).toHaveBeenCalledWith('getObject', testParams);
+    expect(signedUrlPromiseSpy).toHaveBeenCalledWith('getObject', testParams);
   });
 
   it('Should add the region config if the requested url is doing upload', () => {
@@ -57,15 +57,11 @@ describe('getSignedUrl', () => {
   });
 
   it('Should throw an error if bucket is not defined', () => {
-    expect(() => {
-      getSignedUrl('test-bucket', { Key: 'test-key' });
-    }).toThrow();
+    expect(getSignedUrl('test-bucket', { Key: 'test-key' })).rejects.toThrow();
   });
 
   it('Should throw an error if key is not defined', () => {
-    expect(() => {
-      getSignedUrl('test-bucket', { Bucet: 'test-bucket' });
-    }).toThrow();
+    expect(getSignedUrl('test-bucket', { Bucet: 'test-bucket' })).rejects.toThrow();
   });
 });
 
@@ -74,29 +70,29 @@ describe('getSampleFileUploadUrl', () => {
 
   const signedUrlResponse = 'signedUrl';
 
-  const signedUrlSpy = jest.fn();
+  const signedUrlPromiseSpy = jest.fn();
 
-  beforeEach(() => {
-    signedUrlSpy.mockReturnValueOnce(signedUrlResponse);
+  beforeEach(async () => {
+    signedUrlPromiseSpy.mockReturnValueOnce(Promise.resolve(signedUrlResponse));
 
     AWS.S3.mockReset();
     AWS.S3.mockImplementation(() => ({
-      getSignedUrl: signedUrlSpy,
+      getSignedUrlPromise: signedUrlPromiseSpy,
     }));
   });
 
-  it('works correctly without metadata', () => {
-    const response = getSampleFileUploadUrl(mockSampleFileId, {});
+  it('works correctly without metadata', async () => {
+    const response = await getSampleFileUploadUrl(mockSampleFileId, {});
 
     expect(response).toEqual(signedUrlResponse);
-    expect(signedUrlSpy).toMatchSnapshot();
+    expect(signedUrlPromiseSpy.mock.calls[0]).toMatchSnapshot();
   });
 
-  it('works correctly with metadata cellrangerVersion', () => {
-    const response = getSampleFileUploadUrl(mockSampleFileId, { cellrangerVersion: 'v2' });
+  it('works correctly with metadata cellrangerVersion', async () => {
+    const response = await getSampleFileUploadUrl(mockSampleFileId, { cellrangerVersion: 'v2' });
 
     expect(response).toEqual(signedUrlResponse);
-    expect(signedUrlSpy).toMatchSnapshot();
+    expect(signedUrlPromiseSpy.mock.calls[0]).toMatchSnapshot();
   });
 });
 
@@ -108,14 +104,14 @@ describe('getSampleFileDownloadUrl', () => {
 
   const signedUrlResponse = 'signedUrl';
 
-  const signedUrlSpy = jest.fn();
+  const getSignedUrlPromiseSpy = jest.fn();
 
   beforeEach(() => {
-    signedUrlSpy.mockReturnValueOnce(signedUrlResponse);
+    getSignedUrlPromiseSpy.mockReturnValueOnce(signedUrlResponse);
 
     AWS.S3.mockReset();
     AWS.S3.mockImplementation(() => ({
-      getSignedUrl: signedUrlSpy,
+      getSignedUrlPromise: getSignedUrlPromiseSpy,
     }));
   });
 
@@ -134,7 +130,7 @@ describe('getSampleFileDownloadUrl', () => {
     const response = await getSampleFileDownloadUrl(experimentId, sampleId, fileType);
 
     expect(response).toEqual(signedUrlResponse);
-    expect(signedUrlSpy).toMatchSnapshot();
+    expect(getSignedUrlPromiseSpy).toMatchSnapshot();
   });
 
   it('Throws not found if it doesnt find a matching file', async () => {
