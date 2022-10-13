@@ -47,6 +47,17 @@ const patchSample = async (req, res) => {
   res.json(OK());
 };
 
+const bulkPatchSamplesOptions = async (req, res) => {
+  const { params: { experimentId }, body: { sampleIds, options } } = req;
+
+  logger.log(`Bulk patching ${sampleIds.length} samples option in experiment ${experimentId}`);
+
+  await new Sample().updateSamplesOptions(sampleIds, options);
+
+  logger.log(`Bulk patching ${sampleIds.length} samples option in experiment ${experimentId}`);
+  res.json(OK());
+};
+
 const deleteSample = async (req, res) => {
   const { params: { experimentId, sampleId } } = req;
   logger.log(`Deleting sample ${sampleId} from experiment ${experimentId}`);
@@ -75,6 +86,7 @@ const getSamples = async (req, res) => {
 module.exports = {
   createSample,
   patchSample,
+  bulkPatchSamplesOptions,
   getSamples,
   deleteSample,
 };

@@ -822,6 +822,71 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPError'
 
+  '/experiments/{experimentId}/samples/bulkUpdate/options':
+    patch:
+      summary: Bulk patch option for multiple samples
+      description: Update options for multiple samples
+      operationId: bulkPatchSamplesOptions
+      x-eov-operation-id: sample#bulkPatchSamplesOptions
+      x-eov-operation-handler: routes/sample
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                options:
+                  type: object
+                sampleIds:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
+
 
   '/experiments/{experimentId}/samples/position':
     put:
