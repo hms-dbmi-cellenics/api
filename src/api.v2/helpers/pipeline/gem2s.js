@@ -92,7 +92,7 @@ const generateGem2sParams = async (experimentId, authJWT) => {
     const { files, options } = _.find(samples, { id: sampleId });
 
     s3Paths[sampleId] = getS3Paths(files);
-    sampleOptions[sampleId] = options;
+    sampleOptions[sampleId] = options || {};
   });
 
   const taskParams = {
