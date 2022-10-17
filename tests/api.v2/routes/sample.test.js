@@ -44,6 +44,7 @@ describe('tests for experiment route', () => {
     const sampleData = {
       name: 'sampleName',
       sampleTechnology: '10x',
+      options: {},
     };
 
     request(app)
