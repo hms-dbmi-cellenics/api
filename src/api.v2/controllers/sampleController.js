@@ -14,7 +14,7 @@ const logger = getLogger('[SampleController] - ');
 const createSample = async (req, res) => {
   const {
     params: { experimentId, sampleId },
-    body: { name, sampleTechnology },
+    body: { name, sampleTechnology, options },
   } = req;
   logger.log('Creating sample');
 
@@ -24,6 +24,7 @@ const createSample = async (req, res) => {
       experiment_id: experimentId,
       name,
       sample_technology: sampleTechnology,
+      options: JSON.stringify(options),
     });
 
     await new Experiment(trx).addSample(experimentId, sampleId);
