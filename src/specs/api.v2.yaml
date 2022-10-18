@@ -6,8 +6,6 @@ info:
   license:
     name: MIT
     url: 'https://github.com/hms-dbmi-cellenics/api/blob/master/LICENSE'
-  contact:
-    name: HMS
 servers:
   - url: /v2
 tags:
