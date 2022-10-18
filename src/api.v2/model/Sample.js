@@ -71,13 +71,12 @@ class Sample extends BasicModel {
     return result;
   }
 
-  async updateSamplesOptions(sampleIds, option) {
-    const updateString = JSON.stringify(option);
-
-    await this.sql(tableNames.SAMPLE)
+  updateOption(options) {
+    const updateString = JSON.stringify(options);
+    return this.sql(tableNames.SAMPLE)
       .update({
         options: this.sql.raw(`'${updateString}'::jsonb`),
-      }).whereIn('id', sampleIds);
+      });
   }
 
   async setNewFile(sampleId, sampleFileId, sampleFileType) {

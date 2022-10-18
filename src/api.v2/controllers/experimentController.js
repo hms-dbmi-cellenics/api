@@ -101,6 +101,17 @@ const updateSamplePosition = async (req, res) => {
   res.json(OK());
 };
 
+const updateSamplesOptions = async (req, res) => {
+  const { params: { experimentId }, body: { options } } = req;
+
+  logger.log(`Updating options for samples in experiment ${experimentId}`);
+
+  await new Sample().updateOption(options).where({ experiment_id: experimentId });
+
+  logger.log(`Finished updating options for samples in experiment ${experimentId}`);
+  res.json(OK());
+};
+
 const getProcessingConfig = async (req, res) => {
   const { params: { experimentId } } = req;
   logger.log('Getting processing config for experiment ', experimentId);
@@ -191,6 +202,7 @@ module.exports = {
   patchExperiment,
   deleteExperiment,
   updateSamplePosition,
+  updateSamplesOptions,
   getProcessingConfig,
   getBackendStatus,
   downloadData,

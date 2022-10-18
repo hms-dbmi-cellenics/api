@@ -1,7 +1,6 @@
 const {
   createSample,
   patchSample,
-  bulkPatchSamplesOptions,
   deleteSample,
   getSamples,
 } = require('../controllers/sampleController');
@@ -16,10 +15,6 @@ module.exports = {
   'sample#patchSample': [
     expressAuthorizationMiddleware,
     (req, res, next) => patchSample(req, res).catch(next),
-  ],
-  'sample#bulkPatchSamplesOptions': [
-    expressAuthorizationMiddleware,
-    (req, res, next) => bulkPatchSamplesOptions(req, res).catch(next),
   ],
   'sample#deleteSample': [
     expressAuthorizationMiddleware,
