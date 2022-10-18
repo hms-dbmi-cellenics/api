@@ -907,9 +907,6 @@ paths:
           application/json:
             schema:
               type: object
-              properties:
-                options:
-                  type: object
       responses:
         '200':
           description: Success

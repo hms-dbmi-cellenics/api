@@ -102,11 +102,11 @@ const updateSamplePosition = async (req, res) => {
 };
 
 const updateSamplesOptions = async (req, res) => {
-  const { params: { experimentId }, body: { options } } = req;
+  const { params: { experimentId }, body } = req;
 
   logger.log(`Updating options for samples in experiment ${experimentId}`);
 
-  await new Sample().updateOption(options).where({ experiment_id: experimentId });
+  await new Sample().updateOption(body).where({ experiment_id: experimentId });
 
   logger.log(`Finished updating options for samples in experiment ${experimentId}`);
   res.json(OK());
