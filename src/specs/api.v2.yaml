@@ -850,6 +850,43 @@ paths:
                 - oldPosition
                 - newPosition
               additionalProperties: false
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
 
   '/experiments/{experimentId}/samples/options':
     put:
