@@ -2,7 +2,6 @@
 const Experiment = require('../../../src/api.v2/model/Experiment');
 const Sample = require('../../../src/api.v2/model/Sample');
 const UserAccess = require('../../../src/api.v2/model/UserAccess');
-const MetadataTrack = require('../../../src/api.v2/model/MetadataTrack');
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 
 const getPipelineStatus = require('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
@@ -11,8 +10,7 @@ const getWorkerStatus = require('../../../src/api.v2/helpers/worker/getWorkerSta
 const bucketNames = require('../../../src/api.v2/helpers/s3/bucketNames');
 
 const experimentInstance = Experiment();
-const sampleTrackInstance = Sample();
-const metadataTrackInstance = MetadataTrack();
+const sampleInstance = Sample();
 const userAccessInstance = UserAccess();
 
 const mockExperiment = {
@@ -227,6 +225,25 @@ describe('experimentController', () => {
     expect(experimentInstance.updateSamplePosition).not.toHaveBeenCalled();
   });
 
+  it('updateSamplesOptions works correctly', async () => {
+    const mockReq = {
+      params: {
+        experimentId: mockExperiment.id,
+      },
+      body: { someOption: true, otherOption: false },
+    };
+
+    const whereSpy = jest.fn(() => Promise.resolve());
+    const updateOptionSpy = jest.fn(() => ({ where: whereSpy }));
+    sampleInstance.updateOption = updateOptionSpy;
+
+    await experimentController.updateSamplesOptions(mockReq, mockRes);
+
+    expect(updateOptionSpy).toHaveBeenCalledWith(mockReq.body);
+    expect(whereSpy).toHaveBeenCalledWith({ experiment_id: mockExperiment.id });
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
+
   it('getProcessingConfig works', async () => {
     const mockReq = {
       params: {
@@ -300,7 +317,7 @@ describe('experimentController', () => {
     };
 
     experimentInstance.createCopy.mockImplementationOnce(() => Promise.resolve(toExperimentId));
-    sampleTrackInstance.copyTo.mockImplementationOnce(
+    sampleInstance.copyTo.mockImplementationOnce(
       () => Promise.resolve(clonedSamplesSubsetIds),
     );
     experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
@@ -313,7 +330,7 @@ describe('experimentController', () => {
       .toHaveBeenCalledWith(userId, toExperimentId);
 
     // Creates copy samples for new experiment
-    expect(sampleTrackInstance.copyTo)
+    expect(sampleInstance.copyTo)
       .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, samplesToCloneIds);
 
     // Sets created sample in experiment
@@ -341,7 +358,7 @@ describe('experimentController', () => {
     experimentInstance.findById.mockReturnValueOnce(
       { first: () => Promise.resolve({ samplesOrder: allSampleIds }) },
     );
-    sampleTrackInstance.copyTo.mockImplementationOnce(
+    sampleInstance.copyTo.mockImplementationOnce(
       () => Promise.resolve(clonedSamplesIds),
     );
     experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
@@ -356,7 +373,7 @@ describe('experimentController', () => {
       .toHaveBeenCalledWith(userId, toExperimentId);
 
     // Creates copy samples for new experiment
-    expect(sampleTrackInstance.copyTo)
+    expect(sampleInstance.copyTo)
       .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, allSampleIds);
 
     // Sets created sample in experiment
@@ -386,7 +403,7 @@ describe('experimentController', () => {
     experimentInstance.findById.mockReturnValueOnce(
       { first: () => Promise.resolve({ samplesOrder: allSampleIds }) },
     );
-    sampleTrackInstance.copyTo.mockImplementationOnce(
+    sampleInstance.copyTo.mockImplementationOnce(
       () => Promise.resolve(clonedSamplesIds),
     );
     experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
@@ -404,7 +421,7 @@ describe('experimentController', () => {
       .toHaveBeenCalledWith(userId, toExperimentId);
 
     // Creates copy samples for new experiment
-    expect(sampleTrackInstance.copyTo)
+    expect(sampleInstance.copyTo)
       .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, allSampleIds);
 
     // Sets created sample in experiment
