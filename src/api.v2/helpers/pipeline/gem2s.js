@@ -68,13 +68,13 @@ const generateGem2sParams = async (experimentId, authJWT) => {
 
   logger.log('Generating gem2s params');
 
-  const getS3Paths = (files) => (
-    {
-      matrix10x: files.matrix10x.s3Path,
-      barcodes10x: files.barcodes10x.s3Path,
-      features10x: files.features10x.s3Path,
-    }
-  );
+  const getS3Paths = (files) => {
+    const s3Paths = {};
+    Object.keys(files).forEach((key) => {
+      s3Paths[key] = files[key].s3Path;
+    });
+    return s3Paths;
+  };
 
   const [experiment, samples] = await Promise.all([
     new Experiment().findById(experimentId).first(),
