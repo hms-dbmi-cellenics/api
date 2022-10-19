@@ -75,11 +75,11 @@ const getExperimentData = async (sqlClient) => {
   let experiments = await sqlClient.select(['id', 'samples_order']).from(tables.EXPERIMENT);
   let metadataTracks = await sqlClient.select(['experiment_id', 'key']).from(tables.METADATA_TRACK);
 
-  metadataTracks = metadataTracks.reduce((acc, { experiment_id, key }) => {
-    if (!acc[experiment_id]) {
-      acc[experiment_id] = [];
+  metadataTracks = metadataTracks.reduce((acc, { experimentId, key }) => {
+    if (!acc[experimentId]) {
+      acc[experimentId] = [];
     }
-    acc[experiment_id].push(key);
+    acc[experimentId].push(key);
 
     return acc;
   }, {});
@@ -88,7 +88,7 @@ const getExperimentData = async (sqlClient) => {
   experiments = experiments.reduce((acc, curr) => {
     acc[curr.id] = {
       id: curr.id,
-      sampleIds: curr.samples_order || [],
+      sampleIds: curr.samplesOrder || [],
       metadataKeys: metadataTracks[curr.id] || [],
     };
 
@@ -103,8 +103,8 @@ const getSamplesData = async (sqlClient) => {
   let metadataValue = await sqlClient.select(['sample_id', 'key', 'value']).from(tables.METADATA_VALUE).innerJoin(tables.METADATA_TRACK, 'metadata_track_id', `${tables.METADATA_TRACK}.id`);
 
   metadataValue = metadataValue.reduce((acc, curr) => {
-    acc[curr.sample_id] = {
-      ...acc[curr.sample_id],
+    acc[curr.sampleId] = {
+      ...acc[curr.sampleId],
       [curr.key]: curr.value,
     };
 
@@ -115,7 +115,7 @@ const getSamplesData = async (sqlClient) => {
     acc[curr.id] = {
       uuid: curr.id,
       name: curr.name,
-      type: curr.sample_technology,
+      type: curr.sampleTechnology,
       metadata: metadataValue[curr.id],
       options: curr.options,
     };
