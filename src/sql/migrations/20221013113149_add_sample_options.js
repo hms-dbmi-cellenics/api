@@ -4,7 +4,57 @@ const objectHash = require('object-hash');
 
 const METADATA_DEFAULT_VALUE = 'N.A';
 
-const generateGem2sParamsHash = (experiment, samples, isMigrateUp) => {
+// See changes in commits:
+// - https://github.com/biomage-org/ui/pull/69/commits/823e2fccf8aaf4d42e47208ca24e66b680147eca
+// - https://github.com/biomage-org/ui/pull/69/commits/db49e2dfc89725dff25e9fdf1ff74e83c54c36bf
+// Node.js
+
+const oldGenerateGem2sParamsHash = (experiment, samples) => {
+  if (!experiment || !samples) {
+    return false;
+  }
+  const projectSamples = Object.entries(samples)
+    .filter(([key]) => experiment.sampleIds.includes(key))
+    .sort();
+
+  const existingSampleIds = projectSamples.map(([, sample]) => sample.uuid);
+
+  // Different sample order should not change the hash.
+  const orderInvariantSampleIds = [...existingSampleIds].sort();
+
+  const hashParams = {
+    organism: null,
+    input: { type: '10x' },
+    sampleIds: orderInvariantSampleIds,
+    sampleNames: orderInvariantSampleIds.map((sampleId) => samples[sampleId].name),
+  };
+
+  if (experiment.metadataKeys.length) {
+    const orderInvariantProjectMetadataKeys = [...experiment.metadataKeys].sort();
+
+    hashParams.metadata = orderInvariantProjectMetadataKeys.reduce((acc, key) => {
+      // Make sure the key does not contain '-' as it will cause failure in GEM2S
+      const sanitizedKey = key.replace(/-+/g, '_');
+
+      acc[sanitizedKey] = projectSamples.map(
+        ([, sample]) => sample.metadata[key] || METADATA_DEFAULT_VALUE,
+      );
+      return acc;
+    }, {});
+  }
+
+  const newHash = objectHash.sha1(
+    hashParams,
+    { unorderedObjects: true, unorderedArrays: true, unorderedSets: true },
+  );
+
+  return newHash;
+};
+
+// See changes in commits:
+// - https://github.com/biomage-org/ui/pull/69/commits/823e2fccf8aaf4d42e47208ca24e66b680147eca
+// - https://github.com/biomage-org/ui/pull/69/commits/db49e2dfc89725dff25e9fdf1ff74e83c54c36bf
+const newGenerateGem2sParamsHash = (experiment, samples) => {
   if (!experiment || !samples) {
     return false;
   }
@@ -18,28 +68,13 @@ const generateGem2sParamsHash = (experiment, samples, isMigrateUp) => {
   const orderInvariantSampleIds = [...existingSampleIds].sort();
   const sampleTechnology = samples[orderInvariantSampleIds[0]].type;
 
-  let hashParams = {};
-
-  if (isMigrateUp) {
-    // New template to include option
-    // @ts-ignore
-    hashParams = {
-      organism: null,
-      sampleTechnology,
-      sampleIds: orderInvariantSampleIds,
-      sampleNames: orderInvariantSampleIds.map((sampleId) => samples[sampleId].name),
-      sampleOptions: orderInvariantSampleIds.map((sampleId) => samples[sampleId].options),
-    };
-  } else {
-    // Old gem2s params
-    // @ts-ignore
-    hashParams = {
-      organism: null,
-      input: { type: '10x' },
-      sampleIds: orderInvariantSampleIds,
-      sampleNames: orderInvariantSampleIds.map((sampleId) => samples[sampleId].name),
-    };
-  }
+  const hashParams = {
+    organism: null,
+    sampleTechnology,
+    sampleIds: orderInvariantSampleIds,
+    sampleNames: orderInvariantSampleIds.map((sampleId) => samples[sampleId].name),
+    sampleOptions: orderInvariantSampleIds.map((sampleId) => samples[sampleId].options),
+  };
 
   if (experiment.metadataKeys.length) {
     const orderInvariantProjectMetadataKeys = [...experiment.metadataKeys].sort();
@@ -151,7 +186,9 @@ const migrateGem2sParamsHash = async (knex, isMigrateUp) => {
 
   const updateValues = Object.values(experiments).map((experiment) => ({
     experiment_id: experiment.id,
-    params_hash: generateGem2sParamsHash(experiment, samples, isMigrateUp),
+    params_hash: isMigrateUp
+      ? newGenerateGem2sParamsHash(experiment, samples)
+      : oldGenerateGem2sParamsHash(experiment, samples),
   }));
 
   console.log(`Updating paramsHash of ${updateValues.length} experiments`);
