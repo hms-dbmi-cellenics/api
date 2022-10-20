@@ -18,7 +18,6 @@ jest.mock('../../../src/api.v2/controllers/experimentController', () => ({
   patchExperiment: jest.fn(),
   deleteExperiment: jest.fn(),
   updateSamplePosition: jest.fn(),
-  updateSamplesOptions: jest.fn(),
   getProcessingConfig: jest.fn(),
   getBackendStatus: jest.fn(),
   updateProcessingConfig: jest.fn(),
@@ -235,33 +234,6 @@ describe('tests for experiment route', () => {
       .put(`/v2/experiments/${experimentId}/samples/position`)
       .send(body)
       .expect(400)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        // there is no point testing for the values of the response body
-        // - if something is wrong, the schema validator will catch it
-        return done();
-      });
-  });
-
-  it('updateSamplesOptions works', async (done) => {
-    const experimentId = 'experiment-id';
-
-    const body = {
-      someOption: true,
-      otherOption: false,
-    };
-
-    experimentController.updateSamplesOptions.mockImplementationOnce((req, res) => {
-      res.json(OK());
-      return Promise.resolve();
-    });
-
-    request(app)
-      .put(`/v2/experiments/${experimentId}/samples/options`)
-      .send(body)
-      .expect(200)
       .end((err) => {
         if (err) {
           return done(err);

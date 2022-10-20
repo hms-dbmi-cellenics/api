@@ -225,25 +225,6 @@ describe('experimentController', () => {
     expect(experimentInstance.updateSamplePosition).not.toHaveBeenCalled();
   });
 
-  it('updateSamplesOptions works correctly', async () => {
-    const mockReq = {
-      params: {
-        experimentId: mockExperiment.id,
-      },
-      body: { someOption: true, otherOption: false },
-    };
-
-    const whereSpy = jest.fn(() => Promise.resolve());
-    const updateOptionSpy = jest.fn(() => ({ where: whereSpy }));
-    sampleInstance.updateOption = updateOptionSpy;
-
-    await experimentController.updateSamplesOptions(mockReq, mockRes);
-
-    expect(updateOptionSpy).toHaveBeenCalledWith(mockReq.body);
-    expect(whereSpy).toHaveBeenCalledWith({ experiment_id: mockExperiment.id });
-    expect(mockRes.json).toHaveBeenCalledWith(OK());
-  });
-
   it('getProcessingConfig works', async () => {
     const mockReq = {
       params: {

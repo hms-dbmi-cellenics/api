@@ -151,11 +151,12 @@ describe('model/Sample', () => {
 
     mockSqlClient.raw.mockImplementationOnce((x) => x);
 
-    await new Sample().updateOption(mockOptions);
+    await new Sample().updateOption(mockExperimentId, mockOptions);
 
     expect(mockSqlClient.update());
 
     expect(mockSqlClient.raw.mock.calls[0][0]).toEqual(JSONBString);
     expect(mockSqlClient.update.mock.calls[0][0]).toEqual({ options: JSONBString });
+    expect(mockSqlClient.where.mock.calls[0][0]).toEqual({ experiment_id: mockExperimentId });
   });
 });
