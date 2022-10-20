@@ -48,6 +48,17 @@ const patchSample = async (req, res) => {
   res.json(OK());
 };
 
+const updateSamplesOptions = async (req, res) => {
+  const { params: { experimentId }, body } = req;
+
+  logger.log(`Updating options for samples in experiment ${experimentId}`);
+
+  await new Sample().updateOption(experimentId, body);
+
+  logger.log(`Finished updating options for samples in experiment ${experimentId}`);
+  res.json(OK());
+};
+
 const deleteSample = async (req, res) => {
   const { params: { experimentId, sampleId } } = req;
   logger.log(`Deleting sample ${sampleId} from experiment ${experimentId}`);
@@ -76,6 +87,7 @@ const getSamples = async (req, res) => {
 module.exports = {
   createSample,
   patchSample,
+  updateSamplesOptions,
   getSamples,
   deleteSample,
 };

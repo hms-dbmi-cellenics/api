@@ -893,8 +893,8 @@ paths:
       summary: Update options for samples in an experiment
       description: Update options for samples in an experiment
       operationId: updateSamplesOptions
-      x-eov-operation-id: experiment#updateSamplesOptions
-      x-eov-operation-handler: routes/experiment
+      x-eov-operation-id: samples#updateSamplesOptions
+      x-eov-operation-handler: routes/sample
       parameters:
         - name: experimentId
           schema:
