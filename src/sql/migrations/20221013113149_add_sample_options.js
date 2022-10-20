@@ -4,10 +4,12 @@ const objectHash = require('object-hash');
 
 const METADATA_DEFAULT_VALUE = 'N.A';
 
-// See changes in commits:
+// See changes in commits to see the difference between the old and new functions
 // - https://github.com/biomage-org/ui/pull/69/commits/823e2fccf8aaf4d42e47208ca24e66b680147eca
 // - https://github.com/biomage-org/ui/pull/69/commits/db49e2dfc89725dff25e9fdf1ff74e83c54c36bf
-// Node.js
+// - https://github.com/biomage-org/ui/pull/69/commits/c04bb2e395e56014ff4afc13fe4fcd29442d604e
+// Node14 has partial support for optional chaining operator (?.), I removed them for this migration
+// I also switched the order of .filter() and .sort() (line 19-20) so it's faster.
 
 const oldGenerateGem2sParamsHash = (experiment, samples) => {
   if (!experiment || !samples) {
@@ -51,9 +53,6 @@ const oldGenerateGem2sParamsHash = (experiment, samples) => {
   return newHash;
 };
 
-// See changes in commits:
-// - https://github.com/biomage-org/ui/pull/69/commits/823e2fccf8aaf4d42e47208ca24e66b680147eca
-// - https://github.com/biomage-org/ui/pull/69/commits/db49e2dfc89725dff25e9fdf1ff74e83c54c36bf
 const newGenerateGem2sParamsHash = (experiment, samples) => {
   if (!experiment || !samples) {
     return false;
