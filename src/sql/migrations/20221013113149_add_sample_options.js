@@ -4,13 +4,10 @@ const objectHash = require('object-hash');
 
 const METADATA_DEFAULT_VALUE = 'N.A';
 
-// See changes in commits to see the difference between the old and new functions
-// - https://github.com/biomage-org/ui/pull/69/commits/823e2fccf8aaf4d42e47208ca24e66b680147eca
-// - https://github.com/biomage-org/ui/pull/69/commits/db49e2dfc89725dff25e9fdf1ff74e83c54c36bf
-// - https://github.com/biomage-org/ui/pull/69/commits/c04bb2e395e56014ff4afc13fe4fcd29442d604e
+
+// Version from commit: https://github.com/biomage-org/ui/tree/17186e9dd6825c272e856ee7292e73907dd3f148
 // Node14 has partial support for optional chaining operator (?.), I removed them for this migration
 // I also switched the order of .filter() and .sort() (line 19-20) so it's faster.
-
 const oldGenerateGem2sParamsHash = (experiment, samples) => {
   if (!experiment || !samples) {
     return false;
@@ -53,18 +50,15 @@ const oldGenerateGem2sParamsHash = (experiment, samples) => {
   return newHash;
 };
 
+// Version from commit: https://github.com/biomage-org/ui/tree/844b3a6c4d9016dda938032cc20653c45ec0cf7b
+// Node14 has partial support for optional chaining operator (?.), I removed them for this migration
 const newGenerateGem2sParamsHash = (experiment, samples) => {
   if (!experiment || !samples) {
     return false;
   }
-  const projectSamples = Object.entries(samples)
-    .filter(([key]) => experiment.sampleIds.includes(key))
-    .sort();
-
-  const existingSampleIds = projectSamples.map(([, sample]) => sample.uuid);
 
   // Different sample order should not change the hash.
-  const orderInvariantSampleIds = [...existingSampleIds].sort();
+  const orderInvariantSampleIds = [...experiment.sampleIds].sort();
   const sampleTechnology = samples[orderInvariantSampleIds[0]].type;
 
   const hashParams = {
@@ -82,8 +76,8 @@ const newGenerateGem2sParamsHash = (experiment, samples) => {
       // Make sure the key does not contain '-' as it will cause failure in GEM2S
       const sanitizedKey = key.replace(/-+/g, '_');
 
-      acc[sanitizedKey] = projectSamples.map(
-        ([, sample]) => sample.metadata[key] || METADATA_DEFAULT_VALUE,
+      acc[sanitizedKey] = orderInvariantSampleIds.map(
+        (sampleId) => samples[sampleId].metadata[key] || METADATA_DEFAULT_VALUE,
       );
       return acc;
     }, {});
