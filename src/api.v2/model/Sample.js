@@ -72,10 +72,9 @@ class Sample extends BasicModel {
   }
 
   async updateOption(experimentId, options) {
-    const updateString = JSON.stringify(options);
     await this.sql(tableNames.SAMPLE)
       .update({
-        options: this.sql.raw(`'${updateString}'::jsonb`),
+        options: this.sql.raw(`'${JSON.stringify(options)}'::jsonb`),
       })
       .where({ experiment_id: experimentId });
   }

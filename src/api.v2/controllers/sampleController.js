@@ -24,7 +24,7 @@ const createSample = async (req, res) => {
       experiment_id: experimentId,
       name,
       sample_technology: sampleTechnology,
-      options: JSON.stringify(options),
+      options,
     });
 
     await new Experiment(trx).addSample(experimentId, sampleId);
