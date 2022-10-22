@@ -146,7 +146,53 @@ describe('tests for experiment route', () => {
       });
   });
 
-  it('updateSamplesOptions works', async (done) => {
+  it('updateSamplesOptions without a body works', async (done) => {
+    const body = {};
+
+    sampleController.updateSamplesOptions.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+
+    request(app)
+      .put(`/v2/experiments/${experimentId}/samples/options`)
+      .send(body)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
+  it('updateSamplesOptions with valid body works', async (done) => {
+    const body = {
+      includeAbseq: false,
+    };
+
+    sampleController.updateSamplesOptions.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+
+    request(app)
+      .put(`/v2/experiments/${experimentId}/samples/options`)
+      .send(body)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
+  it('updateSamplesOptions with invalid body fails', async (done) => {
     const body = {
       someOption: true,
       otherOption: false,
@@ -160,7 +206,7 @@ describe('tests for experiment route', () => {
     request(app)
       .put(`/v2/experiments/${experimentId}/samples/options`)
       .send(body)
-      .expect(200)
+      .expect(400)
       .end((err) => {
         if (err) {
           return done(err);

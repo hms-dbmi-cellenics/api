@@ -906,7 +906,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              $ref: '#/components/schemas/UpdateSamplesOptions'
       responses:
         '200':
           description: Success
@@ -2039,6 +2039,8 @@ components:
       $ref: './models/samples-bodies/CreateSampleFile.v2.yaml'
     PatchSampleFile:
       $ref: './models/samples-bodies/PatchSampleFile.v2.yaml'
+    UpdateSamplesOptions:
+      $ref: ./models/samples-bodies/UpdateSamplesOptions.v2.yaml
     CellSets:
       $ref: ./models/cell-sets-bodies/CellSets.v2.yaml
     PlotConfig:
