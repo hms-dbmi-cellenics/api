@@ -170,7 +170,7 @@ describe('tests for experiment route', () => {
 
   it('updateSamplesOptions with valid body works', async (done) => {
     const body = {
-      includeAbseq: false,
+      includeAbSeq: false,
     };
 
     sampleController.updateSamplesOptions.mockImplementationOnce((req, res) => {

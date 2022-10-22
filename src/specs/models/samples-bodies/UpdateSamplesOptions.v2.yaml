@@ -2,6 +2,6 @@ title: Update Samples Options
 description: Options allowed to be updated for samples
 type: object
 properties:
-  includeAbseq:
+  includeAbSeq:
     type: boolean
 additionalProperties: false
