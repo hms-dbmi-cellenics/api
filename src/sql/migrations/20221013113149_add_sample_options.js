@@ -9,7 +9,7 @@ const METADATA_DEFAULT_VALUE = 'N.A';
 // Node14 has partial support for optional chaining operator (?.), I removed them for this migration
 // I also switched the order of .filter() and .sort() (line 19-20) so it's faster.
 const oldGenerateGem2sParamsHash = (experiment, samples) => {
-  if (!experiment || !samples) {
+  if (!experiment || !samples || experiment.sampleIds.length === 0) {
     return false;
   }
   const projectSamples = Object.entries(samples)
@@ -53,7 +53,7 @@ const oldGenerateGem2sParamsHash = (experiment, samples) => {
 // Version from commit: https://github.com/biomage-org/ui/tree/844b3a6c4d9016dda938032cc20653c45ec0cf7b
 // Node14 has partial support for optional chaining operator (?.), I removed them for this migration
 const newGenerateGem2sParamsHash = (experiment, samples) => {
-  if (!experiment || !samples) {
+  if (!experiment || !samples || experiment.sampleIds.length === 0) {
     return false;
   }
 
@@ -103,11 +103,11 @@ const getExperimentData = async (sqlClient) => {
   let experiments = await sqlClient.select(['id', 'samples_order']).from(tables.EXPERIMENT);
   let metadataTracks = await sqlClient.select(['experiment_id', 'key']).from(tables.METADATA_TRACK);
 
-  metadataTracks = metadataTracks.reduce((acc, { experimentId, key }) => {
-    if (!acc[experimentId]) {
-      acc[experimentId] = [];
+  metadataTracks = metadataTracks.reduce((acc, { experiment_id, key }) => {
+    if (!acc[experiment_id]) {
+      acc[experiment_id] = [];
     }
-    acc[experimentId].push(key);
+    acc[experiment_id].push(key);
 
     return acc;
   }, {});
@@ -116,7 +116,7 @@ const getExperimentData = async (sqlClient) => {
   experiments = experiments.reduce((acc, curr) => {
     acc[curr.id] = {
       id: curr.id,
-      sampleIds: curr.samplesOrder || [],
+      sampleIds: curr.samples_order || [],
       metadataKeys: metadataTracks[curr.id] || [],
     };
 
@@ -131,8 +131,8 @@ const getSamplesData = async (sqlClient) => {
   let metadataValue = await sqlClient.select(['sample_id', 'key', 'value']).from(tables.METADATA_VALUE).innerJoin(tables.METADATA_TRACK, 'metadata_track_id', `${tables.METADATA_TRACK}.id`);
 
   metadataValue = metadataValue.reduce((acc, curr) => {
-    acc[curr.sampleId] = {
-      ...acc[curr.sampleId],
+    acc[curr.sample_id] = {
+      ...acc[curr.sample_id],
       [curr.key]: curr.value,
     };
 
@@ -143,7 +143,7 @@ const getSamplesData = async (sqlClient) => {
     acc[curr.id] = {
       uuid: curr.id,
       name: curr.name,
-      type: curr.sampleTechnology,
+      type: curr.sample_technology,
       metadata: metadataValue[curr.id],
       options: curr.options,
     };
@@ -172,6 +172,7 @@ const migrateGem2sParamsHash = async (knex, isMigrateUp) => {
   console.log('Getting experiments data...');
   const experiments = await getExperimentData(knex);
   console.log('Finished getting experiments data...');
+  console.log(`Fetched ${experiments.length} experiments`);
 
   console.log('Getting samples data...');
   const samples = await getSamplesData(knex);
@@ -182,7 +183,7 @@ const migrateGem2sParamsHash = async (knex, isMigrateUp) => {
     params_hash: isMigrateUp
       ? newGenerateGem2sParamsHash(experiment, samples)
       : oldGenerateGem2sParamsHash(experiment, samples),
-  }));
+  })).filter(({ params_hash }) => params_hash !== false);
 
   console.log(`Updating paramsHash of ${updateValues.length} experiments`);
 
