@@ -2,11 +2,7 @@ const { buildQCPipelineSteps, qcPipelineSteps } = require('./qcPipelineSkeleton'
 const { gem2SPipelineSteps } = require('./gem2sPipelineSkeleton');
 
 
-const needsBatchJob = (cpus, mem) => {
-  const DEFAULT_CPUS = 4;
-  const DEFAULT_MEM = 29;
-  return cpus !== DEFAULT_CPUS || mem !== DEFAULT_MEM;
-};
+const needsBatchJob = (cpus, mem) => cpus !== undefined || mem !== undefined;
 
 const createLocalPipeline = (nextStep) => ({
   DeleteCompletedPipelineWorker: {

@@ -40,6 +40,8 @@ const getContext = (processName) => ({
     certAuthority: 'mock-ca',
   },
   processingConfig: {},
+  podCPUs: 4,
+  podMem: 29,
 });
 
 
