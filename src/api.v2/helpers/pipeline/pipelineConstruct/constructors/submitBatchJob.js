@@ -6,7 +6,7 @@ const submitBatchJob = (context, step) => {
   } = context;
 
   const DEFAULT_CPUS = 4;
-  const DEFAULT_MEM = 32;
+  const DEFAULT_MEM = 8192; // MiB
   const cpus = podCPUs || DEFAULT_CPUS;
   const mem = podMem || DEFAULT_MEM;
 
@@ -22,33 +22,33 @@ const submitBatchJob = (context, step) => {
         Environment: [
           {
             Name: 'ACTIVITY_ARN',
-            Value: activityArn,
+            Value: `${activityArn}`,
           },
           {
             Name: 'CLUSTER_ENV',
-            Value: config.clusterEnv,
+            Value: `${config.clusterEnv}`,
           },
           {
             Name: 'AWS_DEFAULT_REGION',
-            Value: config.awsRegion,
+            Value: `${config.awsRegion}`,
           },
           {
             Name: 'AWS_ACCOUNT_ID',
-            Value: config.awsAccountId,
+            Value: `${config.awsAccountId}`,
           },
           {
             Name: 'SANDBOX_ID',
-            Value: config.sandboxId,
+            Value: `${config.sandboxId}`,
           },
         ],
         ResourceRequirements: [
           {
             Type: 'VCPU',
-            Value: cpus,
+            Value: `${cpus}`,
           },
           {
             Type: 'MEMORY',
-            Value: mem,
+            Value: `${mem}`,
           },
         ],
       },
