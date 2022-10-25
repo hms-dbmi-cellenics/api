@@ -189,7 +189,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   const experiment = await new Experiment().findById(experimentId).first();
 
   const {
-    processingConfig, samplesOrder, podCPUs, podMem,
+    processingConfig, samplesOrder, podCPUs, podMemory,
   } = experiment;
 
   if (processingConfigUpdates.length) {
@@ -217,7 +217,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     environment: config.clusterEnv,
     authJWT,
     podCPUs,
-    podMem,
+    podMemory,
   };
 
   const qcSteps = await getQcStepsToRun(experimentId, processingConfigUpdates);
@@ -226,7 +226,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     config.clusterEnv,
     qcSteps,
     podCPUs,
-    podMem,
+    podMemory,
   );
 
   logger.log('Skeleton constructed, now building state machine definition...');
@@ -266,7 +266,7 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
   const experiment = await new Experiment().findById(experimentId).first();
-  const { podCPUs, podMem } = experiment;
+  const { podCPUs, podMemory } = experiment;
 
   const context = {
     taskParams,
@@ -281,10 +281,10 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
     processingConfig: {},
     environment: config.clusterEnv,
     podCPUs,
-    podMem,
+    podMemory,
   };
 
-  const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv, podCPUs, podMem);
+  const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv, podCPUs, podMemory);
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);

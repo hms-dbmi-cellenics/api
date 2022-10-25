@@ -5,6 +5,11 @@ const submitBatchJob = (context, step) => {
     activityArn, podCPUs, podMem,
   } = context;
 
+  const DEFAULT_CPUS = 4;
+  const DEFAULT_MEM = 32;
+  const cpus = podCPUs || DEFAULT_CPUS;
+  const mem = podMem || DEFAULT_MEM;
+
   return {
     ...step,
     Type: 'Task',
@@ -39,11 +44,11 @@ const submitBatchJob = (context, step) => {
         ResourceRequirements: [
           {
             Type: 'VCPU',
-            Value: podCPUs,
+            Value: cpus,
           },
           {
             Type: 'MEMORY',
-            Value: podMem,
+            Value: mem,
           },
         ],
       },
