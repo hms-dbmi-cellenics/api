@@ -2,7 +2,7 @@ const config = require('../../../../../config');
 
 const submitBatchJob = (context, step) => {
   const {
-    activityArn, podCPUs, podMem,
+    activityArn, podCPUs, podMem, processName, environment, experimentId,
   } = context;
 
   const DEFAULT_CPUS = 4;
@@ -16,7 +16,7 @@ const submitBatchJob = (context, step) => {
     Resource: 'arn:aws:states:::batch:submitJob',
     Parameters: {
       JobDefinition: 'arn:aws:batch:eu-west-1:242905224710:job-definition/getting-started-job-definition:5',
-      JobName: 'step-functions-test-1',
+      JobName: `${processName}-${environment}-${experimentId}`,
       JobQueue: 'arn:aws:batch:eu-west-1:242905224710:job-queue/getting-started-job-queue',
       ContainerOverrides: {
         Environment: [

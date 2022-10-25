@@ -54,7 +54,6 @@ describe('assignPodToPipeline', () => {
   it('calls delete & patch when there are already running pods', async () => {
     const message = buildPodRequest(fake.SANDBOX_ID,
       fake.EXPERIMENT_ID,
-      fake.POD_SIZE,
       constants.ASSIGN_POD_TO_PIPELINE,
       constants.GEM2S_PROCESS_NAME,
       fake.ACTIVITY_ID);

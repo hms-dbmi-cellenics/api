@@ -90,9 +90,9 @@ const assignPodToPipeline = async (message) => {
   // validate that the message contains input
   await validateRequest(message, 'PipelinePodRequest.v2.yaml');
 
-  const { experimentId, podSize, input: { sandboxId, activityId, processName } } = message;
+  const { experimentId, input: { sandboxId, activityId, processName } } = message;
 
-  logger.log(`Trying to assign pod ${podSize} to ${processName} pipeline for experiment ${experimentId} in sandbox ${sandboxId} for activity ${activityId}`);
+  logger.log(`Trying to assign ${processName} pod to experiment ${experimentId} in sandbox ${sandboxId} for activity ${activityId}`);
 
 
   try {

@@ -63,7 +63,6 @@ module.exports = Object.freeze({
   URL_V2: 'localhost:5000/v2/experiments',
   RESOURCE_V2: '/v2/experiments',
   EXPERIMENT_ID: 'experi-mentid-11111111-1111111-11111',
-  POD_SIZE: 'default',
   S3_BUCKET: 'worker-results',
   S3_KEY: '11111122222233333344444455555555',
   PROJECT_ID: 'aaaaaaaa-bbbb-3333-4444-999999999999',
