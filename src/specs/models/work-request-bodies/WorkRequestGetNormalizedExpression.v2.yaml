@@ -1,0 +1,48 @@
+title: Get Normalized Expression 
+type: object
+description: |-
+  Get the normalized expression of the experiment with the possibility to subset the cells to take by cellSets
+properties:
+  name:
+    type: string
+    description: The name of the task requested -- must be `GetNormalizedExpression`.
+    pattern: GetNormalizedExpression
+  subsetBy:
+    type: object
+    description: |-
+      The configuration of cellSets to subset by, split into 4 classifications for cell sets: louvain, sample, (user defined) metadata and custom cell sets
+      The result will have the intersection, all the cells that are included by all of these classifications.
+      
+      If any of the classifications has an empty list, it means all of the cellIds are included by that classification.
+    properties:    
+      louvain:
+        description: Louvain cell sets classification
+        type: array
+        items:
+          type: string
+      sample: 
+        description: Sample cell sets classification
+        type: array
+        items:
+          type: string
+      metadata: 
+        description: User defined metadata cell sets classification
+        type: array
+        items:
+          type: string
+      customCellSets: 
+        description: Custom (scratchpad) cell sets classification
+        type: array
+        items:
+          type: string
+  required:
+    - louvain
+    - sample
+    - metadata
+    - customCellSets
+  additionalProperties: false
+
+required:
+  - name
+  - subsetBy
+additionalProperties: false
