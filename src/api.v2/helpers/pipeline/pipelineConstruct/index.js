@@ -202,27 +202,6 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     });
   }
 
-  // This is the processing configuration merged for multiple samples where
-  // appropriate.
-  // eslint-disable-next-line consistent-return
-  const mergedProcessingConfig = _.cloneDeepWith(processingConfig, (o) => {
-    if (_.isObject(o) && !o.dataIntegration && !o.embeddingSettings && typeof o.enabled === 'boolean') {
-      // Find which samples have sample-specific configurations.
-      const sampleConfigs = _.intersection(Object.keys(o), samplesOrder);
-
-      // Get an object that is only the "raw" configuration.
-      const rawConfig = _.omit(o, sampleConfigs);
-
-      const result = {};
-
-      samplesOrder.forEach((sample) => {
-        result[sample] = _.merge({}, rawConfig, o[sample]);
-      });
-
-      return result;
-    }
-  });
-
   const context = {
     experimentId,
     accountId,
@@ -233,7 +212,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
     sandboxId: config.sandboxId,
-    processingConfig: mergedProcessingConfig,
+    processingConfig,
     environment: config.clusterEnv,
     authJWT,
   };

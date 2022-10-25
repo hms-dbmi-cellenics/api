@@ -31,11 +31,8 @@ const mockExperimentRow = {
   samplesOrder: ['oneSample', 'otherSample'],
   processingConfig: {
     doubletScores: {
-      enabled: true,
-      filterSettings: {
-        oneSetting: 1,
-      },
       oneSample: {
+        enabled: true,
         filterSettings: {
           oneSetting: 1,
         },
