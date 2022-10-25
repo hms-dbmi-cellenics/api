@@ -26,6 +26,8 @@ const experimentFields = [
   'pipeline_version',
   'created_at',
   'updated_at',
+  'pod_memory',
+  'pod_cpus',
 ];
 
 class Experiment extends BasicModel {
