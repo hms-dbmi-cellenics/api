@@ -822,7 +822,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPError'
 
-
   '/experiments/{experimentId}/samples/position':
     put:
       summary: Update position for a sample
@@ -888,6 +887,64 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+
+  '/experiments/{experimentId}/samples/options':
+    put:
+      summary: Update options for samples in an experiment
+      description: Update options for samples in an experiment
+      operationId: updateSamplesOptions
+      x-eov-operation-id: samples#updateSamplesOptions
+      x-eov-operation-handler: routes/sample
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSamplesOptions'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
 
   '/experiments/{experimentId}/samples/{sampleId}/files/{sampleFileType}/downloadUrl':
     get:
@@ -1982,6 +2039,8 @@ components:
       $ref: './models/samples-bodies/CreateSampleFile.v2.yaml'
     PatchSampleFile:
       $ref: './models/samples-bodies/PatchSampleFile.v2.yaml'
+    UpdateSamplesOptions:
+      $ref: ./models/samples-bodies/UpdateSamplesOptions.v2.yaml
     CellSets:
       $ref: ./models/cell-sets-bodies/CellSets.v2.yaml
     PlotConfig:

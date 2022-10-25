@@ -10,9 +10,12 @@ properties:
       - oneOf:
         - pattern: 10x
         - pattern: rhapsody
- 
+  options:
+    type: object
+
 required:
   - name
   - sampleTechnology
+  - options
 
 additionalProperties: false

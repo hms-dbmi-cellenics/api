@@ -3,6 +3,7 @@ const {
   patchSample,
   deleteSample,
   getSamples,
+  updateSamplesOptions,
 } = require('../controllers/sampleController');
 
 const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
@@ -15,6 +16,10 @@ module.exports = {
   'sample#patchSample': [
     expressAuthorizationMiddleware,
     (req, res, next) => patchSample(req, res).catch(next),
+  ],
+  'samples#updateSamplesOptions': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => updateSamplesOptions(req, res).catch(next),
   ],
   'sample#deleteSample': [
     expressAuthorizationMiddleware,

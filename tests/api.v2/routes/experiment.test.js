@@ -1,7 +1,6 @@
 // @ts-nocheck
 const express = require('express');
 const request = require('supertest');
-const { send } = require('process');
 const expressLoader = require('../../../src/loaders/express');
 
 const { OK } = require('../../../src/utils/responses');

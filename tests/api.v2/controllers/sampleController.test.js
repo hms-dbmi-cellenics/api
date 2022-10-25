@@ -142,6 +142,22 @@ describe('sampleController', () => {
     expect(mockRes.json).toHaveBeenCalledWith(OK());
   });
 
+  it('updateSamplesOptions works correctly', async () => {
+    const mockReq = {
+      params: {
+        experimentId: mockExperimentId,
+      },
+      body: { someOption: true, otherOption: false },
+    };
+
+    sampleInstance.updateOption.mockImplementationOnce(() => Promise.resolve());
+
+    await sampleController.updateSamplesOptions(mockReq, mockRes);
+
+    expect(sampleInstance.updateOption).toHaveBeenCalledWith(mockExperimentId, mockReq.body);
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
+
   it('Get samples works correctly', async () => {
     const mockReq = { params: { experimentId: mockExperimentId } };
     sampleInstance.getSamples.mockImplementationOnce(() => Promise.resolve());

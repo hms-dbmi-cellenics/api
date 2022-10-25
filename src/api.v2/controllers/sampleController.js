@@ -14,7 +14,7 @@ const logger = getLogger('[SampleController] - ');
 const createSample = async (req, res) => {
   const {
     params: { experimentId, sampleId },
-    body: { name, sampleTechnology },
+    body: { name, sampleTechnology, options },
   } = req;
   logger.log('Creating sample');
 
@@ -24,6 +24,7 @@ const createSample = async (req, res) => {
       experiment_id: experimentId,
       name,
       sample_technology: sampleTechnology,
+      options,
     });
 
     await new Experiment(trx).addSample(experimentId, sampleId);
@@ -44,6 +45,17 @@ const patchSample = async (req, res) => {
   await new Sample().updateById(sampleId, snakeCasedKeysToPatch);
 
   logger.log(`Finished patching sample ${sampleId} in experiment ${experimentId}`);
+  res.json(OK());
+};
+
+const updateSamplesOptions = async (req, res) => {
+  const { params: { experimentId }, body } = req;
+
+  logger.log(`Updating options for samples in experiment ${experimentId}`);
+
+  await new Sample().updateOption(experimentId, body);
+
+  logger.log(`Finished updating options for samples in experiment ${experimentId}`);
   res.json(OK());
 };
 
@@ -75,6 +87,7 @@ const getSamples = async (req, res) => {
 module.exports = {
   createSample,
   patchSample,
+  updateSamplesOptions,
   getSamples,
   deleteSample,
 };
