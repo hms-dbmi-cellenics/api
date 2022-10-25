@@ -188,7 +188,9 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
 
   const experiment = await new Experiment().findById(experimentId).first();
 
-  const { processingConfig, samplesOrder, podSize } = experiment;
+  const {
+    processingConfig, samplesOrder, podCPUs, podMem,
+  } = experiment;
 
   if (processingConfigUpdates.length) {
     processingConfigUpdates.forEach(({ name, body }) => {
@@ -206,7 +208,6 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     experimentId,
     accountId,
     roleArn,
-    podSize,
     processName: QC_PROCESS_NAME,
     activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
     pipelineArtifacts: await getPipelineArtifacts(),
@@ -215,6 +216,8 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     processingConfig,
     environment: config.clusterEnv,
     authJWT,
+    podCPUs,
+    podMem,
   };
 
   const qcSteps = await getQcStepsToRun(experimentId, processingConfigUpdates);
@@ -222,6 +225,8 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   const qcPipelineSkeleton = await getQcPipelineSkeleton(
     config.clusterEnv,
     qcSteps,
+    podCPUs,
+    podMem,
   );
 
   logger.log('Skeleton constructed, now building state machine definition...');
@@ -261,14 +266,13 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
   const experiment = await new Experiment().findById(experimentId).first();
-  const { podSize } = experiment;
+  const { podCPUs, podMem } = experiment;
 
   const context = {
     taskParams,
     experimentId,
     accountId,
     roleArn,
-    podSize,
     processName: GEM2S_PROCESS_NAME,
     activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
     pipelineArtifacts: await getPipelineArtifacts(),
@@ -276,6 +280,8 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
     sandboxId: config.sandboxId,
     processingConfig: {},
     environment: config.clusterEnv,
+    podCPUs,
+    podMem,
   };
 
   const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv);

@@ -30,11 +30,9 @@ const getAvailablePods = async (namespace, statusSelector) => {
 const patchPod = async (message) => {
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
-  const { experimentId, podSize, input: { sandboxId, activityId, processName } } = message;
-  let namespace = `pipeline-${sandboxId}`;
-  if (podSize && podSize !== 'default') {
-    namespace = `${namespace}-${podSize}`;
-  }
+  const { experimentId, input: { sandboxId, activityId, processName } } = message;
+  const namespace = `pipeline-${sandboxId}`;
+
   // try to get an available pod which is already running
   let pods = await getAvailablePods(namespace, 'status.phase=Running');
   if (pods.length < 1) {

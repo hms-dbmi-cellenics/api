@@ -4,7 +4,8 @@
  */
 exports.up = async (knex) => {
   await knex.schema.alterTable('experiment', (table) => {
-    table.string('pod_size', 15).notNullable().defaultTo('default');
+    table.integer('pod_cpus').notNullable().defaultTo(4);
+    table.integer('pod_memory').notNullable().defaultTo(29);
   });
 };
 
@@ -14,6 +15,7 @@ exports.up = async (knex) => {
  */
 exports.down = async (knex) => {
   await knex.schema.alterTable('experiment', (table) => {
-    table.dropColumn('pod_size');
+    table.dropColumn('pod_cpus');
+    table.dropColumn('pod_memory');
   });
 };
