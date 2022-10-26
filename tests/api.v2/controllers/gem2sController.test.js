@@ -15,6 +15,8 @@ const mockRes = {
   status: jest.fn(() => ({ send: mockJsonSend })),
 };
 
+const expectedTopic = 'arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2';
+
 describe('gem2sController', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -50,11 +52,14 @@ describe('gem2sController', () => {
 
     parseSNSMessage.mockReturnValue({ io, parsedMessage });
 
-    const mockReq = { params: { experimentId } };
+    const mockReq = {
+      params: { experimentId },
+      headers: { 'x-amz-sns-topic-arn': expectedTopic },
+    };
 
     await gem2sController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
     expect(gem2s.handleGem2sResponse).toHaveBeenCalledWith(io, parsedMessage);
 
     // Response is ok
@@ -71,7 +76,7 @@ describe('gem2sController', () => {
 
     await gem2sController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
 
     expect(gem2s.handleGem2sResponse).not.toHaveBeenCalled();
 
@@ -94,7 +99,7 @@ describe('gem2sController', () => {
 
     await gem2sController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
     expect(gem2s.handleGem2sResponse).toHaveBeenCalledWith(io, parsedMessage);
 
     // Response is nok
@@ -114,7 +119,7 @@ describe('gem2sController', () => {
 
     await gem2sController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
     expect(gem2s.handleGem2sResponse).not.toHaveBeenCalled();
 
     // Response is ok
