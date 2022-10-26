@@ -6,7 +6,7 @@ const { OK } = require('../../../src/utils/responses');
 const handleQCResponse = require('../../../src/api.v2/helpers/pipeline/handleQCResponse');
 const pipelineConstruct = require('../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 
-const parseSNSMessage = require('../../../src/utils/parse-sns-message');
+const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
 
 jest.mock('../../../src/api.v2/helpers/pipeline/handleQCResponse');
 jest.mock('../../../src/api.v2/helpers/pipeline/pipelineConstruct');

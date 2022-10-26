@@ -1,4 +1,4 @@
-const parseSNSMessage = require('../../../utils/parse-sns-message');
+const parseSNSMessage = require('../../../utils/parseSNSMessage');
 const getLogger = require('../../../utils/getLogger');
 
 const UserAccess = require('../../model/UserAccess');

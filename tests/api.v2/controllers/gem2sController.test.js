@@ -4,7 +4,7 @@ const gem2sController = require('../../../src/api.v2/controllers/gem2sController
 const { OK } = require('../../../src/utils/responses');
 
 const gem2s = require('../../../src/api.v2/helpers/pipeline/gem2s');
-const parseSNSMessage = require('../../../src/utils/parse-sns-message');
+const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
 
 jest.mock('../../../src/api.v2/helpers/pipeline/gem2s');
 jest.mock('../../../src/utils/parse-sns-message');
