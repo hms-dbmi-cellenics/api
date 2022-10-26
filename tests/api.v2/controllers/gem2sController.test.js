@@ -54,7 +54,6 @@ describe('gem2sController', () => {
 
     const mockReq = {
       params: { experimentId },
-      headers: { 'x-amz-sns-topic-arn': expectedTopic },
     };
 
     await gem2sController.handleResponse(mockReq, mockRes);

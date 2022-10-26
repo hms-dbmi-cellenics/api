@@ -62,6 +62,8 @@ const mockRes = {
   status: jest.fn(() => ({ send: mockJsonSend })),
 };
 
+const expectedTopic = 'arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2';
+
 describe('qcController', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -121,7 +123,7 @@ describe('qcController', () => {
 
     await qcController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
     expect(handleQCResponse).toHaveBeenCalledWith(io, qcResponsePayload);
 
     // Response is ok
@@ -136,7 +138,7 @@ describe('qcController', () => {
 
     await qcController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
     expect(handleQCResponse).not.toHaveBeenCalled();
 
     // Response is nok
@@ -155,7 +157,7 @@ describe('qcController', () => {
 
     await qcController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
     expect(handleQCResponse).toHaveBeenCalledWith(io, qcResponsePayload);
 
     // Response is nok
@@ -172,7 +174,7 @@ describe('qcController', () => {
 
     await qcController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
     expect(handleQCResponse).not.toHaveBeenCalled();
 
     // Response is ok
