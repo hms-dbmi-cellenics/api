@@ -10,7 +10,7 @@ const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
 
 jest.mock('../../../src/api.v2/helpers/pipeline/handleQCResponse');
 jest.mock('../../../src/api.v2/helpers/pipeline/pipelineConstruct');
-jest.mock('../../../src/utils/parse-sns-message');
+jest.mock('../../../src/utils/parseSNSMessage');
 
 // const MockDataFactory = require('../../../src/api/route-services/__mocks__/MockDataFactory');
 const experimentId = 'experimentId';
