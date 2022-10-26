@@ -54,11 +54,18 @@ const oldGenerateGem2sParamsHash = (experiment, samples) => {
 // Node14 has partial support for optional chaining operator (?.), I removed them for this migration
 const newGenerateGem2sParamsHash = (experiment, samples) => {
   if (!experiment || !samples || experiment.sampleIds.length === 0) {
+    console.log('*** invalid experiment skipped: ', experiment.id);
     return false;
   }
 
   // Different sample order should not change the hash.
   const orderInvariantSampleIds = [...experiment.sampleIds].sort();
+
+  if (!(orderInvariantSampleIds.every((sampleId) => samples[sampleId]))) {
+    console.log('*** invalid experiment skipped: ', experiment.id);
+    return false;
+  }
+
   const sampleTechnology = samples[orderInvariantSampleIds[0]].type;
 
   const hashParams = {
