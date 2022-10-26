@@ -5,7 +5,7 @@ const UserAccess = require('../../../../src/api.v2/model/UserAccess');
 const postRegistrationHandler = require('../../../../src/api.v2/helpers/access/postRegistrationHandler');
 const parseSNSMessage = require('../../../../src/utils/parseSNSMessage');
 
-jest.mock('../../../../src/utils/parse-sns-message');
+jest.mock('../../../../src/utils/parseSNSMessage');
 jest.mock('../../../../src/api.v2/model/UserAccess');
 
 const mockUserAccess = {
