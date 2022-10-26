@@ -2,6 +2,7 @@ const parseSNSMessage = require('../../../utils/parseSNSMessage');
 const getLogger = require('../../../utils/getLogger');
 
 const UserAccess = require('../../model/UserAccess');
+const snsTopics = require('../../../utils/snsTopics');
 
 const logger = getLogger('[PostRegistrationHandler] - ');
 
@@ -10,7 +11,7 @@ const postRegistrationHandler = async (req) => {
   let messageType;
 
   try {
-    const { parsedMessage, msg } = await parseSNSMessage(req);
+    const { parsedMessage, msg } = await parseSNSMessage(req, snsTopics.POST_REGISTRATION);
     data = parsedMessage;
     messageType = msg.Type;
   } catch (e) {

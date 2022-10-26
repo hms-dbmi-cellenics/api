@@ -3,17 +3,27 @@ const MessageValidator = require('sns-validator');
 const { promisify } = require('util');
 const getLogger = require('./getLogger');
 const config = require('../config');
+const { UnauthorizedError } = require('./responses');
 
 const logger = getLogger();
 
 const validator = new MessageValidator();
 
-const parseSNSMessage = async (req) => {
+const parseSNSMessage = async (req, topicArn) => {
   let msg;
+
+  // First make sure the topic is the one we expect to be receiving from
+  logger.log(`[MSG ??] Checking that sns topic is ${topicArn}`);
+  if (topicArn !== req.headers['x-amz-sns-topic-arn']) {
+    logger.log(`[MSG ??] SNS topic doesn't match: request's topic: ${req.headers['x-amz-sns-topic-arn']}, expected: ${topicArn}`);
+    throw new UnauthorizedError('SNS topic doesn\'t match');
+  }
+
 
   logger.log('[MSG ??] SNS message of length', req.body.length, 'arrived.');
 
-  // First let's try parsing the body. It should be JSON.
+
+  // Second let's try parsing the body. It should be JSON.
   try {
     msg = JSON.parse(req.body);
   } catch (error) {

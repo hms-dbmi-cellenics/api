@@ -4,6 +4,7 @@ const { createGem2sPipeline, handleGem2sResponse } = require('../helpers/pipelin
 const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parseSNSMessage');
+const snsTopics = require('../../utils/snsTopics');
 
 const logger = getLogger('[Gem2sController] - ');
 
@@ -25,7 +26,7 @@ const handleResponse = async (req, res) => {
   let result;
 
   try {
-    result = await parseSNSMessage(req);
+    result = await parseSNSMessage(req, snsTopics.WORK_RESULTS);
   } catch (e) {
     logger.error('Parsing initial SNS message failed:', e);
     AWSXRay.getSegment().addError(e);
