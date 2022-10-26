@@ -19,9 +19,7 @@ const parseSNSMessage = async (req, topicArn) => {
     throw new UnauthorizedError('SNS topic doesn\'t match');
   }
 
-
   logger.log('[MSG ??] SNS message of length', req.body.length, 'arrived.');
-
 
   // Second let's try parsing the body. It should be JSON.
   try {
