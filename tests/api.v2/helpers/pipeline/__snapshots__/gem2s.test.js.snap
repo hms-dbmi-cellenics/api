@@ -45,6 +45,9 @@ Array [
     "sampleNames": Array [
       "WT1",
     ],
+    "sampleOptions": Object {
+      "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {},
+    },
     "sampleS3Paths": Object {
       "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
         "barcodes10x": "37d9e601-9278-437c-a776-40fe94680833",

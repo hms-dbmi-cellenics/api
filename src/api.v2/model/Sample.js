@@ -17,6 +17,7 @@ const sampleFields = [
   'experiment_id',
   'name',
   'sample_technology',
+  'options',
   'created_at',
   'updated_at',
 ];
@@ -68,6 +69,14 @@ class Sample extends BasicModel {
       .join(fileNamesQuery, 'select_metadata.id', 'select_sample_file.id');
 
     return result;
+  }
+
+  async updateOption(experimentId, options) {
+    await this.sql(tableNames.SAMPLE)
+      .update({
+        options: this.sql.raw(`'${JSON.stringify(options)}'::jsonb`),
+      })
+      .where({ experiment_id: experimentId });
   }
 
   async setNewFile(sampleId, sampleFileId, sampleFileType) {

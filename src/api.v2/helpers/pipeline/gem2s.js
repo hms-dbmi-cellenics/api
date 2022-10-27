@@ -86,10 +86,13 @@ const generateGem2sParams = async (experimentId, authJWT) => {
   );
 
   const s3Paths = {};
+  const sampleOptions = {};
+
   experiment.samplesOrder.forEach((sampleId) => {
-    const { files } = _.find(samples, { id: sampleId });
+    const { files, options } = _.find(samples, { id: sampleId });
 
     s3Paths[sampleId] = getS3Paths(files);
+    sampleOptions[sampleId] = options || {};
   });
 
 
@@ -101,6 +104,7 @@ const generateGem2sParams = async (experimentId, authJWT) => {
     sampleIds: experiment.samplesOrder,
     sampleNames: _.map(samplesInOrder, 'name'),
     sampleS3Paths: s3Paths,
+    sampleOptions,
     authJWT,
   };
 

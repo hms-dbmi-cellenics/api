@@ -3,6 +3,7 @@ const BasicModel = require('./BasicModel')();
 const stub = {
   getSamples: jest.fn(),
   setNewFile: jest.fn(),
+  updateOption: jest.fn(),
   copyTo: jest.fn(),
   ...BasicModel,
 };
