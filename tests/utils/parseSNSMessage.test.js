@@ -5,9 +5,6 @@ const https = require('https');
 
 const config = require('../../src/config');
 const parseSNSMessage = require('../../src/utils/parseSNSMessage');
-// const { promisify } = require('util');
-// const getLogger = require('./getLogger');
-// const { UnauthorizedError } = require('./responses');
 
 jest.mock('https');
 jest.mock('sns-validator', () => jest.fn().mockImplementation(() => ({
