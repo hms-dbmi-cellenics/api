@@ -1,25 +1,35 @@
 // Placed here based on https://stackoverflow.com/a/73188692
 const mockValidate = jest.fn();
 
+const https = require('https');
+
 const config = require('../../src/config');
 const parseSNSMessage = require('../../src/utils/parseSNSMessage');
-// const https = require('https');
 // const { promisify } = require('util');
 // const getLogger = require('./getLogger');
 // const { UnauthorizedError } = require('./responses');
 
-jest.mock('../../src/utils/getLogger');
+jest.mock('https');
 jest.mock('sns-validator', () => jest.fn().mockImplementation(() => ({
   validate: mockValidate,
 })));
+
+jest.mock('../../src/utils/getLogger');
 
 const experimentId = 'mockExperimentId';
 const expectedTopicName = 'expectedTopicName';
 const expectedTopicArn = `arn:aws:sns:${config.awsRegion}:${config.awsAccountId}:${expectedTopicName}-${config.clusterEnv}-${config.sandboxId}-v2`;
 
+const createMockValidatedMessage = (Type, Message) => ({
+  MessageId: 'mockMessageId',
+  Message,
+  Type,
+  SubscribeURL: 'http://mockUrl.com',
+});
+
 describe('parseSNSMessage', () => {
   beforeEach(() => {
-
+    jest.clearAllMocks();
   });
 
   it('Fails if expected topic doesnt match', async () => {
@@ -54,5 +64,45 @@ describe('parseSNSMessage', () => {
     mockValidate.mockImplementation(() => { throw new Error('Validation error'); });
 
     await expect(parseSNSMessage(mockReq, expectedTopicArn)).rejects.toThrow(new Error('Validation error'));
+  });
+
+  it('Handles SubscriptionConfirmation messages correctly', async () => {
+    const mockReq = {
+      params: { experimentId },
+      headers: { authorization: 'mockAuthorization', 'x-amz-sns-topic-arn': expectedTopicArn },
+      body: JSON.stringify({ paramsHash: 'mockParamsHash' }),
+    };
+
+    const mockMsg = 'mockMsg';
+    const mockValidatedMessage = createMockValidatedMessage('SubscriptionConfirmation', mockMsg);
+
+    mockValidate.mockImplementation((params, cb) => { cb(null, mockValidatedMessage); });
+    https.get.mockImplementation(() => Promise.resolve());
+
+    const res = await parseSNSMessage(mockReq, expectedTopicArn);
+
+    expect(https.get).toHaveBeenCalledWith(mockValidatedMessage.SubscribeURL);
+
+    expect(res).toEqual({ msg: mockValidatedMessage });
+  });
+
+  it('Handles UnsubscribeConfirmation messages correctly', async () => {
+    const mockReq = {
+      params: { experimentId },
+      headers: { authorization: 'mockAuthorization', 'x-amz-sns-topic-arn': expectedTopicArn },
+      body: JSON.stringify({ paramsHash: 'mockParamsHash' }),
+    };
+
+    const mockMsg = 'mockMsg';
+    const mockValidatedMessage = createMockValidatedMessage('UnsubscribeConfirmation', mockMsg);
+
+    mockValidate.mockImplementation((params, cb) => { cb(null, mockValidatedMessage); });
+    https.get.mockImplementation(() => Promise.resolve());
+
+    const res = await parseSNSMessage(mockReq, expectedTopicArn);
+
+    expect(https.get).toHaveBeenCalledWith(mockValidatedMessage.SubscribeURL);
+
+    expect(res).toEqual({ msg: mockValidatedMessage });
   });
 });

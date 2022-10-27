@@ -43,6 +43,7 @@ const parseSNSMessage = async (req, topicArn) => {
     }
   }
 
+
   // Handle subscripton and unsubscription automatically.
   if (config.clusterEnv !== 'development'
     && (msg.Type === 'SubscriptionConfirmation'
