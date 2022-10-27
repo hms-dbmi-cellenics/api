@@ -40,6 +40,10 @@ const submitBatchJob = (context, step) => {
             Name: 'SANDBOX_ID',
             Value: `${config.sandboxId}`,
           },
+          {
+            Name: 'BATCH',
+            Value: 'true',
+          },
         ],
         ResourceRequirements: [
           {
