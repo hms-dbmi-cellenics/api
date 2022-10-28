@@ -4,52 +4,6 @@ const objectHash = require('object-hash');
 
 const METADATA_DEFAULT_VALUE = 'N.A';
 
-
-// Version from commit: https://github.com/biomage-org/ui/tree/17186e9dd6825c272e856ee7292e73907dd3f148
-// Node14 has partial support for optional chaining operator (?.), I removed them for this migration
-// I also switched the order of .filter() and .sort() (line 19-20) so it's faster.
-const oldGenerateGem2sParamsHash = (experiment, samples) => {
-  if (!experiment || !samples || experiment.sampleIds.length === 0) {
-    return false;
-  }
-  const projectSamples = Object.entries(samples)
-    .filter(([key]) => experiment.sampleIds.includes(key))
-    .sort();
-
-  const existingSampleIds = projectSamples.map(([, sample]) => sample.uuid);
-
-  // Different sample order should not change the hash.
-  const orderInvariantSampleIds = [...existingSampleIds].sort();
-
-  const hashParams = {
-    organism: null,
-    input: { type: '10x' },
-    sampleIds: orderInvariantSampleIds,
-    sampleNames: orderInvariantSampleIds.map((sampleId) => samples[sampleId].name),
-  };
-
-  if (experiment.metadataKeys.length) {
-    const orderInvariantProjectMetadataKeys = [...experiment.metadataKeys].sort();
-
-    hashParams.metadata = orderInvariantProjectMetadataKeys.reduce((acc, key) => {
-      // Make sure the key does not contain '-' as it will cause failure in GEM2S
-      const sanitizedKey = key.replace(/-+/g, '_');
-
-      acc[sanitizedKey] = projectSamples.map(
-        ([, sample]) => sample.metadata[key] || METADATA_DEFAULT_VALUE,
-      );
-      return acc;
-    }, {});
-  }
-
-  const newHash = objectHash.sha1(
-    hashParams,
-    { unorderedObjects: true, unorderedArrays: true, unorderedSets: true },
-  );
-
-  return newHash;
-};
-
 // Version from commit: https://github.com/biomage-org/ui/tree/844b3a6c4d9016dda938032cc20653c45ec0cf7b
 // Node14 has partial support for optional chaining operator (?.), I removed them for this migration
 const newGenerateGem2sParamsHash = (experiment, samples) => {
@@ -172,15 +126,13 @@ const updateParamsHash = async (sqlClient, updates) => {
   return Promise.all(updatesPromise);
 };
 
-const migrateGem2sParamsHash = async (knex, isMigrateUp) => {
+const migrateGem2sParamsHash = async (knex) => {
   const experiments = await getExperimentData(knex);
   const samples = await getSamplesData(knex);
 
   const updateValues = Object.values(experiments).map((experiment) => ({
     experiment_id: experiment.id,
-    params_hash: isMigrateUp
-      ? newGenerateGem2sParamsHash(experiment, samples)
-      : oldGenerateGem2sParamsHash(experiment, samples),
+    params_hash: newGenerateGem2sParamsHash(experiment, samples),
   })).filter(({ params_hash }) => params_hash !== false);
 
   await updateParamsHash(knex, updateValues);
@@ -191,11 +143,15 @@ const migrateGem2sParamsHash = async (knex, isMigrateUp) => {
  * @returns { Promise<void> }
  */
 exports.up = async (knex) => {
-  await knex.schema.alterTable('sample', (table) => {
-    table.jsonb('options');
-  });
+  // Update all null values to empty object
+  await knex.table('sample').update({ options: '{}' }).where({ options: null });
 
-  await migrateGem2sParamsHash(knex, true);
+  // Recalculate gem2sParamsHash again
+  await migrateGem2sParamsHash(knex);
+
+  await knex.schema.alterTable('sample', (table) => {
+    table.jsonb('options').notNullable().defaultTo('{}').alter();
+  });
 };
 
 /**
@@ -203,11 +159,7 @@ exports.up = async (knex) => {
  * @returns { Promise<void> }
  */
 exports.down = async (knex) => {
-  // Migrate params first, otherwise query will fail
-  // because the column 'option' is removed from table
-  await migrateGem2sParamsHash(knex, false);
-
   await knex.schema.alterTable('sample', (table) => {
-    table.dropColumn('options');
+    table.jsonb('options').nullable().alter();
   });
 };
