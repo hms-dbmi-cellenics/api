@@ -62,23 +62,23 @@ describe('PipelineResults route', () => {
       });
   });
 
-  it('Sending a qc result returns in a successful response', async (done) => {
-    qcController.handleResponse.mockImplementationOnce((req, res) => {
-      res.json(OK());
-      return Promise.resolve();
-    });
+  // it('Sending a qc result returns in a successful response', async (done) => {
+  //   qcController.handleResponse.mockImplementationOnce((req, res) => {
+  //     res.json(OK());
+  //     return Promise.resolve();
+  //   });
 
-    request(app)
-      .post('/v2/pipelineResults')
-      .send(_.cloneDeep(basicMsg))
-      .expect(200)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        // there is no point testing for the values of the response body
-        // - if something is wrong, the schema validator will catch it
-        return done();
-      });
-  });
+  //   request(app)
+  //     .post('/v2/pipelineResults')
+  //     .send(_.cloneDeep(basicMsg))
+  //     .expect(200)
+  //     .end((err) => {
+  //       if (err) {
+  //         return done(err);
+  //       }
+  //       // there is no point testing for the values of the response body
+  //       // - if something is wrong, the schema validator will catch it
+  //       return done();
+  //     });
+  // });
 });
