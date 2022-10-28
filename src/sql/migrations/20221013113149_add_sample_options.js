@@ -54,7 +54,6 @@ const oldGenerateGem2sParamsHash = (experiment, samples) => {
 // Node14 has partial support for optional chaining operator (?.), I removed them for this migration
 const newGenerateGem2sParamsHash = (experiment, samples) => {
   if (!experiment || !samples || experiment.sampleIds.length === 0) {
-    console.log('*** invalid experiment skipped: ', experiment.id);
     return false;
   }
 
@@ -62,7 +61,6 @@ const newGenerateGem2sParamsHash = (experiment, samples) => {
   const orderInvariantSampleIds = [...experiment.sampleIds].sort();
 
   if (!(orderInvariantSampleIds.every((sampleId) => samples[sampleId]))) {
-    console.log('*** invalid experiment skipped: ', experiment.id);
     return false;
   }
 
@@ -169,21 +167,14 @@ const updateParamsHash = async (sqlClient, updates) => {
         pipeline_type: 'gem2s',
         experiment_id,
       });
-    console.log(`- Experiment ${experiment_id} successfully updated`);
   });
 
   return Promise.all(updatesPromise);
 };
 
 const migrateGem2sParamsHash = async (knex, isMigrateUp) => {
-  console.log('Getting experiments data...');
   const experiments = await getExperimentData(knex);
-  console.log('Finished getting experiments data...');
-  console.log(`Fetched ${experiments.length} experiments`);
-
-  console.log('Getting samples data...');
   const samples = await getSamplesData(knex);
-  console.log('Finished getting samples data...');
 
   const updateValues = Object.values(experiments).map((experiment) => ({
     experiment_id: experiment.id,
@@ -192,10 +183,7 @@ const migrateGem2sParamsHash = async (knex, isMigrateUp) => {
       : oldGenerateGem2sParamsHash(experiment, samples),
   })).filter(({ params_hash }) => params_hash !== false);
 
-  console.log(`Updating paramsHash of ${updateValues.length} experiments`);
-
   await updateParamsHash(knex, updateValues);
-  console.log(`${updateValues.length} experiments updated`);
 };
 
 /**
