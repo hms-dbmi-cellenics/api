@@ -3,7 +3,7 @@ const _ = require('lodash');
 const AWS = require('../../../utils/requireAWS');
 const config = require('../../../config');
 
-const bucketNames = require('./bucketNames');
+const bucketNames = require('../../../config/bucketNames');
 const SampleFile = require('../../model/SampleFile');
 const { NotFoundError } = require('../../../utils/responses');
 

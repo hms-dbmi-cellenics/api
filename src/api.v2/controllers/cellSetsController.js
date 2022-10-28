@@ -1,7 +1,7 @@
 const getLogger = require('../../utils/getLogger');
 
 const getS3Object = require('../helpers/s3/getObject');
-const bucketNames = require('../helpers/s3/bucketNames');
+const bucketNames = require('../../config/bucketNames');
 
 const { OK } = require('../../utils/responses');
 

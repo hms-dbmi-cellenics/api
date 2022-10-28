@@ -10,7 +10,7 @@ const tableNames = require('./tableNames');
 const config = require('../../config');
 
 const getLogger = require('../../utils/getLogger');
-const bucketNames = require('../helpers/s3/bucketNames');
+const bucketNames = require('../../config/bucketNames');
 const { getSignedUrl } = require('../helpers/s3/signedUrl');
 const constants = require('../../utils/constants');
 
