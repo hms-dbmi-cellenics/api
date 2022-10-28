@@ -40,8 +40,6 @@ const getContext = (processName) => ({
     certAuthority: 'mock-ca',
   },
   processingConfig: {},
-  podCPUs: 4,
-  podMem: 29,
 });
 
 
@@ -55,6 +53,36 @@ describe('non-tests to document the State Machines', () => {
 
   it('- qc staging', () => {
     const qcPipelineSkeleton = getQcPipelineSkeleton('staging', qcStepNames);
+    const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
+    expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('- gems staging with specific CPUs', () => {
+    const podCPUs = 16;
+    const podMem = undefined;
+    context.podCPUs = podCPUs;
+    context.podMem = podMem;
+    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', qcStepNames, podCPUs, podMem);
+    const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
+    expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('- qc staging with specific Mem', () => {
+    const podCPUs = undefined;
+    const podMem = 2048;
+    context.podCPUs = podCPUs;
+    context.podMem = podMem;
+    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', qcStepNames, podCPUs, podMem);
+    const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
+    expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('- qc production with specific CPUs & Mem', () => {
+    const podCPUs = 16;
+    const podMem = 2048;
+    context.podCPUs = podCPUs;
+    context.podMem = podMem;
+    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', qcStepNames, podCPUs, podMem);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });

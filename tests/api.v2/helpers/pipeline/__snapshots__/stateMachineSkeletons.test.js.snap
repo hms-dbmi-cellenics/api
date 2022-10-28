@@ -547,6 +547,242 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
 }
 `;
 
+exports[`non-tests to document the State Machines - gems staging with specific CPUs 1`] = `
+
+{
+  "Comment": "QC Pipeline for clusterEnv 'staging'",
+  "StartAt": "SubmitBatchJob",
+  "States": {
+    "SubmitBatchJob": {
+      "Next": "ClassifierFilterMap",
+      "ResultPath": null,
+      "Type": "Task",
+      "Resource": "arn:aws:states:::batch:submitJob",
+      "Parameters": {
+        "JobDefinition": "arn:aws:batch:eu-west-1:242905224710:job-definition/getting-started-job-definition:5",
+        "JobName": "gem2s-undefined-mock-experiment-id",
+        "JobQueue": "arn:aws:batch:eu-west-1:242905224710:job-queue/getting-started-job-queue",
+        "ContainerOverrides": {
+          "Environment": [
+            {
+              "Name": "ACTIVITY_ARN",
+              "Value": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
+            },
+            {
+              "Name": "CLUSTER_ENV",
+              "Value": "test"
+            },
+            {
+              "Name": "AWS_DEFAULT_REGION",
+              "Value": "eu-west-1"
+            },
+            {
+              "Name": "AWS_ACCOUNT_ID",
+              "Value": "000000000000"
+            },
+            {
+              "Name": "SANDBOX_ID",
+              "Value": "default"
+            },
+            {
+              "Name": "BATCH",
+              "Value": "true"
+            },
+            {
+              "Name": "DOMAIN_NAME",
+              "Value": "scp.biomage.net"
+            }
+          ],
+          "ResourceRequirements": [
+            {
+              "Type": "VCPU",
+              "Value": "16"
+            },
+            {
+              "Type": "MEMORY",
+              "Value": "8192"
+            }
+          ]
+        }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "ClassifierFilterMap"
+        }
+      ]
+    },
+    "ClassifierFilterMap": {
+      "Type": "Map",
+      "Next": "CellSizeDistributionFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "ClassifierFilter",
+        "States": {
+          "ClassifierFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "classifier",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "CellSizeDistributionFilterMap": {
+      "Type": "Map",
+      "Next": "MitochondrialContentFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "CellSizeDistributionFilter",
+        "States": {
+          "CellSizeDistributionFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "cellSizeDistribution",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "MitochondrialContentFilterMap": {
+      "Type": "Map",
+      "Next": "NumGenesVsNumUmisFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "MitochondrialContentFilter",
+        "States": {
+          "MitochondrialContentFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "mitochondrialContent",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "NumGenesVsNumUmisFilterMap": {
+      "Type": "Map",
+      "Next": "DoubletScoresFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "NumGenesVsNumUmisFilter",
+        "States": {
+          "NumGenesVsNumUmisFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "numGenesVsNumUmis",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "DoubletScoresFilterMap": {
+      "Type": "Map",
+      "Next": "DataIntegration",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "DoubletScoresFilter",
+        "States": {
+          "DoubletScoresFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "doubletScores",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "DataIntegration": {
+      "Next": "ConfigureEmbedding",
+      "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "HeartbeatSeconds": 90,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "dataIntegration",
+        "processName": "gem2s",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "ConfigureEmbedding": {
+      "Next": "EndOfPipeline",
+      "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "HeartbeatSeconds": 90,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "configureEmbedding",
+        "processName": "gem2s",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "EndOfPipeline": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}
+`;
+
 exports[`non-tests to document the State Machines - qc local development 1`] = `
 
 {
@@ -1007,6 +1243,242 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
 }
 `;
 
+exports[`non-tests to document the State Machines - qc production with specific CPUs & Mem 1`] = `
+
+{
+  "Comment": "QC Pipeline for clusterEnv 'staging'",
+  "StartAt": "SubmitBatchJob",
+  "States": {
+    "SubmitBatchJob": {
+      "Next": "ClassifierFilterMap",
+      "ResultPath": null,
+      "Type": "Task",
+      "Resource": "arn:aws:states:::batch:submitJob",
+      "Parameters": {
+        "JobDefinition": "arn:aws:batch:eu-west-1:242905224710:job-definition/getting-started-job-definition:5",
+        "JobName": "gem2s-undefined-mock-experiment-id",
+        "JobQueue": "arn:aws:batch:eu-west-1:242905224710:job-queue/getting-started-job-queue",
+        "ContainerOverrides": {
+          "Environment": [
+            {
+              "Name": "ACTIVITY_ARN",
+              "Value": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
+            },
+            {
+              "Name": "CLUSTER_ENV",
+              "Value": "test"
+            },
+            {
+              "Name": "AWS_DEFAULT_REGION",
+              "Value": "eu-west-1"
+            },
+            {
+              "Name": "AWS_ACCOUNT_ID",
+              "Value": "000000000000"
+            },
+            {
+              "Name": "SANDBOX_ID",
+              "Value": "default"
+            },
+            {
+              "Name": "BATCH",
+              "Value": "true"
+            },
+            {
+              "Name": "DOMAIN_NAME",
+              "Value": "scp.biomage.net"
+            }
+          ],
+          "ResourceRequirements": [
+            {
+              "Type": "VCPU",
+              "Value": "16"
+            },
+            {
+              "Type": "MEMORY",
+              "Value": "2048"
+            }
+          ]
+        }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "ClassifierFilterMap"
+        }
+      ]
+    },
+    "ClassifierFilterMap": {
+      "Type": "Map",
+      "Next": "CellSizeDistributionFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "ClassifierFilter",
+        "States": {
+          "ClassifierFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "classifier",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "CellSizeDistributionFilterMap": {
+      "Type": "Map",
+      "Next": "MitochondrialContentFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "CellSizeDistributionFilter",
+        "States": {
+          "CellSizeDistributionFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "cellSizeDistribution",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "MitochondrialContentFilterMap": {
+      "Type": "Map",
+      "Next": "NumGenesVsNumUmisFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "MitochondrialContentFilter",
+        "States": {
+          "MitochondrialContentFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "mitochondrialContent",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "NumGenesVsNumUmisFilterMap": {
+      "Type": "Map",
+      "Next": "DoubletScoresFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "NumGenesVsNumUmisFilter",
+        "States": {
+          "NumGenesVsNumUmisFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "numGenesVsNumUmis",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "DoubletScoresFilterMap": {
+      "Type": "Map",
+      "Next": "DataIntegration",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "DoubletScoresFilter",
+        "States": {
+          "DoubletScoresFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "doubletScores",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "DataIntegration": {
+      "Next": "ConfigureEmbedding",
+      "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "HeartbeatSeconds": 90,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "dataIntegration",
+        "processName": "gem2s",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "ConfigureEmbedding": {
+      "Next": "EndOfPipeline",
+      "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "HeartbeatSeconds": 90,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "configureEmbedding",
+        "processName": "gem2s",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "EndOfPipeline": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}
+`;
+
 exports[`non-tests to document the State Machines - qc staging 1`] = `
 
 {
@@ -1090,6 +1562,242 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
           }
         }
       }
+    },
+    "ClassifierFilterMap": {
+      "Type": "Map",
+      "Next": "CellSizeDistributionFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "ClassifierFilter",
+        "States": {
+          "ClassifierFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "classifier",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "CellSizeDistributionFilterMap": {
+      "Type": "Map",
+      "Next": "MitochondrialContentFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "CellSizeDistributionFilter",
+        "States": {
+          "CellSizeDistributionFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "cellSizeDistribution",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "MitochondrialContentFilterMap": {
+      "Type": "Map",
+      "Next": "NumGenesVsNumUmisFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "MitochondrialContentFilter",
+        "States": {
+          "MitochondrialContentFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "mitochondrialContent",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "NumGenesVsNumUmisFilterMap": {
+      "Type": "Map",
+      "Next": "DoubletScoresFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "NumGenesVsNumUmisFilter",
+        "States": {
+          "NumGenesVsNumUmisFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "numGenesVsNumUmis",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "DoubletScoresFilterMap": {
+      "Type": "Map",
+      "Next": "DataIntegration",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "DoubletScoresFilter",
+        "States": {
+          "DoubletScoresFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "doubletScores",
+              "processName": "gem2s",
+              "config": {},
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+            }
+          }
+        }
+      }
+    },
+    "DataIntegration": {
+      "Next": "ConfigureEmbedding",
+      "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "HeartbeatSeconds": 90,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "dataIntegration",
+        "processName": "gem2s",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "ConfigureEmbedding": {
+      "Next": "EndOfPipeline",
+      "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "HeartbeatSeconds": 90,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "configureEmbedding",
+        "processName": "gem2s",
+        "config": {},
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      }
+    },
+    "EndOfPipeline": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}
+`;
+
+exports[`non-tests to document the State Machines - qc staging with specific Mem 1`] = `
+
+{
+  "Comment": "QC Pipeline for clusterEnv 'staging'",
+  "StartAt": "SubmitBatchJob",
+  "States": {
+    "SubmitBatchJob": {
+      "Next": "ClassifierFilterMap",
+      "ResultPath": null,
+      "Type": "Task",
+      "Resource": "arn:aws:states:::batch:submitJob",
+      "Parameters": {
+        "JobDefinition": "arn:aws:batch:eu-west-1:242905224710:job-definition/getting-started-job-definition:5",
+        "JobName": "gem2s-undefined-mock-experiment-id",
+        "JobQueue": "arn:aws:batch:eu-west-1:242905224710:job-queue/getting-started-job-queue",
+        "ContainerOverrides": {
+          "Environment": [
+            {
+              "Name": "ACTIVITY_ARN",
+              "Value": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
+            },
+            {
+              "Name": "CLUSTER_ENV",
+              "Value": "test"
+            },
+            {
+              "Name": "AWS_DEFAULT_REGION",
+              "Value": "eu-west-1"
+            },
+            {
+              "Name": "AWS_ACCOUNT_ID",
+              "Value": "000000000000"
+            },
+            {
+              "Name": "SANDBOX_ID",
+              "Value": "default"
+            },
+            {
+              "Name": "BATCH",
+              "Value": "true"
+            },
+            {
+              "Name": "DOMAIN_NAME",
+              "Value": "scp.biomage.net"
+            }
+          ],
+          "ResourceRequirements": [
+            {
+              "Type": "VCPU",
+              "Value": "4"
+            },
+            {
+              "Type": "MEMORY",
+              "Value": "2048"
+            }
+          ]
+        }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "ClassifierFilterMap"
+        }
+      ]
     },
     "ClassifierFilterMap": {
       "Type": "Map",
