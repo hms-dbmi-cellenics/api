@@ -268,13 +268,7 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
   const accountId = config.awsAccountId;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
-  // try {
   const { podCpus, podMemory } = await new Experiment().getResourceRequirements(experimentId);
-  console.log(`got lcs ${podCpus}, ${podMemory}`);
-  // } catch (e) {
-  //   const podCpus = {};
-  //   const podMemory = {};
-  // }
 
   const context = {
     taskParams,

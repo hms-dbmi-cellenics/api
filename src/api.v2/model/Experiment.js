@@ -181,7 +181,7 @@ class Experiment extends BasicModel {
     return result.processingConfig;
   }
 
-  // try to get specific HW requirements for running an experiment pipeline
+  // try to get specific hardware requirements for running an experiment pipeline
   // return undefined in case of error to use default settings (fargate)
   async getResourceRequirements(experimentId) {
     let podCpus;
