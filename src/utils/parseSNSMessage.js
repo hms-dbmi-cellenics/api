@@ -9,13 +9,13 @@ const logger = getLogger();
 
 const validator = new MessageValidator();
 
-const parseSNSMessage = async (req, topicArn) => {
+const parseSNSMessage = async (req, expectedTopicArn) => {
   let msg;
 
   // First make sure the topic is the one we expect to be receiving from
-  logger.log(`[MSG ??] Checking that sns topic is ${topicArn}`);
-  if (topicArn !== req.headers['x-amz-sns-topic-arn']) {
-    logger.log(`[MSG ??] SNS topic doesn't match: request's topic: ${req.headers['x-amz-sns-topic-arn']}, expected: ${topicArn}`);
+  logger.log(`[MSG ??] Checking that sns topic is ${expectedTopicArn}`);
+  if (expectedTopicArn !== req.headers['x-amz-sns-topic-arn']) {
+    logger.log(`[MSG ??] SNS topic doesn't match: request's topic: ${req.headers['x-amz-sns-topic-arn']}, expected: ${expectedTopicArn}`);
     throw new UnauthorizedError('SNS topic doesn\'t match');
   }
 
