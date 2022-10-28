@@ -1,4 +1,4 @@
-const config = require('../config');
+const config = require('.');
 
 const toArn = (topic, sandboxId = config.sandboxId) => (
   `arn:aws:sns:${config.awsRegion}:${config.awsAccountId}:${topic}-${config.clusterEnv}-${sandboxId}-v2`

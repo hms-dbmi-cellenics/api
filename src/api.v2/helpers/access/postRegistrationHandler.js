@@ -2,7 +2,7 @@ const parseSNSMessage = require('../../../utils/parseSNSMessage');
 const getLogger = require('../../../utils/getLogger');
 
 const UserAccess = require('../../model/UserAccess');
-const snsTopics = require('../../../utils/snsTopics');
+const snsTopics = require('../../../config/snsTopics');
 
 const logger = getLogger('[PostRegistrationHandler] - ');
 

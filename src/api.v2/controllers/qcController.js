@@ -8,7 +8,7 @@ const handleQCResponse = require('../helpers/pipeline/handleQCResponse');
 
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parseSNSMessage');
-const snsTopics = require('../../utils/snsTopics');
+const snsTopics = require('../../config/snsTopics');
 
 const logger = getLogger('[QCController] - ');
 

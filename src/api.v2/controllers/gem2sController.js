@@ -4,7 +4,7 @@ const { createGem2sPipeline, handleGem2sResponse } = require('../helpers/pipelin
 const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parseSNSMessage');
-const snsTopics = require('../../utils/snsTopics');
+const snsTopics = require('../../config/snsTopics');
 
 const logger = getLogger('[Gem2sController] - ');
 
