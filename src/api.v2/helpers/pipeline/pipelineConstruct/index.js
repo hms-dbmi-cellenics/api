@@ -268,8 +268,6 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
   const experiment = await new Experiment().findById(experimentId).first();
   const { podCPUs, podMemory } = experiment;
 
-  console.log(`podCPUs ${podCPUs}, podMemory ${podMemory}`);
-
   const context = {
     taskParams,
     experimentId,

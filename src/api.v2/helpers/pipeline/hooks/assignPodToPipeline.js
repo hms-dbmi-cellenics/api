@@ -36,16 +36,16 @@ const patchPod = async (message) => {
   // try to get an available pod which is already running
   let pods = await getAvailablePods(namespace, 'status.phase=Running');
   if (pods.length < 1) {
-    logger.log(`patchPod: no running pods available in ${namespace}`);
+    logger.log('patchPod: no running pods available');
     pods = await getAvailablePods(namespace, 'status.phase=ContainerCreating');
   }
   if (pods.length < 1) {
-    logger.log(`patchPod: no pods in creation process available in ${namespace}`);
+    logger.log('patchPod: no pods in creation process available');
     pods = await getAvailablePods(namespace, 'status.phase=Pending');
   }
 
   if (pods.length < 1) {
-    throw new Error(`patchPod: no unassigned pods available in ${namespace}`);
+    throw new Error('patchPod: no unassigned pods available');
   }
 
   logger.log(`patchPod: ${pods.length} unassigned candidate pods found`);
