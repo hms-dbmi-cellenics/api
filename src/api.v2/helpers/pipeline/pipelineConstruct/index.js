@@ -284,7 +284,8 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
     podMemory,
   };
 
-  const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv, podCPUs, podMemory);
+  logger.log(`createGem2SPipeline: not passing cpu/mem ${podCPUs}, ${podMemory}`);
+  const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv);
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);

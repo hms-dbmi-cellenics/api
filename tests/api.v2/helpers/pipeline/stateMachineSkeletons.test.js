@@ -57,7 +57,7 @@ describe('non-tests to document the State Machines', () => {
     expect(stateMachine).toMatchSnapshot();
   });
 
-  it('- gems staging with specific CPUs', () => {
+  it('- qc staging with specific CPUs', () => {
     const podCPUs = 16;
     const podMem = undefined;
     context.podCPUs = podCPUs;

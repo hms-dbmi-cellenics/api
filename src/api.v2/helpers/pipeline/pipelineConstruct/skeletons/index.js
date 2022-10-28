@@ -92,7 +92,7 @@ const getStateMachineFirstStep = (clusterEnv, podCPUs, podMem) => {
 
 const getGem2sPipelineSkeleton = (clusterEnv, podCPUs, podMem) => ({
   Comment: `Gem2s Pipeline for clusterEnv '${clusterEnv}'`,
-  StartAt: getStateMachineFirstStep(clusterEnv, podCPUs, podMem),
+  StartAt: getStateMachineFirstStep(clusterEnv),
   States: {
     ...buildInitialSteps(clusterEnv, 'DownloadGem', podCPUs, podMem),
     ...gem2SPipelineSteps,
