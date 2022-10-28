@@ -26,8 +26,6 @@ const experimentFields = [
   'pipeline_version',
   'created_at',
   'updated_at',
-  'pod_memory',
-  'pod_cpus',
 ];
 
 class Experiment extends BasicModel {
@@ -181,6 +179,32 @@ class Experiment extends BasicModel {
     }
 
     return result.processingConfig;
+  }
+
+  // try to get specific HW requirements for running an experiment pipeline
+  // return undefined in case of error to use default settings (fargate)
+  async getResourceRequirements(experimentId) {
+    let podCpus;
+    let podMemory;
+    try {
+      const result = await this.sql
+        .select('pod_memory', 'pod_cpus')
+        .from(tableNames.EXPERIMENT)
+        .where('id', experimentId)
+        .first();
+
+
+      if (_.isEmpty(result)) {
+        throw new NotFoundError('Experiment not found');
+      }
+
+      if (result.podMemory !== null) podMemory = result.podMemory;
+      if (result.podCpus !== null) podCpus = result.podCpus;
+    } catch (e) {
+      logger.error(`getResoureceRequirements: returning default values: ${e}`);
+    }
+
+    return { podCpus, podMemory };
   }
 
   async updateProcessingConfig(experimentId, body) {

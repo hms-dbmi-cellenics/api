@@ -63,13 +63,13 @@ const getPipelineStepNames = () => {
 // if there are map states with nested substeps it returns those sub-steps too
 const getQcPipelineStepNames = () => getSkeletonStepNames(qcPipelineSteps);
 
-const buildInitialSteps = (clusterEnv, nextStep, podCPUs, podMem) => {
+const buildInitialSteps = (clusterEnv, nextStep, podCpus, podMem) => {
   // if we are running locally launch a pipeline job
   if (clusterEnv === 'development') {
     return createLocalPipeline(nextStep);
   }
 
-  if (needsBatchJob(podCPUs, podMem)) {
+  if (needsBatchJob(podCpus, podMem)) {
     return submitBatchJob(nextStep);
   }
 
@@ -77,12 +77,12 @@ const buildInitialSteps = (clusterEnv, nextStep, podCPUs, podMem) => {
   return assignPipelineToPod(nextStep);
 };
 
-const getStateMachineFirstStep = (clusterEnv, podCPUs, podMem) => {
+const getStateMachineFirstStep = (clusterEnv, podCpus, podMem) => {
   if (clusterEnv === 'development') {
     return 'DeleteCompletedPipelineWorker';
   }
 
-  if (needsBatchJob(podCPUs, podMem)) {
+  if (needsBatchJob(podCpus, podMem)) {
     return 'SubmitBatchJob';
   }
 
@@ -90,20 +90,20 @@ const getStateMachineFirstStep = (clusterEnv, podCPUs, podMem) => {
 };
 
 
-const getGem2sPipelineSkeleton = (clusterEnv, podCPUs, podMem) => ({
+const getGem2sPipelineSkeleton = (clusterEnv, podCpus, podMem) => ({
   Comment: `Gem2s Pipeline for clusterEnv '${clusterEnv}'`,
   StartAt: getStateMachineFirstStep(clusterEnv),
   States: {
-    ...buildInitialSteps(clusterEnv, 'DownloadGem', podCPUs, podMem),
+    ...buildInitialSteps(clusterEnv, 'DownloadGem', podCpus, podMem),
     ...gem2SPipelineSteps,
   },
 });
 
-const getQcPipelineSkeleton = (clusterEnv, qcSteps, podCPUs, podMem) => ({
+const getQcPipelineSkeleton = (clusterEnv, qcSteps, podCpus, podMem) => ({
   Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
-  StartAt: getStateMachineFirstStep(clusterEnv, podCPUs, podMem),
+  StartAt: getStateMachineFirstStep(clusterEnv, podCpus, podMem),
   States: {
-    ...buildInitialSteps(clusterEnv, qcSteps[0], podCPUs, podMem),
+    ...buildInitialSteps(clusterEnv, qcSteps[0], podCpus, podMem),
     ...buildQCPipelineSteps(qcSteps),
   },
 });

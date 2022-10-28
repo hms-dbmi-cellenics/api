@@ -82,7 +82,7 @@ describe('model/Experiment', () => {
       'id', 'name', 'description',
       'samples_order', 'processing_config',
       'notify_by_email', 'pipeline_version',
-      'created_at', 'updated_at', 'pod_memory', 'pod_cpus',
+      'created_at', 'updated_at',
     ];
 
     const queryResult = 'result';

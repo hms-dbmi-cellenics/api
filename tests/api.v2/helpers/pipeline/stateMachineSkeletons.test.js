@@ -58,31 +58,31 @@ describe('non-tests to document the State Machines', () => {
   });
 
   it('- qc staging with specific CPUs', () => {
-    const podCPUs = 16;
+    const podCpus = 16;
     const podMem = undefined;
-    context.podCPUs = podCPUs;
+    context.podCpus = podCpus;
     context.podMem = podMem;
-    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', qcStepNames, podCPUs, podMem);
+    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', qcStepNames, podCpus, podMem);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
   it('- qc staging with specific Mem', () => {
-    const podCPUs = undefined;
+    const podCpus = undefined;
     const podMem = 2048;
-    context.podCPUs = podCPUs;
+    context.podCpus = podCpus;
     context.podMem = podMem;
-    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', qcStepNames, podCPUs, podMem);
+    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', qcStepNames, podCpus, podMem);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
   it('- qc production with specific CPUs & Mem', () => {
-    const podCPUs = 16;
+    const podCpus = 16;
     const podMem = 2048;
-    context.podCPUs = podCPUs;
+    context.podCpus = podCpus;
     context.podMem = podMem;
-    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', qcStepNames, podCPUs, podMem);
+    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', qcStepNames, podCpus, podMem);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });

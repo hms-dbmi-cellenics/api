@@ -189,8 +189,11 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   const experiment = await new Experiment().findById(experimentId).first();
 
   const {
-    processingConfig, samplesOrder, podCPUs, podMemory,
+    processingConfig, samplesOrder,
   } = experiment;
+
+  const { podCpus, podMemory } = await new Experiment().getResourceRequirements(experimentId);
+
 
   if (processingConfigUpdates.length) {
     processingConfigUpdates.forEach(({ name, body }) => {
@@ -216,7 +219,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     processingConfig,
     environment: config.clusterEnv,
     authJWT,
-    podCPUs,
+    podCpus,
     podMemory,
   };
 
@@ -225,7 +228,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   const qcPipelineSkeleton = await getQcPipelineSkeleton(
     config.clusterEnv,
     qcSteps,
-    podCPUs,
+    podCpus,
     podMemory,
   );
 
@@ -265,8 +268,13 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
   const accountId = config.awsAccountId;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
-  const experiment = await new Experiment().findById(experimentId).first();
-  const { podCPUs, podMemory } = experiment;
+  // try {
+  const { podCpus, podMemory } = await new Experiment().getResourceRequirements(experimentId);
+  console.log(`got lcs ${podCpus}, ${podMemory}`);
+  // } catch (e) {
+  //   const podCpus = {};
+  //   const podMemory = {};
+  // }
 
   const context = {
     taskParams,
@@ -280,11 +288,11 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
     sandboxId: config.sandboxId,
     processingConfig: {},
     environment: config.clusterEnv,
-    podCPUs,
+    podCpus,
     podMemory,
   };
 
-  logger.log(`createGem2SPipeline: not passing cpu/mem ${podCPUs}, ${podMemory}`);
+  logger.log(`createGem2SPipeline: not passing cpu/mem ${podCpus}, ${podMemory}`);
   const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv);
   logger.log('Skeleton constructed, now building state machine definition...');
 

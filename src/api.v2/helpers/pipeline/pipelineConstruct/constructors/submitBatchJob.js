@@ -2,12 +2,12 @@ const config = require('../../../../../config');
 
 const submitBatchJob = (context, step) => {
   const {
-    activityArn, podCPUs, podMem, processName, environment, experimentId,
+    activityArn, podCpus, podMem, processName, environment, experimentId,
   } = context;
 
   const DEFAULT_CPUS = 4;
   const DEFAULT_MEM = 8192; // MiB
-  const cpus = podCPUs || DEFAULT_CPUS;
+  const cpus = podCpus || DEFAULT_CPUS;
   const mem = podMem || DEFAULT_MEM;
 
   return {
