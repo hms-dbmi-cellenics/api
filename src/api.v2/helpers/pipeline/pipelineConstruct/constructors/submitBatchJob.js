@@ -2,22 +2,22 @@ const config = require('../../../../../config');
 
 const submitBatchJob = (context, step) => {
   const {
-    activityArn, podCpus, podMem, processName, environment, experimentId,
+    activityArn, podCpus, podMemory, processName, environment, experimentId,
   } = context;
 
-  const DEFAULT_CPUS = 4;
+  const DEFAULT_CPUS = 2;
   const DEFAULT_MEM = 8192; // MiB
   const cpus = podCpus || DEFAULT_CPUS;
-  const mem = podMem || DEFAULT_MEM;
+  const mem = podMemory || DEFAULT_MEM;
 
   return {
     ...step,
     Type: 'Task',
     Resource: 'arn:aws:states:::batch:submitJob',
     Parameters: {
-      JobDefinition: 'arn:aws:batch:eu-west-1:242905224710:job-definition/getting-started-job-definition:5',
+      JobDefinition: `job-pipeline-${environment}`,
       JobName: `${processName}-${environment}-${experimentId}`,
-      JobQueue: 'arn:aws:batch:eu-west-1:242905224710:job-queue/getting-started-job-queue',
+      JobQueue: `queue-pipeline-${environment}`,
       ContainerOverrides: {
         Environment: [
           {
