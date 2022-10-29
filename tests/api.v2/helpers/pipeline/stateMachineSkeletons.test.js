@@ -23,11 +23,12 @@ const snapshotPlainJsonSerializer = {
 };
 expect.addSnapshotSerializer(snapshotPlainJsonSerializer);
 
-const getContext = (processName) => ({
+const getContext = (processName, environment) => ({
   experimentId: 'mock-experiment-id',
   accountId: 'mock-account-id',
   roleArn: 'mock-role-arn',
   processName,
+  environment,
   sandboxId: 'pipeline-assignation',
   activityArn: `arn:aws:states:eu-west-1:28592648592:activity:biomage-${processName}-production-39249897-cfce-402b-a617-e58fbf251713`,
   pipelineArtifacts: {
@@ -44,40 +45,80 @@ const getContext = (processName) => ({
 
 
 describe('non-tests to document the State Machines', () => {
-  let context = getContext('qc');
   it('- qc local development', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('development', qcStepNames);
+    const env = 'development';
+    const context = getContext('qc', env);
+    const qcPipelineSkeleton = getQcPipelineSkeleton(env, qcStepNames);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
   it('- qc staging', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('staging', qcStepNames);
+    const env = 'staging';
+    const context = getContext('qc', env);
+    const qcPipelineSkeleton = getQcPipelineSkeleton(env, qcStepNames);
+    const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
+    expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('- qc staging with specific CPUs', () => {
+    const env = 'staging';
+    const context = getContext('qc', env);
+    context.podCpus = 16;
+    context.podMemory = undefined;
+    const qcPipelineSkeleton = getQcPipelineSkeleton(env, qcStepNames, context.podCpus, context.podMemory);
+    const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
+    expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('- qc staging with specific Mem', () => {
+    const env = 'staging';
+    const context = getContext('qc', env);
+    context.podCpus = undefined;
+    context.podMemory = 2048;
+    const qcPipelineSkeleton = getQcPipelineSkeleton(env, qcStepNames, context.podCpus, context.podMemory);
+    const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
+    expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('- qc production with specific CPUs & Mem', () => {
+    const env = 'production';
+    const context = getContext('qc', env);
+    context.podCpus = 16;
+    context.podMemory = 2048;
+    const qcPipelineSkeleton = getQcPipelineSkeleton(env, qcStepNames, context.podCpus, context.podMemory);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
   it('- qc production', () => {
-    const qcPipelineSkeleton = getQcPipelineSkeleton('production', qcStepNames);
+    const env = 'production';
+    const context = getContext('qc', env);
+    const qcPipelineSkeleton = getQcPipelineSkeleton(env, qcStepNames);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
-  context = getContext('gem2s');
   it('- gem2s local development', () => {
-    const gem2sPipelineSkeleton = getGem2sPipelineSkeleton('development');
+    const env = 'development';
+    const context = getContext('gem2s', env);
+    const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(env);
     const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
   it('- gem2s staging', () => {
-    const gem2sPipelineSkeleton = getGem2sPipelineSkeleton('staging');
+    const env = 'staging';
+    const context = getContext('gem2s', env);
+    const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(env);
     const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
 
   it('- gem2s production', () => {
-    const gem2sPipelineSkeleton = getGem2sPipelineSkeleton('production');
+    const env = 'production';
+    const context = getContext('gem2s', env);
+    const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(env);
     const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });
