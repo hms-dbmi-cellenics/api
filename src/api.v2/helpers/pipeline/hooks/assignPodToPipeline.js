@@ -10,6 +10,14 @@ const logger = getLogger();
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
 
+const formatError = (error) => {
+  // if we have a kubernetes error, get the response message because
+  // the default error message (e.message) is not useful
+  if (error.statusCode && error.response && error.response.body) {
+    return `${error.statusCode}: ${error.response.body.message}`;
+  }
+  return error;
+};
 // getAvailablePods retrieves pods not assigned already to an activityID given a selector
 const getAvailablePods = async (namespace, statusSelector) => {
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
@@ -28,24 +36,23 @@ const patchPod = async (message) => {
   // try to get an available pod which is already running
   let pods = await getAvailablePods(namespace, 'status.phase=Running');
   if (pods.length < 1) {
-    logger.log('no running pods available, trying to select pods still being created');
+    logger.log('patchPod: no running pods available');
     pods = await getAvailablePods(namespace, 'status.phase=ContainerCreating');
   }
   if (pods.length < 1) {
-    logger.log('no pods in creation process available, trying to select pods still pending');
+    logger.log('patchPod: no pods in creation process available');
     pods = await getAvailablePods(namespace, 'status.phase=Pending');
   }
 
   if (pods.length < 1) {
-    throw new Error('no unassigned pods available');
+    throw new Error('patchPod: no unassigned pods available');
   }
 
-  logger.log(pods.length, 'unassigned candidate pods found. Selecting one...');
+  logger.log(`patchPod: ${pods.length} unassigned candidate pods found`);
 
   // Select a pod to run this experiment on.
   const selectedPod = parseInt(experimentId, 16) % pods.length;
   const { name } = pods[selectedPod].metadata;
-  logger.log('Pod ', selectedPod, ' named ', name, ' assigned to ', experimentId);
 
   const patch = [
     { op: 'test', path: '/metadata/labels/activityId', value: null },
@@ -67,6 +74,8 @@ const patchPod = async (message) => {
         'content-type': 'application/json-patch+json',
       },
     });
+
+  logger.log(`patchPod: assigned ${selectedPod} ${name} to ${experimentId}`);
 };
 
 const assignPodToPipeline = async (message) => {
@@ -83,21 +92,21 @@ const assignPodToPipeline = async (message) => {
 
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
 
-  logger.log(`Trying to assign pod to ${processName} pipeline for experiment ${experimentId} in sandbox ${sandboxId} for activity ${activityId}`);
+  logger.log(`Trying to assign ${processName} pod to experiment ${experimentId} in sandbox ${sandboxId} for activity ${activityId}`);
 
 
   try {
     // remove pipeline pods already assigned to this experiment
     await deleteExperimentPods(experimentId);
   } catch (e) {
-    logger.error(`Failed to remove pods for experiment ${experimentId}: ${e}`);
+    logger.error(`Failed to remove pods for experiment ${experimentId}. ${formatError(e)}`);
   }
 
   try {
     // try to choose a free pod and assign it to the current pipeline
     await patchPod(message);
   } catch (e) {
-    logger.error(`Failed to assign pipeline pod to experiment ${experimentId}: ${e}`);
+    logger.error(`Failed to assign pipeline pod to experiment ${experimentId}: ${formatError(e)}`);
   }
 };
 

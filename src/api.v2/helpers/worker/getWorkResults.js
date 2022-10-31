@@ -1,4 +1,4 @@
-const { WORKER_RESULTS } = require('../s3/bucketNames');
+const { WORKER_RESULTS } = require('../../../config/bucketNames');
 
 const AWS = require('../../../utils/requireAWS');
 const getLogger = require('../../../utils/getLogger');
