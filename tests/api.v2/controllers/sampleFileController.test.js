@@ -23,12 +23,12 @@ const mockRes = {
 };
 
 describe('sampleFileController', () => {
-  const mockSignedUrl = 'signedUrl';
+  const mockSignedUrls = ['signedUrl'];
 
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    signedUrl.getSampleFileUploadUrl.mockReturnValue(mockSignedUrl);
+    signedUrl.getSampleFileUploadUrls.mockReturnValue(mockSignedUrls);
   });
 
   it('createFile works correctly', async () => {
@@ -61,7 +61,7 @@ describe('sampleFileController', () => {
     expect(sampleInstance.setNewFile).toHaveBeenCalledWith('sampleId', 'sampleFileId', 'features10x');
 
     // Response is generated signed url
-    expect(mockRes.json).toHaveBeenCalledWith(mockSignedUrl);
+    expect(mockRes.json).toHaveBeenCalledWith(mockSignedUrls);
   });
 
   it('createFile errors out if the transaction failed', async () => {
