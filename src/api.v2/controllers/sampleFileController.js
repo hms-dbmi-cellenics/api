@@ -30,6 +30,7 @@ const createFile = async (req, res) => {
     await new SampleFile(trx).create(newSampleFile);
     await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType);
 
+    logger.log(`Getting multipart upload urls for ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
     signedUrls = await getSampleFileUploadUrls(sampleFileId, metadata, size);
   });
 

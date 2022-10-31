@@ -43,22 +43,21 @@ const getMultipartSignedUrls = async (operation, params, size) => {
     UploadId,
   };
 
-  const promises = [];
+  const signedUrls = [];
 
   // TODO: based on size
   const parts = Math.ceil(size / FILE_CHUNK_SIZE);
 
 
   for (let i = 0; i < parts; i += 1) {
-    promises.push(
-      s3.getSignedUrlPromise('uploadPart', {
+    signedUrls.push(
+      // eslint-disable-next-line no-await-in-loop
+      await s3.getSignedUrlPromise('uploadPart', {
         ...baseParams,
         PartNumber: i + 1,
       }),
     );
   }
-
-  const signedUrls = await Promise.all(promises);
 
   return {
     signedUrls,
