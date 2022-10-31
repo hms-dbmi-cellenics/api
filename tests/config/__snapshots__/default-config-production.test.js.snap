@@ -17,13 +17,12 @@ Object {
   },
   "corsOriginUrl": "https://localhost:5000",
   "domainName": "localhost:5000",
-  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/iac/master/releases/production/pipeline.yaml",
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/production/pipeline.yaml",
   "pipelineNamespace": "pipeline-default",
   "podName": "local",
   "port": 3000,
   "rdsSandboxId": "default",
   "sandboxId": "default",
-  "workerInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/iac/master/releases/production/worker.yaml",
   "workerNamespace": "worker-default",
 }
 `;

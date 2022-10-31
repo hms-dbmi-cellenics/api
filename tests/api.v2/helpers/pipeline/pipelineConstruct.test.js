@@ -266,6 +266,10 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-machine' });
     });
 
+    experimentInstance.findById.mockReturnValueOnce(
+      { first: () => Promise.resolve(mockExperimentRow) },
+    );
+
     await createGem2SPipeline('testExperimentId', taskParams);
     expect(describeClusterSpy).toMatchSnapshot();
 
@@ -309,6 +313,10 @@ describe('test for pipeline services', () => {
       startExecutionSpy(params);
       callback(null, { executionArn: 'test-execution' });
     });
+
+    experimentInstance.findById.mockReturnValueOnce(
+      { first: () => Promise.resolve(mockExperimentRow) },
+    );
 
     createGem2SPipeline.waitForDefinitionToPropagate = () => true;
 

@@ -17,13 +17,12 @@ Object {
   },
   "corsOriginUrl": "https://ui-mockedSandboxId.scp-staging.biomage.net",
   "domainName": "scp-staging.biomage.net",
-  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/iac/master/releases/staging/mockedSandboxId.yaml",
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/staging/mockedSandboxId.yaml",
   "pipelineNamespace": "pipeline-mockedSandboxId",
   "podName": "local",
   "port": 3000,
   "rdsSandboxId": "default",
   "sandboxId": "mockedSandboxId",
-  "workerInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/iac/master/releases/staging/mockedSandboxId.yaml",
   "workerNamespace": "worker-mockedSandboxId",
 }
 `;
