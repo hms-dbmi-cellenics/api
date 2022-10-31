@@ -68,6 +68,28 @@ const mockS3GetSignedUrl = (payload = {}, error = null) => {
   return fnSpy;
 };
 
+const mockBatchTerminateJob = (payload = {}, error = null) => {
+  const fnSpy = jest.fn((x) => x);
+  AWSMock.setSDKInstance(AWS);
+  AWSMock.mock('Batch', 'terminateJob', (params, callback) => {
+    fnSpy(params);
+    callback(error, payload);
+  });
+
+  return fnSpy;
+};
+
+const mockBatchListJobs = (payload = {}, error = null) => {
+  const fnSpy = jest.fn((x) => x);
+  AWSMock.setSDKInstance(AWS);
+  AWSMock.mock('Batch', 'listJobs', (params, callback) => {
+    fnSpy(params);
+    callback(error, payload);
+  });
+
+  return fnSpy;
+};
+
 module.exports = {
   mockS3GetObject,
   mockS3PutObject,
@@ -75,4 +97,6 @@ module.exports = {
   mockS3DeleteObjects,
   mockS3GetSignedUrl,
   mockS3GetObjectTagging,
+  mockBatchTerminateJob,
+  mockBatchListJobs,
 };

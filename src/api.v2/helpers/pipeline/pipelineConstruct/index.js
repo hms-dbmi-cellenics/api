@@ -20,6 +20,8 @@ const asyncTimer = require('../../../../utils/asyncTimer');
 const constructPipelineStep = require('./constructors/constructPipelineStep');
 const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('./skeletons');
 const { getQcStepsToRun } = require('./qcHelpers');
+const needsBatchJob = require('../batch/needsBatchJob');
+const cancelBatchJobs = require('../batch/terminateJobs');
 
 const logger = getLogger();
 
@@ -76,6 +78,18 @@ const getClusterInfo = async () => {
   };
 };
 
+const cancelPreviousPipelines = async (experimentId) => {
+  // remove pipeline pods already assigned to this experiment
+  // try {
+  //   await deleteExperimentPods(experimentId);
+  // } catch (e) {
+  //   logger.error(`cancelPreviousPipelines t
+  // o remove pods for experiment ${experimentId}. ${formatError(e)}`);
+  // }
+
+  // remove Batch jobs
+  await cancelBatchJobs(experimentId, config.awsRegion);
+};
 
 const createNewStateMachine = async (context, stateMachine, processName) => {
   const { clusterEnv, sandboxId } = config;
@@ -184,7 +198,7 @@ const buildStateMachineDefinition = (skeleton, context) => {
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) => {
   const accountId = config.awsAccountId;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
-  logger.log(`Fetching processing settings for ${experimentId}`);
+  logger.log(`createQCPipeline: fetch processing settings ${experimentId}`);
 
   const experiment = await new Experiment().findById(experimentId).first();
 
@@ -223,15 +237,17 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     podMemory,
   };
 
+  await cancelPreviousPipelines(experimentId);
+
+
   const qcSteps = await getQcStepsToRun(experimentId, processingConfigUpdates);
+  const runInBatch = needsBatchJob(podCpus, podMemory);
 
   const qcPipelineSkeleton = await getQcPipelineSkeleton(
     config.clusterEnv,
     qcSteps,
-    podCpus,
-    podMemory,
+    runInBatch,
   );
-
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
@@ -285,6 +301,7 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
     podCpus,
     podMemory,
   };
+  await cancelPreviousPipelines(experimentId);
 
   logger.log(`createGem2SPipeline: not passing cpu/mem ${podCpus}, ${podMemory}`);
   const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv);
