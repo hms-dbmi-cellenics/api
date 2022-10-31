@@ -1889,10 +1889,6 @@ paths:
           text/plain:
             schema:
               type: string
-          application/json:
-            schema:
-              type: object
-              properties: {}
       responses:
         '200':
           description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
@@ -1923,10 +1919,6 @@ paths:
           text/plain:
             schema:
               type: string
-          application/json:
-            schema:
-              type: object
-              properties: {}
       responses:
         '200':
           description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
