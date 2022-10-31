@@ -6,6 +6,6 @@ const toArn = (topic, sandboxId = config.sandboxId, withV2) => (
 );
 
 module.exports = {
-  WORK_RESULTS: toArn('work-results', true),
+  WORK_RESULTS: toArn('work-results', undefined, true),
   POST_REGISTRATION: toArn('post-registration-user-access', 'default', false),
 };
