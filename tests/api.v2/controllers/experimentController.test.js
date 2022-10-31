@@ -7,7 +7,7 @@ const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 const getPipelineStatus = require('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 const getWorkerStatus = require('../../../src/api.v2/helpers/worker/getWorkerStatus');
 
-const bucketNames = require('../../../src/api.v2/helpers/s3/bucketNames');
+const bucketNames = require('../../../src/config/bucketNames');
 
 const experimentInstance = Experiment();
 const sampleInstance = Sample();

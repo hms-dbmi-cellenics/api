@@ -1,6 +1,6 @@
 
 const { fileExists } = require('../../s3/fileExists');
-const { FILTERED_CELLS } = require('../../s3/bucketNames');
+const { FILTERED_CELLS } = require('../../../../config/bucketNames');
 
 const filterToStepName = {
   classifier: 'ClassifierFilterMap',

@@ -6,11 +6,11 @@ const { OK } = require('../../../src/utils/responses');
 const handleQCResponse = require('../../../src/api.v2/helpers/pipeline/handleQCResponse');
 const pipelineConstruct = require('../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 
-const parseSNSMessage = require('../../../src/utils/parse-sns-message');
+const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
 
 jest.mock('../../../src/api.v2/helpers/pipeline/handleQCResponse');
 jest.mock('../../../src/api.v2/helpers/pipeline/pipelineConstruct');
-jest.mock('../../../src/utils/parse-sns-message');
+jest.mock('../../../src/utils/parseSNSMessage');
 
 // const MockDataFactory = require('../../../src/api/route-services/__mocks__/MockDataFactory');
 const experimentId = 'experimentId';
@@ -61,6 +61,8 @@ const mockRes = {
   json: jest.fn(),
   status: jest.fn(() => ({ send: mockJsonSend })),
 };
+
+const expectedTopic = 'arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2';
 
 describe('qcController', () => {
   beforeEach(async () => {
@@ -121,7 +123,7 @@ describe('qcController', () => {
 
     await qcController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
     expect(handleQCResponse).toHaveBeenCalledWith(io, qcResponsePayload);
 
     // Response is ok
@@ -136,7 +138,7 @@ describe('qcController', () => {
 
     await qcController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
     expect(handleQCResponse).not.toHaveBeenCalled();
 
     // Response is nok
@@ -155,7 +157,7 @@ describe('qcController', () => {
 
     await qcController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
     expect(handleQCResponse).toHaveBeenCalledWith(io, qcResponsePayload);
 
     // Response is nok
@@ -172,7 +174,7 @@ describe('qcController', () => {
 
     await qcController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
     expect(handleQCResponse).not.toHaveBeenCalled();
 
     // Response is ok
