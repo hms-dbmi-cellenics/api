@@ -84,7 +84,7 @@ describe('tests for gem2s route', () => {
       return Promise.resolve();
     });
 
-    const mockBody = {
+    const mockBody = JSON.stringify({
       Type: 'Notification',
       MessageId: 'ce0a05bf-c500-4dc7-8d0d-2ba974bf2831',
       TopicArn: 'arn:aws:sns:eu-west-1:000000000000:work-results-development-default-v2',
@@ -100,10 +100,11 @@ describe('tests for gem2s route', () => {
           Value: 'GEM2SResponse',
         },
       },
-    };
+    });
 
     request(app)
       .post('/v2/gem2sResults')
+      .set({ 'Content-Type': 'text/plain' })
       .send(mockBody)
       .expect(200)
       .end((err) => {
