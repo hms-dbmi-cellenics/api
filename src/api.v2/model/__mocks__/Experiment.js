@@ -6,6 +6,7 @@ const stub = {
   updateSamplePosition: jest.fn(),
   updateProcessingConfig: jest.fn(),
   getProcessingConfig: jest.fn(),
+  getResourceRequirements: () => ({}),
   createCopy: jest.fn(),
   addSample: jest.fn(),
   deleteSample: jest.fn(),
