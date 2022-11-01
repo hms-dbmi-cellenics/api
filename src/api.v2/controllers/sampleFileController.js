@@ -56,7 +56,14 @@ const completeMultipart = async (req, res) => {
     body: { parts, uploadId, sampleFileId },
   } = req;
 
+  console.log('parts!!!!');
+  console.log(parts);
+
+  logger.log(`completing multipart upload for sampleFileId ${sampleFileId}, uploadId ${uploadId}`);
+
   completeMultiPartUpload(sampleFileId, parts, uploadId);
+
+  logger.log(`completed multipart upload for sampleFileId ${sampleFileId}, uploadId ${uploadId}`);
   res.json(OK());
 };
 
