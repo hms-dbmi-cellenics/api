@@ -34,6 +34,9 @@ const createFile = async (req, res) => {
     signedUrls = await getSampleFileUploadUrls(sampleFileId, metadata, size);
   });
 
+  console.log('signedUrls!!!');
+  console.log(signedUrls);
+
   logger.log(`Finished creating sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
   res.json(signedUrls);
 };

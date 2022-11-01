@@ -24,7 +24,7 @@ const getSignedUrl = (operation, params) => {
 
 const FILE_CHUNK_SIZE = 10000000;
 
-const getMultipartSignedUrls = async (operation, params, size) => {
+const getMultipartSignedUrls = async (params, size) => {
   if (!params.Bucket) throw new Error('Bucket is required');
   if (!params.Key) throw new Error('Key is required');
 
@@ -43,21 +43,19 @@ const getMultipartSignedUrls = async (operation, params, size) => {
     UploadId,
   };
 
-  const signedUrls = [];
-
-  // TODO: based on size
+  const promises = [];
   const parts = Math.ceil(size / FILE_CHUNK_SIZE);
 
-
   for (let i = 0; i < parts; i += 1) {
-    signedUrls.push(
-      // eslint-disable-next-line no-await-in-loop
-      await s3.getSignedUrlPromise('uploadPart', {
+    promises.push(
+      s3.getSignedUrlPromise('uploadPart', {
         ...baseParams,
         PartNumber: i + 1,
       }),
     );
   }
+
+  const signedUrls = await Promise.all(promises);
 
   return {
     signedUrls,
@@ -74,6 +72,8 @@ const completeMultiPartUpload = async (sampleFileId, parts, uploadId) => {
     MultipartUpload: { Parts: parts },
   };
 
+  console.log('completeMultiPartUpload params!!!!');
+  console.log(params);
 
   const S3Config = {
     apiVersion: '2006-03-01',
@@ -82,15 +82,16 @@ const completeMultiPartUpload = async (sampleFileId, parts, uploadId) => {
   };
 
   const s3 = new AWS.S3(S3Config);
+  const res = await s3.completeMultipartUpload(params).promise();
 
-
-  await s3.completeMultipartUpload(params).promise();
+  console.log('completeMultiPartUpload result!!');
+  console.log(res);
 };
 
 const getSampleFileUploadUrls = async (sampleFileId, metadata, size) => {
   const params = {
     Bucket: bucketNames.SAMPLE_FILES,
-    Key: `${sampleFileId}`,
+    Key: sampleFileId,
     // 1 hour timeout of upload link
     Expires: 3600,
   };
@@ -101,7 +102,7 @@ const getSampleFileUploadUrls = async (sampleFileId, metadata, size) => {
     };
   }
 
-  const signedUrls = await getMultipartSignedUrls('putObject', params, size);
+  const signedUrls = await getMultipartSignedUrls(params, size);
   return signedUrls;
 };
 
