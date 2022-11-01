@@ -4,6 +4,6 @@ type: object
 properties:
   uploadStatus:
     type: string
-  size:
-    type: integer
+required:
+  - uploadStatus
 additionalProperties: false
