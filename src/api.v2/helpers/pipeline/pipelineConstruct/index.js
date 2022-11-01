@@ -21,7 +21,9 @@ const constructPipelineStep = require('./constructors/constructPipelineStep');
 const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('./skeletons');
 const { getQcStepsToRun } = require('./qcHelpers');
 const needsBatchJob = require('../batch/needsBatchJob');
-const cancelBatchJobs = require('../batch/terminateJobs');
+const terminateJobs = require('../batch/terminateJobs');
+const listActiveJobs = require('../batch/listActiveJobs');
+const { deleteExperimentPods } = require('../hooks/podCleanup');
 
 const logger = getLogger();
 
@@ -79,16 +81,19 @@ const getClusterInfo = async () => {
 };
 
 const cancelPreviousPipelines = async (experimentId) => {
+  if (config.clusterEnv === 'development') return;
   // remove pipeline pods already assigned to this experiment
-  // try {
-  //   await deleteExperimentPods(experimentId);
-  // } catch (e) {
-  //   logger.error(`cancelPreviousPipelines t
-  // o remove pods for experiment ${experimentId}. ${formatError(e)}`);
-  // }
+
+  try {
+    await deleteExperimentPods(experimentId);
+  } catch (e) {
+    logger.error(`cancelPreviousPipelines: deleteExperimentPods ${experimentId}: ${e}`);
+  }
+
 
   // remove Batch jobs
-  await cancelBatchJobs(experimentId, config.awsRegion);
+  const jobs = listActiveJobs(experimentId, config.clusterEnv, config.awsRegion);
+  await terminateJobs(jobs, config.awsRegion);
 };
 
 const createNewStateMachine = async (context, stateMachine, processName) => {
@@ -238,7 +243,6 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   };
 
   await cancelPreviousPipelines(experimentId);
-
 
   const qcSteps = await getQcStepsToRun(experimentId, processingConfigUpdates);
   const runInBatch = needsBatchJob(podCpus, podMemory);
