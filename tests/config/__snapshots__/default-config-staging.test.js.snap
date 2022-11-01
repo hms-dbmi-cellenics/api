@@ -15,7 +15,11 @@ Object {
       "promise": [MockFunction],
     },
   },
-  "corsOriginUrl": "https://ui-default.scp-staging.biomage.net",
+  "corsOriginUrl": Array [
+    "https://sandbox.elabjournal.com",
+    "https://elabjournal.com",
+    "https://ui-default.scp-staging.biomage.net",
+  ],
   "domainName": "scp-staging.biomage.net",
   "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/staging/pipeline.yaml",
   "pipelineNamespace": "pipeline-default",
