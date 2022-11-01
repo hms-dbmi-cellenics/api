@@ -1,3 +1,4 @@
+const needsBatchJob = require('../../../../src/api.v2/helpers/pipeline/batch/needsBatchJob');
 const { buildStateMachineDefinition } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 const {
   getGem2sPipelineSkeleton, getQcPipelineSkeleton, getQcPipelineStepNames,
@@ -61,32 +62,13 @@ describe('non-tests to document the State Machines', () => {
     expect(stateMachine).toMatchSnapshot();
   });
 
-  it('- qc staging with specific CPUs', () => {
-    const env = 'staging';
-    const context = getContext('qc', env);
-    context.podCpus = 16;
-    context.podMemory = undefined;
-    const qcPipelineSkeleton = getQcPipelineSkeleton(env, qcStepNames, context.podCpus, context.podMemory);
-    const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
-    expect(stateMachine).toMatchSnapshot();
-  });
-
-  it('- qc staging with specific Mem', () => {
-    const env = 'staging';
-    const context = getContext('qc', env);
-    context.podCpus = undefined;
-    context.podMemory = 2048;
-    const qcPipelineSkeleton = getQcPipelineSkeleton(env, qcStepNames, context.podCpus, context.podMemory);
-    const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
-    expect(stateMachine).toMatchSnapshot();
-  });
-
   it('- qc production with specific CPUs & Mem', () => {
     const env = 'production';
     const context = getContext('qc', env);
     context.podCpus = 16;
     context.podMemory = 2048;
-    const qcPipelineSkeleton = getQcPipelineSkeleton(env, qcStepNames, context.podCpus, context.podMemory);
+    const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
+    const qcPipelineSkeleton = getQcPipelineSkeleton(env, qcStepNames, runInBatch);
     const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
     expect(stateMachine).toMatchSnapshot();
   });

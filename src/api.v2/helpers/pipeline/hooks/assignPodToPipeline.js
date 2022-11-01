@@ -3,7 +3,6 @@ const k8s = require('@kubernetes/client-node');
 const getLogger = require('../../../../utils/getLogger');
 const validateRequest = require('../../../../utils/schema-validator');
 const constants = require('../../../constants');
-const { deleteExperimentPods } = require('./podCleanup');
 
 const logger = getLogger();
 
@@ -93,14 +92,6 @@ const assignPodToPipeline = async (message) => {
   const { experimentId, input: { sandboxId, activityId, processName } } = message;
 
   logger.log(`Trying to assign ${processName} pod to experiment ${experimentId} in sandbox ${sandboxId} for activity ${activityId}`);
-
-
-  try {
-    // remove pipeline pods already assigned to this experiment
-    await deleteExperimentPods(experimentId);
-  } catch (e) {
-    logger.error(`Failed to remove pods for experiment ${experimentId}. ${formatError(e)}`);
-  }
 
   try {
     // try to choose a free pod and assign it to the current pipeline
