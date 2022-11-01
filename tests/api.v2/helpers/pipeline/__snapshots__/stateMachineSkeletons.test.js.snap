@@ -1048,7 +1048,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
       "Resource": "arn:aws:states:::batch:submitJob",
       "Parameters": {
         "JobDefinition": "job-pipeline-production",
-        "JobName": "mock-experiment-id-qc",
+        "JobName": "production-mock-experiment-id-qc",
         "JobQueue": "queue-pipeline-production",
         "ContainerOverrides": {
           "Environment": [

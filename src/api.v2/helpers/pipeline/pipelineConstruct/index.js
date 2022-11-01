@@ -92,7 +92,7 @@ const cancelPreviousPipelines = async (experimentId) => {
 
 
   // remove Batch jobs
-  const jobs = listActiveJobs(experimentId, config.clusterEnv, config.awsRegion);
+  const jobs = await listActiveJobs(experimentId, config.clusterEnv, config.awsRegion);
   await terminateJobs(jobs, config.awsRegion);
 };
 

@@ -8,7 +8,7 @@ const listOfJobs = [
   {
     jobArn: 'arn:aws:batch:eu-west-1:cccc:job/7596ed1d-a622-4a65-b5b2-79e1a6988036',
     jobId: '7596ed1d-a622-4a65-b5b2-79e1a6988036',
-    jobName: `${fake.EXPERIMENT_ID}-qc`,
+    jobName: `production-${fake.EXPERIMENT_ID}-qc`,
     createdAt: 1667138764290,
     status: 'RUNNABLE',
     stoppedAt: 1667141730938,
@@ -18,7 +18,7 @@ const listOfJobs = [
   {
     jobArn: 'arn:aws:batch:eu-west-1:ccccc:job/a6d49c90-74f0-4c1e-aa8f-673312b6eb7d',
     jobId: 'a6d49c90-74f0-4c1e-aa8f-673312b6eb7d',
-    jobName: `${fake.EXPERIMENT_ID}-qc`,
+    jobName: `production-${fake.EXPERIMENT_ID}-qc`,
     createdAt: 1667133293413,
     status: 'FAILED',
     stoppedAt: 1667137362912,
@@ -28,7 +28,7 @@ const listOfJobs = [
   {
     jobArn: 'arn:aws:batch:eu-west-1:ccccc:job/a6d49c90-74f0-4c1e-aa8f-673312b6eb7d',
     jobId: 'a6d49c90-74f0-4c1e-aa8f-673312b6eb7d',
-    jobName: `${fake.EXPERIMENT_ID}-qc`,
+    jobName: `production-${fake.EXPERIMENT_ID}-qc`,
     createdAt: 1667133293413,
     status: 'SUCCEEDED',
     stoppedAt: 1667137362912,
@@ -38,7 +38,7 @@ const listOfJobs = [
   {
     jobArn: 'arn:aws:batch:eu-west-1:ccccc:job/a6d49c90-74f0-4c1e-aa8f-673312b6eb7d',
     jobId: 'a6d49c90-74f0-4c1e-aa8f-673312b6eb7d',
-    jobName: `${fake.EXPERIMENT_ID}-qc`,
+    jobName: `production-${fake.EXPERIMENT_ID}-qc`,
     createdAt: 1667133293413,
     status: 'STARTING',
     stoppedAt: 1667137362912,

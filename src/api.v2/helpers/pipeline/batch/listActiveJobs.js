@@ -11,7 +11,7 @@ const listActiveJobs = async (experimentId, env, region) => {
     filters: [
       {
         name: 'JOB_NAME',
-        values: [`${experimentId}-*`],
+        values: [`${env}-${experimentId}-*`],
       },
     ],
   };
