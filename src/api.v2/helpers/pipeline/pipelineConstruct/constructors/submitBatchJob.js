@@ -16,7 +16,7 @@ const submitBatchJob = (context, step) => {
     Resource: 'arn:aws:states:::batch:submitJob',
     Parameters: {
       JobDefinition: `job-pipeline-${environment}`,
-      JobName: `${processName}-${environment}-${experimentId}`,
+      JobName: `${environment}-${experimentId}-${processName}`, // changing the name will break job termination when a new one is submitted
       JobQueue: `queue-pipeline-${environment}`,
       ContainerOverrides: {
         Environment: [
