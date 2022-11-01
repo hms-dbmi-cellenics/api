@@ -1,6 +1,6 @@
 // @ts-nocheck
 const cellSetsController = require('../../../src/api.v2/controllers/cellSetsController');
-const bucketNames = require('../../../src/api.v2/helpers/s3/bucketNames');
+const bucketNames = require('../../../src/config/bucketNames');
 
 const getS3Object = require('../../../src/api.v2/helpers/s3/getObject');
 const patchCellSetsObject = require('../../../src/api.v2/helpers/s3/patchCellSetsObject');
