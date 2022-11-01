@@ -2,8 +2,6 @@ const { buildQCPipelineSteps, qcPipelineSteps } = require('./qcPipelineSkeleton'
 const { gem2SPipelineSteps } = require('./gem2sPipelineSkeleton');
 
 
-const needsBatchJob = (cpus, mem) => cpus !== undefined || mem !== undefined;
-
 const createLocalPipeline = (nextStep) => ({
   DeleteCompletedPipelineWorker: {
     XStepType: 'delete-completed-jobs',
@@ -63,13 +61,13 @@ const getPipelineStepNames = () => {
 // if there are map states with nested substeps it returns those sub-steps too
 const getQcPipelineStepNames = () => getSkeletonStepNames(qcPipelineSteps);
 
-const buildInitialSteps = (clusterEnv, nextStep, podCpus, podMem) => {
+const buildInitialSteps = (clusterEnv, nextStep, runInBatch) => {
   // if we are running locally launch a pipeline job
   if (clusterEnv === 'development') {
     return createLocalPipeline(nextStep);
   }
 
-  if (needsBatchJob(podCpus, podMem)) {
+  if (runInBatch) {
     return submitBatchJob(nextStep);
   }
 
@@ -77,12 +75,12 @@ const buildInitialSteps = (clusterEnv, nextStep, podCpus, podMem) => {
   return assignPipelineToPod(nextStep);
 };
 
-const getStateMachineFirstStep = (clusterEnv, podCpus, podMem) => {
+const getStateMachineFirstStep = (clusterEnv, runInBatch) => {
   if (clusterEnv === 'development') {
     return 'DeleteCompletedPipelineWorker';
   }
 
-  if (needsBatchJob(podCpus, podMem)) {
+  if (runInBatch) {
     return 'SubmitBatchJob';
   }
 
@@ -90,20 +88,20 @@ const getStateMachineFirstStep = (clusterEnv, podCpus, podMem) => {
 };
 
 
-const getGem2sPipelineSkeleton = (clusterEnv, podCpus, podMem) => ({
+const getGem2sPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
   Comment: `Gem2s Pipeline for clusterEnv '${clusterEnv}'`,
-  StartAt: getStateMachineFirstStep(clusterEnv),
+  StartAt: getStateMachineFirstStep(clusterEnv, runInBatch),
   States: {
-    ...buildInitialSteps(clusterEnv, 'DownloadGem', podCpus, podMem),
+    ...buildInitialSteps(clusterEnv, 'DownloadGem', runInBatch),
     ...gem2SPipelineSteps,
   },
 });
 
-const getQcPipelineSkeleton = (clusterEnv, qcSteps, podCpus, podMem) => ({
+const getQcPipelineSkeleton = (clusterEnv, qcSteps, runInBatch = false) => ({
   Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
-  StartAt: getStateMachineFirstStep(clusterEnv, podCpus, podMem),
+  StartAt: getStateMachineFirstStep(clusterEnv, runInBatch),
   States: {
-    ...buildInitialSteps(clusterEnv, qcSteps[0], podCpus, podMem),
+    ...buildInitialSteps(clusterEnv, qcSteps[0], runInBatch),
     ...buildQCPipelineSteps(qcSteps),
   },
 });
