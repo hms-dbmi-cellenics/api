@@ -80,18 +80,20 @@ const getClusterInfo = async () => {
   };
 };
 
+// cancelPreviousPipelines clears any in progress pipeline execution for the
+// given experimentId. It deals both with running fargate pods and AWS Batch jobs.
 const cancelPreviousPipelines = async (experimentId) => {
+  // no need to remove anything in development
   if (config.clusterEnv === 'development') return;
-  // remove pipeline pods already assigned to this experiment
 
+  // remove any pipeline pods already assigned to this experiment
   try {
     await deleteExperimentPods(experimentId);
   } catch (e) {
     logger.error(`cancelPreviousPipelines: deleteExperimentPods ${experimentId}: ${e}`);
   }
 
-
-  // remove Batch jobs
+  // remove any active Batch jobs assigned to this experiment
   const jobs = await listActiveJobs(experimentId, config.clusterEnv, config.awsRegion);
   await terminateJobs(jobs, config.awsRegion);
 };

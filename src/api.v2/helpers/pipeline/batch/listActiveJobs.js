@@ -3,6 +3,8 @@ const AWS = require('../../../../utils/requireAWS');
 const SUCCEEDED = 'SUCCEEDED';
 const FAILED = 'FAILED';
 
+// listActiveJobs returns a list of the 'active' jobs for an experiment
+// all jobs that are not 'succeeded' or 'failed' are considered active
 const listActiveJobs = async (experimentId, env, region) => {
   const batch = new AWS.Batch({ region });
 
@@ -15,9 +17,9 @@ const listActiveJobs = async (experimentId, env, region) => {
       },
     ],
   };
-  const response = await batch.listJobs(input).promise();
-  console.log('response', response);
-  return response.jobSummaryList.filter((job) => job.status !== SUCCEEDED && job.status !== FAILED);
+
+  const resp = await batch.listJobs(input).promise();
+  return resp.jobSummaryList.filter((job) => job.status !== SUCCEEDED && job.status !== FAILED);
 };
 
 module.exports = listActiveJobs;
