@@ -34,8 +34,6 @@ const createFile = async (req, res) => {
     signedUrls = await getSampleFileUploadUrls(sampleFileId, metadata, size);
   });
 
-  console.log('signedUrls!!!');
-  console.log(signedUrls);
 
   logger.log(`Finished creating sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
   res.json(signedUrls);
@@ -59,14 +57,11 @@ const completeMultipart = async (req, res) => {
     body: { parts, uploadId, sampleFileId },
   } = req;
 
-  console.log('parts!!!!');
-  console.log(parts);
-
-  logger.log(`completing multipart upload for sampleFileId ${sampleFileId}, uploadId ${uploadId}`);
+  logger.log(`completing multipart upload for sampleFileId ${sampleFileId}`);
 
   completeMultiPartUpload(sampleFileId, parts, uploadId);
 
-  logger.log(`completed multipart upload for sampleFileId ${sampleFileId}, uploadId ${uploadId}`);
+  logger.log(`completed multipart upload for sampleFileId ${sampleFileId}`);
   res.json(OK());
 };
 

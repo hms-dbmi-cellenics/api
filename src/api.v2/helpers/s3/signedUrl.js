@@ -72,8 +72,6 @@ const completeMultiPartUpload = async (sampleFileId, parts, uploadId) => {
     MultipartUpload: { Parts: parts },
   };
 
-  console.log('completeMultiPartUpload params!!!!');
-  console.log(params);
 
   const S3Config = {
     apiVersion: '2006-03-01',
@@ -82,10 +80,7 @@ const completeMultiPartUpload = async (sampleFileId, parts, uploadId) => {
   };
 
   const s3 = new AWS.S3(S3Config);
-  const res = await s3.completeMultipartUpload(params).promise();
-
-  console.log('completeMultiPartUpload result!!');
-  console.log(res);
+  await s3.completeMultipartUpload(params).promise();
 };
 
 const getSampleFileUploadUrls = async (sampleFileId, metadata, size) => {
