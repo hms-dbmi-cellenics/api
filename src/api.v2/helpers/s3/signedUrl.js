@@ -24,7 +24,7 @@ const getSignedUrl = (operation, params) => {
 
 const FILE_CHUNK_SIZE = 10000000;
 
-const getMultipartSignedUrls = async (params, size) => {
+const createMultipartUpload = async (params, size) => {
   if (!params.Bucket) throw new Error('Bucket is required');
   if (!params.Key) throw new Error('Key is required');
 
@@ -59,7 +59,7 @@ const getMultipartSignedUrls = async (params, size) => {
 
   return {
     signedUrls,
-    UploadId,
+    uploadId: UploadId,
   };
 };
 
@@ -97,8 +97,7 @@ const getSampleFileUploadUrls = async (sampleFileId, metadata, size) => {
     };
   }
 
-  const signedUrls = await getMultipartSignedUrls(params, size);
-  return signedUrls;
+  return await createMultipartUpload(params, size);
 };
 
 const fileNameToReturn = {
@@ -131,6 +130,6 @@ module.exports = {
   getSampleFileUploadUrls,
   getSampleFileDownloadUrl,
   getSignedUrl,
-  getMultipartSignedUrls,
+  createMultipartUpload,
   completeMultiPartUpload,
 };

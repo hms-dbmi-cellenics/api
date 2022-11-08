@@ -24,19 +24,19 @@ const createFile = async (req, res) => {
     upload_status: 'uploading',
   };
 
-  let signedUrls;
+  let uploadUrlParams;
 
   await sqlClient.get().transaction(async (trx) => {
     await new SampleFile(trx).create(newSampleFile);
     await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType);
 
     logger.log(`Getting multipart upload urls for ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
-    signedUrls = await getSampleFileUploadUrls(sampleFileId, metadata, size);
+    uploadUrlParams = await getSampleFileUploadUrls(sampleFileId, metadata, size);
   });
 
 
   logger.log(`Finished creating sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
-  res.json(signedUrls);
+  res.json(uploadUrlParams);
 };
 
 const patchFile = async (req, res) => {
