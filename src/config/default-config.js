@@ -45,17 +45,6 @@ const cognitoISP = new AWS.CognitoIdentityServiceProvider({
   region: awsRegion,
 });
 
-async function getAwsPoolId() {
-  const { UserPools } = await cognitoISP.listUserPools({ MaxResults: 60 }).promise();
-  // when k8s is undefined we are in development where we use staging user pool so we set
-  // it as the default one.
-  const k8sEnv = process.env.K8S_ENV || 'staging';
-  const userPoolName = `biomage-user-pool-case-insensitive-${k8sEnv}`;
-
-  const poolId = UserPools.find((pool) => pool.Name === userPoolName).Id;
-  return poolId;
-}
-
 const externalOrigins = [
   'https://sandbox.elabjournal.com',
   'https://elabjournal.com',
@@ -72,7 +61,6 @@ const config = {
   pipelineNamespace: `pipeline-${process.env.SANDBOX_ID || 'default'}`,
   awsRegion,
   domainName,
-  awsUserPoolIdPromise: getAwsPoolId(),
   cognitoISP,
   api: {
     prefix: '/',

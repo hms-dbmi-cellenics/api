@@ -11,6 +11,7 @@ const { promisify } = require('util');
 const jwtExpress = require('express-jwt');
 
 const config = require('../../config');
+const getAwsPoolId = require('../helpers/cognito/getAwsPoolId');
 const { isReqFromLocalhost, isReqFromCluster } = require('../../utils/isReqFrom');
 
 const CacheSingleton = require('../../cache');
@@ -108,7 +109,7 @@ const expressAuthenticationOnlyMiddleware = async (req, res, next) => {
  * @returns Promise that resolves or rejects based on authentication status.
  */
 const authenticationMiddlewareSocketIO = async (authHeader, ignoreExpiration = false) => {
-  const poolId = await config.awsUserPoolIdPromise;
+  const poolId = await getAwsPoolId();
   const cache = CacheSingleton.get();
 
   const issuer = `https://cognito-idp.${config.awsRegion}.amazonaws.com/${poolId}`;
@@ -155,7 +156,7 @@ const authenticationMiddlewareExpress = async (app) => {
 
   // This will be run outside a request context, so there is no X-Ray segment.
   // Disable tracing so we don't end up with errors logged into the console.
-  const poolId = await config.awsUserPoolIdPromise;
+  const poolId = await getAwsPoolId();
 
   return jwtExpress({
     // JWT tokens are susceptible for downgrade attacks if the algorithm used to sign
