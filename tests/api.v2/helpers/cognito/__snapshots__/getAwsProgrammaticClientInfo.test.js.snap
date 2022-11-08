@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getProgrammaticClientInfo returns a clientId and clientRegion when the client exists 1`] = `
+Object {
+  "clientId": "11111111111111111111111111",
+  "clientRegion": "eu-west-1",
+}
+`;
+
+exports[`getProgrammaticClientInfo returns a not found error when no matching client exists 1`] = `[Error: getAwsProgrammaticClientInfo: biomage-programmatic-client-test: not found]`;
