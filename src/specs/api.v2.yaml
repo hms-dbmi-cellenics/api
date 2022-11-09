@@ -1994,7 +1994,8 @@ paths:
                 pattern: nok
   /programmaticInterfaceClient:
     get:
-      summary: Retrieve the app client ID for the programmatic interface
+      summary: Retrieve the Cognito app client info for the programmatic interface
+      description: Returns the information required to connect to the programmatic interface cognito client.
       operationId: getProgrammaticInterfaceClient
       x-eov-operation-id: programmaticInterface#getClient
       x-eov-operation-handler: routes/programmaticInterface
@@ -2010,9 +2011,6 @@ paths:
                     type: string
                   clientRegion:
                     type: string
-                # required:
-                #   - clientId
-                #   - clientRegion
         '500':
           description: The server did not manage to retrieve the programmatic client ID
           content:
