@@ -1,5 +1,6 @@
 const config = require('../../../config');
 const getAwsPoolId = require('./getAwsPoolId');
+const { NotFoundError } = require('../../../utils/responses');
 
 
 async function getAwsProgrammaticClientInfo() {
@@ -9,11 +10,15 @@ async function getAwsProgrammaticClientInfo() {
   };
 
   const { UserPoolClients } = await config.cognitoISP.listUserPoolClients(params).promise();
-  const appClientName = `biomage-programmatic-client-${config.clusterEnv}`;
+
+  // we use k8s_env instead of config.clusterEnv so that when running in local
+  // we will use staging because K8S_ENV will be undefined
+  const k8sEnv = process.env.K8S_ENV || 'staging';
+  const appClientName = `biomage-programmatic-client-${k8sEnv}`;
 
   const client = UserPoolClients.find((c) => c.ClientName === appClientName);
   if (!client) {
-    throw new Error(`getAwsProgrammaticClientInfo: ${appClientName}: not found`);
+    throw new NotFoundError(`getAwsProgrammaticClientInfo: cognito client ${appClientName}: not found`);
   }
 
   return {

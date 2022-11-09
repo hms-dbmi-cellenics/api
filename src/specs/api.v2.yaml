@@ -2011,13 +2011,15 @@ paths:
                     type: string
                   clientRegion:
                     type: string
+                required:
+                  - clientId
+                  - clientRegion
         '500':
           description: The server did not manage to retrieve the programmatic client ID
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                pattern: nok
+                $ref: '#/components/schemas/HTTPError'
 components:
   schemas:
     CreateExperiment:

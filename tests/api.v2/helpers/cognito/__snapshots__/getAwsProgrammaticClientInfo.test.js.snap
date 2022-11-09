@@ -7,4 +7,4 @@ Object {
 }
 `;
 
-exports[`getProgrammaticClientInfo returns a not found error when no matching client exists 1`] = `[Error: getAwsProgrammaticClientInfo: biomage-programmatic-client-test: not found]`;
+exports[`getProgrammaticClientInfo returns a not found error when no matching client exists 1`] = `[Error: getAwsProgrammaticClientInfo: cognito client biomage-programmatic-client-staging: not found]`;

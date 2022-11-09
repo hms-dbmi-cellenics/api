@@ -11,7 +11,7 @@ const mockClients = {
     {
       ClientId: '11111111111111111111111111',
       UserPoolId: 'eu-west-1_trivial',
-      ClientName: `biomage-programmatic-client-${config.clusterEnv}`,
+      ClientName: 'biomage-programmatic-client-staging',
     },
 
   ],
