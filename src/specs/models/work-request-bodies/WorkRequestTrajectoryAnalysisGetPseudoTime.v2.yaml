@@ -37,7 +37,7 @@ properties:
   rootNodes:
     type: array
     items:
-      type: string
+      type: integer
 required:
   - name
   - embedding
