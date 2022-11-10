@@ -57,17 +57,40 @@ const invalidateCategoricalEmbedding = async (experimentId) => {
 };
 
 const invalidateFrequencyPlot = async (experimentId) => {
-  // await invalidatePlot(experimentId, plots.FREQUENCY_PLOT);
+  await invalidatePlot(experimentId, plots.FREQUENCY_PLOT);
 };
 
-const invalidateTrajectoryAnalysis = async (experimentId) => { };
-const invalidateContinuousEmbedding = async (experimentId) => { };
-const invalidateMarkerHeatmapPlot = async (experimentId) => { };
-const invalidateCustomHeatmapPlot = async (experimentId) => { };
-const invalidateViolinPlot = async (experimentId) => { };
-const invalidateDotPlot = async (experimentId) => { };
-const invalidateNormalizedMatrix = async (experimentId) => { };
-const invalidateVolcanoPlot = async (experimentId) => { };
+const invalidateTrajectoryAnalysis = async (experimentId) => {
+  await invalidatePlot(experimentId, plots.TRAJECTORY_ANALYSIS);
+};
+
+const invalidateContinuousEmbedding = async (experimentId) => {
+  await invalidatePlot(experimentId, plots.CONTINUOUS_EMBEDDING);
+};
+
+const invalidateMarkerHeatmapPlot = async (experimentId) => {
+  await invalidatePlot(experimentId, plots.MARKER_HEATMAP);
+};
+
+const invalidateCustomHeatmapPlot = async (experimentId) => {
+  await invalidatePlot(experimentId, plots.CUSTOM_HEATMAP);
+};
+
+const invalidateViolinPlot = async (experimentId) => {
+  await invalidatePlot(experimentId, plots.VIOLIN_PLOT);
+};
+
+const invalidateDotPlot = async (experimentId) => {
+  await invalidatePlot(experimentId, plots.DOT_PLOT);
+};
+
+const invalidateNormalizedMatrix = async (experimentId) => {
+  await invalidatePlot(experimentId, plots.NORMALIZED_MATRIX);
+};
+
+const invalidateVolcanoPlot = async (experimentId) => {
+  await invalidatePlot(experimentId, plots.VOLCANO_PLOT);
+};
 
 const affectedByCellSetsChanging = [
   invalidateCategoricalEmbedding,
