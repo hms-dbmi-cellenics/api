@@ -1,28 +1,14 @@
 // Disabled ts because it doesn't recognize jest mocks
 // @ts-nocheck
-const config = require('../../../../src/config');
+
+const getUser = require('../../../../src/api.v2/helpers/cognito/getUser');
+
+jest.mock('../../../../src/api.v2/helpers/cognito/getUser');
 
 const UserAccess = require('../../../../src/api.v2/model/UserAccess');
-
 const AccessRole = require('../../../../src/utils/enums/AccessRole');
 
 const getExperimentUsers = require('../../../../src/api.v2/helpers/access/getExperimentUsers');
-
-const { cognitoISP } = config;
-
-jest.mock('../../../../src/config', () => ({
-  awsUserPoolIdPromise: Promise.resolve('mockUserPoolId'),
-  cognitoISP: {
-    adminGetUser: jest.fn(({ Username }) => ({
-      promise: () => Promise.resolve({
-        UserAttributes: [
-          { Name: 'name', Value: `${Username}-test` },
-          { Name: 'email', Value: `${Username}@example.com` },
-        ],
-      }),
-    })),
-  },
-}));
 
 jest.mock('../../../../src/api.v2/model/UserAccess');
 
@@ -65,13 +51,14 @@ describe('getUserRoles', () => {
     expect(mockUserAccess.getExperimentUsers).toHaveBeenCalledTimes(1);
 
     // Only filtered users should be fetched for data
-    expect(cognitoISP.adminGetUser).toHaveBeenCalledTimes(filteredUsers.length);
+    expect(getUser).toHaveBeenCalledTimes(filteredUsers.length);
+    expect(getUser).toHaveBeenCalledTimes(filteredUsers.length);
 
     expect(result).toMatchSnapshot();
   });
 
   it('getUserRoles throws a server error if there is an error fetching Cognito user data', async () => {
-    cognitoISP.adminGetUser.mockReturnValueOnce(Promise.reject(new Error('Error fetching user data')));
+    getUser.mockReturnValueOnce(Promise.reject(new Error('Error fetching user data')));
 
     await expect(getExperimentUsers(experimentId)).rejects.toThrow();
 
