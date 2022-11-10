@@ -9,6 +9,9 @@ const tableNames = require('./tableNames');
 const bucketNames = require('../../config/bucketNames');
 const getObject = require('../helpers/s3/getObject');
 const { NotFoundError } = require('../../utils/responses');
+const getLogger = require('../../utils/getLogger');
+
+const logger = getLogger('[PlotModel] - ');
 
 const selectableProps = [
   'id',
@@ -53,6 +56,32 @@ class Plot extends BasicModel {
 
   async updateConfig(experimentId, plotUuid, plotConfig) {
     return await this.upsert({ id: plotUuid, experiment_id: experimentId }, { config: plotConfig });
+  }
+
+  async invalidateAttributes(experimentId, plotUuid, invalidatedKeys) {
+    await this.sql.transaction(async (trx) => {
+      const plot = await trx(tableNames.PLOT)
+        .select(['config'])
+        .where({ id: plotUuid, experiment_id: experimentId })
+        .first();
+
+      if (_.isNil(plot)) {
+        logger.log(`Experiment ${experimentId}, plot ${plotUuid}. No config stored so skipping invalidation.`);
+        return;
+      }
+
+      const { config } = plot;
+      console.log('configDebug');
+      console.log(config);
+
+      invalidatedKeys.forEach((key) => {
+        delete config[key];
+      });
+
+      await trx(tableNames.PLOT)
+        .update({ config })
+        .where({ id: plotUuid, experiment_id: experimentId });
+    });
   }
 }
 
