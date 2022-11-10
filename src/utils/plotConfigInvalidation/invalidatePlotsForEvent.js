@@ -104,22 +104,14 @@ const affectedByCellSetsChanging = [
   invalidateVolcanoPlot,
 ];
 
-const executeAllPromises = async (experimentId, functionArray) => (
-  await Promise.all(functionArray.map((func) => func(experimentId)))
-);
-
 const configInvalidatorsByEvent = {
   [events.CELL_SETS_MODIFIED]: async (experimentId) => {
-    await executeAllPromises(experimentId, affectedByCellSetsChanging);
+    await Promise.all(
+      affectedByCellSetsChanging.map((func) => func(experimentId)),
+    );
   },
   [events.EMBEDDING_MODIFIED]: async (experimentId) => {
     await invalidateTrajectoryAnalysis(experimentId);
-  },
-  [events.PIPELINE_RERUN]: async (experimentId) => {
-    await executeAllPromises(
-      experimentId,
-      [...affectedByCellSetsChanging, invalidateTrajectoryAnalysis],
-    );
   },
 };
 
