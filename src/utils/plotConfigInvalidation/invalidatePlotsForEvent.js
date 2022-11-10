@@ -115,10 +115,12 @@ const configInvalidatorsByEvent = {
   },
 };
 
-const invalidatePlotsForEvent = async (experimentId, event) => {
+const invalidatePlotsForEvent = async (experimentId, event, socket) => {
   logger.log(`Invalidating for event ${event}`);
   await configInvalidatorsByEvent[event](experimentId);
   logger.log(`Finished invalidating for event ${event}`);
 };
 
 module.exports = invalidatePlotsForEvent;
+
+// req.app.get('io')

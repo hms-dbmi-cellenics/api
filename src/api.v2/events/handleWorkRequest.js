@@ -27,9 +27,8 @@ const handleWorkRequest = async (socket, data, xraySegment) => {
       },
     });
 
-
-    if (data.name === 'GetEmbedding') {
-      await invalidatePlotsForEvent(experimentId, events.EMBEDDING_MODIFIED);
+    if (data.body.name === 'GetEmbedding') {
+      await invalidatePlotsForEvent(experimentId, events.EMBEDDING_MODIFIED, socket);
     }
   } catch (e) {
     logger.log(`[REQ ??, SOCKET ${socket.id}] Error while processing WorkRequest event.`);
