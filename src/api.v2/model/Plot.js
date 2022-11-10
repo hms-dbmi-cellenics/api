@@ -71,8 +71,6 @@ class Plot extends BasicModel {
       }
 
       const { config } = plot;
-      console.log('configDebug');
-      console.log(config);
 
       invalidatedKeys.forEach((key) => {
         delete config[key];
