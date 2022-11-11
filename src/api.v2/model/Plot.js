@@ -59,6 +59,8 @@ class Plot extends BasicModel {
   }
 
   async invalidateAttributes(experimentId, plotUuid, invalidatedKeys) {
+    let newConfig;
+
     await this.sql.transaction(async (trx) => {
       const plot = await trx(tableNames.PLOT)
         .select(['config'])
@@ -76,10 +78,15 @@ class Plot extends BasicModel {
         delete config[key];
       });
 
-      await trx(tableNames.PLOT)
+      const results = await trx(tableNames.PLOT)
         .update({ config })
-        .where({ id: plotUuid, experiment_id: experimentId });
+        .where({ id: plotUuid, experiment_id: experimentId })
+        .returning(['config']);
+
+      newConfig = results[0].config;
     });
+
+    return newConfig;
   }
 }
 

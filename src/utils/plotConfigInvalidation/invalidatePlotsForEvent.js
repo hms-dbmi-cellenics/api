@@ -49,50 +49,52 @@ const plots = {
 };
 
 const invalidatePlot = async (experimentId, { plotId, keys }) => {
-  await new Plot().invalidateAttributes(experimentId, plotId, keys);
+  const updatedConfig = await new Plot().invalidateAttributes(experimentId, plotId, keys);
+
+  return { plotId, updatedConfig };
 };
 
-const invalidateCategoricalEmbedding = async (experimentId) => {
-  await invalidatePlot(experimentId, plots.CATEGORICAL_EMBEDDING);
-};
+const invalidateCategoricalEmbedding = async (experimentId) => (
+  await invalidatePlot(experimentId, plots.CATEGORICAL_EMBEDDING)
+);
 
-const invalidateFrequencyPlot = async (experimentId) => {
-  await invalidatePlot(experimentId, plots.FREQUENCY_PLOT);
-};
+const invalidateFrequencyPlot = async (experimentId) => (
+  await invalidatePlot(experimentId, plots.FREQUENCY_PLOT)
+);
 
-const invalidateTrajectoryAnalysis = async (experimentId) => {
-  await invalidatePlot(experimentId, plots.TRAJECTORY_ANALYSIS);
-};
+const invalidateTrajectoryAnalysis = async (experimentId) => (
+  await invalidatePlot(experimentId, plots.TRAJECTORY_ANALYSIS)
+);
 
-const invalidateContinuousEmbedding = async (experimentId) => {
-  await invalidatePlot(experimentId, plots.CONTINUOUS_EMBEDDING);
-};
+const invalidateContinuousEmbedding = async (experimentId) => (
+  await invalidatePlot(experimentId, plots.CONTINUOUS_EMBEDDING)
+);
 
-const invalidateMarkerHeatmapPlot = async (experimentId) => {
-  await invalidatePlot(experimentId, plots.MARKER_HEATMAP);
-};
+const invalidateMarkerHeatmapPlot = async (experimentId) => (
+  await invalidatePlot(experimentId, plots.MARKER_HEATMAP)
+);
 
-const invalidateCustomHeatmapPlot = async (experimentId) => {
-  await invalidatePlot(experimentId, plots.CUSTOM_HEATMAP);
-};
+const invalidateCustomHeatmapPlot = async (experimentId) => (
+  await invalidatePlot(experimentId, plots.CUSTOM_HEATMAP)
+);
 
-const invalidateViolinPlot = async (experimentId) => {
-  await invalidatePlot(experimentId, plots.VIOLIN_PLOT);
-};
+const invalidateViolinPlot = async (experimentId) => (
+  await invalidatePlot(experimentId, plots.VIOLIN_PLOT)
+);
 
-const invalidateDotPlot = async (experimentId) => {
-  await invalidatePlot(experimentId, plots.DOT_PLOT);
-};
+const invalidateDotPlot = async (experimentId) => (
+  await invalidatePlot(experimentId, plots.DOT_PLOT)
+);
 
-const invalidateNormalizedMatrix = async (experimentId) => {
-  await invalidatePlot(experimentId, plots.NORMALIZED_MATRIX);
-};
+const invalidateNormalizedMatrix = async (experimentId) => (
+  await invalidatePlot(experimentId, plots.NORMALIZED_MATRIX)
+);
 
-const invalidateVolcanoPlot = async (experimentId) => {
-  await invalidatePlot(experimentId, plots.VOLCANO_PLOT);
-};
+const invalidateVolcanoPlot = async (experimentId) => (
+  await invalidatePlot(experimentId, plots.VOLCANO_PLOT)
+);
 
-const affectedByCellSetsChanging = [
+const cellSetsChangingActions = [
   invalidateCategoricalEmbedding,
   invalidateFrequencyPlot,
   invalidateContinuousEmbedding,
@@ -105,22 +107,26 @@ const affectedByCellSetsChanging = [
 ];
 
 const configInvalidatorsByEvent = {
-  [events.CELL_SETS_MODIFIED]: async (experimentId) => {
+  [events.CELL_SETS_MODIFIED]: async (experimentId) => (
     await Promise.all(
-      affectedByCellSetsChanging.map((func) => func(experimentId)),
-    );
-  },
-  [events.EMBEDDING_MODIFIED]: async (experimentId) => {
-    await invalidateTrajectoryAnalysis(experimentId);
-  },
+      cellSetsChangingActions.map((func) => func(experimentId)),
+    )),
+  [events.EMBEDDING_MODIFIED]: async (experimentId) => (
+    await invalidateTrajectoryAnalysis(experimentId)
+  ),
 };
 
-const invalidatePlotsForEvent = async (experimentId, event, socket) => {
+const invalidatePlotsForEvent = async (experimentId, event, sockets) => {
   logger.log(`Invalidating for event ${event}`);
-  await configInvalidatorsByEvent[event](experimentId);
+  const updatedConfigs = await configInvalidatorsByEvent[event](experimentId);
+
+  const update = {
+    type: 'PlotConfigRefresh',
+    updatedConfigs,
+  };
+
+  sockets.emit(`ExperimentUpdates-${experimentId}`, update);
   logger.log(`Finished invalidating for event ${event}`);
 };
 
 module.exports = invalidatePlotsForEvent;
-
-// req.app.get('io')

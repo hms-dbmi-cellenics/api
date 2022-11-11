@@ -33,7 +33,8 @@ const patchCellSets = async (req, res) => {
   logger.log(`Patching cell sets for ${experimentId}`);
   await patchCellSetsObject(experimentId, patch);
 
-  await invalidatePlotsForEvent(experimentId, events.CELL_SETS_MODIFIED);
+  const { sockets } = req.app.get('io');
+  await invalidatePlotsForEvent(experimentId, events.CELL_SETS_MODIFIED, sockets);
 
   logger.log(`Finished patching cell sets for experiment ${experimentId}`);
 

@@ -118,9 +118,9 @@ const updateProcessingConfig = async (req, res) => {
   logger.log('Updating processing config for experiment ', experimentId);
 
   await new Experiment().updateProcessingConfig(experimentId, changes);
-
   if (changes.find((change) => change.name === 'configureEmbedding')) {
-    await invalidatePlotsForEvent(experimentId, events.EMBEDDING_MODIFIED);
+    const { sockets } = req.app.get('io');
+    await invalidatePlotsForEvent(experimentId, events.EMBEDDING_MODIFIED, sockets);
   }
 
   logger.log('Finished updating processing config for experiment ', experimentId);
