@@ -1,4 +1,6 @@
+jest.mock('../../../src/api.v2/helpers/cognito/getAwsPoolId');
 const k8s = require('@kubernetes/client-node');
+
 
 
 jest.mock('@kubernetes/client-node');

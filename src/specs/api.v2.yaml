@@ -58,7 +58,6 @@ paths:
                   - env
                   - clusterEnv
       description: Returns a status on the health of the API.
-
   '/experiments/{experimentId}/cellSets':
     parameters:
       - name: experimentId
@@ -106,7 +105,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
     patch:
       summary: Patch cell sets of an experiment
       description: Performs a partial update on the experiment's cell sets.
@@ -139,7 +137,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
       requestBody:
         content:
           application/boschni-json-merger+json:
@@ -149,7 +146,6 @@ paths:
                   items: {}
                 - type: object
         description: The patch in the format declared by boschni/json-merger. Note the explicit naming of the content subtype (boschni-json-merger+json) which must be used to explicitly acknowledge the format.
-
   '/experiments/{experimentId}/processingConfig':
     get:
       summary: Get processing configuration for an experiment
@@ -204,7 +200,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
     put:
       summary: Update processing configuration for an experiment
       description: Update processing configuration for an experiment
@@ -255,8 +250,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
-  '/experiments':
+  /experiments:
     get:
       summary: Get all experiments
       description: Get all experiments that the user can access
@@ -294,8 +288,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
-  '/experiments/examples':
+  /experiments/examples:
     get:
       summary: Get all example experiments
       description: Get all experiments that are for demonstration
@@ -333,7 +326,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
   '/experiments/{experimentId}':
     get:
       summary: Get an experiment
@@ -385,7 +377,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
     post:
       summary: Create experiment
       description: Create a new experiment
@@ -429,7 +420,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
     patch:
       summary: Patch an experiment
       description: Update some properties in an experiment
@@ -485,7 +475,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
     delete:
       summary: Delete an experiment
       description: Delete an experiment
@@ -536,11 +525,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
   '/experiments/{experimentId}/backendStatus':
     get:
       summary: Get backend status for an experiment
-      description: Get the status fo qc, gem2s and the worker for an experiment
+      description: 'Get the status fo qc, gem2s and the worker for an experiment'
       operationId: getBackendStatus
       x-eov-operation-id: experiment#getBackendStatus
       x-eov-operation-handler: routes/experiment
@@ -583,7 +571,6 @@ paths:
         in: path
         required: true
         description: ID of the experiment
-        
   '/experiments/{experimentId}/samples':
     get:
       summary: Get samples for an experiment
@@ -635,7 +622,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
   '/experiments/{experimentId}/samples/{sampleId}':
     post:
       summary: Create sample
@@ -698,7 +684,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
     patch:
       summary: Patch sample
       description: Patch sample for an experiment
@@ -764,7 +749,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
     delete:
       summary: Delete sample
       description: Delete sample for an experiment
@@ -821,7 +805,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
   '/experiments/{experimentId}/samples/position':
     put:
       summary: Update position for a sample
@@ -887,7 +870,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
   '/experiments/{experimentId}/samples/options':
     put:
       summary: Update options for samples in an experiment
@@ -944,8 +926,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
-
   '/experiments/{experimentId}/samples/{sampleId}/files/{sampleFileType}/downloadUrl':
     get:
       summary: Get file download url
@@ -1006,7 +986,7 @@ paths:
   '/experiments/{experimentId}/metadataTracks/{metadataTrackKey}':
     post:
       summary: Creates a new metadata track
-      description: Creates a new metadata track, no requestBody required
+      description: 'Creates a new metadata track, no requestBody required'
       operationId: createMetadataTrack
       x-eov-operation-id: metadataTrack#createMetadataTrack
       x-eov-operation-handler: routes/metadataTrack
@@ -1129,7 +1109,7 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
     delete:
       summary: Deletes a metadata track
-      description: Deletes a metadata track, no requestBody required
+      description: 'Deletes a metadata track, no requestBody required'
       operationId: deleteMetadataTrack
       x-eov-operation-id: metadataTrack#deleteMetadataTrack
       x-eov-operation-handler: routes/metadataTrack
@@ -1260,7 +1240,7 @@ paths:
   '/experiments/{experimentId}/samples/{sampleId}/sampleFiles/{sampleFileType}':
     post:
       summary: Create a new file for a sample
-      description: Set a new file for a sample, returns signed url to upload sample file
+      description: 'Set a new file for a sample, returns signed url to upload sample file'
       operationId: createFile
       parameters:
         - name: experimentId
@@ -1395,7 +1375,7 @@ paths:
   '/experiments/{experimentId}/clone':
     post:
       summary: Clone an experiment
-      description: Clone an experiment, returns the id of the new experiment
+      description: 'Clone an experiment, returns the id of the new experiment'
       operationId: cloneExperiment
       x-eov-operation-id: experiment#clone
       x-eov-operation-handler: routes/experiment
@@ -1590,7 +1570,6 @@ paths:
               required:
                 - userEmail
         description: email of the user to remove from experiment
-
   /access/post-registration:
     post:
       summary: Endpoint for handling post-registration
@@ -1633,7 +1612,6 @@ paths:
                 userId:
                   type: string
                   minLength: 1
-
   '/workResults/{experimentId}/{ETag}':
     get:
       summary: Get the work results from S3
@@ -1696,7 +1674,7 @@ paths:
             type: string
           in: path
           required: true
-      requestBody: 
+      requestBody:
         content:
           application/json:
             schema:
@@ -1832,7 +1810,6 @@ paths:
             schema:
               $ref: '#/components/schemas/PlotConfig'
         description: The new configuration to update the old one by.
-
   '/experiments/{experimentId}/qc':
     parameters:
       - schema:
@@ -1871,7 +1848,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
   /gem2sResults:
     post:
       summary: Retrieve results from pipeline step functions
@@ -1889,6 +1865,10 @@ paths:
           text/plain:
             schema:
               type: string
+          application/json:
+            schema:
+              type: object
+              properties: {}
       responses:
         '200':
           description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
@@ -1907,8 +1887,8 @@ paths:
     parameters: []
   /pipelineResults:
     post:
-      summary: Placeholder endpoint for qc, necessary so subscriptions to sns work
-      description: Placeholder endpoint for qc, necessary so subscriptions to sns work
+      summary: 'Placeholder endpoint for qc, necessary so subscriptions to sns work'
+      description: 'Placeholder endpoint for qc, necessary so subscriptions to sns work'
       operationId: receiveQCResponse
       x-eov-operation-id: qc#response
       x-eov-operation-handler: routes/qc
@@ -1919,6 +1899,10 @@ paths:
           text/plain:
             schema:
               type: string
+          application/json:
+            schema:
+              type: object
+              properties: {}
       responses:
         '200':
           description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
@@ -1986,7 +1970,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-
   /kubernetesEvents:
     post:
       summary: Monitoring of kubernetes cluster events
@@ -2009,28 +1992,55 @@ paths:
               schema:
                 type: string
                 pattern: nok
-
+  /programmaticInterfaceClient:
+    get:
+      summary: Retrieve the Cognito app client info for the programmatic interface
+      description: Returns the information required to connect to the programmatic interface cognito client.
+      operationId: getProgrammaticInterfaceClient
+      x-eov-operation-id: programmaticInterface#getClient
+      x-eov-operation-handler: routes/programmaticInterface
+      responses:
+        '200':
+          description: The server successfully retrieved the programmatic client ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clientId:
+                    type: string
+                  clientRegion:
+                    type: string
+                required:
+                  - clientId
+                  - clientRegion
+        '500':
+          description: The server did not manage to retrieve the programmatic client ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
 components:
   schemas:
     CreateExperiment:
-      $ref: './models/experiment-bodies/CreateExperiment.v2.yaml'
+      $ref: ./models/experiment-bodies/CreateExperiment.v2.yaml
     ExperimentInfo:
-      $ref: './models/experiment-bodies/ExperimentInfo.v2.yaml'
+      $ref: ./models/experiment-bodies/ExperimentInfo.v2.yaml
     PatchExperiment:
-      $ref: './models/experiment-bodies/PatchExperiment.v2.yaml'
+      $ref: ./models/experiment-bodies/PatchExperiment.v2.yaml
     ProcessingConfig:
-      $ref: './models/experiment-bodies/ProcessingConfig.v2.yaml'
+      $ref: ./models/experiment-bodies/ProcessingConfig.v2.yaml
     ExperimentsList:
-      $ref: './models/experiment-bodies/ExperimentsList.v2.yaml'
+      $ref: ./models/experiment-bodies/ExperimentsList.v2.yaml
     CreateSample:
-      $ref: './models/samples-bodies/CreateSample.v2.yaml'
+      $ref: ./models/samples-bodies/CreateSample.v2.yaml
     GetSamples:
       items:
         $ref: ./models/samples-bodies/Sample.v2.yaml
     CreateSampleFile:
-      $ref: './models/samples-bodies/CreateSampleFile.v2.yaml'
+      $ref: ./models/samples-bodies/CreateSampleFile.v2.yaml
     PatchSampleFile:
-      $ref: './models/samples-bodies/PatchSampleFile.v2.yaml'
+      $ref: ./models/samples-bodies/PatchSampleFile.v2.yaml
     UpdateSamplesOptions:
       $ref: ./models/samples-bodies/UpdateSamplesOptions.v2.yaml
     CellSets:
@@ -2038,6 +2048,6 @@ components:
     PlotConfig:
       $ref: ./models/plots-bodies/PlotConfig.v2.yaml
     HTTPSuccess:
-      $ref: './models/HTTPSuccess.v2.yaml'
+      $ref: ./models/HTTPSuccess.v2.yaml
     HTTPError:
-      $ref: './models/HTTPError.v2.yaml'
+      $ref: ./models/HTTPError.v2.yaml
