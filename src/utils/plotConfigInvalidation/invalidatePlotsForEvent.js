@@ -112,7 +112,7 @@ const configInvalidatorsByEvent = {
       cellSetsChangingActions.map((func) => func(experimentId)),
     )),
   [events.EMBEDDING_MODIFIED]: async (experimentId) => (
-    await invalidateTrajectoryAnalysis(experimentId)
+    await Promise.all([invalidateTrajectoryAnalysis(experimentId)])
   ),
 };
 
