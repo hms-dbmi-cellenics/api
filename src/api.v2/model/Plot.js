@@ -62,17 +62,16 @@ class Plot extends BasicModel {
     let newConfig;
 
     await this.sql.transaction(async (trx) => {
-      const plot = await trx(tableNames.PLOT)
+      const result = await trx(tableNames.PLOT)
         .select(['config'])
-        .where({ id: plotUuid, experiment_id: experimentId })
-        .first();
+        .where({ id: plotUuid, experiment_id: experimentId });
 
-      if (_.isNil(plot)) {
+      if (result.length === 0) {
         logger.log(`Experiment ${experimentId}, plot ${plotUuid}. No config stored so skipping invalidation.`);
         return;
       }
 
-      const { config } = plot;
+      const { config } = result[0];
 
       invalidatedKeys.forEach((key) => {
         delete config[key];
