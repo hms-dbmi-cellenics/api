@@ -4,8 +4,6 @@ const getLogger = require('../../utils/getLogger');
 const logger = getLogger();
 const validateAndSubmitWork = require('./validateAndSubmitWork');
 const { authenticationMiddlewareSocketIO, authorize } = require('../middlewares/authMiddlewares');
-const invalidatePlotsForEvent = require('../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
-const events = require('../../utils/plotConfigInvalidation/events');
 
 const handleWorkRequest = async (socket, data, xraySegment) => {
   const { uuid, Authorization, experimentId } = data;
@@ -26,10 +24,6 @@ const handleWorkRequest = async (socket, data, xraySegment) => {
         trace: AWSXRay.getSegment().trace_id,
       },
     });
-
-    if (data.body.name === 'GetEmbedding') {
-      await invalidatePlotsForEvent(experimentId, events.EMBEDDING_MODIFIED, socket);
-    }
   } catch (e) {
     logger.log(`[REQ ??, SOCKET ${socket.id}] Error while processing WorkRequest event.`);
     logger.trace(e);

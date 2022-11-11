@@ -9,6 +9,8 @@ const sqlClient = require('../../sql/sqlClient');
 
 const getExperimentBackendStatus = require('../helpers/backendStatus/getExperimentBackendStatus');
 const Sample = require('../model/Sample');
+const invalidatePlotsForEvent = require('../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
+const events = require('../../utils/plotConfigInvalidation/events');
 
 const logger = getLogger('[ExperimentController] - ');
 
@@ -112,10 +114,14 @@ const getProcessingConfig = async (req, res) => {
 };
 
 const updateProcessingConfig = async (req, res) => {
-  const { params: { experimentId }, body } = req;
+  const { params: { experimentId }, body: changes } = req;
   logger.log('Updating processing config for experiment ', experimentId);
 
-  await new Experiment().updateProcessingConfig(experimentId, body);
+  await new Experiment().updateProcessingConfig(experimentId, changes);
+
+  if (changes.find((change) => change.name === 'configureEmbedding')) {
+    await invalidatePlotsForEvent(experimentId, events.EMBEDDING_MODIFIED);
+  }
 
   logger.log('Finished updating processing config for experiment ', experimentId);
   res.json(OK());

@@ -207,9 +207,9 @@ class Experiment extends BasicModel {
     return { podCpus, podMemory };
   }
 
-  async updateProcessingConfig(experimentId, body) {
-    const { name: stepName, body: change } = body[0];
-    const updateString = JSON.stringify({ [stepName]: change });
+  async updateProcessingConfig(experimentId, changes) {
+    const { name: stepName, body: update } = changes[0];
+    const updateString = JSON.stringify({ [stepName]: update });
 
     await this.sql(tableNames.EXPERIMENT)
       .update({
