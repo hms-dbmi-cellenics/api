@@ -5,7 +5,7 @@ const signedUrl = require('../../../../src/api.v2/helpers/s3/signedUrl');
 const AWS = require('../../../../src/utils/requireAWS');
 const { NotFoundError } = require('../../../../src/utils/responses');
 
-const { getSignedUrl, getSampleFileDownloadUrl } = signedUrl;
+const { getSignedUrl, getSampleFileDownloadUrl, getSampleFileUploadUrls } = signedUrl;
 const sampleFileInstance = new SampleFile();
 
 jest.mock('../../../../src/api.v2/model/SampleFile');
@@ -69,42 +69,41 @@ describe('getSignedUrl', () => {
   });
 });
 
-// describe('getSampleFileUploadUrls', () => {
-//   const mockSampleFileId = 'mockSampleFileId';
+describe('getSampleFileUploadUrls', () => {
+  const mockSampleFileId = 'mockSampleFileId';
 
-//   const signedUrlResponse = ['signedUrl'];
+  const signedUrlResponse = { signedUrls: ['signedUrl'], uploadId: 'uploadId' };
 
-//   const createMultipartUploadSpy = jest.fn();
-//   createMultipartUploadSpy.promise = jest.fn();
-//   const getSignedUrlPromiseSpy = jest.fn();
+  const createMultipartUploadSpy = jest.fn();
+  const getSignedUrlPromiseSpy = jest.fn();
 
-//   beforeEach(() => {
-//     createMultipartUploadSpy.promise.mockResolvedValue({ UploadId: 'uploadId' });
-//     getSignedUrlPromiseSpy.mockResolvedValue('signedUrl');
+  beforeEach(() => {
+    createMultipartUploadSpy.mockReturnValue({ promise: jest.fn().mockReturnValue({ UploadId: 'uploadId' }) });
+    getSignedUrlPromiseSpy.mockReturnValue('signedUrl');
 
-//     AWS.S3.mockReset();
-//     AWS.S3.mockImplementation(() => ({
-//       createMultipartUpload: createMultipartUploadSpy,
-//       getSignedUrlPromise: getSignedUrlPromiseSpy,
-//     }));
-//   });
+    AWS.S3.mockReset();
+    AWS.S3.mockImplementation(() => ({
+      createMultipartUpload: createMultipartUploadSpy,
+      getSignedUrlPromise: getSignedUrlPromiseSpy,
+    }));
+  });
 
-//   it('works correctly without metadata', async () => {
-//     const response = await getSampleFileUploadUrls(mockSampleFileId, {}, 1);
+  it('works correctly without metadata', async () => {
+    const response = await getSampleFileUploadUrls(mockSampleFileId, {}, 1);
 
-//     expect(response).toEqual(signedUrlResponse);
-//     expect(createMultipartUploadSpy).toMatchSnapshot();
-//     expect(getSignedUrlPromiseSpy).toMatchSnapshot();
-//   });
+    expect(response).toEqual(signedUrlResponse);
+    expect(createMultipartUploadSpy).toMatchSnapshot();
+    expect(getSignedUrlPromiseSpy).toMatchSnapshot();
+  });
 
-//   it('works correctly with metadata cellrangerVersion', () => {
-//     const response = getSampleFileUploadUrls(mockSampleFileId, { cellrangerVersion: 'v2' }, 1);
+  it('works correctly with metadata cellrangerVersion', async () => {
+    const response = await getSampleFileUploadUrls(mockSampleFileId, { cellrangerVersion: 'v2' }, 1);
 
-//     expect(response).toEqual(signedUrlResponse);
-//     expect(createMultipartUploadSpy).toMatchSnapshot();
-//     expect(getSignedUrlPromiseSpy).toMatchSnapshot();
-//   });
-// });
+    expect(response).toEqual(signedUrlResponse);
+    expect(createMultipartUploadSpy).toMatchSnapshot();
+    expect(getSignedUrlPromiseSpy).toMatchSnapshot();
+  });
+});
 
 
 describe('getSampleFileDownloadUrl', () => {

@@ -11,7 +11,7 @@ const experimentExecutionInstance = new ExperimentExecution();
 
 const mockStepNames = getQcPipelineStepNames();
 
-const { createQCPipeline, createGem2SPipeline } = jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
+const { createQCPipeline, createGem2SPipeline, createSeuratObjectPipeline } = jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
@@ -84,7 +84,16 @@ describe('test for pipeline services', () => {
     },
   ];
 
-  const taskParams = {
+  const gem2sTaskParams = {
+    projectId: 'test-project',
+    experimentName: 'valerio-massala',
+    organism: null,
+    input: { type: '10x' },
+    sampleIds: ['3af6b6bb-a1aa-4375-9c2c-c112bada56ca'],
+    sampleNames: ['sample-1'],
+  };
+
+  const seuratTaskParams = {
     projectId: 'test-project',
     experimentName: 'valerio-massala',
     organism: null,
@@ -269,7 +278,47 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-machine' });
     });
 
-    await createGem2SPipeline('testExperimentId', taskParams);
+    await createGem2SPipeline('testExperimentId', gem2sTaskParams);
+    expect(describeClusterSpy).toMatchSnapshot();
+
+    expect(createStateMachineSpy.mock.results).toMatchSnapshot();
+
+    expect(createActivitySpy).toHaveBeenCalled();
+    expect(startExecutionSpy).toHaveBeenCalled();
+    expect(startExecutionSpy.mock.results).toMatchSnapshot();
+  });
+
+  it('Create Seurat pipeline works', async () => {
+    AWSMock.setSDKInstance(AWS);
+
+    const describeClusterSpy = jest.fn((x) => x);
+    AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
+      describeClusterSpy(params);
+      callback(null, mockCluster);
+    });
+
+    const createStateMachineSpy = jest.fn(
+      (stateMachineObject) => _.omit(stateMachineObject, ['definition', 'image']),
+    );
+
+    AWSMock.mock('StepFunctions', 'createStateMachine', (params, callback) => {
+      createStateMachineSpy(params);
+      callback(null, { stateMachineArn: 'test-machine' });
+    });
+
+    const createActivitySpy = jest.fn((x) => x);
+    AWSMock.mock('StepFunctions', 'createActivity', (params, callback) => {
+      createActivitySpy(params);
+      callback(null, { activityArn: 'test-actvitiy' });
+    });
+
+    const startExecutionSpy = jest.fn((x) => x);
+    AWSMock.mock('StepFunctions', 'startExecution', (params, callback) => {
+      startExecutionSpy(params);
+      callback(null, { executionArn: 'test-machine' });
+    });
+
+    await createSeuratObjectPipeline('testExperimentId', seuratTaskParams);
     expect(describeClusterSpy).toMatchSnapshot();
 
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
@@ -315,7 +364,55 @@ describe('test for pipeline services', () => {
 
     createGem2SPipeline.waitForDefinitionToPropagate = () => true;
 
-    await createGem2SPipeline('testExperimentId', taskParams);
+    await createGem2SPipeline('testExperimentId', gem2sTaskParams);
+
+    expect(describeClusterSpy).toMatchSnapshot();
+    expect(createStateMachineSpy.mock.results).toMatchSnapshot();
+
+    expect(updateStateMachineSpy).toHaveBeenCalled();
+    expect(updateStateMachineSpy.mock.results).toMatchSnapshot();
+
+    expect(createActivitySpy).toHaveBeenCalled();
+    expect(startExecutionSpy).toHaveBeenCalled();
+    expect(startExecutionSpy.mock.results).toMatchSnapshot();
+  });
+
+  it('Seurat Pipeline is updated instead of created if an error is thrown.', async () => {
+    AWSMock.setSDKInstance(AWS);
+
+    const describeClusterSpy = jest.fn((x) => x);
+    AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
+      describeClusterSpy(params);
+      callback(null, mockCluster);
+    });
+
+    const createStateMachineSpy = jest.fn((stateMachineObject) => _.omit(stateMachineObject, 'definition'));
+    AWSMock.mock('StepFunctions', 'createStateMachine', (params, callback) => {
+      createStateMachineSpy(params);
+      callback({ code: 'StateMachineAlreadyExists' }, null);
+    });
+
+    const updateStateMachineSpy = jest.fn((stateMachineObject) => _.omit(stateMachineObject, 'definition'));
+    AWSMock.mock('StepFunctions', 'updateStateMachine', (params, callback) => {
+      updateStateMachineSpy(params);
+      callback(null, { stateMachineArn: 'test-machine' });
+    });
+
+    const createActivitySpy = jest.fn((x) => x);
+    AWSMock.mock('StepFunctions', 'createActivity', (params, callback) => {
+      createActivitySpy(params);
+      callback(null, { activityArn: 'test-actvitiy' });
+    });
+
+    const startExecutionSpy = jest.fn((x) => x);
+    AWSMock.mock('StepFunctions', 'startExecution', (params, callback) => {
+      startExecutionSpy(params);
+      callback(null, { executionArn: 'test-execution' });
+    });
+
+    createSeuratObjectPipeline.waitForDefinitionToPropagate = () => true;
+
+    await createSeuratObjectPipeline('testExperimentId', seuratTaskParams);
 
     expect(describeClusterSpy).toMatchSnapshot();
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
