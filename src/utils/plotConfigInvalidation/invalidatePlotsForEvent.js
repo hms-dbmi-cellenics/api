@@ -109,10 +109,13 @@ const configInvalidatorsByEvent = {
     // and we want a simple array with each config updated
     await Promise.all(
       cellSetsChangingActions.map((func) => func(experimentId)),
-    )).flat(),
+    )
+  ).flat(),
   [events.EMBEDDING_MODIFIED]: async (experimentId) => (
-    await Promise.all([invalidateTrajectoryAnalysis(experimentId)])
-  ),
+    await Promise.all([
+      invalidateTrajectoryAnalysis(experimentId),
+    ])
+  ).flat(),
 };
 
 const invalidatePlotsForEvent = async (experimentId, event, sockets) => {

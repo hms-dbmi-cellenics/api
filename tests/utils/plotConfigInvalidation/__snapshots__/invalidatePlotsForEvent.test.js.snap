@@ -82,3 +82,15 @@ Array [
   ],
 ]
 `;
+
+exports[`invalidatePlotsForEvent Works correctly for EMBEDDING_MODIFIED: invalidateAttributesForMatches calls 1`] = `
+Array [
+  Array [
+    "mockExperimentId",
+    "trajectoryAnalysisMain",
+    Array [
+      "selectedNodes",
+    ],
+  ],
+]
+`;

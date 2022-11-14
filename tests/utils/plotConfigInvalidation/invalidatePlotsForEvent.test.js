@@ -16,10 +16,16 @@ const mockExperimentId = 'mockExperimentId';
 const mockSockets = { emit: jest.fn() };
 
 describe('invalidatePlotsForEvent', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('Works correctly for CELL_SETS_MODIFIED', async () => {
-    _.times(Object.keys(invalidationResults).length, () => {
+    const cellSetsResults = invalidationResults[events.CELL_SETS_MODIFIED];
+
+    _.times(Object.keys(cellSetsResults).length, () => {
       plotInstance.invalidateAttributesForMatches.mockImplementationOnce((expId, plotIdMatcher) => (
-        Promise.resolve(invalidationResults[plotIdMatcher])
+        Promise.resolve(cellSetsResults[plotIdMatcher])
       ));
     });
 
@@ -32,11 +38,29 @@ describe('invalidatePlotsForEvent', () => {
     // Notifies clients looking at the experiment of the update
     expect(mockSockets.emit).toHaveBeenCalledWith(
       `ExperimentUpdates-${mockExperimentId}`,
-      { type: 'PlotConfigRefresh', updatedConfigs: Object.values(invalidationResults).flat() },
+      { type: 'PlotConfigRefresh', updatedConfigs: Object.values(cellSetsResults).flat() },
     );
   });
 
   it('Works correctly for EMBEDDING_MODIFIED', async () => {
+    const embeddingResults = invalidationResults[events.EMBEDDING_MODIFIED];
 
+    _.times(Object.keys(embeddingResults).length, () => {
+      plotInstance.invalidateAttributesForMatches.mockImplementationOnce((expId, plotIdMatcher) => (
+        Promise.resolve(embeddingResults[plotIdMatcher])
+      ));
+    });
+
+    await invalidatePlotsForEvent(
+      mockExperimentId, events.EMBEDDING_MODIFIED, mockSockets,
+    );
+
+    expect(plotInstance.invalidateAttributesForMatches.mock.calls).toMatchSnapshot({}, 'invalidateAttributesForMatches calls');
+
+    // Notifies clients looking at the experiment of the update
+    expect(mockSockets.emit).toHaveBeenCalledWith(
+      `ExperimentUpdates-${mockExperimentId}`,
+      { type: 'PlotConfigRefresh', updatedConfigs: Object.values(embeddingResults).flat() },
+    );
   });
 });
