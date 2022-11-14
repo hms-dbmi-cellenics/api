@@ -7,6 +7,9 @@ const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 const getPipelineStatus = require('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 const getWorkerStatus = require('../../../src/api.v2/helpers/worker/getWorkerStatus');
 
+const invalidatePlotsForEvent = require('../../../src/utils/plotConfigInvalidation/invalidatePlotsForEvent');
+const events = require('../../../src/utils/plotConfigInvalidation/events');
+
 const bucketNames = require('../../../src/config/bucketNames');
 
 const experimentInstance = Experiment();
@@ -33,6 +36,8 @@ jest.mock('../../../src/sql/sqlClient', () => ({
 }));
 jest.mock('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 jest.mock('../../../src/api.v2/helpers/worker/getWorkerStatus');
+
+jest.mock('../../../src/utils/plotConfigInvalidation/invalidatePlotsForEvent');
 
 const getExperimentResponse = require('../mocks/data/getExperimentResponse.json');
 const getAllExperimentsResponse = require('../mocks/data/getAllExperimentsResponse.json');
@@ -254,6 +259,40 @@ describe('experimentController', () => {
     await experimentController.updateProcessingConfig(mockReq, mockRes);
     expect(experimentInstance.updateProcessingConfig).toHaveBeenCalledWith(
       mockExperiment.id, mockReq.body,
+    );
+
+    // If configureEmbedding isnt included in changes, then invalidate isnt called
+    expect(invalidatePlotsForEvent).not.toHaveBeenCalled();
+  });
+
+  it('updateProcessingConfig works when ConfigureEmbedding is updated', async () => {
+    experimentInstance.updateProcessingConfig.mockImplementationOnce(() => Promise.resolve());
+
+    const mockSockets = 'mockSockets';
+    const mockIo = { sockets: mockSockets };
+    const mockReq = {
+      params: {
+        experimentId: mockExperiment.id,
+      },
+      body: [{
+        name: 'configureEmbedding',
+        body: {
+          someChangedField: 'a value',
+        },
+      }],
+      app: { get: jest.fn(() => mockIo) },
+    };
+
+    await experimentController.updateProcessingConfig(mockReq, mockRes);
+
+    expect(experimentInstance.updateProcessingConfig).toHaveBeenCalledWith(
+      mockExperiment.id, mockReq.body,
+    );
+
+    expect(invalidatePlotsForEvent).toHaveBeenCalledWith(
+      mockExperiment.id,
+      events.EMBEDDING_MODIFIED,
+      mockSockets,
     );
   });
 
