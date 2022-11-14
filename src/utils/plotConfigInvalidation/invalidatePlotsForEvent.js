@@ -6,44 +6,43 @@ const logger = getLogger('[invalidatePlotsForEvent] - ');
 
 const plots = {
   CATEGORICAL_EMBEDDING: {
-    plotId: 'embeddingCategoricalMain',
+    plotIdMatcher: 'embeddingCategoricalMain',
     keys: ['selectedSample', 'selectedCellSet'],
   },
   FREQUENCY_PLOT: {
-    plotId: 'frequencyPlotMain',
+    plotIdMatcher: 'frequencyPlotMain',
     keys: ['xAxisGrouping', 'proportionGrouping'],
   },
   TRAJECTORY_ANALYSIS: {
-    plotId: 'trajectoryAnalysisMain',
+    plotIdMatcher: 'trajectoryAnalysisMain',
     keys: ['selectedNodes'],
   },
   CONTINUOUS_EMBEDDING: {
-    plotId: 'embeddingContinuousMain',
+    plotIdMatcher: 'embeddingContinuousMain',
     keys: ['selectedSample'],
   },
   MARKER_HEATMAP: {
-    plotId: 'markerHeatmapPlotMain',
+    plotIdMatcher: 'markerHeatmapPlotMain',
     keys: ['selectedPoints', 'selectedCellSet', 'selectedTracks', 'groupedTracks'],
   },
   CUSTOM_HEATMAP: {
-    plotId: 'heatmapPlotMain',
+    plotIdMatcher: 'heatmapPlotMain',
     keys: ['selectedPoints', 'selectedCellSet', 'selectedTracks', 'groupedTracks'],
   },
   VIOLIN_PLOT: {
     plotIdMatcher: 'ViolinMain%',
     keys: ['selectedPoints', 'selectedCellSet'],
   },
-  // '// ViolinMain-0:',
   DOT_PLOT: {
-    plotId: 'dotPlotMain',
+    plotIdMatcher: 'dotPlotMain',
     keys: ['selectedPoints', 'selectedCellSet'],
   },
   NORMALIZED_MATRIX: {
-    plotId: 'normalized-matrix',
+    plotIdMatcher: 'normalized-matrix',
     keys: ['sample', 'louvain', 'metadata', 'scratchpad'],
   },
   VOLCANO_PLOT: {
-    plotId: 'volcanoPlotMain',
+    plotIdMatcher: 'volcanoPlotMain',
     keys: ['cellSet', 'compareWith', 'basis'],
   },
 };
@@ -52,34 +51,28 @@ const invalidateMatchingPlots = async (experimentId, { plotIdMatcher, keys }) =>
   await new Plot().invalidateAttributesForMatches(experimentId, plotIdMatcher, keys)
 );
 
-const invalidatePlot = async (experimentId, { plotId, keys }) => {
-  const updatedConfig = await new Plot().invalidateAttributes(experimentId, plotId, keys);
-
-  return { plotId, updatedConfig };
-};
-
 const invalidateCategoricalEmbedding = async (experimentId) => (
-  await invalidatePlot(experimentId, plots.CATEGORICAL_EMBEDDING)
+  await invalidateMatchingPlots(experimentId, plots.CATEGORICAL_EMBEDDING)
 );
 
 const invalidateFrequencyPlot = async (experimentId) => (
-  await invalidatePlot(experimentId, plots.FREQUENCY_PLOT)
+  await invalidateMatchingPlots(experimentId, plots.FREQUENCY_PLOT)
 );
 
 const invalidateTrajectoryAnalysis = async (experimentId) => (
-  await invalidatePlot(experimentId, plots.TRAJECTORY_ANALYSIS)
+  await invalidateMatchingPlots(experimentId, plots.TRAJECTORY_ANALYSIS)
 );
 
 const invalidateContinuousEmbedding = async (experimentId) => (
-  await invalidatePlot(experimentId, plots.CONTINUOUS_EMBEDDING)
+  await invalidateMatchingPlots(experimentId, plots.CONTINUOUS_EMBEDDING)
 );
 
 const invalidateMarkerHeatmapPlot = async (experimentId) => (
-  await invalidatePlot(experimentId, plots.MARKER_HEATMAP)
+  await invalidateMatchingPlots(experimentId, plots.MARKER_HEATMAP)
 );
 
 const invalidateCustomHeatmapPlot = async (experimentId) => (
-  await invalidatePlot(experimentId, plots.CUSTOM_HEATMAP)
+  await invalidateMatchingPlots(experimentId, plots.CUSTOM_HEATMAP)
 );
 
 const invalidateViolinPlot = async (experimentId) => (
@@ -87,15 +80,15 @@ const invalidateViolinPlot = async (experimentId) => (
 );
 
 const invalidateDotPlot = async (experimentId) => (
-  await invalidatePlot(experimentId, plots.DOT_PLOT)
+  await invalidateMatchingPlots(experimentId, plots.DOT_PLOT)
 );
 
 const invalidateNormalizedMatrix = async (experimentId) => (
-  await invalidatePlot(experimentId, plots.NORMALIZED_MATRIX)
+  await invalidateMatchingPlots(experimentId, plots.NORMALIZED_MATRIX)
 );
 
 const invalidateVolcanoPlot = async (experimentId) => (
-  await invalidatePlot(experimentId, plots.VOLCANO_PLOT)
+  await invalidateMatchingPlots(experimentId, plots.VOLCANO_PLOT)
 );
 
 const cellSetsChangingActions = [
@@ -112,8 +105,8 @@ const cellSetsChangingActions = [
 
 const configInvalidatorsByEvent = {
   [events.CELL_SETS_MODIFIED]: async (experimentId) => (
-    // return result flattened because violin returns an array with configs
-    // so we want each config to be together
+    // flatten because results are arrays of arrays (for each config updated for each plot type)
+    // and we want a simple array with each config updated
     await Promise.all(
       cellSetsChangingActions.map((func) => func(experimentId)),
     )).flat(),

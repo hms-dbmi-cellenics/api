@@ -68,53 +68,25 @@ class Plot extends BasicModel {
         .where({ experiment_id: experimentId })
         .andWhereLike('id', plotIdMatcher);
 
+      logger.log(`Invalidating config for ${results.length} plots`);
+
       const updatedConfigs = await Promise.all(results.map(async ({ id, config }) => {
         invalidatedKeys.forEach((key) => {
           delete config[key];
         });
 
-        const [updateResult] = await trx(tableNames.PLOT)
+        const [updatedConfig] = await trx(tableNames.PLOT)
           .update({ config })
           .where({ id, experiment_id: experimentId })
           .returning(['id', 'config']);
 
-        return updateResult;
+        return updatedConfig;
       }));
 
       newConfigs = updatedConfigs;
     });
 
     return newConfigs;
-  }
-
-  async invalidateAttributes(experimentId, plotId, invalidatedKeys) {
-    let newConfig;
-
-    await this.sql.transaction(async (trx) => {
-      const result = await trx(tableNames.PLOT)
-        .select(['config'])
-        .where({ id: plotId, experiment_id: experimentId });
-
-      if (result.length === 0) {
-        logger.log(`Experiment ${experimentId}, plot ${plotId}. No config stored so skipping invalidation.`);
-        return;
-      }
-
-      const { config } = result[0];
-
-      invalidatedKeys.forEach((key) => {
-        delete config[key];
-      });
-
-      const results = await trx(tableNames.PLOT)
-        .update({ config })
-        .where({ id: plotId, experiment_id: experimentId })
-        .returning(['config']);
-
-      newConfig = results[0].config;
-    });
-
-    return newConfig;
   }
 }
 
