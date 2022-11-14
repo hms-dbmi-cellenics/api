@@ -63,14 +63,14 @@ class Plot extends BasicModel {
     let newConfigs;
 
     await this.sql.transaction(async (trx) => {
-      const results = await trx(tableNames.PLOT)
+      const matches = await trx(tableNames.PLOT)
         .select(['id', 'config'])
         .where({ experiment_id: experimentId })
         .andWhereLike('id', plotIdMatcher);
 
-      logger.log(`Invalidating config for ${results.length} plots`);
+      logger.log(`Plot matcher: ${plotIdMatcher}. Invalidating config for ${matches.length} plots`);
 
-      const updatedConfigs = await Promise.all(results.map(async ({ id, config }) => {
+      const updatedConfigs = await Promise.all(matches.map(async ({ id, config }) => {
         invalidatedKeys.forEach((key) => {
           delete config[key];
         });
