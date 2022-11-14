@@ -60,7 +60,7 @@ class Plot extends BasicModel {
   }
 
   async invalidateAttributesForMatches(experimentId, plotIdMatcher, invalidatedKeys) {
-    let newConfigs;
+    let configsToReturn;
 
     await this.sql.transaction(async (trx) => {
       const matches = await trx(tableNames.PLOT)
@@ -83,10 +83,10 @@ class Plot extends BasicModel {
         return updatedConfig;
       }));
 
-      newConfigs = updatedConfigs;
+      configsToReturn = updatedConfigs;
     });
 
-    return newConfigs;
+    return configsToReturn;
   }
 }
 
