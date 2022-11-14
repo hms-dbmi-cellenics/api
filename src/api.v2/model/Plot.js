@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const _ = require('lodash');
 
 const BasicModel = require('./BasicModel');
@@ -25,11 +26,11 @@ class Plot extends BasicModel {
     super(sql, tableNames.PLOT, selectableProps);
   }
 
-  async getConfig(experimentId, plotUuid) {
-    const result = await this.findOne({ id: plotUuid, experiment_id: experimentId });
+  async getConfig(experimentId, plotId) {
+    const result = await this.findOne({ id: plotId, experiment_id: experimentId });
 
     if (_.isNil(result)) {
-      throw new NotFoundError(`Plot ${plotUuid} in experiment ${experimentId} not found`);
+      throw new NotFoundError(`Plot ${plotId} in experiment ${experimentId} not found`);
     }
 
     const { s3DataKey = null, config: plotConfig } = result;
@@ -54,20 +55,48 @@ class Plot extends BasicModel {
     return response;
   }
 
-  async updateConfig(experimentId, plotUuid, plotConfig) {
-    return await this.upsert({ id: plotUuid, experiment_id: experimentId }, { config: plotConfig });
+  async updateConfig(experimentId, plotId, plotConfig) {
+    return await this.upsert({ id: plotId, experiment_id: experimentId }, { config: plotConfig });
   }
 
-  async invalidateAttributes(experimentId, plotUuid, invalidatedKeys) {
+  async invalidateAttributesForMatches(experimentId, plotIdMatcher, invalidatedKeys) {
+    let newConfigs;
+
+    await this.sql.transaction(async (trx) => {
+      const results = await trx(tableNames.PLOT)
+        .select(['id', 'config'])
+        .where({ experiment_id: experimentId })
+        .andWhereLike('id', plotIdMatcher);
+
+      const updatedConfigs = await Promise.all(results.map(async ({ id, config }) => {
+        invalidatedKeys.forEach((key) => {
+          delete config[key];
+        });
+
+        const [updateResult] = await trx(tableNames.PLOT)
+          .update({ config })
+          .where({ id, experiment_id: experimentId })
+          .returning(['id', 'config']);
+
+        return updateResult;
+      }));
+
+      newConfigs = updatedConfigs;
+    });
+
+    return newConfigs;
+  }
+
+  async invalidateAttributes(experimentId, plotId, invalidatedKeys) {
     let newConfig;
 
     await this.sql.transaction(async (trx) => {
       const result = await trx(tableNames.PLOT)
         .select(['config'])
-        .where({ id: plotUuid, experiment_id: experimentId });
+        .where({ id: plotId, experiment_id: experimentId });
 
       if (result.length === 0) {
-        logger.log(`Experiment ${experimentId}, plot ${plotUuid}. No config stored so skipping invalidation.`);
+        logger.log(`Experiment ${experimentId}, plot ${plotId}. No config stored so skipping invalidation.`);
         return;
       }
 
@@ -79,7 +108,7 @@ class Plot extends BasicModel {
 
       const results = await trx(tableNames.PLOT)
         .update({ config })
-        .where({ id: plotUuid, experiment_id: experimentId })
+        .where({ id: plotId, experiment_id: experimentId })
         .returning(['config']);
 
       newConfig = results[0].config;

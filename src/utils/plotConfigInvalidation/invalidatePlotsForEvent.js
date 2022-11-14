@@ -30,7 +30,7 @@ const plots = {
     keys: ['selectedPoints', 'selectedCellSet', 'selectedTracks', 'groupedTracks'],
   },
   VIOLIN_PLOT: {
-    plotId: 'ViolinMain',
+    plotIdMatcher: 'ViolinMain%',
     keys: ['selectedPoints', 'selectedCellSet'],
   },
   // '// ViolinMain-0:',
@@ -47,6 +47,10 @@ const plots = {
     keys: ['cellSet', 'compareWith', 'basis'],
   },
 };
+
+const invalidateMatchingPlots = async (experimentId, { plotIdMatcher, keys }) => (
+  await new Plot().invalidateAttributesForMatches(experimentId, plotIdMatcher, keys)
+);
 
 const invalidatePlot = async (experimentId, { plotId, keys }) => {
   const updatedConfig = await new Plot().invalidateAttributes(experimentId, plotId, keys);
@@ -79,7 +83,7 @@ const invalidateCustomHeatmapPlot = async (experimentId) => (
 );
 
 const invalidateViolinPlot = async (experimentId) => (
-  await invalidatePlot(experimentId, plots.VIOLIN_PLOT)
+  await invalidateMatchingPlots(experimentId, plots.VIOLIN_PLOT)
 );
 
 const invalidateDotPlot = async (experimentId) => (
@@ -108,9 +112,11 @@ const cellSetsChangingActions = [
 
 const configInvalidatorsByEvent = {
   [events.CELL_SETS_MODIFIED]: async (experimentId) => (
+    // return result flattened because violin returns an array with configs
+    // so we want each config to be together
     await Promise.all(
       cellSetsChangingActions.map((func) => func(experimentId)),
-    )),
+    )).flat(),
   [events.EMBEDDING_MODIFIED]: async (experimentId) => (
     await Promise.all([invalidateTrajectoryAnalysis(experimentId)])
   ),
