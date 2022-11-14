@@ -5,6 +5,7 @@ metadata:
   labels:
     sandboxId: FILLED_IN_BY_CI
 ---
+# GitRepository to watch for chart changes
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
 metadata:
@@ -55,4 +56,54 @@ spec:
       name: account-config
       valuesKey: account-config.yaml
       optional: false
-  # filled in by CI. do not modify.
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageRepository
+metadata:
+  name: FILLED_IN_BY_CI
+  namespace: FILLED_IN_BY_CI
+spec:
+  image: FILLED_IN_BY_CI
+  interval: 2m0s
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: FILLED_IN_BY_CI
+  namespace: FILLED_IN_BY_CI
+spec:
+  imageRepositoryRef:
+    name: FILLED_IN_BY_CI
+  filterTags:
+    pattern: FILLED_IN_BY_CI
+    extract: FILLED_IN_BY_CI
+  policy: FILLED_IN_BY_CI
+---
+# GitRepository to update the helm release in case of image updates
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: FILLED_IN_BY_CI
+  namespace: FILLED_IN_BY_CI
+spec:
+  interval: 2m0s
+  url: https://github.com/biomage-org/flux-v2-migration
+  ref:
+    branch: master
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageUpdateAutomation
+metadata:
+  name: FILLED_IN_BY_CI
+  namespace: FILLED_IN_BY_CI
+spec:
+  interval: 2m0s
+  sourceRef:
+    kind: GitRepository
+    name: FILLED_IN_BY_CI
+    namespace: FILLED_IN_BY_CI
+  git:
+    commit:
+      author:
+        email: ci@biomage.net
+# filled in by CI. do not modify.

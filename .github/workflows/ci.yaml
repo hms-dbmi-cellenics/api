@@ -97,7 +97,7 @@ jobs:
     needs: test
     outputs:
       ref-id: ${{ steps.ref.outputs.ref-id }}
-      commit-sha: ${{ steps.ref.outputs.commit-sha }}
+      image-tag: ${{ steps.ref.outputs.image-tag }}
     steps:
       - id: checkout
         name: Check out source code
@@ -132,8 +132,6 @@ jobs:
             COMMIT_SHA=$GITHUB_SHA
             IMAGE_TAG="$REF_ID-$COMMIT_SHA-$TIMESTAMP"
           fi
-
-          echo "::set-output name=commit-sha::$COMMIT_SHA"
 
           # IMAGE_TAG is used in the Build Docker Image step.
           # We can easily build the image-tag from REF_ID and COMMIT_SHA for non-production releases.
@@ -227,8 +225,10 @@ jobs:
             RDS_SANDBOX_ID="default"
             CHART_REF="master"
             KUBERNETES_ENV="production"
-            IMAGE_TAG="${REF_ID/refs-tags-/}"
-            IMAGE_GLOB="semver:>=0.0.0"
+            IMAGE_PATTERN="^(?P<version>[0-9]+\.[0-9]+\.[0-9])+$"
+            IMAGE_EXTRACT="$version"
+            IMAGE_POLICY_TYPE="semver.range"
+            IMAGE_POLICY_VALUE=">=0.0.0"
             REPLICA_COUNT="4"
           fi
 
@@ -237,7 +237,10 @@ jobs:
             RDS_SANDBOX_ID="default"
             CHART_REF="master"
             KUBERNETES_ENV="staging"
-            IMAGE_TAG="$REF_ID-$COMMIT_SHA"
+            IMAGE_PATTERN="^$REF_ID-[a-f0-9]+-(?P<timestamp>[0-9]+)$"
+            IMAGE_EXTRACT="$timestamp"
+            IMAGE_POLICY_TYPE="numerical.order"
+            IMAGE_POLICY_VALUE="asc"
             IMAGE_GLOB="glob:$REF_ID-*"
             REPLICA_COUNT="2"
           fi
@@ -247,8 +250,10 @@ jobs:
             RDS_SANDBOX_ID="STAGING_RDS_SANDBOX_ID"
             CHART_REF="STAGING_CHART_REF"
             KUBERNETES_ENV="staging"
-            IMAGE_TAG="$REF_ID-$COMMIT_SHA"
-            IMAGE_GLOB="glob:$REF_ID-*"
+            IMAGE_PATTERN="^$REF_ID-[a-f0-9]+-(?P<timestamp>[0-9]+)$"
+            IMAGE_EXTRACT="$timestamp"
+            IMAGE_POLICY_TYPE="numerical.order"
+            IMAGE_POLICY_VALUE="asc"
             REPLICA_COUNT="1"
           fi
 
@@ -258,15 +263,14 @@ jobs:
 
           yq w -d0 .flux.yaml metadata.name "$NAMESPACE" \
           | yq w -d0 - metadata.labels.sandboxId "$SANDBOX_ID" \
-          | yq w -d1 - metadata.name "$DEPLOYMENT_NAME" \
+          | yq w -d1 - metadata.name "$DEPLOYMENT_NAME-chart" \
           | yq w -d1 - metadata.namespace "$NAMESPACE" \
           | yq w -d1 - spec.ref.branch "$CHART_REF" \
           | yq w -d2 - metadata.name "$DEPLOYMENT_NAME" \
           | yq w -d2 - metadata.namespace "$NAMESPACE" \
           | yq w -d2 - metadata.labels.sandboxId "$SANDBOX_ID" \
-          | yq w -d2 - "metadata.annotations[filter.fluxcd.io/chart-image]" "$IMAGE_GLOB" \
           | yq w -d2 - spec.releaseName "$DEPLOYMENT_NAME" \
-          | yq w -d2 - spec.chart.spec.sourceRef.name "$DEPLOYMENT_NAME" \
+          | yq w -d2 - spec.chart.spec.sourceRef.name "$DEPLOYMENT_NAME-chart" \
           | yq w -d2 - spec.chart.spec.sourceRef.namespace "$NAMESPACE" \
           | yq w -d2 - spec.values.kubernetes.env "$KUBERNETES_ENV" \
           | yq w -d2 - spec.values.biomageCi.repo "$GITHUB_REPOSITORY" \
@@ -274,15 +278,30 @@ jobs:
           | yq w -d2 - spec.values.biomageCi.rdsSandboxId "$RDS_SANDBOX_ID" \
           | yq w -d2 - spec.values.image.registry "${{ steps.login-ecr.outputs.registry }}" \
           | yq w -d2 - spec.values.image.repository "$DEPLOYMENT_NAME" \
-          | yq w -d2 - spec.values.image.tag "$IMAGE_TAG" \
+          | yq w -d2 - spec.values.image.tag "$IMAGE_TAG # {\"$imagepolicy": \"$NAMESPACE:$DEPLOYMENT_NAME:tag\"}" \
           | yq w -d2 - spec.values.replicaCount $REPLICA_COUNT \
           | yq w -d2 - spec.values.serviceAccount.iamRole "api-role-$KUBERNETES_ENV" \
+          | yq w -d3 - metadata.name "$DEPLOYMENT_NAME" \
+          | yq w -d3 - metadata.namespace "$NAMESPACE" \
+          | yq w -d3 - spec.image "${{ steps.login-ecr.outputs.registry }}/$DEPLOYMENT_NAME" \
+          | yq w -d4 - metadata.name "$DEPLOYMENT_NAME" \
+          | yq w -d4 - metadata.namespace "$NAMESPACE" \
+          | yq w -d4 - spec.imageRepositoryRef.name "$DEPLOYMENT_NAME" \
+          | yq w -d4 - spec.filterTags.pattern "$IMAGE_PATTERN" \
+          | yq w -d4 - spec.filterTags.extract "$IMAGE_EXTRACT" \
+          | yq w -d4 - "spec.policy.$IMAGE_POLICY_TYPE" "$IMAGE_POLICY_VALUE" \
+          | yq w -d5 - metadata.name "$DEPLOYMENT_NAME-release" \
+          | yq w -d5 - metadata.namespace "$NAMESPACE" \
+          | yq w -d6 - metadata.name "$DEPLOYMENT_NAME" \
+          | yq w -d6 - metadata.namespace "$NAMESPACE" \
+          | yq w -d6 - spec.sourceRef.name "$DEPLOYMENT_NAME-release" \
+          | yq w -d6 - spec.sourceRef.namespace "$NAMESPACE" \
           > $DEPLOYMENT_NAME.yaml
 
           cat $DEPLOYMENT_NAME.yaml
         env:
           REF_ID: ${{ needs.build-docker.outputs.ref-id }}
-          COMMIT_SHA: ${{ needs.build-docker.outputs.commit-sha }}
+          IMAGE_TAG: ${{ needs.build-docker.outputs.image-tag }}
 
       - id: disable-admin-enforcement
         name: Temporarily disable admin enforcement
