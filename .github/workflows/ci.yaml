@@ -226,7 +226,7 @@ jobs:
             CHART_REF="master"
             KUBERNETES_ENV="production"
             IMAGE_PATTERN="^(?P<version>[0-9]+\.[0-9]+\.[0-9])+$"
-            IMAGE_EXTRACT="$version"
+            IMAGE_EXTRACT='$version'
             IMAGE_POLICY_TYPE="semver.range"
             IMAGE_POLICY_VALUE=">=0.0.0"
             REPLICA_COUNT="4"
@@ -238,7 +238,7 @@ jobs:
             CHART_REF="master"
             KUBERNETES_ENV="staging"
             IMAGE_PATTERN="^$REF_ID-[a-f0-9]+-(?P<timestamp>[0-9]+)$"
-            IMAGE_EXTRACT="$timestamp"
+            IMAGE_EXTRACT='$timestamp'
             IMAGE_POLICY_TYPE="numerical.order"
             IMAGE_POLICY_VALUE="asc"
             IMAGE_GLOB="glob:$REF_ID-*"
@@ -251,7 +251,7 @@ jobs:
             CHART_REF="STAGING_CHART_REF"
             KUBERNETES_ENV="staging"
             IMAGE_PATTERN="^$REF_ID-[a-f0-9]+-(?P<timestamp>[0-9]+)$"
-            IMAGE_EXTRACT="$timestamp"
+            IMAGE_EXTRACT='$timestamp'
             IMAGE_POLICY_TYPE="numerical.order"
             IMAGE_POLICY_VALUE="asc"
             REPLICA_COUNT="1"
