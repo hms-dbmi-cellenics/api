@@ -17,46 +17,6 @@ spec:
   ref:
     branch: FILLED_IN_BY_CI
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
-kind: HelmRelease
-metadata:
-  name: FILLED_IN_BY_CI
-  namespace: FILLED_IN_BY_CI
-  labels:
-    sandboxId: FILLED_IN_BY_CI
-  annotations:
-    filter.fluxcd.io/chart-image: FILLED_IN_BY_CI
-spec:
-  releaseName: FILLED_IN_BY_CI
-  interval: 2m0s
-  chart:
-    spec:
-      chart: charts/nodejs
-      sourceRef:
-        kind: GitRepository
-        name: FILLED_IN_BY_CI
-        namespace: FILLED_IN_BY_CI
-  values:
-    service:
-      externalPort: 3000
-      internalPort: 3000
-    readinessProbe:
-      path: "/v2/health"
-    livenessProbe:
-      probeType: tcpSocket
-    resources:
-      requests:
-        cpu: "100m"
-    hpa:
-      enabled: false
-    loadBalancerHealthCheck:
-      path: "/v2/health"
-  valuesFrom:
-    - kind: ConfigMap
-      name: account-config
-      valuesKey: account-config.yaml
-      optional: false
----
 apiVersion: image.toolkit.fluxcd.io/v1beta1
 kind: ImageRepository
 metadata:
@@ -106,4 +66,44 @@ spec:
     commit:
       author:
         email: ci@biomage.net
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: FILLED_IN_BY_CI
+  namespace: FILLED_IN_BY_CI
+  labels:
+    sandboxId: FILLED_IN_BY_CI
+  annotations:
+    filter.fluxcd.io/chart-image: FILLED_IN_BY_CI
+spec:
+  releaseName: FILLED_IN_BY_CI
+  interval: 2m0s
+  chart:
+    spec:
+      chart: charts/nodejs
+      sourceRef:
+        kind: GitRepository
+        name: FILLED_IN_BY_CI
+        namespace: FILLED_IN_BY_CI
+  values:
+    service:
+      externalPort: 3000
+      internalPort: 3000
+    readinessProbe:
+      path: "/v2/health"
+    livenessProbe:
+      probeType: tcpSocket
+    resources:
+      requests:
+        cpu: "100m"
+    hpa:
+      enabled: false
+    loadBalancerHealthCheck:
+      path: "/v2/health"
+  valuesFrom:
+    - kind: ConfigMap
+      name: account-config
+      valuesKey: account-config.yaml
+      optional: false
 # filled in by CI. do not modify.

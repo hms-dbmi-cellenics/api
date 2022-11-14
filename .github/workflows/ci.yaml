@@ -241,7 +241,6 @@ jobs:
             IMAGE_EXTRACT='$timestamp'
             IMAGE_POLICY_TYPE="numerical.order"
             IMAGE_POLICY_VALUE="asc"
-            IMAGE_GLOB="glob:$REF_ID-*"
             REPLICA_COUNT="2"
           fi
 
@@ -268,34 +267,34 @@ jobs:
           | yq w -d1 - spec.ref.branch "$CHART_REF" \
           | yq w -d2 - metadata.name "$DEPLOYMENT_NAME" \
           | yq w -d2 - metadata.namespace "$NAMESPACE" \
-          | yq w -d2 - metadata.labels.sandboxId "$SANDBOX_ID" \
-          | yq w -d2 - spec.releaseName "$DEPLOYMENT_NAME" \
-          | yq w -d2 - spec.chart.spec.sourceRef.name "$DEPLOYMENT_NAME-chart" \
-          | yq w -d2 - spec.chart.spec.sourceRef.namespace "$NAMESPACE" \
-          | yq w -d2 - spec.values.kubernetes.env "$KUBERNETES_ENV" \
-          | yq w -d2 - spec.values.biomageCi.repo "$GITHUB_REPOSITORY" \
-          | yq w -d2 - spec.values.biomageCi.sandboxId "$SANDBOX_ID" \
-          | yq w -d2 - spec.values.biomageCi.rdsSandboxId "$RDS_SANDBOX_ID" \
-          | yq w -d2 - spec.values.image.registry "${{ steps.login-ecr.outputs.registry }}" \
-          | yq w -d2 - spec.values.image.repository "$DEPLOYMENT_NAME" \
-          | yq w -d2 - spec.values.image.tag "$IMAGE_TAG # {\"$imagepolicy": \"$NAMESPACE:$DEPLOYMENT_NAME:tag\"}" \
-          | yq w -d2 - spec.values.replicaCount $REPLICA_COUNT \
-          | yq w -d2 - spec.values.serviceAccount.iamRole "api-role-$KUBERNETES_ENV" \
+          | yq w -d2 - spec.image "${{ steps.login-ecr.outputs.registry }}/$DEPLOYMENT_NAME" \
           | yq w -d3 - metadata.name "$DEPLOYMENT_NAME" \
           | yq w -d3 - metadata.namespace "$NAMESPACE" \
-          | yq w -d3 - spec.image "${{ steps.login-ecr.outputs.registry }}/$DEPLOYMENT_NAME" \
-          | yq w -d4 - metadata.name "$DEPLOYMENT_NAME" \
+          | yq w -d3 - spec.imageRepositoryRef.name "$DEPLOYMENT_NAME" \
+          | yq w -d3 - spec.filterTags.pattern "$IMAGE_PATTERN" \
+          | yq w -d3 - spec.filterTags.extract "$IMAGE_EXTRACT" \
+          | yq w -d3 - "spec.policy.$IMAGE_POLICY_TYPE" "$IMAGE_POLICY_VALUE" \
+          | yq w -d4 - metadata.name "$DEPLOYMENT_NAME-release" \
           | yq w -d4 - metadata.namespace "$NAMESPACE" \
-          | yq w -d4 - spec.imageRepositoryRef.name "$DEPLOYMENT_NAME" \
-          | yq w -d4 - spec.filterTags.pattern "$IMAGE_PATTERN" \
-          | yq w -d4 - spec.filterTags.extract "$IMAGE_EXTRACT" \
-          | yq w -d4 - "spec.policy.$IMAGE_POLICY_TYPE" "$IMAGE_POLICY_VALUE" \
-          | yq w -d5 - metadata.name "$DEPLOYMENT_NAME-release" \
+          | yq w -d5 - metadata.name "$DEPLOYMENT_NAME" \
           | yq w -d5 - metadata.namespace "$NAMESPACE" \
+          | yq w -d5 - spec.sourceRef.name "$DEPLOYMENT_NAME-release" \
+          | yq w -d5 - spec.sourceRef.namespace "$NAMESPACE" \
           | yq w -d6 - metadata.name "$DEPLOYMENT_NAME" \
           | yq w -d6 - metadata.namespace "$NAMESPACE" \
-          | yq w -d6 - spec.sourceRef.name "$DEPLOYMENT_NAME-release" \
-          | yq w -d6 - spec.sourceRef.namespace "$NAMESPACE" \
+          | yq w -d6 - metadata.labels.sandboxId "$SANDBOX_ID" \
+          | yq w -d6 - spec.releaseName "$DEPLOYMENT_NAME" \
+          | yq w -d6 - spec.chart.spec.sourceRef.name "$DEPLOYMENT_NAME-chart" \
+          | yq w -d6 - spec.chart.spec.sourceRef.namespace "$NAMESPACE" \
+          | yq w -d6 - spec.values.kubernetes.env "$KUBERNETES_ENV" \
+          | yq w -d6 - spec.values.biomageCi.repo "$GITHUB_REPOSITORY" \
+          | yq w -d6 - spec.values.biomageCi.sandboxId "$SANDBOX_ID" \
+          | yq w -d6 - spec.values.biomageCi.rdsSandboxId "$RDS_SANDBOX_ID" \
+          | yq w -d6 - spec.values.image.registry "${{ steps.login-ecr.outputs.registry }}" \
+          | yq w -d6 - spec.values.image.repository "$DEPLOYMENT_NAME" \
+          | yq w -d6 - spec.values.image.tag "$IMAGE_TAG # {\"\$imagepolicy\": \"$NAMESPACE:$DEPLOYMENT_NAME:tag\"}" \
+          | yq w -d6 - spec.values.replicaCount $REPLICA_COUNT \
+          | yq w -d6 - spec.values.serviceAccount.iamRole "api-role-$KUBERNETES_ENV" \
           > $DEPLOYMENT_NAME.yaml
 
           cat $DEPLOYMENT_NAME.yaml
