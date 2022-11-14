@@ -1,0 +1,84 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`invalidatePlotsForEvent Works correctly for CELL_SETS_MODIFIED: invalidateAttributesForMatches calls 1`] = `
+Array [
+  Array [
+    "mockExperimentId",
+    "embeddingCategoricalMain",
+    Array [
+      "selectedSample",
+      "selectedCellSet",
+    ],
+  ],
+  Array [
+    "mockExperimentId",
+    "frequencyPlotMain",
+    Array [
+      "xAxisGrouping",
+      "proportionGrouping",
+    ],
+  ],
+  Array [
+    "mockExperimentId",
+    "embeddingContinuousMain",
+    Array [
+      "selectedSample",
+    ],
+  ],
+  Array [
+    "mockExperimentId",
+    "markerHeatmapPlotMain",
+    Array [
+      "selectedPoints",
+      "selectedCellSet",
+      "selectedTracks",
+      "groupedTracks",
+    ],
+  ],
+  Array [
+    "mockExperimentId",
+    "heatmapPlotMain",
+    Array [
+      "selectedPoints",
+      "selectedCellSet",
+      "selectedTracks",
+      "groupedTracks",
+    ],
+  ],
+  Array [
+    "mockExperimentId",
+    "ViolinMain%",
+    Array [
+      "selectedPoints",
+      "selectedCellSet",
+    ],
+  ],
+  Array [
+    "mockExperimentId",
+    "dotPlotMain",
+    Array [
+      "selectedPoints",
+      "selectedCellSet",
+    ],
+  ],
+  Array [
+    "mockExperimentId",
+    "normalized-matrix",
+    Array [
+      "sample",
+      "louvain",
+      "metadata",
+      "scratchpad",
+    ],
+  ],
+  Array [
+    "mockExperimentId",
+    "volcanoPlotMain",
+    Array [
+      "cellSet",
+      "compareWith",
+      "basis",
+    ],
+  ],
+]
+`;
