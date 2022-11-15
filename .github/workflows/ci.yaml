@@ -261,62 +261,62 @@ jobs:
 
           cp .flux.yaml $DEPLOYMENT_NAME.yaml
 
-          yq -i 'select(documentIndex == 0) |
-            .metadata.name = strenv($NAMESPACE) |
-            .metadata.labels.sandboxId = strenv(SANDBOX_ID)
-          ' $DEPLOYMENT_NAME.yaml
+          # yq -i 'select(documentIndex == 0) |
+          #   .metadata.name = strenv($NAMESPACE) |
+          #   .metadata.labels.sandboxId = strenv(SANDBOX_ID)
+          # ' $DEPLOYMENT_NAME.yaml
 
-          yq -i 'select(documentIndex == 1) |
-            .metadata.name = strenv(DEPLOYMENT_NAME) + "-chart" |
-            .metadata.namespace = strenv(NAMESPACE) |
-            .spec.ref.branch = strenv(CHART_REF)
-          ' $DEPLOYMENT_NAME.yaml
+          # yq -i 'select(documentIndex == 1) |
+          #   .metadata.name = strenv(DEPLOYMENT_NAME) + "-chart" |
+          #   .metadata.namespace = strenv(NAMESPACE) |
+          #   .spec.ref.branch = strenv(CHART_REF)
+          # ' $DEPLOYMENT_NAME.yaml
 
-          yq -i 'select(documentIndex == 2) |
-            .metadata.name = strenv(DEPLOYMENT_NAME) |
-            .metadata.namespace = strenv(NAMESPACE) |
-            .spec.image = strenv(REGISTRY) + "/" + strenv(DEPLOYMENT_NAME)
-          ' $DEPLOYMENT_NAME.yaml
+          # yq -i 'select(documentIndex == 2) |
+          #   .metadata.name = strenv(DEPLOYMENT_NAME) |
+          #   .metadata.namespace = strenv(NAMESPACE) |
+          #   .spec.image = strenv(REGISTRY) + "/" + strenv(DEPLOYMENT_NAME)
+          # ' $DEPLOYMENT_NAME.yaml
 
-          yq -i 'select(documentIndex == 3) |
-            .metadata.name = strenv(DEPLOYMENT_NAME) |
-            .metadata.namespace = strenv(NAMESPACE) |
-            .spec.imageRepositoryRef.name = strenv(DEPLOYMENT_NAME) |
-            .spec.filterTags.pattern = strenv(IMAGE_PATTERN) |
-            .spec.filterTags.extract = strenv(IMAGE_EXTRACT) |
-            .spec.policy.[strenv(IMAGE_POLICY_TYPE)].[strenv(IMAGE_POLICY_KEY)] = strenv(IMAGE_POLICY_VALUE)
-          ' $DEPLOYMENT_NAME.yaml
+          # yq -i 'select(documentIndex == 3) |
+          #   .metadata.name = strenv(DEPLOYMENT_NAME) |
+          #   .metadata.namespace = strenv(NAMESPACE) |
+          #   .spec.imageRepositoryRef.name = strenv(DEPLOYMENT_NAME) |
+          #   .spec.filterTags.pattern = strenv(IMAGE_PATTERN) |
+          #   .spec.filterTags.extract = strenv(IMAGE_EXTRACT) |
+          #   .spec.policy.[strenv(IMAGE_POLICY_TYPE)].[strenv(IMAGE_POLICY_KEY)] = strenv(IMAGE_POLICY_VALUE)
+          # ' $DEPLOYMENT_NAME.yaml
 
-          yq -i 'select(documentIndex == 4) |
-            .metadata.name = strenv(DEPLOYMENT_NAME) + "-release" |
-            .metadata.namespace = strenv(NAMESPACE)
-          ' $DEPLOYMENT_NAME.yaml
+          # yq -i 'select(documentIndex == 4) |
+          #   .metadata.name = strenv(DEPLOYMENT_NAME) + "-release" |
+          #   .metadata.namespace = strenv(NAMESPACE)
+          # ' $DEPLOYMENT_NAME.yaml
 
-          yq -i 'select(documentIndex == 5) |
-            .metadata.name = strenv(DEPLOYMENT_NAME) |
-            .metadata.namespace = strenv(NAMESPACE) |
-            .spec.sourceRef.name = strenv(DEPLOYMENT_NAME) + "-release" |
-            .spec.sourceRef.namespace = strenv(NAMESPACE)
-          ' $DEPLOYMENT_NAME.yaml
+          # yq -i 'select(documentIndex == 5) |
+          #   .metadata.name = strenv(DEPLOYMENT_NAME) |
+          #   .metadata.namespace = strenv(NAMESPACE) |
+          #   .spec.sourceRef.name = strenv(DEPLOYMENT_NAME) + "-release" |
+          #   .spec.sourceRef.namespace = strenv(NAMESPACE)
+          # ' $DEPLOYMENT_NAME.yaml
 
-          yq -i 'select(documentIndex == 6) |
-            .metadata.name = strenv(DEPLOYMENT_NAME) |
-            .metadata.namespace = strenv(NAMESPACE) |
-            .metadata.labels.sandboxId = strev(SANDBOX_ID) |
-            .spec.releaseName = strenv(DEPLOYMENT_NAME) |
-            .spec.chart.spec.sourceRef.name = strenv(DEPLOYMENT_NAME) + "-chart" |
-            .spec.chart.spec.sourceRef.namespace = strenv(NAMESPACE) |
-            .spec.values.kubernetes.env = strenv(KUBERNETES_ENV) |
-            .spec.values.biomageCi.repo = strenv(GITHUB_REPOSITORY) |
-            .spec.values.biomageCi.sandboxId = strenv(SANDBOX_ID) |
-            .spec.values.biomageCi.rdsSandboxId = strenv(RDS_SANDBOX_ID) |
-            .spec.values.image.registry = strenv(REGISTRY) |
-            .spec.values.image.repository = strenv(DEPLOYMENT_NAME) |
-            .spec.values.image.tag = strenv(IMAGE_TAG) |
-            .spec.values.image.tag line_comment = strenv(IMAGE_POLICY_TAG) |
-            .spec.values.replicaCount = strenv($REPLICA_COUNT) |
-            .spec.values.serviceAccount.iamRole = "api-role-" + strenv(KUBERNETES_ENV)
-          ' $DEPLOYMENT_NAME.yaml
+          # yq -i 'select(documentIndex == 6) |
+          #   .metadata.name = strenv(DEPLOYMENT_NAME) |
+          #   .metadata.namespace = strenv(NAMESPACE) |
+          #   .metadata.labels.sandboxId = strenv(SANDBOX_ID) |
+          #   .spec.releaseName = strenv(DEPLOYMENT_NAME) |
+          #   .spec.chart.spec.sourceRef.name = strenv(DEPLOYMENT_NAME) + "-chart" |
+          #   .spec.chart.spec.sourceRef.namespace = strenv(NAMESPACE) |
+          #   .spec.values.kubernetes.env = strenv(KUBERNETES_ENV) |
+          #   .spec.values.biomageCi.repo = strenv(GITHUB_REPOSITORY) |
+          #   .spec.values.biomageCi.sandboxId = strenv(SANDBOX_ID) |
+          #   .spec.values.biomageCi.rdsSandboxId = strenv(RDS_SANDBOX_ID) |
+          #   .spec.values.image.registry = strenv(REGISTRY) |
+          #   .spec.values.image.repository = strenv(DEPLOYMENT_NAME) |
+          #   .spec.values.image.tag = strenv(IMAGE_TAG) |
+          #   .spec.values.image.tag line_comment = strenv(IMAGE_POLICY_TAG) |
+          #   .spec.values.replicaCount = strenv($REPLICA_COUNT) |
+          #   .spec.values.serviceAccount.iamRole = "api-role-" + strenv(KUBERNETES_ENV)
+          # ' $DEPLOYMENT_NAME.yaml
 
           cat $DEPLOYMENT_NAME.yaml
         env:
