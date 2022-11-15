@@ -209,11 +209,6 @@ jobs:
         name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
-      - id: install-yq
-        name: Install yq for modifying the deployment spec.
-        run: |-
-          sudo wget https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64 -O /usr/local/bin/yq && sudo chmod +x /usr/local/bin/yq
-
       - id: fill-metadata
         name: Fill out a new HelmRelease resource
         run: |-
@@ -260,42 +255,64 @@ jobs:
 
           NAMESPACE="$DEPLOYMENT_NAME-$SANDBOX_ID"
 
-          yq w -d0 .flux.yaml metadata.name "$NAMESPACE" \
-          | yq w -d0 - metadata.labels.sandboxId "$SANDBOX_ID" \
-          | yq w -d1 - metadata.name "$DEPLOYMENT_NAME-chart" \
-          | yq w -d1 - metadata.namespace "$NAMESPACE" \
-          | yq w -d1 - spec.ref.branch "$CHART_REF" \
-          | yq w -d2 - metadata.name "$DEPLOYMENT_NAME" \
-          | yq w -d2 - metadata.namespace "$NAMESPACE" \
-          | yq w -d2 - spec.image "${{ steps.login-ecr.outputs.registry }}/$DEPLOYMENT_NAME" \
-          | yq w -d3 - metadata.name "$DEPLOYMENT_NAME" \
-          | yq w -d3 - metadata.namespace "$NAMESPACE" \
-          | yq w -d3 - spec.imageRepositoryRef.name "$DEPLOYMENT_NAME" \
-          | yq w -d3 - spec.filterTags.pattern "$IMAGE_PATTERN" \
-          | yq w -d3 - spec.filterTags.extract "$IMAGE_EXTRACT" \
-          | yq w -d3 - "spec.policy.$IMAGE_POLICY_TYPE" "$IMAGE_POLICY_VALUE" \
-          | yq w -d4 - metadata.name "$DEPLOYMENT_NAME-release" \
-          | yq w -d4 - metadata.namespace "$NAMESPACE" \
-          | yq w -d5 - metadata.name "$DEPLOYMENT_NAME" \
-          | yq w -d5 - metadata.namespace "$NAMESPACE" \
-          | yq w -d5 - spec.sourceRef.name "$DEPLOYMENT_NAME-release" \
-          | yq w -d5 - spec.sourceRef.namespace "$NAMESPACE" \
-          | yq w -d6 - metadata.name "$DEPLOYMENT_NAME" \
-          | yq w -d6 - metadata.namespace "$NAMESPACE" \
-          | yq w -d6 - metadata.labels.sandboxId "$SANDBOX_ID" \
-          | yq w -d6 - spec.releaseName "$DEPLOYMENT_NAME" \
-          | yq w -d6 - spec.chart.spec.sourceRef.name "$DEPLOYMENT_NAME-chart" \
-          | yq w -d6 - spec.chart.spec.sourceRef.namespace "$NAMESPACE" \
-          | yq w -d6 - spec.values.kubernetes.env "$KUBERNETES_ENV" \
-          | yq w -d6 - spec.values.biomageCi.repo "$GITHUB_REPOSITORY" \
-          | yq w -d6 - spec.values.biomageCi.sandboxId "$SANDBOX_ID" \
-          | yq w -d6 - spec.values.biomageCi.rdsSandboxId "$RDS_SANDBOX_ID" \
-          | yq w -d6 - spec.values.image.registry "${{ steps.login-ecr.outputs.registry }}" \
-          | yq w -d6 - spec.values.image.repository "$DEPLOYMENT_NAME" \
-          | yq w -d6 - spec.values.image.tag "$IMAGE_TAG # {\"\$imagepolicy\": \"$NAMESPACE:$DEPLOYMENT_NAME:tag\"}" \
-          | yq w -d6 - spec.values.replicaCount $REPLICA_COUNT \
-          | yq w -d6 - spec.values.serviceAccount.iamRole "api-role-$KUBERNETES_ENV" \
-          > $DEPLOYMENT_NAME.yaml
+          cp .flux.yaml $DEPLOYMENT_NAME.yaml
+
+          yq -i "select(documentIndex == 0)
+            .metadata.name = $NAMESPACE |
+            .metadata.labels.sandboxId $SANDBOX_ID
+          " $DEPLOYMENT_NAME.yaml
+
+          yq -i "select(documentIndex == 1)
+            .metadata.name = $DEPLOYMENT_NAME-chart |
+            .metadata.namespace = $NAMESPACE |
+            .spec.ref.branch = $CHART_REF |
+          " $DEPLOYMENT_NAME.yaml
+
+          yq -i "select(documentIndex == 2)
+            .metadata.name = $DEPLOYMENT_NAME |
+            .metadata.namespace = $NAMESPACE |
+            .spec.image = ${{ steps.login-ecr.outputs.registry }}/$DEPLOYMENT_NAME
+          " $DEPLOYMENT_NAME.yaml
+
+          yq -i "select(documentIndex == 3)
+            .metadata.name = $DEPLOYMENT_NAME |
+            .metadata.namespace = $NAMESPACE |
+            .spec.imageRepositoryRef.name = $DEPLOYMENT_NAME |
+            .spec.filterTags.pattern = $IMAGE_PATTERN |
+            .spec.filterTags.extract = $IMAGE_EXTRACT |
+            .spec.policy.$IMAGE_POLICY_TYPE = $IMAGE_VALUE
+          " $DEPLOYMENT_NAME.yaml
+
+          yq -i "select(documentIndex == 4)
+            .metadata.name = $DEPLOYMENT_NAME-release |
+            .metadata.namespace = $NAMESPACE
+          " $DEPLOYMENT_NAME.yaml
+
+          yq -i "select(documentIndex == 5)
+            .metadata.name = $DEPLOYMENT_NAME |
+            .metadata.namespace = $NAMESPACE |
+            .spec.sourceRef.name = $DEPLOYMENT_NAME-release |
+            .spec.sourceRef.namespace = $NAMESPACE
+          " $DEPLOYMENT_NAME.yaml
+
+          yq -i "select(documentIndex == 6)
+            .metadata.name = $DEPLOYMENT_NAME |
+            .metadata.namespace = $NAMESPACE |
+            .metadata.labels.sandboxId = $SANDBOX_ID |
+            .spec.releaseName = $DEPLOYMENT_NAME |
+            .spec.chart.spec.sourceRef.name = $DEPLOYMENT_NAME-chart |
+            .spec.chart.spec.sourceRef.namespace = $NAMESPACE |
+            .spec.values.kubernetes.env = $KUBERNETES_ENV |
+            .spec.values.biomageCi.repo = $GITHUB_REPOSITORY |
+            .spec.values.biomageCi.sandboxId = $SANDBOX_ID |
+            .spec.values.biomageCi.rdsSandboxId = $RDS_SANDBOX_ID |
+            .spec.values.image.registry = ${{ steps.login-ecr.outputs.registry }} |
+            .spec.values.image.repository = $DEPLOYMENT_NAME |
+            .spec.values.image.tag = $IMAGE_TAG |
+            .spec.values.image.tag line_comment='{\"$imagepolicy\": \"$NAMESPACE:$DEPLOYMENT_NAME:tag\"}' |
+            .spec.values.replicaCount = $REPLICA_COUNT |
+            .spec.values.serviceAccount.iamRole = api-role-$KUBERNETES_ENV
+          " $DEPLOYMENT_NAME.yaml
 
           cat $DEPLOYMENT_NAME.yaml
         env:
