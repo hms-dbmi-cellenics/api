@@ -1358,6 +1358,10 @@ paths:
                   items:
                     type: object   
               additionalProperties: false
+              required:
+                  - sampleFileId
+                  - uploadId
+                  - parts
       responses:
         '200':
           description: Success
