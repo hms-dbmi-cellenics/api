@@ -257,24 +257,24 @@ jobs:
 
           cp .flux.yaml $DEPLOYMENT_NAME.yaml
 
-          yq -i "select(documentIndex == 0)
+          yq -i "select(documentIndex == 0) |
             .metadata.name = $NAMESPACE |
             .metadata.labels.sandboxId $SANDBOX_ID
           " $DEPLOYMENT_NAME.yaml
 
-          yq -i "select(documentIndex == 1)
+          yq -i "select(documentIndex == 1) |
             .metadata.name = $DEPLOYMENT_NAME-chart |
             .metadata.namespace = $NAMESPACE |
             .spec.ref.branch = $CHART_REF |
           " $DEPLOYMENT_NAME.yaml
 
-          yq -i "select(documentIndex == 2)
+          yq -i "select(documentIndex == 2) |
             .metadata.name = $DEPLOYMENT_NAME |
             .metadata.namespace = $NAMESPACE |
             .spec.image = ${{ steps.login-ecr.outputs.registry }}/$DEPLOYMENT_NAME
           " $DEPLOYMENT_NAME.yaml
 
-          yq -i "select(documentIndex == 3)
+          yq -i "select(documentIndex == 3) |
             .metadata.name = $DEPLOYMENT_NAME |
             .metadata.namespace = $NAMESPACE |
             .spec.imageRepositoryRef.name = $DEPLOYMENT_NAME |
@@ -283,19 +283,19 @@ jobs:
             .spec.policy.$IMAGE_POLICY_TYPE = $IMAGE_VALUE
           " $DEPLOYMENT_NAME.yaml
 
-          yq -i "select(documentIndex == 4)
+          yq -i "select(documentIndex == 4) |
             .metadata.name = $DEPLOYMENT_NAME-release |
             .metadata.namespace = $NAMESPACE
           " $DEPLOYMENT_NAME.yaml
 
-          yq -i "select(documentIndex == 5)
+          yq -i "select(documentIndex == 5) |
             .metadata.name = $DEPLOYMENT_NAME |
             .metadata.namespace = $NAMESPACE |
             .spec.sourceRef.name = $DEPLOYMENT_NAME-release |
             .spec.sourceRef.namespace = $NAMESPACE
           " $DEPLOYMENT_NAME.yaml
 
-          yq -i "select(documentIndex == 6)
+          yq -i "select(documentIndex == 6) |
             .metadata.name = $DEPLOYMENT_NAME |
             .metadata.namespace = $NAMESPACE |
             .metadata.labels.sandboxId = $SANDBOX_ID |
