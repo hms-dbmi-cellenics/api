@@ -269,7 +269,7 @@ jobs:
           yq -i 'select(documentIndex == 1) |
             .metadata.name = strenv(DEPLOYMENT_NAME) + "-chart" |
             .metadata.namespace = strenv(NAMESPACE) |
-            .spec.ref.branch = strenv(CHART_REF) |
+            .spec.ref.branch = strenv(CHART_REF)
           ' $DEPLOYMENT_NAME.yaml
 
           yq -i 'select(documentIndex == 2) |

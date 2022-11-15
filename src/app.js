@@ -9,6 +9,7 @@ const sqlClientLoader = require('./loaders/sqlClient');
 const config = require('./config');
 const getLogger = require('./utils/getLogger');
 
+// TESTING
 
 const logger = getLogger();
 
