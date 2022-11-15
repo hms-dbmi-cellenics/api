@@ -1,5 +1,40 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`completeMultipartUpload works correctly  1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "Bucket": "biomage-originals-test-000000000000",
+        "Key": "mockSampleFileId",
+        "MultipartUpload": Object {
+          "Parts": Array [],
+        },
+        "UploadId": "uploadId",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [MockFunction] {
+          "calls": Array [
+            Array [],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
+          ],
+        },
+      },
+    },
+  ],
+}
+`;
+
 exports[`getSampleFileDownloadUrl works correctly 1`] = `
 [MockFunction] {
   "calls": Array [

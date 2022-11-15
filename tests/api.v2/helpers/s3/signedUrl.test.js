@@ -5,7 +5,9 @@ const signedUrl = require('../../../../src/api.v2/helpers/s3/signedUrl');
 const AWS = require('../../../../src/utils/requireAWS');
 const { NotFoundError } = require('../../../../src/utils/responses');
 
-const { getSignedUrl, getSampleFileDownloadUrl, getSampleFileUploadUrls } = signedUrl;
+const {
+  getSignedUrl, getSampleFileDownloadUrl, getSampleFileUploadUrls, completeMultipartUpload,
+} = signedUrl;
 const sampleFileInstance = new SampleFile();
 
 jest.mock('../../../../src/api.v2/model/SampleFile');
@@ -102,6 +104,30 @@ describe('getSampleFileUploadUrls', () => {
     expect(response).toEqual(signedUrlResponse);
     expect(createMultipartUploadSpy).toMatchSnapshot();
     expect(getSignedUrlPromiseSpy).toMatchSnapshot();
+  });
+});
+
+describe('completeMultipartUpload', () => {
+  const mockSampleFileId = 'mockSampleFileId';
+  const mockParts = [];
+  const mockUploadId = 'uploadId';
+
+  const completeMultipartUploadSpy = jest.fn();
+
+  beforeEach(() => {
+    completeMultipartUploadSpy.mockReturnValue({ promise: jest.fn().mockReturnValue() });
+
+    AWS.S3.mockReset();
+    AWS.S3.mockImplementation(() => ({
+      completeMultipartUpload: completeMultipartUploadSpy,
+    }));
+  });
+
+  it('works correctly ', async () => {
+    const response = await completeMultipartUpload(mockSampleFileId, mockParts, mockUploadId);
+
+    expect(response).toBeUndefined();
+    expect(completeMultipartUploadSpy).toMatchSnapshot();
   });
 });
 

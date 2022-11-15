@@ -3,7 +3,7 @@ const sqlClient = require('../../sql/sqlClient');
 const Sample = require('../model/Sample');
 const SampleFile = require('../model/SampleFile');
 
-const { getSampleFileUploadUrls, getSampleFileDownloadUrl, completeMultiPartUpload } = require('../helpers/s3/signedUrl');
+const { getSampleFileUploadUrls, getSampleFileDownloadUrl, completeMultipartUpload } = require('../helpers/s3/signedUrl');
 const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 
@@ -54,12 +54,12 @@ const patchFile = async (req, res) => {
 
 const completeMultipart = async (req, res) => {
   const {
-    body: { parts, uploadId, sampleFileId },
+    body: { sampleFileId, parts, uploadId },
   } = req;
 
   logger.log(`completing multipart upload for sampleFileId ${sampleFileId}`);
 
-  completeMultiPartUpload(sampleFileId, parts, uploadId);
+  completeMultipartUpload(sampleFileId, parts, uploadId);
 
   logger.log(`completed multipart upload for sampleFileId ${sampleFileId}`);
   res.json(OK());

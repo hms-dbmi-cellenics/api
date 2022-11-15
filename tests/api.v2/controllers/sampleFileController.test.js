@@ -136,4 +136,25 @@ describe('sampleFileController', () => {
     // Response is generated signed url
     expect(mockRes.json).toHaveBeenCalledWith(signedUrlString);
   });
+
+  it('completeMultipart works correctly', async () => {
+    const sampleFileId = 'sampleFileId';
+    const uploadId = 'uploadId';
+    const parts = [];
+
+
+    const mockReq = {
+      body: { sampleFileId, parts, uploadId },
+    };
+
+    signedUrl.completeMultipartUpload.mockImplementationOnce(
+      () => Promise.resolve(undefined),
+    );
+
+    await sampleFileController.completeMultipart(mockReq, mockRes);
+
+    expect(signedUrl.completeMultipartUpload).toHaveBeenCalledWith(
+      sampleFileId, parts, uploadId,
+    );
+  });
 });

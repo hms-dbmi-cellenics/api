@@ -64,7 +64,7 @@ const createMultipartUpload = async (params, size) => {
 };
 
 
-const completeMultiPartUpload = async (sampleFileId, parts, uploadId) => {
+const completeMultipartUpload = async (sampleFileId, parts, uploadId) => {
   const params = {
     Bucket: bucketNames.SAMPLE_FILES,
     Key: `${sampleFileId}`,
@@ -131,5 +131,5 @@ module.exports = {
   getSampleFileDownloadUrl,
   getSignedUrl,
   createMultipartUpload,
-  completeMultiPartUpload,
+  completeMultipartUpload,
 };
