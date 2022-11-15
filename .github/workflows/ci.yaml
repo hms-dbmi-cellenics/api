@@ -222,7 +222,8 @@ jobs:
             export KUBERNETES_ENV="production"
             export IMAGE_PATTERN="^(?P<version>[0-9]+\.[0-9]+\.[0-9])+$"
             export IMAGE_EXTRACT='$version'
-            export IMAGE_POLICY_TYPE="semver.range"
+            export IMAGE_POLICY_TYPE="semver"
+            export IMAGE_POLICY_KEY="range"
             export IMAGE_POLICY_VALUE=">=0.0.0"
             export REPLICA_COUNT="4"
           fi
@@ -234,7 +235,8 @@ jobs:
             export KUBERNETES_ENV="staging"
             export IMAGE_PATTERN="^$REF_ID-[a-f0-9]+-(?P<timestamp>[0-9]+)$"
             export IMAGE_EXTRACT='$timestamp'
-            export IMAGE_POLICY_TYPE="numerical.order"
+            export IMAGE_POLICY_TYPE="numerical"
+            export IMAGE_POLICY_KEY="order"
             export IMAGE_POLICY_VALUE="asc"
             export REPLICA_COUNT="2"
           fi
@@ -246,7 +248,8 @@ jobs:
             export KUBERNETES_ENV="staging"
             export IMAGE_PATTERN="^$REF_ID-[a-f0-9]+-(?P<timestamp>[0-9]+)$"
             export IMAGE_EXTRACT='$timestamp'
-            export IMAGE_POLICY_TYPE="numerical.order"
+            export IMAGE_POLICY_TYPE="numerical"
+            export IMAGE_POLICY_KEY="order"
             export IMAGE_POLICY_VALUE="asc"
             export REPLICA_COUNT="1"
           fi
@@ -281,7 +284,7 @@ jobs:
             .spec.imageRepositoryRef.name = strenv(DEPLOYMENT_NAME) |
             .spec.filterTags.pattern = strenv(IMAGE_PATTERN) |
             .spec.filterTags.extract = strenv(IMAGE_EXTRACT) |
-            .spec.policy.$IMAGE_POLICY_TYPE = strenv(IMAGE_VALUE)
+            .spec.policy.[strenv(IMAGE_POLICY_TYPE)].[strenv(IMAGE_POLICY_KEY)] = strenv(IMAGE_POLICY_VALUE)
           ' $DEPLOYMENT_NAME.yaml
 
           yq -i 'select(documentIndex == 4) |
