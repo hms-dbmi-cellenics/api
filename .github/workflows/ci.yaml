@@ -258,60 +258,60 @@ jobs:
           cp .flux.yaml $DEPLOYMENT_NAME.yaml
 
           yq -i "select(documentIndex == 0) |
-            .metadata.name = $NAMESPACE |
-            .metadata.labels.sandboxId $SANDBOX_ID
+            .metadata.name = '$NAMESPACE' |
+            .metadata.labels.sandboxId '$SANDBOX_ID'
           " $DEPLOYMENT_NAME.yaml
 
           yq -i "select(documentIndex == 1) |
-            .metadata.name = $DEPLOYMENT_NAME-chart |
-            .metadata.namespace = $NAMESPACE |
-            .spec.ref.branch = $CHART_REF |
+            .metadata.name = '$DEPLOYMENT_NAME-chart' |
+            .metadata.namespace = '$NAMESPACE' |
+            .spec.ref.branch = '$CHART_REF' |
           " $DEPLOYMENT_NAME.yaml
 
           yq -i "select(documentIndex == 2) |
-            .metadata.name = $DEPLOYMENT_NAME |
-            .metadata.namespace = $NAMESPACE |
-            .spec.image = ${{ steps.login-ecr.outputs.registry }}/$DEPLOYMENT_NAME
+            .metadata.name = '$DEPLOYMENT_NAME' |
+            .metadata.namespace = '$NAMESPACE' |
+            .spec.image = '${{ steps.login-ecr.outputs.registry }}/$DEPLOYMENT_NAME'
           " $DEPLOYMENT_NAME.yaml
 
           yq -i "select(documentIndex == 3) |
-            .metadata.name = $DEPLOYMENT_NAME |
-            .metadata.namespace = $NAMESPACE |
-            .spec.imageRepositoryRef.name = $DEPLOYMENT_NAME |
-            .spec.filterTags.pattern = $IMAGE_PATTERN |
-            .spec.filterTags.extract = $IMAGE_EXTRACT |
-            .spec.policy.$IMAGE_POLICY_TYPE = $IMAGE_VALUE
+            .metadata.name = '$DEPLOYMENT_NAME' |
+            .metadata.namespace = '$NAMESPACE' |
+            .spec.imageRepositoryRef.name = '$DEPLOYMENT_NAME' |
+            .spec.filterTags.pattern = '$IMAGE_PATTERN' |
+            .spec.filterTags.extract = '$IMAGE_EXTRACT' |
+            .spec.policy.$IMAGE_POLICY_TYPE = '$IMAGE_VALUE'
           " $DEPLOYMENT_NAME.yaml
 
           yq -i "select(documentIndex == 4) |
-            .metadata.name = $DEPLOYMENT_NAME-release |
-            .metadata.namespace = $NAMESPACE
+            .metadata.name = '$DEPLOYMENT_NAME-release' |
+            .metadata.namespace = '$NAMESPACE'
           " $DEPLOYMENT_NAME.yaml
 
           yq -i "select(documentIndex == 5) |
-            .metadata.name = $DEPLOYMENT_NAME |
-            .metadata.namespace = $NAMESPACE |
-            .spec.sourceRef.name = $DEPLOYMENT_NAME-release |
-            .spec.sourceRef.namespace = $NAMESPACE
+            .metadata.name = '$DEPLOYMENT_NAME' |
+            .metadata.namespace = '$NAMESPACE' |
+            .spec.sourceRef.name = '$DEPLOYMENT_NAME-release' |
+            .spec.sourceRef.namespace = '$NAMESPACE'
           " $DEPLOYMENT_NAME.yaml
 
           yq -i "select(documentIndex == 6) |
-            .metadata.name = $DEPLOYMENT_NAME |
-            .metadata.namespace = $NAMESPACE |
-            .metadata.labels.sandboxId = $SANDBOX_ID |
-            .spec.releaseName = $DEPLOYMENT_NAME |
-            .spec.chart.spec.sourceRef.name = $DEPLOYMENT_NAME-chart |
-            .spec.chart.spec.sourceRef.namespace = $NAMESPACE |
-            .spec.values.kubernetes.env = $KUBERNETES_ENV |
-            .spec.values.biomageCi.repo = $GITHUB_REPOSITORY |
-            .spec.values.biomageCi.sandboxId = $SANDBOX_ID |
-            .spec.values.biomageCi.rdsSandboxId = $RDS_SANDBOX_ID |
-            .spec.values.image.registry = ${{ steps.login-ecr.outputs.registry }} |
-            .spec.values.image.repository = $DEPLOYMENT_NAME |
-            .spec.values.image.tag = $IMAGE_TAG |
+            .metadata.name = '$DEPLOYMENT_NAME' |
+            .metadata.namespace = '$NAMESPACE' |
+            .metadata.labels.sandboxId = '$SANDBOX_ID' |
+            .spec.releaseName = '$DEPLOYMENT_NAME' |
+            .spec.chart.spec.sourceRef.name = '$DEPLOYMENT_NAME-chart' |
+            .spec.chart.spec.sourceRef.namespace = '$NAMESPACE' |
+            .spec.values.kubernetes.env = '$KUBERNETES_ENV' |
+            .spec.values.biomageCi.repo = '$GITHUB_REPOSITORY' |
+            .spec.values.biomageCi.sandboxId = '$SANDBOX_ID' |
+            .spec.values.biomageCi.rdsSandboxId = '$RDS_SANDBOX_ID' |
+            .spec.values.image.registry = '${{ steps.login-ecr.outputs.registry }}' |
+            .spec.values.image.repository = '$DEPLOYMENT_NAME' |
+            .spec.values.image.tag = '$IMAGE_TAG' |
             .spec.values.image.tag line_comment='{\"$imagepolicy\": \"$NAMESPACE:$DEPLOYMENT_NAME:tag\"}' |
-            .spec.values.replicaCount = $REPLICA_COUNT |
-            .spec.values.serviceAccount.iamRole = api-role-$KUBERNETES_ENV
+            .spec.values.replicaCount = '$REPLICA_COUNT' |
+            .spec.values.serviceAccount.iamRole = 'api-role-$KUBERNETES_ENV'
           " $DEPLOYMENT_NAME.yaml
 
           cat $DEPLOYMENT_NAME.yaml
