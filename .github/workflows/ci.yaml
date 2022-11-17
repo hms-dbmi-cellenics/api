@@ -264,7 +264,7 @@ jobs:
             .spec.values.kubernetes.env = strenv(KUBERNETES_ENV) |
             .spec.values.biomageCi.repo = strenv(GITHUB_REPOSITORY) |
             .spec.values.biomageCi.sandboxId = strenv(SANDBOX_ID) |
-            .spec.values.biomageCi.rdsSandboxId = strenv($RDS_SANDBOX_ID) |
+            .spec.values.biomageCi.rdsSandboxId = strenv(RDS_SANDBOX_ID) |
             .spec.values.image.registry = strenv(REGISTRY) |
             .spec.values.image.repository = strenv(DEPLOYMENT_NAME) |
             .spec.values.image.tag = strenv(IMAGE_TAG) |
