@@ -11,28 +11,35 @@ const sqlClient = require('../../sql/sqlClient');
 
 const logger = getLogger('[SampleController] - ');
 
-const createSample = async (req, res) => {
+const createSamples = async (req, res) => {
   const {
-    params: { experimentId, sampleId },
-    body: { name, sampleTechnology, options },
+    params: { experimentId },
+    body: samples,
   } = req;
   logger.log('Creating sample');
 
+
   await sqlClient.get().transaction(async (trx) => {
-    await new Sample(trx).create({
-      id: sampleId,
+    const sampleModel = new Sample(trx);
+
+    await Promise.all(samples.map(({
+      id, name, sampleTechnology, options,
+    }) => sampleModel.create({
+      id,
       experiment_id: experimentId,
       name,
       sample_technology: sampleTechnology,
       options,
-    });
+    })));
 
-    await new Experiment(trx).addSample(experimentId, sampleId);
 
-    await new MetadataTrack(trx).createNewSampleValues(experimentId, sampleId);
+    const sampleIds = samples.map(({ id }) => id);
+
+    await new Experiment(trx).addSamples(experimentId, sampleIds);
+    await new MetadataTrack(trx).createNewSamplesValues(experimentId, sampleIds);
   });
 
-  logger.log(`Finished creating sample ${sampleId} for experiment ${experimentId}`);
+  logger.log(`Finished creating samples ${JSON.stringify(samples.map(({ id }) => id))} for experiment ${experimentId}`);
   res.json(OK());
 };
 
@@ -85,7 +92,7 @@ const getSamples = async (req, res) => {
 };
 
 module.exports = {
-  createSample,
+  createSamples,
   patchSample,
   updateSamplesOptions,
   getSamples,

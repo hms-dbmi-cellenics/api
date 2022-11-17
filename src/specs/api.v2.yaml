@@ -622,12 +622,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
-  '/experiments/{experimentId}/samples/{sampleId}':
+  '/experiments/{experimentId}/samples':
     post:
       summary: Create sample
       description: Create sample for an experiment
       operationId: createSample
-      x-eov-operation-id: sample#createSample
+      x-eov-operation-id: sample#createSamples
       x-eov-operation-handler: routes/sample
       parameters:
         - name: experimentId
@@ -636,17 +636,11 @@ paths:
           in: path
           required: true
           description: ID of the experiment
-        - name: sampleId
-          schema:
-            type: string
-          in: path
-          required: true
-          description: ID of the sample
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateSample'
+              $ref: '#/components/schemas/CreateSamples'
       responses:
         '200':
           description: Success
@@ -2032,8 +2026,8 @@ components:
       $ref: ./models/experiment-bodies/ProcessingConfig.v2.yaml
     ExperimentsList:
       $ref: ./models/experiment-bodies/ExperimentsList.v2.yaml
-    CreateSample:
-      $ref: ./models/samples-bodies/CreateSample.v2.yaml
+    CreateSamples:
+      $ref: ./models/samples-bodies/CreateSamples.v2.yaml
     GetSamples:
       items:
         $ref: ./models/samples-bodies/Sample.v2.yaml
