@@ -4,6 +4,7 @@ jest.mock('dns', () => ({
   promises: {
     reverse: jest.fn((ip) => {
       if (ip === '127.0.0.1') return [];
+      if (ip === '::ffff:192.168.66.200') return ['ip-192-168-66-200.eu-west-1.compute.internal'];
       return ['ip-192-168-905-123.region.compute.internal'];
     }),
   },
@@ -56,6 +57,18 @@ describe('Tests for isRequestFromCluster and isRequestFromLocalhost', () => {
       url: `/v1/experiments/${fake.EXPERIMENT_ID}/cellSets`,
       method: 'PATCH',
       ip: '::ffff:192.0.0.1',
+    };
+
+    expect(await isReqFromCluster(req)).toEqual(true);
+  });
+
+  it('isReqFromCluster returns true for batch addr', async () => {
+    const req = {
+      params: { experimentId: fake.EXPERIMENT_ID },
+      user: fake.USER,
+      url: `/v1/experiments/${fake.EXPERIMENT_ID}/cellSets`,
+      method: 'PATCH',
+      ip: '::ffff:192.168.66.200',
     };
 
     expect(await isReqFromCluster(req)).toEqual(true);

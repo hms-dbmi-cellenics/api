@@ -206,13 +206,23 @@ const authenticationMiddlewareExpress = async (app) => {
   });
 };
 const checkAuthExpiredMiddleware = (req, res, next) => {
-  console.log('checkAuthExpiredMiddleware');
-  console.log(req);
-  console.log(req.ip);
+  // check if we should ignore expired jwt token for this path and request type
+  const longTimeoutEndpoints = [{ urlMatcher: /experiments\/.{36}\/cellSets$/, method: 'PATCH' }];
+  const isEndpointIgnored = longTimeoutEndpoints.some(
+    ({ urlMatcher, method }) => (
+      req.method.toLowerCase() === method.toLowerCase() && urlMatcher.test(req.url)
+    ),
+  );
   if (!req.user) {
     return next();
   }
 
+  if (isEndpointIgnored) {
+    console.log('checkAuthExpiredMiddleware');
+    // console.log(req);
+    console.log(req.ip);
+    isReqFromCluster(req).then((data) => console.log('isfromcluster; ', data));
+  }
   // JWT `exp` returns seconds since UNIX epoch, conver to milliseconds for this
   const timeLeft = (req.user.exp * 1000) - Date.now();
 
@@ -227,13 +237,14 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
   }
 
 
-  // check if we should ignore expired jwt token for this path and request type
-  const longTimeoutEndpoints = [{ urlMatcher: /experiments\/.{36}\/cellSets$/, method: 'PATCH' }];
-  const isEndpointIgnored = longTimeoutEndpoints.some(
-    ({ urlMatcher, method }) => (
-      req.method.toLowerCase() === method.toLowerCase() && urlMatcher.test(req.url)
-    ),
-  );
+  // // check if we should ignore expired jwt token for this path and request type
+  // const longTimeoutEndpoints = [{ urlMatcher: /experiments\/.{36}\/cellSet
+  // s$/, method: 'PATCH' }];
+  // const isEndpointIgnored = longTimeoutEndpoints.some(
+  //   ({ urlMatcher, method }) => (
+  //     req.method.toLowerCase() === method.toLowerCase() && urlMatcher.test(req.url)
+  //   ),
+  // );
 
   // if endpoint is not in ignore list, the JWT is too old, send an error accordingly
   if (!isEndpointIgnored) {
