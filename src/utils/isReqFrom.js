@@ -35,7 +35,7 @@ const isReqFromCluster = async (req) => {
     return true;
   }
 
-  throw new Error('ip address does not come from internal sources');
+  throw new Error(`ip address ${remoteAddress} and its domains ${domains} do not come from internal sources`);
 };
 
 module.exports = {
