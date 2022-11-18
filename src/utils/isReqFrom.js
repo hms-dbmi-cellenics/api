@@ -16,6 +16,9 @@ const isReqFromLocalhost = async (req) => {
 };
 
 const isReqFromCluster = async (req) => {
+  console.log('isReqFromCluster');
+  console.log(req);
+  console.log(req.ip);
   let remoteAddress = req.ip;
   const addr = ipaddr.parse(req.ip);
   // req.ip returns IPv4 addresses mapped to IPv6, e.g.:
