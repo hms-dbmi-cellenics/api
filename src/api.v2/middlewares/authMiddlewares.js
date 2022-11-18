@@ -206,6 +206,9 @@ const authenticationMiddlewareExpress = async (app) => {
   });
 };
 const checkAuthExpiredMiddleware = (req, res, next) => {
+  console.log('checkAuthExpiredMiddleware');
+  console.log(req);
+  console.log(req.ip);
   if (!req.user) {
     return next();
   }
