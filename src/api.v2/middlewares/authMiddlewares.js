@@ -256,9 +256,13 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
   console.log(req.ip);
   promiseAny([isReqFromCluster(req), isReqFromLocalhost(req)])
     .then(() => next())
-    .catch((e) => {
-      next(new UnauthenticatedError(`invalid request origin ${e}`));
+    .catch((error) => {
+      console.log(error.message); // "All Promises rejected"
+      console.log(error.name); // "AggregateError"
+      console.log(error.errors); // [ Error: "Something went wrong" ]
+      next(new UnauthenticatedError(`invalid request origin ${error}: ${error.errors}`));
     });
+
 
   return null;
 };

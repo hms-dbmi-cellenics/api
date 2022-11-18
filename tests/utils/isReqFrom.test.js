@@ -62,7 +62,7 @@ describe('Tests for isRequestFromCluster and isRequestFromLocalhost', () => {
     expect(await isReqFromCluster(req)).toEqual(true);
   });
 
-  it('isReqFromCluster returns true for batch addr', async () => {
+  it.only('isReqFromCluster returns true for batch addr', async () => {
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
       user: fake.USER,
