@@ -237,6 +237,9 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
     return next(new UnauthenticatedError('token has expired for non-ignored endpoint'));
   }
 
+  console.log('racing to see where the req comes from');
+  console.log(req);
+  console.log(req.ip);
   promiseAny([isReqFromCluster(req), isReqFromLocalhost(req)])
     .then(() => next())
     .catch((e) => {
