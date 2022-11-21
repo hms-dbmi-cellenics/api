@@ -4,6 +4,8 @@ const config = require('../config');
 
 // eslint-disable-next-line no-useless-escape
 const INTERNAL_DOMAINS_REGEX = new RegExp(`((\.compute\.internal)|(\.svc\.local)|(${config.awsRegion}\.compute\.amazonaws\.com))$`);
+// awsRegion.compute.amazonaws.com => running in AWS Batch
+// compute.internal & svc.local => running in cluster or fargate
 
 const isReqFromLocalhost = async (req) => {
   const ip = req.connection.remoteAddress;
@@ -17,9 +19,6 @@ const isReqFromLocalhost = async (req) => {
 };
 
 const isReqFromCluster = async (req) => {
-  console.log('isReqFromCluster');
-  console.log(req);
-  console.log(req.ip);
   let remoteAddress = req.ip;
   const addr = ipaddr.parse(req.ip);
   // req.ip returns IPv4 addresses mapped to IPv6, e.g.:

@@ -6,7 +6,7 @@ const sqlClient = require('../../sql/sqlClient');
 const validateRequest = require('../../utils/schema-validator');
 
 const tableNames = require('./tableNames');
-const bucketNames = require('../helpers/s3/bucketNames');
+const bucketNames = require('../../config/bucketNames');
 const getObject = require('../helpers/s3/getObject');
 const { NotFoundError } = require('../../utils/responses');
 

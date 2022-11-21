@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getUser returns a valid user 1`] = `
+Array [
+  Object {
+    "Name": "name",
+    "Value": "email-test",
+  },
+  Object {
+    "Name": "email",
+    "Value": "email@example.com",
+  },
+]
+`;

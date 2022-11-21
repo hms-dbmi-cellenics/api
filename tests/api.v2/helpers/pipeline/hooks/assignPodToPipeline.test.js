@@ -60,17 +60,7 @@ describe('assignPodToPipeline', () => {
 
     await assignPodToPipeline(message);
 
-    expect(listNamespacedPod).toHaveBeenCalledTimes(2);
-    // check that sandbox ID, activity & selector are correctly passed into k8s
-    expect(listNamespacedPod).toHaveBeenNthCalledWith(1,
-      expect.stringContaining(fake.SANDBOX_ID), null, null, null, null,
-      expect.stringContaining(fake.EXPERIMENT_ID));
-
-    expect(deleteNamespacedPod).toHaveBeenCalledTimes(2);
-    // check that pod name & sandbox ID are correctly passed into k8s
-    expect(deleteNamespacedPod).toHaveBeenNthCalledWith(1,
-      expect.stringContaining('pipeline-X1'),
-      expect.stringContaining(fake.SANDBOX_ID));
+    expect(listNamespacedPod).toHaveBeenCalledTimes(1);
 
     expect(patchNamespacedPod).toHaveBeenCalledTimes(1);
     // check that pod name & sandbox ID are correctly passed into k8s

@@ -1,6 +1,6 @@
 const {
   PLOTS, SAMPLE_FILES, FILTERED_CELLS, RAW_SEURAT, PROCESSED_MATRIX, CELL_SETS,
-} = require('../../api.v2/helpers/s3/bucketNames');
+} = require('../../config/bucketNames');
 
 const getTriggerFunction = (dbEnv, key, bucketName) => {
   let body = '';

@@ -11,6 +11,10 @@ const experimentExecutionInstance = new ExperimentExecution();
 
 const mockStepNames = getQcPipelineStepNames();
 
+jest.mock('../../../../src/api.v2/helpers/pipeline/batch/terminateJobs');
+jest.mock('../../../../src/api.v2/helpers/pipeline/batch/listActiveJobs');
+jest.mock('../../../../src/api.v2/helpers/pipeline/hooks/podCleanup');
+
 const { createQCPipeline, createGem2SPipeline } = jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 
 jest.mock('crypto', () => ({

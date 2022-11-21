@@ -1,4 +1,4 @@
-const config = require('../../../config');
+const config = require('.');
 
 const bucketNames = {
   SAMPLE_FILES: `biomage-originals-${config.clusterEnv}-${config.awsAccountId}`,

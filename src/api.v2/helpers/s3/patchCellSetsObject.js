@@ -1,6 +1,6 @@
 const jsonMerger = require('json-merger');
 
-const bucketNames = require('./bucketNames');
+const bucketNames = require('../../../config/bucketNames');
 const getObject = require('./getObject');
 const putObject = require('./putObject');
 
