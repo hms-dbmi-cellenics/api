@@ -260,7 +260,7 @@ jobs:
             select(di == 1).spec.values.image.tag = strenv(IMAGE_TAG) |
             select(di == 1).spec.values.replicaCount = strenv(REPLICA_COUNT) |
             select(di == 1).spec.values.serviceAccount.iamRole = "api-role-" + strenv(KUBERNETES_ENV)
-          ' .flux.yaml > DEPLOYMENT_NAME.yaml
+          ' .flux.yaml > $DEPLOYMENT_NAME.yaml
 
           cat $DEPLOYMENT_NAME.yaml
         env:
