@@ -6,7 +6,7 @@ const invalidatePlotsForEvent = require('../../../src/utils/plotConfigInvalidati
 
 const Plot = require('../../../src/api.v2/model/Plot');
 const events = require('../../../src/utils/plotConfigInvalidation/events');
-const invalidationResults = require('./mockData/invalidationResults');
+const invalidationResults = require('../../api.v2/mocks/data/invalidationResults');
 
 jest.mock('../../../src/api.v2/model/Plot');
 
