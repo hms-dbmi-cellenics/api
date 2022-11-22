@@ -218,7 +218,6 @@ jobs:
           if [ "${{ matrix.environment }}" = "production" ]; then
             export SANDBOX_ID="default"
             export RDS_SANDBOX_ID="default"
-            export CHART_REF="master"
             export KUBERNETES_ENV="production"
             export IMAGE_PATTERN="^(?P<version>[0-9]+\.[0-9]+\.[0-9])+$"
             export IMAGE_EXTRACT='$version'
@@ -231,7 +230,6 @@ jobs:
           if [ "${{ matrix.environment }}" = "develop" ]; then
             export SANDBOX_ID="default"
             export RDS_SANDBOX_ID="default"
-            export CHART_REF="master"
             export KUBERNETES_ENV="staging"
             export IMAGE_PATTERN="^$REF_ID-[a-f0-9]+-(?P<timestamp>[0-9]+)$"
             export IMAGE_EXTRACT='$timestamp'
@@ -244,7 +242,6 @@ jobs:
           if [ "${{ matrix.environment }}" = "staging" ]; then
             export SANDBOX_ID="STAGING_SANDBOX_ID"
             export RDS_SANDBOX_ID="STAGING_RDS_SANDBOX_ID"
-            export CHART_REF="STAGING_CHART_REF"
             export KUBERNETES_ENV="staging"
             export IMAGE_PATTERN="^$REF_ID-[a-f0-9]+-(?P<timestamp>[0-9]+)$"
             export IMAGE_EXTRACT='$timestamp'
@@ -260,6 +257,7 @@ jobs:
           export IMAGE_POLICY_TAG="{\"\$imagepolicy\": \"$NAMESPACE:$DEPLOYMENT_NAME:tag\"}"
           export CHART_NAME="$DEPLOYMENT_NAME-chart"
           export RELEASE_NAME="$DEPLOYMENT_NAME-release"
+          export IMAGE_AUTOMATION_UPDATE_NAME="$DEPLOYMENT_NAME-image-update"
 
           cp .flux.yaml $DEPLOYMENT_NAME.yaml
 
@@ -268,7 +266,6 @@ jobs:
             select(di == 0).metadata.labels.sandboxId = strenv(SANDBOX_ID) |
             select(di == 1).metadata.name = strenv(CHART_NAME) |
             select(di == 1).metadata.namespace = strenv(NAMESPACE) |
-            select(di == 1).spec.ref.branch = strenv(CHART_REF) |
             select(di == 2).metadata.name = strenv(DEPLOYMENT_NAME) |
             select(di == 2).metadata.namespace = strenv(NAMESPACE) |
             select(di == 2).spec.image = strenv(REGISTRY) + "/" + strenv(DEPLOYMENT_NAME) |
@@ -278,6 +275,8 @@ jobs:
             select(di == 3).spec.filterTags.pattern = strenv(IMAGE_PATTERN) |
             select(di == 3).spec.filterTags.extract = strenv(IMAGE_EXTRACT) |
             select(di == 3).spec.policy.[strenv(IMAGE_POLICY_TYPE)].[strenv(IMAGE_POLICY_KEY)] = strenv(IMAGE_POLICY_VALUE) |
+            select(di == 4).metadata.name = strenv(IMAGE_AUTOMATION_UPDATE_NAME) |
+            select(di == 4).metadata.namespace = strenv(NAMESPACE) |
             select(di == 4).spec.sourceRef.name = strenv(RELEASE_NAME) |
             select(di == 4).spec.sourceRef.namespace = strenv(NAMESPACE) |
             select(di == 5).metadata.name = strenv(DEPLOYMENT_NAME) |

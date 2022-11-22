@@ -5,7 +5,6 @@ metadata:
   labels:
     sandboxId: FILLED_IN_BY_CI
 ---
-# GitRepository to watch for chart changes
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
 metadata:
@@ -15,7 +14,7 @@ spec:
   interval: 5m0s
   url: https://github.com/biomage-org/iac
   ref:
-    branch: FILLED_IN_BY_CI
+    branch: "master"
 ---
 apiVersion: image.toolkit.fluxcd.io/v1beta1
 kind: ImageRepository
@@ -37,7 +36,6 @@ spec:
   filterTags:
     pattern: FILLED_IN_BY_CI
     extract: FILLED_IN_BY_CI
-  policy: FILLED_IN_BY_CI
 ---
 apiVersion: image.toolkit.fluxcd.io/v1beta1
 kind: ImageUpdateAutomation
