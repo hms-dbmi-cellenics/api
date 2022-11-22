@@ -1,8 +1,11 @@
 const dns = require('dns').promises;
 const ipaddr = require('ipaddr.js');
+const config = require('../config');
 
 // eslint-disable-next-line no-useless-escape
-const INTERNAL_DOMAINS_REGEX = new RegExp('((\.compute\.internal)|(\.svc\.local))$');
+const INTERNAL_DOMAINS_REGEX = new RegExp(`((\.compute\.internal)|(\.svc\.local)|(${config.awsRegion}\.compute\.amazonaws\.com))$`);
+// awsRegion.compute.amazonaws.com => running in AWS Batch
+// compute.internal & svc.local => running in cluster or fargate
 
 const isReqFromLocalhost = async (req) => {
   const ip = req.connection.remoteAddress;
@@ -32,7 +35,7 @@ const isReqFromCluster = async (req) => {
     return true;
   }
 
-  throw new Error('ip address does not come from internal sources');
+  throw new Error(`ip address ${remoteAddress} and its domains ${domains} do not come from internal sources`);
 };
 
 module.exports = {

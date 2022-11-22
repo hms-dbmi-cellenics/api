@@ -98,7 +98,7 @@ spec:
     hpa:
       enabled: false
     loadBalancerHealthCheck:
-      path: "/v2/health"
+      path: "/"
   valuesFrom:
     - kind: ConfigMap
       name: account-config
