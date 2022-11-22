@@ -258,8 +258,8 @@ jobs:
 
           export NAMESPACE="$DEPLOYMENT_NAME-$SANDBOX_ID"
           export IMAGE_POLICY_TAG="{\"\$imagepolicy\": \"$NAMESPACE:$DEPLOYMENT_NAME:tag\"}"
-          export CHART_NAME = "$DEPLOYMENT_NAME-chart"
-          export RELEASE_NAME = "$DEPLOYMENT_NAME-release"
+          export CHART_NAME="$DEPLOYMENT_NAME-chart"
+          export RELEASE_NAME="$DEPLOYMENT_NAME-release"
 
           cp .flux.yaml $DEPLOYMENT_NAME.yaml
 
