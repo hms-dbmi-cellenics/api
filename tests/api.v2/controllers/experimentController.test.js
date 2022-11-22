@@ -265,7 +265,7 @@ describe('experimentController', () => {
     expect(invalidatePlotsForEvent).not.toHaveBeenCalled();
   });
 
-  it('updateProcessingConfig works when ConfigureEmbedding is updated', async () => {
+  it('Dependent plot configs are invalidated when ConfigureEmbedding is updated', async () => {
     experimentInstance.updateProcessingConfig.mockImplementationOnce(() => Promise.resolve());
 
     const mockSockets = 'mockSockets';
