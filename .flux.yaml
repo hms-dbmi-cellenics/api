@@ -39,18 +39,6 @@ spec:
     extract: FILLED_IN_BY_CI
   policy: FILLED_IN_BY_CI
 ---
-# GitRepository to update the helm release in case of image updates
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: GitRepository
-metadata:
-  name: FILLED_IN_BY_CI
-  namespace: FILLED_IN_BY_CI
-spec:
-  interval: 2m0s
-  url: https://github.com/biomage-org/flux-v2-migration
-  ref:
-    branch: master
----
 apiVersion: image.toolkit.fluxcd.io/v1beta1
 kind: ImageUpdateAutomation
 metadata:
@@ -60,8 +48,8 @@ spec:
   interval: 2m0s
   sourceRef:
     kind: GitRepository
-    name: FILLED_IN_BY_CI
-    namespace: FILLED_IN_BY_CI
+    name: flux-system
+    namespace: flux-system
   git:
     commit:
       author:
