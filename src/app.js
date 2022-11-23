@@ -9,7 +9,7 @@ const sqlClientLoader = require('./loaders/sqlClient');
 const config = require('./config');
 const getLogger = require('./utils/getLogger');
 
-// TESTING
+// TESTING FLUX V2 - REMOVE THIS COMMENT BEFORE MERGING
 
 const logger = getLogger();
 
