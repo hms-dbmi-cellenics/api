@@ -34,9 +34,8 @@ spec:
         cpu: "100m"
     hpa:
       enabled: false
-    ingress:
-      annotations:
-        alb.ingress.kubernetes.io/healthcheck-path: /v2/health
+    loadBalancerHealthCheck:
+      path: "/"
   valuesFrom:
   - configMapKeyRef:
       name: account-config

@@ -224,7 +224,6 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
     return next(new UnauthenticatedError('token has expired'));
   }
 
-
   // check if we should ignore expired jwt token for this path and request type
   const longTimeoutEndpoints = [{ urlMatcher: /experiments\/.{36}\/cellSets$/, method: 'PATCH' }];
   const isEndpointIgnored = longTimeoutEndpoints.some(
@@ -235,14 +234,15 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
 
   // if endpoint is not in ignore list, the JWT is too old, send an error accordingly
   if (!isEndpointIgnored) {
-    return next(new UnauthenticatedError('token has expired for non-ignored endpoint'));
+    return next(new UnauthenticatedError(`expired token: non-ignored endpoint ${req.url}`));
   }
 
   promiseAny([isReqFromCluster(req), isReqFromLocalhost(req)])
     .then(() => next())
-    .catch((e) => {
-      next(new UnauthenticatedError(`invalid request origin ${e}`));
+    .catch((error) => {
+      next(new UnauthenticatedError(`invalid request origin ${error}: ${error.errors}`));
     });
+
 
   return null;
 };
