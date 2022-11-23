@@ -255,15 +255,13 @@ jobs:
 
           export NAMESPACE="$DEPLOYMENT_NAME-$SANDBOX_ID"
           export IMAGE_POLICY_TAG="{\"\$imagepolicy\": \"$NAMESPACE:$DEPLOYMENT_NAME:tag\"}"
-          export CHART_NAME="$DEPLOYMENT_NAME-chart"
-          export IMAGE_AUTOMATION_UPDATE_NAME="$DEPLOYMENT_NAME-image-update"
 
           cp .flux.yaml $DEPLOYMENT_NAME.yaml
 
           yq '
             select(di == 0).metadata.name = strenv(NAMESPACE) |
             select(di == 0).metadata.labels.sandboxId = strenv(SANDBOX_ID) |
-            select(di == 1).metadata.name = strenv(CHART_NAME) |
+            select(di == 1).metadata.name = strenv(DEPLOYMENT_NAME) + "-chart" |
             select(di == 1).metadata.namespace = strenv(NAMESPACE) |
             select(di == 2).metadata.name = strenv(DEPLOYMENT_NAME) |
             select(di == 2).metadata.namespace = strenv(NAMESPACE) |
@@ -274,7 +272,7 @@ jobs:
             select(di == 3).spec.filterTags.pattern = strenv(IMAGE_PATTERN) |
             select(di == 3).spec.filterTags.extract = strenv(IMAGE_EXTRACT) |
             select(di == 3).spec.policy.[strenv(IMAGE_POLICY_TYPE)].[strenv(IMAGE_POLICY_KEY)] = strenv(IMAGE_POLICY_VALUE) |
-            select(di == 4).metadata.name = strenv(IMAGE_AUTOMATION_UPDATE_NAME) |
+            select(di == 4).metadata.name = strenv(DEPLOYMENT_NAME) + "-image-update" |
             select(di == 4).metadata.namespace = strenv(NAMESPACE) |
             select(di == 5).metadata.name = strenv(DEPLOYMENT_NAME) |
             select(di == 5).metadata.namespace = strenv(NAMESPACE) |
