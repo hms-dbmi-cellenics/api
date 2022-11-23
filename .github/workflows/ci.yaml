@@ -124,7 +124,7 @@ jobs:
 
           if [ "${{ github.event_name }}" = "release" ] && [ "${{ github.event.action }}" = "released" ]; then
             COMMIT_SHA=""
-            IMAGE_TAG="${REF_ID/refs-tags-/}-$TIMESTAMP"
+            IMAGE_TAG="${REF_ID/refs-tags-/}"
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
             COMMIT_SHA="${{ github.event.pull_request.head.sha }}"
             IMAGE_TAG="$REF_ID-$COMMIT_SHA-$TIMESTAMP"
