@@ -11,7 +11,7 @@ const getLogger = require('./utils/getLogger');
 
 const logger = getLogger();
 
-// TEST FLUX IMAGE UPDATE
+// TEST FLUX IMAGE UPDATE - REMOVE TAG BEFORE MERGING
 
 async function startServer() {
   const { app, server, socketIo: io } = await expressLoader(express());
