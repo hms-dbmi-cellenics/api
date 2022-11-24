@@ -36,21 +36,21 @@ describe('tests for experiment route', () => {
     jest.restoreAllMocks();
   });
 
-  it('Creating a new sample works', async (done) => {
-    sampleController.createSample.mockImplementationOnce((req, res) => {
-      res.json(OK());
+  it('Creating new samples works', async (done) => {
+    sampleController.createSamples.mockImplementationOnce((req, res) => {
+      res.json(['id1']);
       return Promise.resolve();
     });
 
-    const sampleData = {
+    const samplesData = [{
       name: 'sampleName',
       sampleTechnology: '10x',
       options: {},
-    };
+    }];
 
     request(app)
-      .post(`/v2/experiments/${experimentId}/samples/${sampleId}`)
-      .send(sampleData)
+      .post(`/v2/experiments/${experimentId}/samples`)
+      .send(samplesData)
       .expect(200)
       .end((err) => {
         if (err) {
@@ -63,18 +63,18 @@ describe('tests for experiment route', () => {
   });
 
   it('Creating a new sample fails if request body is invalid', async (done) => {
-    sampleController.createSample.mockImplementationOnce((req, res) => {
+    sampleController.createSamples.mockImplementationOnce((req, res) => {
       res.json(OK());
       return Promise.resolve();
     });
 
-    const invalidSampleData = {
+    const invalidSampleData = [{
       name: 'sampleName',
       sampleTechnology: 'Invalidtechnology',
-    };
+    }];
 
     request(app)
-      .post(`/v2/experiments/${experimentId}/samples/${sampleId}`)
+      .post(`/v2/experiments/${experimentId}/samples`)
       .send(invalidSampleData)
       .expect(400)
       .end((err) => {
