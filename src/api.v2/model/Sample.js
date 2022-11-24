@@ -66,7 +66,7 @@ class Sample extends BasicModel {
     const result = await this.sql.select('*')
       .queryContext({ camelCaseExceptions: ['metadata'] })
       .from(metadataQuery)
-      .rightJoin(fileNamesQuery, 'select_metadata.id', 'select_sample_file.id');
+      .join(fileNamesQuery, 'select_metadata.id', 'select_sample_file.id');
 
     return result;
   }
