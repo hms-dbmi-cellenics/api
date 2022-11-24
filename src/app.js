@@ -11,6 +11,8 @@ const getLogger = require('./utils/getLogger');
 
 const logger = getLogger();
 
+// TEST FLUX IMAGE UPDATE
+
 async function startServer() {
   const { app, server, socketIo: io } = await expressLoader(express());
   await cacheLoader(io);
