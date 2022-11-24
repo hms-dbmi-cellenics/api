@@ -8,7 +8,7 @@ const { OK } = require('../../../src/utils/responses');
 const sampleController = require('../../../src/api.v2/controllers/sampleController');
 
 jest.mock('../../../src/api.v2/controllers/sampleController', () => ({
-  createSample: jest.fn(),
+  createSamples: jest.fn(),
   deleteSample: jest.fn(),
   patchSample: jest.fn(),
   updateSamplesOptions: jest.fn(),

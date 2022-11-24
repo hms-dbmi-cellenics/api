@@ -2,7 +2,7 @@ const BasicModel = require('./BasicModel')();
 
 const stub = {
   createNewMetadataTrack: jest.fn(),
-  createNewSampleValues: jest.fn(),
+  createNewSamplesValues: jest.fn(),
   patchValueForSample: jest.fn(),
   ...BasicModel,
 };
