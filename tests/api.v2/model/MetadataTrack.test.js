@@ -104,27 +104,29 @@ describe('model/userAccess', () => {
     expect(mockFind).toHaveBeenCalledWith({ experiment_id: experimentId, key });
   });
 
-  it('createNewExperimentPermissions works correctly when experiment has metadata tracks', async () => {
+  it('createNewSamplesValues works correctly when experiment has metadata tracks', async () => {
     const mockExperimentId = 'mockExperimentId';
-    const mockSampleId = 'mockSampleId';
+    const mockSampleIds = ['id1', 'id2'];
 
     mockSqlClient.where.mockImplementationOnce(() => Promise.resolve([{ id: 'track1Id' }, { id: 'track2Id' }]));
 
-    await new MetadataTrack().createNewSampleValues(mockExperimentId, mockSampleId);
+    await new MetadataTrack().createNewSamplesValues(mockExperimentId, mockSampleIds);
 
     expect(mockSqlClient.insert).toHaveBeenCalledWith([
-      { metadata_track_id: 'track1Id', sample_id: 'mockSampleId' },
-      { metadata_track_id: 'track2Id', sample_id: 'mockSampleId' },
+      { metadata_track_id: 'track1Id', sample_id: 'id1' },
+      { metadata_track_id: 'track2Id', sample_id: 'id1' },
+      { metadata_track_id: 'track1Id', sample_id: 'id2' },
+      { metadata_track_id: 'track2Id', sample_id: 'id2' },
     ]);
   });
 
-  it('createNewExperimentPermissions doesn\'t do anything when experiment has no metadata tracks', async () => {
+  it('createNewSamplesValues doesn\'t do anything when experiment has no metadata tracks', async () => {
     const mockExperimentId = 'mockExperimentId';
-    const mockSampleId = 'mockSampleId';
+    const mockSampleIds = ['id1', 'id2'];
 
     mockSqlClient.where.mockImplementationOnce(() => Promise.resolve([]));
 
-    await new MetadataTrack().createNewSampleValues(mockExperimentId, mockSampleId);
+    await new MetadataTrack().createNewSamplesValues(mockExperimentId, mockSampleIds);
 
     expect(mockSqlClient.insert).not.toHaveBeenCalled();
   });
