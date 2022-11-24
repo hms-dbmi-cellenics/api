@@ -231,14 +231,16 @@ describe('model/Experiment', () => {
     expect(mockTrx.rollback).toHaveBeenCalled();
   });
 
-  it('addSample works correctly', async () => {
+  it('addSamples works correctly', async () => {
     mockSqlClient.where.mockImplementationOnce(() => { Promise.resolve(); });
     mockSqlClient.raw.mockImplementationOnce(() => 'RawSqlCommand');
 
-    await new Experiment().addSample(mockExperimentId, mockSampleId);
+    const newSamples = [mockSampleId, 'id2'];
+
+    await new Experiment().addSamples(mockExperimentId, newSamples);
 
     expect(mockSqlClient.update).toHaveBeenCalledWith({ samples_order: 'RawSqlCommand' });
-    expect(mockSqlClient.raw).toHaveBeenCalledWith('samples_order || \'["mockSampleId"]\'::jsonb');
+    expect(mockSqlClient.raw).toHaveBeenCalledWith('samples_order || \'["mockSampleId", "id2"]\'::jsonb');
     expect(mockSqlClient.where).toHaveBeenCalledWith('id', 'mockExperimentId');
   });
 
