@@ -1,6 +1,4 @@
 // @ts-nocheck
-// const { v4: uuidv4 } = require('uuid');
-
 const Experiment = require('../../../src/api.v2/model/Experiment');
 const Sample = require('../../../src/api.v2/model/Sample');
 const MetadataTrack = require('../../../src/api.v2/model/MetadataTrack');
