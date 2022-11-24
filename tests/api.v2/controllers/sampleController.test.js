@@ -31,6 +31,7 @@ const mockRes = {
 
 const mockExperimentId = 'mockExperimentId';
 const mockSampleTechnology = '10x';
+const mockSampleId = 'mockSampleId';
 
 const newSamplesReq = [
   { name: 'mockSampleName1', sampleTechnology: mockSampleTechnology, options: {} },
@@ -51,7 +52,7 @@ describe('sampleController', () => {
     jest.clearAllMocks();
   });
 
-  it.only('createSample works correctly', async () => {
+  it('createSample works correctly', async () => {
     const mockReq = {
       params: { experimentId: mockExperimentId },
       body: newSamplesReq, // { name: mockSampleName, sampleTechnology: mockSampleTechnology },
@@ -90,7 +91,7 @@ describe('sampleController', () => {
   it('createSample errors out if the transaction fails', async () => {
     const mockReq = {
       params: { experimentId: mockExperimentId },
-      body: { name: mockSampleName, sampleTechnology: mockSampleTechnology },
+      body: newSamplesReq,
     };
 
     mockSqlClient.transaction.mockImplementationOnce(() => Promise.reject(new Error()));
