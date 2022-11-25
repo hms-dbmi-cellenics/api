@@ -129,11 +129,11 @@ jobs:
             TIMESTAMP=""
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
             COMMIT_SHA="${{ github.event.pull_request.head.sha }}"
-            IMAGE_TAG="$REF_ID-$COMMIT_SHA-$TIMESTAMP"
+            IMAGE_TAG="$REF_ID-$COMMIT_SHA"
             TIMESTAMP=$TIMESTAMP
           else
             COMMIT_SHA=$GITHUB_SHA
-            IMAGE_TAG="$REF_ID-$COMMIT_SHA-$TIMESTAMP"
+            IMAGE_TAG="$REF_ID-$COMMIT_SHA"
             TIMESTAMP=$TIMESTAMP
           fi
 
