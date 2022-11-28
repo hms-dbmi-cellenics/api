@@ -2,7 +2,7 @@ const { ACCOUNT_ID } = require('../../api.v2/constants');
 const config = require('../../config');
 
 const buildUserInvitedEmailBody = (email, experimentId, inviterUser) => {
-  const link = `${config.domainName}/experiments/${experimentId}/data-exploration`;
+  const link = `https://${config.domainName}/experiments/${experimentId}/data-exploration`;
 
   const isHMS = config.awsAccountId === ACCOUNT_ID.HMS;
 
