@@ -6,11 +6,10 @@ const buildPipelineStatusEmailBody = (experimentId, status, user) => {
   const isHMS = config.awsAccountId === ACCOUNT_ID.HMS;
 
   const firstname = user.name.split(' ')[0];
-  const link = `https://${config.domainName}/experiments/${experimentId}/data-processing`;
+  const link = `${config.domainName}/experiments/${experimentId}/data-processing`;
   const successMessage = `
       The data processing pipeline has completed successfully and your data is now ready to explore:<br/>
       <a href="${link}">${link}</a>
-      <br />
       Happy analysing! <br/>`;
   const failMessage = `
       Unfortunately, when trying to run the analysis the data processing failed for your experiment: <br/>
