@@ -104,6 +104,7 @@ const fileNameToReturn = {
   matrix10x: 'matrix.mtx.gz',
   barcodes10x: 'barcodes.tsv.gz',
   features10x: 'features.tsv.gz',
+  seurat: 'r.rds',
 };
 
 const getSampleFileDownloadUrl = async (experimentId, sampleId, fileType) => {
