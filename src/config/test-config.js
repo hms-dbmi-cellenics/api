@@ -8,6 +8,7 @@ module.exports = {
   awsAccountId: '000000000000',
   awsRegion: 'eu-west-1',
   corsOriginUrl: 'https://scp.biomage.net',
+  emailUrl: 'https://scp.biomage.net',
   domainName: 'scp.biomage.net',
   podName: 'test',
   sandboxId: 'default',
