@@ -246,9 +246,6 @@ class Experiment extends BasicModel {
       case bucketNames.PROCESSED_MATRIX:
         downloadedFileName = `${filenamePrefix}_processed_matrix.rds`;
         break;
-      case bucketNames.RAW_SEURAT:
-        downloadedFileName = `${filenamePrefix}_raw_matrix.rds`;
-        break;
       default:
         throw new BadRequestError('Invalid download type requested');
     }
