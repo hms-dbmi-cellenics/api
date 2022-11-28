@@ -287,7 +287,7 @@ jobs:
             select(di == 0).metadata.labels.sandboxId = strenv(SANDBOX_ID) |
             select(di == 1).metadata.name = strenv(CHART_CRD_NAME) |
             select(di == 1).metadata.namespace = strenv(NAMESPACE) |
-            select(di == 1).metadata.namespace = strenv(NAMESPACE) |
+            select(di == 1).spec.ref.branch = strenv(CHART_BRANCH) |
             select(di == 2).metadata.name = strenv(DEPLOYMENT_NAME) |
             select(di == 2).metadata.namespace = strenv(NAMESPACE) |
             select(di == 2).spec.image = strenv(REGISTRY) + "/" + strenv(DEPLOYMENT_NAME) |
