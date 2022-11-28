@@ -5,9 +5,12 @@ const bucketNames = require('../../../src/config/bucketNames');
 const getS3Object = require('../../../src/api.v2/helpers/s3/getObject');
 const patchCellSetsObject = require('../../../src/api.v2/helpers/s3/patchCellSetsObject');
 const { OK } = require('../../../src/utils/responses');
+const invalidatePlotsForEvent = require('../../../src/utils/plotConfigInvalidation/invalidatePlotsForEvent');
+const events = require('../../../src/utils/plotConfigInvalidation/events');
 
 jest.mock('../../../src/api.v2/helpers/s3/getObject');
 jest.mock('../../../src/api.v2/helpers/s3/patchCellSetsObject');
+jest.mock('../../../src/utils/plotConfigInvalidation/invalidatePlotsForEvent');
 
 const mockRes = {
   json: jest.fn(),
@@ -63,6 +66,8 @@ const mockPatch = [
 ];
 
 const mockExperimentId = '1234-5678-9012';
+const mockSockets = 'mockSockets';
+const mockIo = { sockets: mockSockets };
 
 describe('cellSetsController', () => {
   beforeEach(async () => {
@@ -70,7 +75,10 @@ describe('cellSetsController', () => {
   });
 
   it('getCellSets works correctly', async () => {
-    const mockReq = { params: { experimentId: mockExperimentId } };
+    const mockReq = {
+      params: { experimentId: mockExperimentId },
+      app: { get: jest.fn(() => mockIo) },
+    };
     getS3Object.mockImplementationOnce(
       () => Promise.resolve(mockCellSets),
     );
@@ -89,6 +97,7 @@ describe('cellSetsController', () => {
     const mockReq = {
       params: { experimentId: mockExperimentId },
       body: mockPatch,
+      app: { get: jest.fn(() => mockIo) },
     };
 
     patchCellSetsObject.mockImplementationOnce(
@@ -100,6 +109,12 @@ describe('cellSetsController', () => {
     expect(patchCellSetsObject).toHaveBeenCalledWith(
       mockExperimentId,
       mockPatch,
+    );
+
+    expect(invalidatePlotsForEvent).toHaveBeenCalledWith(
+      mockExperimentId,
+      events.CELL_SETS_MODIFIED,
+      mockSockets,
     );
 
     expect(mockRes.json).toHaveBeenCalledWith(OK());

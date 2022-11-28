@@ -3,6 +3,7 @@ const BasicModel = require('./BasicModel')();
 const stub = {
   getConfig: jest.fn(),
   updateConfig: jest.fn(),
+  invalidateAttributesForMatches: jest.fn(),
   ...BasicModel,
 };
 
