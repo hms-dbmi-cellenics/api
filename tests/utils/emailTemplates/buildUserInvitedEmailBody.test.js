@@ -6,7 +6,7 @@ const testUserEmail = 'test@email.com';
 const mockInviterUser = { email: 'inviter@example.com' };
 const mockExperimentId = 'mock-experiment-id';
 
-describe('buildUserInvitedNotRegisteredEmailBody', () => {
+describe('buildUserInvitedEmailBody', () => {
   it('Should build the correct message', () => {
     const emailParams = buildUserInvitedEmailBody(testUserEmail, mockExperimentId, mockInviterUser);
     expect(emailParams).toMatchSnapshot();
