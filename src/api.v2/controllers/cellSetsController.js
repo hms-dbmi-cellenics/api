@@ -6,6 +6,8 @@ const bucketNames = require('../../config/bucketNames');
 const { OK } = require('../../utils/responses');
 
 const patchCellSetsObject = require('../helpers/s3/patchCellSetsObject');
+const invalidatePlotsForEvent = require('../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
+const events = require('../../utils/plotConfigInvalidation/events');
 
 const logger = getLogger('[CellSetsController] - ');
 
@@ -30,6 +32,9 @@ const patchCellSets = async (req, res) => {
 
   logger.log(`Patching cell sets for ${experimentId}`);
   await patchCellSetsObject(experimentId, patch);
+
+  const { sockets } = req.app.get('io');
+  await invalidatePlotsForEvent(experimentId, events.CELL_SETS_MODIFIED, sockets);
 
   logger.log(`Finished patching cell sets for experiment ${experimentId}`);
 
