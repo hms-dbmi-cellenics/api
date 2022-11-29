@@ -10,6 +10,8 @@ const buildPipelineStatusEmailBody = (experimentId, status, user) => {
   const successMessage = `
       The data processing pipeline has completed successfully and your data is now ready to explore:<br/>
       <a href="${link}">${link}</a>
+      <br />
+      <br />
       Happy analysing! <br/>`;
   const failMessage = `
       Unfortunately, when trying to run the analysis the data processing failed for your experiment: <br/>
@@ -23,6 +25,7 @@ const buildPipelineStatusEmailBody = (experimentId, status, user) => {
         <body>
             <h3>Hello ${firstname},</h3>
             <p>Thanks for using Cellenics! <br/>
+            <br />
               ${status === SUCCEEDED ? successMessage : failMessage}<br/><br/>${isHMS ? '' : `
               The Biomage Team`}
               <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>

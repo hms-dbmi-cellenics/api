@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`buildUserInvitedNotRegisteredEmailBody Should build the correct message 1`] = `
+exports[`buildUserInvitedEmailBody Should build the correct message 1`] = `
 Object {
   "Destination": Object {
     "ToAddresses": Array [
@@ -63,7 +63,7 @@ Object {
 }
 `;
 
-exports[`buildUserInvitedNotRegisteredEmailBody Should build the correct message for HMS 1`] = `
+exports[`buildUserInvitedEmailBody Should build the correct message for HMS 1`] = `
 Object {
   "Destination": Object {
     "ToAddresses": Array [
