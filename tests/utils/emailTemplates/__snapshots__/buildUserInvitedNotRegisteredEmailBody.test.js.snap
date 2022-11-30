@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`creatUserInvite Grants access if user is already registered and sends an email 1`] = `
+exports[`buildUserInvitedNotRegisteredEmailBody Should build the correct message 1`] = `
 Object {
   "Destination": Object {
     "ToAddresses": Array [
-      "invited@example.com",
+      "test@email.com",
     ],
   },
   "Message": Object {
@@ -19,8 +19,9 @@ Object {
             <p>
               Hello, <br/>
               Your collaborator inviter@example.com has invited you to explore their single cell RNA-seq project in Cellenics. <br/><br/>
-              Access it with the link below: <br/>
-              <a href=\\"https://scp.biomage.net/experiments/experimentId/data-exploration\\">https://scp.biomage.net/experiments/experimentId/data-exploration</a> <br/> <br/>
+              You need to create a Cellenics account in order to access the project. <br/>
+              Register at <a href=\\"https://scp.biomage.net\\">https://scp.biomage.net</a> using this email address.<br/> <br/>
+
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
               The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
               More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
@@ -41,8 +42,9 @@ Object {
             <p>
               Hello, <br/>
               Your collaborator inviter@example.com has invited you to explore their single cell RNA-seq project in Cellenics. <br/><br/>
-              Access it with the link below: <br/>
-              <a href=\\"https://scp.biomage.net/experiments/experimentId/data-exploration\\">https://scp.biomage.net/experiments/experimentId/data-exploration</a> <br/> <br/>
+              You need to create a Cellenics account in order to access the project. <br/>
+              Register at <a href=\\"https://scp.biomage.net\\">https://scp.biomage.net</a> using this email address.<br/> <br/>
+
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
               The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
               More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
@@ -63,11 +65,11 @@ Object {
 }
 `;
 
-exports[`creatUserInvite Sends an invitation to sign up if user is not registered 1`] = `
+exports[`buildUserInvitedNotRegisteredEmailBody Should build the correct message for HMS 1`] = `
 Object {
   "Destination": Object {
     "ToAddresses": Array [
-      "invited@example.com",
+      "test@email.com",
     ],
   },
   "Message": Object {
@@ -87,8 +89,6 @@ Object {
 
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
               The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
-              More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
-              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>
               Best Regards, <br/>
               Cellenics team
             <p/>
@@ -110,8 +110,6 @@ Object {
 
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
               The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
-              More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
-              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>
               Best Regards, <br/>
               Cellenics team
             <p/>
@@ -124,6 +122,6 @@ Object {
       "Data": "Invitation to join a project in Cellenics",
     },
   },
-  "Source": "notification@biomage.net",
+  "Source": "alex_pickering@hms.harvard.edu",
 }
 `;
