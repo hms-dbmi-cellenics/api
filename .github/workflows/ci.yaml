@@ -126,15 +126,12 @@ jobs:
           if [ "${{ github.event_name }}" = "release" ] && [ "${{ github.event.action }}" = "released" ]; then
             COMMIT_SHA=""
             IMAGE_TAG="${REF_ID/refs-tags-/}"
-            TIMESTAMP=""
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
             COMMIT_SHA="${{ github.event.pull_request.head.sha }}"
-            IMAGE_TAG="$REF_ID-$COMMIT_SHA"
-            TIMESTAMP=$TIMESTAMP
+            IMAGE_TAG="$REF_ID-$COMMIT_SHA-$TIMESTAMP"
           else
             COMMIT_SHA=$GITHUB_SHA
-            IMAGE_TAG="$REF_ID-$COMMIT_SHA"
-            TIMESTAMP=$TIMESTAMP
+            IMAGE_TAG="$REF_ID-$COMMIT_SHA-$TIMESTAMP"
           fi
 
           # IMAGE_TAG is used in the Build Docker Image step.
@@ -190,16 +187,8 @@ jobs:
         run: |-
           echo Pushing image $IMAGE_NAME to ECR.
           docker push $IMAGE_NAME
-
-          if [ ! -z "$TIMESTAMP" ]; then
-            echo Pushing timestamped $IMAGE_NAME-$TIMESTAMP to ECR
-
-            docker tag $IMAGE_NAME $IMAGE_NAME-$TIMESTAMP
-            docker push $IMAGE_NAME-$TIMESTAMP
-          fi
         env:
           IMAGE_NAME: ${{ format('{0}/{1}:{2}', steps.login-ecr.outputs.registry, steps.ref.outputs.repo-name, steps.ref.outputs.image-tag) }}
-          TIMESTAMP: ${{ steps.ref.outputs.timestamp }}
 
   deploy:
     name: Deploy to Kubernetes
@@ -237,7 +226,6 @@ jobs:
             export RDS_SANDBOX_ID="default"
             export KUBERNETES_ENV="production"
             export CHART_REF="master"
-            export IMAGE_NAME=$IMAGE_TAG
             export IMAGE_PATTERN="^(?P<version>[0-9]+\.[0-9]+\.[0-9]+)$"
             export IMAGE_EXTRACT='$version'
             export IMAGE_POLICY_TYPE="semver"
@@ -251,7 +239,6 @@ jobs:
             export RDS_SANDBOX_ID="default"
             export KUBERNETES_ENV="staging"
             export CHART_REF="master"
-            export IMAGE_NAME="$IMAGE_TAG-$TIMESTAMP"
             export IMAGE_PATTERN="^$REF_ID-[a-f0-9]+-(?P<timestamp>[0-9]+)$"
             export IMAGE_EXTRACT='$timestamp'
             export IMAGE_POLICY_TYPE="numerical"
@@ -265,7 +252,6 @@ jobs:
             export RDS_SANDBOX_ID="STAGING_RDS_SANDBOX_ID"
             export KUBERNETES_ENV="staging"
             export CHART_REF="FILLED_IN_BY_BIOMAGE_STAGE"
-            export IMAGE_NAME="$IMAGE_TAG-$TIMESTAMP"
             export IMAGE_PATTERN="^$REF_ID-[a-f0-9]+-(?P<timestamp>[0-9]+)$"
             export IMAGE_EXTRACT='$timestamp'
             export IMAGE_POLICY_TYPE="numerical"
@@ -311,7 +297,7 @@ jobs:
             select(di == 5).spec.values.biomageCi.rdsSandboxId = strenv(RDS_SANDBOX_ID) |
             select(di == 5).spec.values.image.registry = strenv(REGISTRY) |
             select(di == 5).spec.values.image.repository = strenv(DEPLOYMENT_NAME) |
-            select(di == 5).spec.values.image.tag = strenv(IMAGE_NAME) |
+            select(di == 5).spec.values.image.tag = strenv(IMAGE_TAG) |
             select(di == 5).spec.values.image.tag line_comment = strenv(IMAGE_POLICY_TAG) |
             select(di == 5).spec.values.replicaCount = env(REPLICA_COUNT) |
             select(di == 5).spec.values.serviceAccount.iamRole = "api-role-" + strenv(KUBERNETES_ENV)
@@ -321,7 +307,6 @@ jobs:
         env:
           REF_ID: ${{ needs.build-docker.outputs.ref-id }}
           IMAGE_TAG: ${{ needs.build-docker.outputs.image-tag }}
-          TIMESTAMP: ${{ needs.build-docker.outputs.timestamp }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
 
       - id: disable-admin-enforcement
