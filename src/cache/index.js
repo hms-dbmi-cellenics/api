@@ -1,5 +1,3 @@
-// TESTING IMAGE UPDATE - REMOVE BEFORE MERGING
-
 /* eslint-disable no-underscore-dangle */
 const _ = require('lodash');
 const createMemCache = require('./mem-cache');
