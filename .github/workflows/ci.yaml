@@ -251,7 +251,7 @@ jobs:
             export SANDBOX_ID="STAGING_SANDBOX_ID"
             export RDS_SANDBOX_ID="STAGING_RDS_SANDBOX_ID"
             export KUBERNETES_ENV="staging"
-            export CHART_REF="FILLED_IN_BY_BIOMAGE_STAGE"
+            export CHART_REF="$GITHUB_HEAD_REF"
             export IMAGE_PATTERN="^$REF_ID-[a-f0-9]+-(?P<timestamp>[0-9]+)$"
             export IMAGE_EXTRACT='$timestamp'
             export IMAGE_POLICY_TYPE="numerical"
