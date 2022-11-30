@@ -21,6 +21,7 @@ Object {
     "https://localhost:5000",
   ],
   "domainName": "localhost:5000",
+  "emailDomainName": "https://localhost:5000",
   "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/production/pipeline.yaml",
   "pipelineNamespace": "pipeline-default",
   "podName": "local",
