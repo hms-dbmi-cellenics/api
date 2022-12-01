@@ -9,7 +9,6 @@ const sqlClientLoader = require('./loaders/sqlClient');
 const config = require('./config');
 const getLogger = require('./utils/getLogger');
 
-
 const logger = getLogger();
 
 async function startServer() {
