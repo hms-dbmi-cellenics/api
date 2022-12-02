@@ -91,6 +91,15 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
 
+    - id: check-licenses
+      name: Check licenses
+      env:
+        ALLOWED_LICENSES: "MIT;ISC;Apache-2.0;BSD-3-Clause;BSD-2-Clause;(MIT OR Apache-2.0);Unlicense;Python-2.0;BSD;(AFL-2.1 OR BSD-3-Clause);0BSD"
+        EXCLUDE_PACKAGES: "cluster-key-slot@1.1.0"
+      run: |-
+        npm install -g license-checker
+        license-checker --production --json --onlyAllow="${ALLOWED_LICENSES}" --excludePackages="${EXCLUDE_PACKAGES}"
+
     - id: send-to-slack
       name: Send failure notification to Slack
       if: failure() && github.event_name == 'push'
