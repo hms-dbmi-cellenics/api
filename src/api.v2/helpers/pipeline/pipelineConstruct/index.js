@@ -307,10 +307,13 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
     podCpus,
     podMemory,
   };
+
   await cancelPreviousPipelines(experimentId);
 
+  const runInBatch = needsBatchJob(podCpus, podMemory);
+
   logger.log(`createGem2SPipeline: not passing cpu/mem ${podCpus}, ${podMemory}`);
-  const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv);
+  const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch);
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
