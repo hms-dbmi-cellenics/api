@@ -20,6 +20,9 @@ const createTask = (taskName, context) => {
     server: remoterServer,
   };
 
+  console.log('taskDebug');
+  console.log(task);
+
   return task;
 };
 
@@ -41,9 +44,20 @@ const getGem2SParams = (task, context) => {
   };
 };
 
+// const getSubsetParams = (task, context) => {
+//   // console.log('taskDebug');
+//   // console.log(task);
+//   // // const { taskParams } = context;
 
-const buildParams = (task, context, stepArgs) => {
+//   // return {};
+// };
+
+const buildParams = (context, stepArgs) => {
+  const { taskName } = stepArgs;
+
   let processParams;
+
+  const task = createTask(taskName, context);
 
   if (task.processName === QC_PROCESS_NAME) {
     processParams = getQCParams(task, context, stepArgs);
@@ -59,9 +73,13 @@ const buildParams = (task, context, stepArgs) => {
 
 const createNewStep = (context, step, stepArgs) => {
   const { activityArn } = context;
-  const { taskName } = stepArgs;
-  const task = createTask(taskName, context);
-  const params = buildParams(task, context, stepArgs);
+
+  const params = buildParams(context, stepArgs);
+
+  console.log('paramsDebug');
+  console.log(JSON.stringify(context));
+  console.log(JSON.stringify(step));
+  console.log();
 
   return {
     ...step,

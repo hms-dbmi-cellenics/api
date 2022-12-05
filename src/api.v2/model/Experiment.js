@@ -112,7 +112,7 @@ class Experiment extends BasicModel {
     return result;
   }
 
-  async createCopy(fromExperimentId, name = null) {
+  async createCopy(fromExperimentId, name = null, gem2sRerunnable = true) {
     const toExperimentId = uuidv4();
 
     const { sql } = this;
@@ -125,6 +125,8 @@ class Experiment extends BasicModel {
             // Clone the original name if no new name is provided
             name ? sql.raw('? as name', [name]) : 'name',
             'description',
+            // Take the parameter gem2sRerunnable instead of cloning it
+            sql.raw('? as gem2s_rerunnable', [gem2sRerunnable]),
           )
           .where({ id: fromExperimentId }),
       )

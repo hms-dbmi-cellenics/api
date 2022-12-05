@@ -138,6 +138,9 @@ const createGem2sPipeline = async (experimentId, body, authJWT) => {
 
   const { stateMachineArn, executionArn } = await createGem2SPipeline(experimentId, taskParams);
 
+  console.log('PAREPAPREOIM');
+  return;
+
   logger.log('GEM2S params created.');
 
   const newExecution = {

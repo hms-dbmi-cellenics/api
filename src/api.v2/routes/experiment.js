@@ -1,9 +1,10 @@
 const {
   getAllExperiments, getExampleExperiments,
-  createExperiment, getExperiment, patchExperiment, deleteExperiment, cloneExperiment,
+  createExperiment, getExperiment, patchExperiment, deleteExperiment,
   getProcessingConfig, updateProcessingConfig,
   updateSamplePosition,
   getBackendStatus, downloadData,
+  cloneExperiment, subsetExperiment,
 } = require('../controllers/experimentController');
 
 const { expressAuthenticationOnlyMiddleware, expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
@@ -56,5 +57,9 @@ module.exports = {
   'experiment#clone': [
     expressAuthorizationMiddleware,
     (req, res, next) => cloneExperiment(req, res).catch(next),
+  ],
+  'experiment#subset': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => subsetExperiment(req, res).catch(next),
   ],
 };

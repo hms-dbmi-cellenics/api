@@ -11,6 +11,7 @@ const getExperimentBackendStatus = require('../helpers/backendStatus/getExperime
 const Sample = require('../model/Sample');
 const invalidatePlotsForEvent = require('../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
 const events = require('../../utils/plotConfigInvalidation/events');
+const { createSubsetGem2sPipeline } = require('../helpers/pipeline/pipelineConstruct');
 
 const logger = getLogger('[ExperimentController] - ');
 
@@ -188,17 +189,47 @@ const cloneExperiment = async (req, res) => {
   res.json(toExperimentId);
 };
 
+const subsetExperiment = async (req, res) => {
+  const {
+    params: { experimentId: fromExperimentId },
+    body: {
+      name,
+      cellSetKeys,
+    },
+    user: { sub: userId },
+  } = req;
+
+
+  logger.log(`Creating experiment to subset ${fromExperimentId} to`);
+
+  let toExperimentId;
+  await sqlClient.get().transaction(async (trx) => {
+    toExperimentId = await new Experiment(trx).createCopy(toExperimentId, name);
+    await new UserAccess(trx).createNewExperimentPermissions(userId, fromExperimentId);
+  });
+
+  // const clonedSamplesOrder = await new Sample()
+  //   .copyTo(fromExperimentId, toExperimentId, samplesToCloneIds);
+
+  logger.log(`Created ${toExperimentId}, subsetting experiment ${fromExperimentId} to it`);
+
+  await createSubsetPipeline(fromExperimentId, toExperimentId, cellSetKeys);
+
+  res.json(toExperimentId);
+};
+
 module.exports = {
   getAllExperiments,
   getExampleExperiments,
-  getExperiment,
   createExperiment,
-  updateProcessingConfig,
+  getExperiment,
   patchExperiment,
   deleteExperiment,
-  updateSamplePosition,
   getProcessingConfig,
+  updateProcessingConfig,
+  updateSamplePosition,
   getBackendStatus,
   downloadData,
   cloneExperiment,
+  subsetExperiment,
 };
