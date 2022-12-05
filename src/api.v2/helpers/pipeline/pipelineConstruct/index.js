@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const util = require('util');
 
 const config = require('../../../../config');
-const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUBSET_PROCESS_NAME } = require('../../../constants');
+const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME /* SUBSET_PROCESS_NAME */ } = require('../../../constants');
 
 const Experiment = require('../../../model/Experiment');
 const ExperimentExecution = require('../../../model/ExperimentExecution');
@@ -18,7 +18,7 @@ const getLogger = require('../../../../utils/getLogger');
 const asyncTimer = require('../../../../utils/asyncTimer');
 
 const constructPipelineStep = require('./constructors/constructPipelineStep');
-const { getGem2sPipelineSkeleton, getQcPipelineSkeleton, getSubsetPipelineSkeleton } = require('./skeletons');
+const { getGem2sPipelineSkeleton, getQcPipelineSkeleton /* getSubsetPipelineSkeleton */ } = require('./skeletons');
 const { getQcStepsToRun } = require('./qcHelpers');
 const needsBatchJob = require('../batch/needsBatchJob');
 const terminateJobs = require('../batch/terminateJobs');
@@ -263,7 +263,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   console.log('stateMachineDebug');
   console.log(JSON.stringify(stateMachine));
 
-  return;
+  // return;
   // throw new Error('OHLAHOLA');
 
   const activityArn = await createActivity(context); // the context contains the activityArn
@@ -326,7 +326,7 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
   const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
   logger.log('State machine definition built, now creating activity if not already present...');
 
-  return;
+  // return;
   // throw new Error('OHLAHOLA');
 
   const activityArn = await createActivity(context);
@@ -344,37 +344,39 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
 };
 
 const createSubsetPipeline = async (fromExperimentId, toExperimentId, cellSetKeys) => {
-  const accountId = config.awsAccountId;
-  const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
+  console.log(fromExperimentId, toExperimentId, cellSetKeys);
+  // const accountId = config.awsAccountId;
+  // const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
-  const { podCpus, podMemory } = await new Experiment().getResourceRequirements(toExperimentId);
+  // const { podCpus, podMemory } = await new Experiment().getResourceRequirements(toExperimentId);
 
-  const taskParams = {
-    cellSetKeys,
-    parentExperimentId: fromExperimentId,
-    subsetExperimentId: toExperimentId,
-  };
+  // const taskParams = {
+  //   cellSetKeys,
+  //   parentExperimentId: fromExperimentId,
+  //   subsetExperimentId: toExperimentId,
+  // };
 
-  const context = {
-    taskParams,
-    experimentId: fromExperimentId,
-    accountId,
-    roleArn,
-    processName: SUBSET_PROCESS_NAME,
-    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
-    pipelineArtifacts: await getPipelineArtifacts(),
-    clusterInfo: await getClusterInfo(),
-    sandboxId: config.sandboxId,
-    // processingConfig: {},
-    environment: config.clusterEnv,
-    podCpus,
-    podMemory,
-  };
-  await cancelPreviousPipelines(fromExperimentId);
+  // const context = {
+  //   taskParams,
+  //   experimentId: fromExperimentId,
+  //   accountId,
+  //   roleArn,
+  //   processName: SUBSET_PROCESS_NAME,
+  //   activityArn: `arn:aws:states:${config.awsRegion}:${acco
+  // untId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
+  //   pipelineArtifacts: await getPipelineArtifacts(),
+  //   clusterInfo: await getClusterInfo(),
+  //   sandboxId: config.sandboxId,
+  //   // processingConfig: {},
+  //   environment: config.clusterEnv,
+  //   podCpus,
+  //   podMemory,
+  // };
+  // await cancelPreviousPipelines(fromExperimentId);
 
-  logger.log(`createSubsetPipeline: not passing cpu/mem ${podCpus}, ${podMemory}`);
-  const subsetPipelineSkeleton = getSubsetPipelineSkeleton(config.clusterEnv);
-  logger.log('Skeleton constructed, now building state machine definition...');
+  // logger.log(`createSubsetPipeline: not passing cpu/mem ${podCpus}, ${podMemory}`);
+  // const subsetPipelineSkeleton = getSubsetPipelineSkeleton(config.clusterEnv);
+  // logger.log('Skeleton constructed, now building state machine definition...');
 };
 
 

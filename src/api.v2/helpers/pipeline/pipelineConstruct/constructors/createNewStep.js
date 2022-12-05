@@ -1,9 +1,9 @@
 const config = require('../../../../../config');
 const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../../../../constants');
 
-const createTask = (taskName, context) => {
+const getGeneralParams = (taskName, context) => {
   const {
-    projectId, processingConfig, experimentId, processName,
+    projectId, experimentId, processName,
   } = context;
 
   const remoterServer = (
@@ -16,30 +16,30 @@ const createTask = (taskName, context) => {
     experimentId,
     taskName,
     processName,
-    config: processingConfig[taskName] || {},
     server: remoterServer,
   };
-
-  console.log('taskDebug');
-  console.log(task);
 
   return task;
 };
 
-const getQCParams = (task, context, stepArgs) => {
-  const { perSample, uploadCountMatrix } = stepArgs;
+const getQCParams = (context, stepArgs) => {
+  const { perSample, uploadCountMatrix, taskName } = stepArgs;
+
   return {
-    ...task,
+    ...getGeneralParams(taskName, context),
     ...perSample ? { 'sampleUuid.$': '$.sampleUuid' } : { sampleUuid: '' },
     ...uploadCountMatrix ? { uploadCountMatrix: true } : { uploadCountMatrix: false },
     authJWT: context.authJWT,
+    config: context.processingConfig[taskName] || {},
   };
 };
 
-const getGem2SParams = (task, context) => {
+const getGem2SParams = (context, stepArgs) => {
   const { taskParams } = context;
+  const { taskName } = stepArgs;
+
   return {
-    ...task,
+    ...getGeneralParams(taskName, context),
     ...taskParams,
   };
 };
@@ -53,22 +53,15 @@ const getGem2SParams = (task, context) => {
 // };
 
 const buildParams = (context, stepArgs) => {
-  const { taskName } = stepArgs;
-
   let processParams;
 
-  const task = createTask(taskName, context);
-
-  if (task.processName === QC_PROCESS_NAME) {
-    processParams = getQCParams(task, context, stepArgs);
-  } else if (task.processName === GEM2S_PROCESS_NAME) {
-    processParams = getGem2SParams(task, context);
+  if (context.processName === QC_PROCESS_NAME) {
+    processParams = getQCParams(context, stepArgs);
+  } else if (context.processName === GEM2S_PROCESS_NAME) {
+    processParams = getGem2SParams(context, stepArgs);
   }
 
-  return {
-    ...task,
-    ...processParams,
-  };
+  return { ...processParams };
 };
 
 const createNewStep = (context, step, stepArgs) => {
@@ -79,7 +72,6 @@ const createNewStep = (context, step, stepArgs) => {
   console.log('paramsDebug');
   console.log(JSON.stringify(context));
   console.log(JSON.stringify(step));
-  console.log();
 
   return {
     ...step,

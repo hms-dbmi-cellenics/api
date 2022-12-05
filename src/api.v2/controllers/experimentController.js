@@ -11,7 +11,7 @@ const getExperimentBackendStatus = require('../helpers/backendStatus/getExperime
 const Sample = require('../model/Sample');
 const invalidatePlotsForEvent = require('../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
 const events = require('../../utils/plotConfigInvalidation/events');
-const { createSubsetGem2sPipeline } = require('../helpers/pipeline/pipelineConstruct');
+const { createSubsetPipeline } = require('../helpers/pipeline/pipelineConstruct');
 
 const logger = getLogger('[ExperimentController] - ');
 
