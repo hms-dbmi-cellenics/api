@@ -1,5 +1,5 @@
 const {
-  createSample,
+  createSamples,
   patchSample,
   deleteSample,
   getSamples,
@@ -9,9 +9,9 @@ const {
 const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
 
 module.exports = {
-  'sample#createSample': [
+  'sample#createSamples': [
     expressAuthorizationMiddleware,
-    (req, res, next) => createSample(req, res).catch(next),
+    (req, res, next) => createSamples(req, res).catch(next),
   ],
   'sample#patchSample': [
     expressAuthorizationMiddleware,
