@@ -217,10 +217,14 @@ class Experiment extends BasicModel {
       }).where('id', experimentId);
   }
 
-  async addSample(experimentId, sampleId) {
+  async addSamples(experimentId, sampleIds) {
+    const newSamplesArray = sampleIds
+      .map((sampleId) => `"${sampleId}"`)
+      .join(', ');
+
     await this.sql(tableNames.EXPERIMENT)
       .update({
-        samples_order: this.sql.raw(`samples_order || '["${sampleId}"]'::jsonb`),
+        samples_order: this.sql.raw(`samples_order || '[${newSamplesArray}]'::jsonb`),
       })
       .where('id', experimentId);
   }

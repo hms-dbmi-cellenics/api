@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { v4: uuidv4 } = require('uuid');
 
 const Sample = require('../model/Sample');
 const Experiment = require('../model/Experiment');
@@ -11,29 +12,38 @@ const sqlClient = require('../../sql/sqlClient');
 
 const logger = getLogger('[SampleController] - ');
 
-const createSample = async (req, res) => {
+const createSamples = async (req, res) => {
   const {
-    params: { experimentId, sampleId },
-    body: { name, sampleTechnology, options },
+    params: { experimentId },
+    body: samples,
   } = req;
-  logger.log('Creating sample');
+  logger.log(`Experiment: ${experimentId}, creating samples`);
+
+  let sampleIdsByName;
 
   await sqlClient.get().transaction(async (trx) => {
-    await new Sample(trx).create({
-      id: sampleId,
-      experiment_id: experimentId,
-      name,
-      sample_technology: sampleTechnology,
-      options,
-    });
+    const sampleModel = new Sample(trx);
 
-    await new Experiment(trx).addSample(experimentId, sampleId);
+    const createdSamples = await sampleModel.create(
+      samples.map((sample) => ({
+        id: uuidv4(),
+        experiment_id: experimentId,
+        name: sample.name,
+        sample_technology: sample.sampleTechnology,
+        options: sample.options,
+      })),
+    );
 
-    await new MetadataTrack(trx).createNewSampleValues(experimentId, sampleId);
+    sampleIdsByName = createdSamples.reduce((acc, { id, name }) => ({ ...acc, [name]: id }), {});
+    const sampleIds = createdSamples.map(({ id }) => id);
+
+    await new Experiment(trx).addSamples(experimentId, sampleIds);
+    await new MetadataTrack(trx).createNewSamplesValues(experimentId, sampleIds);
   });
 
-  logger.log(`Finished creating sample ${sampleId} for experiment ${experimentId}`);
-  res.json(OK());
+  logger.log(`Finished creating samples for experiment ${experimentId}`);
+
+  res.json(sampleIdsByName);
 };
 
 const patchSample = async (req, res) => {
@@ -85,7 +95,7 @@ const getSamples = async (req, res) => {
 };
 
 module.exports = {
-  createSample,
+  createSamples,
   patchSample,
   updateSamplesOptions,
   getSamples,
