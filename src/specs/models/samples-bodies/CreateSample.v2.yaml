@@ -10,6 +10,7 @@ properties:
       - oneOf:
         - pattern: 10x
         - pattern: rhapsody
+        - pattern: seurat
  
 required:
   - name

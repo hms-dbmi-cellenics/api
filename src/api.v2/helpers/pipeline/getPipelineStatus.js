@@ -30,6 +30,11 @@ const gem2sPipelineSteps = [
   'PrepareExperiment',
   'UploadToAWS'];
 
+const seuratPipelineSteps = [
+  'DownloadSeurat',
+  'ProcessSeurat',
+  'UploadSeuratToAWS'];
+
 // pipelineStepNames are the names of pipeline steps for which we
 // want to report the progress back to the user
 // does not include steps used to initialize the infrastructure (like pod deletion assignation)
@@ -76,6 +81,9 @@ const buildCompletedStatus = (processName, date, paramsHash) => {
   switch (processName) {
     case pipelineConstants.GEM2S_PROCESS_NAME:
       completedSteps = gem2sPipelineSteps;
+      break;
+    case pipelineConstants.SEURAT_PROCESS_NAME:
+      completedSteps = seuratPipelineSteps;
       break;
     case pipelineConstants.QC_PROCESS_NAME:
       completedSteps = qcPipelineSteps;
@@ -274,16 +282,19 @@ const getPipelineStatus = async (experimentId, processName) => {
   }
 
   const events = await getExecutionHistory(stepFunctions, executionArn);
-
   error = checkError(events);
   const executedSteps = getStepsFromExecutionHistory(events);
   const lastExecuted = executedSteps[executedSteps.length - 1];
+
   switch (processName) {
     case pipelineConstants.QC_PROCESS_NAME:
       completedSteps = qcPipelineSteps.slice(0, qcPipelineSteps.indexOf(lastExecuted) + 1);
       break;
     case pipelineConstants.GEM2S_PROCESS_NAME:
       completedSteps = gem2sPipelineSteps.slice(0, gem2sPipelineSteps.indexOf(lastExecuted) + 1);
+      break;
+    case pipelineConstants.SEURAT_PROCESS_NAME:
+      completedSteps = seuratPipelineSteps.slice(0, seuratPipelineSteps.indexOf(lastExecuted) + 1);
       break;
     default:
       logger.error(`unknown process name ${processName}`);

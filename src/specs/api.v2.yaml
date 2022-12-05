@@ -540,7 +540,7 @@ paths:
   '/experiments/{experimentId}/backendStatus':
     get:
       summary: Get backend status for an experiment
-      description: Get the status fo qc, gem2s and the worker for an experiment
+      description: Get the status fo qc, gem2s, seurat, and the worker for an experiment
       operationId: getBackendStatus
       x-eov-operation-id: experiment#getBackendStatus
       x-eov-operation-handler: routes/experiment
@@ -1237,7 +1237,7 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: object
         '400':
           description: Bad Request
           content:
@@ -1298,6 +1298,70 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchSampleFile'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '424':
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+  /completeMultipartUpload:
+    post:
+      summary: Complete a multipart upload
+      description: Complete a multipart upload of a sample file
+      operationId: completeMultipart
+      x-eov-operation-id: sampleFile#completeMultipart
+      x-eov-operation-handler: routes/sampleFile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: information here
+              type: object
+              properties:
+                sampleFileId:
+                  type: string
+                uploadId:
+                  type: string
+                parts:
+                  type: array
+                  items:
+                    type: object   
+              additionalProperties: false
+              required:
+                  - sampleFileId
+                  - uploadId
+                  - parts
       responses:
         '200':
           description: Success
@@ -1623,6 +1687,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+
   '/experiments/{experimentId}/gem2s':
     post:
       summary: Run gem2s
@@ -1679,6 +1744,64 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+
+  '/experiments/{experimentId}/seurat':
+    post:
+      summary: Run seurat
+      operationId: runSeurat
+      x-eov-operation-id: seurat#run
+      x-eov-operation-handler: routes/seurat
+      description: Triggers a new seurat run
+      parameters:
+        - name: experimentId
+          description: Id of the experiment
+          schema:
+            type: string
+          in: path
+          required: true
+      requestBody: 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                paramsHash:
+                  type: string
+              required:
+                - paramsHash
+              additionalProperties: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Experiment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
   '/experiments/{experimentId}/plots/{plotUuid}':
     parameters:
       - schema:
@@ -1850,6 +1973,45 @@ paths:
                 type: string
                 pattern: nok
     parameters: []
+
+  /seuratResults:
+    post:
+      summary: Retrieve results from pipeline step functions
+      description: |-
+        Results from Step Function pipeline steps are relayed to the API through this endpoint.
+        Note that this endpoint is only exposed to AWS SNS, and since it has a specific communication protocol with limited feedback, the schema defined here is designed to be liberally enforceable. This endpoint is also used by SNS to handle subscribe/unsubscribe events.
+        The actual JSON passed by SNS is found in the `PipelineResponse` model, which is to be validated by the API.
+      operationId: receiveSeuratResponse
+      x-eov-operation-id: seurat#response
+      x-eov-operation-handler: routes/seurat
+      requestBody:
+        description: 'The results from the execution of a pipeline step, sent via SNS.'
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        '200':
+          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: ok
+        '500':
+          description: The data sent by the server could not be parsed as JSON.
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: nok
+    parameters: []
+    
   /pipelineResults:
     post:
       summary: Placeholder endpoint for qc, necessary so subscriptions to sns work

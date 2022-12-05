@@ -135,7 +135,7 @@ describe('handleWorkRequest', () => {
       socketId: '6789',
       experimentId: 'my-experiment',
       timeout: '2099-01-01T00:00:00Z',
-      body: { name: 'GetEmbedding', type: 'umap', config: { distanceMetric: 'euclidean' } },
+      body: { name: 'GetEmbedding', type: 'umap', config: { minimumDistance: 0, distanceMetric: 'euclidean' } },
     };
 
     getPipelineStatus.mockImplementationOnce(() => ({

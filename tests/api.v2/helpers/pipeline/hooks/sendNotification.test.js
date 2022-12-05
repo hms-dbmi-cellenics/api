@@ -32,6 +32,9 @@ const pipelines = {
   gem2s: {
     stateMachineArn: 'gem2sArn',
   },
+  seurat: {
+    stateMachineArn: 'seuratArn',
+  },
 };
 
 describe('send-notification ', () => {
@@ -65,7 +68,7 @@ describe('send-notification ', () => {
     expect(sendEmail).toHaveBeenCalledTimes(0);
   });
 
-  it('Sends email and slack message if user toggled notifications on failed process', async () => {
+  it('Sends email and slack message if user toggled notifications on failed QC process', async () => {
     experimentInstance.getExperimentData.mockReturnValue({ notifyByEmail: true, pipelines });
 
     const newMessage = {
@@ -88,7 +91,30 @@ describe('send-notification ', () => {
     expect(sendFailedSlackMessage).toHaveBeenCalledTimes(1);
   });
 
-  it('Sends email on success if toggled, does not send slack message ', async () => {
+  it('Sends email and slack message if user toggled notifications on failed Seurat process', async () => {
+    experimentInstance.getExperimentData.mockReturnValue({ notifyByEmail: true, pipelines });
+
+    const newMessage = {
+      ...message,
+      input: {
+        ...message.input,
+        processName: 'seurat',
+      },
+    };
+
+    getPipelineStatus.mockReturnValue({
+      seurat: {
+        status: FAILED,
+      },
+    });
+
+    await sendNotification(newMessage);
+
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+    expect(sendFailedSlackMessage).toHaveBeenCalledTimes(1);
+  });
+
+  it('Sends email on QC success if toggled, does not send slack message ', async () => {
     experimentInstance.getExperimentData.mockReturnValue({ notifyByEmail: true, pipelines });
     const newMessage = {
       ...message,
@@ -107,7 +133,26 @@ describe('send-notification ', () => {
     expect(sendFailedSlackMessage).toHaveBeenCalledTimes(0);
   });
 
-  it('Does not send email on success if user has not toggled notifications', async () => {
+  it('Sends email on Seurat success if toggled, does not send slack message ', async () => {
+    experimentInstance.getExperimentData.mockReturnValue({ notifyByEmail: true, pipelines });
+    const newMessage = {
+      ...message,
+      input: {
+        ...message.input,
+        processName: 'seurat',
+      },
+    };
+    getPipelineStatus.mockReturnValue({
+      seurat: {
+        status: SUCCEEDED,
+      },
+    });
+    await sendNotification(newMessage);
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+    expect(sendFailedSlackMessage).toHaveBeenCalledTimes(0);
+  });
+
+  it('Does not send email on QC success if user has not toggled notifications', async () => {
     experimentInstance.getExperimentData.mockReturnValue({ notifyByEmail: false, pipelines });
     const newMessage = {
       ...message,
@@ -118,6 +163,25 @@ describe('send-notification ', () => {
     };
     getPipelineStatus.mockReturnValue({
       qc: {
+        status: SUCCEEDED,
+      },
+    });
+    await sendNotification(newMessage);
+    expect(sendEmail).toHaveBeenCalledTimes(0);
+    expect(sendFailedSlackMessage).toHaveBeenCalledTimes(0);
+  });
+
+  it('Does not send email on Seurat success if user has not toggled notifications', async () => {
+    experimentInstance.getExperimentData.mockReturnValue({ notifyByEmail: false, pipelines });
+    const newMessage = {
+      ...message,
+      input: {
+        ...message.input,
+        processName: 'seurat',
+      },
+    };
+    getPipelineStatus.mockReturnValue({
+      seurat: {
         status: SUCCEEDED,
       },
     });

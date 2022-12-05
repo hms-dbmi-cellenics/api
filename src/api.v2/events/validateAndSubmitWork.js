@@ -5,6 +5,8 @@ const getPipelineStatus = require('../helpers/pipeline/getPipelineStatus');
 
 const pipelineConstants = require('../constants');
 
+const checkSomeEqualTo = (array, testValue) => array.some((item) => item === testValue);
+
 const validateAndSubmitWork = async (workRequest) => {
   const { experimentId } = workRequest;
 
@@ -13,8 +15,13 @@ const validateAndSubmitWork = async (workRequest) => {
     experimentId, pipelineConstants.QC_PROCESS_NAME,
   );
 
-  if (qcPipelineStatus !== pipelineConstants.SUCCEEDED) {
-    const e = new Error(`Work request can not be handled because pipeline is ${qcPipelineStatus}`);
+
+  const { seurat: { status: seuratPipelineStatus } } = await getPipelineStatus(
+    experimentId, pipelineConstants.SEURAT_PROCESS_NAME,
+  );
+
+  if (!checkSomeEqualTo([qcPipelineStatus, seuratPipelineStatus], pipelineConstants.SUCCEEDED)) {
+    const e = new Error(`Work request can not be handled because pipeline is ${qcPipelineStatus} or seurat status is ${seuratPipelineStatus}`);
 
     AWSXRay.getSegment().addError(e);
     throw e;

@@ -1,5 +1,5 @@
 const config = require('../../../../../config');
-const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../../../../constants');
+const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SEURAT_PROCESS_NAME } = require('../../../../constants');
 
 const createTask = (taskName, context) => {
   const {
@@ -41,6 +41,14 @@ const getGem2SParams = (task, context) => {
   };
 };
 
+const getSeuratParams = (task, context) => {
+  const { taskParams } = context;
+  return {
+    ...task,
+    ...taskParams,
+  };
+};
+
 
 const buildParams = (task, context, stepArgs) => {
   let processParams;
@@ -49,6 +57,8 @@ const buildParams = (task, context, stepArgs) => {
     processParams = getQCParams(task, context, stepArgs);
   } else if (task.processName === GEM2S_PROCESS_NAME) {
     processParams = getGem2SParams(task, context);
+  } else if (task.processName === SEURAT_PROCESS_NAME) {
+    processParams = getSeuratParams(task, context);
   }
 
   return {

@@ -15,7 +15,7 @@ jest.mock('../../../../src/api.v2/model/ExperimentExecution');
 jest.useFakeTimers('modern').setSystemTime(new Date(pipelineConstants.EXPIRED_EXECUTION_DATE).getTime());
 
 const {
-  GEM2S_PROCESS_NAME, QC_PROCESS_NAME,
+  GEM2S_PROCESS_NAME, QC_PROCESS_NAME, SEURAT_PROCESS_NAME,
 } = constants;
 
 // these are constants used to indicate to a mocked component whether they should return a
@@ -56,6 +56,13 @@ const mockRunResponse = [
     lastStatusResponse: statusResponseSql,
   },
   {
+    pipelineType: SEURAT_PROCESS_NAME,
+    stateMachineArn: SUCCEEDED_ID,
+    executionArn: SUCCEEDED_ID,
+    paramsHash,
+    lastStatusResponse: statusResponseSql,
+  },
+  {
     pipelineType: QC_PROCESS_NAME,
     stateMachineArn: SUCCEEDED_ID,
     executionArn: SUCCEEDED_ID,
@@ -67,6 +74,13 @@ const mockRunResponse = [
 const mockExecutionNotExistResponse = [
   {
     pipelineType: GEM2S_PROCESS_NAME,
+    stateMachineArn: '',
+    executionArn: EXECUTION_DOES_NOT_EXIST_ID,
+    paramsHash,
+    lastStatusResponse: statusResponseSql,
+  },
+  {
+    pipelineType: SEURAT_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
     paramsHash,
@@ -90,6 +104,13 @@ const mockExecutionNotExistNullSqlResponse = [
     lastStatusResponse: null,
   },
   {
+    pipelineType: SEURAT_PROCESS_NAME,
+    stateMachineArn: '',
+    executionArn: EXECUTION_DOES_NOT_EXIST_ID,
+    paramsHash,
+    lastStatusResponse: null,
+  },
+  {
     pipelineType: QC_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
@@ -101,6 +122,13 @@ const mockExecutionNotExistNullSqlResponse = [
 const mockRandomExceptionResponse = [
   {
     pipelineType: GEM2S_PROCESS_NAME,
+    stateMachineArn: '',
+    executionArn: RANDOM_EXCEPTION,
+    paramsHash,
+    lastStatusResponse: statusResponseSql,
+  },
+  {
+    pipelineType: SEURAT_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: RANDOM_EXCEPTION,
     paramsHash,
