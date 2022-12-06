@@ -3,7 +3,7 @@ const AWSXRay = require('aws-xray-sdk');
 
 const constants = require('../../constants');
 const getPipelineStatus = require('./getPipelineStatus');
-const { createGem2SPipeline, createQCPipeline } = require('./pipelineConstruct');
+const { startGem2SPipeline, createQCPipeline } = require('./pipelineConstruct');
 
 const Sample = require('../../model/Sample');
 const Experiment = require('../../model/Experiment');
@@ -136,7 +136,7 @@ const createGem2sPipeline = async (experimentId, body, authJWT) => {
 
   const taskParams = await generateGem2sParams(experimentId, authJWT);
 
-  const { stateMachineArn, executionArn } = await createGem2SPipeline(experimentId, taskParams);
+  const { stateMachineArn, executionArn } = await startGem2SPipeline(experimentId, taskParams);
 
   // console.log('PAREPAPREOIM');
   // return;
