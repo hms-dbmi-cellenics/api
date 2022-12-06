@@ -1851,8 +1851,8 @@ paths:
       summary: Subset experiment
       description: Create a new experiment from a subset of the experiment in path
       operationId: subsetExperiment
-      x-eov-operation-id: experiment#subset
-      x-eov-operation-handler: routes/experiment
+      x-eov-operation-id: subset#run
+      x-eov-operation-handler: routes/subset
       parameters:
         - name: experimentId
           schema:
