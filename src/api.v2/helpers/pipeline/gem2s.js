@@ -20,7 +20,7 @@ const logger = getLogger('[Gem2sService] - ');
 const hookRunner = new HookRunner();
 
 const continueToQC = async (payload) => {
-  const { experimentId, item } = payload;
+  const { experimentId, item, jobId } = payload;
 
   await new Experiment().updateById(experimentId, { processing_config: item.processingConfig });
 
@@ -31,7 +31,7 @@ const continueToQC = async (payload) => {
   // we need to change this once we rework the pipeline message response
   const authJWT = payload.authJWT || payload.input.authJWT;
 
-  await createQCPipeline(experimentId, [], authJWT);
+  await createQCPipeline(experimentId, [], authJWT, jobId);
 
   logger.log('Started qc successfully');
 };
