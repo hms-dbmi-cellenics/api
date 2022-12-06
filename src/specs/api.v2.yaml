@@ -524,7 +524,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: '#components/schemas/HTTPError'
   '/experiments/{experimentId}/backendStatus':
     get:
       summary: Get backend status for an experiment
@@ -571,51 +571,6 @@ paths:
         in: path
         required: true
         description: ID of the experiment
-  '/experiments/{experimentId}/subset':
-    post:
-      summary: Subset experiment
-      description: Create a new experiment from a subset of the experiment in path
-      operationId: subsetExperiment
-      x-eov-operation-id: experiment#subset
-      x-eov-operation-handler: routes/experiment
-      parameters:
-        - name: experimentId
-          schema:
-            type: string
-          in: path
-          required: true
-          description: ID of the experiment
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: string
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: The request lacks authentication credentials.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: Forbidden request for this user.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: Not found error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPError'
   '/experiments/{experimentId}/samples':
     get:
       summary: Get samples for an experiment
@@ -1891,6 +1846,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+  '/experiments/{experimentId}/subset':
+    post:
+      summary: Subset experiment
+      description: Create a new experiment from a subset of the experiment in path
+      operationId: subsetExperiment
+      x-eov-operation-id: experiment#subset
+      x-eov-operation-handler: routes/experiment
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+
   /gem2sResults:
     post:
       summary: Retrieve results from pipeline step functions

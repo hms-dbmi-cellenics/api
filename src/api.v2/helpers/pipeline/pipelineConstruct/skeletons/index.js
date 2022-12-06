@@ -98,28 +98,20 @@ const getGem2sPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
   },
 });
 
-const getQcPipelineSkeleton = (clusterEnv, qcSteps, runInBatch = false) => {
-  console.log('initialStepsDebug');
-  console.log(JSON.stringify(buildInitialSteps(clusterEnv, qcSteps[0], runInBatch)));
-
-  console.log('buildQCPipelineStepsqcStepsDebug');
-  console.log(JSON.stringify(buildQCPipelineSteps(qcSteps)));
-
-  return ({
-    Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
-    StartAt: getStateMachineFirstStep(clusterEnv, runInBatch),
-    States: {
-      ...buildInitialSteps(clusterEnv, qcSteps[0], runInBatch),
-      ...buildQCPipelineSteps(qcSteps),
-    },
-  });
-};
-
-const getSubsetPipelineSkeleton = (clusterEnv, qcSteps, runInBatch = false) => ({
-  Comment: `Subset Pipeline for clusterEnv '${clusterEnv}'`,
+const getQcPipelineSkeleton = (clusterEnv, qcSteps, runInBatch = false) => ({
+  Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
   StartAt: getStateMachineFirstStep(clusterEnv, runInBatch),
   States: {
     ...buildInitialSteps(clusterEnv, qcSteps[0], runInBatch),
+    ...buildQCPipelineSteps(qcSteps),
+  },
+});
+
+const getSubsetPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
+  Comment: `Subset Pipeline for clusterEnv '${clusterEnv}'`,
+  StartAt: getStateMachineFirstStep(clusterEnv, runInBatch),
+  States: {
+    ...buildInitialSteps(clusterEnv, 'SubsetSeurat', runInBatch),
     ...subsetPipelineSteps,
   },
 });

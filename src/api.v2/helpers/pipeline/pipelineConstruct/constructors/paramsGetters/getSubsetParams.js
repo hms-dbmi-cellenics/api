@@ -1,0 +1,12 @@
+// subsetSeurat
+// prepareExperiment
+// uploadToAWS
+
+const getSubsetParams = (context, stepArgs) => {
+  const { taskName } = stepArgs;
+  const { taskParams } = context;
+
+  return taskParams[taskName];
+};
+
+module.exports = getSubsetParams;
