@@ -24,13 +24,12 @@ const runSubset = async (req, res) => {
     user: { sub: userId },
   } = req;
 
-
-  logger.log(`Creating experiment to subset ${fromExperimentId} to`);
+  logger.log(`Creating experiment to subset ${fromExperimentId}`);
 
   let toExperimentId;
   await sqlClient.get().transaction(async (trx) => {
-    toExperimentId = await new Experiment(trx).createCopy(toExperimentId, name);
-    await new UserAccess(trx).createNewExperimentPermissions(userId, fromExperimentId);
+    toExperimentId = await new Experiment(trx).createCopy(fromExperimentId, name, false);
+    await new UserAccess(trx).createNewExperimentPermissions(userId, toExperimentId);
   });
 
   // const clonedSamplesOrder = await new Sample()

@@ -130,7 +130,7 @@ class Experiment extends BasicModel {
           )
           .where({ id: fromExperimentId }),
       )
-      .into(sql.raw(`${tableNames.EXPERIMENT} (id, name, description)`));
+      .into(sql.raw(`${tableNames.EXPERIMENT} (id, name, description, gem2s_rerunnable)`));
 
     return toExperimentId;
   }
