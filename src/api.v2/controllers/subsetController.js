@@ -39,14 +39,6 @@ const runSubset = async (req, res) => {
 
   await createSubsetPipeline(fromExperimentId, toExperimentId, cellSetKeys);
 
-  res.json(toExperimentId);
-
-  // await createQCPipeline(
-  //   req.params.experimentId,
-  //   processingConfig || [],
-  //   req.headers.authorization,
-  // );
-
   logger.log(`Started subset for experiment ${experimentId} successfully, `);
 
   res.json(toExperimentId);
