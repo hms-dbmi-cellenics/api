@@ -5,7 +5,7 @@ info:
   description: The main Node.js pipeline API.
   license:
     name: MIT
-    url: 'https://github.com/biomage-org/api/blob/master/LICENSE'
+    url: "https://github.com/biomage-org/api/blob/master/LICENSE"
   contact:
     name: Biomage Ltd.
 servers:
@@ -29,7 +29,7 @@ paths:
       x-eov-operation-id: health#check
       x-eov-operation-handler: routes/health
       responses:
-        '200':
+        "200":
           description: API is available.
           content:
             application/json:
@@ -58,7 +58,7 @@ paths:
                   - env
                   - clusterEnv
       description: Returns a status on the health of the API.
-  '/experiments/{experimentId}/cellSets':
+  "/experiments/{experimentId}/cellSets":
     parameters:
       - name: experimentId
         in: path
@@ -75,68 +75,68 @@ paths:
       x-eov-operation-id: cellSets#getCellSets
       x-eov-operation-handler: routes/cellSets
       responses:
-        '200':
-          description: 'Request successful, hierarchy returned below.'
+        "200":
+          description: "Request successful, hierarchy returned below."
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CellSets'
-        '401':
+                $ref: "#/components/schemas/CellSets"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: The authenticated user is not authorized to view this resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Experiment not found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
     patch:
       summary: Patch cell sets of an experiment
-      description: Performs a partial update on the experiment's cell sets.
+      description: Performs a partial update on the experiment"s cell sets.
       operationId: patchExperimentCellSets
       x-eov-operation-id: cellSets#patchCellSets
       x-eov-operation-handler: routes/cellSets
       responses:
-        '200':
+        "200":
           description: Update to object in response successful.
           content:
             application/json:
               schema:
                 type: object
                 properties: {}
-        '401':
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: The authenticated user is not authorized to view this resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       requestBody:
         content:
           application/boschni-json-merger+json:
@@ -146,7 +146,7 @@ paths:
                   items: {}
                 - type: object
         description: The patch in the format declared by boschni/json-merger. Note the explicit naming of the content subtype (boschni-json-merger+json) which must be used to explicitly acknowledge the format.
-  '/experiments/{experimentId}/processingConfig':
+  "/experiments/{experimentId}/processingConfig":
     get:
       summary: Get processing configuration for an experiment
       description: Get processing configuration for an experiment
@@ -161,7 +161,7 @@ paths:
           required: true
           description: ID of the experiment
       responses:
-        '200':
+        "200":
           description: get processing configuration for an experiment
           content:
             application/json:
@@ -169,37 +169,37 @@ paths:
                 anyOf:
                   - type: object
                     additionalProperties: false
-                  - $ref: '#/components/schemas/ProcessingConfig'
-        '400':
+                  - $ref: "#/components/schemas/ProcessingConfig"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
     put:
       summary: Update processing configuration for an experiment
       description: Update processing configuration for an experiment
@@ -214,42 +214,42 @@ paths:
           required: true
           description: ID of the experiment
       responses:
-        '200':
+        "200":
           description: Processing configuration for an experiment
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
   /experiments:
     get:
       summary: Get all experiments
@@ -258,36 +258,36 @@ paths:
       x-eov-operation-id: experiment#getAllExperiments
       x-eov-operation-handler: routes/experiment
       responses:
-        '200':
+        "200":
           description: All experiments that the user can acess
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExperimentsList'
-        '400':
+                $ref: "#/components/schemas/ExperimentsList"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
   /experiments/examples:
     get:
       summary: Get all example experiments
@@ -296,37 +296,37 @@ paths:
       x-eov-operation-id: experiment#getExampleExperiments
       x-eov-operation-handler: routes/experiment
       responses:
-        '200':
+        "200":
           description: All experiments that the user can acess
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExperimentsList'
-        '400':
+                $ref: "#/components/schemas/ExperimentsList"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-  '/experiments/{experimentId}':
+                $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}":
     get:
       summary: Get an experiment
       description: Get an experiment
@@ -341,42 +341,42 @@ paths:
           required: true
           description: ID of the experiment
       responses:
-        '200':
+        "200":
           description: Get experiment
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExperimentInfo'
-        '400':
+                $ref: "#/components/schemas/ExperimentInfo"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
     post:
       summary: Create experiment
       description: Create a new experiment
@@ -394,32 +394,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateExperiment'
+              $ref: "#/components/schemas/CreateExperiment"
       responses:
-        '200':
+        "200":
           description: Create experiment
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
     patch:
       summary: Patch an experiment
       description: Update some properties in an experiment
@@ -437,44 +437,44 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchExperiment'
+              $ref: "#/components/schemas/PatchExperiment"
       responses:
-        '200':
+        "200":
           description: Create experiment
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
     delete:
       summary: Delete an experiment
       description: Delete an experiment
@@ -489,81 +489,81 @@ paths:
           required: true
           description: ID of the experiment
       responses:
-        '200':
+        "200":
           description: Get experiment
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#components/schemas/HTTPError'
-  '/experiments/{experimentId}/backendStatus':
+                $ref: "#components/schemas/HTTPError"
+  "/experiments/{experimentId}/backendStatus":
     get:
       summary: Get backend status for an experiment
-      description: 'Get the status fo qc, gem2s and the worker for an experiment'
+      description: "Get the status fo qc, gem2s and the worker for an experiment"
       operationId: getBackendStatus
       x-eov-operation-id: experiment#getBackendStatus
       x-eov-operation-handler: routes/experiment
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
                 properties: {}
-        '401':
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: The authenticated user is not authorized to view this resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Experiment not found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
     parameters:
       - schema:
           type: string
@@ -571,7 +571,7 @@ paths:
         in: path
         required: true
         description: ID of the experiment
-  '/experiments/{experimentId}/samples':
+  "/experiments/{experimentId}/samples":
     get:
       summary: Get samples for an experiment
       description: Get samples for an experiment
@@ -586,42 +586,42 @@ paths:
           required: true
           description: ID of the experiment
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetSamples'
-        '400':
+                $ref: "#/components/schemas/GetSamples"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
     post:
       summary: Create samples
       description: Create samples for an experiment
@@ -639,9 +639,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateSamples'
+              $ref: "#/components/schemas/CreateSamples"
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
@@ -651,37 +651,37 @@ paths:
                 additionalProperties:
                   type: string
 
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-  '/experiments/{experimentId}/samples/{sampleId}':
+                $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/samples/{sampleId}":
     patch:
       summary: Patch sample
       description: Patch sample for an experiment
@@ -711,42 +711,42 @@ paths:
                   type: string
               additionalProperties: false
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
     delete:
       summary: Delete sample
       description: Delete sample for an experiment
@@ -767,43 +767,43 @@ paths:
           required: true
           description: ID of the sample
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-  '/experiments/{experimentId}/samples/position':
+                $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/samples/position":
     put:
       summary: Update position for a sample
       description: Set a new position for a sample
@@ -832,43 +832,43 @@ paths:
                 - newPosition
               additionalProperties: false
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-  '/experiments/{experimentId}/samples/options':
+                $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/samples/options":
     put:
       summary: Update options for samples in an experiment
       description: Update options for samples in an experiment
@@ -886,45 +886,45 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateSamplesOptions'
+              $ref: "#/components/schemas/UpdateSamplesOptions"
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-  ? '/experiments/{experimentId}/samples/{sampleId}/files/{sampleFileType}/downloadUrl'
+                $ref: "#/components/schemas/HTTPError"
+  ? "/experiments/{experimentId}/samples/{sampleId}/files/{sampleFileType}/downloadUrl"
   : get:
       summary: Get file download url
       description: Get temporary s3 download url for file
@@ -951,40 +951,40 @@ paths:
           required: true
           description: Type of sample file
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: string
-        '401':
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: The authenticated user is not authorized to view this resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Experiment not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-  '/experiments/{experimentId}/metadataTracks/{metadataTrackKey}':
+                $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/metadataTracks/{metadataTrackKey}":
     post:
       summary: Creates a new metadata track
-      description: 'Creates a new metadata track, no requestBody required'
+      description: "Creates a new metadata track, no requestBody required"
       operationId: createMetadataTrack
       x-eov-operation-id: metadataTrack#createMetadataTrack
       x-eov-operation-handler: routes/metadataTrack
@@ -1002,42 +1002,42 @@ paths:
           required: true
           description: Name of the metadata track
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
     patch:
       summary: Updates a metadata tracks properties
       description: Updates a metadata tracks properties
@@ -1069,45 +1069,45 @@ paths:
                 - key
               additionalProperties: false
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
     delete:
       summary: Deletes a metadata track
-      description: 'Deletes a metadata track, no requestBody required'
+      description: "Deletes a metadata track, no requestBody required"
       operationId: deleteMetadataTrack
       x-eov-operation-id: metadataTrack#deleteMetadataTrack
       x-eov-operation-handler: routes/metadataTrack
@@ -1125,46 +1125,46 @@ paths:
           required: true
           description: Name of the metadata track
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-  ? '/experiments/{experimentId}/samples/{sampleId}/metadataTracks/{metadataTrackKey}'
+                $ref: "#/components/schemas/HTTPError"
+  ? "/experiments/{experimentId}/samples/{sampleId}/metadataTracks/{metadataTrackKey}"
   : patch:
       summary: Updates the value that a sample has in a metadata track in particular
-      description: Updates a sample's metadata tracks value
+      description: Updates a sample"s metadata tracks value
       operationId: patchSampleInMetadataTrackValue
       x-eov-operation-id: metadataTrack#patchSampleInMetadataTrackValue
       x-eov-operation-handler: routes/metadataTrack
@@ -1199,46 +1199,46 @@ paths:
                 - value
               additionalProperties: false
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-  '/experiments/{experimentId}/samples/{sampleId}/sampleFiles/{sampleFileType}':
+                $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/samples/{sampleId}/sampleFiles/{sampleFileType}":
     post:
       summary: Create a new file for a sample
-      description: 'Set a new file for a sample, returns signed url to upload sample file'
+      description: "Set a new file for a sample, returns signed url to upload sample file"
       operationId: createFile
       parameters:
         - name: experimentId
@@ -1265,44 +1265,44 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateSampleFile'
+              $ref: "#/components/schemas/CreateSampleFile"
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
                 type: string
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
     patch:
       summary: Update a sample files property
       description: Update property of a sample file
@@ -1332,48 +1332,48 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchSampleFile'
+              $ref: "#/components/schemas/PatchSampleFile"
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-  '/experiments/{experimentId}/clone':
+                $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/clone":
     post:
       summary: Clone an experiment
-      description: 'Clone an experiment, returns the id of the new experiment'
+      description: "Clone an experiment, returns the id of the new experiment"
       operationId: cloneExperiment
       x-eov-operation-id: experiment#clone
       x-eov-operation-handler: routes/experiment
@@ -1392,43 +1392,43 @@ paths:
                   type: string
               additionalProperties: false
       responses:
-        '200':
+        "200":
           description: Clone experiment
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExperimentInfo'
-        '400':
+                $ref: "#/components/schemas/ExperimentInfo"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '424':
+                $ref: "#/components/schemas/HTTPError"
+        "424":
           description: Terms not accepted error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-  '/access/{experimentId}':
+                $ref: "#/components/schemas/HTTPError"
+  "/access/{experimentId}":
     get:
       summary: Get the users with access to an experiment
       operationId: getAccess
@@ -1443,7 +1443,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -1461,12 +1461,12 @@ paths:
                   - name
                   - email
                   - role
-        '404':
+        "404":
           description: Experiment not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
     put:
       summary: Add user to an experiment
       operationId: inviteUser
@@ -1481,30 +1481,30 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '401':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: The authenticated user does not have permissions to add users to this resource
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       requestBody:
         content:
           application/json:
@@ -1531,30 +1531,30 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '401':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: The user does not have permissions to revoke the role.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Role not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       description: Delete a role for a user in experiment
       requestBody:
         content:
@@ -1576,24 +1576,24 @@ paths:
       x-eov-operation-id: access#postRegistration
       x-eov-operation-handler: routes/access
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
+                $ref: "#/components/schemas/HTTPError"
+        "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       requestBody:
         content:
           text/plain:
@@ -1610,13 +1610,13 @@ paths:
                 userId:
                   type: string
                   minLength: 1
-  '/workResults/{experimentId}/{ETag}':
+  "/workResults/{experimentId}/{ETag}":
     get:
       summary: Get the work results from S3
       operationId: getWorkResults
       x-eov-operation-id: work#getResults
       x-eov-operation-handler: routes/work
-      description: 'On success, returns a signed url with the uploaded worker results in S3'
+      description: "On success, returns a signed url with the uploaded worker results in S3"
       parameters:
         - name: experimentId
           description: Id of the experiment
@@ -1631,7 +1631,7 @@ paths:
           in: path
           required: true
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -1640,25 +1640,25 @@ paths:
                 properties:
                   signedUrl:
                     type: string
-        '401':
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: The user does not have permissions to view the work results.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: The work results were not found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-  '/experiments/{experimentId}/gem2s':
+                $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/gem2s":
     post:
       summary: Run gem2s
       operationId: runGem2s
@@ -1684,37 +1684,37 @@ paths:
                 - paramsHash
               additionalProperties: false
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: The authenticated user is not authorized to view this resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Experiment not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-  '/experiments/{experimentId}/plots/{plotUuid}':
+                $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/plots/{plotUuid}":
     parameters:
       - schema:
           type: string
@@ -1732,36 +1732,36 @@ paths:
       x-eov-operation-id: plots#get
       x-eov-operation-handler: routes/plots
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PlotConfig'
-        '400':
+                $ref: "#/components/schemas/PlotConfig"
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: The authenticated user is not authorized to view this resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Experiment/plot not found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       description: Reads a plot and table for a given experiment with the data specified.
     put:
       summary: Update a plot or table config
@@ -1769,46 +1769,46 @@ paths:
       x-eov-operation-id: plots#update
       x-eov-operation-handler: routes/plots
       responses:
-        '200':
+        "200":
           description: Update to object in response successful.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '201':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "201":
           description: New resource created.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '400':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: The authenticated user is not authorized to view this resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Invalid experiment ID specified.
       description: Updates a plot and table for a given experiment with the data specified.
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PlotConfig'
+              $ref: "#/components/schemas/PlotConfig"
         description: The new configuration to update the old one by.
-  '/experiments/{experimentId}/qc':
+  "/experiments/{experimentId}/qc":
     parameters:
       - schema:
           type: string
@@ -1822,31 +1822,31 @@ paths:
       x-eov-operation-id: qc#run
       x-eov-operation-handler: routes/qc
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPSuccess'
-        '401':
+                $ref: "#/components/schemas/HTTPSuccess"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: The authenticated user is not authorized to view this resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Experiment not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-  '/experiments/{experimentId}/subset':
+                $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/subset":
     post:
       summary: Subset experiment
       description: Create a new experiment from a subset of the experiment in path
@@ -1861,7 +1861,7 @@ paths:
           required: true
           description: ID of the experiment
       requestBody:
-        description: 'The parameters for subsetting the experiment'
+        description: "The parameters for subsetting the experiment"
         content:
           application/json:
             schema:
@@ -1877,36 +1877,36 @@ paths:
                 - name
                 - cellSetKeys
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: string
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: Forbidden request for this user.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Not found error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
 
   /gem2sResults:
     post:
@@ -1919,7 +1919,7 @@ paths:
       x-eov-operation-id: gem2s#response
       x-eov-operation-handler: routes/gem2s
       requestBody:
-        description: 'The results from the execution of a pipeline step, sent via SNS.'
+        description: "The results from the execution of a pipeline step, sent via SNS."
         required: true
         content:
           text/plain:
@@ -1930,14 +1930,14 @@ paths:
               type: object
               properties: {}
       responses:
-        '200':
-          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
+        "200":
+          description: "A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*."
           content:
             text/plain:
               schema:
                 type: string
                 pattern: ok
-        '500':
+        "500":
           description: The data sent by the server could not be parsed as JSON.
           content:
             text/plain:
@@ -1947,13 +1947,13 @@ paths:
     parameters: []
   /pipelineResults:
     post:
-      summary: 'Placeholder endpoint for qc, necessary so subscriptions to sns work'
-      description: 'Placeholder endpoint for qc, necessary so subscriptions to sns work'
+      summary: "Placeholder endpoint for qc, necessary so subscriptions to sns work"
+      description: "Placeholder endpoint for qc, necessary so subscriptions to sns work"
       operationId: receiveQCResponse
       x-eov-operation-id: qc#response
       x-eov-operation-handler: routes/qc
       requestBody:
-        description: 'The results from the execution of a pipeline step, sent via SNS.'
+        description: "The results from the execution of a pipeline step, sent via SNS."
         required: true
         content:
           text/plain:
@@ -1964,21 +1964,21 @@ paths:
               type: object
               properties: {}
       responses:
-        '200':
-          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
+        "200":
+          description: "A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*."
           content:
             text/plain:
               schema:
                 type: string
                 pattern: ok
-        '500':
+        "500":
           description: The data sent by the server could not be parsed as JSON.
           content:
             text/plain:
               schema:
                 type: string
                 pattern: nok
-  '/experiments/{experimentId}/download/{type}':
+  "/experiments/{experimentId}/download/{type}":
     get:
       summary: Download data according to the requested type
       description: Download data according to the requested type
@@ -1999,37 +1999,37 @@ paths:
           in: path
           required: true
       responses:
-        '200':
+        "200":
           description: Download request successful.
           content:
             application/json:
               schema:
                 type: string
                 description: signed URL of the resource
-        '400':
+        "400":
           description: Invalid download type request.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
+                $ref: "#/components/schemas/HTTPError"
+        "401":
           description: The request lacks authentication credentials.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
+                $ref: "#/components/schemas/HTTPError"
+        "403":
           description: The authenticated user is not authorized to view this resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
+                $ref: "#/components/schemas/HTTPError"
+        "404":
           description: Invalid experiment ID or download type specified
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
   /kubernetesEvents:
     post:
       summary: Monitoring of kubernetes cluster events
@@ -2038,14 +2038,14 @@ paths:
       x-eov-operation-id: kubernetes#event
       x-eov-operation-handler: routes/kubernetes
       responses:
-        '200':
-          description: 'A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*.'
+        "200":
+          description: "A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*."
           content:
             text/plain:
               schema:
                 type: string
                 pattern: ok
-        '500':
+        "500":
           description: The data sent by the server could not be parsed as JSON.
           content:
             text/plain:
@@ -2060,7 +2060,7 @@ paths:
       x-eov-operation-id: programmaticInterface#getClient
       x-eov-operation-handler: routes/programmaticInterface
       responses:
-        '200':
+        "200":
           description: The server successfully retrieved the programmatic client ID
           content:
             application/json:
@@ -2074,12 +2074,12 @@ paths:
                 required:
                   - clientId
                   - clientRegion
-        '500':
+        "500":
           description: The server did not manage to retrieve the programmatic client ID
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
 components:
   schemas:
     CreateExperiment:
