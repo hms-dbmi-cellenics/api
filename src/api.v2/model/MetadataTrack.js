@@ -45,7 +45,7 @@ class MetadataTrack extends BasicModel {
     });
   }
 
-  async createNewSampleValues(experimentId, sampleId) {
+  async createNewSamplesValues(experimentId, sampleIds) {
     const tracks = await this.sql.select(['id'])
       .from(tableNames.METADATA_TRACK)
       .where({ experiment_id: experimentId });
@@ -54,10 +54,12 @@ class MetadataTrack extends BasicModel {
       return;
     }
 
-    const valuesToInsert = tracks.map(({ id }) => ({
-      metadata_track_id: id,
-      sample_id: sampleId,
-    }));
+    const valuesToInsert = sampleIds.map((sampleId) => (
+      tracks.map(({ id }) => ({
+        metadata_track_id: id,
+        sample_id: sampleId,
+      }))
+    )).flat();
 
     await this.sql(tableNames.SAMPLE_IN_METADATA_TRACK_MAP).insert(valuesToInsert);
   }

@@ -1,4 +1,4 @@
-const githubOrganisationName = 'hms-dbmi-cellenics';
+const githubOrganisationName = 'biomage-org';
 
 process.env.NODE_ENV = 'test';
 
@@ -7,7 +7,8 @@ module.exports = {
   clusterEnv: 'test',
   awsAccountId: '000000000000',
   awsRegion: 'eu-west-1',
-  corsOriginUrl: 'https://scp.biomage.net',
+  corsOriginUrl: ['https://test.url2.com', 'https://test.url1.com', 'https://scp.biomage.net'],
+  emailDomainName: 'https://scp.biomage.net',
   domainName: 'scp.biomage.net',
   podName: 'test',
   sandboxId: 'default',

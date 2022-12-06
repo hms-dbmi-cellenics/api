@@ -4,7 +4,7 @@
   "description": "Node.js API for the single-cell pipeline.",
   "main": "index.js",
   "scripts": {
-    "test": "jest --silent --coverage --testTimeout=10000",
+    "test": "jest --silent --coverage --testTimeout=100000",
     "test:loud": "jest",
     "test:debug": "node --inspect node_modules/.bin/jest --runInBand --silent",
     "coverage": "jest --coverage --silent",
@@ -58,7 +58,7 @@
     "pg": "^8.7.3",
     "promise.any": "^2.0.2",
     "sns-validator": "^0.3.4",
-    "socket.io": "^3.1.2",
+    "socket.io": "^4.5.3",
     "socket.io-redis": "^6.0.1",
     "swagger-client": "^3.12.2",
     "swagger-model-validator": "^3.0.18",

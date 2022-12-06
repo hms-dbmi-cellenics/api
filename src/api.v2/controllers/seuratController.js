@@ -3,7 +3,7 @@ const AWSXRay = require('aws-xray-sdk');
 const { createSeuratPipeline, handleSeuratResponse } = require('../helpers/pipeline/seurat');
 const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
-const parseSNSMessage = require('../../utils/parse-sns-message');
+const parseSNSMessage = require('../../utils/parseSNSMessage');
 
 const logger = getLogger('[SeuratController] - ');
 

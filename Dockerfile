@@ -11,13 +11,9 @@ ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json package-lock.json ./
 RUN npm ci --only=production
 
-# Install Helm
 RUN apk add --no-cache bash curl openssl
 RUN curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
-# add app
-ARG READONLY_API_TOKEN_GITHUB
-RUN echo "READONLY_API_TOKEN_GITHUB=$READONLY_API_TOKEN_GITHUB" > .env
 COPY . ./
 
 # run

@@ -1,20 +1,25 @@
 const {
-  createSample,
+  createSamples,
   patchSample,
   deleteSample,
   getSamples,
+  updateSamplesOptions,
 } = require('../controllers/sampleController');
 
 const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
 
 module.exports = {
-  'sample#createSample': [
+  'sample#createSamples': [
     expressAuthorizationMiddleware,
-    (req, res, next) => createSample(req, res).catch(next),
+    (req, res, next) => createSamples(req, res).catch(next),
   ],
   'sample#patchSample': [
     expressAuthorizationMiddleware,
     (req, res, next) => patchSample(req, res).catch(next),
+  ],
+  'samples#updateSamplesOptions': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => updateSamplesOptions(req, res).catch(next),
   ],
   'sample#deleteSample': [
     expressAuthorizationMiddleware,

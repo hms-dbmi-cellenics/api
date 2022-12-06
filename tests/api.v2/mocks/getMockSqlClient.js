@@ -26,6 +26,7 @@ module.exports = () => {
     queryContext: jest.fn().mockReturnThis(),
     onConflict: jest.fn().mockReturnThis(),
     merge: jest.fn().mockReturnThis(),
+    andWhereLike: jest.fn().mockReturnThis(),
     ref: jest.fn(),
   };
 

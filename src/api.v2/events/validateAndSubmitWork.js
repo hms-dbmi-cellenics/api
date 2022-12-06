@@ -28,6 +28,7 @@ const validateAndSubmitWork = async (workRequest) => {
   }
 
   await validateRequest(workRequest, 'WorkRequest.v2.yaml');
+
   const { timeout } = workRequest;
 
   if (Date.parse(timeout) <= Date.now()) {

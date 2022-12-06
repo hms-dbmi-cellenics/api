@@ -68,13 +68,13 @@ const generateGem2sParams = async (experimentId, authJWT) => {
 
   logger.log('Generating gem2s params');
 
-  const getS3Paths = (files) => (
-    {
-      matrix10x: files.matrix10x.s3Path,
-      barcodes10x: files.barcodes10x.s3Path,
-      features10x: files.features10x.s3Path,
-    }
-  );
+  const getS3Paths = (files) => {
+    const s3Paths = {};
+    Object.keys(files).forEach((key) => {
+      s3Paths[key] = files[key].s3Path;
+    });
+    return s3Paths;
+  };
 
   const [experiment, samples] = await Promise.all([
     new Experiment().findById(experimentId).first(),
@@ -86,11 +86,15 @@ const generateGem2sParams = async (experimentId, authJWT) => {
   );
 
   const s3Paths = {};
+  const sampleOptions = {};
+
   experiment.samplesOrder.forEach((sampleId) => {
-    const { files } = _.find(samples, { id: sampleId });
+    const { files, options } = _.find(samples, { id: sampleId });
 
     s3Paths[sampleId] = getS3Paths(files);
+    sampleOptions[sampleId] = options || {};
   });
+
 
   const taskParams = {
     projectId: experimentId,
@@ -100,6 +104,7 @@ const generateGem2sParams = async (experimentId, authJWT) => {
     sampleIds: experiment.samplesOrder,
     sampleNames: _.map(samplesInOrder, 'name'),
     sampleS3Paths: s3Paths,
+    sampleOptions,
     authJWT,
   };
 
@@ -141,13 +146,20 @@ const createGem2sPipeline = async (experimentId, body, authJWT) => {
     execution_arn: executionArn,
   };
 
-  await new ExperimentExecution().upsert(
+  const experimentExecutionClient = new ExperimentExecution();
+
+  await experimentExecutionClient.upsert(
     {
       experiment_id: experimentId,
       pipeline_type: 'gem2s',
     },
     newExecution,
   );
+
+  await experimentExecutionClient.delete({
+    experiment_id: experimentId,
+    pipeline_type: 'qc',
+  });
 
   logger.log('GEM2S params saved.');
 

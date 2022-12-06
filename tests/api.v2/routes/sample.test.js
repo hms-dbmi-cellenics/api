@@ -8,9 +8,10 @@ const { OK } = require('../../../src/utils/responses');
 const sampleController = require('../../../src/api.v2/controllers/sampleController');
 
 jest.mock('../../../src/api.v2/controllers/sampleController', () => ({
-  createSample: jest.fn(),
+  createSamples: jest.fn(),
   deleteSample: jest.fn(),
   patchSample: jest.fn(),
+  updateSamplesOptions: jest.fn(),
   getSamples: jest.fn(),
 }));
 
@@ -35,20 +36,21 @@ describe('tests for experiment route', () => {
     jest.restoreAllMocks();
   });
 
-  it('Creating a new sample works', async (done) => {
-    sampleController.createSample.mockImplementationOnce((req, res) => {
-      res.json(OK());
+  it('Creating new samples works', async (done) => {
+    sampleController.createSamples.mockImplementationOnce((req, res) => {
+      res.json(['id1']);
       return Promise.resolve();
     });
 
-    const sampleData = {
+    const samplesData = [{
       name: 'sampleName',
       sampleTechnology: '10x',
-    };
+      options: {},
+    }];
 
     request(app)
-      .post(`/v2/experiments/${experimentId}/samples/${sampleId}`)
-      .send(sampleData)
+      .post(`/v2/experiments/${experimentId}/samples`)
+      .send(samplesData)
       .expect(200)
       .end((err) => {
         if (err) {
@@ -61,18 +63,18 @@ describe('tests for experiment route', () => {
   });
 
   it('Creating a new sample fails if request body is invalid', async (done) => {
-    sampleController.createSample.mockImplementationOnce((req, res) => {
+    sampleController.createSamples.mockImplementationOnce((req, res) => {
       res.json(OK());
       return Promise.resolve();
     });
 
-    const invalidSampleData = {
+    const invalidSampleData = [{
       name: 'sampleName',
       sampleTechnology: 'Invalidtechnology',
-    };
+    }];
 
     request(app)
-      .post(`/v2/experiments/${experimentId}/samples/${sampleId}`)
+      .post(`/v2/experiments/${experimentId}/samples`)
       .send(invalidSampleData)
       .expect(400)
       .end((err) => {
@@ -143,6 +145,78 @@ describe('tests for experiment route', () => {
         return done();
       });
   });
+
+  it('updateSamplesOptions without a body works', async (done) => {
+    const body = {};
+
+    sampleController.updateSamplesOptions.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+
+    request(app)
+      .put(`/v2/experiments/${experimentId}/samples/options`)
+      .send(body)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
+  it('updateSamplesOptions with valid body works', async (done) => {
+    const body = {
+      includeAbSeq: false,
+    };
+
+    sampleController.updateSamplesOptions.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+
+    request(app)
+      .put(`/v2/experiments/${experimentId}/samples/options`)
+      .send(body)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
+  it('updateSamplesOptions with invalid body fails', async (done) => {
+    const body = {
+      someOption: true,
+      otherOption: false,
+    };
+
+    sampleController.updateSamplesOptions.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+
+    request(app)
+      .put(`/v2/experiments/${experimentId}/samples/options`)
+      .send(body)
+      .expect(400)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
   it('Getting all samples works', async (done) => {
     sampleController.getSamples.mockImplementationOnce((req, res) => {
       res.json(OK());

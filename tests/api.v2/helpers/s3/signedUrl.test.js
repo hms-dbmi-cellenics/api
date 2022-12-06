@@ -17,7 +17,7 @@ jest.mock('../../../../src/utils/requireAWS', () => ({
 }));
 
 describe('getSignedUrl', () => {
-  const signedUrlSpy = jest.fn();
+  const signedUrlPromiseSpy = jest.fn();
 
   const testParams = {
     Bucket: 'test-bucket',
@@ -27,13 +27,13 @@ describe('getSignedUrl', () => {
   beforeEach(() => {
     AWS.S3.mockReset();
     AWS.S3.mockImplementation(() => ({
-      getSignedUrl: signedUrlSpy,
+      getSignedUrlPromise: signedUrlPromiseSpy,
     }));
   });
 
   it('Should call S3 signed url correctly', () => {
     getSignedUrl('getObject', testParams);
-    expect(signedUrlSpy).toHaveBeenCalledWith('getObject', testParams);
+    expect(signedUrlPromiseSpy).toHaveBeenCalledWith('getObject', testParams);
   });
 
   it('Should add the region config if the requested url is doing upload', () => {
@@ -59,15 +59,11 @@ describe('getSignedUrl', () => {
   });
 
   it('Should throw an error if bucket is not defined', () => {
-    expect(() => {
-      getSignedUrl('test-bucket', { Key: 'test-key' });
-    }).toThrow();
+    expect(getSignedUrl('test-bucket', { Key: 'test-key' })).rejects.toThrow();
   });
 
   it('Should throw an error if key is not defined', () => {
-    expect(() => {
-      getSignedUrl('test-bucket', { Bucet: 'test-bucket' });
-    }).toThrow();
+    expect(getSignedUrl('test-bucket', { Bucet: 'test-bucket' })).rejects.toThrow();
   });
 });
 

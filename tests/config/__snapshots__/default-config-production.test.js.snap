@@ -15,16 +15,19 @@ Object {
       "promise": [MockFunction],
     },
   },
-  "corsOriginUrl": "https://localhost:5000",
+  "corsOriginUrl": Array [
+    "https://sandbox.elabjournal.com",
+    "https://elabjournal.com",
+    "https://localhost:5000",
+  ],
   "domainName": "localhost:5000",
-  "githubToken": undefined,
-  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/production/pipeline.yaml",
+  "emailDomainName": "https://localhost:5000",
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/production/pipeline.yaml",
   "pipelineNamespace": "pipeline-default",
   "podName": "local",
   "port": 3000,
   "rdsSandboxId": "default",
   "sandboxId": "default",
-  "workerInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/production/worker.yaml",
   "workerNamespace": "worker-default",
 }
 `;

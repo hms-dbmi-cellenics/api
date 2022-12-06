@@ -1,7 +1,6 @@
 // @ts-nocheck
 const express = require('express');
 const request = require('supertest');
-const { send } = require('process');
 const expressLoader = require('../../../src/loaders/express');
 
 const { OK } = require('../../../src/utils/responses');
@@ -20,6 +19,7 @@ jest.mock('../../../src/api.v2/controllers/experimentController', () => ({
   deleteExperiment: jest.fn(),
   updateSamplePosition: jest.fn(),
   getProcessingConfig: jest.fn(),
+  getBackendStatus: jest.fn(),
   updateProcessingConfig: jest.fn(),
   downloadData: jest.fn(),
   getExampleExperiments: jest.fn(),
@@ -289,6 +289,23 @@ describe('tests for experiment route', () => {
     });
     request(app)
       .put(`/v2/experiments/${experimentId}/processingConfig`)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Get backend status works', (done) => {
+    const experimentId = 'experiment-id';
+    experimentController.getBackendStatus.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+    request(app)
+      .get(`/v2/experiments/${experimentId}/backendStatus`)
       .expect(200)
       .end((err) => {
         if (err) {

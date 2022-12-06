@@ -7,8 +7,11 @@ oneOf:
   - $ref: ./work-request-bodies/WorkRequestListGenes.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestGetBackgroundExpressedGenes.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestGeneExpression.v2.yaml
+  - $ref: ./work-request-bodies/WorkRequestGetExpressionCellSets.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestMitochondrialContent.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestDoubletScores.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestMarkerGenes.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestDotPlot.v2.yaml
-  - $ref: ./work-request-bodies/WorkRequestGetExpressionCellSets.v2.yaml
+  - $ref: ./work-request-bodies/WorkRequestTrajectoryAnalysisGetStartingNodes.v2.yaml
+  - $ref: ./work-request-bodies/WorkRequestTrajectoryAnalysisGetPseudoTime.v2.yaml
+  - $ref: ./work-request-bodies/WorkRequestGetNormalizedExpression.v2.yaml

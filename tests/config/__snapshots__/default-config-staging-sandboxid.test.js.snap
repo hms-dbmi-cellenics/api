@@ -15,16 +15,19 @@ Object {
       "promise": [MockFunction],
     },
   },
-  "corsOriginUrl": "https://ui-mockedSandboxId.scp-staging.biomage.net",
+  "corsOriginUrl": Array [
+    "https://sandbox.elabjournal.com",
+    "https://elabjournal.com",
+    "https://ui-mockedSandboxId.scp-staging.biomage.net",
+  ],
   "domainName": "scp-staging.biomage.net",
-  "githubToken": undefined,
-  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/staging/mockedSandboxId.yaml",
+  "emailDomainName": "https://ui-mockedSandboxId.scp-staging.biomage.net",
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/staging/mockedSandboxId.yaml",
   "pipelineNamespace": "pipeline-mockedSandboxId",
   "podName": "local",
   "port": 3000,
   "rdsSandboxId": "default",
   "sandboxId": "mockedSandboxId",
-  "workerInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/iac/master/releases/staging/mockedSandboxId.yaml",
   "workerNamespace": "worker-mockedSandboxId",
 }
 `;

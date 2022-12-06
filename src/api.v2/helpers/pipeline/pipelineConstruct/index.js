@@ -20,6 +20,10 @@ const asyncTimer = require('../../../../utils/asyncTimer');
 const constructPipelineStep = require('./constructors/constructPipelineStep');
 const { getGem2sPipelineSkeleton, getQcPipelineSkeleton, getSeuratPipelineSkeleton } = require('./skeletons');
 const { getQcStepsToRun } = require('./qcHelpers');
+const needsBatchJob = require('../batch/needsBatchJob');
+const terminateJobs = require('../batch/terminateJobs');
+const listActiveJobs = require('../batch/listActiveJobs');
+const { deleteExperimentPods } = require('../hooks/podCleanup');
 
 const logger = getLogger();
 
@@ -76,6 +80,23 @@ const getClusterInfo = async () => {
   };
 };
 
+// cancelPreviousPipelines clears any in progress pipeline execution for the
+// given experimentId. It deals both with running fargate pods and AWS Batch jobs.
+const cancelPreviousPipelines = async (experimentId) => {
+  // no need to remove anything in development
+  if (config.clusterEnv === 'development') return;
+
+  // remove any pipeline pods already assigned to this experiment
+  try {
+    await deleteExperimentPods(experimentId);
+  } catch (e) {
+    logger.error(`cancelPreviousPipelines: deleteExperimentPods ${experimentId}: ${e}`);
+  }
+
+  // remove any active Batch jobs assigned to this experiment
+  const jobs = await listActiveJobs(experimentId, config.clusterEnv, config.awsRegion);
+  await terminateJobs(jobs, config.awsRegion);
+};
 
 const createNewStateMachine = async (context, stateMachine, processName) => {
   const { clusterEnv, sandboxId } = config;
@@ -184,11 +205,16 @@ const buildStateMachineDefinition = (skeleton, context) => {
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) => {
   const accountId = config.awsAccountId;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
-  logger.log(`Fetching processing settings for ${experimentId}`);
+  logger.log(`createQCPipeline: fetch processing settings ${experimentId}`);
 
   const experiment = await new Experiment().findById(experimentId).first();
 
-  const { processingConfig, samplesOrder } = experiment;
+  const {
+    processingConfig, samplesOrder,
+  } = experiment;
+
+  const { podCpus, podMemory } = await new Experiment().getResourceRequirements(experimentId);
+
 
   if (processingConfigUpdates.length) {
     processingConfigUpdates.forEach(({ name, body }) => {
@@ -202,27 +228,6 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     });
   }
 
-  // This is the processing configuration merged for multiple samples where
-  // appropriate.
-  // eslint-disable-next-line consistent-return
-  const mergedProcessingConfig = _.cloneDeepWith(processingConfig, (o) => {
-    if (_.isObject(o) && !o.dataIntegration && !o.embeddingSettings && typeof o.enabled === 'boolean') {
-      // Find which samples have sample-specific configurations.
-      const sampleConfigs = _.intersection(Object.keys(o), samplesOrder);
-
-      // Get an object that is only the "raw" configuration.
-      const rawConfig = _.omit(o, sampleConfigs);
-
-      const result = {};
-
-      samplesOrder.forEach((sample) => {
-        result[sample] = _.merge({}, rawConfig, o[sample]);
-      });
-
-      return result;
-    }
-  });
-
   const context = {
     experimentId,
     accountId,
@@ -232,18 +237,23 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     pipelineArtifacts: await getPipelineArtifacts(),
     clusterInfo: await getClusterInfo(),
     sandboxId: config.sandboxId,
-    processingConfig: mergedProcessingConfig,
+    processingConfig,
     environment: config.clusterEnv,
     authJWT,
+    podCpus,
+    podMemory,
   };
 
+  await cancelPreviousPipelines(experimentId);
+
   const qcSteps = await getQcStepsToRun(experimentId, processingConfigUpdates);
+  const runInBatch = needsBatchJob(podCpus, podMemory);
 
   const qcPipelineSkeleton = await getQcPipelineSkeleton(
     config.clusterEnv,
     qcSteps,
+    runInBatch,
   );
-
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
@@ -280,6 +290,8 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
   const accountId = config.awsAccountId;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
+  const { podCpus, podMemory } = await new Experiment().getResourceRequirements(experimentId);
+
   const context = {
     taskParams,
     experimentId,
@@ -292,9 +304,16 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
     sandboxId: config.sandboxId,
     processingConfig: {},
     environment: config.clusterEnv,
+    podCpus,
+    podMemory,
   };
 
-  const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv);
+  await cancelPreviousPipelines(experimentId);
+
+  const runInBatch = needsBatchJob(podCpus, podMemory);
+
+  logger.log(`createGem2SPipeline: not passing cpu/mem ${podCpus}, ${podMemory}`);
+  const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch);
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);

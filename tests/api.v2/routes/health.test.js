@@ -3,6 +3,7 @@ const request = require('supertest');
 const expressLoader = require('../../../src/loaders/express');
 const CacheSingleton = require('../../../src/cache');
 
+jest.mock('../../../src/api.v2/helpers/cognito/getAwsPoolId');
 jest.mock('../../../src/cache');
 
 jest.setTimeout(30000);

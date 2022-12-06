@@ -144,4 +144,19 @@ describe('model/Sample', () => {
     expect(mockTrx).not.toHaveBeenCalledWith(tableNames.METADATA_TRACK);
     expect(mockTrx).not.toHaveBeenCalledWith(tableNames.SAMPLE_IN_METADATA_TRACK_MAP);
   });
+
+  it('updateOption works correctly', async () => {
+    const mockOptions = { someOption: true, otherOption: false };
+    const JSONBString = `'${JSON.stringify(mockOptions)}'::jsonb`;
+
+    mockSqlClient.raw.mockImplementationOnce((x) => x);
+
+    await new Sample().updateOption(mockExperimentId, mockOptions);
+
+    expect(mockSqlClient.update());
+
+    expect(mockSqlClient.raw.mock.calls[0][0]).toEqual(JSONBString);
+    expect(mockSqlClient.update.mock.calls[0][0]).toEqual({ options: JSONBString });
+    expect(mockSqlClient.where.mock.calls[0][0]).toEqual({ experiment_id: mockExperimentId });
+  });
 });

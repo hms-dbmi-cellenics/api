@@ -17,6 +17,7 @@ const handleWorkRequest = async (socket, data, xraySegment) => {
     const { sub: userId } = jwtClaim;
     await authorize(userId, 'socket', null, experimentId);
     const podInfo = await validateAndSubmitWork(data);
+
     socket.emit(`WorkerInfo-${experimentId}`, {
       response: {
         podInfo,
