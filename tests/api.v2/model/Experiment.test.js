@@ -144,6 +144,7 @@ describe('model/Experiment', () => {
       'mockNewExperimentId as id',
       'mockNewName as name',
       'description',
+      'true as gem2s_rerunnable',
     );
 
     expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
@@ -170,6 +171,7 @@ describe('model/Experiment', () => {
       'mockNewExperimentId as id',
       'name',
       'description',
+      'true as gem2s_rerunnable',
     );
 
     expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
