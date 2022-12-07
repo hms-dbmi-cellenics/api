@@ -95,6 +95,7 @@ const cancelPreviousPipelines = async (experimentId, previousJobId = null) => {
     logger.error(`cancelPreviousPipelines: deleteExperimentPods ${experimentId}: ${e}`);
   }
 
+  logger.log(`cancelPreviousPipelines: excluding ${previousJobId} from cleanup`);
   // remove any active Batch jobs assigned to this experiment
   const jobs = await listJobsToDelete(
     experimentId,
@@ -320,7 +321,6 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
 
   const runInBatch = needsBatchJob(podCpus, podMemory);
 
-  logger.log(`createGem2SPipeline: not passing cpu/mem ${podCpus}, ${podMemory}`);
   const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch);
   logger.log('Skeleton constructed, now building state machine definition...');
 
