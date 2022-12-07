@@ -18,9 +18,9 @@ const subsetPipelineSteps = {
     XConstructorArgs: {
       taskName: 'uploadToAWS',
     },
-    Next: 'EndOfGem2S',
+    Next: 'EndOfSubset',
   },
-  EndOfGem2S: {
+  EndOfSubset: {
     Type: 'Pass',
     End: true,
   },
