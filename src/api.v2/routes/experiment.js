@@ -1,10 +1,9 @@
 const {
   getAllExperiments, getExampleExperiments,
-  createExperiment, getExperiment, patchExperiment, deleteExperiment,
+  createExperiment, getExperiment, patchExperiment, deleteExperiment, cloneExperiment,
   getProcessingConfig, updateProcessingConfig,
   updateSamplePosition,
   getBackendStatus, downloadData,
-  cloneExperiment,
 } = require('../controllers/experimentController');
 
 const { expressAuthenticationOnlyMiddleware, expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
