@@ -11,7 +11,8 @@ const buildParams = (context, stepArgs) => {
   } else if (context.processName === GEM2S_PROCESS_NAME) {
     stepParams = context.taskParams;
   } else if (context.processName === SUBSET_PROCESS_NAME) {
-    stepParams = getSubsetParams(context, stepArgs);
+    // stepParams = getSubsetParams(context, stepArgs);
+    stepParams = getSubsetParams();
   }
 
   return {
