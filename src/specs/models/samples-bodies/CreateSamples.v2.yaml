@@ -1,0 +1,23 @@
+title: Create sample
+description: "Data required to create a new sample"
+type: array
+items:
+  type: object
+  properties:
+    name:
+      type: string
+    sampleTechnology:
+      allOf:
+        - type: string
+        - oneOf:
+            - pattern: 10x
+            - pattern: rhapsody
+    options:
+      type: object
+
+  required:
+    - name
+    - sampleTechnology
+    - options
+
+additionalProperties: false

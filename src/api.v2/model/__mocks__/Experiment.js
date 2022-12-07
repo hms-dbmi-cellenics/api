@@ -8,7 +8,7 @@ const stub = {
   getProcessingConfig: jest.fn(),
   getResourceRequirements: () => ({}),
   createCopy: jest.fn(),
-  addSample: jest.fn(),
+  addSamples: jest.fn(),
   deleteSample: jest.fn(),
   getDownloadLink: jest.fn(),
   getExampleExperiments: jest.fn(),

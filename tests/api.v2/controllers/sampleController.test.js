@@ -14,6 +14,9 @@ jest.mock('../../../src/api.v2/model/Experiment');
 jest.mock('../../../src/api.v2/model/Sample');
 jest.mock('../../../src/api.v2/model/MetadataTrack');
 
+const mockUuid = jest.fn();
+jest.mock('uuid', () => ({ v4: mockUuid }));
+
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
 }));
@@ -25,9 +28,22 @@ const mockRes = {
 };
 
 const mockExperimentId = 'mockExperimentId';
-const mockSampleId = 'mockSampleId';
 const mockSampleTechnology = '10x';
-const mockSampleName = 'mockSampleName';
+const mockSampleId = 'mockSampleId';
+
+const newSamplesReq = [
+  { name: 'mockSampleName1', sampleTechnology: mockSampleTechnology, options: {} },
+  { name: 'mockSampleName2', sampleTechnology: mockSampleTechnology, options: {} },
+];
+
+const newSamplesCreated = [
+  {
+    id: 'uuid1', experiment_id: mockExperimentId, name: 'mockSampleName1', sample_technology: mockSampleTechnology, options: {},
+  },
+  {
+    id: 'uuid2', experiment_id: mockExperimentId, name: 'mockSampleName2', sample_technology: mockSampleTechnology, options: {},
+  },
+];
 
 describe('sampleController', () => {
   beforeEach(async () => {
@@ -36,15 +52,17 @@ describe('sampleController', () => {
 
   it('createSample works correctly', async () => {
     const mockReq = {
-      params: { experimentId: mockExperimentId, sampleId: mockSampleId },
-      body: { name: mockSampleName, sampleTechnology: mockSampleTechnology },
+      params: { experimentId: mockExperimentId },
+      body: newSamplesReq, // { name: mockSampleName, sampleTechnology: mockSampleTechnology },
     };
 
-    sampleInstance.create.mockImplementationOnce(() => Promise.resolve());
-    experimentInstance.addSample.mockImplementationOnce(() => Promise.resolve());
-    metadataTrackInstance.createNewSampleValues.mockImplementationOnce(() => Promise.resolve());
+    mockUuid.mockImplementationOnce(() => 'uuid1').mockImplementationOnce(() => 'uuid2');
 
-    await sampleController.createSample(mockReq, mockRes);
+    sampleInstance.create.mockImplementationOnce(() => Promise.resolve(newSamplesCreated));
+    experimentInstance.addSamples.mockImplementationOnce(() => Promise.resolve());
+    metadataTrackInstance.createNewSamplesValues.mockImplementationOnce(() => Promise.resolve());
+
+    await sampleController.createSamples(mockReq, mockRes);
 
     expect(mockSqlClient.transaction).toHaveBeenCalled();
 
@@ -58,30 +76,25 @@ describe('sampleController', () => {
     expect(Experiment).not.toHaveBeenCalledWith(mockSqlClient);
     expect(MetadataTrack).not.toHaveBeenCalledWith(mockSqlClient);
 
-    expect(sampleInstance.create).toHaveBeenCalledWith(
-      {
-        experiment_id: mockExperimentId,
-        id: mockSampleId,
-        name: mockSampleName,
-        sample_technology: mockSampleTechnology,
-      },
-    );
-    expect(experimentInstance.addSample).toHaveBeenCalledWith(mockExperimentId, mockSampleId);
-    expect(metadataTrackInstance.createNewSampleValues)
-      .toHaveBeenCalledWith(mockExperimentId, mockSampleId);
+    expect(sampleInstance.create).toHaveBeenCalledWith(newSamplesCreated);
+    expect(experimentInstance.addSamples).toHaveBeenCalledWith(mockExperimentId, ['uuid1', 'uuid2']);
+    expect(metadataTrackInstance.createNewSamplesValues).toHaveBeenCalledWith(mockExperimentId, ['uuid1', 'uuid2']);
 
-    expect(mockRes.json).toHaveBeenCalledWith(OK());
+    expect(mockRes.json).toHaveBeenCalledWith({
+      mockSampleName1: 'uuid1',
+      mockSampleName2: 'uuid2',
+    });
   });
 
   it('createSample errors out if the transaction fails', async () => {
     const mockReq = {
-      params: { experimentId: mockExperimentId, sampleId: mockSampleId },
-      body: { name: mockSampleName, sampleTechnology: mockSampleTechnology },
+      params: { experimentId: mockExperimentId },
+      body: newSamplesReq,
     };
 
     mockSqlClient.transaction.mockImplementationOnce(() => Promise.reject(new Error()));
 
-    await expect(sampleController.createSample(mockReq, mockRes)).rejects.toThrow();
+    await expect(sampleController.createSamples(mockReq, mockRes)).rejects.toThrow();
 
     expect(mockSqlClient.transaction).toHaveBeenCalled();
 

@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`model/Plot invalidateAttributesForMatches works correctly: andWhereLike calls 1`] = `
+Array [
+  Array [
+    "id",
+    "ViolinMain%",
+  ],
+]
+`;
+
+exports[`model/Plot invalidateAttributesForMatches works correctly: returning calls 1`] = `
+Array [
+  Array [
+    Array [
+      "id",
+      "config",
+    ],
+  ],
+  Array [
+    Array [
+      "id",
+      "config",
+    ],
+  ],
+  Array [
+    Array [
+      "id",
+      "config",
+    ],
+  ],
+]
+`;
+
+exports[`model/Plot invalidateAttributesForMatches works correctly: select calls 1`] = `
+Array [
+  Array [
+    Array [
+      "id",
+      "config",
+    ],
+  ],
+]
+`;
+
+exports[`model/Plot invalidateAttributesForMatches works correctly: update calls 1`] = `
+Array [
+  Array [
+    Object {
+      "config": Object {
+        "title": Object {
+          "anchor": "start",
+          "dx": 0,
+          "fontSize": 20,
+          "text": "Gzma",
+        },
+      },
+    },
+  ],
+  Array [
+    Object {
+      "config": Object {
+        "title": Object {
+          "anchor": "start",
+          "dx": 0,
+          "fontSize": 20,
+          "text": "Lyz2",
+        },
+      },
+    },
+  ],
+  Array [
+    Object {
+      "config": Object {
+        "title": Object {
+          "anchor": "start",
+          "dx": 0,
+          "fontSize": 20,
+          "text": "Lyz1",
+        },
+      },
+    },
+  ],
+]
+`;
+
+exports[`model/Plot invalidateAttributesForMatches works correctly: where calls 1`] = `
+Array [
+  Array [
+    Object {
+      "experiment_id": "mockExperimentId",
+    },
+  ],
+  Array [
+    Object {
+      "experiment_id": "mockExperimentId",
+      "id": "ViolinMain",
+    },
+  ],
+  Array [
+    Object {
+      "experiment_id": "mockExperimentId",
+      "id": "ViolinMain-0",
+    },
+  ],
+  Array [
+    Object {
+      "experiment_id": "mockExperimentId",
+      "id": "ViolinMain-1",
+    },
+  ],
+]
+`;

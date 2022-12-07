@@ -231,14 +231,16 @@ describe('model/Experiment', () => {
     expect(mockTrx.rollback).toHaveBeenCalled();
   });
 
-  it('addSample works correctly', async () => {
+  it('addSamples works correctly', async () => {
     mockSqlClient.where.mockImplementationOnce(() => { Promise.resolve(); });
     mockSqlClient.raw.mockImplementationOnce(() => 'RawSqlCommand');
 
-    await new Experiment().addSample(mockExperimentId, mockSampleId);
+    const newSamples = [mockSampleId, 'id2'];
+
+    await new Experiment().addSamples(mockExperimentId, newSamples);
 
     expect(mockSqlClient.update).toHaveBeenCalledWith({ samples_order: 'RawSqlCommand' });
-    expect(mockSqlClient.raw).toHaveBeenCalledWith('samples_order || \'["mockSampleId"]\'::jsonb');
+    expect(mockSqlClient.raw).toHaveBeenCalledWith('samples_order || \'["mockSampleId", "id2"]\'::jsonb');
     expect(mockSqlClient.where).toHaveBeenCalledWith('id', 'mockExperimentId');
   });
 
@@ -292,7 +294,6 @@ describe('model/Experiment', () => {
     const expectedFileName = `${filenamePrefix}_processed_matrix.rds`;
 
     await new Experiment().getDownloadLink(experimentId, 'processed-matrix');
-    await new Experiment().getDownloadLink(experimentId, 'biomage-source');
 
     expect(signedUrlSpy).toHaveBeenCalledWith(
       'getObject',

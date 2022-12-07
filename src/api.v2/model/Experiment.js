@@ -207,9 +207,9 @@ class Experiment extends BasicModel {
     return { podCpus, podMemory };
   }
 
-  async updateProcessingConfig(experimentId, body) {
-    const { name: stepName, body: change } = body[0];
-    const updateString = JSON.stringify({ [stepName]: change });
+  async updateProcessingConfig(experimentId, changes) {
+    const { name: stepName, body: update } = changes[0];
+    const updateString = JSON.stringify({ [stepName]: update });
 
     await this.sql(tableNames.EXPERIMENT)
       .update({
@@ -217,10 +217,14 @@ class Experiment extends BasicModel {
       }).where('id', experimentId);
   }
 
-  async addSample(experimentId, sampleId) {
+  async addSamples(experimentId, sampleIds) {
+    const newSamplesArray = sampleIds
+      .map((sampleId) => `"${sampleId}"`)
+      .join(', ');
+
     await this.sql(tableNames.EXPERIMENT)
       .update({
-        samples_order: this.sql.raw(`samples_order || '["${sampleId}"]'::jsonb`),
+        samples_order: this.sql.raw(`samples_order || '[${newSamplesArray}]'::jsonb`),
       })
       .where('id', experimentId);
   }
@@ -245,9 +249,6 @@ class Experiment extends BasicModel {
     switch (requestedBucketName) {
       case bucketNames.PROCESSED_MATRIX:
         downloadedFileName = `${filenamePrefix}_processed_matrix.rds`;
-        break;
-      case bucketNames.RAW_SEURAT:
-        downloadedFileName = `${filenamePrefix}_raw_matrix.rds`;
         break;
       default:
         throw new BadRequestError('Invalid download type requested');
