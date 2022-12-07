@@ -1,23 +1,22 @@
 const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUBSET_PROCESS_NAME } = require('../../../../constants');
-const getGem2SParams = require('./paramsGetters/getGem2sParams');
 const getGeneralParams = require('./paramsGetters/getGeneralParams');
 const getQCParams = require('./paramsGetters/getQCParams');
 const getSubsetParams = require('./paramsGetters/getSubsetParams');
 
 const buildParams = (context, stepArgs) => {
-  let processParams;
+  let stepParams;
 
   if (context.processName === QC_PROCESS_NAME) {
-    processParams = getQCParams(context, stepArgs);
+    stepParams = getQCParams(context, stepArgs);
   } else if (context.processName === GEM2S_PROCESS_NAME) {
-    processParams = getGem2SParams(context);
+    stepParams = context.taskParams;
   } else if (context.processName === SUBSET_PROCESS_NAME) {
-    processParams = getSubsetParams(context, stepArgs);
+    stepParams = getSubsetParams(context, stepArgs);
   }
 
   return {
     ...getGeneralParams(stepArgs.taskName, context),
-    ...processParams,
+    ...stepParams,
   };
 };
 

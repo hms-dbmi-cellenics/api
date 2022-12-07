@@ -1,10 +1,4 @@
-// subsetSeurat
-// prepareExperiment
-// uploadToAWS
-
-// const paramsGetters = (taskName) => {
-// if ()
-// };
+// taskName will be one of: [subsetSeurat, prepareExperiment, uploadToAWS]
 
 const getSubsetParams = (context, stepArgs) => {
   const { taskName } = stepArgs;
