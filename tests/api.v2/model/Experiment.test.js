@@ -148,7 +148,7 @@ describe('model/Experiment', () => {
     );
 
     expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
-    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description)');
+    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, gem2s_rerunnable)');
   });
 
   it('createCopy works correctly without a name', async () => {
@@ -175,7 +175,7 @@ describe('model/Experiment', () => {
     );
 
     expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
-    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description)');
+    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, gem2s_rerunnable)');
   });
 
   it('updateSamplePosition works correctly if valid params are passed', async () => {
