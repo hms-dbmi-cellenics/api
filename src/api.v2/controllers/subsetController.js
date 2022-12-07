@@ -15,10 +15,7 @@ const runSubset = async (req, res) => {
 
   const {
     params: { experimentId: fromExperimentId },
-    body: {
-      name,
-      cellSetKeys,
-    },
+    body: { name, cellSetKeys },
     user: { sub: userId },
   } = req;
 

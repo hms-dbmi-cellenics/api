@@ -9,8 +9,7 @@ const util = require('util');
 
 const config = require('../../../../config');
 const {
-  QC_PROCESS_NAME, GEM2S_PROCESS_NAME, /* SUBSET_PROCESS_NAME */
-  SUBSET_PROCESS_NAME,
+  QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUBSET_PROCESS_NAME,
 } = require('../../../constants');
 
 const Experiment = require('../../../model/Experiment');
@@ -22,8 +21,7 @@ const asyncTimer = require('../../../../utils/asyncTimer');
 
 const constructPipelineStep = require('./constructors/constructPipelineStep');
 const {
-  getGem2sPipelineSkeleton, getQcPipelineSkeleton, /* getSubsetPipelineSkeleton */
-  getSubsetPipelineSkeleton,
+  getGem2sPipelineSkeleton, getQcPipelineSkeleton, getSubsetPipelineSkeleton,
 } = require('./skeletons');
 const { getQcStepsToRun } = require('./qcHelpers');
 const needsBatchJob = require('../batch/needsBatchJob');
@@ -266,12 +264,6 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
   logger.log('State machine definition built, now creating activity if not already present...');
 
-  console.log('stateMachineDebug');
-  console.log(JSON.stringify(stateMachine));
-
-  // return;
-  // throw new Error('OHLAHOLA');
-
   const activityArn = await createActivity(context); // the context contains the activityArn
   logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
 
@@ -332,9 +324,6 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
   const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
   logger.log('State machine definition built, now creating activity if not already present...');
 
-  // return;
-  // throw new Error('OHLAHOLA');
-
   const activityArn = await createActivity(context);
   logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
 
@@ -388,9 +377,6 @@ const createSubsetPipeline = async (fromExperimentId, toExperimentId, cellSetKey
 
   const stateMachine = buildStateMachineDefinition(subsetPipelineSkeleton, context);
   logger.log('State machine definition built, now creating activity if not already present...');
-
-  // return;
-  // throw new Error('OHLAHOLA');
 
   const activityArn = await createActivity(context);
   logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
