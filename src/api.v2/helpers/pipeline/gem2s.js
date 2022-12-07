@@ -28,6 +28,8 @@ const continueToQC = async (payload) => {
 
   logger.log(`Experiment: ${experimentId}. Starting qc run because gem2s finished successfully`);
 
+  logger.log(`continueToQc: previous jobId: ${jobId}`);
+
   // we need to change this once we rework the pipeline message response
   const authJWT = payload.authJWT || payload.input.authJWT;
 
