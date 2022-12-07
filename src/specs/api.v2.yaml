@@ -107,7 +107,7 @@ paths:
                 $ref: "#/components/schemas/HTTPError"
     patch:
       summary: Patch cell sets of an experiment
-      description: Performs a partial update on the experiment"s cell sets.
+      description: Performs a partial update on the experiment's cell sets.
       operationId: patchExperimentCellSets
       x-eov-operation-id: cellSets#patchCellSets
       x-eov-operation-handler: routes/cellSets
@@ -524,7 +524,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#components/schemas/HTTPError"
+                $ref: "#/components/schemas/HTTPError"
   "/experiments/{experimentId}/backendStatus":
     get:
       summary: Get backend status for an experiment
@@ -1164,7 +1164,7 @@ paths:
   ? "/experiments/{experimentId}/samples/{sampleId}/metadataTracks/{metadataTrackKey}"
   : patch:
       summary: Updates the value that a sample has in a metadata track in particular
-      description: Updates a sample"s metadata tracks value
+      description: Updates a sample's metadata tracks value
       operationId: patchSampleInMetadataTrackValue
       x-eov-operation-id: metadataTrack#patchSampleInMetadataTrackValue
       x-eov-operation-handler: routes/metadataTrack
