@@ -12,6 +12,7 @@ items:
         - oneOf:
             - pattern: 10x
             - pattern: rhapsody
+            - pattern: seurat
     options:
       type: object
 
