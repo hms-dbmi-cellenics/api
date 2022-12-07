@@ -1,0 +1,8 @@
+title: Get number of UMIs data
+type: object
+description: A worker schema to get number of UMIs.
+properties:
+  name:
+    type: string
+    pattern: GetNUmis
+    description: The name of the work submitted. Should be `GetNUmis`.
