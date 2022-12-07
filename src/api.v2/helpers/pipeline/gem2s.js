@@ -3,7 +3,7 @@ const AWSXRay = require('aws-xray-sdk');
 
 const constants = require('../../constants');
 const getPipelineStatus = require('./getPipelineStatus');
-const { startGem2SPipeline, createQCPipeline } = require('./pipelineConstruct');
+const { createGem2SPipeline, createQCPipeline } = require('./pipelineConstruct');
 
 const Sample = require('../../model/Sample');
 const Experiment = require('../../model/Experiment');
@@ -130,13 +130,13 @@ const generateGem2sParams = async (experimentId, authJWT) => {
   return taskParams;
 };
 
-const createGem2sPipeline = async (experimentId, body, authJWT) => {
+const startGem2sPipeline = async (experimentId, body, authJWT) => {
   logger.log('Creating GEM2S params...');
   const { paramsHash } = body;
 
   const taskParams = await generateGem2sParams(experimentId, authJWT);
 
-  const { stateMachineArn, executionArn } = await startGem2SPipeline(experimentId, taskParams);
+  const { stateMachineArn, executionArn } = await createGem2SPipeline(experimentId, taskParams);
 
   logger.log('GEM2S params created.');
 
@@ -186,6 +186,6 @@ const handleGem2sResponse = async (io, message) => {
 };
 
 module.exports = {
-  createGem2sPipeline,
+  startGem2sPipeline,
   handleGem2sResponse,
 };

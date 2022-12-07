@@ -1,6 +1,6 @@
 const AWSXRay = require('aws-xray-sdk');
 
-const { createGem2sPipeline, handleGem2sResponse } = require('../helpers/pipeline/gem2s');
+const { startGem2sPipeline, handleGem2sResponse } = require('../helpers/pipeline/gem2s');
 const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parseSNSMessage');
@@ -13,7 +13,7 @@ const runGem2s = async (req, res) => {
 
   logger.log(`Starting gem2s for experiment ${experimentId}`);
 
-  const newExecution = await createGem2sPipeline(experimentId, req.body, req.headers.authorization);
+  const newExecution = await startGem2sPipeline(experimentId, req.body, req.headers.authorization);
 
   logger.log(`Started gem2s for experiment ${experimentId} successfully, `);
   logger.log('New executions data:');

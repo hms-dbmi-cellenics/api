@@ -1,5 +1,3 @@
-// const AWSXRay = require('aws-xray-sdk');
-
 const sqlClient = require('../../sql/sqlClient');
 const getLogger = require('../../utils/getLogger');
 

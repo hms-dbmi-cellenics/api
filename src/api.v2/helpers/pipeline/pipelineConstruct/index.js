@@ -299,7 +299,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   );
 };
 
-const startGem2SPipeline = async (experimentId, taskParams) => {
+const createGem2SPipeline = async (experimentId, taskParams) => {
   const accountId = config.awsAccountId;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 
@@ -325,7 +325,7 @@ const startGem2SPipeline = async (experimentId, taskParams) => {
 
   const runInBatch = needsBatchJob(podCpus, podMemory);
 
-  logger.log(`startGem2SPipeline: not passing cpu/mem ${podCpus}, ${podMemory}`);
+  logger.log(`createGem2SPipeline: not passing cpu/mem ${podCpus}, ${podMemory}`);
   const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch);
   logger.log('Skeleton constructed, now building state machine definition...');
 
@@ -409,7 +409,7 @@ const createSubsetPipeline = async (fromExperimentId, toExperimentId, cellSetKey
 
 module.exports = {
   createQCPipeline,
-  startGem2SPipeline,
+  createGem2SPipeline,
   createSubsetPipeline,
   buildStateMachineDefinition,
 };
