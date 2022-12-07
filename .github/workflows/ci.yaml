@@ -232,6 +232,7 @@ jobs:
             export IMAGE_POLICY_KEY="range"
             export IMAGE_POLICY_VALUE=">=0.0.0"
             export REPLICA_COUNT="4"
+            export MANIFEST_REPOSITORY="./production"
           fi
 
           if [ "${{ matrix.environment }}" = "develop" ]; then
@@ -245,6 +246,7 @@ jobs:
             export IMAGE_POLICY_KEY="order"
             export IMAGE_POLICY_VALUE="asc"
             export REPLICA_COUNT="2"
+            export MANIFEST_REPOSITORY="./staging"
           fi
 
           if [ "${{ matrix.environment }}" = "staging" ]; then
@@ -261,6 +263,7 @@ jobs:
             export IMAGE_POLICY_KEY="order"
             export IMAGE_POLICY_VALUE="asc"
             export REPLICA_COUNT="1"
+            export MANIFEST_REPOSITORY="./staging"
           fi
 
           echo "::set-output name=kubernetes-env::$KUBERNETES_ENV"
@@ -288,6 +291,7 @@ jobs:
             select(di == 3).spec.policy.[strenv(IMAGE_POLICY_TYPE)].[strenv(IMAGE_POLICY_KEY)] = strenv(IMAGE_POLICY_VALUE) |
             select(di == 4).metadata.name = strenv(DEPLOYMENT_NAME) + "-image-update" |
             select(di == 4).metadata.namespace = strenv(NAMESPACE) |
+            select(di == 4).spec.update.path = strenv(MANIFEST_REPOSITORY) |
             select(di == 5).metadata.name = strenv(DEPLOYMENT_NAME) |
             select(di == 5).metadata.namespace = strenv(NAMESPACE) |
             select(di == 5).metadata.labels.sandboxId = strenv(SANDBOX_ID) |
