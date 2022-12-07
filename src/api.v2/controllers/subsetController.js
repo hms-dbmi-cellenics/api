@@ -32,8 +32,7 @@ const runSubset = async (req, res) => {
     await new UserAccess(trx).createNewExperimentPermissions(userId, toExperimentId);
   });
 
-  // const clonedSamplesOrder = await new Sample()
-  //   .copyTo(fromExperimentId, toExperimentId, samplesToCloneIds);
+  // Samples are not created here, we add them in handleResponse of SubsetSeurat
 
   logger.log(`Created ${toExperimentId}, subsetting experiment ${fromExperimentId} to it`);
 
@@ -44,38 +43,7 @@ const runSubset = async (req, res) => {
   res.json(toExperimentId);
 };
 
-const handleResponse = async () => {
-  // const handleResponse = async (req, res) => {
-  // let result;
-
-  // try {
-  //   result = await parseSNSMessage(req, snsTopics.WORK_RESULTS);
-  // } catch (e) {
-  //   logger.error('Parsing initial SNS message failed:', e);
-  //   AWSXRay.getSegment().addError(e);
-  //   res.status(200).send('nok');
-  //   return;
-  // }
-
-  // const { io, parsedMessage } = result;
-
-  // const isSnsNotification = parsedMessage !== undefined;
-  // if (isSnsNotification) {
-  //   try {
-  //     await handleQCResponse(io, parsedMessage);
-  //   } catch (e) {
-  //     logger.error(
-  //       'qc pipeline response handler failed with error: ', e,
-  //     );
-
-  //     AWSXRay.getSegment().addError(e);
-  //     res.status(200).send('nok');
-  //     return;
-  //   }
-  // }
-
-  // res.status(200).send('ok');
-};
+const handleResponse = async () => { };
 
 module.exports = {
   runSubset,
