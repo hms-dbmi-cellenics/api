@@ -81,6 +81,19 @@ properties:
       - method
       - numPCs
       - excludeGeneCategories
+  downsampling:
+    type: object
+    properties:
+      method:
+        type: string
+        enum:
+          - none
+          - geosketch
+      percentageToKeep:
+        type: number
+    required:
+      - method
+      - percentageToKeep
 required:
   - dataIntegration
   - dimensionalityReduction
