@@ -125,10 +125,12 @@ class Experiment extends BasicModel {
             // Clone the original name if no new name is provided
             name ? sql.raw('? as name', [name]) : 'name',
             'description',
+            'pod_cpus',
+            'pod_memory',
           )
           .where({ id: fromExperimentId }),
       )
-      .into(sql.raw(`${tableNames.EXPERIMENT} (id, name, description)`));
+      .into(sql.raw(`${tableNames.EXPERIMENT} (id, name, description, pod_cpus, pod_memory)`));
 
     return toExperimentId;
   }
