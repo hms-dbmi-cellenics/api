@@ -22,7 +22,7 @@ const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('./skeletons
 const { getQcStepsToRun } = require('./qcHelpers');
 const needsBatchJob = require('../batch/needsBatchJob');
 const terminateJobs = require('../batch/terminateJobs');
-const listActiveJobs = require('../batch/listActiveJobs');
+const listJobsToDelete = require('../batch/listJobsToDelete');
 const { deleteExperimentPods } = require('../hooks/podCleanup');
 
 const logger = getLogger();
@@ -82,7 +82,9 @@ const getClusterInfo = async () => {
 
 // cancelPreviousPipelines clears any in progress pipeline execution for the
 // given experimentId. It deals both with running fargate pods and AWS Batch jobs.
-const cancelPreviousPipelines = async (experimentId) => {
+// batch jobs are cleaned up slowly, in order to avoid canceling the gem2s job that
+// triggered a QC run, do not attempt to remove jobId
+const cancelPreviousPipelines = async (experimentId, previousJobId = null) => {
   // no need to remove anything in development
   if (config.clusterEnv === 'development') return;
 
@@ -93,8 +95,15 @@ const cancelPreviousPipelines = async (experimentId) => {
     logger.error(`cancelPreviousPipelines: deleteExperimentPods ${experimentId}: ${e}`);
   }
 
+  logger.log(`cancelPreviousPipelines: excluding ${previousJobId} from cleanup`);
   // remove any active Batch jobs assigned to this experiment
-  const jobs = await listActiveJobs(experimentId, config.clusterEnv, config.awsRegion);
+  const jobs = await listJobsToDelete(
+    experimentId,
+    config.clusterEnv,
+    config.awsRegio,
+    previousJobId,
+  );
+
   await terminateJobs(jobs, config.awsRegion);
 };
 
@@ -202,7 +211,7 @@ const buildStateMachineDefinition = (skeleton, context) => {
   return stateMachine;
 };
 
-const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) => {
+const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
   const accountId = config.awsAccountId;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
   logger.log(`createQCPipeline: fetch processing settings ${experimentId}`);
@@ -244,7 +253,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
     podMemory,
   };
 
-  await cancelPreviousPipelines(experimentId);
+  await cancelPreviousPipelines(experimentId, previousJobId);
 
   const qcSteps = await getQcStepsToRun(experimentId, processingConfigUpdates);
   const runInBatch = needsBatchJob(podCpus, podMemory);
@@ -312,7 +321,6 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
 
   const runInBatch = needsBatchJob(podCpus, podMemory);
 
-  logger.log(`createGem2SPipeline: not passing cpu/mem ${podCpus}, ${podMemory}`);
   const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch);
   logger.log('Skeleton constructed, now building state machine definition...');
 
