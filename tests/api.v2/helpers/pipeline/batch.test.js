@@ -1,4 +1,4 @@
-const listActiveJobs = require('../../../../src/api.v2/helpers/pipeline/batch/listActiveJobs');
+const listJobsToDelete = require('../../../../src/api.v2/helpers/pipeline/batch/listJobsToDelete');
 const terminateJobs = require('../../../../src/api.v2/helpers/pipeline/batch/terminateJobs');
 const fake = require('../../../test-utils/constants');
 const { mockBatchTerminateJob, mockBatchListJobs } = require('../../../test-utils/mockAWSServices');
@@ -47,12 +47,21 @@ const listOfJobs = [
   },
 ];
 
-describe('listActiveJobs', () => {
-  it('returns only active jobs', async () => {
-    const spy = mockBatchListJobs({ jobSummaryList: listOfJobs });
+describe('listJobsToDelete', () => {
+  const spy = mockBatchListJobs({ jobSummaryList: listOfJobs });
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-    const jobs = await listActiveJobs(fake.EXPERIMENT_ID, 'eu-west-1');
+  it('returns only active jobs', async () => {
+    const jobs = await listJobsToDelete(fake.EXPERIMENT_ID, 'production', 'eu-west-1');
     expect(jobs.length).toEqual(2);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('filters out also previous jobId', async () => {
+    const jobs = await listJobsToDelete(fake.EXPERIMENT_ID, 'production', 'eu-west-1', '7596ed1d-a622-4a65-b5b2-79e1a6988036');
+    expect(jobs.length).toEqual(1);
     expect(spy).toHaveBeenCalledTimes(1);
   });
 });

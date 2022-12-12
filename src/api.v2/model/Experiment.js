@@ -127,10 +127,12 @@ class Experiment extends BasicModel {
             'description',
             // Take the parameter gem2sRerunnable instead of cloning it
             sql.raw('? as gem2s_rerunnable', [gem2sRerunnable]),
+            'pod_cpus',
+            'pod_memory',
           )
           .where({ id: fromExperimentId }),
       )
-      .into(sql.raw(`${tableNames.EXPERIMENT} (id, name, description, gem2s_rerunnable)`));
+      .into(sql.raw(`${tableNames.EXPERIMENT} (id, name, description, gem2s_rerunnable, pod_cpus, pod_memory)`));
 
     return toExperimentId;
   }

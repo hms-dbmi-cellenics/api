@@ -145,10 +145,12 @@ describe('model/Experiment', () => {
       'mockNewName as name',
       'description',
       'true as gem2s_rerunnable',
+      'pod_cpus',
+      'pod_memory',
     );
 
     expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
-    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, gem2s_rerunnable)');
+    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, gem2s_rerunnable, pod_cpus, pod_memory)');
   });
 
   it('createCopy works correctly without a name', async () => {
@@ -172,10 +174,12 @@ describe('model/Experiment', () => {
       'name',
       'description',
       'true as gem2s_rerunnable',
+      'pod_cpus',
+      'pod_memory',
     );
 
     expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
-    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, gem2s_rerunnable)');
+    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, gem2s_rerunnable, pod_cpus, pod_memory)');
   });
 
   it('updateSamplePosition works correctly if valid params are passed', async () => {
