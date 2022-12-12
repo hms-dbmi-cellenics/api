@@ -2,10 +2,10 @@
 
 exports[`Test for pipeline constructor services builds valid pipeline pod assignation request 1`] = `
 Object {
+  "apiUrl": "test-public-api-url",
   "experimentId": "experi-mentid-11111111-1111111-11111",
   "input": Object {
     "activityId": "arn:aws:states:eu-east-9:111111111111:activity:biomage-gem2s-production-39249897-cfce-632b-a617-e58fbf251733",
-    "apiUrl": "test-public-api-url",
     "experimentId": "experi-mentid-11111111-1111111-11111",
     "processName": "gem2s",
     "sandboxId": "default",

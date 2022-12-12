@@ -15,12 +15,12 @@ const getActivityId = (activityArn) => {
 const buildPodRequest = (sandboxId, experimentId, taskName, processName, activityId) => ({
   taskName,
   experimentId,
+  apiUrl: config.publicApiUrl,
   input: {
     experimentId, // remove once PipelineResponse.v1.yaml is refactored with gem2s one
     sandboxId,
     activityId,
     processName,
-    apiUrl: config.publicApiUrl,
   },
 });
 
