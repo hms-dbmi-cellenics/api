@@ -233,6 +233,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "apiUrl": "test-public-api-url",
                   "config": Object {},
                   "experimentId": "testExperimentId",
                   "processName": "qc",
@@ -261,6 +262,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "apiUrl": "test-public-api-url",
                   "config": Object {},
                   "experimentId": "testExperimentId",
                   "processName": "qc",
@@ -284,6 +286,7 @@ Array [
           "HeartbeatSeconds": 90,
           "Next": "EndOfPipeline",
           "Parameters": Object {
+            "apiUrl": "test-public-api-url",
             "config": Object {},
             "experimentId": "testExperimentId",
             "processName": "qc",
@@ -301,6 +304,7 @@ Array [
           "HeartbeatSeconds": 90,
           "Next": "ConfigureEmbedding",
           "Parameters": Object {
+            "apiUrl": "test-public-api-url",
             "config": Object {},
             "experimentId": "testExperimentId",
             "processName": "qc",
@@ -323,6 +327,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "apiUrl": "test-public-api-url",
                   "config": Object {
                     "oneSample": Object {
                       "defaultFilterSettings": Object {
@@ -369,6 +374,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "apiUrl": "test-public-api-url",
                   "config": Object {},
                   "experimentId": "testExperimentId",
                   "processName": "qc",
@@ -397,6 +403,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "apiUrl": "test-public-api-url",
                   "config": Object {},
                   "experimentId": "testExperimentId",
                   "processName": "qc",
@@ -420,7 +427,7 @@ Array [
           "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
           "Next": "WaitForPod",
           "Parameters": Object {
-            "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"testExperimentId\\",\\"input\\":{\\"experimentId\\":\\"testExperimentId\\",\\"sandboxId\\":\\"default\\",\\"activityId\\":\\"pipeline-test-mock-uuid\\",\\"processName\\":\\"qc\\"}}",
+            "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"testExperimentId\\",\\"input\\":{\\"experimentId\\":\\"testExperimentId\\",\\"sandboxId\\":\\"default\\",\\"activityId\\":\\"pipeline-test-mock-uuid\\",\\"processName\\":\\"qc\\",\\"apiUrl\\":\\"test-public-api-url\\"}}",
             "MessageAttributes": Object {
               "type": Object {
                 "DataType": "String",
