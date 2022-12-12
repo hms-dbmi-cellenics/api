@@ -18,6 +18,8 @@ const createTask = (taskName, context) => {
     processName,
     config: processingConfig[taskName] || {},
     server: remoterServer,
+    // Used by the lambda forwarder
+    apiUrl: config.publicApiUrl,
   };
 
   return task;

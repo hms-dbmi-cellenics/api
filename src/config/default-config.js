@@ -70,8 +70,8 @@ const config = {
   corsOriginUrl: [...externalOrigins, `https://${domainName}`],
   emailDomainName: `https://${domainName}`,
   adminSub: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
+  publicApiUrl: `https://api.${domainName}`,
 };
-
 
 // We are in permanent develop staging environment
 if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
@@ -80,6 +80,7 @@ if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
   config.corsOriginUrl = [...externalOrigins, `https://ui-default.${domainName}`];
   config.emailDomainName = `https://ui-default.${domainName}`;
   config.adminSub = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
+  config.publicApiUrl = `https://api-${config.sandbox}.${domainName}`;
 }
 
 // We are in user staging environments
@@ -89,6 +90,7 @@ if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
   config.corsOriginUrl = [...externalOrigins, `https://ui-${config.sandboxId}.${domainName}`];
   config.emailDomainName = `https://ui-${config.sandboxId}.${domainName}`;
   config.adminSub = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
+  config.publicApiUrl = `https://api-${config.sandbox}.${domainName}`;
 }
 
 
