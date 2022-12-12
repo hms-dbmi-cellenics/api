@@ -233,7 +233,6 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
-                  "apiUrl": "test-public-api-url",
                   "config": Object {},
                   "experimentId": "testExperimentId",
                   "processName": "qc",
@@ -262,7 +261,6 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
-                  "apiUrl": "test-public-api-url",
                   "config": Object {},
                   "experimentId": "testExperimentId",
                   "processName": "qc",
@@ -286,7 +284,6 @@ Array [
           "HeartbeatSeconds": 90,
           "Next": "EndOfPipeline",
           "Parameters": Object {
-            "apiUrl": "test-public-api-url",
             "config": Object {},
             "experimentId": "testExperimentId",
             "processName": "qc",
@@ -304,7 +301,6 @@ Array [
           "HeartbeatSeconds": 90,
           "Next": "ConfigureEmbedding",
           "Parameters": Object {
-            "apiUrl": "test-public-api-url",
             "config": Object {},
             "experimentId": "testExperimentId",
             "processName": "qc",
@@ -327,7 +323,6 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
-                  "apiUrl": "test-public-api-url",
                   "config": Object {
                     "oneSample": Object {
                       "defaultFilterSettings": Object {
@@ -374,7 +369,6 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
-                  "apiUrl": "test-public-api-url",
                   "config": Object {},
                   "experimentId": "testExperimentId",
                   "processName": "qc",
@@ -403,7 +397,6 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
-                  "apiUrl": "test-public-api-url",
                   "config": Object {},
                   "experimentId": "testExperimentId",
                   "processName": "qc",

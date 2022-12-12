@@ -15,6 +15,7 @@ const getActivityId = (activityArn) => {
 const buildPodRequest = (sandboxId, experimentId, taskName, processName, activityId) => ({
   taskName,
   experimentId,
+  // Used by the lambda forwarder to know where to reach the api
   apiUrl: config.publicApiUrl,
   input: {
     experimentId, // remove once PipelineResponse.v1.yaml is refactored with gem2s one

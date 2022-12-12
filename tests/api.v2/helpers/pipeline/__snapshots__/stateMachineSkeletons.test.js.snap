@@ -52,8 +52,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "downloadGem",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "PreProcessing": {
@@ -68,8 +67,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "preproc",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "EmptyDrops": {
@@ -84,8 +82,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "emptyDrops",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "DoubletScores": {
@@ -100,8 +97,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "doubletScores",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "CreateSeurat": {
@@ -116,8 +112,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "createSeurat",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "PrepareExperiment": {
@@ -132,8 +127,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "prepareExperiment",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "UploadToAWS": {
@@ -148,8 +142,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "uploadToAWS",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "EndOfGem2S": {
@@ -256,8 +249,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "downloadGem",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "PreProcessing": {
@@ -272,8 +264,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "preproc",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "EmptyDrops": {
@@ -288,8 +279,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "emptyDrops",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "DoubletScores": {
@@ -304,8 +294,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "doubletScores",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "CreateSeurat": {
@@ -320,8 +309,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "createSeurat",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "PrepareExperiment": {
@@ -336,8 +324,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "prepareExperiment",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "UploadToAWS": {
@@ -352,8 +339,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "uploadToAWS",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "EndOfGem2S": {
@@ -460,8 +446,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "downloadGem",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "PreProcessing": {
@@ -476,8 +461,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "preproc",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "EmptyDrops": {
@@ -492,8 +476,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "emptyDrops",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "DoubletScores": {
@@ -508,8 +491,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "doubletScores",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "CreateSeurat": {
@@ -524,8 +506,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "createSeurat",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "PrepareExperiment": {
@@ -540,8 +521,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "prepareExperiment",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "UploadToAWS": {
@@ -556,8 +536,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "uploadToAWS",
         "processName": "gem2s",
         "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
     "EndOfGem2S": {
@@ -629,7 +608,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -658,7 +636,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -687,7 +664,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -716,7 +692,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -745,7 +720,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -766,7 +740,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "processName": "qc",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url",
         "sampleUuid": "",
         "uploadCountMatrix": true
       }
@@ -784,7 +757,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "processName": "qc",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url",
         "sampleUuid": "",
         "uploadCountMatrix": false
       }
@@ -902,7 +874,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -931,7 +902,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -960,7 +930,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -989,7 +958,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -1018,7 +986,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -1039,7 +1006,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "processName": "qc",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url",
         "sampleUuid": "",
         "uploadCountMatrix": true
       }
@@ -1057,7 +1023,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "processName": "qc",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url",
         "sampleUuid": "",
         "uploadCountMatrix": false
       }
@@ -1159,7 +1124,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -1188,7 +1152,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -1217,7 +1180,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -1246,7 +1208,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -1275,7 +1236,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -1296,7 +1256,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "processName": "qc",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url",
         "sampleUuid": "",
         "uploadCountMatrix": true
       }
@@ -1314,7 +1273,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "processName": "qc",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url",
         "sampleUuid": "",
         "uploadCountMatrix": false
       }
@@ -1432,7 +1390,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -1461,7 +1418,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -1490,7 +1446,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -1519,7 +1474,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -1548,7 +1502,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "processName": "qc",
               "config": {},
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-              "apiUrl": "test-public-api-url",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false
             }
@@ -1569,7 +1522,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "processName": "qc",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url",
         "sampleUuid": "",
         "uploadCountMatrix": true
       }
@@ -1587,7 +1539,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "processName": "qc",
         "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
-        "apiUrl": "test-public-api-url",
         "sampleUuid": "",
         "uploadCountMatrix": false
       }
