@@ -20,6 +20,7 @@ const buildPodRequest = (sandboxId, experimentId, taskName, processName, activit
     sandboxId,
     activityId,
     processName,
+    apiUrl: config.publicApiUrl,
   },
 });
 
