@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { v4: uuidv4 } = require('uuid');
 const util = require('util');
 
 const config = require('../../../../config');
@@ -24,16 +23,12 @@ const {
   createActivity,
   createNewStateMachine,
   cancelPreviousPipelines,
-  getClusterInfo,
-  getPipelineArtifacts,
+  getGeneralPipelineContext,
 } = require('./utils');
-
 
 const logger = getLogger();
 
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
-  const accountId = config.awsAccountId;
-  const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
   logger.log(`createQCPipeline: fetch processing settings ${experimentId}`);
 
   const experiment = await new Experiment().findById(experimentId).first();
@@ -41,9 +36,6 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
   const {
     processingConfig, samplesOrder,
   } = experiment;
-
-  const { podCpus, podMemory } = await new Experiment().getResourceRequirements(experimentId);
-
 
   if (processingConfigUpdates.length) {
     processingConfigUpdates.forEach(({ name, body }) => {
@@ -58,25 +50,15 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
   }
 
   const context = {
-    experimentId,
-    accountId,
-    roleArn,
-    processName: QC_PROCESS_NAME,
-    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
-    pipelineArtifacts: await getPipelineArtifacts(),
-    clusterInfo: await getClusterInfo(),
-    sandboxId: config.sandboxId,
+    ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
     processingConfig,
-    environment: config.clusterEnv,
     authJWT,
-    podCpus,
-    podMemory,
   };
 
   await cancelPreviousPipelines(experimentId, previousJobId);
 
   const qcSteps = await getQcStepsToRun(experimentId, processingConfigUpdates);
-  const runInBatch = needsBatchJob(podCpus, podMemory);
+  const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
   const qcPipelineSkeleton = await getQcPipelineSkeleton(
     config.clusterEnv,
@@ -117,30 +99,15 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
 };
 
 const createGem2SPipeline = async (experimentId, taskParams) => {
-  const accountId = config.awsAccountId;
-  const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
-
-  const { podCpus, podMemory } = await new Experiment().getResourceRequirements(experimentId);
-
   const context = {
-    taskParams,
-    experimentId,
-    accountId,
-    roleArn,
-    processName: GEM2S_PROCESS_NAME,
-    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
-    pipelineArtifacts: await getPipelineArtifacts(),
-    clusterInfo: await getClusterInfo(),
-    sandboxId: config.sandboxId,
+    ...(await getGeneralPipelineContext(experimentId, GEM2S_PROCESS_NAME)),
     processingConfig: {},
-    environment: config.clusterEnv,
-    podCpus,
-    podMemory,
+    taskParams,
   };
 
   await cancelPreviousPipelines(experimentId);
 
-  const runInBatch = needsBatchJob(podCpus, podMemory);
+  const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
   const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch);
   logger.log('Skeleton constructed, now building state machine definition...');
@@ -163,33 +130,18 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
 };
 
 const createSubsetPipeline = async (fromExperimentId, toExperimentId, cellSetKeys) => {
-  const accountId = config.awsAccountId;
-  const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
-
-  const { podCpus, podMemory } = await new Experiment().getResourceRequirements(fromExperimentId);
-
-  const taskParams = {
+  const gem2sStepsParams = {
     cellSetKeys,
     parentExperimentId: fromExperimentId,
     subsetExperimentId: toExperimentId,
   };
 
   const context = {
-    experimentId: fromExperimentId,
-    accountId,
-    roleArn,
-    processName: SUBSET_PROCESS_NAME,
-    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
-    pipelineArtifacts: await getPipelineArtifacts(),
-    clusterInfo: await getClusterInfo(),
-    sandboxId: config.sandboxId,
-    environment: config.clusterEnv,
-    podCpus,
-    podMemory,
+    ...(await getGeneralPipelineContext(fromExperimentId, SUBSET_PROCESS_NAME)),
     taskParams: {
       subsetSeurat: {},
-      prepareExperiment: taskParams,
-      uploadToAWS: taskParams,
+      prepareExperiment: gem2sStepsParams,
+      uploadToAWS: gem2sStepsParams,
     },
   };
 
@@ -198,8 +150,9 @@ const createSubsetPipeline = async (fromExperimentId, toExperimentId, cellSetKey
   //  need to check if that is fine
   await cancelPreviousPipelines(fromExperimentId);
 
-  logger.log(`createSubsetPipeline: not passing cpu/mem ${podCpus}, ${podMemory}`);
-  const subsetPipelineSkeleton = getSubsetPipelineSkeleton(config.clusterEnv);
+  const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
+
+  const subsetPipelineSkeleton = getSubsetPipelineSkeleton(config.clusterEnv, runInBatch);
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(subsetPipelineSkeleton, context);

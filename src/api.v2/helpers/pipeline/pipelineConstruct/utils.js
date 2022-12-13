@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const jq = require('node-jq');
 const YAML = require('yaml');
 const AWSXRay = require('aws-xray-sdk');
+const { v4: uuidv4 } = require('uuid');
 
 const AWS = require('../../../../utils/requireAWS');
 const config = require('../../../../config');
@@ -13,6 +14,7 @@ const constructPipelineStep = require('./constructors/constructPipelineStep');
 const { deleteExperimentPods } = require('../hooks/podCleanup');
 const listJobsToDelete = require('../batch/listJobsToDelete');
 const terminateJobs = require('../batch/terminateJobs');
+const Experiment = require('../../../model/Experiment');
 
 const logger = getLogger();
 
@@ -201,12 +203,29 @@ const buildStateMachineDefinition = (skeleton, context) => {
   return stateMachine;
 };
 
+const getGeneralPipelineContext = async (experimentId, processName) => {
+  const { podCpus, podMemory } = await new Experiment().getResourceRequirements(experimentId);
+
+  return ({
+    experimentId,
+    accountId: config.awsAccountId,
+    processName,
+    roleArn: `arn:aws:iam::${config.awsAccountId}:role/state-machine-role-${config.clusterEnv}`,
+    activityArn: `arn:aws:states:${config.awsRegion}:${config.awsAccountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
+    pipelineArtifacts: await getPipelineArtifacts(),
+    clusterInfo: await getClusterInfo(),
+    sandboxId: config.sandboxId,
+    environment: config.clusterEnv,
+    podCpus,
+    podMemory,
+  });
+};
+
 module.exports = {
   buildStateMachineDefinition,
   executeStateMachine,
   createActivity,
   createNewStateMachine,
   cancelPreviousPipelines,
-  getClusterInfo,
-  getPipelineArtifacts,
+  getGeneralPipelineContext,
 };
