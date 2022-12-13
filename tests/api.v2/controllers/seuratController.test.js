@@ -4,16 +4,18 @@ const seuratController = require('../../../src/api.v2/controllers/seuratControll
 const { OK } = require('../../../src/utils/responses');
 
 const seurat = require('../../../src/api.v2/helpers/pipeline/seurat');
-const parseSNSMessage = require('../../../src/utils/parse-sns-message');
+const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
 
 jest.mock('../../../src/api.v2/helpers/pipeline/seurat');
-jest.mock('../../../src/utils/parse-sns-message');
+jest.mock('../../../src/utils/parseSNSMessage');
 
 const mockJsonSend = jest.fn();
 const mockRes = {
   json: jest.fn(),
   status: jest.fn(() => ({ send: mockJsonSend })),
 };
+
+const expectedTopic = 'arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2';
 
 describe('seuratController', () => {
   beforeEach(async () => {
@@ -54,7 +56,7 @@ describe('seuratController', () => {
 
     await seuratController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
     expect(seurat.handleSeuratResponse).toHaveBeenCalledWith(io, parsedMessage);
 
     // Response is ok
@@ -71,7 +73,7 @@ describe('seuratController', () => {
 
     await seuratController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
 
     expect(seurat.handleSeuratResponse).not.toHaveBeenCalled();
 
@@ -94,7 +96,7 @@ describe('seuratController', () => {
 
     await seuratController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
     expect(seurat.handleSeuratResponse).toHaveBeenCalledWith(io, parsedMessage);
 
     // Response is nok
@@ -114,7 +116,7 @@ describe('seuratController', () => {
 
     await seuratController.handleResponse(mockReq, mockRes);
 
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
     expect(seurat.handleSeuratResponse).not.toHaveBeenCalled();
 
     // Response is ok
