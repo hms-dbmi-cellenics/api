@@ -15,6 +15,7 @@ jest.mock('../../../../src/api.v2/helpers/pipeline/batch/terminateJobs');
 jest.mock('../../../../src/api.v2/helpers/pipeline/batch/listJobsToDelete');
 jest.mock('../../../../src/api.v2/helpers/pipeline/hooks/podCleanup');
 
+
 const { createQCPipeline, createGem2SPipeline } = jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 
 jest.mock('crypto', () => ({
@@ -24,6 +25,14 @@ jest.mock('crypto', () => ({
 
 jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/qcHelpers', () => ({
   getQcStepsToRun: jest.fn(() => mockStepNames),
+}));
+
+jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils.js', () => ({
+  ...jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils'),
+  getPipelineArtifacts: async () => ({
+    chartRef: '',
+    pipelineRunner: '',
+  }),
 }));
 
 jest.mock('../../../../src/utils/asyncTimer');
