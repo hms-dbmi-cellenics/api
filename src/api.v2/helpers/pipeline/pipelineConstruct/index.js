@@ -376,6 +376,10 @@ const createSubsetPipeline = async (fromExperimentId, toExperimentId, cellSetKey
       uploadToAWS: taskParams,
     },
   };
+
+  // Don't allow gem2s, qc runs doing changes on the data we need to perform the subset
+  // This also cancels other subset pipeline runs on the same from experiment,
+  //  need to check if that is fine
   await cancelPreviousPipelines(fromExperimentId);
 
   logger.log(`createSubsetPipeline: not passing cpu/mem ${podCpus}, ${podMemory}`);
