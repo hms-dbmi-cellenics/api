@@ -347,7 +347,6 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
 };
 
 const createSubsetPipeline = async (fromExperimentId, toExperimentId, cellSetKeys) => {
-  console.log(fromExperimentId, toExperimentId, cellSetKeys);
   const accountId = config.awsAccountId;
   const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
 

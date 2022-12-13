@@ -4,7 +4,7 @@
  */
 exports.up = async (knex) => {
   await knex.schema.alterTable('experiment', (table) => {
-    table.boolean('gem2s_rerunnable').defaultTo(true);
+    table.boolean('can_rerun_gem2s').defaultTo(true);
   });
 };
 
@@ -14,6 +14,6 @@ exports.up = async (knex) => {
  */
 exports.down = async (knex) => {
   await knex.schema.alterTable('experiment', (table) => {
-    table.dropColumn('gem2s_rerunnable');
+    table.dropColumn('can_rerun_gem2s');
   });
 };

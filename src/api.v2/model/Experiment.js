@@ -112,7 +112,7 @@ class Experiment extends BasicModel {
     return result;
   }
 
-  async createCopy(fromExperimentId, name = null, gem2sRerunnable = true) {
+  async createCopy(fromExperimentId, name = null, canRerunGem2s = true) {
     const toExperimentId = uuidv4();
 
     const { sql } = this;
@@ -125,14 +125,14 @@ class Experiment extends BasicModel {
             // Clone the original name if no new name is provided
             name ? sql.raw('? as name', [name]) : 'name',
             'description',
-            // Take the parameter gem2sRerunnable instead of cloning it
-            sql.raw('? as gem2s_rerunnable', [gem2sRerunnable]),
+            // Take the parameter canRerunGem2s instead of cloning it
+            sql.raw('? as can_rerun_gem2s', [canRerunGem2s]),
             'pod_cpus',
             'pod_memory',
           )
           .where({ id: fromExperimentId }),
       )
-      .into(sql.raw(`${tableNames.EXPERIMENT} (id, name, description, gem2s_rerunnable, pod_cpus, pod_memory)`));
+      .into(sql.raw(`${tableNames.EXPERIMENT} (id, name, description, can_rerun_gem2s, pod_cpus, pod_memory)`));
 
     return toExperimentId;
   }
