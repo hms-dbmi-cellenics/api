@@ -135,14 +135,14 @@ describe('getSampleFileDownloadUrl', () => {
 
   const signedUrlResponse = 'signedUrl';
 
-  const signedUrlSpy = jest.fn();
+  const getSignedUrlPromiseSpy = jest.fn();
 
   beforeEach(() => {
-    signedUrlSpy.mockReturnValueOnce(signedUrlResponse);
+    getSignedUrlPromiseSpy.mockReturnValueOnce(signedUrlResponse);
 
     AWS.S3.mockReset();
     AWS.S3.mockImplementation(() => ({
-      getSignedUrl: signedUrlSpy,
+      getSignedUrlPromise: getSignedUrlPromiseSpy,
     }));
   });
 
@@ -161,7 +161,7 @@ describe('getSampleFileDownloadUrl', () => {
     const response = await getSampleFileDownloadUrl(experimentId, sampleId, fileType);
 
     expect(response).toEqual(signedUrlResponse);
-    expect(signedUrlSpy).toMatchSnapshot();
+    expect(getSignedUrlPromiseSpy).toMatchSnapshot();
   });
 
   it('Throws not found if it doesnt find a matching file', async () => {
