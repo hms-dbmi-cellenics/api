@@ -12,7 +12,6 @@ const runSubset = async (req, res) => {
 
   logger.log(`Starting subset for experiment ${experimentId}`);
 
-
   const {
     params: { experimentId: fromExperimentId },
     body: { name, cellSetKeys },
@@ -44,9 +43,6 @@ const runSubset = async (req, res) => {
   res.json(toExperimentId);
 };
 
-const handleResponse = async () => { };
-
 module.exports = {
   runSubset,
-  handleResponse,
 };
