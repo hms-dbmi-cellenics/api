@@ -288,7 +288,8 @@ describe('test for pipeline services', () => {
     await createSubsetPipeline('testExperimentId', taskParams);
     expect(describeClusterSpy).toMatchSnapshot();
 
-    expect(createStateMachineSpy.mock.results).toMatchSnapshot();
+    expect(createStateMachineSpy.mock.calls).toMatchSnapshot('createStateMachineSpy calls');
+    expect(createStateMachineSpy.mock.results).toMatchSnapshot('createStateMachineSpy results');
 
     expect(createActivitySpy).toHaveBeenCalled();
     expect(startExecutionSpy).toHaveBeenCalled();
