@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createNewStateMachine State machine is updated instead of created if it already exists. 1`] = `[MockFunction]`;
+
+exports[`createNewStateMachine State machine is updated instead of created if it already exists. 2`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "loggingConfiguration": Object {
+        "level": "OFF",
+      },
+      "name": "biomage-SomePipelineName-test-6b71d11936e7d590b1e0c8c1f01bd6abef203bab",
+      "roleArn": "mockRoleArn",
+      "tags": Array [
+        Object {
+          "key": "experimentId",
+          "value": "mockExperimentId",
+        },
+        Object {
+          "key": "clusterEnv",
+          "value": "test",
+        },
+        Object {
+          "key": "sandboxId",
+          "value": "default",
+        },
+      ],
+      "type": "STANDARD",
+    },
+  },
+]
+`;
+
+exports[`createNewStateMachine State machine is updated instead of created if it already exists. 3`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "roleArn": "mockRoleArn",
+      "stateMachineArn": "arn:aws:states:eu-west-1:mockAccountId:stateMachine:biomage-SomePipelineName-test-6b71d11936e7d590b1e0c8c1f01bd6abef203bab",
+    },
+  },
+]
+`;

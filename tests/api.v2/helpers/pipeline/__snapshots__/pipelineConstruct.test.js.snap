@@ -141,7 +141,7 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 1`] = `
+exports[`test for pipeline services Create Subset pipeline works 1`] = `
 [MockFunction] {
   "calls": Array [
     Array [
@@ -161,7 +161,7 @@ exports[`test for pipeline services Gem2s Pipeline is updated instead of created
 }
 `;
 
-exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 2`] = `
+exports[`test for pipeline services Create Subset pipeline works 2`] = `
 Array [
   Object {
     "type": "return",
@@ -169,7 +169,7 @@ Array [
       "loggingConfiguration": Object {
         "level": "OFF",
       },
-      "name": "biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "name": "biomage-subset-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
       "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
       "tags": Array [
         Object {
@@ -191,25 +191,13 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 3`] = `
-Array [
-  Object {
-    "type": "return",
-    "value": Object {
-      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
-      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-    },
-  },
-]
-`;
-
-exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 4`] = `
+exports[`test for pipeline services Create Subset pipeline works 3`] = `
 Array [
   Object {
     "type": "return",
     "value": Object {
       "input": "{\\"retries\\":[\\"retry\\"]}",
-      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "stateMachineArn": "test-machine",
       "traceHeader": undefined,
     },
   },
@@ -495,81 +483,6 @@ Array [
           "Type": "Map",
         },
       },
-    },
-  },
-]
-`;
-
-exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 1`] = `
-[MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
-        "name": "biomage-test",
-      },
-    ],
-  ],
-  "results": Array [
-    Object {
-      "type": "return",
-      "value": Object {
-        "name": "biomage-test",
-      },
-    },
-  ],
-}
-`;
-
-exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 2`] = `
-Array [
-  Object {
-    "type": "return",
-    "value": Object {
-      "loggingConfiguration": Object {
-        "level": "OFF",
-      },
-      "name": "biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
-      "tags": Array [
-        Object {
-          "key": "experimentId",
-          "value": "testExperimentId",
-        },
-        Object {
-          "key": "clusterEnv",
-          "value": "test",
-        },
-        Object {
-          "key": "sandboxId",
-          "value": "default",
-        },
-      ],
-      "type": "STANDARD",
-    },
-  },
-]
-`;
-
-exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 3`] = `
-Array [
-  Object {
-    "type": "return",
-    "value": Object {
-      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
-      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-    },
-  },
-]
-`;
-
-exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 4`] = `
-Array [
-  Object {
-    "type": "return",
-    "value": Object {
-      "input": "{\\"samples\\":[{\\"sampleUuid\\":\\"oneSample\\",\\"index\\":0},{\\"sampleUuid\\":\\"otherSample\\",\\"index\\":1}],\\"retries\\":[\\"retry\\"]}",
-      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-      "traceHeader": undefined,
     },
   },
 ]
