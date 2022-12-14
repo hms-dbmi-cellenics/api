@@ -129,19 +129,24 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
   return { stateMachineArn, executionArn };
 };
 
-const createSubsetPipeline = async (fromExperimentId, toExperimentId, cellSetKeys) => {
-  const gem2sStepsParams = {
-    cellSetKeys,
+const createSubsetPipeline = async (
+  fromExperimentId, toExperimentId, toExperimentName, cellSetKeys, authJWT,
+) => {
+  const stepsParams = {
     parentExperimentId: fromExperimentId,
     subsetExperimentId: toExperimentId,
+    cellSetKeys,
   };
+
+  // None of the other normal gem2s params are necessary for these 2 steps
+  const lastStepsParams = { experimentName: toExperimentName, authJWT };
 
   const context = {
     ...(await getGeneralPipelineContext(fromExperimentId, SUBSET_PROCESS_NAME)),
     taskParams: {
-      subsetSeurat: {},
-      prepareExperiment: gem2sStepsParams,
-      uploadToAWS: gem2sStepsParams,
+      subsetSeurat: stepsParams,
+      prepareExperiment: lastStepsParams,
+      uploadToAWS: lastStepsParams,
     },
   };
 

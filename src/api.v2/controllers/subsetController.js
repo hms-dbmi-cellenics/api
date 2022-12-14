@@ -31,7 +31,13 @@ const runSubset = async (req, res) => {
 
   logger.log(`Created ${toExperimentId}, subsetting experiment ${fromExperimentId} to it`);
 
-  await createSubsetPipeline(fromExperimentId, toExperimentId, cellSetKeys);
+  await createSubsetPipeline(
+    fromExperimentId,
+    toExperimentId,
+    name,
+    cellSetKeys,
+    req.headers.authorization,
+  );
 
   logger.log(`Started subset for experiment ${experimentId} successfully, `);
 

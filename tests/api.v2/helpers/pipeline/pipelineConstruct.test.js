@@ -9,6 +9,8 @@ const { getQcPipelineStepNames } = require('../../../../src/api.v2/helpers/pipel
 const Experiment = require('../../../../src/api.v2/model/Experiment');
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
 const { createSubsetPipeline } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
+const { cancelPreviousPipelines } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils');
+const needsBatchJob = require('../../../../src/api.v2/helpers/pipeline/batch/needsBatchJob');
 
 const experimentInstance = new Experiment();
 const experimentExecutionInstance = new ExperimentExecution();
@@ -30,6 +32,13 @@ jest.mock('crypto', () => ({
 jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/qcHelpers', () => ({
   getQcStepsToRun: jest.fn(() => mockStepNames),
 }));
+
+jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils', () => ({
+  ...jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils'),
+  cancelPreviousPipelines: jest.fn(() => Promise.resolve()),
+}));
+
+
 
 jest.mock('../../../../src/utils/asyncTimer');
 jest.mock('../../../../src/api.v2/model/Experiment');
@@ -284,5 +293,8 @@ describe('test for pipeline services', () => {
     expect(createActivitySpy).toHaveBeenCalled();
     expect(startExecutionSpy).toHaveBeenCalled();
     expect(startExecutionSpy.mock.results).toMatchSnapshot();
+
+    // It cancelled previous pipelines on this experiment
+    expect(cancelPreviousPipelines).toHaveBeenCalled();
   });
 });
