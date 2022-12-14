@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`createNewStateMachine State machine is updated instead of created if it already exists. 1`] = `[MockFunction]`;
+exports[`utils createNewStateMachine State machine is updated instead of created if it already exists. 1`] = `[MockFunction]`;
 
-exports[`createNewStateMachine State machine is updated instead of created if it already exists. 2`] = `
+exports[`utils createNewStateMachine State machine is updated instead of created if it already exists. 2`] = `
 Array [
   Object {
     "type": "return",
@@ -32,7 +32,7 @@ Array [
 ]
 `;
 
-exports[`createNewStateMachine State machine is updated instead of created if it already exists. 3`] = `
+exports[`utils createNewStateMachine State machine is updated instead of created if it already exists. 3`] = `
 Array [
   Object {
     "type": "return",
