@@ -228,4 +228,5 @@ module.exports = {
   createNewStateMachine,
   cancelPreviousPipelines,
   getGeneralPipelineContext,
+  getPipelineArtifacts,
 };

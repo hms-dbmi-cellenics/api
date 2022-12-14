@@ -1,5 +1,8 @@
+const fetchMock = require('jest-fetch-mock');
 const AWSMock = require('aws-sdk-mock');
 const _ = require('lodash');
+
+
 const AWS = require('../../../../src/utils/requireAWS');
 const { getQcPipelineStepNames } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/skeletons');
 
@@ -27,18 +30,10 @@ jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/qcHelpers',
   getQcStepsToRun: jest.fn(() => mockStepNames),
 }));
 
-jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils.js', () => ({
-  ...jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils'),
-  getPipelineArtifacts: async () => ({
-    chartRef: '',
-    pipelineRunner: '',
-  }),
-}));
-
 jest.mock('../../../../src/utils/asyncTimer');
-
 jest.mock('../../../../src/api.v2/model/Experiment');
 jest.mock('../../../../src/api.v2/model/ExperimentExecution');
+fetchMock.enableFetchMocks();
 
 const mockExperimentRow = {
   samplesOrder: ['oneSample', 'otherSample'],
@@ -58,6 +53,11 @@ const mockExperimentRow = {
 };
 
 describe('test for pipeline services', () => {
+  beforeEach(() => {
+    fetchMock.resetMocks();
+    fetchMock.mockResponse('');
+  });
+
   afterEach(() => {
     AWSMock.restore('EKS');
     AWSMock.restore('StepFunctions');
