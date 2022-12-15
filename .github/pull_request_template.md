@@ -43,10 +43,6 @@ Your changes will be ready for merging after all of the steps below have been co
   The required checks will not pass until all the boxes below have been checked.
 -->
 
-### Code updates
-Have best practices and ongoing refactors being observed in this PR
-- [ ] Migrated any selector / reducer used to the new format.
-
 ### Manual/unit testing
 - [ ] Tested changes using InfraMock locally **or** no tests required for change, e.g. Kubernetes chart updates.
 - [ ] Validated that current unit tests for code work as expected and are sufficient for code coverage **or** no unit tests required for change, e.g. documentation update.
@@ -63,7 +59,6 @@ Have best practices and ongoing refactors being observed in this PR
 Integration tests have to pass before the PR can be merged. Without checking the box, your PR
 **will not pass** the required status checks for merging.
 
-- [ ] If this is unchecked, make sure the changes in **api.v2.yaml** are not breaking any integrations and check the box.
 - [ ] Started end-to-end tests on the latest commit.
 
 ### Documentation updates
