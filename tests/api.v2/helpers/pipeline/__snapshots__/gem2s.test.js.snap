@@ -1,64 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`createGem2sPipeline works correctly 1`] = `
-Array [
-  Object {
-    "experiment_id": "mockExperimentId",
-    "pipeline_type": "gem2s",
-  },
-  Object {
-    "execution_arn": "mockExecutionArn",
-    "params_hash": "mockParamsHash",
-    "state_machine_arn": "mockStateMachineArn",
-  },
-]
-`;
-
-exports[`createGem2sPipeline works correctly 2`] = `
-Array [
-  Object {
-    "experiment_id": "mockExperimentId",
-    "pipeline_type": "qc",
-  },
-]
-`;
-
-exports[`createGem2sPipeline works correctly 3`] = `
-Array [
-  "mockExperimentId",
-  Object {
-    "authJWT": "mockAuthJWT",
-    "experimentName": "asdsadsada",
-    "input": Object {
-      "type": "10x",
-    },
-    "metadata": Object {
-      "Track_1": Array [
-        "N.A.",
-      ],
-    },
-    "organism": null,
-    "projectId": "mockExperimentId",
-    "sampleIds": Array [
-      "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e",
-    ],
-    "sampleNames": Array [
-      "WT1",
-    ],
-    "sampleOptions": Object {
-      "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {},
-    },
-    "sampleS3Paths": Object {
-      "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
-        "barcodes10x": "37d9e601-9278-437c-a776-40fe94680833",
-        "features10x": "1ee00087-e98a-4390-a3cb-392a3f6d09d8",
-        "matrix10x": "68f74995-3689-401a-90e0-145e08049cd5",
-      },
-    },
-  },
-]
-`;
-
 exports[`gem2sResponse Starts a QC run when gem2s finishes 1`] = `
 Array [
   Array [
@@ -288,6 +229,65 @@ Array [
       },
     },
     "type": "gem2s",
+  },
+]
+`;
+
+exports[`startGem2sPipeline works correctly 1`] = `
+Array [
+  Object {
+    "experiment_id": "mockExperimentId",
+    "pipeline_type": "gem2s",
+  },
+  Object {
+    "execution_arn": "mockExecutionArn",
+    "params_hash": "mockParamsHash",
+    "state_machine_arn": "mockStateMachineArn",
+  },
+]
+`;
+
+exports[`startGem2sPipeline works correctly 2`] = `
+Array [
+  Object {
+    "experiment_id": "mockExperimentId",
+    "pipeline_type": "qc",
+  },
+]
+`;
+
+exports[`startGem2sPipeline works correctly 3`] = `
+Array [
+  "mockExperimentId",
+  Object {
+    "authJWT": "mockAuthJWT",
+    "experimentName": "asdsadsada",
+    "input": Object {
+      "type": "10x",
+    },
+    "metadata": Object {
+      "Track_1": Array [
+        "N.A.",
+      ],
+    },
+    "organism": null,
+    "projectId": "mockExperimentId",
+    "sampleIds": Array [
+      "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e",
+    ],
+    "sampleNames": Array [
+      "WT1",
+    ],
+    "sampleOptions": Object {
+      "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {},
+    },
+    "sampleS3Paths": Object {
+      "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
+        "barcodes10x": "37d9e601-9278-437c-a776-40fe94680833",
+        "features10x": "1ee00087-e98a-4390-a3cb-392a3f6d09d8",
+        "matrix10x": "68f74995-3689-401a-90e0-145e08049cd5",
+      },
+    },
   },
 ]
 `;

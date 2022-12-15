@@ -97,7 +97,6 @@ const generateGem2sParams = async (experimentId, authJWT) => {
     sampleOptions[sampleId] = options || {};
   });
 
-
   const taskParams = {
     projectId: experimentId,
     experimentName: experiment.name,
@@ -132,7 +131,7 @@ const generateGem2sParams = async (experimentId, authJWT) => {
   return taskParams;
 };
 
-const createGem2sPipeline = async (experimentId, body, authJWT) => {
+const startGem2sPipeline = async (experimentId, body, authJWT) => {
   logger.log('Creating GEM2S params...');
   const { paramsHash } = body;
 
@@ -188,6 +187,6 @@ const handleGem2sResponse = async (io, message) => {
 };
 
 module.exports = {
-  createGem2sPipeline,
+  startGem2sPipeline,
   handleGem2sResponse,
 };

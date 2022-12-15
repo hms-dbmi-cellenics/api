@@ -141,7 +141,7 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 1`] = `
+exports[`test for pipeline services Create Subset pipeline works 1`] = `
 [MockFunction] {
   "calls": Array [
     Array [
@@ -161,15 +161,28 @@ exports[`test for pipeline services Gem2s Pipeline is updated instead of created
 }
 `;
 
-exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 2`] = `
+exports[`test for pipeline services Create Subset pipeline works 2`] = `
 Array [
   Object {
     "type": "return",
     "value": Object {
+      "input": "{\\"retries\\":[\\"retry\\"]}",
+      "stateMachineArn": "test-machine",
+      "traceHeader": undefined,
+    },
+  },
+]
+`;
+
+exports[`test for pipeline services Create Subset pipeline works: createStateMachineSpy calls 1`] = `
+Array [
+  Array [
+    Object {
+      "definition": "{\\"Comment\\":\\"Subset Pipeline for clusterEnv 'test'\\",\\"StartAt\\":\\"RequestPod\\",\\"States\\":{\\"RequestPod\\":{\\"ResultPath\\":null,\\"Next\\":\\"WaitForPod\\",\\"Comment\\":\\"Send a message through SNS so that the API assigns a pod to the pipeline\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:::sns:publish\\",\\"Parameters\\":{\\"TopicArn\\":\\"arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2\\",\\"Message\\":\\"{\\\\\\"taskName\\\\\\":\\\\\\"assignPodToPipeline\\\\\\",\\\\\\"experimentId\\\\\\":\\\\\\"testExperimentId\\\\\\",\\\\\\"apiUrl\\\\\\":\\\\\\"test-public-api-url\\\\\\",\\\\\\"input\\\\\\":{\\\\\\"experimentId\\\\\\":\\\\\\"testExperimentId\\\\\\",\\\\\\"sandboxId\\\\\\":\\\\\\"default\\\\\\",\\\\\\"activityId\\\\\\":\\\\\\"pipeline-test-mock-uuid\\\\\\",\\\\\\"processName\\\\\\":\\\\\\"subset\\\\\\"}}\\",\\"MessageAttributes\\":{\\"type\\":{\\"DataType\\":\\"String\\",\\"StringValue\\":\\"PipelineResponse\\"}}}},\\"WaitForPod\\":{\\"ResultPath\\":null,\\"Next\\":\\"SubsetSeurat\\",\\"Type\\":\\"Map\\",\\"ItemsPath\\":\\"$.retries\\",\\"MaxConcurrency\\":1,\\"Retry\\":[{\\"ErrorEquals\\":[\\"NoPodAssigned\\"],\\"IntervalSeconds\\":1,\\"MaxAttempts\\":13,\\"BackoffRate\\":1.5}],\\"Iterator\\":{\\"StartAt\\":\\"GetAssignedPod\\",\\"States\\":{\\"GetAssignedPod\\":{\\"Next\\":\\"IsPodAssigned\\",\\"Type\\":\\"Task\\",\\"Comment\\":\\"Retrieves first unassigned and running pipeline pod.\\",\\"Resource\\":\\"arn:aws:states:::eks:call\\",\\"Parameters\\":{\\"ClusterName\\":\\"biomage-test\\",\\"CertificateAuthority\\":\\"AAAAAAAAAAA\\",\\"Endpoint\\":\\"https://test-endpoint.me/fgh\\",\\"Method\\":\\"GET\\",\\"Path\\":\\"/api/v1/namespaces/pipeline-test-namespace/pods\\",\\"QueryParameters\\":{\\"labelSelector\\":[\\"type=pipeline,activityId=pipeline-test-mock-uuid\\"]}}},\\"IsPodAssigned\\":{\\"Type\\":\\"Choice\\",\\"Comment\\":\\"Redirects to an error state if the pipeline pod is not assigned yet.\\",\\"Choices\\":[{\\"Variable\\":\\"$.ResponseBody.items[0]\\",\\"IsPresent\\":false,\\"Next\\":\\"NoPodAssigned\\"}],\\"Default\\":\\"ReadyToRun\\"},\\"NoPodAssigned\\":{\\"Type\\":\\"Fail\\",\\"Cause\\":\\"No available and running pipeline pods.\\",\\"Error\\":\\"NoPodAssigned\\"},\\"ReadyToRun\\":{\\"Type\\":\\"Pass\\",\\"End\\":true}}}},\\"SubsetSeurat\\":{\\"Next\\":\\"PrepareExperiment\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid\\",\\"ResultPath\\":null,\\"TimeoutSeconds\\":10800,\\"HeartbeatSeconds\\":90,\\"Parameters\\":{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"subsetSeurat\\",\\"processName\\":\\"subset\\",\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\"}},\\"PrepareExperiment\\":{\\"Next\\":\\"UploadToAWS\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid\\",\\"ResultPath\\":null,\\"TimeoutSeconds\\":10800,\\"HeartbeatSeconds\\":90,\\"Parameters\\":{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"prepareExperiment\\",\\"processName\\":\\"subset\\",\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\"}},\\"UploadToAWS\\":{\\"Next\\":\\"EndOfSubset\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid\\",\\"ResultPath\\":null,\\"TimeoutSeconds\\":10800,\\"HeartbeatSeconds\\":90,\\"Parameters\\":{\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"uploadToAWS\\",\\"processName\\":\\"subset\\",\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\"}},\\"EndOfSubset\\":{\\"Type\\":\\"Pass\\",\\"End\\":true}}}",
       "loggingConfiguration": Object {
         "level": "OFF",
       },
-      "name": "biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "name": "biomage-subset-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
       "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
       "tags": Array [
         Object {
@@ -187,30 +200,35 @@ Array [
       ],
       "type": "STANDARD",
     },
-  },
+  ],
 ]
 `;
 
-exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 3`] = `
+exports[`test for pipeline services Create Subset pipeline works: createStateMachineSpy results 1`] = `
 Array [
   Object {
     "type": "return",
     "value": Object {
+      "loggingConfiguration": Object {
+        "level": "OFF",
+      },
+      "name": "biomage-subset-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
       "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
-      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-    },
-  },
-]
-`;
-
-exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 4`] = `
-Array [
-  Object {
-    "type": "return",
-    "value": Object {
-      "input": "{\\"retries\\":[\\"retry\\"]}",
-      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-gem2s-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-      "traceHeader": undefined,
+      "tags": Array [
+        Object {
+          "key": "experimentId",
+          "value": "testExperimentId",
+        },
+        Object {
+          "key": "clusterEnv",
+          "value": "test",
+        },
+        Object {
+          "key": "sandboxId",
+          "value": "default",
+        },
+      ],
+      "type": "STANDARD",
     },
   },
 ]
@@ -495,81 +513,6 @@ Array [
           "Type": "Map",
         },
       },
-    },
-  },
-]
-`;
-
-exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 1`] = `
-[MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
-        "name": "biomage-test",
-      },
-    ],
-  ],
-  "results": Array [
-    Object {
-      "type": "return",
-      "value": Object {
-        "name": "biomage-test",
-      },
-    },
-  ],
-}
-`;
-
-exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 2`] = `
-Array [
-  Object {
-    "type": "return",
-    "value": Object {
-      "loggingConfiguration": Object {
-        "level": "OFF",
-      },
-      "name": "biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
-      "tags": Array [
-        Object {
-          "key": "experimentId",
-          "value": "testExperimentId",
-        },
-        Object {
-          "key": "clusterEnv",
-          "value": "test",
-        },
-        Object {
-          "key": "sandboxId",
-          "value": "default",
-        },
-      ],
-      "type": "STANDARD",
-    },
-  },
-]
-`;
-
-exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 3`] = `
-Array [
-  Object {
-    "type": "return",
-    "value": Object {
-      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
-      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-    },
-  },
-]
-`;
-
-exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 4`] = `
-Array [
-  Object {
-    "type": "return",
-    "value": Object {
-      "input": "{\\"samples\\":[{\\"sampleUuid\\":\\"oneSample\\",\\"index\\":0},{\\"sampleUuid\\":\\"otherSample\\",\\"index\\":1}],\\"retries\\":[\\"retry\\"]}",
-      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-      "traceHeader": undefined,
     },
   },
 ]

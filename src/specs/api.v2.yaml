@@ -1846,6 +1846,68 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/subset":
+    post:
+      summary: Subset experiment
+      description: Create a new experiment from a subset of the experiment in path
+      operationId: subsetExperiment
+      x-eov-operation-id: subset#run
+      x-eov-operation-handler: routes/subset
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+      requestBody:
+        description: "The parameters for subsetting the experiment"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                cellSetKeys:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - name
+                - cellSetKeys
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+
   /gem2sResults:
     post:
       summary: Retrieve results from pipeline step functions
