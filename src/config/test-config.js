@@ -21,4 +21,5 @@ module.exports = {
     prefix: '/',
   },
   cachingEnabled: false,
+  publicApiUrl: 'test-public-api-url',
 };
