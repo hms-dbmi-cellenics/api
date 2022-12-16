@@ -19,8 +19,29 @@ const logger = getLogger('[Gem2sService] - ');
 
 const hookRunner = new HookRunner();
 
+const addDefaultFilterSettings = (processingConfig) => {
+  const stepsToDuplicate = [
+    'cellSizeDistribution',
+    'mitochondrialContent',
+    'classifier',
+    'numGenesVsNumUmis',
+    'doubletScores',
+  ];
+
+  stepsToDuplicate.forEach((stepName) => {
+    const sampleSettingsArray = Object.values(processingConfig[stepName]);
+
+    sampleSettingsArray.forEach((sampleSettings) => {
+      // eslint-disable-next-line no-param-reassign
+      sampleSettings.defaultFilterSettings = _.cloneDeep(sampleSettings.filterSettings);
+    });
+  });
+};
+
 const continueToQC = async (payload) => {
   const { experimentId, item, jobId } = payload;
+
+  addDefaultFilterSettings(item.processingConfig);
 
   await new Experiment().updateById(experimentId, { processing_config: item.processingConfig });
 
