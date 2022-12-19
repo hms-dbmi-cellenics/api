@@ -26,6 +26,7 @@ Object {
   "pipelineNamespace": "pipeline-default",
   "podName": "local",
   "port": 3000,
+  "publicApiUrl": "https://api.localhost:5000",
   "rdsSandboxId": "default",
   "sandboxId": "default",
   "workerNamespace": "worker-default",

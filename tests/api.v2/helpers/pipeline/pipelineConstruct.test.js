@@ -21,12 +21,7 @@ jest.mock('../../../../src/api.v2/helpers/pipeline/batch/terminateJobs');
 jest.mock('../../../../src/api.v2/helpers/pipeline/batch/listJobsToDelete');
 jest.mock('../../../../src/api.v2/helpers/pipeline/hooks/podCleanup');
 
-<<<<<<< HEAD
 const { createQCPipeline, createGem2SPipeline, createSeuratObjectPipeline } = jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
-=======
-
-const { createQCPipeline, createGem2SPipeline } = jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
->>>>>>> biomage/master
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
@@ -108,16 +103,7 @@ describe('test for pipeline services', () => {
     },
   ];
 
-  const gem2sTaskParams = {
-    projectId: 'test-project',
-    experimentName: 'valerio-massala',
-    organism: null,
-    input: { type: '10x' },
-    sampleIds: ['3af6b6bb-a1aa-4375-9c2c-c112bada56ca'],
-    sampleNames: ['sample-1'],
-  };
-
-  const seuratTaskParams = {
+  const taskParams = {
     projectId: 'test-project',
     experimentName: 'valerio-massala',
     organism: null,
@@ -250,7 +236,7 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-machine' });
     });
 
-    await createGem2SPipeline('testExperimentId', gem2sTaskParams);
+    await createGem2SPipeline('testExperimentId', taskParams);
     expect(describeClusterSpy).toMatchSnapshot();
 
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
@@ -290,7 +276,7 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-machine' });
     });
 
-    await createSeuratObjectPipeline('testExperimentId', seuratTaskParams);
+    await createSeuratObjectPipeline('testExperimentId', taskParams);
     expect(describeClusterSpy).toMatchSnapshot();
 
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
@@ -334,20 +320,18 @@ describe('test for pipeline services', () => {
       { first: () => Promise.resolve(mockExperimentRow) },
     );
 
-<<<<<<< HEAD
-    createGem2SPipeline.waitForDefinitionToPropagate = () => true;
-
-    await createGem2SPipeline('testExperimentId', gem2sTaskParams);
-
+    await createSubsetPipeline('testExperimentId', taskParams);
     expect(describeClusterSpy).toMatchSnapshot();
-    expect(createStateMachineSpy.mock.results).toMatchSnapshot();
 
-    expect(updateStateMachineSpy).toHaveBeenCalled();
-    expect(updateStateMachineSpy.mock.results).toMatchSnapshot();
+    expect(createStateMachineSpy.mock.calls).toMatchSnapshot('createStateMachineSpy calls');
+    expect(createStateMachineSpy.mock.results).toMatchSnapshot('createStateMachineSpy results');
 
     expect(createActivitySpy).toHaveBeenCalled();
     expect(startExecutionSpy).toHaveBeenCalled();
     expect(startExecutionSpy.mock.results).toMatchSnapshot();
+
+    // It cancelled previous pipelines on this experiment
+    expect(cancelPreviousPipelines).toHaveBeenCalled();
   });
 
   it('Seurat Pipeline is updated instead of created if an error is thrown.', async () => {
@@ -385,11 +369,8 @@ describe('test for pipeline services', () => {
 
     createSeuratObjectPipeline.waitForDefinitionToPropagate = () => true;
 
-    await createSeuratObjectPipeline('testExperimentId', seuratTaskParams);
+    await createSeuratObjectPipeline('testExperimentId', taskParams);
 
-=======
-    await createSubsetPipeline('testExperimentId', taskParams);
->>>>>>> biomage/master
     expect(describeClusterSpy).toMatchSnapshot();
 
     expect(createStateMachineSpy.mock.calls).toMatchSnapshot('createStateMachineSpy calls');

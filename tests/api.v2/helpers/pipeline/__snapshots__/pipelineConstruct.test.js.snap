@@ -141,7 +141,6 @@ Array [
 ]
 `;
 
-<<<<<<< HEAD
 exports[`test for pipeline services Create Seurat pipeline works 1`] = `
 [MockFunction] {
   "calls": Array [
@@ -205,10 +204,7 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Gem2s Pipeline is updated instead of created if an error is thrown. 1`] = `
-=======
 exports[`test for pipeline services Create Subset pipeline works 1`] = `
->>>>>>> biomage/master
 [MockFunction] {
   "calls": Array [
     Array [
@@ -584,82 +580,6 @@ Array [
   },
 ]
 `;
-<<<<<<< HEAD
-
-exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 1`] = `
-[MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
-        "name": "biomage-test",
-      },
-    ],
-  ],
-  "results": Array [
-    Object {
-      "type": "return",
-      "value": Object {
-        "name": "biomage-test",
-      },
-    },
-  ],
-}
-`;
-
-exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 2`] = `
-Array [
-  Object {
-    "type": "return",
-    "value": Object {
-      "loggingConfiguration": Object {
-        "level": "OFF",
-      },
-      "name": "biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
-      "tags": Array [
-        Object {
-          "key": "experimentId",
-          "value": "testExperimentId",
-        },
-        Object {
-          "key": "clusterEnv",
-          "value": "test",
-        },
-        Object {
-          "key": "sandboxId",
-          "value": "default",
-        },
-      ],
-      "type": "STANDARD",
-    },
-  },
-]
-`;
-
-exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 3`] = `
-Array [
-  Object {
-    "type": "return",
-    "value": Object {
-      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
-      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-    },
-  },
-]
-`;
-
-exports[`test for pipeline services QC Pipeline is updated instead of created if an error is thrown. 4`] = `
-Array [
-  Object {
-    "type": "return",
-    "value": Object {
-      "input": "{\\"samples\\":[{\\"sampleUuid\\":\\"oneSample\\",\\"index\\":0},{\\"sampleUuid\\":\\"otherSample\\",\\"index\\":1}],\\"retries\\":[\\"retry\\"]}",
-      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-qc-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-      "traceHeader": undefined,
-    },
-  },
-]
-`;
 
 exports[`test for pipeline services Seurat Pipeline is updated instead of created if an error is thrown. 1`] = `
 [MockFunction] {
@@ -682,6 +602,49 @@ exports[`test for pipeline services Seurat Pipeline is updated instead of create
 `;
 
 exports[`test for pipeline services Seurat Pipeline is updated instead of created if an error is thrown. 2`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "input": "{\\"retries\\":[\\"retry\\"]}",
+      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-seurat-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "traceHeader": undefined,
+    },
+  },
+]
+`;
+
+exports[`test for pipeline services Seurat Pipeline is updated instead of created if an error is thrown.: createStateMachineSpy calls 1`] = `
+Array [
+  Array [
+    Object {
+      "definition": "{\\"Comment\\":\\"Seurat Pipeline for clusterEnv 'test'\\",\\"StartAt\\":\\"RequestPod\\",\\"States\\":{\\"RequestPod\\":{\\"ResultPath\\":null,\\"Next\\":\\"WaitForPod\\",\\"Comment\\":\\"Send a message through SNS so that the API assigns a pod to the pipeline\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:::sns:publish\\",\\"Parameters\\":{\\"TopicArn\\":\\"arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2\\",\\"Message\\":\\"{\\\\\\"taskName\\\\\\":\\\\\\"assignPodToPipeline\\\\\\",\\\\\\"experimentId\\\\\\":\\\\\\"testExperimentId\\\\\\",\\\\\\"apiUrl\\\\\\":\\\\\\"test-public-api-url\\\\\\",\\\\\\"input\\\\\\":{\\\\\\"experimentId\\\\\\":\\\\\\"testExperimentId\\\\\\",\\\\\\"sandboxId\\\\\\":\\\\\\"default\\\\\\",\\\\\\"activityId\\\\\\":\\\\\\"pipeline-test-mock-uuid\\\\\\",\\\\\\"processName\\\\\\":\\\\\\"seurat\\\\\\"}}\\",\\"MessageAttributes\\":{\\"type\\":{\\"DataType\\":\\"String\\",\\"StringValue\\":\\"PipelineResponse\\"}}}},\\"WaitForPod\\":{\\"ResultPath\\":null,\\"Next\\":\\"DownloadSeurat\\",\\"Type\\":\\"Map\\",\\"ItemsPath\\":\\"$.retries\\",\\"MaxConcurrency\\":1,\\"Retry\\":[{\\"ErrorEquals\\":[\\"NoPodAssigned\\"],\\"IntervalSeconds\\":1,\\"MaxAttempts\\":13,\\"BackoffRate\\":1.5}],\\"Iterator\\":{\\"StartAt\\":\\"GetAssignedPod\\",\\"States\\":{\\"GetAssignedPod\\":{\\"Next\\":\\"IsPodAssigned\\",\\"Type\\":\\"Task\\",\\"Comment\\":\\"Retrieves first unassigned and running pipeline pod.\\",\\"Resource\\":\\"arn:aws:states:::eks:call\\",\\"Parameters\\":{\\"ClusterName\\":\\"biomage-test\\",\\"CertificateAuthority\\":\\"AAAAAAAAAAA\\",\\"Endpoint\\":\\"https://test-endpoint.me/fgh\\",\\"Method\\":\\"GET\\",\\"Path\\":\\"/api/v1/namespaces/pipeline-test-namespace/pods\\",\\"QueryParameters\\":{\\"labelSelector\\":[\\"type=pipeline,activityId=pipeline-test-mock-uuid\\"]}}},\\"IsPodAssigned\\":{\\"Type\\":\\"Choice\\",\\"Comment\\":\\"Redirects to an error state if the pipeline pod is not assigned yet.\\",\\"Choices\\":[{\\"Variable\\":\\"$.ResponseBody.items[0]\\",\\"IsPresent\\":false,\\"Next\\":\\"NoPodAssigned\\"}],\\"Default\\":\\"ReadyToRun\\"},\\"NoPodAssigned\\":{\\"Type\\":\\"Fail\\",\\"Cause\\":\\"No available and running pipeline pods.\\",\\"Error\\":\\"NoPodAssigned\\"},\\"ReadyToRun\\":{\\"Type\\":\\"Pass\\",\\"End\\":true}}}},\\"DownloadSeurat\\":{\\"Next\\":\\"ProcessSeurat\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid\\",\\"ResultPath\\":null,\\"TimeoutSeconds\\":10800,\\"HeartbeatSeconds\\":90,\\"Parameters\\":{\\"projectId\\":\\"test-project\\",\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"downloadSeurat\\",\\"processName\\":\\"seurat\\",\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\",\\"experimentName\\":\\"valerio-massala\\",\\"organism\\":null,\\"input\\":{\\"type\\":\\"10x\\"},\\"sampleIds\\":[\\"3af6b6bb-a1aa-4375-9c2c-c112bada56ca\\"],\\"sampleNames\\":[\\"sample-1\\"]}},\\"ProcessSeurat\\":{\\"Next\\":\\"UploadSeuratToAWS\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid\\",\\"ResultPath\\":null,\\"TimeoutSeconds\\":10800,\\"HeartbeatSeconds\\":90,\\"Parameters\\":{\\"projectId\\":\\"test-project\\",\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"processSeurat\\",\\"processName\\":\\"seurat\\",\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\",\\"experimentName\\":\\"valerio-massala\\",\\"organism\\":null,\\"input\\":{\\"type\\":\\"10x\\"},\\"sampleIds\\":[\\"3af6b6bb-a1aa-4375-9c2c-c112bada56ca\\"],\\"sampleNames\\":[\\"sample-1\\"]}},\\"UploadSeuratToAWS\\":{\\"Next\\":\\"EndOfSeurat\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid\\",\\"ResultPath\\":null,\\"TimeoutSeconds\\":10800,\\"HeartbeatSeconds\\":90,\\"Parameters\\":{\\"projectId\\":\\"test-project\\",\\"experimentId\\":\\"testExperimentId\\",\\"taskName\\":\\"uploadSeuratToAWS\\",\\"processName\\":\\"seurat\\",\\"server\\":\\"remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local\\",\\"experimentName\\":\\"valerio-massala\\",\\"organism\\":null,\\"input\\":{\\"type\\":\\"10x\\"},\\"sampleIds\\":[\\"3af6b6bb-a1aa-4375-9c2c-c112bada56ca\\"],\\"sampleNames\\":[\\"sample-1\\"]}},\\"EndOfSeurat\\":{\\"Type\\":\\"Pass\\",\\"End\\":true}}}",
+      "loggingConfiguration": Object {
+        "level": "OFF",
+      },
+      "name": "biomage-seurat-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
+      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
+      "tags": Array [
+        Object {
+          "key": "experimentId",
+          "value": "testExperimentId",
+        },
+        Object {
+          "key": "clusterEnv",
+          "value": "test",
+        },
+        Object {
+          "key": "sandboxId",
+          "value": "default",
+        },
+      ],
+      "type": "STANDARD",
+    },
+  ],
+]
+`;
+
+exports[`test for pipeline services Seurat Pipeline is updated instead of created if an error is thrown.: createStateMachineSpy results 1`] = `
 Array [
   Object {
     "type": "return",
@@ -710,30 +673,3 @@ Array [
   },
 ]
 `;
-
-exports[`test for pipeline services Seurat Pipeline is updated instead of created if an error is thrown. 3`] = `
-Array [
-  Object {
-    "type": "return",
-    "value": Object {
-      "roleArn": "arn:aws:iam::000000000000:role/state-machine-role-test",
-      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-seurat-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-    },
-  },
-]
-`;
-
-exports[`test for pipeline services Seurat Pipeline is updated instead of created if an error is thrown. 4`] = `
-Array [
-  Object {
-    "type": "return",
-    "value": Object {
-      "input": "{\\"retries\\":[\\"retry\\"]}",
-      "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-seurat-test-b2bacc54e31beb2bda7b4bd9b1ec33ec84eae60f",
-      "traceHeader": undefined,
-    },
-  },
-]
-`;
-=======
->>>>>>> biomage/master
