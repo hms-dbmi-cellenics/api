@@ -26,6 +26,7 @@ Object {
   "pipelineNamespace": "pipeline-mockedSandboxId",
   "podName": "local",
   "port": 3000,
+  "publicApiUrl": "https://api-mockedSandboxId.scp-staging.biomage.net",
   "rdsSandboxId": "default",
   "sandboxId": "mockedSandboxId",
   "workerNamespace": "worker-mockedSandboxId",

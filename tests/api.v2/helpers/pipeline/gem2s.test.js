@@ -1,7 +1,7 @@
 // @ts-nocheck
 const io = require('socket.io-client');
 
-const { createGem2sPipeline, handleGem2sResponse } = require('../../../../src/api.v2/helpers/pipeline/gem2s');
+const { startGem2sPipeline, handleGem2sResponse } = require('../../../../src/api.v2/helpers/pipeline/gem2s');
 
 const Experiment = require('../../../../src/api.v2/model/Experiment');
 const Sample = require('../../../../src/api.v2/model/Sample');
@@ -35,7 +35,7 @@ const experimentExecutionInstance = ExperimentExecution();
 
 const hookRunnerInstance = HookRunner();
 
-describe('createGem2sPipeline', () => {
+describe('startGem2sPipeline', () => {
   const experimentId = 'mockExperimentId';
   const paramsHash = 'mockParamsHash';
   const authJWT = 'mockAuthJWT';
@@ -94,7 +94,7 @@ describe('createGem2sPipeline', () => {
   });
 
   it('works correctly', async () => {
-    await createGem2sPipeline(experimentId, { paramsHash }, authJWT);
+    await startGem2sPipeline(experimentId, { paramsHash }, authJWT);
 
     expect(experimentInstance.findById).toHaveBeenCalledWith(experimentId);
     expect(sampleInstance.getSamples).toHaveBeenCalledWith(experimentId);
