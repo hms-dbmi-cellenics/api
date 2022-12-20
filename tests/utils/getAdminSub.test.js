@@ -9,6 +9,13 @@ jest.mock('../../src/config', () => ({
         Username: 'mockAdminSub',
       }),
     })),
+    adminCreateUser: jest.fn(() => ({
+      promise: () => Promise.resolve({
+        User: {
+          Username: 'newMockAdminSub',
+        },
+      }),
+    })),
   },
 }));
 
@@ -20,13 +27,14 @@ describe('getAdminSub', () => {
     expect(adminSub).toEqual('mockAdminSub');
   });
 
-  it('Should return backup admin sub if admin user does not exist', async () => {
+  it('Should create a new admin user if admin user does not exist', async () => {
     config.cognitoISP.adminGetUser.mockImplementationOnce(() => ({
       promise: () => Promise.reject(new Error('User does not exist')),
     }));
     const adminSub = await getAdminSub();
 
-    expect(adminSub).toEqual('00000000-0000-0000-0000-000000000000');
+    expect(adminSub).toEqual('newMockAdminSub');
+    expect(config.cognitoISP.adminCreateUser.mock.calls[0]).toMatchSnapshot();
   });
 
   it('Should throw an error if there are other errors', async () => {

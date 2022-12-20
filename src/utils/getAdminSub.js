@@ -2,7 +2,6 @@ const config = require('../config');
 const getAwsPoolId = require('../api.v2/helpers/cognito/getAwsPoolId');
 
 const adminEmail = 'admin@biomage.net';
-const backupAdminSub = '00000000-0000-0000-0000-000000000000';
 
 const getAdminSub = async () => {
   const userPoolId = await getAwsPoolId();
@@ -16,9 +15,22 @@ const getAdminSub = async () => {
     return result.Username;
   } catch (e) {
     if (e.message.match(/User does not exist/)) {
-      console.log(`Admin account does not exist in deployment. Create admin account with email ${adminEmail} in userpool ${userPoolId}.`);
+      console.log(`Admin account does not exist in deployment. Creating admin account with email ${adminEmail} in userpool ${userPoolId}.`);
 
-      return backupAdminSub;
+      const result = await config.cognitoISP.adminCreateUser({
+        Username: adminEmail,
+        UserPoolId: userPoolId,
+        MessageAction: 'SUPPRESS',
+        UserAttributes: [
+          { Name: 'email', Value: adminEmail },
+          { Name: 'name', Value: 'Biomage Admin' },
+          { Name: 'email_verified', Value: 'true' },
+        ],
+      }).promise();
+
+      console.log('Admin account created. Change admin password using biomage account change-password to login.');
+
+      return result.User.Username;
     }
 
     throw (e);
