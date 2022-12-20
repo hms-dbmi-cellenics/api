@@ -41,8 +41,6 @@ const addDefaultFilterSettings = (processingConfig) => {
 const continueToQC = async (payload) => {
   const { experimentId, item, jobId } = payload;
 
-  addDefaultFilterSettings(item.processingConfig);
-
   await new Experiment().updateById(experimentId, { processing_config: item.processingConfig });
 
   logger.log(`Experiment: ${experimentId}. Saved processing config received from gem2s`);
@@ -193,6 +191,10 @@ const handleGem2sResponse = async (io, message) => {
 
   // Fail hard if there was an error.
   await validateRequest(message, 'GEM2SResponse.v2.yaml');
+
+  if (message.item && message.item.processingConfig) {
+    addDefaultFilterSettings(message.item.processingConfig);
+  }
 
   await hookRunner.run(message);
 

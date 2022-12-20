@@ -3,7 +3,7 @@
 exports[`gem2sResponse Starts a QC run when gem2s finishes 1`] = `
 Array [
   Array [
-    "06d50e28-cc96-2624-900c-e0e9a0995598",
+    "mockExperimentId",
     Object {
       "processing_config": Object {
         "cellSizeDistribution": Object {
@@ -159,10 +159,10 @@ Array [
 exports[`gem2sResponse Starts a QC run when gem2s finishes 2`] = `
 Array [
   Array [
-    "06d50e28-cc96-2624-900c-e0e9a0995598",
+    "mockExperimentId",
     Array [],
-    "Bearer someHugeHash",
-    "a6d49c90-74f0-4c1e-aa8f-673312b6eb7d",
+    "mockAuthJWT",
+    "mockJobId",
   ],
 ]
 `;

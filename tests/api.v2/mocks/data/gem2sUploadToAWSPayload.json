@@ -15,9 +15,6 @@
           "prefiltered": true,
           "filterSettings": {
             "FDR": 0.01
-          },
-          "defaultFilterSettings": {
-            "FDR": 0.01
           }
         }
       },
@@ -26,10 +23,6 @@
           "auto": true,
           "enabled": true,
           "filterSettings": {
-            "binStep": 0.02,
-            "probabilityThreshold": 0.6569474
-          },
-          "defaultFilterSettings": {
             "binStep": 0.02,
             "probabilityThreshold": 0.6569474
           }
@@ -77,17 +70,6 @@
                 "p.level": 0.001
               }
             }
-          },
-          "defaultFilterSettings": {
-            "regressionType": "linear",
-            "regressionTypeSettings": {
-              "linear": {
-                "p.level": 0.001
-              },
-              "spline": {
-                "p.level": 0.001
-              }
-            }
           }
         }
       },
@@ -121,10 +103,6 @@
           "filterSettings": {
             "binStep": 200,
             "minCellSize": 1044
-          },
-          "defaultFilterSettings": {
-            "binStep": 200,
-            "minCellSize": 1044
           }
         }
       },
@@ -133,15 +111,6 @@
           "auto": true,
           "enabled": true,
           "filterSettings": {
-            "method": "absoluteThreshold",
-            "methodSettings": {
-              "absoluteThreshold": {
-                "binStep": 0.3,
-                "maxFraction": 0.07181329
-              }
-            }
-          },
-          "defaultFilterSettings": {
             "method": "absoluteThreshold",
             "methodSettings": {
               "absoluteThreshold": {
