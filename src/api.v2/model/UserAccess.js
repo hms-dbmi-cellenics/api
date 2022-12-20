@@ -1,7 +1,5 @@
 const _ = require('lodash');
 
-const config = require('../../config');
-
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 const { NotFoundError } = require('../../utils/responses');
@@ -20,6 +18,7 @@ const selectableProps = [
 
 const getLogger = require('../../utils/getLogger');
 const constants = require('../../utils/constants');
+const getAdminSub = require('../../utils/getAdminSub');
 
 const logger = getLogger('[UserAccessModel] - ');
 
@@ -81,10 +80,12 @@ class UserAccess extends BasicModel {
   async createNewExperimentPermissions(userId, experimentId) {
     logger.log('Setting up access permissions for experiment');
 
-    // Create admin permissions
-    await this.grantAccess(config.adminSub, experimentId, AccessRole.ADMIN);
+    const adminSub = await getAdminSub();
 
-    if (userId === config.adminSub) {
+    // Create admin permissions
+    await this.grantAccess(adminSub, experimentId, AccessRole.ADMIN);
+
+    if (userId === adminSub) {
       logger.log('User is the admin, so only creating admin access');
       return;
     }
