@@ -35,7 +35,7 @@ const addDefaultFilterSettings = async (experimentId, processingConfig) => {
   ];
 
   stepsToDuplicate.forEach((stepName) => {
-    const processingConfigStep = processingConfig[stepName];
+    const processingConfigStep = processingConfigToReturn[stepName];
 
     samplesOrder.forEach((sampleId) => {
       const sampleSettings = processingConfigStep[sampleId];
@@ -53,7 +53,13 @@ const addDefaultFilterSettings = async (experimentId, processingConfig) => {
 const continueToQC = async (payload) => {
   const { experimentId, item, jobId } = payload;
 
-  await new Experiment().updateById(experimentId, { processing_config: item.processingConfig });
+  const processingConfigWithDefaults = await addDefaultFilterSettings(
+    experimentId, item.processingConfig,
+  );
+
+  await new Experiment().updateById(
+    experimentId, { processing_config: processingConfigWithDefaults },
+  );
 
   logger.log(`Experiment: ${experimentId}. Saved processing config received from gem2s`);
 
@@ -204,6 +210,8 @@ const handleGem2sResponse = async (io, message) => {
   // Fail hard if there was an error.
   await validateRequest(message, 'GEM2SResponse.v2.yaml');
 
+  await hookRunner.run(message);
+
   const { experimentId } = message;
 
   const messageForClient = _.cloneDeep(message);
@@ -214,8 +222,6 @@ const handleGem2sResponse = async (io, message) => {
       messageForClient.item.processingConfig,
     );
   }
-
-  await hookRunner.run(messageForClient);
 
   // Make sure authJWT doesn't get back to the client
   delete messageForClient.authJWT;

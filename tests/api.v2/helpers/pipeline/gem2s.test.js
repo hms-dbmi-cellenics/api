@@ -35,22 +35,22 @@ const experimentExecutionInstance = ExperimentExecution();
 
 const hookRunnerInstance = HookRunner();
 
+const experimentId = 'mockExperimentId';
+const paramsHash = 'mockParamsHash';
+const authJWT = 'mockAuthJWT';
+
+const mockExperiment = {
+  id: '8e282f0d-aadb-8032-a334-982a371efd0f',
+  name: 'asdsadsada',
+  description: 'Analysis description',
+  samplesOrder: ['fc68aefc-c3ca-467f-8589-f1dbaaac1c1e'],
+  processingConfig: {},
+  notifyByEmail: true,
+  createdAt: '2022-05-10 15:41:04.165961+00',
+  updatedAt: '2022-05-10 15:41:04.165961+00',
+};
+
 describe('startGem2sPipeline', () => {
-  const experimentId = 'mockExperimentId';
-  const paramsHash = 'mockParamsHash';
-  const authJWT = 'mockAuthJWT';
-
-  const mockExperiment = {
-    id: '8e282f0d-aadb-8032-a334-982a371efd0f',
-    name: 'asdsadsada',
-    description: 'Analysis description',
-    samplesOrder: ['fc68aefc-c3ca-467f-8589-f1dbaaac1c1e'],
-    processingConfig: {},
-    notifyByEmail: true,
-    createdAt: '2022-05-10 15:41:04.165961+00',
-    updatedAt: '2022-05-10 15:41:04.165961+00',
-  };
-
   const mockSamples = [{
     id: 'fc68aefc-c3ca-467f-8589-f1dbaaac1c1e',
     experimentId: '8e282f0d-aadb-8032-a334-982a371efd0f',
@@ -105,7 +105,6 @@ describe('startGem2sPipeline', () => {
 });
 
 describe('gem2sResponse', () => {
-  const experimentId = 'mockExperimentId';
   const mockGetPipelineStatusResponse = {
     status: {
       gem2s: {
@@ -124,11 +123,17 @@ describe('gem2sResponse', () => {
     io.sockets = { emit: jest.fn() };
 
     experimentInstance.updateById.mockClear();
+    experimentInstance.findById.mockClear();
+
     pipelineConstruct.createQCPipeline.mockClear();
 
     hookRunnerInstance.run.mockClear();
 
     getPipelineStatus.mockReturnValueOnce(mockGetPipelineStatusResponse);
+
+    experimentInstance.findById.mockReturnValue({
+      first: jest.fn(() => Promise.resolve(mockExperiment)),
+    });
   });
 
   it('works correctly', async () => {

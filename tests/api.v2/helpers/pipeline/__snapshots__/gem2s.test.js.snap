@@ -7,7 +7,7 @@ Array [
     Object {
       "processing_config": Object {
         "cellSizeDistribution": Object {
-          "f87892f0-3403-4ba9-b871-c366e3fa855e": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
               "binStep": 200,
@@ -21,7 +21,7 @@ Array [
           },
         },
         "classifier": Object {
-          "f87892f0-3403-4ba9-b871-c366e3fa855e": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
               "FDR": 0.01,
@@ -85,7 +85,7 @@ Array [
           },
         },
         "doubletScores": Object {
-          "f87892f0-3403-4ba9-b871-c366e3fa855e": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
               "binStep": 0.02,
@@ -99,7 +99,7 @@ Array [
           },
         },
         "mitochondrialContent": Object {
-          "f87892f0-3403-4ba9-b871-c366e3fa855e": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
               "method": "absoluteThreshold",
@@ -123,7 +123,7 @@ Array [
           },
         },
         "numGenesVsNumUmis": Object {
-          "f87892f0-3403-4ba9-b871-c366e3fa855e": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
               "regressionType": "linear",

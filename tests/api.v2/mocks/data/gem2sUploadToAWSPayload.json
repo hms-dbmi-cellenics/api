@@ -9,7 +9,7 @@
     },
     "processingConfig": {
       "classifier": {
-        "f87892f0-3403-4ba9-b871-c366e3fa855e": {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": {
           "auto": true,
           "enabled": false,
           "prefiltered": true,
@@ -19,7 +19,7 @@
         }
       },
       "doubletScores": {
-        "f87892f0-3403-4ba9-b871-c366e3fa855e": {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": {
           "auto": true,
           "enabled": true,
           "filterSettings": {
@@ -57,7 +57,7 @@
         }
       },
       "numGenesVsNumUmis": {
-        "f87892f0-3403-4ba9-b871-c366e3fa855e": {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": {
           "auto": true,
           "enabled": true,
           "filterSettings": {
@@ -97,7 +97,7 @@
         }
       },
       "cellSizeDistribution": {
-        "f87892f0-3403-4ba9-b871-c366e3fa855e": {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": {
           "auto": true,
           "enabled": false,
           "filterSettings": {
@@ -107,7 +107,7 @@
         }
       },
       "mitochondrialContent": {
-        "f87892f0-3403-4ba9-b871-c366e3fa855e": {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": {
           "auto": true,
           "enabled": true,
           "filterSettings": {
@@ -140,13 +140,13 @@
       "type": "10x"
     },
     "sampleIds": [
-      "f87892f0-3403-4ba9-b871-c366e3fa855e"
+      "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e"
     ],
     "sampleNames": [
       "WT"
     ],
     "sampleS3Paths": {
-      "f87892f0-3403-4ba9-b871-c366e3fa855e": {
+      "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": {
         "matrix10x": "f6919cd0-a98d-471f-bd00-c98d98d4b00f",
         "barcodes10x": "925e656b-3b56-40cf-b9c6-fa78d1145682",
         "features10x": "2451aae8-2aa2-4611-a280-247c767968f2"
