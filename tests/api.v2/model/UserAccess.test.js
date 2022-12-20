@@ -171,21 +171,21 @@ describe('model/userAccess', () => {
 
     await new UserAccess().createNewExperimentPermissions(mockAdminUserId, mockExperimentId);
 
-    expect(mockCreate).toHaveBeenCalledWith({ access_role: roles.ADMIN, experiment_id: mockExperimentId, user_id: mockAdminUserId });
+    expect(mockCreate).toHaveBeenCalledWith({ access_role: roles.OWNER, experiment_id: mockExperimentId, user_id: mockAdminUserId });
     expect(mockCreate).toHaveBeenCalledTimes(1);
   });
 
-  it('createNewExperimentPermissions fails if admin creation failed', async () => {
+  it('createNewExperimentPermissions fails if owner creation failed', async () => {
     const mockCreate = jest.spyOn(BasicModel.prototype, 'create')
       .mockImplementationOnce(() => Promise.reject(new Error('A happy sql error :)')));
 
     await expect(new UserAccess().createNewExperimentPermissions(mockUserId, mockExperimentId)).rejects.toThrow('A happy sql error :)');
 
-    expect(mockCreate).toHaveBeenCalledWith({ access_role: roles.ADMIN, experiment_id: mockExperimentId, user_id: mockAdminUserId });
+    expect(mockCreate).toHaveBeenCalledWith({ access_role: roles.OWNER, experiment_id: mockExperimentId, user_id: mockUserId });
     expect(mockCreate).toHaveBeenCalledTimes(1);
   });
 
-  it('createNewExperimentPermissions fails if owner creation failed', async () => {
+  it('createNewExperimentPermissions fails if admin creation failed', async () => {
     const mockCreate = jest.spyOn(BasicModel.prototype, 'create')
       .mockImplementationOnce(() => Promise.resolve([mockUserAccessCreateResults[0]]))
       .mockImplementationOnce(() => Promise.reject(new Error('A happy sql error :)')));
