@@ -19,7 +19,9 @@ const logger = getLogger('[Gem2sService] - ');
 
 const hookRunner = new HookRunner();
 
-const addDefaultFilterSettings = (experimentId, processingConfig) => {
+const addDefaultFilterSettings = async (experimentId, processingConfig) => {
+  const { samplesOrder } = await new Experiment().findById(experimentId).first();
+
   const processingConfigToReturn = _.cloneDeep(processingConfig);
 
   logger.log('Adding defaultFilterSettings to received processing config');
@@ -33,14 +35,11 @@ const addDefaultFilterSettings = (experimentId, processingConfig) => {
   ];
 
   stepsToDuplicate.forEach((stepName) => {
-    const settingsSplitBySample = Object.values(processingConfig[stepName]);
+    const processingConfigStep = processingConfig[stepName];
 
-    settingsSplitBySample.forEach((sampleSettings) => {
-      if (!sampleSettings.filterSettings) {
-        logger.log(`Experiment: ${experimentId}. Skipping current sample config, it doesnt have filterSettings:`);
-        logger.log(JSON.stringify(sampleSettings.filterSettings));
-        return;
-      }
+    samplesOrder.forEach((sampleId) => {
+      const sampleSettings = processingConfigStep[sampleId];
+
       // eslint-disable-next-line no-param-reassign
       sampleSettings.defaultFilterSettings = _.cloneDeep(sampleSettings.filterSettings);
     });
@@ -210,8 +209,9 @@ const handleGem2sResponse = async (io, message) => {
   const messageForClient = _.cloneDeep(message);
 
   if (messageForClient.taskName === 'uploadToAWS') {
-    messageForClient.item.processingConfig = addDefaultFilterSettings(
-      experimentId, messageForClient.item.processingConfig,
+    messageForClient.item.processingConfig = await addDefaultFilterSettings(
+      experimentId,
+      messageForClient.item.processingConfig,
     );
   }
 
