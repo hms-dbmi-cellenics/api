@@ -20,6 +20,8 @@ const logger = getLogger('[Gem2sService] - ');
 const hookRunner = new HookRunner();
 
 const addDefaultFilterSettings = (experimentId, processingConfig) => {
+  const processingConfigToReturn = _.cloneDeep(processingConfig);
+
   logger.log('Adding defaultFilterSettings to received processing config');
 
   const stepsToDuplicate = [
@@ -45,6 +47,8 @@ const addDefaultFilterSettings = (experimentId, processingConfig) => {
   });
 
   logger.log('Finished adding defaultFilterSettings to received processing config');
+
+  return processingConfigToReturn;
 };
 
 const continueToQC = async (payload) => {
@@ -203,13 +207,15 @@ const handleGem2sResponse = async (io, message) => {
 
   const { experimentId } = message;
 
-  if (message.taskName === 'uploadToAWS') {
-    addDefaultFilterSettings(experimentId, message.item.processingConfig);
+  const messageForClient = _.cloneDeep(message);
+
+  if (messageForClient.taskName === 'uploadToAWS') {
+    messageForClient.item.processingConfig = addDefaultFilterSettings(
+      experimentId, messageForClient.item.processingConfig,
+    );
   }
 
-  await hookRunner.run(message);
-
-  const messageForClient = _.cloneDeep(message);
+  await hookRunner.run(messageForClient);
 
   // Make sure authJWT doesn't get back to the client
   delete messageForClient.authJWT;
