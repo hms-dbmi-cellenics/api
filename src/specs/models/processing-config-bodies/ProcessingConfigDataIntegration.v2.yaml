@@ -83,17 +83,21 @@ properties:
       - excludeGeneCategories
   downsampling:
     type: object
+    required:
+      - method
+      - methodSettings
     properties:
       method:
         type: string
-        enum:
-          - none
-          - geosketch
-      percentageToKeep:
-        type: number
-    required:
-      - method
-      - percentageToKeep
+        minLength: 1
+      methodSettings:
+        type: object
+        properties:
+          geosketch:
+            type: object
+            properties:
+              percentageToKeep:
+                type: number
 required:
   - dataIntegration
   - dimensionalityReduction
