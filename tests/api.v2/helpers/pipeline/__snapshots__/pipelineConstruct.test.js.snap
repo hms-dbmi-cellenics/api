@@ -251,7 +251,24 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
-                  "config": Object {},
+                  "config": Object {
+                    "oneSample": Object {
+                      "auto": true,
+                      "enabled": false,
+                      "filterSettings": Object {
+                        "binStep": 200,
+                        "minCellSize": 1044,
+                      },
+                    },
+                    "otherSample": Object {
+                      "auto": true,
+                      "enabled": false,
+                      "filterSettings": Object {
+                        "binStep": 200,
+                        "minCellSize": 1044,
+                      },
+                    },
+                  },
                   "experimentId": "testExperimentId",
                   "processName": "qc",
                   "sampleUuid.$": "$.sampleUuid",
@@ -279,7 +296,24 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
-                  "config": Object {},
+                  "config": Object {
+                    "oneSample": Object {
+                      "auto": true,
+                      "enabled": false,
+                      "filterSettings": Object {
+                        "FDR": 0.01,
+                      },
+                      "prefiltered": true,
+                    },
+                    "otherSample": Object {
+                      "auto": true,
+                      "enabled": false,
+                      "filterSettings": Object {
+                        "FDR": 0.01,
+                      },
+                      "prefiltered": true,
+                    },
+                  },
                   "experimentId": "testExperimentId",
                   "processName": "qc",
                   "sampleUuid.$": "$.sampleUuid",
@@ -302,7 +336,29 @@ Array [
           "HeartbeatSeconds": 90,
           "Next": "EndOfPipeline",
           "Parameters": Object {
-            "config": Object {},
+            "config": Object {
+              "clusteringSettings": Object {
+                "method": "louvain",
+                "methodSettings": Object {
+                  "louvain": Object {
+                    "resolution": 0.8,
+                  },
+                },
+              },
+              "embeddingSettings": Object {
+                "method": "umap",
+                "methodSettings": Object {
+                  "tsne": Object {
+                    "learningRate": 200,
+                    "perplexity": 30,
+                  },
+                  "umap": Object {
+                    "distanceMetric": "cosine",
+                    "minimumDistance": 0.3,
+                  },
+                },
+              },
+            },
             "experimentId": "testExperimentId",
             "processName": "qc",
             "sampleUuid": "",
@@ -319,7 +375,34 @@ Array [
           "HeartbeatSeconds": 90,
           "Next": "ConfigureEmbedding",
           "Parameters": Object {
-            "config": Object {},
+            "config": Object {
+              "dataIntegration": Object {
+                "method": "harmony",
+                "methodSettings": Object {
+                  "fastmnn": Object {
+                    "normalisation": "logNormalize",
+                    "numGenes": 2000,
+                  },
+                  "harmony": Object {
+                    "normalisation": "logNormalize",
+                    "numGenes": 2000,
+                  },
+                  "seuratv4": Object {
+                    "normalisation": "logNormalize",
+                    "numGenes": 2000,
+                  },
+                  "unisample": Object {
+                    "normalisation": "logNormalize",
+                    "numGenes": 2000,
+                  },
+                },
+              },
+              "dimensionalityReduction": Object {
+                "excludeGeneCategories": Array [],
+                "method": "rpca",
+                "numPCs": 30,
+              },
+            },
             "experimentId": "testExperimentId",
             "processName": "qc",
             "sampleUuid": "",
@@ -343,9 +426,6 @@ Array [
                 "Parameters": Object {
                   "config": Object {
                     "oneSample": Object {
-                      "defaultFilterSettings": Object {
-                        "oneSetting": 1,
-                      },
                       "filterSettings": Object {
                         "oneSetting": 7,
                       },
@@ -387,7 +467,34 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
-                  "config": Object {},
+                  "config": Object {
+                    "oneSample": Object {
+                      "auto": true,
+                      "enabled": true,
+                      "filterSettings": Object {
+                        "method": "absoluteThreshold",
+                        "methodSettings": Object {
+                          "absoluteThreshold": Object {
+                            "binStep": 0.3,
+                            "maxFraction": 0.07181329,
+                          },
+                        },
+                      },
+                    },
+                    "otherSample": Object {
+                      "auto": true,
+                      "enabled": true,
+                      "filterSettings": Object {
+                        "method": "absoluteThreshold",
+                        "methodSettings": Object {
+                          "absoluteThreshold": Object {
+                            "binStep": 0.3,
+                            "maxFraction": 0.07181329,
+                          },
+                        },
+                      },
+                    },
+                  },
                   "experimentId": "testExperimentId",
                   "processName": "qc",
                   "sampleUuid.$": "$.sampleUuid",
@@ -415,7 +522,38 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
-                  "config": Object {},
+                  "config": Object {
+                    "oneSample": Object {
+                      "auto": true,
+                      "enabled": true,
+                      "filterSettings": Object {
+                        "regressionType": "linear",
+                        "regressionTypeSettings": Object {
+                          "linear": Object {
+                            "p.level": 0.001,
+                          },
+                          "spline": Object {
+                            "p.level": 0.001,
+                          },
+                        },
+                      },
+                    },
+                    "otherSample": Object {
+                      "auto": true,
+                      "enabled": true,
+                      "filterSettings": Object {
+                        "regressionType": "linear",
+                        "regressionTypeSettings": Object {
+                          "linear": Object {
+                            "p.level": 0.001,
+                          },
+                          "spline": Object {
+                            "p.level": 0.001,
+                          },
+                        },
+                      },
+                    },
+                  },
                   "experimentId": "testExperimentId",
                   "processName": "qc",
                   "sampleUuid.$": "$.sampleUuid",

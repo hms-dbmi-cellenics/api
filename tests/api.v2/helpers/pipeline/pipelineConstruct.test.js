@@ -10,12 +10,13 @@ const Experiment = require('../../../../src/api.v2/model/Experiment');
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
 const { createSubsetPipeline } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 const { cancelPreviousPipelines } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils');
-const needsBatchJob = require('../../../../src/api.v2/helpers/pipeline/batch/needsBatchJob');
 
 const experimentInstance = new Experiment();
 const experimentExecutionInstance = new ExperimentExecution();
 
 const mockStepNames = getQcPipelineStepNames();
+
+const mockExperimentRow = require('../../mocks/data/experimentRow.json');
 
 jest.mock('../../../../src/api.v2/helpers/pipeline/batch/terminateJobs');
 jest.mock('../../../../src/api.v2/helpers/pipeline/batch/listJobsToDelete');
@@ -44,23 +45,6 @@ jest.mock('../../../../src/utils/asyncTimer');
 jest.mock('../../../../src/api.v2/model/Experiment');
 jest.mock('../../../../src/api.v2/model/ExperimentExecution');
 fetchMock.enableFetchMocks();
-
-const mockExperimentRow = {
-  samplesOrder: ['oneSample', 'otherSample'],
-  processingConfig: {
-    doubletScores: {
-      oneSample: {
-        enabled: true,
-        filterSettings: {
-          oneSetting: 1,
-        },
-        defaultFilterSettings: {
-          oneSetting: 1,
-        },
-      },
-    },
-  },
-};
 
 describe('test for pipeline services', () => {
   beforeEach(() => {
