@@ -48,6 +48,10 @@ const submitBatchJob = (context, step) => {
             Name: 'DOMAIN_NAME',
             Value: `${config.domainName}`,
           },
+          {
+            Name: 'EXPERIMENT_ID',
+            Value: `${experimentId}`,
+          },
         ],
         ResourceRequirements: [
           {
