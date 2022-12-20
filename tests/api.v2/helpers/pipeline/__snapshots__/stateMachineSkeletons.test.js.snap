@@ -1058,6 +1058,10 @@ exports[`non-tests to document the State Machines - qc production with specific 
             {
               "Name": "DOMAIN_NAME",
               "Value": "scp.biomage.net"
+            },
+            {
+              "Name": "EXPERIMENT_ID",
+              "Value": "mock-experiment-id"
             }
           ],
           "ResourceRequirements": [
