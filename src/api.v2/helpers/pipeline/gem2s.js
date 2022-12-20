@@ -14,6 +14,7 @@ const HookRunner = require('./hooks/HookRunner');
 
 const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
+const { qcStepsWithFilterSettings } = require('../../enums');
 
 const logger = getLogger('[Gem2sService] - ');
 
@@ -26,15 +27,7 @@ const addDefaultFilterSettings = async (experimentId, processingConfig) => {
 
   logger.log('Adding defaultFilterSettings to received processing config');
 
-  const stepsToDuplicate = [
-    'cellSizeDistribution',
-    'mitochondrialContent',
-    'classifier',
-    'numGenesVsNumUmis',
-    'doubletScores',
-  ];
-
-  stepsToDuplicate.forEach((stepName) => {
+  qcStepsWithFilterSettings.forEach((stepName) => {
     const processingConfigStep = processingConfigToReturn[stepName];
 
     samplesOrder.forEach((sampleId) => {

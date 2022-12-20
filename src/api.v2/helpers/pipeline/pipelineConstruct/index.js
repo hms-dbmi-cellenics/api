@@ -25,17 +25,30 @@ const {
   cancelPreviousPipelines,
   getGeneralPipelineContext,
 } = require('./utils');
+const { qcStepsWithFilterSettings } = require('../../../enums');
 
 const logger = getLogger();
+
+const getSanitizedProcessingConfig = (processingConfig, samplesOrder) => {
+  const sanitizedProcessingConfig = _.cloneDeep(processingConfig);
+
+  logger.log('Sanitizing processing config from sampleIds');
+
+  qcStepsWithFilterSettings.forEach((stepName) => {
+    samplesOrder.forEach((sampleId) => {
+      delete sanitizedProcessingConfig[stepName][sampleId].defaultFilterSettings;
+    });
+  });
+
+  logger.log('Finished sanitizing processing config from sampleIds');
+
+  return sanitizedProcessingConfig;
+};
 
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
   logger.log(`createQCPipeline: fetch processing settings ${experimentId}`);
 
-  const experiment = await new Experiment().findById(experimentId).first();
-
-  const {
-    processingConfig, samplesOrder,
-  } = experiment;
+  const { processingConfig, samplesOrder } = await new Experiment().findById(experimentId).first();
 
   if (processingConfigUpdates.length) {
     processingConfigUpdates.forEach(({ name, body }) => {
@@ -49,15 +62,18 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
     });
   }
 
+  const sanitizedProcessingConfig = getSanitizedProcessingConfig(processingConfig, samplesOrder);
+
   const context = {
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
-    processingConfig,
+    processingConfig: sanitizedProcessingConfig,
     authJWT,
   };
 
   await cancelPreviousPipelines(experimentId, previousJobId);
 
   const qcSteps = await getQcStepsToRun(experimentId, processingConfigUpdates);
+
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
   const qcPipelineSkeleton = await getQcPipelineSkeleton(

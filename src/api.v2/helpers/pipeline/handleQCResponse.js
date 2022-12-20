@@ -1,4 +1,5 @@
 const AWSXRay = require('aws-xray-sdk');
+
 const validateRequest = require('../../../utils/schema-validator');
 const AWS = require('../../../utils/requireAWS');
 const getLogger = require('../../../utils/getLogger');
@@ -78,7 +79,11 @@ const updateProcessingConfigWithQCStep = async (taskName, experimentId, output, 
     // defaultFilterSettings
     const sampleOutput = output;
 
-    if (auto) sampleOutput.config.defaultFilterSettings = output.config.filterSettings;
+    // If auto, use new filter settings as default too,
+    // if not, reuse the previous defaultFilterSettings
+    sampleOutput.config.defaultFilterSettings = auto
+      ? output.config.filterSettings
+      : previousConfig[taskName][sampleUuid].defaultFilterSettings;
 
     await experiment.updateProcessingConfig(experimentId, [
       {
