@@ -29,9 +29,9 @@ const addDefaultFilterSettings = (processingConfig) => {
   ];
 
   stepsToDuplicate.forEach((stepName) => {
-    const sampleSettingsArray = Object.values(processingConfig[stepName]);
+    const settingsSplitBySample = Object.values(processingConfig[stepName]);
 
-    sampleSettingsArray.forEach((sampleSettings) => {
+    settingsSplitBySample.forEach((sampleSettings) => {
       // eslint-disable-next-line no-param-reassign
       sampleSettings.defaultFilterSettings = _.cloneDeep(sampleSettings.filterSettings);
     });
