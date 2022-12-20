@@ -20,7 +20,7 @@ const logger = getLogger('[Gem2sService] - ');
 const hookRunner = new HookRunner();
 
 const continueToQC = async (payload) => {
-  const { experimentId, item } = payload;
+  const { experimentId, item, jobId } = payload;
 
   await new Experiment().updateById(experimentId, { processing_config: item.processingConfig });
 
@@ -28,10 +28,12 @@ const continueToQC = async (payload) => {
 
   logger.log(`Experiment: ${experimentId}. Starting qc run because gem2s finished successfully`);
 
+  logger.log(`continueToQc: previous jobId: ${jobId}`);
+
   // we need to change this once we rework the pipeline message response
   const authJWT = payload.authJWT || payload.input.authJWT;
 
-  await createQCPipeline(experimentId, [], authJWT);
+  await createQCPipeline(experimentId, [], authJWT, jobId);
 
   logger.log('Started qc successfully');
 };
@@ -95,7 +97,6 @@ const generateGem2sParams = async (experimentId, authJWT) => {
     sampleOptions[sampleId] = options || {};
   });
 
-
   const taskParams = {
     projectId: experimentId,
     experimentName: experiment.name,
@@ -130,7 +131,7 @@ const generateGem2sParams = async (experimentId, authJWT) => {
   return taskParams;
 };
 
-const createGem2sPipeline = async (experimentId, body, authJWT) => {
+const startGem2sPipeline = async (experimentId, body, authJWT) => {
   logger.log('Creating GEM2S params...');
   const { paramsHash } = body;
 
@@ -186,6 +187,6 @@ const handleGem2sResponse = async (io, message) => {
 };
 
 module.exports = {
-  createGem2sPipeline,
+  startGem2sPipeline,
   handleGem2sResponse,
 };

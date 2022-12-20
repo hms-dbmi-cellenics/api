@@ -1,0 +1,8 @@
+title: Get number of genes data
+type: object
+description: A worker schema to get number of genes.
+properties:
+  name:
+    type: string
+    pattern: GetNGenes
+    description: The name of the work submitted. Should be `GetNGenes`.

@@ -1,210 +1,34 @@
-const crypto = require('crypto');
-const jq = require('node-jq');
-const YAML = require('yaml');
 const _ = require('lodash');
-const AWSXRay = require('aws-xray-sdk');
-const fetch = require('node-fetch');
-const { v4: uuidv4 } = require('uuid');
 const util = require('util');
 
 const config = require('../../../../config');
-const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME } = require('../../../constants');
+const {
+  QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUBSET_PROCESS_NAME,
+} = require('../../../constants');
 
 const Experiment = require('../../../model/Experiment');
 const ExperimentExecution = require('../../../model/ExperimentExecution');
 
-const AWS = require('../../../../utils/requireAWS');
 const getLogger = require('../../../../utils/getLogger');
-const asyncTimer = require('../../../../utils/asyncTimer');
 
-const constructPipelineStep = require('./constructors/constructPipelineStep');
-const { getGem2sPipelineSkeleton, getQcPipelineSkeleton } = require('./skeletons');
+const {
+  getGem2sPipelineSkeleton, getQcPipelineSkeleton, getSubsetPipelineSkeleton,
+} = require('./skeletons');
 const { getQcStepsToRun } = require('./qcHelpers');
 const needsBatchJob = require('../batch/needsBatchJob');
-const terminateJobs = require('../batch/terminateJobs');
-const listActiveJobs = require('../batch/listActiveJobs');
-const { deleteExperimentPods } = require('../hooks/podCleanup');
+
+const {
+  buildStateMachineDefinition,
+  executeStateMachine,
+  createActivity,
+  createNewStateMachine,
+  cancelPreviousPipelines,
+  getGeneralPipelineContext,
+} = require('./utils');
 
 const logger = getLogger();
 
-const getPipelineArtifacts = async () => {
-  const response = await fetch(
-    config.pipelineInstanceConfigUrl,
-    {
-      method: 'GET',
-    },
-  );
-
-  const txt = await response.text();
-  const manifest = YAML.parseAllDocuments(txt);
-
-  const [chartRef, pipelineRunner] = await Promise.all([
-    jq.run(
-      '..|objects| select(.metadata != null) | select( .metadata.name | contains("pipeline")) | .spec.chart.ref//empty',
-      manifest,
-      {
-        input: 'json',
-        output: 'json',
-      },
-    ),
-    jq.run(
-      '..|objects|.["pipelineRunner"].image//empty',
-      manifest,
-      {
-        input: 'json',
-        output: 'json',
-      },
-    ),
-  ]);
-
-  return {
-    chartRef,
-    pipelineRunner,
-  };
-};
-
-const getClusterInfo = async () => {
-  if (config.clusterEnv === 'development') return {};
-
-  const eks = new AWS.EKS({
-    region: config.awsRegion,
-  });
-
-  const { cluster: info } = await eks.describeCluster({ name: `biomage-${config.clusterEnv}` }).promise();
-  const { name, endpoint, certificateAuthority: { data: certAuthority } } = info;
-
-  return {
-    name,
-    endpoint,
-    certAuthority,
-  };
-};
-
-// cancelPreviousPipelines clears any in progress pipeline execution for the
-// given experimentId. It deals both with running fargate pods and AWS Batch jobs.
-const cancelPreviousPipelines = async (experimentId) => {
-  // no need to remove anything in development
-  if (config.clusterEnv === 'development') return;
-
-  // remove any pipeline pods already assigned to this experiment
-  try {
-    await deleteExperimentPods(experimentId);
-  } catch (e) {
-    logger.error(`cancelPreviousPipelines: deleteExperimentPods ${experimentId}: ${e}`);
-  }
-
-  // remove any active Batch jobs assigned to this experiment
-  const jobs = await listActiveJobs(experimentId, config.clusterEnv, config.awsRegion);
-  await terminateJobs(jobs, config.awsRegion);
-};
-
-const createNewStateMachine = async (context, stateMachine, processName) => {
-  const { clusterEnv, sandboxId } = config;
-  const { experimentId, roleArn, accountId } = context;
-
-  const stepFunctions = new AWS.StepFunctions({
-    region: config.awsRegion,
-  });
-
-  const pipelineHash = crypto
-    .createHash('sha1')
-    .update(`${experimentId}-${sandboxId}`)
-    .digest('hex');
-
-  const params = {
-    name: `biomage-${processName}-${clusterEnv}-${pipelineHash}`,
-    roleArn,
-    definition: JSON.stringify(stateMachine),
-    loggingConfiguration: { level: 'OFF' },
-    tags: [
-      { key: 'experimentId', value: experimentId },
-      { key: 'clusterEnv', value: clusterEnv },
-      { key: 'sandboxId', value: sandboxId },
-    ],
-    type: 'STANDARD',
-  };
-
-  let stateMachineArn = null;
-
-  try {
-    const response = await stepFunctions.createStateMachine(params).promise();
-    stateMachineArn = response.stateMachineArn;
-    logger.log('Created state machine...');
-  } catch (e) {
-    if (e.code !== 'StateMachineAlreadyExists') {
-      throw e;
-    }
-
-    logger.log('State machine already exists, updating...');
-
-    stateMachineArn = `arn:aws:states:${config.awsRegion}:${accountId}:stateMachine:${params.name}`;
-
-    await stepFunctions.updateStateMachine(
-      { stateMachineArn, definition: params.definition, roleArn },
-    ).promise();
-
-    /**
-     * Wait for some time before the state machine update is returned to the caller.
-     * Per https://docs.aws.amazon.com/step-functions/latest/apireference/API_UpdateStateMachine.html:
-     *
-     * Executions started immediately after calling UpdateStateMachine may use the
-     * previous state machine `definition` [...].
-     *
-     */
-    await asyncTimer(3500);
-  }
-
-  return stateMachineArn;
-};
-
-const executeStateMachine = async (stateMachineArn, execInput = {}) => {
-  // when running in aws the step functions use a map step to retry the process
-  // of assigning the pipeline to an available pod
-  // map steps require an array as input so we declare one (it's value is not used)
-  const input = execInput;
-  input.retries = ['retry'];
-
-  const stepFunctions = new AWS.StepFunctions({
-    region: config.awsRegion,
-  });
-  const { trace_id: traceId } = AWSXRay.getSegment() || {};
-
-  const { executionArn } = await stepFunctions.startExecution({
-    stateMachineArn,
-    input: JSON.stringify(input),
-    traceHeader: traceId,
-  }).promise();
-
-  return executionArn;
-};
-
-const createActivity = async (context) => {
-  const stepFunctions = new AWS.StepFunctions({
-    region: config.awsRegion,
-  });
-
-  const { activityArn } = await stepFunctions.createActivity({
-    name: context.activityArn.split(/[: ]+/).pop(),
-  }).promise();
-
-  return activityArn;
-};
-
-const buildStateMachineDefinition = (skeleton, context) => {
-  logger.log('Constructing pipeline steps...');
-  const stateMachine = _.cloneDeepWith(skeleton, (o) => {
-    if (_.isObject(o) && o.XStepType) {
-      return _.omit(constructPipelineStep(context, o), ['XStepType', 'XConstructorArgs', 'XNextOnCatch']);
-    }
-    return undefined;
-  });
-
-  return stateMachine;
-};
-
-const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) => {
-  const accountId = config.awsAccountId;
-  const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
+const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
   logger.log(`createQCPipeline: fetch processing settings ${experimentId}`);
 
   const experiment = await new Experiment().findById(experimentId).first();
@@ -212,9 +36,6 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   const {
     processingConfig, samplesOrder,
   } = experiment;
-
-  const { podCpus, podMemory } = await new Experiment().getResourceRequirements(experimentId);
-
 
   if (processingConfigUpdates.length) {
     processingConfigUpdates.forEach(({ name, body }) => {
@@ -229,31 +50,22 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
   }
 
   const context = {
-    experimentId,
-    accountId,
-    roleArn,
-    processName: QC_PROCESS_NAME,
-    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
-    pipelineArtifacts: await getPipelineArtifacts(),
-    clusterInfo: await getClusterInfo(),
-    sandboxId: config.sandboxId,
+    ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
     processingConfig,
-    environment: config.clusterEnv,
     authJWT,
-    podCpus,
-    podMemory,
   };
 
-  await cancelPreviousPipelines(experimentId);
+  await cancelPreviousPipelines(experimentId, previousJobId);
 
   const qcSteps = await getQcStepsToRun(experimentId, processingConfigUpdates);
-  const runInBatch = needsBatchJob(podCpus, podMemory);
+  const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
   const qcPipelineSkeleton = await getQcPipelineSkeleton(
     config.clusterEnv,
     qcSteps,
     runInBatch,
   );
+
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
@@ -287,32 +99,16 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT) 
 };
 
 const createGem2SPipeline = async (experimentId, taskParams) => {
-  const accountId = config.awsAccountId;
-  const roleArn = `arn:aws:iam::${accountId}:role/state-machine-role-${config.clusterEnv}`;
-
-  const { podCpus, podMemory } = await new Experiment().getResourceRequirements(experimentId);
-
   const context = {
-    taskParams,
-    experimentId,
-    accountId,
-    roleArn,
-    processName: GEM2S_PROCESS_NAME,
-    activityArn: `arn:aws:states:${config.awsRegion}:${accountId}:activity:pipeline-${config.clusterEnv}-${uuidv4()}`,
-    pipelineArtifacts: await getPipelineArtifacts(),
-    clusterInfo: await getClusterInfo(),
-    sandboxId: config.sandboxId,
+    ...(await getGeneralPipelineContext(experimentId, GEM2S_PROCESS_NAME)),
     processingConfig: {},
-    environment: config.clusterEnv,
-    podCpus,
-    podMemory,
+    taskParams,
   };
 
   await cancelPreviousPipelines(experimentId);
 
-  const runInBatch = needsBatchJob(podCpus, podMemory);
+  const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
-  logger.log(`createGem2SPipeline: not passing cpu/mem ${podCpus}, ${podMemory}`);
   const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch);
   logger.log('Skeleton constructed, now building state machine definition...');
 
@@ -333,9 +129,58 @@ const createGem2SPipeline = async (experimentId, taskParams) => {
   return { stateMachineArn, executionArn };
 };
 
+const createSubsetPipeline = async (
+  fromExperimentId, toExperimentId, toExperimentName, cellSetKeys, authJWT,
+) => {
+  const stepsParams = {
+    parentExperimentId: fromExperimentId,
+    subsetExperimentId: toExperimentId,
+    cellSetKeys,
+  };
+
+  // None of the other normal gem2s params are necessary for these 2 steps
+  const lastStepsParams = { experimentName: toExperimentName, authJWT };
+
+  const context = {
+    ...(await getGeneralPipelineContext(fromExperimentId, SUBSET_PROCESS_NAME)),
+    taskParams: {
+      subsetSeurat: stepsParams,
+      prepareExperiment: lastStepsParams,
+      uploadToAWS: lastStepsParams,
+    },
+  };
+
+  // Don't allow gem2s, qc runs doing changes on the data we need to perform the subset
+  // This also cancels other subset pipeline runs on the same from experiment,
+  //  need to check if that is fine
+  await cancelPreviousPipelines(fromExperimentId);
+
+  const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
+
+  const subsetPipelineSkeleton = getSubsetPipelineSkeleton(config.clusterEnv, runInBatch);
+  logger.log('Skeleton constructed, now building state machine definition...');
+
+  const stateMachine = buildStateMachineDefinition(subsetPipelineSkeleton, context);
+  logger.log('State machine definition built, now creating activity if not already present...');
+
+  const activityArn = await createActivity(context);
+  logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
+
+  const stateMachineArn = await createNewStateMachine(context, stateMachine, SUBSET_PROCESS_NAME);
+  logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
+  logger.log('Context:', util.inspect(context, { showHidden: false, depth: null, colors: false }));
+  logger.log('State machine:', util.inspect(stateMachine, { showHidden: false, depth: null, colors: false }));
+
+  const executionArn = await executeStateMachine(stateMachineArn);
+  logger.log(`Execution with ARN ${executionArn} created.`);
+
+  return { stateMachineArn, executionArn };
+};
+
 
 module.exports = {
   createQCPipeline,
   createGem2SPipeline,
+  createSubsetPipeline,
   buildStateMachineDefinition,
 };
