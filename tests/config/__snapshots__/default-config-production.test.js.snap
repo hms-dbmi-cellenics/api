@@ -20,6 +20,8 @@ Object {
     "https://elabjournal.com",
     "https://localhost:5000",
   ],
+  "datadogApiKey": "",
+  "datadogAppKey": "",
   "domainName": "localhost:5000",
   "emailDomainName": "https://localhost:5000",
   "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/production/pipeline.yaml",

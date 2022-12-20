@@ -71,6 +71,9 @@ const config = {
   emailDomainName: `https://${domainName}`,
   adminSub: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
   publicApiUrl: `https://api.${domainName}`,
+  // Used for Batch reporting
+  datadogApiKey: process.env.DD_API_KEY || '',
+  datadogAppKey: process.env.DD_APP_KEY || '',
 };
 
 // We are in permanent develop staging environment

@@ -1032,6 +1032,10 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "ContainerOverrides": {
           "Environment": [
             {
+              "Name": "EXPERIMENT_ID",
+              "Value": "mock-experiment-id"
+            },
+            {
               "Name": "ACTIVITY_ARN",
               "Value": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713"
             },
@@ -1060,8 +1064,12 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "Value": "scp.biomage.net"
             },
             {
-              "Name": "EXPERIMENT_ID",
-              "Value": "mock-experiment-id"
+              "Name": "DD_API_KEY",
+              "Value": "test-datadog-api-key"
+            },
+            {
+              "Name": "DD_APP_KEY",
+              "Value": "test-datadog-app-key"
             }
           ],
           "ResourceRequirements": [
