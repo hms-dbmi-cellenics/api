@@ -1,5 +1,6 @@
 const { buildQCPipelineSteps, qcPipelineSteps } = require('./qcPipelineSkeleton');
 const { gem2SPipelineSteps } = require('./gem2sPipelineSkeleton');
+const subsetPipelineSteps = require('./subsetPipelineSteps');
 
 
 const createLocalPipeline = (nextStep) => ({
@@ -106,10 +107,20 @@ const getQcPipelineSkeleton = (clusterEnv, qcSteps, runInBatch = false) => ({
   },
 });
 
+const getSubsetPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
+  Comment: `Subset Pipeline for clusterEnv '${clusterEnv}'`,
+  StartAt: getStateMachineFirstStep(clusterEnv, runInBatch),
+  States: {
+    ...buildInitialSteps(clusterEnv, 'SubsetSeurat', runInBatch),
+    ...subsetPipelineSteps,
+  },
+});
+
 
 module.exports = {
   getPipelineStepNames,
   getQcPipelineStepNames,
   getGem2sPipelineSkeleton,
   getQcPipelineSkeleton,
+  getSubsetPipelineSkeleton,
 };

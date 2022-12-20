@@ -26,7 +26,7 @@ describe('gem2sController', () => {
     const experimentId = 'experimentId';
     const newExecution = 'mockNewExecution';
 
-    gem2s.createGem2sPipeline.mockReturnValue(newExecution);
+    gem2s.startGem2sPipeline.mockReturnValue(newExecution);
 
     const mockReq = {
       params: { experimentId },
@@ -36,7 +36,7 @@ describe('gem2sController', () => {
 
     await gem2sController.runGem2s(mockReq, mockRes);
 
-    expect(gem2s.createGem2sPipeline).toHaveBeenCalledWith(
+    expect(gem2s.startGem2sPipeline).toHaveBeenCalledWith(
       experimentId, mockReq.body, mockReq.headers.authorization,
     );
 
