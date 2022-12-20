@@ -80,17 +80,10 @@ class UserAccess extends BasicModel {
   async createNewExperimentPermissions(userId, experimentId) {
     logger.log('Setting up access permissions for experiment');
 
-    const adminSub = await getAdminSub();
-
-    // Create admin permissions
-    await this.grantAccess(adminSub, experimentId, AccessRole.ADMIN);
-
-    if (userId === adminSub) {
-      logger.log('User is the admin, so only creating admin access');
-      return;
-    }
-
     await this.grantAccess(userId, experimentId, AccessRole.OWNER);
+
+    const adminSub = await getAdminSub();
+    if (userId !== adminSub) await this.grantAccess(adminSub, experimentId, AccessRole.ADMIN);
   }
 
 

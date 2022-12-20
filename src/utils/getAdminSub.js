@@ -28,7 +28,7 @@ const getAdminSub = async () => {
         ],
       }).promise();
 
-      console.log('Admin account created. Change admin password using biomage account change-password to login.');
+      console.log('Admin account created. Change admin password to login.');
 
       return result.User.Username;
     }
