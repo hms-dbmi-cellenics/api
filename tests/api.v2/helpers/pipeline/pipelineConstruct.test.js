@@ -236,10 +236,6 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-machine' });
     });
 
-    experimentInstance.findById.mockReturnValueOnce(
-      { first: () => Promise.resolve(mockExperimentRow) },
-    );
-
     await createGem2SPipeline('testExperimentId', taskParams);
     expect(describeClusterSpy).toMatchSnapshot();
 
