@@ -26,9 +26,7 @@ const hookRunner = new HookRunner();
  * @returns A copy of processingConfig with each filterSettings entry
  *  duplicated under defaultFilterSettings
  */
-const addDefaultFilterSettings = async (experimentId, processingConfig) => {
-  const { samplesOrder } = await new Experiment().findById(experimentId).first();
-
+const addDefaultFilterSettings = (experimentId, processingConfig) => {
   const processingConfigToReturn = _.cloneDeep(processingConfig);
 
   logger.log('Adding defaultFilterSettings to received processing config');
@@ -42,10 +40,14 @@ const addDefaultFilterSettings = async (experimentId, processingConfig) => {
   ];
 
   stepsToDuplicate.forEach((stepName) => {
-    const processingConfigStep = processingConfigToReturn[stepName];
+    const stepConfigSplitBySample = Object.values(processingConfigToReturn[stepName]);
 
-    samplesOrder.forEach((sampleId) => {
-      const sampleSettings = processingConfigStep[sampleId];
+    stepConfigSplitBySample.forEach((sampleSettings) => {
+      if (!sampleSettings.filterSettings) {
+        logger.log(`Experiment: ${experimentId}. Skipping current sample config, it doesnt have filterSettings:`);
+        logger.log(JSON.stringify(sampleSettings.filterSettings));
+        return;
+      }
 
       // eslint-disable-next-line no-param-reassign
       sampleSettings.defaultFilterSettings = _.cloneDeep(sampleSettings.filterSettings);
@@ -62,7 +64,7 @@ const continueToQC = async (payload) => {
 
   // Before persisting the new processing config,
   // fill it in with default filter settings (to preserve the gem2s-generated settings)
-  const processingConfigWithDefaults = await addDefaultFilterSettings(
+  const processingConfigWithDefaults = addDefaultFilterSettings(
     experimentId, item.processingConfig,
   );
 
@@ -229,7 +231,7 @@ const handleGem2sResponse = async (io, message) => {
   // Before being returned to the client we need to
   // fill it in with default filter settings (to preserve the gem2s-generated settings)
   if (messageForClient.taskName === 'uploadToAWS') {
-    messageForClient.item.processingConfig = await addDefaultFilterSettings(
+    messageForClient.item.processingConfig = addDefaultFilterSettings(
       experimentId,
       messageForClient.item.processingConfig,
     );
