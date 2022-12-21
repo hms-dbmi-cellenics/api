@@ -24,10 +24,12 @@ const SUCCEEDED_ID = 'succeded_id';
 const EMPTY_ID = 'empty_id';
 // experimentID used to trigger an execution does not exist
 const EXECUTION_DOES_NOT_EXIST_ID = 'EXECUTION_DOES_NOT_EXIST';
+const EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_PARAMS_HASH = 'EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_PARAMS_HASH';
 const EXECUTION_DOES_NOT_EXIST_NULL_SQL_ID = 'EXECUTION_DOES_NOT_EXIST_NULL_SQL';
 const RANDOM_EXCEPTION = 'RANDOM_EXCEPTION';
 
 const paramsHash = '44c4c6e190e54c4b2740d37a861bb6954921730cnotASecret';
+const notMatchingParamsHash = 'notMatching44c4c6e190e54c4b2740d37a861bb6954921730cnotASecret';
 
 const statusResponseSql = {
   startDate: new Date(5),
@@ -43,6 +45,23 @@ const statusResponseSql = {
     'UploadToAWS'],
   error: false,
   paramsHash,
+};
+
+const qcStatusResponseSql = {
+  startDate: new Date(5),
+  stopDate: new Date(5),
+  status: 'SUCCEEDED',
+  completedSteps: [
+    'ClassifierFilter',
+    'CellSizeDistributionFilter',
+    'MitochondrialContentFilter',
+    'NumGenesVsNumUmisFilter',
+    'DoubletScoresFilter',
+    'DataIntegration',
+    'ConfigureEmbedding',
+  ],
+  error: false,
+  paramsHash: null,
 };
 
 const mockNoRunsResponse = [];
@@ -77,6 +96,16 @@ const mockExecutionNotExistResponse = [
     stateMachineArn: '',
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
     paramsHash: null,
+    lastStatusResponse: qcStatusResponseSql,
+  },
+];
+
+const mockExecutionNotExistResponseNotMatchingParamsHash = [
+  {
+    pipelineType: GEM2S_PROCESS_NAME,
+    stateMachineArn: '',
+    executionArn: EXECUTION_DOES_NOT_EXIST_ID,
+    paramsHash: notMatchingParamsHash,
     lastStatusResponse: statusResponseSql,
   },
 ];
@@ -270,6 +299,9 @@ describe('pipelineStatus', () => {
         case EXECUTION_DOES_NOT_EXIST_ID:
           response = mockExecutionNotExistResponse;
           break;
+        case EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_PARAMS_HASH:
+          response = mockExecutionNotExistResponseNotMatchingParamsHash;
+          break;
         case EXECUTION_DOES_NOT_EXIST_NULL_SQL_ID:
           response = mockExecutionNotExistNullSqlResponse;
           break;
@@ -343,6 +375,31 @@ describe('pipelineStatus', () => {
     expect(experimentExecutionInstance.update).not.toHaveBeenCalled();
   });
 
+  it('if gem2s execution sql last response doesnt match the latest paramsHash, it updates it', async () => {
+    const status = await getPipelineStatus(
+      EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_PARAMS_HASH, GEM2S_PROCESS_NAME,
+    );
+
+    expect(status).toEqual({
+      [GEM2S_PROCESS_NAME]: {
+        ...statusResponseSql,
+        paramsHash: notMatchingParamsHash,
+      },
+    });
+    expect(status[GEM2S_PROCESS_NAME].startDate).toBeDefined();
+    expect(status[GEM2S_PROCESS_NAME].stopDate).toBeDefined();
+
+    expect(experimentExecutionInstance.find).toHaveBeenCalledWith(
+      { experiment_id: EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_PARAMS_HASH },
+    );
+
+    // Updted the execution with the new paramsHash
+    expect(experimentExecutionInstance.update).toHaveBeenCalledWith(
+      { experiment_id: EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_PARAMS_HASH, pipeline_type: 'gem2s' },
+      { last_status_response: { ...statusResponseSql, paramsHash: notMatchingParamsHash } },
+    );
+  });
+
   it('handles a gem2s execution does not exist exception with hardcoded success if there is no sql value',
     async () => {
       const status = await getPipelineStatus(
@@ -378,7 +435,8 @@ describe('pipelineStatus', () => {
   it('handles a qc execution does not exist exception by returning sql last response', async () => {
     const status = await getPipelineStatus(EXECUTION_DOES_NOT_EXIST_ID, QC_PROCESS_NAME);
 
-    expect(status).toEqual({ [QC_PROCESS_NAME]: statusResponseSql });
+    // Returns the sql response
+    expect(status).toEqual({ [QC_PROCESS_NAME]: qcStatusResponseSql });
 
     expect(experimentExecutionInstance.find)
       .toHaveBeenCalledWith({ experiment_id: EXECUTION_DOES_NOT_EXIST_ID });
