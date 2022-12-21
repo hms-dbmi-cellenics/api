@@ -10,7 +10,6 @@ const Experiment = require('../../../../src/api.v2/model/Experiment');
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
 const { createSubsetPipeline } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 const { cancelPreviousPipelines } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils');
-const needsBatchJob = require('../../../../src/api.v2/helpers/pipeline/batch/needsBatchJob');
 
 const experimentInstance = new Experiment();
 const experimentExecutionInstance = new ExperimentExecution();

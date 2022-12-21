@@ -216,6 +216,9 @@ const handleGem2sResponse = async (io, message) => {
 
   const messageForClient = _.cloneDeep(message);
 
+  // If we are at uploadToAWS, then a new processingConfig was received
+  // Before being returned to the client we need to
+  // fill it in with default filter settings (to preserve the gem2s-generated settings)
   if (messageForClient.taskName === 'uploadToAWS') {
     messageForClient.item.processingConfig = await addDefaultFilterSettings(
       experimentId,
