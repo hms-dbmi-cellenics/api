@@ -53,6 +53,8 @@ const addDefaultFilterSettings = async (experimentId, processingConfig) => {
 const continueToQC = async (payload) => {
   const { experimentId, item, jobId } = payload;
 
+  // Before persisting the new processing config,
+  // fill it in with default filter settings (to preserve the gem2s-generated settings)
   const processingConfigWithDefaults = await addDefaultFilterSettings(
     experimentId, item.processingConfig,
   );
