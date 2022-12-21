@@ -1030,6 +1030,9 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "JobName": "production-mock-experiment-id-qc",
         "JobQueue": "queue-pipeline-production",
         "ContainerOverrides": {
+          "Command": [
+            "./start-batch.sh"
+          ],
           "Environment": [
             {
               "Name": "EXPERIMENT_ID",
