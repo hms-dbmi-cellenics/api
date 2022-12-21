@@ -226,7 +226,7 @@ const generateUpdatedLastStatusResponse = async (
 ) => {
   let lastStatusResponseToReturn = lastStatusResponse;
 
-  if (lastStatusResponseToReturn[processName].paramsHash !== paramsHash) {
+  if (lastStatusResponseToReturn.paramsHash !== paramsHash) {
     lastStatusResponseToReturn = _.cloneDeep(lastStatusResponse);
 
     lastStatusResponseToReturn.paramsHash = paramsHash;
