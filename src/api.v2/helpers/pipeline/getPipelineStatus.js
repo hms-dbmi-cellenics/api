@@ -86,7 +86,6 @@ const buildCompletedStatus = (processName, date, paramsHash) => {
   return buildResponse(processName, execution, paramsHash, error, completedSteps);
 };
 
-
 const getExecutionHistory = async (stepFunctions, executionArn) => {
   let events = [];
   let nextToken;
@@ -210,6 +209,37 @@ const getStepsFromExecutionHistory = (events) => {
   return shortestCompletedToReport || [];
 };
 
+/**
+ *
+ * Checks if the paramsHash in the sql column matches the one in the last_status_response
+ * If it does, it doesnt do anything, just returns the received status response
+ * If it doesn't, it updates the paramsHash in the status response and returns this updated status
+ *
+ * @param {*} paramsHash
+ * @param {*} lastStatusResponse
+ * @param {*} experimentId
+ * @param {*} processName
+ * @returns the updated status response
+ */
+const generateUpdatedLastStatusResponse = async (
+  paramsHash, lastStatusResponse, experimentId, processName,
+) => {
+  let lastStatusResponseToReturn = lastStatusResponse;
+
+  if (lastStatusResponseToReturn[processName].paramsHash !== paramsHash) {
+    lastStatusResponseToReturn = _.cloneDeep(lastStatusResponse);
+
+    lastStatusResponseToReturn.paramsHash = paramsHash;
+
+    await new ExperimentExecution().update(
+      { experiment_id: experimentId, pipeline_type: processName },
+      { last_status_response: lastStatusResponseToReturn },
+    );
+  }
+
+  return lastStatusResponseToReturn;
+};
+
 /*
      * Return `completedSteps` of the state machine (SM) associated to the `experimentId`'s pipeline
      * The code assumes that
@@ -253,8 +283,12 @@ const getPipelineStatus = async (experimentId, processName) => {
       || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
     ) {
       if (lastStatusResponse) {
+        const updatedLastStatusResponse = await generateUpdatedLastStatusResponse(
+          paramsHash, lastStatusResponse, experimentId, processName,
+        );
+
         logger.log(`Returning status stored in sql because AWS doesn't find arn ${executionArn}`);
-        return { [processName]: lastStatusResponse };
+        return { [processName]: updatedLastStatusResponse };
       }
 
       logger.log(
