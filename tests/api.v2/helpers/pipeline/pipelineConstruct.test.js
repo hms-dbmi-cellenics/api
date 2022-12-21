@@ -10,7 +10,6 @@ const Experiment = require('../../../../src/api.v2/model/Experiment');
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
 const { createSubsetPipeline } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 const { cancelPreviousPipelines } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils');
-const needsBatchJob = require('../../../../src/api.v2/helpers/pipeline/batch/needsBatchJob');
 
 const experimentInstance = new Experiment();
 const experimentExecutionInstance = new ExperimentExecution();
@@ -236,10 +235,6 @@ describe('test for pipeline services', () => {
       startExecutionSpy(params);
       callback(null, { executionArn: 'test-machine' });
     });
-
-    experimentInstance.findById.mockReturnValueOnce(
-      { first: () => Promise.resolve(mockExperimentRow) },
-    );
 
     await createGem2SPipeline('testExperimentId', taskParams);
     expect(describeClusterSpy).toMatchSnapshot();
