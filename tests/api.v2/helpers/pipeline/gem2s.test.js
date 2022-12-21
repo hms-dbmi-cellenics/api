@@ -1,4 +1,5 @@
 // @ts-nocheck
+const _ = require('lodash');
 const io = require('socket.io-client');
 
 const { startGem2sPipeline, handleGem2sResponse } = require('../../../../src/api.v2/helpers/pipeline/gem2s');
@@ -154,6 +155,51 @@ describe('gem2sResponse', () => {
       input: { authJWT: 'mockAuthJWT' },
       taskName: 'uploadToAWS',
       item: gem2sUploadToAWSPayload.item,
+      response: {},
+      jobId: 'mockJobId',
+    };
+
+    pipelineConstruct.createQCPipeline.mockImplementationOnce(
+      () => Promise.resolve({ stateMachineArn, executionArn }),
+    );
+
+    // There's a hook registered on the uploadToAWS step
+    expect(hookRunnerInstance.register.mock.calls[0][0]).toEqual('uploadToAWS');
+
+    await handleGem2sResponse(io, message);
+
+    // It called hookRunner.run
+    expect(hookRunnerInstance.run).toHaveBeenCalled();
+
+    // Take the item passed to register
+    const uploadToAWSPayload = hookRunnerInstance.run.mock.calls[0][0];
+
+    // Take the hookedFunctions
+    const hookedFunctions = hookRunnerInstance.register.mock.calls[0][1];
+    expect(hookedFunctions).toHaveLength(1);
+
+    // calling the hookedFunction triggers QC
+    await hookedFunctions[0](uploadToAWSPayload);
+
+    expect(experimentInstance.updateById.mock.calls).toMatchSnapshot();
+    expect(pipelineConstruct.createQCPipeline.mock.calls).toMatchSnapshot();
+  });
+
+  it('Starts a QC run when gem2s finishes and can duplicate defaultProcessingConfig ignoring entries that arent samples', async () => {
+    const stateMachineArn = 'mockStateMachineArn';
+    const executionArn = 'mockExecutionArn';
+
+    const itemWithSomeStepFlag = _.cloneDeep(gem2sUploadToAWSPayload.item);
+
+    // Add an entry that is applied to the whole step
+    itemWithSomeStepFlag.processingConfig.doubletScores.someStepFlag = true;
+
+    const message = {
+      experimentId,
+      authJWT: 'mockAuthJWT',
+      input: { authJWT: 'mockAuthJWT' },
+      taskName: 'uploadToAWS',
+      item: itemWithSomeStepFlag,
       response: {},
       jobId: 'mockJobId',
     };
