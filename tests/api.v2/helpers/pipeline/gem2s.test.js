@@ -123,17 +123,12 @@ describe('gem2sResponse', () => {
     io.sockets = { emit: jest.fn() };
 
     experimentInstance.updateById.mockClear();
-    experimentInstance.findById.mockClear();
 
     pipelineConstruct.createQCPipeline.mockClear();
 
     hookRunnerInstance.run.mockClear();
 
     getPipelineStatus.mockReturnValueOnce(mockGetPipelineStatusResponse);
-
-    experimentInstance.findById.mockReturnValue({
-      first: jest.fn(() => Promise.resolve(mockExperiment)),
-    });
   });
 
   it('works correctly', async () => {
