@@ -19,6 +19,13 @@ const logger = getLogger('[Gem2sService] - ');
 
 const hookRunner = new HookRunner();
 
+/**
+ *
+ * @param {*} experimentId
+ * @param {*} processingConfig The full processing config for an experiment
+ * @returns A copy of processingConfig with each filterSettings entry
+ *  duplicated under defaultFilterSettings
+ */
 const addDefaultFilterSettings = async (experimentId, processingConfig) => {
   const { samplesOrder } = await new Experiment().findById(experimentId).first();
 
