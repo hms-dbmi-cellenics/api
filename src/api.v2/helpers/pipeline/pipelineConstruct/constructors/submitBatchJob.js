@@ -19,6 +19,7 @@ const submitBatchJob = (context, step) => {
       JobName: `${environment}-${experimentId}-${processName}`, // changing the name will break job termination when a new one is submitted
       JobQueue: `queue-pipeline-${environment}`,
       ContainerOverrides: {
+        Command: ['./start-batch.sh'],
         Environment: [
           {
             Name: 'EXPERIMENT_ID',
