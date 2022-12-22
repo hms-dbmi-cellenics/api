@@ -267,29 +267,31 @@ const getPipelineStatus = async (experimentId, processName) => {
     // the pipeline losing annotations. This will be addressed checking if the
     // processed files exist in S3 to avoid allowing users to move onwards when the pipeline was not
     // actually run.
+
     if (
       (e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
       || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
     ) {
       if (lastStatusResponse) {
         // Update the paramsHash just in case it changed
-        const updatedLastStatusResponse = { ...lastStatusResponse, paramsHash };
-
+        const updatedLastStatusResponse = {
+          [processName]: { ...lastStatusResponse[processName], paramsHash },
+        };
         logger.log(`Returning status stored in sql because AWS doesn't find arn ${executionArn}`);
-        response = { [processName]: updatedLastStatusResponse };
+        response = updatedLastStatusResponse;
+      } else {
+        logger.log(
+          `Returning a mocked success ${processName} - pipeline status because ARN ${executionArn} `
+          + `does not exist in aws and we are running in ${config.clusterEnv} so it means it's either a `
+          + 'a pulled experiment or this is a very old legacy experiment from before sql that (legacy) '
+          + 'doesn\'t have its latest execution stored in sql.',
+        );
+
+        // we set a custom date that can be used by the UI to reliably generate ETag
+        const fixedPipelineDate = EXPIRED_EXECUTION_DATE;
+
+        response = buildCompletedStatus(processName, fixedPipelineDate, paramsHash);
       }
-
-      logger.log(
-        `Returning a mocked success ${processName} - pipeline status because ARN ${executionArn} `
-        + `does not exist in aws and we are running in ${config.clusterEnv} so it means it's either a `
-        + 'a pulled experiment or this is a very old legacy experiment from before sql that (legacy) '
-        + 'doesn\'t have its latest execution stored in sql.',
-      );
-
-      // we set a custom date that can be used by the UI to reliably generate ETag
-      const fixedPipelineDate = EXPIRED_EXECUTION_DATE;
-
-      response = buildCompletedStatus(processName, fixedPipelineDate, paramsHash);
     } else {
       throw e;
     }
