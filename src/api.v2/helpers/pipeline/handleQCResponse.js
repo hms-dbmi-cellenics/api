@@ -73,14 +73,13 @@ const updateProcessingConfigWithQCStep = async (taskName, experimentId, output, 
   if (sampleUuid !== '') {
     const { auto } = output.config;
 
-    // This is a temporary fix to save defaultFilterSettings calculated in the QC pipeline
-    // to patch for old experiments with hardcoded defaultFilterSettings.
+    // - If auto = true, temporary fix to save defaultFilterSettings calculated in the QC
+    //  pipeline to patch for old experiments with hardcoded defaultFilterSettings.
     // Remove this once we're done migrating to the new experiment schema with defaultFilterSettings
-    const sampleOutput = output;
+    // - If auto = false, reuse the previous defaultFilterSettings
 
-    // If auto, use new filter settings as default too,
-    // if not, reuse the previous defaultFilterSettings
-    sampleOutput.config.defaultFilterSettings = auto
+    // eslint-disable-next-line no-param-reassign
+    output.config.defaultFilterSettings = auto
       ? output.config.filterSettings
       : previousConfig[taskName][sampleUuid].defaultFilterSettings;
 
@@ -89,7 +88,7 @@ const updateProcessingConfigWithQCStep = async (taskName, experimentId, output, 
         name: taskName,
         body: {
           ...previousConfig[taskName],
-          [sampleUuid]: { ...sampleOutput.config },
+          [sampleUuid]: { ...output.config },
         },
       },
     ]);
