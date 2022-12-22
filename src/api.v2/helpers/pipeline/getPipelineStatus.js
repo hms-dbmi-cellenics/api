@@ -209,30 +209,6 @@ const getStepsFromExecutionHistory = (events) => {
   return shortestCompletedToReport || [];
 };
 
-/**
- *
- * Checks if paramsHash matches the one in lastStatusResponse
- * If it does, it doesn't do anything, just returns the received status response
- * If it doesn't, it returns the status with its paramsHash updated to match paramsHash
- *
- * @param {*} paramsHash
- * @param {*} lastStatusResponse
- * @returns the updated status response
- */
-const getUpdatedLastStatusResponse = (
-  paramsHash, lastStatusResponse,
-) => {
-  let lastStatusResponseToReturn = lastStatusResponse;
-
-  if (lastStatusResponseToReturn.paramsHash !== paramsHash) {
-    lastStatusResponseToReturn = _.cloneDeep(lastStatusResponse);
-
-    lastStatusResponseToReturn.paramsHash = paramsHash;
-  }
-
-  return lastStatusResponseToReturn;
-};
-
 /*
      * Return `completedSteps` of the state machine (SM) associated to the `experimentId`'s pipeline
      * The code assumes that
@@ -259,10 +235,30 @@ const getPipelineStatus = async (experimentId, processName) => {
 
   const { executionArn = null, paramsHash = null, lastStatusResponse } = pipelineExecution;
 
+  let response;
+
   try {
     execution = await stepFunctions.describeExecution({
       executionArn,
     }).promise();
+
+    const events = await getExecutionHistory(stepFunctions, executionArn);
+
+    error = checkError(events);
+    const executedSteps = getStepsFromExecutionHistory(events);
+    const lastExecuted = executedSteps[executedSteps.length - 1];
+    switch (processName) {
+      case pipelineConstants.QC_PROCESS_NAME:
+        completedSteps = qcPipelineSteps.slice(0, qcPipelineSteps.indexOf(lastExecuted) + 1);
+        break;
+      case pipelineConstants.GEM2S_PROCESS_NAME:
+        completedSteps = gem2sPipelineSteps.slice(0, gem2sPipelineSteps.indexOf(lastExecuted) + 1);
+        break;
+      default:
+        logger.error(`unknown process name ${processName}`);
+    }
+
+    response = buildResponse(processName, execution, paramsHash, error, completedSteps);
   } catch (e) {
     // if we get the execution does not exist it means we are using a pulled experiment so
     // just return a mock sucess status
@@ -276,12 +272,11 @@ const getPipelineStatus = async (experimentId, processName) => {
       || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
     ) {
       if (lastStatusResponse) {
-        const updatedLastStatusResponse = getUpdatedLastStatusResponse(
-          paramsHash, lastStatusResponse,
-        );
+        // Update the paramsHash just in case it changed
+        const updatedLastStatusResponse = { ...lastStatusResponse, paramsHash };
 
         logger.log(`Returning status stored in sql because AWS doesn't find arn ${executionArn}`);
-        return { [processName]: updatedLastStatusResponse };
+        response = { [processName]: updatedLastStatusResponse };
       }
 
       logger.log(
@@ -294,29 +289,11 @@ const getPipelineStatus = async (experimentId, processName) => {
       // we set a custom date that can be used by the UI to reliably generate ETag
       const fixedPipelineDate = EXPIRED_EXECUTION_DATE;
 
-      return buildCompletedStatus(processName, fixedPipelineDate, paramsHash);
+      response = buildCompletedStatus(processName, fixedPipelineDate, paramsHash);
+    } else {
+      throw e;
     }
-
-    throw e;
   }
-
-  const events = await getExecutionHistory(stepFunctions, executionArn);
-
-  error = checkError(events);
-  const executedSteps = getStepsFromExecutionHistory(events);
-  const lastExecuted = executedSteps[executedSteps.length - 1];
-  switch (processName) {
-    case pipelineConstants.QC_PROCESS_NAME:
-      completedSteps = qcPipelineSteps.slice(0, qcPipelineSteps.indexOf(lastExecuted) + 1);
-      break;
-    case pipelineConstants.GEM2S_PROCESS_NAME:
-      completedSteps = gem2sPipelineSteps.slice(0, gem2sPipelineSteps.indexOf(lastExecuted) + 1);
-      break;
-    default:
-      logger.error(`unknown process name ${processName}`);
-  }
-
-  const response = buildResponse(processName, execution, paramsHash, error, completedSteps);
 
   // If the new response changed compared to the stored one, update sql one
   if (!_.isEqual(response, lastStatusResponse)) {
