@@ -29,20 +29,26 @@ const { qcStepsWithFilterSettings } = require('../../../enums');
 
 const logger = getLogger();
 
-const getSanitizedProcessingConfig = (processingConfig, samplesOrder) => {
-  const sanitizedProcessingConfig = _.cloneDeep(processingConfig);
+/**
+ *
+ * @param {*} processingConfig The processing config with defaultFilterSettings in each step
+ * @param {*} samplesOrder The sample ids to iterate over
+ * @returns The processing config without defaultFilterSettings in each step
+ */
+const getSlimmedProcessingConfig = (processingConfig, samplesOrder) => {
+  const slimmedProcessingConfig = _.cloneDeep(processingConfig);
 
   logger.log('Sanitizing processing config from sampleIds');
 
   qcStepsWithFilterSettings.forEach((stepName) => {
     samplesOrder.forEach((sampleId) => {
-      delete sanitizedProcessingConfig[stepName][sampleId].defaultFilterSettings;
+      delete slimmedProcessingConfig[stepName][sampleId].defaultFilterSettings;
     });
   });
 
   logger.log('Finished sanitizing processing config from sampleIds');
 
-  return sanitizedProcessingConfig;
+  return slimmedProcessingConfig;
 };
 
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
@@ -62,11 +68,11 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
     });
   }
 
-  const sanitizedProcessingConfig = getSanitizedProcessingConfig(processingConfig, samplesOrder);
+  const slimmedProcessingConfig = getSlimmedProcessingConfig(processingConfig, samplesOrder);
 
   const context = {
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
-    processingConfig: sanitizedProcessingConfig,
+    processingConfig: slimmedProcessingConfig,
     authJWT,
   };
 
