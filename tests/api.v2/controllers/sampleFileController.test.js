@@ -114,7 +114,6 @@ describe('sampleFileController', () => {
     const experimentId = 'experimentId';
     const sampleId = 'sampleId';
     const sampleFileType = 'features10x';
-
     const uploadStatus = 'uploaded';
 
     const mockReq = {
