@@ -211,18 +211,16 @@ const getStepsFromExecutionHistory = (events) => {
 
 /**
  *
- * Checks if the paramsHash in the sql column matches the one in the last_status_response
- * If it does, it doesnt do anything, just returns the received status response
- * If it doesn't, it updates the paramsHash in the status response and returns this updated status
+ * Checks if paramsHash matches the one in lastStatusResponse
+ * If it does, it doesn't do anything, just returns the received status response
+ * If it doesn't, it returns the status with its paramsHash updated to match paramsHash
  *
  * @param {*} paramsHash
  * @param {*} lastStatusResponse
- * @param {*} experimentId
- * @param {*} processName
  * @returns the updated status response
  */
-const generateUpdatedLastStatusResponse = async (
-  paramsHash, lastStatusResponse, experimentId, processName,
+const getUpdatedLastStatusResponse = (
+  paramsHash, lastStatusResponse,
 ) => {
   let lastStatusResponseToReturn = lastStatusResponse;
 
@@ -230,11 +228,6 @@ const generateUpdatedLastStatusResponse = async (
     lastStatusResponseToReturn = _.cloneDeep(lastStatusResponse);
 
     lastStatusResponseToReturn.paramsHash = paramsHash;
-
-    await new ExperimentExecution().update(
-      { experiment_id: experimentId, pipeline_type: processName },
-      { last_status_response: lastStatusResponseToReturn },
-    );
   }
 
   return lastStatusResponseToReturn;
@@ -283,8 +276,8 @@ const getPipelineStatus = async (experimentId, processName) => {
       || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
     ) {
       if (lastStatusResponse) {
-        const updatedLastStatusResponse = await generateUpdatedLastStatusResponse(
-          paramsHash, lastStatusResponse, experimentId, processName,
+        const updatedLastStatusResponse = getUpdatedLastStatusResponse(
+          paramsHash, lastStatusResponse,
         );
 
         logger.log(`Returning status stored in sql because AWS doesn't find arn ${executionArn}`);
