@@ -75,8 +75,7 @@ const updateProcessingConfigWithQCStep = async (taskName, experimentId, output, 
 
     // This is a temporary fix to save defaultFilterSettings calculated in the QC pipeline
     // to patch for old experiments with hardcoded defaultFilterSettings.
-    // Remove this once we're done migrating to the new experiment schema with
-    // defaultFilterSettings
+    // Remove this once we're done migrating to the new experiment schema with defaultFilterSettings
     const sampleOutput = output;
 
     // If auto, use new filter settings as default too,
