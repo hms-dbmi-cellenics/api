@@ -44,7 +44,7 @@
     "ipaddr.js": "^2.0.1",
     "js-yaml": "^3.13.1",
     "json-merger": "^1.1.7",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "jwk-to-pem": "^2.0.5",
     "knex": "^1.0.3",
     "lodash": "^4.17.21",
