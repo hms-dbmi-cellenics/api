@@ -86,7 +86,44 @@ const continueToQC = async (payload) => {
   logger.log('Started qc successfully');
 };
 
+/**
+ *
+ * Works with the subsetSeurat sns notification, it adds to sql
+ * the samples that were just duplicated
+ *
+ * It takes a sampleIdMap object with:
+ * - keys: ids of parent experiment samples that survived the subset
+ * - values: ids of corresponding subset experiment samples
+ *
+ * @param {*} payload
+ *
+ */
+const setupSubsetSamples = async (payload) => {
+  const { sampleIdMap, input: { parentExperimentId, subsetExperimentId } } = payload;
+
+  const {
+    samplesOrder: parentSamplesOrder,
+  } = await new Experiment().findById(parentExperimentId).first();
+
+  const samplesToCloneIds = parentSamplesOrder.filter((id) => sampleIdMap[id]);
+
+  logger.log(`Cloning retained experiment samples from experiment ${parentExperimentId} into subset: ${subsetExperimentId}`);
+
+  const cloneSamplesOrder = await new Sample().copyTo(
+    parentExperimentId, subsetExperimentId, samplesToCloneIds,
+  );
+
+  await new Experiment().updateById(
+    subsetExperimentId,
+    { samples_order: JSON.stringify(cloneSamplesOrder) },
+  );
+
+  logger.log(`Finished creating samples for new subset experiment: ${subsetExperimentId}`);
+  // Add samples that were created
+};
+
 hookRunner.register('uploadToAWS', [continueToQC]);
+hookRunner.register('subsetSeurat', [setupSubsetSamples]);
 
 hookRunner.registerAll([sendNotification]);
 
