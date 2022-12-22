@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getAdminSub Should create a new admin user if admin user does not exist 1`] = `
+Array [
+  Object {
+    "MessageAction": "SUPPRESS",
+    "UserAttributes": Array [
+      Object {
+        "Name": "email",
+        "Value": "admin@biomage.net",
+      },
+      Object {
+        "Name": "name",
+        "Value": "Biomage Admin",
+      },
+      Object {
+        "Name": "email_verified",
+        "Value": "true",
+      },
+    ],
+    "UserPoolId": "trivial-pool-id",
+    "Username": "admin@biomage.net",
+  },
+]
+`;
+
+exports[`getAdminSub Should return the correct admin sub 1`] = `
+Array [
+  Object {
+    "UserPoolId": "trivial-pool-id",
+    "Username": "admin@biomage.net",
+  },
+]
+`;
