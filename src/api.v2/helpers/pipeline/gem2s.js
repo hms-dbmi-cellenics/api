@@ -86,9 +86,7 @@ const continueToQC = async (payload) => {
   logger.log('Started qc successfully');
 };
 
-hookRunner.register('uploadToAWS', [
-  continueToQC,
-]);
+hookRunner.register('uploadToAWS', [continueToQC]);
 
 hookRunner.registerAll([sendNotification]);
 
