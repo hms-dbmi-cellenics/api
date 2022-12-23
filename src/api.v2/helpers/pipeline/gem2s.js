@@ -14,7 +14,7 @@ const HookRunner = require('./hooks/HookRunner');
 
 const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
-const { qcStepsWithFilterSettings } = require('../../enums');
+const { QC_STEPS_WITH_FILTER_SETTINGS } = require('../../constants');
 
 const logger = getLogger('[Gem2sService] - ');
 
@@ -32,7 +32,7 @@ const addDefaultFilterSettings = (experimentId, processingConfig) => {
 
   logger.log('Adding defaultFilterSettings to received processing config');
 
-  qcStepsWithFilterSettings.forEach((stepName) => {
+  QC_STEPS_WITH_FILTER_SETTINGS.forEach((stepName) => {
     const stepConfigSplitBySample = Object.values(processingConfigToReturn[stepName]);
 
     stepConfigSplitBySample.forEach((sampleSettings) => {

@@ -25,7 +25,7 @@ const {
   cancelPreviousPipelines,
   getGeneralPipelineContext,
 } = require('./utils');
-const { qcStepsWithFilterSettings } = require('../../../enums');
+const { QC_STEPS_WITH_FILTER_SETTINGS } = require('../../../constants');
 
 const logger = getLogger();
 
@@ -40,7 +40,7 @@ const getSlimmedProcessingConfig = (processingConfig, samplesOrder) => {
 
   logger.log('Sanitizing processing config from sampleIds');
 
-  qcStepsWithFilterSettings.forEach((stepName) => {
+  QC_STEPS_WITH_FILTER_SETTINGS.forEach((stepName) => {
     samplesOrder.forEach((sampleId) => {
       delete slimmedProcessingConfig[stepName][sampleId].defaultFilterSettings;
     });
