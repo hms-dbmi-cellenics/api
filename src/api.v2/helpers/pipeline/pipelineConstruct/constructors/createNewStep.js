@@ -2,6 +2,7 @@ const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUBSET_PROCESS_NAME } = require('..
 const getGeneralParams = require('./paramsGetters/getGeneralParams');
 const getQCParams = require('./paramsGetters/getQCParams');
 const getSubsetParams = require('./paramsGetters/getSubsetParams');
+const { HANDLE_ERROR_STEP } = require('../../../../constants');
 
 const buildParams = (context, stepArgs) => {
   let stepParams;
@@ -35,6 +36,13 @@ const createNewStep = (context, step, stepArgs) => {
     HeartbeatSeconds: 10,
     Parameters: params,
     ...!step.End && { Next: step.Next },
+    Catch: [
+      {
+        ErrorEquals: ['States.ALL'],
+        ResultPath: '$.error-info',
+        Next: HANDLE_ERROR_STEP,
+      },
+    ],
   };
 };
 
