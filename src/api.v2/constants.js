@@ -9,8 +9,8 @@ const ASSIGN_POD_TO_PIPELINE = 'assignPodToPipeline';
 const PIPELINE_ERROR = 'pipelineError';
 
 // Pipeline step name
-const HANDLE_ERROR_STEP = 'handleErrorStep';
-const END_OF_PIPELINE = 'endOfPipeline';
+const HANDLE_ERROR_STEP = 'HandleErrorStep';
+const END_OF_PIPELINE = 'EndOfPipeline';
 
 // Pipeline states as defined in
 // https://docs.aws.amazon.com/step-functions/latest/apireference/API_DescribeExecution.html

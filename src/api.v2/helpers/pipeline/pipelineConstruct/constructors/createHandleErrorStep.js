@@ -2,13 +2,20 @@ const config = require('../../../../../config');
 const { PIPELINE_ERROR, END_OF_PIPELINE } = require('../../../../constants');
 const utils = require('../utils');
 
-const buildErrorMessage = (sandboxId, experimentId, taskName, processName, activityId) => ({
+const buildErrorMessage = (
+  sandboxId,
+  experimentId,
+  taskName,
+  processName,
+  activityId,
+  authJWT,
+) => ({
   taskName,
   experimentId,
-  // Used by the lambda forwarder to know where to reach the api
   apiUrl: config.publicApiUrl,
   input: {
-    experimentId, // remove once PipelineResponse.v1.yaml is refactored with gem2s one
+    authJWT,
+    experimentId,
     sandboxId,
     activityId,
     processName,
@@ -17,7 +24,7 @@ const buildErrorMessage = (sandboxId, experimentId, taskName, processName, activ
 
 const createHandleErrorStep = (context, step) => {
   const {
-    environment, accountId, sandboxId, activityArn, experimentId, processName,
+    environment, accountId, sandboxId, activityArn, experimentId, processName, authJWT,
   } = context;
 
   const activityId = utils.getActivityId(activityArn);
@@ -26,7 +33,8 @@ const createHandleErrorStep = (context, step) => {
     experimentId,
     PIPELINE_ERROR,
     processName,
-    activityId);
+    activityId,
+    authJWT);
 
   return {
     ...step,

@@ -41,7 +41,7 @@ Object {
     "Type": "Map",
   },
   "ConfigureEmbedding": Object {
-    "Next": "endOfPipeline",
+    "Next": "EndOfPipeline",
     "XConstructorArgs": Object {
       "perSample": false,
       "taskName": "configureEmbedding",
