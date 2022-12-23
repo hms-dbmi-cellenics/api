@@ -113,7 +113,7 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
 
-const generateGem2sParams = async (experimentId, authJWT) => {
+const generateGem2sParams = async (experimentId) => {
   const defaultMetadataValue = 'N.A.';
 
   logger.log('Generating gem2s params');
@@ -154,7 +154,6 @@ const generateGem2sParams = async (experimentId, authJWT) => {
     sampleNames: _.map(samplesInOrder, 'name'),
     sampleS3Paths: s3Paths,
     sampleOptions,
-    authJWT,
   };
 
   const metadataKeys = Object.keys(samples[0].metadata);
@@ -183,7 +182,7 @@ const startGem2sPipeline = async (experimentId, body, authJWT) => {
   logger.log('Creating GEM2S params...');
   const { paramsHash } = body;
 
-  const taskParams = await generateGem2sParams(experimentId, authJWT);
+  const taskParams = await generateGem2sParams(experimentId);
 
   const {
     stateMachineArn,

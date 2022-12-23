@@ -207,7 +207,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-development-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -475,7 +475,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -743,7 +743,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-staging-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -822,6 +822,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -859,6 +860,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -896,6 +898,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -933,6 +936,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -970,6 +974,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -999,6 +1004,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": true,
+        "authJWT": "mockAuthJWT",
         "config": {}
       },
       "Catch": [
@@ -1025,6 +1031,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": false,
+        "authJWT": "mockAuthJWT",
         "config": {}
       },
       "Catch": [
@@ -1043,7 +1050,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-development-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
+        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -1166,6 +1173,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -1203,6 +1211,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -1240,6 +1249,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -1277,6 +1287,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -1314,6 +1325,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -1343,6 +1355,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": true,
+        "authJWT": "mockAuthJWT",
         "config": {}
       },
       "Catch": [
@@ -1369,6 +1382,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": false,
+        "authJWT": "mockAuthJWT",
         "config": {}
       },
       "Catch": [
@@ -1387,7 +1401,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
+        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -1498,6 +1512,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -1535,6 +1550,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -1572,6 +1588,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -1609,6 +1626,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -1646,6 +1664,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -1675,6 +1694,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": true,
+        "authJWT": "mockAuthJWT",
         "config": {}
       },
       "Catch": [
@@ -1701,6 +1721,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": false,
+        "authJWT": "mockAuthJWT",
         "config": {}
       },
       "Catch": [
@@ -1719,7 +1740,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
+        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -1842,6 +1863,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -1879,6 +1901,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -1916,6 +1939,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -1953,6 +1977,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -1990,6 +2015,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             },
             "Catch": [
@@ -2019,6 +2045,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": true,
+        "authJWT": "mockAuthJWT",
         "config": {}
       },
       "Catch": [
@@ -2045,6 +2072,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": false,
+        "authJWT": "mockAuthJWT",
         "config": {}
       },
       "Catch": [
@@ -2063,7 +2091,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-staging-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
+        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
