@@ -32,9 +32,9 @@ const createNewStep = (context, step, stepArgs) => {
     Resource: activityArn,
     ResultPath: null,
     TimeoutSeconds: 10800,
-    HeartbeatSeconds: 90,
+    HeartbeatSeconds: 10,
     Parameters: params,
-    ...!step.End && { Next: step.XNextOnCatch || step.Next },
+    ...!step.End && { Next: step.Next },
   };
 };
 

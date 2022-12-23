@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const crypto = require('crypto');
 const jq = require('node-jq');
 const YAML = require('yaml');
@@ -10,7 +9,6 @@ const config = require('../../../../config');
 const getLogger = require('../../../../utils/getLogger');
 const asyncTimer = require('../../../../utils/asyncTimer');
 
-const constructPipelineStep = require('./constructors/constructPipelineStep');
 const { deleteExperimentPods } = require('../hooks/podCleanup');
 const listJobsToDelete = require('../batch/listJobsToDelete');
 const terminateJobs = require('../batch/terminateJobs');
@@ -191,16 +189,14 @@ const createActivity = async (context) => {
   return activityArn;
 };
 
-const buildStateMachineDefinition = (skeleton, context) => {
-  logger.log('Constructing pipeline steps...');
-  const stateMachine = _.cloneDeepWith(skeleton, (o) => {
-    if (_.isObject(o) && o.XStepType) {
-      return _.omit(constructPipelineStep(context, o), ['XStepType', 'XConstructorArgs', 'XNextOnCatch']);
-    }
-    return undefined;
-  });
-
-  return stateMachine;
+// the full activityArn is too long to be used as a tag (> 63 chars)
+// so we just send the last part of the arn as the rest can be constructed.
+//  E.g.
+// arn:aws:states:eu-west-1:242905224710:activity:pipeline-production-01037a63-a801-4ea4-a93e-...
+// => pipeline-production-01037a63-a801-4ea4-a93e-def76c1e5bd2
+const getActivityId = (activityArn) => {
+  const split = activityArn.split(':');
+  return split[split.length - 1];
 };
 
 const getGeneralPipelineContext = async (experimentId, processName) => {
@@ -222,9 +218,9 @@ const getGeneralPipelineContext = async (experimentId, processName) => {
 };
 
 module.exports = {
-  buildStateMachineDefinition,
   executeStateMachine,
   createActivity,
+  getActivityId,
   createNewStateMachine,
   cancelPreviousPipelines,
   getGeneralPipelineContext,

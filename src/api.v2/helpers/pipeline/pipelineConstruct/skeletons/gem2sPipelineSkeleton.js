@@ -1,3 +1,5 @@
+const { END_OF_PIPELINE } = require('../../../../constants');
+
 const gem2SPipelineSteps = {
   DownloadGem: {
     XStepType: 'create-new-step',
@@ -46,11 +48,7 @@ const gem2SPipelineSteps = {
     XConstructorArgs: {
       taskName: 'uploadToAWS',
     },
-    Next: 'EndOfGem2S',
-  },
-  EndOfGem2S: {
-    Type: 'Pass',
-    End: true,
+    Next: END_OF_PIPELINE,
   },
 };
 

@@ -1,4 +1,5 @@
 const config = require('../../../../../config');
+const { HANDLE_ERROR_STEP } = require('../../../../constants');
 
 const createNewJobIfNotExist = (context, step) => {
   const { accountId, activityArn, processName } = context;
@@ -20,7 +21,7 @@ const createNewJobIfNotExist = (context, step) => {
       {
         ErrorEquals: ['States.ALL'],
         ResultPath: '$.error-info',
-        Next: step.XNextOnCatch || step.Next,
+        Next: HANDLE_ERROR_STEP,
       },
     ],
   };

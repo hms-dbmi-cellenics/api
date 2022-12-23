@@ -18,13 +18,14 @@ const { getQcStepsToRun } = require('./qcHelpers');
 const needsBatchJob = require('../batch/needsBatchJob');
 
 const {
-  buildStateMachineDefinition,
   executeStateMachine,
   createActivity,
   createNewStateMachine,
   cancelPreviousPipelines,
   getGeneralPipelineContext,
 } = require('./utils');
+
+const buildStateMachineDefinition = require('./constructors/buildStateMachineDefinition');
 
 const logger = getLogger();
 

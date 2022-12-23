@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { END_OF_PIPELINE } = require('../../../../constants');
 
 const qcPipelineSteps = {
   ClassifierFilterMap: {
@@ -111,17 +112,15 @@ const qcPipelineSteps = {
       perSample: false,
       taskName: 'configureEmbedding',
     },
-    Next: 'EndOfPipeline',
-  },
-  EndOfPipeline: {
-    Type: 'Pass',
-    End: true,
+    Next: END_OF_PIPELINE,
   },
 };
 
 
 const buildQCPipelineSteps = (qcSteps) => {
-  const stepsToRemove = Object.keys(qcPipelineSteps).filter((step) => !qcSteps.includes(step) && step !== 'EndOfPipeline');
+  const stepsToRemove = Object.keys(qcPipelineSteps)
+    .filter((step) => !qcSteps.includes(step) && step !== END_OF_PIPELINE);
+
   return _.omit(qcPipelineSteps, stepsToRemove);
 };
 

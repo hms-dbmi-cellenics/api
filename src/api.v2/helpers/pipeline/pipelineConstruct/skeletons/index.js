@@ -1,6 +1,7 @@
 const { buildQCPipelineSteps, qcPipelineSteps } = require('./qcPipelineSkeleton');
 const { gem2SPipelineSteps } = require('./gem2sPipelineSkeleton');
 const subsetPipelineSteps = require('./subsetPipelineSteps');
+const { END_OF_PIPELINE, HANDLE_ERROR_STEP } = require('../../../../constants');
 
 
 const createLocalPipeline = (nextStep) => ({
@@ -76,6 +77,20 @@ const buildInitialSteps = (clusterEnv, nextStep, runInBatch) => {
   return assignPipelineToPod(nextStep);
 };
 
+const buildErrorHandlingSteps = () => ({
+  [HANDLE_ERROR_STEP]: {
+    XStepType: 'create-handle-error-step',
+    Next: END_OF_PIPELINE,
+  },
+});
+
+const buildEndOfPipelineStep = () => ({
+  [END_OF_PIPELINE]: {
+    Type: 'Pass',
+    End: true,
+  },
+});
+
 const getStateMachineFirstStep = (clusterEnv, runInBatch) => {
   if (clusterEnv === 'development') {
     return 'DeleteCompletedPipelineWorker';
@@ -95,6 +110,8 @@ const getGem2sPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
   States: {
     ...buildInitialSteps(clusterEnv, 'DownloadGem', runInBatch),
     ...gem2SPipelineSteps,
+    ...buildErrorHandlingSteps(),
+    ...buildEndOfPipelineStep(),
   },
 });
 
@@ -104,6 +121,8 @@ const getQcPipelineSkeleton = (clusterEnv, qcSteps, runInBatch = false) => ({
   States: {
     ...buildInitialSteps(clusterEnv, qcSteps[0], runInBatch),
     ...buildQCPipelineSteps(qcSteps),
+    ...buildErrorHandlingSteps(),
+    ...buildEndOfPipelineStep(),
   },
 });
 
@@ -113,6 +132,8 @@ const getSubsetPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
   States: {
     ...buildInitialSteps(clusterEnv, 'SubsetSeurat', runInBatch),
     ...subsetPipelineSteps,
+    ...buildErrorHandlingSteps(),
+    ...buildEndOfPipelineStep(),
   },
 });
 

@@ -1,6 +1,7 @@
 const deleteCompletedJobs = require('./deleteCompleteJobs');
 const createNewJobIfNotExist = require('./createNewJobIfNotExist');
 const createNewStep = require('./createNewStep');
+const createHandleErrorStep = require('./createHandleErrorStep');
 const submitBatchJob = require('./submitBatchJob');
 const {
   requestPod, waitForPod,
@@ -31,6 +32,9 @@ const constructPipelineStep = (context, step) => {
     // used both locally and in aws
     case 'create-new-step': {
       return createNewStep(context, step, args);
+    }
+    case 'create-handle-error-step': {
+      return createHandleErrorStep(context, step);
     }
     default: {
       throw new Error(`Invalid state type specified: ${stepType}`);
