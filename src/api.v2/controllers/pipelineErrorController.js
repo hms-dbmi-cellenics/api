@@ -11,6 +11,7 @@ const logger = getLogger('[PipelineErrorController] - ');
 
 const insertExperimentError = async (parsedMessage, io) => {
   console.log('*** inside insertExperimentError');
+  console.log('*** message', parsedMessage);
 
   const { experimentId, message } = parsedMessage;
   const { processName } = message.input;
@@ -59,8 +60,8 @@ const handleResponse = async (req, res) => {
   const isSnsNotification = parsedMessage !== undefined;
   if (isSnsNotification) {
     try {
-      insertExperimentError(io, parsedMessage);
-      sendNotification(parsedMessage);
+      await insertExperimentError(parsedMessage, io);
+      await sendNotification(parsedMessage);
     } catch (e) {
       logger.error(
         'pipeline error response handler failed with error: ', e,
