@@ -41,7 +41,7 @@ Object {
     "Type": "Map",
   },
   "ConfigureEmbedding": Object {
-    "Next": "EndOfPipeline",
+    "Next": "endOfPipeline",
     "XConstructorArgs": Object {
       "perSample": false,
       "taskName": "configureEmbedding",
@@ -75,10 +75,6 @@ Object {
     "Next": "DataIntegration",
     "ResultPath": null,
     "Type": "Map",
-  },
-  "EndOfPipeline": Object {
-    "End": true,
-    "Type": "Pass",
   },
   "MitochondrialContentFilterMap": Object {
     "ItemsPath": "$.samples",
