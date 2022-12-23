@@ -52,7 +52,16 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "downloadGem",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "PreProcessing": {
       "Next": "EmptyDrops",
@@ -66,7 +75,16 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "preproc",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "EmptyDrops": {
       "Next": "DoubletScores",
@@ -80,7 +98,16 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "emptyDrops",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "DoubletScores": {
       "Next": "CreateSeurat",
@@ -94,7 +121,16 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "doubletScores",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "CreateSeurat": {
       "Next": "PrepareExperiment",
@@ -108,7 +144,16 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "createSeurat",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "PrepareExperiment": {
       "Next": "UploadToAWS",
@@ -122,7 +167,16 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "prepareExperiment",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "UploadToAWS": {
       "Next": "endOfPipeline",
@@ -136,7 +190,16 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "uploadToAWS",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "handleErrorStep": {
       "Next": "endOfPipeline",
@@ -257,7 +320,16 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "downloadGem",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "PreProcessing": {
       "Next": "EmptyDrops",
@@ -271,7 +343,16 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "preproc",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "EmptyDrops": {
       "Next": "DoubletScores",
@@ -285,7 +366,16 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "emptyDrops",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "DoubletScores": {
       "Next": "CreateSeurat",
@@ -299,7 +389,16 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "doubletScores",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "CreateSeurat": {
       "Next": "PrepareExperiment",
@@ -313,7 +412,16 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "createSeurat",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "PrepareExperiment": {
       "Next": "UploadToAWS",
@@ -327,7 +435,16 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "prepareExperiment",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "UploadToAWS": {
       "Next": "endOfPipeline",
@@ -341,7 +458,16 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "uploadToAWS",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "handleErrorStep": {
       "Next": "endOfPipeline",
@@ -462,7 +588,16 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "downloadGem",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "PreProcessing": {
       "Next": "EmptyDrops",
@@ -476,7 +611,16 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "preproc",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "EmptyDrops": {
       "Next": "DoubletScores",
@@ -490,7 +634,16 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "emptyDrops",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "DoubletScores": {
       "Next": "CreateSeurat",
@@ -504,7 +657,16 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "doubletScores",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "CreateSeurat": {
       "Next": "PrepareExperiment",
@@ -518,7 +680,16 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "createSeurat",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "PrepareExperiment": {
       "Next": "UploadToAWS",
@@ -532,7 +703,16 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "prepareExperiment",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "UploadToAWS": {
       "Next": "endOfPipeline",
@@ -546,7 +726,16 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "uploadToAWS",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "handleErrorStep": {
       "Next": "endOfPipeline",
@@ -634,7 +823,16 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -662,7 +860,16 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -690,7 +897,16 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -718,7 +934,16 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -746,7 +971,16 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -766,7 +1000,16 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "sampleUuid": "",
         "uploadCountMatrix": true,
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "ConfigureEmbedding": {
       "Next": "endOfPipeline",
@@ -783,7 +1026,16 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "sampleUuid": "",
         "uploadCountMatrix": false,
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "handleErrorStep": {
       "Next": "endOfPipeline",
@@ -915,7 +1167,16 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -943,7 +1204,16 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -971,7 +1241,16 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -999,7 +1278,16 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -1027,7 +1315,16 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -1047,7 +1344,16 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "sampleUuid": "",
         "uploadCountMatrix": true,
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "ConfigureEmbedding": {
       "Next": "endOfPipeline",
@@ -1064,7 +1370,16 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "sampleUuid": "",
         "uploadCountMatrix": false,
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "handleErrorStep": {
       "Next": "endOfPipeline",
@@ -1184,7 +1499,16 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -1212,7 +1536,16 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -1240,7 +1573,16 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -1268,7 +1610,16 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -1296,7 +1647,16 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -1316,7 +1676,16 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "sampleUuid": "",
         "uploadCountMatrix": true,
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "ConfigureEmbedding": {
       "Next": "endOfPipeline",
@@ -1333,7 +1702,16 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "sampleUuid": "",
         "uploadCountMatrix": false,
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "handleErrorStep": {
       "Next": "endOfPipeline",
@@ -1465,7 +1843,16 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -1493,7 +1880,16 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -1521,7 +1917,16 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -1549,7 +1954,16 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -1577,7 +1991,16 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "config": {}
-            }
+            },
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error-info",
+                "Next": "handleErrorStep"
+              }
+            ]
           }
         }
       }
@@ -1597,7 +2020,16 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "sampleUuid": "",
         "uploadCountMatrix": true,
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "ConfigureEmbedding": {
       "Next": "endOfPipeline",
@@ -1614,7 +2046,16 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "sampleUuid": "",
         "uploadCountMatrix": false,
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "handleErrorStep"
+        }
+      ]
     },
     "handleErrorStep": {
       "Next": "endOfPipeline",
