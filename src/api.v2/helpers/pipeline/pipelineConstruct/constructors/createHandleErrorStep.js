@@ -23,6 +23,8 @@ const buildErrorMessage = (
 });
 
 const createHandleErrorStep = (context, step) => {
+  console.log('*** context', context);
+
   const {
     environment, accountId, sandboxId, activityArn, experimentId, processName, authJWT,
   } = context;
@@ -35,6 +37,8 @@ const createHandleErrorStep = (context, step) => {
     processName,
     activityId,
     authJWT);
+
+  console.log('*** errorMessage', errorMessage);
 
   return {
     ...step,

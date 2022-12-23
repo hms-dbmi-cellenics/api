@@ -99,11 +99,12 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
   );
 };
 
-const createGem2SPipeline = async (experimentId, taskParams) => {
+const createGem2SPipeline = async (experimentId, taskParams, authJWT) => {
   const context = {
     ...(await getGeneralPipelineContext(experimentId, GEM2S_PROCESS_NAME)),
     processingConfig: {},
     taskParams,
+    authJWT,
   };
 
   await cancelPreviousPipelines(experimentId);
