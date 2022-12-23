@@ -9,12 +9,11 @@ const sendNotification = require('../helpers/pipeline/hooks/sendNotification');
 
 const logger = getLogger('[PipelineErrorController] - ');
 
-const insertExperimentError = async (parsedMessage, io) => {
+const insertExperimentError = async (message, io) => {
   console.log('*** inside insertExperimentError');
-  console.log('*** message', parsedMessage);
+  console.log('*** message', message);
 
-  const { experimentId, message } = parsedMessage;
-  const { processName } = message.input;
+  const { experimentId, input: { processName } } = message;
 
   const statusRes = await getPipelineStatus(experimentId, processName);
   const messageForClient = _.cloneDeep(message);
