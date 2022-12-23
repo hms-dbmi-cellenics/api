@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const AWSXRay = require('aws-xray-sdk');
 
 const validateRequest = require('../../../utils/schema-validator');
@@ -73,14 +74,16 @@ const updateProcessingConfigWithQCStep = async (taskName, experimentId, output, 
   if (sampleUuid !== '') {
     const { auto } = output.config;
 
+    const config = _.cloneDeep(output.config);
+
     // - If auto = true, temporary fix to save defaultFilterSettings calculated in the QC
     //  pipeline to patch for old experiments with hardcoded defaultFilterSettings.
     // Remove this once we're done migrating to the new experiment schema with defaultFilterSettings
     // - If auto = false, reuse the previous defaultFilterSettings
 
     // eslint-disable-next-line no-param-reassign
-    output.config.defaultFilterSettings = auto
-      ? output.config.filterSettings
+    config.defaultFilterSettings = auto
+      ? config.filterSettings
       : previousConfig[taskName][sampleUuid].defaultFilterSettings;
 
     await experiment.updateProcessingConfig(experimentId, [
@@ -88,18 +91,22 @@ const updateProcessingConfigWithQCStep = async (taskName, experimentId, output, 
         name: taskName,
         body: {
           ...previousConfig[taskName],
-          [sampleUuid]: { ...output.config },
+          [sampleUuid]: { ...config },
         },
       },
     ]);
-  } else {
-    await experiment.updateProcessingConfig(experimentId, [
-      {
-        name: taskName,
-        body: output.config,
-      },
-    ]);
+
+    return config;
   }
+
+  await experiment.updateProcessingConfig(experimentId, [
+    {
+      name: taskName,
+      body: output.config,
+    },
+  ]);
+
+  return output.config;
 };
 
 const sendUpdateToSubscribed = async (experimentId, message, output, error, io) => {
@@ -135,6 +142,8 @@ const handleQCResponse = async (io, message) => {
   const { error = false } = message.response || {};
 
   let qcStepOutput = null;
+  let updatedConfig = null;
+
   // if there aren't errors proceed with the updates
   if (!error && 'output' in message) {
     const { input: { sampleUuid, taskName } } = message;
@@ -142,10 +151,18 @@ const handleQCResponse = async (io, message) => {
     qcStepOutput = await getOutputFromS3(message);
 
     await updatePlotDataKeys(taskName, experimentId, qcStepOutput);
-    await updateProcessingConfigWithQCStep(taskName, experimentId, qcStepOutput, sampleUuid);
+
+    updatedConfig = await updateProcessingConfigWithQCStep(
+      taskName, experimentId, qcStepOutput, sampleUuid,
+    );
   }
+
+  const qcStepOutputForClient = updatedConfig
+    ? { ...qcStepOutput, config: updatedConfig }
+    : qcStepOutput;
+
   // we want to send the update to the subscribed both in successful and error case
-  await sendUpdateToSubscribed(experimentId, message, qcStepOutput, error, io);
+  await sendUpdateToSubscribed(experimentId, message, qcStepOutputForClient, error, io);
 };
 
 module.exports = handleQCResponse;
