@@ -142,7 +142,7 @@ const createSubsetPipeline = async (
   const lastStepsParams = { experimentName: toExperimentName, authJWT };
 
   const context = {
-    ...(await getGeneralPipelineContext(fromExperimentId, SUBSET_PROCESS_NAME)),
+    ...(await getGeneralPipelineContext(toExperimentId, SUBSET_PROCESS_NAME)),
     taskParams: {
       subsetSeurat: stepsParams,
       prepareExperiment: lastStepsParams,
