@@ -34,18 +34,14 @@ const logger = getLogger();
  * @param {*} samplesOrder The sample ids to iterate over
  * @returns The processing config without defaultFilterSettings in each step
  */
-const getSlimmedProcessingConfig = (processingConfig, samplesOrder) => {
+const withoutDefaultFilterSettings = (processingConfig, samplesOrder) => {
   const slimmedProcessingConfig = _.cloneDeep(processingConfig);
-
-  logger.log('Sanitizing processing config from sampleIds');
 
   qcStepsWithFilterSettings.forEach((stepName) => {
     samplesOrder.forEach((sampleId) => {
       delete slimmedProcessingConfig[stepName][sampleId].defaultFilterSettings;
     });
   });
-
-  logger.log('Finished sanitizing processing config from sampleIds');
 
   return slimmedProcessingConfig;
 };
@@ -67,7 +63,9 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
     });
   }
 
-  const slimmedProcessingConfig = getSlimmedProcessingConfig(processingConfig, samplesOrder);
+  logger.log(`Removing defaultFilterSettings for ${experimentId}`);
+  const slimmedProcessingConfig = withoutDefaultFilterSettings(processingConfig, samplesOrder);
+  logger.log(`Finished removing defaultFilterSettings for ${experimentId}`);
 
   const context = {
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
