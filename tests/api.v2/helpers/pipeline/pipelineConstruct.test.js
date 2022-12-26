@@ -89,15 +89,6 @@ describe('test for pipeline services', () => {
     },
   ];
 
-  const taskParams = {
-    projectId: 'test-project',
-    experimentName: 'valerio-massala',
-    organism: null,
-    input: { type: '10x' },
-    sampleIds: ['3af6b6bb-a1aa-4375-9c2c-c112bada56ca'],
-    sampleNames: ['sample-1'],
-  };
-
   it('Create QC pipeline works', async () => {
     const describeClusterSpy = jest.fn((x) => x);
     AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
@@ -222,7 +213,18 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-machine' });
     });
 
-    await createGem2SPipeline('testExperimentId', taskParams);
+    await createGem2SPipeline(
+      'testExperimentId',
+      {
+        projectId: 'test-project',
+        experimentName: 'valerio-massala',
+        organism: null,
+        input: { type: '10x' },
+        sampleIds: ['3af6b6bb-a1aa-4375-9c2c-c112bada56ca'],
+        sampleNames: ['sample-1'],
+      },
+    );
+
     expect(describeClusterSpy).toMatchSnapshot();
 
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
@@ -266,7 +268,7 @@ describe('test for pipeline services', () => {
       { first: () => Promise.resolve(mockExperimentRow) },
     );
 
-    await createSubsetPipeline('testExperimentId', taskParams);
+    await createSubsetPipeline('fromExperimentId', 'toExperimentId', 'toExperimentName', ['louvain-1', 'louvain-2'], 'mockAuthJWT');
     expect(describeClusterSpy).toMatchSnapshot();
 
     expect(createStateMachineSpy.mock.calls).toMatchSnapshot('createStateMachineSpy calls');
