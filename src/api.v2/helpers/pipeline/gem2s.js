@@ -91,7 +91,7 @@ const continueToQC = async (payload) => {
  * Works with the subsetSeurat sns notification, it adds to sql
  * the samples that were just duplicated
  *
- * It takes a sampleIdMap object with:
+ * Within payload, takes a sampleIdMap object with:
  * - keys: ids of parent experiment samples that survived the subset
  * - values: ids of corresponding subset experiment samples
  *
