@@ -32,6 +32,7 @@ jest.mock('crypto', () => ({
 
 jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/qcHelpers', () => ({
   getQcStepsToRun: jest.fn(() => mockStepNames),
+  ...jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/qcHelpers'),
 }));
 
 jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils', () => ({
