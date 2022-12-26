@@ -14,7 +14,6 @@ const HookRunner = require('./hooks/HookRunner');
 
 const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
-const { MethodNotAllowedError } = require('../../../utils/responses');
 
 const logger = getLogger('[Gem2sService] - ');
 
@@ -166,10 +165,6 @@ const generateGem2sParams = async (experimentId, authJWT) => {
     new Experiment().findById(experimentId).first(),
     new Sample().getSamples(experimentId),
   ]);
-
-  if (experiment.canRerunGem2s === false) {
-    throw new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`);
-  }
 
   const samplesInOrder = experiment.samplesOrder.map(
     (sampleId) => _.find(samples, { id: sampleId }),
