@@ -63,9 +63,9 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
     });
   }
 
-  logger.log(`Removing defaultFilterSettings for ${experimentId}`);
+  logger.log(`Removing defaultFilterSettings for experiment: ${experimentId}`);
   const slimmedProcessingConfig = withoutDefaultFilterSettings(processingConfig, samplesOrder);
-  logger.log(`Finished removing defaultFilterSettings for ${experimentId}`);
+  logger.log(`Finished removing defaultFilterSettings for experiment: ${experimentId}`);
 
   const context = {
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
