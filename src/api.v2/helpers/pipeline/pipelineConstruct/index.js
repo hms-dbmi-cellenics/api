@@ -14,7 +14,7 @@ const getLogger = require('../../../../utils/getLogger');
 const {
   getGem2sPipelineSkeleton, getQcPipelineSkeleton, getSubsetPipelineSkeleton,
 } = require('./skeletons');
-const { getQcStepsToRun } = require('./qcHelpers');
+const { getQcStepsToRun, qcStepsWithFilterSettings } = require('./qcHelpers');
 const needsBatchJob = require('../batch/needsBatchJob');
 
 const {
@@ -25,7 +25,6 @@ const {
   cancelPreviousPipelines,
   getGeneralPipelineContext,
 } = require('./utils');
-const { QC_STEPS_WITH_FILTER_SETTINGS } = require('../../../constants');
 
 const logger = getLogger();
 
@@ -40,7 +39,7 @@ const getSlimmedProcessingConfig = (processingConfig, samplesOrder) => {
 
   logger.log('Sanitizing processing config from sampleIds');
 
-  QC_STEPS_WITH_FILTER_SETTINGS.forEach((stepName) => {
+  qcStepsWithFilterSettings.forEach((stepName) => {
     samplesOrder.forEach((sampleId) => {
       delete slimmedProcessingConfig[stepName][sampleId].defaultFilterSettings;
     });

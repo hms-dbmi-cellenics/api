@@ -33,14 +33,6 @@ const ACCOUNT_ID = {
   HMS: '160782110667',
 };
 
-const QC_STEPS_WITH_FILTER_SETTINGS = [
-  'cellSizeDistribution',
-  'mitochondrialContent',
-  'classifier',
-  'numGenesVsNumUmis',
-  'doubletScores',
-];
-
 module.exports = {
   QC_PROCESS_NAME,
   GEM2S_PROCESS_NAME,
@@ -57,5 +49,4 @@ module.exports = {
   ASSIGN_POD_TO_PIPELINE,
   EXPIRED_EXECUTION_DATE,
   ACCOUNT_ID,
-  QC_STEPS_WITH_FILTER_SETTINGS,
 };
