@@ -96,6 +96,7 @@ const updateProcessingConfigWithQCStep = async (taskName, experimentId, output, 
       },
     ]);
 
+    // Return the updated config, it now has defaultFilterSettings added
     return config;
   }
 
@@ -106,6 +107,7 @@ const updateProcessingConfigWithQCStep = async (taskName, experimentId, output, 
     },
   ]);
 
+  // Non-sample specific config updates don't require modifications
   return output.config;
 };
 
@@ -142,7 +144,6 @@ const handleQCResponse = async (io, message) => {
   const { error = false } = message.response || {};
 
   let qcStepOutput = null;
-  let updatedConfig = null;
 
   // if there aren't errors proceed with the updates
   if (!error && 'output' in message) {
@@ -152,17 +153,13 @@ const handleQCResponse = async (io, message) => {
 
     await updatePlotDataKeys(taskName, experimentId, qcStepOutput);
 
-    updatedConfig = await updateProcessingConfigWithQCStep(
+    qcStepOutput.config = await updateProcessingConfigWithQCStep(
       taskName, experimentId, qcStepOutput, sampleUuid,
     );
   }
 
-  const qcStepOutputForClient = updatedConfig
-    ? { ...qcStepOutput, config: updatedConfig }
-    : qcStepOutput;
-
   // we want to send the update to the subscribed both in successful and error case
-  await sendUpdateToSubscribed(experimentId, message, qcStepOutputForClient, error, io);
+  await sendUpdateToSubscribed(experimentId, message, qcStepOutput, error, io);
 };
 
 module.exports = handleQCResponse;
