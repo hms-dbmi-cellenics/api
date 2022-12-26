@@ -24,6 +24,7 @@ const experimentFields = [
   'processing_config',
   'notify_by_email',
   'pipeline_version',
+  'can_rerun_gem2s',
   'created_at',
   'updated_at',
 ];
@@ -41,6 +42,7 @@ class Experiment extends BasicModel {
       'samples_order',
       'notify_by_email',
       'pipeline_version',
+      'can_rerun_gem2s',
       'created_at',
       'updated_at',
     ];
