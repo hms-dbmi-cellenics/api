@@ -50,14 +50,13 @@ const runSubset = async (req, res) => {
 
   await experimentExecutionClient.upsert(
     {
-      experiment_id: experimentId,
+      experiment_id: toExperimentId,
       pipeline_type: GEM2S_PROCESS_NAME,
     },
     newExecution,
   );
 
-
-  logger.log(`Started subset for experiment ${experimentId} successfully`);
+  logger.log(`Started subset for experiment ${experimentId} successfully, subset experimentId: ${toExperimentId}`);
 
   res.json(toExperimentId);
 };
