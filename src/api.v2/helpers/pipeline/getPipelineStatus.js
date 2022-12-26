@@ -273,12 +273,9 @@ const getPipelineStatus = async (experimentId, processName) => {
       || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
     ) {
       if (lastStatusResponse) {
-        // Update the paramsHash just in case it changed
-        const updatedLastStatusResponse = {
-          [processName]: { ...lastStatusResponse[processName], paramsHash },
-        };
         logger.log(`Returning status stored in sql because AWS doesn't find arn ${executionArn}`);
-        response = updatedLastStatusResponse;
+        // Update the paramsHash just in case it changed
+        response = { [processName]: { ...lastStatusResponse[processName], paramsHash } };
       } else {
         logger.log(
           `Returning a mocked success ${processName} - pipeline status because ARN ${executionArn} `
