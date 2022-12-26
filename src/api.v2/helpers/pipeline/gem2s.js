@@ -110,7 +110,7 @@ const setupSubsetSamples = async (payload) => {
   logger.log(`Cloning retained experiment samples from experiment ${parentExperimentId} into subset: ${subsetExperimentId}`);
 
   const cloneSamplesOrder = await new Sample().copyTo(
-    parentExperimentId, subsetExperimentId, samplesToCloneIds,
+    parentExperimentId, subsetExperimentId, samplesToCloneIds, sampleIdMap,
   );
 
   await new Experiment().updateById(
