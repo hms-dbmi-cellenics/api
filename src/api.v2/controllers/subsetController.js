@@ -1,8 +1,10 @@
 const sqlClient = require('../../sql/sqlClient');
 const getLogger = require('../../utils/getLogger');
+const { GEM2S_PROCESS_NAME } = require('../constants');
 
 const { createSubsetPipeline } = require('../helpers/pipeline/pipelineConstruct');
 const Experiment = require('../model/Experiment');
+const ExperimentExecution = require('../model/ExperimentExecution');
 const UserAccess = require('../model/UserAccess');
 
 const logger = getLogger('[SubsetController] - ');
@@ -30,7 +32,7 @@ const runSubset = async (req, res) => {
 
   logger.log(`Created ${toExperimentId}, subsetting experiment ${fromExperimentId} to it`);
 
-  await createSubsetPipeline(
+  const { stateMachineArn, executionArn } = await createSubsetPipeline(
     fromExperimentId,
     toExperimentId,
     name,
@@ -38,7 +40,24 @@ const runSubset = async (req, res) => {
     req.headers.authorization,
   );
 
-  logger.log(`Started subset for experiment ${experimentId} successfully, `);
+  const newExecution = {
+    params_hash: null,
+    state_machine_arn: stateMachineArn,
+    execution_arn: executionArn,
+  };
+
+  const experimentExecutionClient = new ExperimentExecution();
+
+  await experimentExecutionClient.upsert(
+    {
+      experiment_id: experimentId,
+      pipeline_type: GEM2S_PROCESS_NAME,
+    },
+    newExecution,
+  );
+
+
+  logger.log(`Started subset for experiment ${experimentId} successfully`);
 
   res.json(toExperimentId);
 };
