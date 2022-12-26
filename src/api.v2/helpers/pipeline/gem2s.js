@@ -167,7 +167,7 @@ const generateGem2sParams = async (experimentId, authJWT) => {
     new Sample().getSamples(experimentId),
   ]);
 
-  if (!experiment.canRerunGem2s) {
+  if (experiment.canRerunGem2s === false) {
     throw new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`);
   }
 
