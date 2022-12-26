@@ -23,6 +23,14 @@ const stepNames = [
 ];
 
 
+const qcStepsWithFilterSettings = [
+  'cellSizeDistribution',
+  'mitochondrialContent',
+  'classifier',
+  'numGenesVsNumUmis',
+  'doubletScores',
+];
+
 // checks whether an experiment has available filtered cell IDs in S3
 // meaning it can be started from any step in the QC pipeline without
 // needing to re-run previous steps
@@ -70,4 +78,5 @@ const getQcStepsToRun = async (experimentId, processingConfigUpdates) => {
 
 module.exports = {
   getQcStepsToRun,
+  qcStepsWithFilterSettings,
 };
