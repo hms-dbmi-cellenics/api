@@ -1,6 +1,7 @@
 const AWSXRay = require('aws-xray-sdk');
 
 const { startGem2sPipeline, handleGem2sResponse } = require('../helpers/pipeline/gem2s');
+const handlePipelineError = require('../helpers/pipeline/pipelineErrorHandler');
 const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parseSNSMessage');
@@ -39,7 +40,11 @@ const handleResponse = async (req, res) => {
   const isSnsNotification = parsedMessage !== undefined;
   if (isSnsNotification) {
     try {
-      await handleGem2sResponse(io, parsedMessage);
+      if (parsedMessage.input.error) {
+        await handlePipelineError(io, parsedMessage);
+      } else {
+        await handleGem2sResponse(io, parsedMessage);
+      }
     } catch (e) {
       logger.error(
         'gem2s pipeline response handler failed with error: ', e,

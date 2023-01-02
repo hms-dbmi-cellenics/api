@@ -1,4 +1,5 @@
 const config = require('../../../../../config');
+const { PIPELINE_ERROR } = require('../../../../constants');
 const { getActivityId } = require('../utils');
 
 const buildErrorMessage = (
@@ -6,6 +7,7 @@ const buildErrorMessage = (
   experimentId,
   taskName,
   processName,
+  errorType,
   activityId,
   authJWT,
 ) => ({
@@ -15,6 +17,8 @@ const buildErrorMessage = (
   input: {
     authJWT,
     experimentId,
+    error: errorType,
+    taskName,
     sandboxId,
     activityId,
     processName,
@@ -22,8 +26,6 @@ const buildErrorMessage = (
 });
 
 const createHandleErrorStep = (context, step, args) => {
-  console.log('*** context', context);
-  console.log('*** args', args);
   const {
     environment,
     accountId,
@@ -41,13 +43,12 @@ const createHandleErrorStep = (context, step, args) => {
   const errorMessage = buildErrorMessage(
     sandboxId,
     experimentId,
-    errorType,
+    PIPELINE_ERROR,
     processName,
+    errorType,
     activityId,
     authJWT,
   );
-
-  console.log('*** errorMessage', errorMessage);
 
   return {
     ...step,
@@ -59,7 +60,8 @@ const createHandleErrorStep = (context, step, args) => {
       MessageAttributes: {
         type: {
           DataType: 'String',
-          StringValue: 'PipelineError',
+          // Publish to pipeline result endpoint
+          StringValue: 'PipelineResponse',
         },
       },
     },

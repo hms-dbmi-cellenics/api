@@ -4,6 +4,7 @@ const AWSXRay = require('aws-xray-sdk');
 const { OK } = require('../../utils/responses');
 
 const { createQCPipeline } = require('../helpers/pipeline/pipelineConstruct');
+const handlePipelineError = require('../helpers/pipeline/pipelineErrorHandler');
 const handleQCResponse = require('../helpers/pipeline/handleQCResponse');
 
 const getLogger = require('../../utils/getLogger');
@@ -46,7 +47,11 @@ const handleResponse = async (req, res) => {
   const isSnsNotification = parsedMessage !== undefined;
   if (isSnsNotification) {
     try {
-      await handleQCResponse(io, parsedMessage);
+      if (parsedMessage.input.error) {
+        await handlePipelineError(io, parsedMessage);
+      } else {
+        await handleQCResponse(io, parsedMessage);
+      }
     } catch (e) {
       logger.error(
         'qc pipeline response handler failed with error: ', e,
