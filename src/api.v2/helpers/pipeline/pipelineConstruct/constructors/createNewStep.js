@@ -32,8 +32,7 @@ const createNewStep = (context, step, stepArgs) => {
     Resource: activityArn,
     ResultPath: null,
     TimeoutSeconds: 10800,
-    // REMINDER: REVERT THIS TO 90 BEFORE MERGING
-    HeartbeatSeconds: 10,
+    HeartbeatSeconds: 90,
     Parameters: params,
     ...!step.End && { Next: step.Next },
     Catch: [
