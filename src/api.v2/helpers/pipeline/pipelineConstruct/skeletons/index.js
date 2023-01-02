@@ -80,7 +80,10 @@ const buildInitialSteps = (clusterEnv, nextStep, runInBatch) => {
 const buildErrorHandlingSteps = () => ({
   [HANDLE_ERROR_STEP]: {
     XStepType: 'create-handle-error-step',
-    Next: END_OF_PIPELINE,
+    Next: 'MarkAsFailed',
+  },
+  MarkAsFailed: {
+    XStepType: 'mark-as-failed',
   },
 });
 

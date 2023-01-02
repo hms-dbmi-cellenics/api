@@ -216,6 +216,9 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         }
       }
     },
+    "MarkAsFailed": {
+      "Type": "Fail"
+    },
     "EndOfPipeline": {
       "Type": "Pass",
       "End": true
@@ -484,6 +487,9 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         }
       }
     },
+    "MarkAsFailed": {
+      "Type": "Fail"
+    },
     "EndOfPipeline": {
       "Type": "Pass",
       "End": true
@@ -751,6 +757,9 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
           }
         }
       }
+    },
+    "MarkAsFailed": {
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -1058,6 +1067,9 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           }
         }
       }
+    },
+    "MarkAsFailed": {
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -1410,6 +1422,9 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         }
       }
     },
+    "MarkAsFailed": {
+      "Type": "Fail"
+    },
     "EndOfPipeline": {
       "Type": "Pass",
       "End": true
@@ -1748,6 +1763,9 @@ exports[`non-tests to document the State Machines - qc production with specific 
           }
         }
       }
+    },
+    "MarkAsFailed": {
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -2099,6 +2117,9 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
           }
         }
       }
+    },
+    "MarkAsFailed": {
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",

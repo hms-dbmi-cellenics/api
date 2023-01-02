@@ -2,6 +2,7 @@ const deleteCompletedJobs = require('./deleteCompleteJobs');
 const createNewJobIfNotExist = require('./createNewJobIfNotExist');
 const createNewStep = require('./createNewStep');
 const createHandleErrorStep = require('./createHandleErrorStep');
+const createFailedStep = require('./createFailedStep');
 const submitBatchJob = require('./submitBatchJob');
 const {
   requestPod, waitForPod,
@@ -35,6 +36,9 @@ const constructPipelineStep = (context, step) => {
     }
     case 'create-handle-error-step': {
       return createHandleErrorStep(context, step);
+    }
+    case 'mark-as-failed': {
+      return createFailedStep(context, step);
     }
     default: {
       throw new Error(`Invalid state type specified: ${stepType}`);
