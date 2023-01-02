@@ -81,6 +81,23 @@ properties:
       - method
       - numPCs
       - excludeGeneCategories
+  downsampling:
+    type: object
+    required:
+      - method
+      - methodSettings
+    properties:
+      method:
+        type: string
+        minLength: 1
+      methodSettings:
+        type: object
+        properties:
+          geosketch:
+            type: object
+            properties:
+              percentageToKeep:
+                type: number
 required:
   - dataIntegration
   - dimensionalityReduction

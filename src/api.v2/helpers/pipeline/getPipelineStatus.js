@@ -86,7 +86,6 @@ const buildCompletedStatus = (processName, date, paramsHash) => {
   return buildResponse(processName, execution, paramsHash, error, completedSteps);
 };
 
-
 const getExecutionHistory = async (stepFunctions, executionArn) => {
   let events = [];
   let nextToken;
@@ -236,10 +235,30 @@ const getPipelineStatus = async (experimentId, processName) => {
 
   const { executionArn = null, paramsHash = null, lastStatusResponse } = pipelineExecution;
 
+  let response;
+
   try {
     execution = await stepFunctions.describeExecution({
       executionArn,
     }).promise();
+
+    const events = await getExecutionHistory(stepFunctions, executionArn);
+
+    error = checkError(events);
+    const executedSteps = getStepsFromExecutionHistory(events);
+    const lastExecuted = executedSteps[executedSteps.length - 1];
+    switch (processName) {
+      case pipelineConstants.QC_PROCESS_NAME:
+        completedSteps = qcPipelineSteps.slice(0, qcPipelineSteps.indexOf(lastExecuted) + 1);
+        break;
+      case pipelineConstants.GEM2S_PROCESS_NAME:
+        completedSteps = gem2sPipelineSteps.slice(0, gem2sPipelineSteps.indexOf(lastExecuted) + 1);
+        break;
+      default:
+        logger.error(`unknown process name ${processName}`);
+    }
+
+    response = buildResponse(processName, execution, paramsHash, error, completedSteps);
   } catch (e) {
     // if we get the execution does not exist it means we are using a pulled experiment so
     // just return a mock sucess status
@@ -248,48 +267,32 @@ const getPipelineStatus = async (experimentId, processName) => {
     // the pipeline losing annotations. This will be addressed checking if the
     // processed files exist in S3 to avoid allowing users to move onwards when the pipeline was not
     // actually run.
+
     if (
       (e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
       || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)
     ) {
       if (lastStatusResponse) {
         logger.log(`Returning status stored in sql because AWS doesn't find arn ${executionArn}`);
-        return { [processName]: lastStatusResponse };
+        // Update the paramsHash just in case it changed
+        response = { [processName]: { ...lastStatusResponse[processName], paramsHash } };
+      } else {
+        logger.log(
+          `Returning a mocked success ${processName} - pipeline status because ARN ${executionArn} `
+          + `does not exist in aws and we are running in ${config.clusterEnv} so it means it's either a `
+          + 'a pulled experiment or this is a very old legacy experiment from before sql that (legacy) '
+          + 'doesn\'t have its latest execution stored in sql.',
+        );
+
+        // we set a custom date that can be used by the UI to reliably generate ETag
+        const fixedPipelineDate = EXPIRED_EXECUTION_DATE;
+
+        response = buildCompletedStatus(processName, fixedPipelineDate, paramsHash);
       }
-
-      logger.log(
-        `Returning a mocked success ${processName} - pipeline status because ARN ${executionArn} `
-        + `does not exist in aws and we are running in ${config.clusterEnv} so it means it's either a `
-        + 'a pulled experiment or this is a very old legacy experiment from before sql that (legacy) '
-        + 'doesn\'t have its latest execution stored in sql.',
-      );
-
-      // we set a custom date that can be used by the UI to reliably generate ETag
-      const fixedPipelineDate = EXPIRED_EXECUTION_DATE;
-
-      return buildCompletedStatus(processName, fixedPipelineDate, paramsHash);
+    } else {
+      throw e;
     }
-
-    throw e;
   }
-
-  const events = await getExecutionHistory(stepFunctions, executionArn);
-
-  error = checkError(events);
-  const executedSteps = getStepsFromExecutionHistory(events);
-  const lastExecuted = executedSteps[executedSteps.length - 1];
-  switch (processName) {
-    case pipelineConstants.QC_PROCESS_NAME:
-      completedSteps = qcPipelineSteps.slice(0, qcPipelineSteps.indexOf(lastExecuted) + 1);
-      break;
-    case pipelineConstants.GEM2S_PROCESS_NAME:
-      completedSteps = gem2sPipelineSteps.slice(0, gem2sPipelineSteps.indexOf(lastExecuted) + 1);
-      break;
-    default:
-      logger.error(`unknown process name ${processName}`);
-  }
-
-  const response = buildResponse(processName, execution, paramsHash, error, completedSteps);
 
   // If the new response changed compared to the stored one, update sql one
   if (!_.isEqual(response, lastStatusResponse)) {
