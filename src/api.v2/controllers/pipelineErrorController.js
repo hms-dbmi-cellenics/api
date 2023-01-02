@@ -9,7 +9,10 @@ const sendNotification = require('../helpers/pipeline/hooks/sendNotification');
 
 const logger = getLogger('[PipelineErrorController] - ');
 
-const updateExperimentErrorState = async (message, io) => {
+const insertExperimentError = async (message, io) => {
+  console.log('*** inside insertExperimentError');
+  console.log('*** message', message);
+
   const { experimentId, input: { processName } } = message;
 
   const statusRes = await getPipelineStatus(experimentId, processName);
@@ -26,13 +29,15 @@ const updateExperimentErrorState = async (message, io) => {
     type: processName,
   };
 
+  console.log('*** response', response);
+
   const { error = null } = message.response || {};
   if (error) {
     logger.log(`Error in ${processName} received`);
     AWSXRay.getSegment().addError(error);
   }
 
-  logger.log('Sending pipeline error to all clients subscribed to experiment', experimentId);
+  logger.log('Sending to all clients subscribed to experiment', experimentId);
 
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
@@ -54,7 +59,7 @@ const handleResponse = async (req, res) => {
   const isSnsNotification = parsedMessage !== undefined;
   if (isSnsNotification) {
     try {
-      await updateExperimentErrorState(parsedMessage, io);
+      await insertExperimentError(parsedMessage, io);
       await sendNotification(parsedMessage);
     } catch (e) {
       logger.error(
