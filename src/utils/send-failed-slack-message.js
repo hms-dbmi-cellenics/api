@@ -3,12 +3,7 @@ const getLogger = require('./getLogger');
 
 const logger = getLogger();
 const sendFailedSlackMessage = async (message, user, process, stateMachineArn) => {
-  console.log('*** inside sendFailedSlackMessage');
-  console.log('*** message', message);
-  console.log('*** user', user);
-  console.log('*** process', process);
-  console.log('*** stateMachineArn', stateMachineArn);
-
+  const { input: { taskName, error } } = message;
   const { experimentId } = message;
 
   const userContext = [
@@ -47,7 +42,7 @@ const sendFailedSlackMessage = async (message, user, process, stateMachineArn) =
           type: 'plain_text',
           text: `
           The process for ${process} has failed for experiment ${experimentId}
-          Step: ${message.input.taskName}
+          Step: ${error ? `${taskName} - ${error}` : taskName}
           State machine arn: ${stateMachineArn}
           `,
         },

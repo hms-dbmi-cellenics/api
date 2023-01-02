@@ -16,9 +16,6 @@ const buildPipelineStatusEmailBody = require('../../../../utils/emailTemplates/b
 const logger = getLogger();
 
 const sendNotification = async (message) => {
-  console.log('*** inside sendNotification');
-  console.log('*** message', message);
-
   const { authJWT, processName } = message.input;
   if (!authJWT) {
     logger.log('No authJWT token in message, skipping status check for notifications...');
@@ -31,8 +28,6 @@ const sendNotification = async (message) => {
   const statusRes = await getPipelineStatus(experimentId, processName);
 
   const experiment = await new Experiment().getExperimentData(experimentId);
-
-  console.log('*** statusRes', statusRes);
 
   const { status } = statusRes[processName];
 
