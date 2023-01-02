@@ -20,7 +20,6 @@ const updateExperimentErrorState = async (io, message) => {
     type: processName,
   };
 
-
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
 
