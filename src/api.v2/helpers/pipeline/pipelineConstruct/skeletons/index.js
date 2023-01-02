@@ -1,7 +1,7 @@
 const { buildQCPipelineSteps, qcPipelineSteps } = require('./qcPipelineSkeleton');
 const { gem2SPipelineSteps } = require('./gem2sPipelineSkeleton');
 const subsetPipelineSteps = require('./subsetPipelineSteps');
-const { END_OF_PIPELINE, HANDLE_ERROR_STEP } = require('../../../../constants');
+const { END_OF_PIPELINE, HANDLE_TIMEOUT_ERROR_STEP } = require('../../../../constants');
 
 
 const createLocalPipeline = (nextStep) => ({
@@ -78,8 +78,11 @@ const buildInitialSteps = (clusterEnv, nextStep, runInBatch) => {
 };
 
 const buildErrorHandlingSteps = () => ({
-  [HANDLE_ERROR_STEP]: {
+  [HANDLE_TIMEOUT_ERROR_STEP]: {
     XStepType: 'create-handle-error-step',
+    XConstructorArgs: {
+      errorType: 'timeout',
+    },
     Next: 'MarkAsFailed',
   },
   MarkAsFailed: {

@@ -35,7 +35,7 @@ const constructPipelineStep = (context, step) => {
       return createNewStep(context, step, args);
     }
     case 'create-handle-error-step': {
-      return createHandleErrorStep(context, step);
+      return createHandleErrorStep(context, step, args);
     }
     case 'mark-as-failed': {
       return createFailedStep(context, step);

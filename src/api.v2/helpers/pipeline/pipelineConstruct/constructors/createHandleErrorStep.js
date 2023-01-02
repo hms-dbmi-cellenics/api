@@ -1,5 +1,4 @@
 const config = require('../../../../../config');
-const { PIPELINE_ERROR } = require('../../../../constants');
 const { getActivityId } = require('../utils');
 
 const buildErrorMessage = (
@@ -22,8 +21,9 @@ const buildErrorMessage = (
   },
 });
 
-const createHandleErrorStep = (context, step) => {
+const createHandleErrorStep = (context, step, args) => {
   console.log('*** context', context);
+  console.log('*** args', args);
   const {
     environment,
     accountId,
@@ -34,14 +34,18 @@ const createHandleErrorStep = (context, step) => {
     authJWT,
   } = context;
 
+  const { errorType } = args;
+
   const activityId = getActivityId(activityArn);
 
-  const errorMessage = buildErrorMessage(sandboxId,
+  const errorMessage = buildErrorMessage(
+    sandboxId,
     experimentId,
-    PIPELINE_ERROR,
+    errorType,
     processName,
     activityId,
-    authJWT);
+    authJWT,
+  );
 
   console.log('*** errorMessage', errorMessage);
 

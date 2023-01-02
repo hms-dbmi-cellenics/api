@@ -2,7 +2,7 @@ const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUBSET_PROCESS_NAME } = require('..
 const getGeneralParams = require('./paramsGetters/getGeneralParams');
 const getQCParams = require('./paramsGetters/getQCParams');
 const getSubsetParams = require('./paramsGetters/getSubsetParams');
-const { HANDLE_ERROR_STEP } = require('../../../../constants');
+const { HANDLE_TIMEOUT_ERROR_STEP } = require('../../../../constants');
 
 const buildParams = (context, stepArgs) => {
   let stepParams;
@@ -38,9 +38,9 @@ const createNewStep = (context, step, stepArgs) => {
     ...!step.End && { Next: step.Next },
     Catch: [
       {
-        ErrorEquals: ['States.ALL'],
+        ErrorEquals: ['States.Timeout'],
         ResultPath: '$.error-info',
-        Next: HANDLE_ERROR_STEP,
+        Next: HANDLE_TIMEOUT_ERROR_STEP,
       },
     ],
   };

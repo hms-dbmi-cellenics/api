@@ -1,5 +1,5 @@
 const config = require('../../../../../config');
-const { HANDLE_ERROR_STEP } = require('../../../../constants');
+const { HANDLE_TIMEOUT_ERROR_STEP } = require('../../../../constants');
 
 const submitBatchJob = (context, step) => {
   const {
@@ -68,9 +68,9 @@ const submitBatchJob = (context, step) => {
     },
     Catch: [
       {
-        ErrorEquals: ['States.ALL'],
+        ErrorEquals: ['States.Timeout'],
         ResultPath: '$.error-info',
-        Next: HANDLE_ERROR_STEP,
+        Next: HANDLE_TIMEOUT_ERROR_STEP,
       },
     ],
   };

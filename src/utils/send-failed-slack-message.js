@@ -47,7 +47,7 @@ const sendFailedSlackMessage = async (message, user, process, stateMachineArn) =
           type: 'plain_text',
           text: `
           The process for ${process} has failed for experiment ${experimentId}
-          Step: ${message.input.taskName}
+          Step: ${message.input.taskName ? message.input.taskName : 'timeout'}
           State machine arn: ${stateMachineArn}
           `,
         },
