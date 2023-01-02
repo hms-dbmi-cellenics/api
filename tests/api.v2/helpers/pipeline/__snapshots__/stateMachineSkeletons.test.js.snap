@@ -202,7 +202,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       ]
     },
     "HandleErrorStep": {
-      "Next": "EndOfPipeline",
+      "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
@@ -473,7 +473,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       ]
     },
     "HandleErrorStep": {
-      "Next": "EndOfPipeline",
+      "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
@@ -744,7 +744,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       ]
     },
     "HandleErrorStep": {
-      "Next": "EndOfPipeline",
+      "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
@@ -1054,7 +1054,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
       ]
     },
     "HandleErrorStep": {
-      "Next": "EndOfPipeline",
+      "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
@@ -1408,7 +1408,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
       ]
     },
     "HandleErrorStep": {
-      "Next": "EndOfPipeline",
+      "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
@@ -1750,7 +1750,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
       ]
     },
     "HandleErrorStep": {
-      "Next": "EndOfPipeline",
+      "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
@@ -2104,7 +2104,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
       ]
     },
     "HandleErrorStep": {
-      "Next": "EndOfPipeline",
+      "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {

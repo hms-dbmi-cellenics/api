@@ -1,5 +1,5 @@
 const config = require('../../../../../config');
-const { PIPELINE_ERROR, END_OF_PIPELINE } = require('../../../../constants');
+const { PIPELINE_ERROR } = require('../../../../constants');
 const { getActivityId } = require('../utils');
 
 const buildErrorMessage = (
@@ -59,7 +59,7 @@ const createHandleErrorStep = (context, step) => {
         },
       },
     },
-    Next: END_OF_PIPELINE,
+    ...!step.End && { Next: step.Next },
   };
 };
 
