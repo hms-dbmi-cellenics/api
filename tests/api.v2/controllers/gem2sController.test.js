@@ -4,9 +4,11 @@ const gem2sController = require('../../../src/api.v2/controllers/gem2sController
 const { OK } = require('../../../src/utils/responses');
 
 const gem2s = require('../../../src/api.v2/helpers/pipeline/gem2s');
+const handlePipelineError = require('../../../src/api.v2/helpers/pipeline/pipelineErrorHandler');
 const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
 
 jest.mock('../../../src/api.v2/helpers/pipeline/gem2s');
+jest.mock('../../../src/api.v2/helpers/pipeline/pipelineErrorHandler');
 jest.mock('../../../src/utils/parseSNSMessage');
 
 const mockJsonSend = jest.fn();
@@ -17,6 +19,7 @@ const mockRes = {
 
 const experimentId = 'experimentId';
 const expectedTopic = 'arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2';
+const io = 'mockIo';
 
 const parsedMessage = {
   taskName: 'mockTask',
@@ -31,9 +34,7 @@ const parsedMessage = {
   },
 };
 
-const mockSNSResponse = {
-  body: JSON.stringify(parsedMessage),
-};
+const mockSNSResponse = { body: JSON.stringify(parsedMessage) };
 
 describe('gem2sController', () => {
   beforeEach(async () => {
@@ -61,15 +62,36 @@ describe('gem2sController', () => {
     expect(mockRes.json).toHaveBeenCalledWith(OK());
   });
 
-  it('handleResponse works correctly', async () => {
-    const io = 'mockIo';
-
+  it('handleResponse handles success message correctly', async () => {
     parseSNSMessage.mockReturnValue({ io, parsedMessage });
 
     await gem2sController.handleResponse(mockSNSResponse, mockRes);
 
     expect(parseSNSMessage).toHaveBeenCalledWith(mockSNSResponse, expectedTopic);
     expect(gem2s.handleGem2sResponse).toHaveBeenCalledWith(io, parsedMessage);
+    expect(handlePipelineError).not.toHaveBeenCalled();
+
+    // Response is ok
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockJsonSend).toHaveBeenCalledWith('ok');
+  });
+
+  it('handleResponse handles pipeline error message correctly', async () => {
+    const errorMessage = {
+      ...parsedMessage,
+      input: {
+        ...parsedMessage.input,
+        error: 'mockError',
+      },
+    };
+
+    parseSNSMessage.mockReturnValue({ io, parsedMessage: errorMessage });
+
+    await gem2sController.handleResponse(mockSNSResponse, mockRes);
+
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockSNSResponse, expectedTopic);
+    expect(handlePipelineError).toHaveBeenCalledWith(io, errorMessage);
+    expect(gem2s.handleGem2sResponse).not.toHaveBeenCalled();
 
     // Response is ok
     expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -91,8 +113,6 @@ describe('gem2sController', () => {
   });
 
   it('handleResponse returns nok when gem2sResponse fails', async () => {
-    const io = 'mockIo';
-
     parseSNSMessage.mockReturnValue({ io, parsedMessage });
 
     gem2s.handleGem2sResponse.mockImplementationOnce(() => Promise.reject(new Error('Some error with gem2sResponse')));
@@ -108,7 +128,6 @@ describe('gem2sController', () => {
   });
 
   it('handleResponse ignores message if it isnt an sns notification', async () => {
-    const io = 'mockIo';
     const undefinedMessage = undefined;
 
     parseSNSMessage.mockReturnValue({ io, undefinedMessage });
