@@ -351,6 +351,15 @@ Array [
           "Type": "Map",
         },
         "ConfigureEmbedding": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.Timeout",
+              ],
+              "Next": "HandleTimeoutError",
+              "ResultPath": "$.error-info",
+            },
+          ],
           "HeartbeatSeconds": 90,
           "Next": "EndOfPipeline",
           "Parameters": Object {
@@ -390,6 +399,15 @@ Array [
           "Type": "Task",
         },
         "DataIntegration": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.Timeout",
+              ],
+              "Next": "HandleTimeoutError",
+              "ResultPath": "$.error-info",
+            },
+          ],
           "HeartbeatSeconds": 90,
           "Next": "ConfigureEmbedding",
           "Parameters": Object {

@@ -60,6 +60,15 @@ Object {
   },
   "ConfigureEmbedding": Object {
     "Next": "EndOfPipeline",
+    "XCatch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.Timeout",
+        ],
+        "Next": "HandleTimeoutError",
+        "ResultPath": "$.error-info",
+      },
+    ],
     "XConstructorArgs": Object {
       "perSample": false,
       "taskName": "configureEmbedding",
@@ -68,6 +77,15 @@ Object {
   },
   "DataIntegration": Object {
     "Next": "ConfigureEmbedding",
+    "XCatch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.Timeout",
+        ],
+        "Next": "HandleTimeoutError",
+        "ResultPath": "$.error-info",
+      },
+    ],
     "XConstructorArgs": Object {
       "perSample": false,
       "taskName": "dataIntegration",

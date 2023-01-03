@@ -988,7 +988,16 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "uploadCountMatrix": true,
         "authJWT": "mockAuthJWT",
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
@@ -1006,7 +1015,16 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "uploadCountMatrix": false,
         "authJWT": "mockAuthJWT",
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "HandleTimeoutError": {
       "Next": "MarkAsFailed",
@@ -1324,7 +1342,16 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "uploadCountMatrix": true,
         "authJWT": "mockAuthJWT",
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
@@ -1342,7 +1369,16 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "uploadCountMatrix": false,
         "authJWT": "mockAuthJWT",
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "HandleTimeoutError": {
       "Next": "MarkAsFailed",
@@ -1648,7 +1684,16 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "uploadCountMatrix": true,
         "authJWT": "mockAuthJWT",
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
@@ -1666,7 +1711,16 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "uploadCountMatrix": false,
         "authJWT": "mockAuthJWT",
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "HandleTimeoutError": {
       "Next": "MarkAsFailed",
@@ -1984,7 +2038,16 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "uploadCountMatrix": true,
         "authJWT": "mockAuthJWT",
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
@@ -2002,7 +2065,16 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "uploadCountMatrix": false,
         "authJWT": "mockAuthJWT",
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "HandleTimeoutError": {
       "Next": "MarkAsFailed",

@@ -111,6 +111,7 @@ const qcPipelineSteps = {
       uploadCountMatrix: true,
     },
     Next: 'ConfigureEmbedding',
+    XCatch: [timeoutErrorHandler()],
   },
   ConfigureEmbedding: {
     XStepType: 'create-new-step',
@@ -119,6 +120,7 @@ const qcPipelineSteps = {
       taskName: 'configureEmbedding',
     },
     Next: END_OF_PIPELINE,
+    XCatch: [timeoutErrorHandler()],
   },
 };
 
