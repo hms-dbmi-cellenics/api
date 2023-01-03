@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { END_OF_PIPELINE } = require('../../../../constants');
+const { timeoutErrorHandler } = require('../constructors/createHandleErrorStep');
 
 const qcPipelineSteps = {
   ClassifierFilterMap: {
@@ -20,6 +21,7 @@ const qcPipelineSteps = {
         },
       },
     },
+    Catch: [timeoutErrorHandler()],
   },
   CellSizeDistributionFilterMap: {
     Type: 'Map',
@@ -39,6 +41,7 @@ const qcPipelineSteps = {
         },
       },
     },
+    Catch: [timeoutErrorHandler()],
   },
   MitochondrialContentFilterMap: {
     Type: 'Map',
@@ -58,6 +61,7 @@ const qcPipelineSteps = {
         },
       },
     },
+    Catch: [timeoutErrorHandler()],
   },
   NumGenesVsNumUmisFilterMap: {
     Type: 'Map',
@@ -77,6 +81,7 @@ const qcPipelineSteps = {
         },
       },
     },
+    Catch: [timeoutErrorHandler()],
   },
   DoubletScoresFilterMap: {
     Type: 'Map',
@@ -96,6 +101,7 @@ const qcPipelineSteps = {
         },
       },
     },
+    Catch: [timeoutErrorHandler()],
   },
   DataIntegration: {
     XStepType: 'create-new-step',

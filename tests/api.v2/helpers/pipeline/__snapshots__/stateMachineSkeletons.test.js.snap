@@ -36,7 +36,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -59,7 +59,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -82,7 +82,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -105,7 +105,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -128,7 +128,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -151,7 +151,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -174,7 +174,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -190,18 +190,9 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "uploadToAWS",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
-        }
-      ]
+      }
     },
-    "HandleTimeoutErrorStep": {
+    "HandleTimeoutError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -330,7 +321,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -353,7 +344,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -376,7 +367,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -399,7 +390,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -422,7 +413,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -445,7 +436,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -461,18 +452,9 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "uploadToAWS",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
-        }
-      ]
+      }
     },
-    "HandleTimeoutErrorStep": {
+    "HandleTimeoutError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -601,7 +583,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -624,7 +606,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -647,7 +629,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -670,7 +652,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -693,7 +675,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -716,7 +698,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -732,18 +714,9 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "uploadToAWS",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
-        }
-      ]
+      }
     },
-    "HandleTimeoutErrorStep": {
+    "HandleTimeoutError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -805,7 +778,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -833,19 +806,19 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "CellSizeDistributionFilterMap": {
       "Type": "Map",
@@ -871,19 +844,19 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "MitochondrialContentFilterMap": {
       "Type": "Map",
@@ -909,19 +882,19 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "NumGenesVsNumUmisFilterMap": {
       "Type": "Map",
@@ -947,19 +920,19 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "DoubletScoresFilterMap": {
       "Type": "Map",
@@ -985,19 +958,19 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
@@ -1015,16 +988,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "uploadCountMatrix": true,
         "authJWT": "mockAuthJWT",
         "config": {}
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
-        }
-      ]
+      }
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
@@ -1042,18 +1006,9 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "uploadCountMatrix": false,
         "authJWT": "mockAuthJWT",
         "config": {}
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
-        }
-      ]
+      }
     },
-    "HandleTimeoutErrorStep": {
+    "HandleTimeoutError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -1187,19 +1142,19 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "CellSizeDistributionFilterMap": {
       "Type": "Map",
@@ -1225,19 +1180,19 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "MitochondrialContentFilterMap": {
       "Type": "Map",
@@ -1263,19 +1218,19 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "NumGenesVsNumUmisFilterMap": {
       "Type": "Map",
@@ -1301,19 +1256,19 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "DoubletScoresFilterMap": {
       "Type": "Map",
@@ -1339,19 +1294,19 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
@@ -1369,16 +1324,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "uploadCountMatrix": true,
         "authJWT": "mockAuthJWT",
         "config": {}
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
-        }
-      ]
+      }
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
@@ -1396,18 +1342,9 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "uploadCountMatrix": false,
         "authJWT": "mockAuthJWT",
         "config": {}
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
-        }
-      ]
+      }
     },
-    "HandleTimeoutErrorStep": {
+    "HandleTimeoutError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -1501,7 +1438,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
             "States.Timeout"
           ],
           "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
+          "Next": "HandleTimeoutError"
         }
       ]
     },
@@ -1529,19 +1466,19 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "CellSizeDistributionFilterMap": {
       "Type": "Map",
@@ -1567,19 +1504,19 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "MitochondrialContentFilterMap": {
       "Type": "Map",
@@ -1605,19 +1542,19 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "NumGenesVsNumUmisFilterMap": {
       "Type": "Map",
@@ -1643,19 +1580,19 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "DoubletScoresFilterMap": {
       "Type": "Map",
@@ -1681,19 +1618,19 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
@@ -1711,16 +1648,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "uploadCountMatrix": true,
         "authJWT": "mockAuthJWT",
         "config": {}
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
-        }
-      ]
+      }
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
@@ -1738,18 +1666,9 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "uploadCountMatrix": false,
         "authJWT": "mockAuthJWT",
         "config": {}
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
-        }
-      ]
+      }
     },
-    "HandleTimeoutErrorStep": {
+    "HandleTimeoutError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -1883,19 +1802,19 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "CellSizeDistributionFilterMap": {
       "Type": "Map",
@@ -1921,19 +1840,19 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "MitochondrialContentFilterMap": {
       "Type": "Map",
@@ -1959,19 +1878,19 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "NumGenesVsNumUmisFilterMap": {
       "Type": "Map",
@@ -1997,19 +1916,19 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "DoubletScoresFilterMap": {
       "Type": "Map",
@@ -2035,19 +1954,19 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
               "config": {}
-            },
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.Timeout"
-                ],
-                "ResultPath": "$.error-info",
-                "Next": "HandleTimeoutErrorStep"
-              }
-            ]
+            }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleTimeoutError"
+        }
+      ]
     },
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
@@ -2065,16 +1984,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "uploadCountMatrix": true,
         "authJWT": "mockAuthJWT",
         "config": {}
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
-        }
-      ]
+      }
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
@@ -2092,18 +2002,9 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "uploadCountMatrix": false,
         "authJWT": "mockAuthJWT",
         "config": {}
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutErrorStep"
-        }
-      ]
+      }
     },
-    "HandleTimeoutErrorStep": {
+    "HandleTimeoutError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",

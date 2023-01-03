@@ -3,6 +3,15 @@
 exports[`helper functions for skeletons returns the default first step and full state machine if the config has no updates 1`] = `
 Object {
   "CellSizeDistributionFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.Timeout",
+        ],
+        "Next": "HandleTimeoutError",
+        "ResultPath": "$.error-info",
+      },
+    ],
     "ItemsPath": "$.samples",
     "Iterator": Object {
       "StartAt": "CellSizeDistributionFilter",
@@ -22,6 +31,15 @@ Object {
     "Type": "Map",
   },
   "ClassifierFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.Timeout",
+        ],
+        "Next": "HandleTimeoutError",
+        "ResultPath": "$.error-info",
+      },
+    ],
     "ItemsPath": "$.samples",
     "Iterator": Object {
       "StartAt": "ClassifierFilter",
@@ -58,6 +76,15 @@ Object {
     "XStepType": "create-new-step",
   },
   "DoubletScoresFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.Timeout",
+        ],
+        "Next": "HandleTimeoutError",
+        "ResultPath": "$.error-info",
+      },
+    ],
     "ItemsPath": "$.samples",
     "Iterator": Object {
       "StartAt": "DoubletScoresFilter",
@@ -77,6 +104,15 @@ Object {
     "Type": "Map",
   },
   "MitochondrialContentFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.Timeout",
+        ],
+        "Next": "HandleTimeoutError",
+        "ResultPath": "$.error-info",
+      },
+    ],
     "ItemsPath": "$.samples",
     "Iterator": Object {
       "StartAt": "MitochondrialContentFilter",
@@ -96,6 +132,15 @@ Object {
     "Type": "Map",
   },
   "NumGenesVsNumUmisFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.Timeout",
+        ],
+        "Next": "HandleTimeoutError",
+        "ResultPath": "$.error-info",
+      },
+    ],
     "ItemsPath": "$.samples",
     "Iterator": Object {
       "StartAt": "NumGenesVsNumUmisFilter",

@@ -1,4 +1,5 @@
 const { END_OF_PIPELINE } = require('../../../../constants');
+const { timeoutErrorHandler } = require('../constructors/createHandleErrorStep');
 
 const gem2SPipelineSteps = {
   DownloadGem: {
@@ -7,6 +8,7 @@ const gem2SPipelineSteps = {
       taskName: 'downloadGem',
     },
     Next: 'PreProcessing',
+    XCatch: [timeoutErrorHandler()],
   },
   PreProcessing: {
     XStepType: 'create-new-step',
@@ -14,6 +16,7 @@ const gem2SPipelineSteps = {
       taskName: 'preproc',
     },
     Next: 'EmptyDrops',
+    XCatch: [timeoutErrorHandler()],
   },
   EmptyDrops: {
     XStepType: 'create-new-step',
@@ -21,6 +24,7 @@ const gem2SPipelineSteps = {
       taskName: 'emptyDrops',
     },
     Next: 'DoubletScores',
+    XCatch: [timeoutErrorHandler()],
   },
   DoubletScores: {
     XStepType: 'create-new-step',
@@ -28,6 +32,7 @@ const gem2SPipelineSteps = {
       taskName: 'doubletScores',
     },
     Next: 'CreateSeurat',
+    XCatch: [timeoutErrorHandler()],
   },
   CreateSeurat: {
     XStepType: 'create-new-step',
@@ -35,6 +40,7 @@ const gem2SPipelineSteps = {
       taskName: 'createSeurat',
     },
     Next: 'PrepareExperiment',
+    XCatch: [timeoutErrorHandler()],
   },
   PrepareExperiment: {
     XStepType: 'create-new-step',
@@ -42,6 +48,7 @@ const gem2SPipelineSteps = {
       taskName: 'prepareExperiment',
     },
     Next: 'UploadToAWS',
+    XCatch: [timeoutErrorHandler()],
   },
   UploadToAWS: {
     XStepType: 'create-new-step',

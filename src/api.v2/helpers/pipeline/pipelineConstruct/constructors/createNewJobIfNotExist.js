@@ -1,7 +1,6 @@
 const config = require('../../../../../config');
-const { HANDLE_TIMEOUT_ERROR_STEP } = require('../../../../constants');
 
-const createNewJobIfNotExist = (context, step) => {
+const createNewJobIfNotExist = (context, step, catchSteps) => {
   const { accountId, activityArn, processName } = context;
 
   return {
@@ -17,13 +16,7 @@ const createNewJobIfNotExist = (context, step) => {
         activityArn,
       },
     },
-    Catch: [
-      {
-        ErrorEquals: ['States.Timeout'],
-        ResultPath: '$.error-info',
-        Next: HANDLE_TIMEOUT_ERROR_STEP,
-      },
-    ],
+    ...catchSteps && { Catch: catchSteps },
   };
 };
 

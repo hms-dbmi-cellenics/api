@@ -1,5 +1,5 @@
 const config = require('../../../../../config');
-const { PIPELINE_ERROR } = require('../../../../constants');
+const { PIPELINE_ERROR, HANDLE_TIMEOUT_ERROR_STEP } = require('../../../../constants');
 const { getActivityId } = require('../utils');
 
 const buildErrorMessage = (
@@ -69,4 +69,13 @@ const createHandleErrorStep = (context, step, args) => {
   };
 };
 
-module.exports = createHandleErrorStep;
+const timeoutErrorHandler = () => ({
+  ErrorEquals: ['States.Timeout'],
+  ResultPath: '$.error-info',
+  Next: HANDLE_TIMEOUT_ERROR_STEP,
+});
+
+module.exports = {
+  timeoutErrorHandler,
+  createHandleErrorStep,
+};

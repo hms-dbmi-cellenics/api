@@ -9,7 +9,7 @@ const ASSIGN_POD_TO_PIPELINE = 'assignPodToPipeline';
 const PIPELINE_ERROR = 'pipelineError';
 
 // Pipeline step name
-const HANDLE_TIMEOUT_ERROR_STEP = 'HandleTimeoutErrorStep';
+const HANDLE_TIMEOUT_ERROR_STEP = 'HandleTimeoutError';
 const END_OF_PIPELINE = 'EndOfPipeline';
 
 // Pipeline states as defined in

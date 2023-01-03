@@ -9,7 +9,7 @@ const buildStateMachineDefinition = (skeleton, context) => {
   logger.log('Constructing pipeline steps...');
   const stateMachine = _.cloneDeepWith(skeleton, (o) => {
     if (_.isObject(o) && o.XStepType) {
-      return _.omit(constructPipelineStep(context, o), ['XStepType', 'XConstructorArgs']);
+      return _.omit(constructPipelineStep(context, o), ['XStepType', 'XConstructorArgs', 'XCatch']);
     }
     return undefined;
   });
