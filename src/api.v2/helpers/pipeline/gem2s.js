@@ -14,15 +14,56 @@ const HookRunner = require('./hooks/HookRunner');
 
 const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
+const { qcStepsWithFilterSettings } = require('./pipelineConstruct/qcHelpers');
 
 const logger = getLogger('[Gem2sService] - ');
 
 const hookRunner = new HookRunner();
 
+/**
+ *
+ * @param {*} experimentId
+ * @param {*} processingConfig The full processing config for an experiment
+ * @returns A copy of processingConfig with each filterSettings entry
+ *  duplicated under defaultFilterSettings
+ */
+const addDefaultFilterSettings = (experimentId, processingConfig) => {
+  const processingConfigToReturn = _.cloneDeep(processingConfig);
+
+  logger.log('Adding defaultFilterSettings to received processing config');
+
+  qcStepsWithFilterSettings.forEach((stepName) => {
+    const stepConfigSplitBySample = Object.values(processingConfigToReturn[stepName]);
+
+    stepConfigSplitBySample.forEach((sampleSettings) => {
+      if (!sampleSettings.filterSettings) {
+        logger.log(`Experiment: ${experimentId}. Skipping current sample config, it doesnt have filterSettings:`);
+        logger.log(JSON.stringify(sampleSettings.filterSettings));
+        return;
+      }
+
+      // eslint-disable-next-line no-param-reassign
+      sampleSettings.defaultFilterSettings = _.cloneDeep(sampleSettings.filterSettings);
+    });
+  });
+
+  logger.log('Finished adding defaultFilterSettings to received processing config');
+
+  return processingConfigToReturn;
+};
+
 const continueToQC = async (payload) => {
   const { experimentId, item, jobId } = payload;
 
-  await new Experiment().updateById(experimentId, { processing_config: item.processingConfig });
+  // Before persisting the new processing config,
+  // fill it in with default filter settings (to preserve the gem2s-generated settings)
+  const processingConfigWithDefaults = addDefaultFilterSettings(
+    experimentId, item.processingConfig,
+  );
+
+  await new Experiment().updateById(
+    experimentId, { processing_config: processingConfigWithDefaults },
+  );
 
   logger.log(`Experiment: ${experimentId}. Saved processing config received from gem2s`);
 
@@ -178,6 +219,16 @@ const handleGem2sResponse = async (io, message) => {
   const { experimentId } = message;
 
   const messageForClient = _.cloneDeep(message);
+
+  // If we are at uploadToAWS, then a new processingConfig was received
+  // Before being returned to the client we need to
+  // fill it in with default filter settings (to preserve the gem2s-generated settings)
+  if (messageForClient.taskName === 'uploadToAWS') {
+    messageForClient.item.processingConfig = addDefaultFilterSettings(
+      experimentId,
+      messageForClient.item.processingConfig,
+    );
+  }
 
   // Make sure authJWT doesn't get back to the client
   delete messageForClient.authJWT;

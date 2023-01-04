@@ -2,7 +2,6 @@
 
 exports[`default-config Returns correct values for staging default 1`] = `
 Object {
-  "adminSub": "0b17683f-363b-4466-b2e2-5bf11c38a76e",
   "api": Object {
     "prefix": "/",
   },
@@ -20,6 +19,8 @@ Object {
     "https://elabjournal.com",
     "https://ui-default.scp-staging.biomage.net",
   ],
+  "datadogApiKey": "",
+  "datadogAppKey": "",
   "domainName": "scp-staging.biomage.net",
   "emailDomainName": "https://ui-default.scp-staging.biomage.net",
   "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/staging/pipeline.yaml",

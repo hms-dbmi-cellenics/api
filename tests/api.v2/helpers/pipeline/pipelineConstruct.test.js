@@ -10,12 +10,13 @@ const Experiment = require('../../../../src/api.v2/model/Experiment');
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
 const { createSubsetPipeline } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 const { cancelPreviousPipelines } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils');
-const needsBatchJob = require('../../../../src/api.v2/helpers/pipeline/batch/needsBatchJob');
 
 const experimentInstance = new Experiment();
 const experimentExecutionInstance = new ExperimentExecution();
 
 const mockStepNames = getQcPipelineStepNames();
+
+const mockExperimentRow = require('../../mocks/data/experimentRow.json');
 
 jest.mock('../../../../src/api.v2/helpers/pipeline/batch/terminateJobs');
 jest.mock('../../../../src/api.v2/helpers/pipeline/batch/listJobsToDelete');
@@ -31,6 +32,7 @@ jest.mock('crypto', () => ({
 
 jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/qcHelpers', () => ({
   getQcStepsToRun: jest.fn(() => mockStepNames),
+  ...jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/qcHelpers'),
 }));
 
 jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils', () => ({
@@ -44,23 +46,6 @@ jest.mock('../../../../src/utils/asyncTimer');
 jest.mock('../../../../src/api.v2/model/Experiment');
 jest.mock('../../../../src/api.v2/model/ExperimentExecution');
 fetchMock.enableFetchMocks();
-
-const mockExperimentRow = {
-  samplesOrder: ['oneSample', 'otherSample'],
-  processingConfig: {
-    doubletScores: {
-      oneSample: {
-        enabled: true,
-        filterSettings: {
-          oneSetting: 1,
-        },
-        defaultFilterSettings: {
-          oneSetting: 1,
-        },
-      },
-    },
-  },
-};
 
 describe('test for pipeline services', () => {
   beforeEach(() => {
@@ -103,15 +88,6 @@ describe('test for pipeline services', () => {
       },
     },
   ];
-
-  const taskParams = {
-    projectId: 'test-project',
-    experimentName: 'valerio-massala',
-    organism: null,
-    input: { type: '10x' },
-    sampleIds: ['3af6b6bb-a1aa-4375-9c2c-c112bada56ca'],
-    sampleNames: ['sample-1'],
-  };
 
   it('Create QC pipeline works', async () => {
     const describeClusterSpy = jest.fn((x) => x);
@@ -237,11 +213,18 @@ describe('test for pipeline services', () => {
       callback(null, { executionArn: 'test-machine' });
     });
 
-    experimentInstance.findById.mockReturnValueOnce(
-      { first: () => Promise.resolve(mockExperimentRow) },
+    await createGem2SPipeline(
+      'testExperimentId',
+      {
+        projectId: 'test-project',
+        experimentName: 'valerio-massala',
+        organism: null,
+        input: { type: '10x' },
+        sampleIds: ['3af6b6bb-a1aa-4375-9c2c-c112bada56ca'],
+        sampleNames: ['sample-1'],
+      },
     );
 
-    await createGem2SPipeline('testExperimentId', taskParams);
     expect(describeClusterSpy).toMatchSnapshot();
 
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
@@ -285,7 +268,7 @@ describe('test for pipeline services', () => {
       { first: () => Promise.resolve(mockExperimentRow) },
     );
 
-    await createSubsetPipeline('testExperimentId', taskParams);
+    await createSubsetPipeline('fromExperimentId', 'toExperimentId', 'toExperimentName', ['louvain-1', 'louvain-2'], 'mockAuthJWT');
     expect(describeClusterSpy).toMatchSnapshot();
 
     expect(createStateMachineSpy.mock.calls).toMatchSnapshot('createStateMachineSpy calls');

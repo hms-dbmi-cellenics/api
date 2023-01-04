@@ -3,13 +3,11 @@
 exports[`gem2sResponse Starts a QC run when gem2s finishes 1`] = `
 Array [
   Array [
-    "06d50e28-cc96-2624-900c-e0e9a0995598",
+    "mockExperimentId",
     Object {
       "processing_config": Object {
         "cellSizeDistribution": Object {
-          "auto": true,
-          "enabled": false,
-          "f87892f0-3403-4ba9-b871-c366e3fa855e": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
               "binStep": 200,
@@ -20,16 +18,10 @@ Array [
               "binStep": 200,
               "minCellSize": 1044,
             },
-          },
-          "filterSettings": Object {
-            "binStep": 200,
-            "minCellSize": 1080,
           },
         },
         "classifier": Object {
-          "auto": true,
-          "enabled": false,
-          "f87892f0-3403-4ba9-b871-c366e3fa855e": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
               "FDR": 0.01,
@@ -38,11 +30,8 @@ Array [
             "filterSettings": Object {
               "FDR": 0.01,
             },
+            "prefiltered": true,
           },
-          "filterSettings": Object {
-            "FDR": 0.01,
-          },
-          "prefiltered": true,
         },
         "configureEmbedding": Object {
           "clusteringSettings": Object {
@@ -58,7 +47,7 @@ Array [
             "methodSettings": Object {
               "tsne": Object {
                 "learningRate": 200,
-                "perplexity": 9.18,
+                "perplexity": 30,
               },
               "umap": Object {
                 "distanceMetric": "cosine",
@@ -92,33 +81,25 @@ Array [
           "dimensionalityReduction": Object {
             "excludeGeneCategories": Array [],
             "method": "rpca",
-            "numPCs": null,
+            "numPCs": 30,
           },
         },
         "doubletScores": Object {
-          "auto": true,
-          "enabled": true,
-          "f87892f0-3403-4ba9-b871-c366e3fa855e": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
               "binStep": 0.02,
-              "probabilityThreshold": 0.7622447,
+              "probabilityThreshold": 0.6569474,
             },
             "enabled": true,
             "filterSettings": Object {
               "binStep": 0.02,
-              "probabilityThreshold": 0.7622447,
+              "probabilityThreshold": 0.6569474,
             },
-          },
-          "filterSettings": Object {
-            "binStep": 0.02,
-            "probabilityThreshold": 0.5,
           },
         },
         "mitochondrialContent": Object {
-          "auto": true,
-          "enabled": true,
-          "f87892f0-3403-4ba9-b871-c366e3fa855e": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
               "method": "absoluteThreshold",
@@ -129,6 +110,7 @@ Array [
                 },
               },
             },
+            "enabled": true,
             "filterSettings": Object {
               "method": "absoluteThreshold",
               "methodSettings": Object {
@@ -136,23 +118,12 @@ Array [
                   "binStep": 0.3,
                   "maxFraction": 0.07181329,
                 },
-              },
-            },
-          },
-          "filterSettings": Object {
-            "method": "absoluteThreshold",
-            "methodSettings": Object {
-              "absoluteThreshold": Object {
-                "binStep": 0.3,
-                "maxFraction": 0.1,
               },
             },
           },
         },
         "numGenesVsNumUmis": Object {
-          "auto": true,
-          "enabled": true,
-          "f87892f0-3403-4ba9-b871-c366e3fa855e": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
               "regressionType": "linear",
@@ -175,17 +146,6 @@ Array [
                 "spline": Object {
                   "p.level": 0.001,
                 },
-              },
-            },
-          },
-          "filterSettings": Object {
-            "regressionType": "linear",
-            "regressionTypeSettings": Object {
-              "linear": Object {
-                "p.level": 0.001,
-              },
-              "spline": Object {
-                "p.level": 0.001,
               },
             },
           },
@@ -199,10 +159,178 @@ Array [
 exports[`gem2sResponse Starts a QC run when gem2s finishes 2`] = `
 Array [
   Array [
-    "06d50e28-cc96-2624-900c-e0e9a0995598",
+    "mockExperimentId",
     Array [],
-    "Bearer someHugeHash",
-    "a6d49c90-74f0-4c1e-aa8f-673312b6eb7d",
+    "mockAuthJWT",
+    "mockJobId",
+  ],
+]
+`;
+
+exports[`gem2sResponse Starts a QC run when gem2s finishes and can duplicate defaultProcessingConfig ignoring entries that arent samples 1`] = `
+Array [
+  Array [
+    "mockExperimentId",
+    Object {
+      "processing_config": Object {
+        "cellSizeDistribution": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
+            "auto": true,
+            "defaultFilterSettings": Object {
+              "binStep": 200,
+              "minCellSize": 1044,
+            },
+            "enabled": false,
+            "filterSettings": Object {
+              "binStep": 200,
+              "minCellSize": 1044,
+            },
+          },
+        },
+        "classifier": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
+            "auto": true,
+            "defaultFilterSettings": Object {
+              "FDR": 0.01,
+            },
+            "enabled": false,
+            "filterSettings": Object {
+              "FDR": 0.01,
+            },
+            "prefiltered": true,
+          },
+        },
+        "configureEmbedding": Object {
+          "clusteringSettings": Object {
+            "method": "louvain",
+            "methodSettings": Object {
+              "louvain": Object {
+                "resolution": 0.8,
+              },
+            },
+          },
+          "embeddingSettings": Object {
+            "method": "umap",
+            "methodSettings": Object {
+              "tsne": Object {
+                "learningRate": 200,
+                "perplexity": 30,
+              },
+              "umap": Object {
+                "distanceMetric": "cosine",
+                "minimumDistance": 0.3,
+              },
+            },
+          },
+        },
+        "dataIntegration": Object {
+          "dataIntegration": Object {
+            "method": "harmony",
+            "methodSettings": Object {
+              "fastmnn": Object {
+                "normalisation": "logNormalize",
+                "numGenes": 2000,
+              },
+              "harmony": Object {
+                "normalisation": "logNormalize",
+                "numGenes": 2000,
+              },
+              "seuratv4": Object {
+                "normalisation": "logNormalize",
+                "numGenes": 2000,
+              },
+              "unisample": Object {
+                "normalisation": "logNormalize",
+                "numGenes": 2000,
+              },
+            },
+          },
+          "dimensionalityReduction": Object {
+            "excludeGeneCategories": Array [],
+            "method": "rpca",
+            "numPCs": 30,
+          },
+        },
+        "doubletScores": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
+            "auto": true,
+            "defaultFilterSettings": Object {
+              "binStep": 0.02,
+              "probabilityThreshold": 0.6569474,
+            },
+            "enabled": true,
+            "filterSettings": Object {
+              "binStep": 0.02,
+              "probabilityThreshold": 0.6569474,
+            },
+          },
+          "someStepFlag": true,
+        },
+        "mitochondrialContent": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
+            "auto": true,
+            "defaultFilterSettings": Object {
+              "method": "absoluteThreshold",
+              "methodSettings": Object {
+                "absoluteThreshold": Object {
+                  "binStep": 0.3,
+                  "maxFraction": 0.07181329,
+                },
+              },
+            },
+            "enabled": true,
+            "filterSettings": Object {
+              "method": "absoluteThreshold",
+              "methodSettings": Object {
+                "absoluteThreshold": Object {
+                  "binStep": 0.3,
+                  "maxFraction": 0.07181329,
+                },
+              },
+            },
+          },
+        },
+        "numGenesVsNumUmis": Object {
+          "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
+            "auto": true,
+            "defaultFilterSettings": Object {
+              "regressionType": "linear",
+              "regressionTypeSettings": Object {
+                "linear": Object {
+                  "p.level": 0.001,
+                },
+                "spline": Object {
+                  "p.level": 0.001,
+                },
+              },
+            },
+            "enabled": true,
+            "filterSettings": Object {
+              "regressionType": "linear",
+              "regressionTypeSettings": Object {
+                "linear": Object {
+                  "p.level": 0.001,
+                },
+                "spline": Object {
+                  "p.level": 0.001,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+]
+`;
+
+exports[`gem2sResponse Starts a QC run when gem2s finishes and can duplicate defaultProcessingConfig ignoring entries that arent samples 2`] = `
+Array [
+  Array [
+    "mockExperimentId",
+    Array [],
+    "mockAuthJWT",
+    "mockJobId",
   ],
 ]
 `;

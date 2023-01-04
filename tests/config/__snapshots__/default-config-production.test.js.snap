@@ -2,7 +2,6 @@
 
 exports[`default-config Returns correct values for production 1`] = `
 Object {
-  "adminSub": "032abd44-0cd3-4d58-af21-850ca0b95ac7",
   "api": Object {
     "prefix": "/",
   },
@@ -20,6 +19,8 @@ Object {
     "https://elabjournal.com",
     "https://localhost:5000",
   ],
+  "datadogApiKey": "",
+  "datadogAppKey": "",
   "domainName": "localhost:5000",
   "emailDomainName": "https://localhost:5000",
   "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/production/pipeline.yaml",

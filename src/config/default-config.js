@@ -69,8 +69,10 @@ const config = {
   cachingEnabled: true,
   corsOriginUrl: [...externalOrigins, `https://${domainName}`],
   emailDomainName: `https://${domainName}`,
-  adminSub: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
   publicApiUrl: `https://api.${domainName}`,
+  // Used for Batch reporting
+  datadogApiKey: process.env.DD_API_KEY || '',
+  datadogAppKey: process.env.DD_APP_KEY || '',
 };
 
 // We are in permanent develop staging environment
@@ -79,7 +81,6 @@ if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
   config.cachingEnabled = false;
   config.corsOriginUrl = [...externalOrigins, `https://ui-default.${domainName}`];
   config.emailDomainName = `https://ui-default.${domainName}`;
-  config.adminSub = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
   config.publicApiUrl = `https://api-${config.sandboxId}.${domainName}`;
 }
 
@@ -89,7 +90,6 @@ if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
   config.cachingEnabled = false;
   config.corsOriginUrl = [...externalOrigins, `https://ui-${config.sandboxId}.${domainName}`];
   config.emailDomainName = `https://ui-${config.sandboxId}.${domainName}`;
-  config.adminSub = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
   config.publicApiUrl = `https://api-${config.sandboxId}.${domainName}`;
 }
 
@@ -109,7 +109,6 @@ if (config.clusterEnv === 'development') {
 
   config.corsOriginUrl = [...externalOrigins, 'http://localhost:5000'];
   config.emailDomainName = 'http://localhost:5000';
-  config.adminSub = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
 }
 
 module.exports = config;
