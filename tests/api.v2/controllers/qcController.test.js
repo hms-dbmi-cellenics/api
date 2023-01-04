@@ -9,7 +9,6 @@ const pipelineConstruct = require('../../../src/api.v2/helpers/pipeline/pipeline
 const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
 
 jest.mock('../../../src/api.v2/helpers/pipeline/handleQCResponse');
-jest.mock('../../../src/api.v2/helpers/pipeline/pipelineErrorHandler');
 jest.mock('../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 jest.mock('../../../src/utils/parseSNSMessage');
 
