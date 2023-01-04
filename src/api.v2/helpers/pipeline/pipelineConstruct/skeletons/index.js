@@ -86,7 +86,8 @@ const buildErrorHandlingSteps = () => ({
     Next: 'MarkAsFailed',
   },
   MarkAsFailed: {
-    XStepType: 'mark-as-failed',
+    Type: 'Fail',
+    Cause: 'Timeout',
   },
 });
 
