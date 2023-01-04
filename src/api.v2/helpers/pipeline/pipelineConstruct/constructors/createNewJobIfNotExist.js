@@ -1,6 +1,6 @@
 const config = require('../../../../../config');
 
-const createNewJobIfNotExist = (context, step, catchSteps) => {
+const createNewJobIfNotExist = (context, step) => {
   const { accountId, activityArn, processName } = context;
 
   return {
@@ -16,7 +16,6 @@ const createNewJobIfNotExist = (context, step, catchSteps) => {
         activityArn,
       },
     },
-    ...catchSteps && { Catch: catchSteps },
   };
 };
 

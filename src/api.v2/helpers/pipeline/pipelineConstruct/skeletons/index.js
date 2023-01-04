@@ -2,7 +2,6 @@ const { buildQCPipelineSteps, qcPipelineSteps } = require('./qcPipelineSkeleton'
 const { gem2SPipelineSteps } = require('./gem2sPipelineSkeleton');
 const subsetPipelineSteps = require('./subsetPipelineSteps');
 const { END_OF_PIPELINE, HANDLE_TIMEOUT_ERROR_STEP, TIMED_OUT } = require('../../../../constants');
-const { timeoutErrorHandler } = require('../constructors/createHandleErrorStep');
 
 
 const createLocalPipeline = (nextStep) => ({
@@ -15,7 +14,6 @@ const createLocalPipeline = (nextStep) => ({
     XStepType: 'create-new-job-if-not-exist',
     Next: nextStep,
     ResultPath: null,
-    XCatch: [timeoutErrorHandler()],
   },
 });
 
