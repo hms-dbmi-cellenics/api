@@ -4,7 +4,6 @@ const gem2sController = require('../../../src/api.v2/controllers/gem2sController
 const { OK } = require('../../../src/utils/responses');
 
 const gem2s = require('../../../src/api.v2/helpers/pipeline/gem2s');
-const handlePipelineError = require('../../../src/api.v2/helpers/pipeline/pipelineErrorHandler');
 const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
 
 jest.mock('../../../src/api.v2/helpers/pipeline/gem2s');
@@ -69,29 +68,6 @@ describe('gem2sController', () => {
 
     expect(parseSNSMessage).toHaveBeenCalledWith(mockSNSResponse, expectedTopic);
     expect(gem2s.handleGem2sResponse).toHaveBeenCalledWith(io, parsedMessage);
-    expect(handlePipelineError).not.toHaveBeenCalled();
-
-    // Response is ok
-    expect(mockRes.status).toHaveBeenCalledWith(200);
-    expect(mockJsonSend).toHaveBeenCalledWith('ok');
-  });
-
-  it('handleResponse handles pipeline error message correctly', async () => {
-    const errorMessage = {
-      ...parsedMessage,
-      input: {
-        ...parsedMessage.input,
-        error: 'mockError',
-      },
-    };
-
-    parseSNSMessage.mockReturnValue({ io, parsedMessage: errorMessage });
-
-    await gem2sController.handleResponse(mockSNSResponse, mockRes);
-
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockSNSResponse, expectedTopic);
-    expect(handlePipelineError).toHaveBeenCalledWith(io, errorMessage);
-    expect(gem2s.handleGem2sResponse).not.toHaveBeenCalled();
 
     // Response is ok
     expect(mockRes.status).toHaveBeenCalledWith(200);

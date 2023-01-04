@@ -29,16 +29,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
           "detached": true,
           "activityArn": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
         }
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        }
-      ]
+      }
     },
     "DownloadGem": {
       "Next": "PreProcessing",
@@ -208,7 +199,8 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       }
     },
     "MarkAsFailed": {
-      "Type": "Fail"
+      "Type": "Fail",
+      "Cause": "Timeout"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -470,7 +462,8 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       }
     },
     "MarkAsFailed": {
-      "Type": "Fail"
+      "Type": "Fail",
+      "Cause": "Timeout"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -732,7 +725,8 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       }
     },
     "MarkAsFailed": {
-      "Type": "Fail"
+      "Type": "Fail",
+      "Cause": "Timeout"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -771,16 +765,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           "detached": true,
           "activityArn": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713"
         }
-      },
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        }
-      ]
+      }
     },
     "ClassifierFilterMap": {
       "Type": "Map",
@@ -1042,7 +1027,8 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
       }
     },
     "MarkAsFailed": {
-      "Type": "Fail"
+      "Type": "Fail",
+      "Cause": "Timeout"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -1396,7 +1382,8 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
       }
     },
     "MarkAsFailed": {
-      "Type": "Fail"
+      "Type": "Fail",
+      "Cause": "Timeout"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -1746,7 +1733,8 @@ exports[`non-tests to document the State Machines - qc production with specific 
       }
     },
     "MarkAsFailed": {
-      "Type": "Fail"
+      "Type": "Fail",
+      "Cause": "Timeout"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -2100,7 +2088,8 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
       }
     },
     "MarkAsFailed": {
-      "Type": "Fail"
+      "Type": "Fail",
+      "Cause": "Timeout"
     },
     "EndOfPipeline": {
       "Type": "Pass",

@@ -4,7 +4,6 @@ const qcController = require('../../../src/api.v2/controllers/qcController');
 const { OK } = require('../../../src/utils/responses');
 
 const handleQCResponse = require('../../../src/api.v2/helpers/pipeline/handleQCResponse');
-const handlePipelineError = require('../../../src/api.v2/helpers/pipeline/pipelineErrorHandler');
 const pipelineConstruct = require('../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 
 const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
@@ -125,29 +124,6 @@ describe('qcController', () => {
 
     expect(parseSNSMessage).toHaveBeenCalledWith(mockSNSResponse, expectedTopic);
     expect(handleQCResponse).toHaveBeenCalledWith(io, qcResponsePayload);
-    expect(handlePipelineError).not.toHaveBeenCalled();
-
-    // Response is ok
-    expect(mockRes.status).toHaveBeenCalledWith(200);
-    expect(mockJsonSend).toHaveBeenCalledWith('ok');
-  });
-
-  it('handleResponse pipeline error message correctly', async () => {
-    const errorMessage = {
-      ...qcResponsePayload,
-      input: {
-        ...qcResponsePayload.input,
-        error: 'mockError',
-      },
-    };
-
-    parseSNSMessage.mockReturnValue({ io, parsedMessage: errorMessage });
-
-    await qcController.handleResponse(mockSNSResponse, mockRes);
-
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockSNSResponse, expectedTopic);
-    expect(handlePipelineError).toHaveBeenCalledWith(io, errorMessage);
-    expect(handleQCResponse).not.toHaveBeenCalled();
 
     // Response is ok
     expect(mockRes.status).toHaveBeenCalledWith(200);
