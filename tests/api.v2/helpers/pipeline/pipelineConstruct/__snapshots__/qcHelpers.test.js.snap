@@ -11,6 +11,13 @@ Object {
         "Next": "HandleTimeoutError",
         "ResultPath": "$.error-info",
       },
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.error-info",
+      },
     ],
     "ItemsPath": "$.samples",
     "Iterator": Object {
@@ -37,6 +44,13 @@ Object {
           "States.Timeout",
         ],
         "Next": "HandleTimeoutError",
+        "ResultPath": "$.error-info",
+      },
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
         "ResultPath": "$.error-info",
       },
     ],
@@ -68,6 +82,13 @@ Object {
         "Next": "HandleTimeoutError",
         "ResultPath": "$.error-info",
       },
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.error-info",
+      },
     ],
     "XConstructorArgs": Object {
       "perSample": false,
@@ -85,6 +106,13 @@ Object {
         "Next": "HandleTimeoutError",
         "ResultPath": "$.error-info",
       },
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.error-info",
+      },
     ],
     "XConstructorArgs": Object {
       "perSample": false,
@@ -100,6 +128,13 @@ Object {
           "States.Timeout",
         ],
         "Next": "HandleTimeoutError",
+        "ResultPath": "$.error-info",
+      },
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
         "ResultPath": "$.error-info",
       },
     ],
@@ -130,6 +165,13 @@ Object {
         "Next": "HandleTimeoutError",
         "ResultPath": "$.error-info",
       },
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.error-info",
+      },
     ],
     "ItemsPath": "$.samples",
     "Iterator": Object {
@@ -156,6 +198,13 @@ Object {
           "States.Timeout",
         ],
         "Next": "HandleTimeoutError",
+        "ResultPath": "$.error-info",
+      },
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
         "ResultPath": "$.error-info",
       },
     ],

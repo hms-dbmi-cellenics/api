@@ -9,6 +9,7 @@ const ASSIGN_POD_TO_PIPELINE = 'assignPodToPipeline';
 const PIPELINE_ERROR = 'pipelineError';
 
 // Pipeline step name
+const HANDLE_ERROR_STEP = 'HandleError';
 const HANDLE_TIMEOUT_ERROR_STEP = 'HandleTimeoutError';
 const END_OF_PIPELINE = 'EndOfPipeline';
 
@@ -45,6 +46,7 @@ module.exports = {
   OLD_QC_NAME_TO_BE_REMOVED,
   SUBSET_PROCESS_NAME,
   PIPELINE_ERROR,
+  HANDLE_ERROR_STEP,
   HANDLE_TIMEOUT_ERROR_STEP,
   END_OF_PIPELINE,
   RUNNING,
