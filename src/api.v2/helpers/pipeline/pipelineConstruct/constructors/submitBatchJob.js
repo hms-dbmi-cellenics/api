@@ -22,6 +22,10 @@ const submitBatchJob = (context, step) => {
       ContainerOverrides: {
         Environment: [
           {
+            Name: 'EXPERIMENT_ID',
+            Value: `${experimentId}`,
+          },
+          {
             Name: 'ACTIVITY_ARN',
             Value: `${activityArn}`,
           },
@@ -50,8 +54,12 @@ const submitBatchJob = (context, step) => {
             Value: `${config.domainName}`,
           },
           {
-            Name: 'EXPERIMENT_ID',
-            Value: `${experimentId}`,
+            Name: 'DD_API_KEY',
+            Value: `${config.datadogApiKey}`,
+          },
+          {
+            Name: 'DD_APP_KEY',
+            Value: `${config.datadogAppKey}`,
           },
         ],
         ResourceRequirements: [
