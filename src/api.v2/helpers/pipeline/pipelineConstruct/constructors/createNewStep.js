@@ -13,8 +13,7 @@ const buildParams = (context, stepArgs) => {
   } else if ([GEM2S_PROCESS_NAME, SEURAT_PROCESS_NAME].includes(context.processName)) {
     stepParams = context.taskParams;
   } else if (context.processName === SUBSET_PROCESS_NAME) {
-    // stepParams = getSubsetParams(context, stepArgs);
-    stepParams = getSubsetParams();
+    stepParams = getSubsetParams(context, stepArgs);
   }
 
   return {

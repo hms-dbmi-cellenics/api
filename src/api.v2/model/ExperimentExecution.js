@@ -5,7 +5,7 @@ const tableNames = require('./tableNames');
 
 const selectableProps = [
   'experiment_id', 'pipeline_type',
-  'params_hash', 'state_machine_arn', 'execution_arn',
+  'params_hash', 'state_machine_arn', 'execution_arn', 'last_status_response',
 ];
 
 class ExperimentExecution extends BasicModel {

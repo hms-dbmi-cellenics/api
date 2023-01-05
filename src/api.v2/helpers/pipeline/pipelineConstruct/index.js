@@ -14,7 +14,7 @@ const getLogger = require('../../../../utils/getLogger');
 const {
   getGem2sPipelineSkeleton, getQcPipelineSkeleton, getSubsetPipelineSkeleton, getSeuratPipelineSkeleton,
 } = require('./skeletons');
-const { getQcStepsToRun } = require('./qcHelpers');
+const { getQcStepsToRun, qcStepsWithFilterSettings } = require('./qcHelpers');
 const needsBatchJob = require('../batch/needsBatchJob');
 
 const {
@@ -28,14 +28,28 @@ const {
 
 const logger = getLogger();
 
+/**
+ *
+ * @param {*} processingConfig The processing config with defaultFilterSettings in each step
+ * @param {*} samplesOrder The sample ids to iterate over
+ * @returns The processing config without defaultFilterSettings in each step
+ */
+const withoutDefaultFilterSettings = (processingConfig, samplesOrder) => {
+  const slimmedProcessingConfig = _.cloneDeep(processingConfig);
+
+  qcStepsWithFilterSettings.forEach((stepName) => {
+    samplesOrder.forEach((sampleId) => {
+      delete slimmedProcessingConfig[stepName][sampleId].defaultFilterSettings;
+    });
+  });
+
+  return slimmedProcessingConfig;
+};
+
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
   logger.log(`createQCPipeline: fetch processing settings ${experimentId}`);
 
-  const experiment = await new Experiment().findById(experimentId).first();
-
-  const {
-    processingConfig, samplesOrder,
-  } = experiment;
+  const { processingConfig, samplesOrder } = await new Experiment().findById(experimentId).first();
 
   if (processingConfigUpdates.length) {
     processingConfigUpdates.forEach(({ name, body }) => {
@@ -51,13 +65,14 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
 
   const context = {
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
-    processingConfig,
+    processingConfig: withoutDefaultFilterSettings(processingConfig, samplesOrder),
     authJWT,
   };
 
   await cancelPreviousPipelines(experimentId, previousJobId);
 
   const qcSteps = await getQcStepsToRun(experimentId, processingConfigUpdates);
+
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
   const qcPipelineSkeleton = await getQcPipelineSkeleton(
@@ -142,7 +157,7 @@ const createSubsetPipeline = async (
   const lastStepsParams = { experimentName: toExperimentName, authJWT };
 
   const context = {
-    ...(await getGeneralPipelineContext(fromExperimentId, SUBSET_PROCESS_NAME)),
+    ...(await getGeneralPipelineContext(toExperimentId, SUBSET_PROCESS_NAME)),
     taskParams: {
       subsetSeurat: stepsParams,
       prepareExperiment: lastStepsParams,

@@ -72,6 +72,9 @@ const config = {
   emailDomainName: `https://${domainName}`,
   adminSub: ADMIN_SUB[process.env.AWS_ACCOUNT_ID],
   publicApiUrl: `https://api.${domainName}`,
+  // Used for Batch reporting
+  datadogApiKey: process.env.DD_API_KEY || '',
+  datadogAppKey: process.env.DD_APP_KEY || '',
 };
 
 // We are in permanent develop staging environment

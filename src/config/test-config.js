@@ -12,7 +12,6 @@ module.exports = {
   domainName: 'scp.biomage.net',
   podName: 'test',
   sandboxId: 'default',
-  adminSub: 'mockAdminSub',
   workerNamespace: 'worker-test-namespace',
   pipelineNamespace: 'pipeline-test-namespace',
   pipelineInstanceConfigUrl: `https://raw.githubusercontent.com/${githubOrganisationName}/iac/master/releases/staging/pipeline.yaml`,
@@ -22,4 +21,6 @@ module.exports = {
   },
   cachingEnabled: false,
   publicApiUrl: 'test-public-api-url',
+  datadogApiKey: 'test-datadog-api-key',
+  datadogAppKey: 'test-datadog-app-key',
 };
