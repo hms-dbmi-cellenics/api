@@ -68,6 +68,21 @@ const qcStatusResponseSql = {
   },
 };
 
+const seuratStatusResponseSql = {
+  [SEURAT_PROCESS_NAME]: {
+    startDate: new Date(5),
+    stopDate: new Date(5),
+    status: 'SUCCEEDED',
+    completedSteps: [
+      'DownloadSeurat',
+      'ProcessSeurat',
+      'UploadSeuratToAWS',
+    ],
+    error: false,
+    paramsHash: null,
+  },
+};
+
 const mockNoRunsResponse = [];
 
 const mockRunResponse = [
@@ -83,7 +98,7 @@ const mockRunResponse = [
     stateMachineArn: SUCCEEDED_ID,
     executionArn: SUCCEEDED_ID,
     paramsHash,
-    lastStatusResponse: statusResponseSql,
+    lastStatusResponse: seuratStatusResponseSql,
   },
   {
     pipelineType: QC_PROCESS_NAME,
@@ -107,7 +122,7 @@ const mockExecutionNotExistResponse = [
     stateMachineArn: '',
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
     paramsHash,
-    lastStatusResponse: statusResponseSql,
+    lastStatusResponse: seuratStatusResponseSql,
   },
   {
     pipelineType: QC_PROCESS_NAME,
@@ -165,7 +180,7 @@ const mockRandomExceptionResponse = [
     stateMachineArn: '',
     executionArn: RANDOM_EXCEPTION,
     paramsHash,
-    lastStatusResponse: statusResponseSql,
+    lastStatusResponse: seuratStatusResponseSql,
   },
   {
     pipelineType: QC_PROCESS_NAME,
