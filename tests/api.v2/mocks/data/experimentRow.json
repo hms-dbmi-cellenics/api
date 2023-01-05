@@ -1,0 +1,229 @@
+{
+  "samplesOrder": [
+    "oneSample",
+    "otherSample"
+  ],
+  "processingConfig": {
+    "classifier": {
+      "oneSample": {
+        "auto": true,
+        "enabled": false,
+        "prefiltered": true,
+        "filterSettings": {
+          "FDR": 0.01
+        },
+        "defaultFilterSettings": {
+          "FDR": 0.01
+        }
+      },
+      "otherSample": {
+        "auto": true,
+        "enabled": false,
+        "prefiltered": true,
+        "filterSettings": {
+          "FDR": 0.01
+        },
+        "defaultFilterSettings": {
+          "FDR": 0.01
+        }
+      }
+    },
+    "doubletScores": {
+      "oneSample": {
+        "enabled": true,
+        "filterSettings": {
+          "oneSetting": 1
+        },
+        "defaultFilterSettings": {
+          "oneSetting": 1
+        }
+      },
+      "otherSample": {
+        "enabled": true,
+        "filterSettings": {
+          "oneSetting": 1
+        },
+        "defaultFilterSettings": {
+          "oneSetting": 1
+        }
+      }
+    },
+    "dataIntegration": {
+      "dataIntegration": {
+        "method": "harmony",
+        "methodSettings": {
+          "fastmnn": {
+            "numGenes": 2000,
+            "normalisation": "logNormalize"
+          },
+          "harmony": {
+            "numGenes": 2000,
+            "normalisation": "logNormalize"
+          },
+          "seuratv4": {
+            "numGenes": 2000,
+            "normalisation": "logNormalize"
+          },
+          "unisample": {
+            "numGenes": 2000,
+            "normalisation": "logNormalize"
+          }
+        }
+      },
+      "dimensionalityReduction": {
+        "method": "rpca",
+        "numPCs": 30,
+        "excludeGeneCategories": []
+      }
+    },
+    "numGenesVsNumUmis": {
+      "oneSample": {
+        "auto": true,
+        "enabled": true,
+        "filterSettings": {
+          "regressionType": "linear",
+          "regressionTypeSettings": {
+            "linear": {
+              "p.level": 0.001
+            },
+            "spline": {
+              "p.level": 0.001
+            }
+          }
+        },
+        "defaultFilterSettings": {
+          "regressionType": "linear",
+          "regressionTypeSettings": {
+            "linear": {
+              "p.level": 0.001
+            },
+            "spline": {
+              "p.level": 0.001
+            }
+          }
+        }
+      },
+      "otherSample": {
+        "auto": true,
+        "enabled": true,
+        "filterSettings": {
+          "regressionType": "linear",
+          "regressionTypeSettings": {
+            "linear": {
+              "p.level": 0.001
+            },
+            "spline": {
+              "p.level": 0.001
+            }
+          }
+        },
+        "defaultFilterSettings": {
+          "regressionType": "linear",
+          "regressionTypeSettings": {
+            "linear": {
+              "p.level": 0.001
+            },
+            "spline": {
+              "p.level": 0.001
+            }
+          }
+        }
+      }
+    },
+    "configureEmbedding": {
+      "embeddingSettings": {
+        "method": "umap",
+        "methodSettings": {
+          "tsne": {
+            "perplexity": 30,
+            "learningRate": 200
+          },
+          "umap": {
+            "distanceMetric": "cosine",
+            "minimumDistance": 0.3
+          }
+        }
+      },
+      "clusteringSettings": {
+        "method": "louvain",
+        "methodSettings": {
+          "louvain": {
+            "resolution": 0.8
+          }
+        }
+      }
+    },
+    "cellSizeDistribution": {
+      "oneSample": {
+        "auto": true,
+        "enabled": false,
+        "filterSettings": {
+          "binStep": 200,
+          "minCellSize": 1044
+        },
+        "defaultFilterSettings": {
+          "binStep": 200,
+          "minCellSize": 1044
+        }
+      },
+      "otherSample": {
+        "auto": true,
+        "enabled": false,
+        "filterSettings": {
+          "binStep": 200,
+          "minCellSize": 1044
+        },
+        "defaultFilterSettings": {
+          "binStep": 200,
+          "minCellSize": 1044
+        }
+      }
+    },
+    "mitochondrialContent": {
+      "oneSample": {
+        "auto": true,
+        "enabled": true,
+        "filterSettings": {
+          "method": "absoluteThreshold",
+          "methodSettings": {
+            "absoluteThreshold": {
+              "binStep": 0.3,
+              "maxFraction": 0.07181329
+            }
+          }
+        },
+        "defaultFilterSettings": {
+          "method": "absoluteThreshold",
+          "methodSettings": {
+            "absoluteThreshold": {
+              "binStep": 0.3,
+              "maxFraction": 0.07181329
+            }
+          }
+        }
+      },
+      "otherSample": {
+        "auto": true,
+        "enabled": true,
+        "filterSettings": {
+          "method": "absoluteThreshold",
+          "methodSettings": {
+            "absoluteThreshold": {
+              "binStep": 0.3,
+              "maxFraction": 0.07181329
+            }
+          }
+        },
+        "defaultFilterSettings": {
+          "method": "absoluteThreshold",
+          "methodSettings": {
+            "absoluteThreshold": {
+              "binStep": 0.3,
+              "maxFraction": 0.07181329
+            }
+          }
+        }
+      }
+    }
+  }
+}
