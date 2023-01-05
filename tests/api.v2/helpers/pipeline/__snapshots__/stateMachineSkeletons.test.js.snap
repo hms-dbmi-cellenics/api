@@ -225,7 +225,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
-    "HandleError": {
+    "HandleTimeoutError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -240,7 +240,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         }
       }
     },
-    "HandleTimeoutError": {
+    "HandleError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -256,8 +256,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       }
     },
     "MarkAsFailed": {
-      "Type": "Fail",
-      "Cause": "Timeout"
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -545,7 +544,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
-    "HandleError": {
+    "HandleTimeoutError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -560,7 +559,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         }
       }
     },
-    "HandleTimeoutError": {
+    "HandleError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -576,8 +575,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       }
     },
     "MarkAsFailed": {
-      "Type": "Fail",
-      "Cause": "Timeout"
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -865,7 +863,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
-    "HandleError": {
+    "HandleTimeoutError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -880,7 +878,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         }
       }
     },
-    "HandleTimeoutError": {
+    "HandleError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -896,8 +894,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       }
     },
     "MarkAsFailed": {
-      "Type": "Fail",
-      "Cause": "Timeout"
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -1231,7 +1228,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         }
       ]
     },
-    "HandleError": {
+    "HandleTimeoutError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -1246,7 +1243,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         }
       }
     },
-    "HandleTimeoutError": {
+    "HandleError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -1262,8 +1259,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
       }
     },
     "MarkAsFailed": {
-      "Type": "Fail",
-      "Cause": "Timeout"
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -1650,7 +1646,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         }
       ]
     },
-    "HandleError": {
+    "HandleTimeoutError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -1665,7 +1661,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         }
       }
     },
-    "HandleTimeoutError": {
+    "HandleError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -1681,8 +1677,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
       }
     },
     "MarkAsFailed": {
-      "Type": "Fail",
-      "Cause": "Timeout"
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -2065,7 +2060,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
         }
       ]
     },
-    "HandleError": {
+    "HandleTimeoutError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -2080,7 +2075,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
         }
       }
     },
-    "HandleTimeoutError": {
+    "HandleError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -2096,8 +2091,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
       }
     },
     "MarkAsFailed": {
-      "Type": "Fail",
-      "Cause": "Timeout"
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -2484,7 +2478,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         }
       ]
     },
-    "HandleError": {
+    "HandleTimeoutError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -2499,7 +2493,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         }
       }
     },
-    "HandleTimeoutError": {
+    "HandleError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
@@ -2515,8 +2509,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
       }
     },
     "MarkAsFailed": {
-      "Type": "Fail",
-      "Cause": "Timeout"
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",
