@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { END_OF_PIPELINE } = require('../../../../constants');
-const { errorHandler } = require('../constructors/createHandleErrorStep');
+const { createCatchSteps } = require('../constructors/createHandleErrorStep');
 
 const qcPipelineSteps = {
   ClassifierFilterMap: {
@@ -21,7 +21,7 @@ const qcPipelineSteps = {
         },
       },
     },
-    Catch: errorHandler(),
+    Catch: createCatchSteps(),
   },
   CellSizeDistributionFilterMap: {
     Type: 'Map',
@@ -41,7 +41,7 @@ const qcPipelineSteps = {
         },
       },
     },
-    Catch: errorHandler(),
+    Catch: createCatchSteps(),
   },
   MitochondrialContentFilterMap: {
     Type: 'Map',
@@ -61,7 +61,7 @@ const qcPipelineSteps = {
         },
       },
     },
-    Catch: errorHandler(),
+    Catch: createCatchSteps(),
   },
   NumGenesVsNumUmisFilterMap: {
     Type: 'Map',
@@ -81,7 +81,7 @@ const qcPipelineSteps = {
         },
       },
     },
-    Catch: errorHandler(),
+    Catch: createCatchSteps(),
   },
   DoubletScoresFilterMap: {
     Type: 'Map',
@@ -101,7 +101,7 @@ const qcPipelineSteps = {
         },
       },
     },
-    Catch: errorHandler(),
+    Catch: createCatchSteps(),
   },
   DataIntegration: {
     XStepType: 'create-new-step',
@@ -111,7 +111,7 @@ const qcPipelineSteps = {
       uploadCountMatrix: true,
     },
     Next: 'ConfigureEmbedding',
-    XCatch: errorHandler(),
+    XCatch: createCatchSteps(),
   },
   ConfigureEmbedding: {
     XStepType: 'create-new-step',
@@ -120,7 +120,7 @@ const qcPipelineSteps = {
       taskName: 'configureEmbedding',
     },
     Next: END_OF_PIPELINE,
-    XCatch: errorHandler(),
+    XCatch: createCatchSteps(),
   },
 };
 

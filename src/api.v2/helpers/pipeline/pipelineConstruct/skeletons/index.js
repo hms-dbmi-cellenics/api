@@ -83,14 +83,14 @@ const buildInitialSteps = (clusterEnv, nextStep, runInBatch) => {
 };
 
 const buildErrorHandlingSteps = () => ({
-  [HANDLE_ERROR_STEP]: {
+  [HANDLE_TIMEOUT_ERROR_STEP]: {
     XStepType: 'create-handle-error-step',
     XConstructorArgs: {
       errorType: TIMED_OUT,
     },
     Next: 'MarkAsFailed',
   },
-  [HANDLE_TIMEOUT_ERROR_STEP]: {
+  [HANDLE_ERROR_STEP]: {
     XStepType: 'create-handle-error-step',
     XConstructorArgs: {
       errorType: FAILED,
@@ -99,7 +99,6 @@ const buildErrorHandlingSteps = () => ({
   },
   MarkAsFailed: {
     Type: 'Fail',
-    Cause: 'Timeout',
   },
 });
 

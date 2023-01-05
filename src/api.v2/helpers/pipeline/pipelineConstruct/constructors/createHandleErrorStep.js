@@ -69,7 +69,7 @@ const createHandleErrorStep = (context, step, args) => {
   };
 };
 
-const errorHandler = () => ([
+const createCatchSteps = () => ([
   {
     ErrorEquals: ['States.Timeout'],
     ResultPath: '$.error-info',
@@ -83,6 +83,6 @@ const errorHandler = () => ([
 ]);
 
 module.exports = {
-  errorHandler,
+  createCatchSteps,
   createHandleErrorStep,
 };
