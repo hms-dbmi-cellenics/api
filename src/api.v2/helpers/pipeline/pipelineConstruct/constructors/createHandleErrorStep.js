@@ -1,53 +1,51 @@
 const config = require('../../../../../config');
-// const { PIPELINE_ERROR, HANDLE_ERROR_STEP } = require('../../../../constants');
-// const { getActivityId } = require('../utils');
+const { PIPELINE_ERROR, HANDLE_ERROR_STEP } = require('../../../../constants');
+const { getActivityId } = require('../utils');
 
-const { HANDLE_ERROR_STEP } = require('../../../../constants');
-
-// const buildErrorMessage = (
-//   sandboxId,
-//   experimentId,
-//   taskName,
-//   processName,
-//   activityId,
-//   authJWT,
-// ) => ({
-//   taskName,
-//   experimentId,
-//   apiUrl: config.publicApiUrl,
-//   input: {
-//     authJWT,
-//     experimentId,
-//     // This is replaced in States.Format
-//     error: '{}',
-//     taskName,
-//     sandboxId,
-//     activityId,
-//     processName,
-//   },
-// });
+const buildErrorMessage = (
+  sandboxId,
+  experimentId,
+  taskName,
+  processName,
+  activityId,
+  authJWT,
+) => ({
+  taskName,
+  experimentId,
+  apiUrl: config.publicApiUrl,
+  input: {
+    authJWT,
+    experimentId,
+    // This is replaced in States.Format
+    error: '{}',
+    taskName,
+    sandboxId,
+    activityId,
+    processName,
+  },
+});
 
 const createHandleErrorStep = (context, step) => {
   const {
     environment,
     accountId,
     sandboxId,
-    // activityArn,
-    // experimentId,
-    // processName,
-    // authJWT,
+    activityArn,
+    experimentId,
+    processName,
+    authJWT,
   } = context;
 
-  // const activityId = getActivityId(activityArn);
+  const activityId = getActivityId(activityArn);
 
-  // const errorMessage = buildErrorMessage(
-  //   sandboxId,
-  //   experimentId,
-  //   PIPELINE_ERROR,
-  //   processName,
-  //   activityId,
-  //   authJWT,
-  // );
+  const errorMessage = buildErrorMessage(
+    sandboxId,
+    experimentId,
+    PIPELINE_ERROR,
+    processName,
+    activityId,
+    authJWT,
+  );
 
   return {
     ...step,
@@ -55,7 +53,7 @@ const createHandleErrorStep = (context, step) => {
     Resource: 'arn:aws:states:::sns:publish',
     Parameters: {
       TopicArn: `arn:aws:sns:${config.awsRegion}:${accountId}:work-results-${environment}-${sandboxId}-v2`,
-      'Message.$': 'States.Format("Error message: {}", $.errorInfo.Error)',
+      Message: JSON.stringify(errorMessage),
       MessageAttributes: {
         type: {
           DataType: 'String',
