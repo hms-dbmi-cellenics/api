@@ -29,7 +29,16 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
           "detached": true,
           "activityArn": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleError"
+        }
+      ]
     },
     "DownloadGem": {
       "Next": "PreProcessing",
@@ -198,7 +207,7 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-development-pipeline-assignation-v2",
-        "Message": "States.Format({\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}, $.error-info.Error)",
+        "Message.$": "States.Format(\\"{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}\\", $.input.error-info.Error)",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -469,7 +478,7 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
-        "Message": "States.Format({\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}, $.error-info.Error)",
+        "Message.$": "States.Format(\\"{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}\\", $.input.error-info.Error)",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -740,7 +749,7 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-staging-pipeline-assignation-v2",
-        "Message": "States.Format({\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}, $.error-info.Error)",
+        "Message.$": "States.Format(\\"{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}\\", $.input.error-info.Error)",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -789,7 +798,16 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           "detached": true,
           "activityArn": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713"
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "HandleError"
+        }
+      ]
     },
     "ClassifierFilterMap": {
       "Type": "Map",
@@ -1041,7 +1059,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-development-pipeline-assignation-v2",
-        "Message": "States.Format({\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}, $.error-info.Error)",
+        "Message.$": "States.Format(\\"{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}\\", $.input.error-info.Error)",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -1395,7 +1413,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
-        "Message": "States.Format({\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}, $.error-info.Error)",
+        "Message.$": "States.Format(\\"{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}\\", $.input.error-info.Error)",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -1745,7 +1763,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
-        "Message": "States.Format({\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}, $.error-info.Error)",
+        "Message.$": "States.Format(\\"{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}\\", $.input.error-info.Error)",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -2099,7 +2117,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-staging-pipeline-assignation-v2",
-        "Message": "States.Format({\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}, $.error-info.Error)",
+        "Message.$": "States.Format(\\"{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}\\", $.input.error-info.Error)",
         "MessageAttributes": {
           "type": {
             "DataType": "String",

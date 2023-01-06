@@ -16,7 +16,7 @@ const constructPipelineStep = (context, step) => {
       return deleteCompletedJobs(context, step);
     }
     case 'create-new-job-if-not-exist': {
-      return createNewJobIfNotExist(context, step);
+      return createNewJobIfNotExist(context, step, catchSteps);
     }
     // create new job for big datasets in aws
     case 'submit-batch-job': {
