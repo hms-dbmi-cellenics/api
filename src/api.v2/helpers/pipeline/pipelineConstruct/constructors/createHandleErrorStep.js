@@ -1,5 +1,5 @@
 const config = require('../../../../../config');
-const { PIPELINE_ERROR, HANDLE_TIMEOUT_ERROR_STEP, HANDLE_ERROR_STEP } = require('../../../../constants');
+const { PIPELINE_ERROR, HANDLE_ERROR_STEP } = require('../../../../constants');
 const { getActivityId } = require('../utils');
 
 const buildErrorMessage = (
@@ -7,7 +7,6 @@ const buildErrorMessage = (
   experimentId,
   taskName,
   processName,
-  errorType,
   activityId,
   authJWT,
 ) => ({
@@ -17,7 +16,8 @@ const buildErrorMessage = (
   input: {
     authJWT,
     experimentId,
-    error: errorType,
+    // This is replaced in States.Format
+    error: '{}',
     taskName,
     sandboxId,
     activityId,
@@ -25,7 +25,7 @@ const buildErrorMessage = (
   },
 });
 
-const createHandleErrorStep = (context, step, args) => {
+const createHandleErrorStep = (context, step) => {
   const {
     environment,
     accountId,
@@ -36,8 +36,6 @@ const createHandleErrorStep = (context, step, args) => {
     authJWT,
   } = context;
 
-  const { errorType } = args;
-
   const activityId = getActivityId(activityArn);
 
   const errorMessage = buildErrorMessage(
@@ -45,7 +43,6 @@ const createHandleErrorStep = (context, step, args) => {
     experimentId,
     PIPELINE_ERROR,
     processName,
-    errorType,
     activityId,
     authJWT,
   );
@@ -56,7 +53,7 @@ const createHandleErrorStep = (context, step, args) => {
     Resource: 'arn:aws:states:::sns:publish',
     Parameters: {
       TopicArn: `arn:aws:sns:${config.awsRegion}:${accountId}:work-results-${environment}-${sandboxId}-v2`,
-      Message: JSON.stringify(errorMessage),
+      Message: `States.Format(${JSON.stringify(errorMessage)}, $.error-info.Error)`,
       MessageAttributes: {
         type: {
           DataType: 'String',
@@ -70,11 +67,6 @@ const createHandleErrorStep = (context, step, args) => {
 };
 
 const createCatchSteps = () => ([
-  {
-    ErrorEquals: ['States.Timeout'],
-    ResultPath: '$.error-info',
-    Next: HANDLE_TIMEOUT_ERROR_STEP,
-  },
   {
     ErrorEquals: ['States.ALL'],
     ResultPath: '$.error-info',

@@ -47,13 +47,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -75,13 +68,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -107,13 +93,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -135,13 +114,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -167,13 +139,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -195,13 +160,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -227,13 +185,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -241,28 +192,13 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         }
       ]
     },
-    "HandleTimeoutError": {
-      "Next": "MarkAsFailed",
-      "Type": "Task",
-      "Resource": "arn:aws:states:::sns:publish",
-      "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-development-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
-        "MessageAttributes": {
-          "type": {
-            "DataType": "String",
-            "StringValue": "PipelineResponse"
-          }
-        }
-      }
-    },
     "HandleError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-development-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "Message": "States.Format({\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}, $.error-info.Error)",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -382,13 +318,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -410,13 +339,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -442,13 +364,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -470,13 +385,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -502,13 +410,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -530,13 +431,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -562,13 +456,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -576,28 +463,13 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         }
       ]
     },
-    "HandleTimeoutError": {
-      "Next": "MarkAsFailed",
-      "Type": "Task",
-      "Resource": "arn:aws:states:::sns:publish",
-      "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
-        "MessageAttributes": {
-          "type": {
-            "DataType": "String",
-            "StringValue": "PipelineResponse"
-          }
-        }
-      }
-    },
     "HandleError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "Message": "States.Format({\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}, $.error-info.Error)",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -717,13 +589,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -745,13 +610,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -777,13 +635,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -805,13 +656,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -837,13 +681,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -865,13 +702,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -897,13 +727,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -911,28 +734,13 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         }
       ]
     },
-    "HandleTimeoutError": {
-      "Next": "MarkAsFailed",
-      "Type": "Task",
-      "Resource": "arn:aws:states:::sns:publish",
-      "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-staging-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
-        "MessageAttributes": {
-          "type": {
-            "DataType": "String",
-            "StringValue": "PipelineResponse"
-          }
-        }
-      }
-    },
     "HandleError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-staging-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "Message": "States.Format({\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}, $.error-info.Error)",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -1014,13 +822,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -1057,13 +858,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         }
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -1104,13 +898,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -1147,13 +934,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         }
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -1194,13 +974,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -1226,13 +999,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "config": {}
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -1262,13 +1028,6 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -1276,28 +1035,13 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         }
       ]
     },
-    "HandleTimeoutError": {
-      "Next": "MarkAsFailed",
-      "Type": "Task",
-      "Resource": "arn:aws:states:::sns:publish",
-      "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-development-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
-        "MessageAttributes": {
-          "type": {
-            "DataType": "String",
-            "StringValue": "PipelineResponse"
-          }
-        }
-      }
-    },
     "HandleError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-development-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
+        "Message": "States.Format({\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}, $.error-info.Error)",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -1432,13 +1176,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -1475,13 +1212,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         }
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -1522,13 +1252,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -1565,13 +1288,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         }
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -1612,13 +1328,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -1644,13 +1353,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "config": {}
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -1680,13 +1382,6 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -1694,28 +1389,13 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         }
       ]
     },
-    "HandleTimeoutError": {
-      "Next": "MarkAsFailed",
-      "Type": "Task",
-      "Resource": "arn:aws:states:::sns:publish",
-      "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
-        "MessageAttributes": {
-          "type": {
-            "DataType": "String",
-            "StringValue": "PipelineResponse"
-          }
-        }
-      }
-    },
     "HandleError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
+        "Message": "States.Format({\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}, $.error-info.Error)",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -1846,13 +1526,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -1889,13 +1562,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
         }
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -1936,13 +1602,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -1979,13 +1638,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
         }
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -2026,13 +1678,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -2058,13 +1703,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "config": {}
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -2094,13 +1732,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -2108,28 +1739,13 @@ exports[`non-tests to document the State Machines - qc production with specific 
         }
       ]
     },
-    "HandleTimeoutError": {
-      "Next": "MarkAsFailed",
-      "Type": "Task",
-      "Resource": "arn:aws:states:::sns:publish",
-      "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
-        "MessageAttributes": {
-          "type": {
-            "DataType": "String",
-            "StringValue": "PipelineResponse"
-          }
-        }
-      }
-    },
     "HandleError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
+        "Message": "States.Format({\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}, $.error-info.Error)",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -2264,13 +1880,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -2307,13 +1916,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         }
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -2354,13 +1956,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -2397,13 +1992,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         }
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -2444,13 +2032,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -2476,13 +2057,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "config": {}
       },
       "Catch": [
-        {
-          "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
         {
           "ErrorEquals": [
             "States.ALL"
@@ -2512,13 +2086,6 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
       "Catch": [
         {
           "ErrorEquals": [
-            "States.Timeout"
-          ],
-          "ResultPath": "$.error-info",
-          "Next": "HandleTimeoutError"
-        },
-        {
-          "ErrorEquals": [
             "States.ALL"
           ],
           "ResultPath": "$.error-info",
@@ -2526,28 +2093,13 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         }
       ]
     },
-    "HandleTimeoutError": {
-      "Next": "MarkAsFailed",
-      "Type": "Task",
-      "Resource": "arn:aws:states:::sns:publish",
-      "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-staging-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
-        "MessageAttributes": {
-          "type": {
-            "DataType": "String",
-            "StringValue": "PipelineResponse"
-          }
-        }
-      }
-    },
     "HandleError": {
       "Next": "MarkAsFailed",
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
         "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-staging-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
+        "Message": "States.Format({\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}, $.error-info.Error)",
         "MessageAttributes": {
           "type": {
             "DataType": "String",

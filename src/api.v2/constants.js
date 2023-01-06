@@ -10,7 +10,6 @@ const PIPELINE_ERROR = 'pipelineError';
 
 // Pipeline step name
 const HANDLE_ERROR_STEP = 'HandleError';
-const HANDLE_TIMEOUT_ERROR_STEP = 'HandleTimeoutError';
 const END_OF_PIPELINE = 'EndOfPipeline';
 
 // Pipeline states as defined in
@@ -47,7 +46,6 @@ module.exports = {
   SUBSET_PROCESS_NAME,
   PIPELINE_ERROR,
   HANDLE_ERROR_STEP,
-  HANDLE_TIMEOUT_ERROR_STEP,
   END_OF_PIPELINE,
   RUNNING,
   FAILED,

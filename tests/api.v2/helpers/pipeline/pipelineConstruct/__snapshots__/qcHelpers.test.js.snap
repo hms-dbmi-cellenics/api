@@ -6,13 +6,6 @@ Object {
     "Catch": Array [
       Object {
         "ErrorEquals": Array [
-          "States.Timeout",
-        ],
-        "Next": "HandleTimeoutError",
-        "ResultPath": "$.error-info",
-      },
-      Object {
-        "ErrorEquals": Array [
           "States.ALL",
         ],
         "Next": "HandleError",
@@ -39,13 +32,6 @@ Object {
   },
   "ClassifierFilterMap": Object {
     "Catch": Array [
-      Object {
-        "ErrorEquals": Array [
-          "States.Timeout",
-        ],
-        "Next": "HandleTimeoutError",
-        "ResultPath": "$.error-info",
-      },
       Object {
         "ErrorEquals": Array [
           "States.ALL",
@@ -77,13 +63,6 @@ Object {
     "XCatch": Array [
       Object {
         "ErrorEquals": Array [
-          "States.Timeout",
-        ],
-        "Next": "HandleTimeoutError",
-        "ResultPath": "$.error-info",
-      },
-      Object {
-        "ErrorEquals": Array [
           "States.ALL",
         ],
         "Next": "HandleError",
@@ -101,13 +80,6 @@ Object {
     "XCatch": Array [
       Object {
         "ErrorEquals": Array [
-          "States.Timeout",
-        ],
-        "Next": "HandleTimeoutError",
-        "ResultPath": "$.error-info",
-      },
-      Object {
-        "ErrorEquals": Array [
           "States.ALL",
         ],
         "Next": "HandleError",
@@ -123,13 +95,6 @@ Object {
   },
   "DoubletScoresFilterMap": Object {
     "Catch": Array [
-      Object {
-        "ErrorEquals": Array [
-          "States.Timeout",
-        ],
-        "Next": "HandleTimeoutError",
-        "ResultPath": "$.error-info",
-      },
       Object {
         "ErrorEquals": Array [
           "States.ALL",
@@ -160,13 +125,6 @@ Object {
     "Catch": Array [
       Object {
         "ErrorEquals": Array [
-          "States.Timeout",
-        ],
-        "Next": "HandleTimeoutError",
-        "ResultPath": "$.error-info",
-      },
-      Object {
-        "ErrorEquals": Array [
           "States.ALL",
         ],
         "Next": "HandleError",
@@ -193,13 +151,6 @@ Object {
   },
   "NumGenesVsNumUmisFilterMap": Object {
     "Catch": Array [
-      Object {
-        "ErrorEquals": Array [
-          "States.Timeout",
-        ],
-        "Next": "HandleTimeoutError",
-        "ResultPath": "$.error-info",
-      },
       Object {
         "ErrorEquals": Array [
           "States.ALL",

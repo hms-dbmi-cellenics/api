@@ -3,9 +3,7 @@ const { gem2SPipelineSteps } = require('./gem2sPipelineSkeleton');
 const subsetPipelineSteps = require('./subsetPipelineSteps');
 const {
   END_OF_PIPELINE,
-  FAILED,
-  TIMED_OUT,
-  HANDLE_ERROR_STEP, HANDLE_TIMEOUT_ERROR_STEP,
+  HANDLE_ERROR_STEP,
 } = require('../../../../constants');
 
 
@@ -83,18 +81,8 @@ const buildInitialSteps = (clusterEnv, nextStep, runInBatch) => {
 };
 
 const buildErrorHandlingSteps = () => ({
-  [HANDLE_TIMEOUT_ERROR_STEP]: {
-    XStepType: 'create-handle-error-step',
-    XConstructorArgs: {
-      errorType: TIMED_OUT,
-    },
-    Next: 'MarkAsFailed',
-  },
   [HANDLE_ERROR_STEP]: {
     XStepType: 'create-handle-error-step',
-    XConstructorArgs: {
-      errorType: FAILED,
-    },
     Next: 'MarkAsFailed',
   },
   MarkAsFailed: {

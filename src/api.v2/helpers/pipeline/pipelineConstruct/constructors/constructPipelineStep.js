@@ -34,7 +34,7 @@ const constructPipelineStep = (context, step) => {
       return createNewStep(context, step, args, catchSteps);
     }
     case 'create-handle-error-step': {
-      return createHandleErrorStep(context, step, args);
+      return createHandleErrorStep(context, step);
     }
     default: {
       throw new Error(`Invalid state type specified: ${stepType}`);
