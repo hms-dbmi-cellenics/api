@@ -77,7 +77,7 @@ const submitBatchJob = (context, step) => {
     Catch: [
       {
         ErrorEquals: ['States.ALL'],
-        ResultPath: '$.error-info',
+        ResultPath: '$.errorInfo',
         Next: HANDLE_ERROR_STEP,
       },
     ],

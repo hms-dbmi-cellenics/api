@@ -53,7 +53,7 @@ const createHandleErrorStep = (context, step) => {
     Resource: 'arn:aws:states:::sns:publish',
     Parameters: {
       TopicArn: `arn:aws:sns:${config.awsRegion}:${accountId}:work-results-${environment}-${sandboxId}-v2`,
-      'Message.$': `States.Format("${JSON.stringify(errorMessage)}", $.input.error-info.Error)`,
+      'Message.$': `States.Format(${JSON.stringify(errorMessage)}, $.errorInfo.Error)`,
       MessageAttributes: {
         type: {
           DataType: 'String',
@@ -69,7 +69,7 @@ const createHandleErrorStep = (context, step) => {
 const createCatchSteps = () => ([
   {
     ErrorEquals: ['States.ALL'],
-    ResultPath: '$.error-info',
+    ResultPath: '$.errorInfo',
     Next: HANDLE_ERROR_STEP,
   },
 ]);
