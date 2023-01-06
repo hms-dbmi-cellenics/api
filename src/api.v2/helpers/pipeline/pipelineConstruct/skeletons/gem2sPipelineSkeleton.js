@@ -55,6 +55,7 @@ const gem2SPipelineSteps = {
     XConstructorArgs: {
       taskName: 'uploadToAWS',
     },
+    XCatch: createCatchSteps(),
     Next: END_OF_PIPELINE,
   },
 };
