@@ -9,21 +9,27 @@ const buildErrorMessage = (
   processName,
   activityId,
   authJWT,
-) => ({
-  taskName,
-  experimentId,
-  apiUrl: config.publicApiUrl,
-  input: {
-    authJWT,
-    experimentId,
-    // This is replaced in States.Format
-    error: '{}',
+) => {
+  const errorMessage = JSON.stringify({
     taskName,
-    sandboxId,
-    activityId,
-    processName,
-  },
-});
+    experimentId,
+    apiUrl: config.publicApiUrl,
+    input: {
+      authJWT,
+      experimentId,
+      // This is replaced in States.Format
+      error: 'INPUT_PLACEHOLDER',
+      taskName,
+      sandboxId,
+      activityId,
+      processName,
+    },
+  }).replace(/\{/g, '\\{')
+    .replace(/\}/g, '\\}')
+    .replace('INPUT_PLACEHOLDER', '{}');
+
+  return errorMessage;
+};
 
 const createHandleErrorStep = (context, step) => {
   const {
@@ -47,13 +53,16 @@ const createHandleErrorStep = (context, step) => {
     authJWT,
   );
 
+  console.log('*** message', `States.Format('${errorMessage}', $.errorInfo.Error)`);
+  console.log('*** json', JSON.stringify(`States.Format('${errorMessage}', $.errorInfo.Error)`));
+
   return {
     ...step,
     Type: 'Task',
     Resource: 'arn:aws:states:::sns:publish',
     Parameters: {
       TopicArn: `arn:aws:sns:${config.awsRegion}:${accountId}:work-results-${environment}-${sandboxId}-v2`,
-      Message: JSON.stringify(errorMessage),
+      'Message.$': `States.Format('${errorMessage}', $.errorInfo.Error)`,
       MessageAttributes: {
         type: {
           DataType: 'String',
