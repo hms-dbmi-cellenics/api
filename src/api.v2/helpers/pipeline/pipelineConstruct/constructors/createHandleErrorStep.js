@@ -10,7 +10,7 @@ const buildErrorMessage = (
   activityId,
   authJWT,
 ) => {
-  const errorMessage = JSON.stringify({
+  let errorMessage = JSON.stringify({
     taskName,
     experimentId,
     apiUrl: config.publicApiUrl,
@@ -24,7 +24,12 @@ const buildErrorMessage = (
       activityId,
       processName,
     },
-  }).replace(/\{/g, '\\{')
+  });
+
+  // Replace curly braces "{" and "}" with "\{" and "\}" so that it will be correctly
+  // parsed by the Step Function's States.Format intrinsic function. For more information refer to
+  // https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html
+  errorMessage = errorMessage.replace(/\{/g, '\\{')
     .replace(/\}/g, '\\}')
     .replace('INPUT_PLACEHOLDER', '{}');
 
