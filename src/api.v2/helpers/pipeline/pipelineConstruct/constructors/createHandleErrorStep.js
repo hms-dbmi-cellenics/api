@@ -53,9 +53,6 @@ const createHandleErrorStep = (context, step) => {
     authJWT,
   );
 
-  console.log('*** message', `States.Format('${errorMessage}', $.errorInfo.Error)`);
-  console.log('*** json', JSON.stringify(`States.Format('${errorMessage}', $.errorInfo.Error)`));
-
   return {
     ...step,
     Type: 'Task',
