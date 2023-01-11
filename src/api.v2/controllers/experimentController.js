@@ -7,7 +7,8 @@ const getLogger = require('../../utils/getLogger');
 const { OK, NotFoundError } = require('../../utils/responses');
 const sqlClient = require('../../sql/sqlClient');
 
-const getExperimentBackendStatus = require('../helpers/backendStatus/getExperimentBackendStatus');
+const getExperimentBackendStatus = require('../helpers/experimentStatus/getExperimentBackendStatus');
+const getExperimentRerunStatus = require('../helpers/experimentStatus/getExperimentRerunStatus');
 const Sample = require('../model/Sample');
 const invalidatePlotsForEvent = require('../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
 const events = require('../../utils/plotConfigInvalidation/events');
@@ -141,11 +142,7 @@ const getRerunStatus = async (req, res) => {
   const { experimentId } = req.params;
   logger.log(`Getting rerun status for experiment ${experimentId}`);
 
-  // const response = await getExperimentBackendStatus(experimentId);
-
-  const response = {
-    rerun: true
-  }
+  const response = await getExperimentRerunStatus(experimentId);
 
   logger.log(`Finished getting rerun status for experiment ${experimentId} successfully`);
   res.json(response);
