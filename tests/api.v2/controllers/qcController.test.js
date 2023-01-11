@@ -12,8 +12,8 @@ jest.mock('../../../src/api.v2/helpers/pipeline/handleQCResponse');
 jest.mock('../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 jest.mock('../../../src/utils/parseSNSMessage');
 
-// const MockDataFactory = require('../../../src/api/route-services/__mocks__/MockDataFactory');
 const experimentId = 'experimentId';
+const io = 'mockIo';
 
 const processingConfigUpdate = [{
   name: 'numGenesVsNumUmis',
@@ -55,6 +55,8 @@ const qcResponsePayload = {
   output: { bucket: 'worker-results-development', key: 'de2f3434-dc63-4007-907b-28d3e72b140d' },
   response: { error: false },
 };
+
+const mockSNSResponse = { body: JSON.stringify(qcResponsePayload) };
 
 const mockJsonSend = jest.fn();
 const mockRes = {
@@ -114,16 +116,12 @@ describe('qcController', () => {
     expect(mockRes.json).toHaveBeenCalledWith(OK());
   });
 
-  it('handleResponse works correctly', async () => {
-    const io = 'mockIo';
-
+  it('handleResponse handles success message correctly', async () => {
     parseSNSMessage.mockReturnValue({ io, parsedMessage: qcResponsePayload });
 
-    const mockReq = { params: { experimentId } };
+    await qcController.handleResponse(mockSNSResponse, mockRes);
 
-    await qcController.handleResponse(mockReq, mockRes);
-
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockSNSResponse, expectedTopic);
     expect(handleQCResponse).toHaveBeenCalledWith(io, qcResponsePayload);
 
     // Response is ok
@@ -147,17 +145,13 @@ describe('qcController', () => {
   });
 
   it('handleResponse returns nok when gem2sResponse fails', async () => {
-    const io = 'mockIo';
-
     parseSNSMessage.mockReturnValue({ io, parsedMessage: qcResponsePayload });
 
     handleQCResponse.mockImplementationOnce(() => Promise.reject(new Error('Some error with qcResponse')));
 
-    const mockReq = { params: { experimentId } };
+    await qcController.handleResponse(mockSNSResponse, mockRes);
 
-    await qcController.handleResponse(mockReq, mockRes);
-
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockSNSResponse, expectedTopic);
     expect(handleQCResponse).toHaveBeenCalledWith(io, qcResponsePayload);
 
     // Response is nok
@@ -166,15 +160,11 @@ describe('qcController', () => {
   });
 
   it('handleResponse ignores message if it isnt an sns notification', async () => {
-    const io = 'mockIo';
-
     parseSNSMessage.mockReturnValue({ io, parsedMessage: undefined });
 
-    const mockReq = { params: { experimentId } };
+    await qcController.handleResponse(mockSNSResponse, mockRes);
 
-    await qcController.handleResponse(mockReq, mockRes);
-
-    expect(parseSNSMessage).toHaveBeenCalledWith(mockReq, expectedTopic);
+    expect(parseSNSMessage).toHaveBeenCalledWith(mockSNSResponse, expectedTopic);
     expect(handleQCResponse).not.toHaveBeenCalled();
 
     // Response is ok

@@ -178,7 +178,7 @@ exports[`test for pipeline services Create Subset pipeline works: createStateMac
 Array [
   Array [
     Object {
-      "definition": "{\\"Comment\\":\\"Subset Pipeline for clusterEnv 'test'\\",\\"StartAt\\":\\"RequestPod\\",\\"States\\":{\\"RequestPod\\":{\\"ResultPath\\":null,\\"Next\\":\\"WaitForPod\\",\\"Comment\\":\\"Send a message through SNS so that the API assigns a pod to the pipeline\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:::sns:publish\\",\\"Parameters\\":{\\"TopicArn\\":\\"arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2\\",\\"Message\\":\\"{\\\\\\"taskName\\\\\\":\\\\\\"assignPodToPipeline\\\\\\",\\\\\\"experimentId\\\\\\":\\\\\\"toExperimentId\\\\\\",\\\\\\"apiUrl\\\\\\":\\\\\\"test-public-api-url\\\\\\",\\\\\\"input\\\\\\":{\\\\\\"experimentId\\\\\\":\\\\\\"toExperimentId\\\\\\",\\\\\\"sandboxId\\\\\\":\\\\\\"default\\\\\\",\\\\\\"activityId\\\\\\":\\\\\\"pipeline-test-mock-uuid\\\\\\",\\\\\\"processName\\\\\\":\\\\\\"subset\\\\\\"}}\\",\\"MessageAttributes\\":{\\"type\\":{\\"DataType\\":\\"String\\",\\"StringValue\\":\\"PipelineResponse\\"}}}},\\"WaitForPod\\":{\\"ResultPath\\":null,\\"Next\\":\\"SubsetSeurat\\",\\"Type\\":\\"Map\\",\\"ItemsPath\\":\\"$.retries\\",\\"MaxConcurrency\\":1,\\"Retry\\":[{\\"ErrorEquals\\":[\\"NoPodAssigned\\"],\\"IntervalSeconds\\":1,\\"MaxAttempts\\":13,\\"BackoffRate\\":1.5}],\\"Iterator\\":{\\"StartAt\\":\\"GetAssignedPod\\",\\"States\\":{\\"GetAssignedPod\\":{\\"Next\\":\\"IsPodAssigned\\",\\"Type\\":\\"Task\\",\\"Comment\\":\\"Retrieves first unassigned and running pipeline pod.\\",\\"Resource\\":\\"arn:aws:states:::eks:call\\",\\"Parameters\\":{\\"ClusterName\\":\\"biomage-test\\",\\"CertificateAuthority\\":\\"AAAAAAAAAAA\\",\\"Endpoint\\":\\"https://test-endpoint.me/fgh\\",\\"Method\\":\\"GET\\",\\"Path\\":\\"/api/v1/namespaces/pipeline-test-namespace/pods\\",\\"QueryParameters\\":{\\"labelSelector\\":[\\"type=pipeline,activityId=pipeline-test-mock-uuid\\"]}}},\\"IsPodAssigned\\":{\\"Type\\":\\"Choice\\",\\"Comment\\":\\"Redirects to an error state if the pipeline pod is not assigned yet.\\",\\"Choices\\":[{\\"Variable\\":\\"$.ResponseBody.items[0]\\",\\"IsPresent\\":false,\\"Next\\":\\"NoPodAssigned\\"}],\\"Default\\":\\"ReadyToRun\\"},\\"NoPodAssigned\\":{\\"Type\\":\\"Fail\\",\\"Cause\\":\\"No available and running pipeline pods.\\",\\"Error\\":\\"NoPodAssigned\\"},\\"ReadyToRun\\":{\\"Type\\":\\"Pass\\",\\"End\\":true}}}},\\"SubsetSeurat\\":{\\"Next\\":\\"PrepareExperiment\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid\\",\\"ResultPath\\":null,\\"TimeoutSeconds\\":10800,\\"HeartbeatSeconds\\":90,\\"Parameters\\":{\\"experimentId\\":\\"toExperimentId\\",\\"taskName\\":\\"subsetSeurat\\",\\"processName\\":\\"subset\\",\\"server\\":\\"remoter-server-toExperimentId.pipeline-test-namespace.svc.cluster.local\\",\\"parentExperimentId\\":\\"fromExperimentId\\",\\"subsetExperimentId\\":\\"toExperimentId\\",\\"cellSetKeys\\":[\\"louvain-1\\",\\"louvain-2\\"]}},\\"PrepareExperiment\\":{\\"Next\\":\\"UploadToAWS\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid\\",\\"ResultPath\\":null,\\"TimeoutSeconds\\":10800,\\"HeartbeatSeconds\\":90,\\"Parameters\\":{\\"experimentId\\":\\"toExperimentId\\",\\"taskName\\":\\"prepareExperiment\\",\\"processName\\":\\"subset\\",\\"server\\":\\"remoter-server-toExperimentId.pipeline-test-namespace.svc.cluster.local\\",\\"experimentName\\":\\"toExperimentName\\",\\"authJWT\\":\\"mockAuthJWT\\"}},\\"UploadToAWS\\":{\\"Next\\":\\"EndOfSubset\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid\\",\\"ResultPath\\":null,\\"TimeoutSeconds\\":10800,\\"HeartbeatSeconds\\":90,\\"Parameters\\":{\\"experimentId\\":\\"toExperimentId\\",\\"taskName\\":\\"uploadToAWS\\",\\"processName\\":\\"subset\\",\\"server\\":\\"remoter-server-toExperimentId.pipeline-test-namespace.svc.cluster.local\\",\\"experimentName\\":\\"toExperimentName\\",\\"authJWT\\":\\"mockAuthJWT\\"}},\\"EndOfSubset\\":{\\"Type\\":\\"Pass\\",\\"End\\":true}}}",
+      "definition": "{\\"Comment\\":\\"Subset Pipeline for clusterEnv 'test'\\",\\"StartAt\\":\\"RequestPod\\",\\"States\\":{\\"RequestPod\\":{\\"ResultPath\\":null,\\"Next\\":\\"WaitForPod\\",\\"Comment\\":\\"Send a message through SNS so that the API assigns a pod to the pipeline\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:::sns:publish\\",\\"Parameters\\":{\\"TopicArn\\":\\"arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2\\",\\"Message\\":\\"{\\\\\\"taskName\\\\\\":\\\\\\"assignPodToPipeline\\\\\\",\\\\\\"experimentId\\\\\\":\\\\\\"toExperimentId\\\\\\",\\\\\\"apiUrl\\\\\\":\\\\\\"test-public-api-url\\\\\\",\\\\\\"input\\\\\\":{\\\\\\"experimentId\\\\\\":\\\\\\"toExperimentId\\\\\\",\\\\\\"sandboxId\\\\\\":\\\\\\"default\\\\\\",\\\\\\"activityId\\\\\\":\\\\\\"pipeline-test-mock-uuid\\\\\\",\\\\\\"processName\\\\\\":\\\\\\"subset\\\\\\"}}\\",\\"MessageAttributes\\":{\\"type\\":{\\"DataType\\":\\"String\\",\\"StringValue\\":\\"PipelineResponse\\"}}}},\\"WaitForPod\\":{\\"ResultPath\\":null,\\"Next\\":\\"SubsetSeurat\\",\\"Type\\":\\"Map\\",\\"ItemsPath\\":\\"$.retries\\",\\"MaxConcurrency\\":1,\\"Retry\\":[{\\"ErrorEquals\\":[\\"NoPodAssigned\\"],\\"IntervalSeconds\\":1,\\"MaxAttempts\\":13,\\"BackoffRate\\":1.5}],\\"Iterator\\":{\\"StartAt\\":\\"GetAssignedPod\\",\\"States\\":{\\"GetAssignedPod\\":{\\"Next\\":\\"IsPodAssigned\\",\\"Type\\":\\"Task\\",\\"Comment\\":\\"Retrieves first unassigned and running pipeline pod.\\",\\"Resource\\":\\"arn:aws:states:::eks:call\\",\\"Parameters\\":{\\"ClusterName\\":\\"biomage-test\\",\\"CertificateAuthority\\":\\"AAAAAAAAAAA\\",\\"Endpoint\\":\\"https://test-endpoint.me/fgh\\",\\"Method\\":\\"GET\\",\\"Path\\":\\"/api/v1/namespaces/pipeline-test-namespace/pods\\",\\"QueryParameters\\":{\\"labelSelector\\":[\\"type=pipeline,activityId=pipeline-test-mock-uuid\\"]}}},\\"IsPodAssigned\\":{\\"Type\\":\\"Choice\\",\\"Comment\\":\\"Redirects to an error state if the pipeline pod is not assigned yet.\\",\\"Choices\\":[{\\"Variable\\":\\"$.ResponseBody.items[0]\\",\\"IsPresent\\":false,\\"Next\\":\\"NoPodAssigned\\"}],\\"Default\\":\\"ReadyToRun\\"},\\"NoPodAssigned\\":{\\"Type\\":\\"Fail\\",\\"Cause\\":\\"No available and running pipeline pods.\\",\\"Error\\":\\"NoPodAssigned\\"},\\"ReadyToRun\\":{\\"Type\\":\\"Pass\\",\\"End\\":true}}}},\\"SubsetSeurat\\":{\\"Next\\":\\"PrepareExperiment\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid\\",\\"ResultPath\\":null,\\"TimeoutSeconds\\":10800,\\"HeartbeatSeconds\\":90,\\"Parameters\\":{\\"experimentId\\":\\"toExperimentId\\",\\"taskName\\":\\"subsetSeurat\\",\\"processName\\":\\"subset\\",\\"server\\":\\"remoter-server-toExperimentId.pipeline-test-namespace.svc.cluster.local\\",\\"parentExperimentId\\":\\"fromExperimentId\\",\\"subsetExperimentId\\":\\"toExperimentId\\",\\"cellSetKeys\\":[\\"louvain-1\\",\\"louvain-2\\"]},\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$.errorInfo\\",\\"Next\\":\\"HandleError\\"}]},\\"PrepareExperiment\\":{\\"Next\\":\\"UploadToAWS\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid\\",\\"ResultPath\\":null,\\"TimeoutSeconds\\":10800,\\"HeartbeatSeconds\\":90,\\"Parameters\\":{\\"experimentId\\":\\"toExperimentId\\",\\"taskName\\":\\"prepareExperiment\\",\\"processName\\":\\"subset\\",\\"server\\":\\"remoter-server-toExperimentId.pipeline-test-namespace.svc.cluster.local\\",\\"experimentName\\":\\"toExperimentName\\",\\"authJWT\\":\\"mockAuthJWT\\"},\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$.errorInfo\\",\\"Next\\":\\"HandleError\\"}]},\\"UploadToAWS\\":{\\"Next\\":\\"EndOfPipeline\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid\\",\\"ResultPath\\":null,\\"TimeoutSeconds\\":10800,\\"HeartbeatSeconds\\":90,\\"Parameters\\":{\\"experimentId\\":\\"toExperimentId\\",\\"taskName\\":\\"uploadToAWS\\",\\"processName\\":\\"subset\\",\\"server\\":\\"remoter-server-toExperimentId.pipeline-test-namespace.svc.cluster.local\\",\\"experimentName\\":\\"toExperimentName\\",\\"authJWT\\":\\"mockAuthJWT\\"},\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$.errorInfo\\",\\"Next\\":\\"HandleError\\"}]},\\"HandleError\\":{\\"Next\\":\\"MarkAsFailed\\",\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:aws:states:::sns:publish\\",\\"Parameters\\":{\\"TopicArn\\":\\"arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2\\",\\"Message.$\\":\\"States.Format('\\\\\\\\{\\\\\\"taskName\\\\\\":\\\\\\"pipelineError\\\\\\",\\\\\\"experimentId\\\\\\":\\\\\\"toExperimentId\\\\\\",\\\\\\"apiUrl\\\\\\":\\\\\\"test-public-api-url\\\\\\",\\\\\\"input\\\\\\":\\\\\\\\{\\\\\\"experimentId\\\\\\":\\\\\\"toExperimentId\\\\\\",\\\\\\"error\\\\\\":\\\\\\"{}\\\\\\",\\\\\\"taskName\\\\\\":\\\\\\"pipelineError\\\\\\",\\\\\\"sandboxId\\\\\\":\\\\\\"default\\\\\\",\\\\\\"activityId\\\\\\":\\\\\\"pipeline-test-mock-uuid\\\\\\",\\\\\\"processName\\\\\\":\\\\\\"subset\\\\\\"\\\\\\\\}\\\\\\\\}', $.errorInfo.Error)\\",\\"MessageAttributes\\":{\\"type\\":{\\"DataType\\":\\"String\\",\\"StringValue\\":\\"PipelineResponse\\"}}}},\\"MarkAsFailed\\":{\\"Type\\":\\"Fail\\"},\\"EndOfPipeline\\":{\\"Type\\":\\"Pass\\",\\"End\\":true}}}",
       "loggingConfiguration": Object {
         "level": "OFF",
       },
@@ -243,6 +243,15 @@ Array [
       "StartAt": "RequestPod",
       "States": Object {
         "CellSizeDistributionFilterMap": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "HandleError",
+              "ResultPath": "$.errorInfo",
+            },
+          ],
           "ItemsPath": "$.samples",
           "Iterator": Object {
             "StartAt": "CellSizeDistributionFilter",
@@ -288,6 +297,15 @@ Array [
           "Type": "Map",
         },
         "ClassifierFilterMap": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "HandleError",
+              "ResultPath": "$.errorInfo",
+            },
+          ],
           "ItemsPath": "$.samples",
           "Iterator": Object {
             "StartAt": "ClassifierFilter",
@@ -333,6 +351,15 @@ Array [
           "Type": "Map",
         },
         "ConfigureEmbedding": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "HandleError",
+              "ResultPath": "$.errorInfo",
+            },
+          ],
           "HeartbeatSeconds": 90,
           "Next": "EndOfPipeline",
           "Parameters": Object {
@@ -372,6 +399,15 @@ Array [
           "Type": "Task",
         },
         "DataIntegration": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "HandleError",
+              "ResultPath": "$.errorInfo",
+            },
+          ],
           "HeartbeatSeconds": 90,
           "Next": "ConfigureEmbedding",
           "Parameters": Object {
@@ -416,6 +452,15 @@ Array [
           "Type": "Task",
         },
         "DoubletScoresFilterMap": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "HandleError",
+              "ResultPath": "$.errorInfo",
+            },
+          ],
           "ItemsPath": "$.samples",
           "Iterator": Object {
             "StartAt": "DoubletScoresFilter",
@@ -458,7 +503,34 @@ Array [
           "End": true,
           "Type": "Pass",
         },
+        "HandleError": Object {
+          "Next": "MarkAsFailed",
+          "Parameters": Object {
+            "Message.$": "States.Format('\\\\{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"testExperimentId\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":\\\\{\\"experimentId\\":\\"testExperimentId\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"default\\",\\"activityId\\":\\"pipeline-test-mock-uuid\\",\\"processName\\":\\"qc\\"\\\\}\\\\}', $.errorInfo.Error)",
+            "MessageAttributes": Object {
+              "type": Object {
+                "DataType": "String",
+                "StringValue": "PipelineResponse",
+              },
+            },
+            "TopicArn": "arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2",
+          },
+          "Resource": "arn:aws:states:::sns:publish",
+          "Type": "Task",
+        },
+        "MarkAsFailed": Object {
+          "Type": "Fail",
+        },
         "MitochondrialContentFilterMap": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "HandleError",
+              "ResultPath": "$.errorInfo",
+            },
+          ],
           "ItemsPath": "$.samples",
           "Iterator": Object {
             "StartAt": "MitochondrialContentFilter",
@@ -514,6 +586,15 @@ Array [
           "Type": "Map",
         },
         "NumGenesVsNumUmisFilterMap": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "HandleError",
+              "ResultPath": "$.errorInfo",
+            },
+          ],
           "ItemsPath": "$.samples",
           "Iterator": Object {
             "StartAt": "NumGenesVsNumUmisFilter",
