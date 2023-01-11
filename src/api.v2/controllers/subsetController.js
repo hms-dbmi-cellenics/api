@@ -5,6 +5,7 @@ const { GEM2S_PROCESS_NAME } = require('../constants');
 const { createSubsetPipeline } = require('../helpers/pipeline/pipelineConstruct');
 const Experiment = require('../model/Experiment');
 const ExperimentExecution = require('../model/ExperimentExecution');
+const ExperimentParent = require('../model/ExperimentParent');
 const UserAccess = require('../model/UserAccess');
 
 const logger = getLogger('[SubsetController] - ');
@@ -26,6 +27,10 @@ const runSubset = async (req, res) => {
   await sqlClient.get().transaction(async (trx) => {
     toExperimentId = await new Experiment(trx).createCopy(fromExperimentId, name, false);
     await new UserAccess(trx).createNewExperimentPermissions(userId, toExperimentId);
+
+    await new ExperimentParent(trx).create(
+      { experiment_id: toExperimentId, parent_experiment_id: fromExperimentId },
+    );
   });
 
   // Samples are not created here, we add them in handleResponse of SubsetSeurat
