@@ -5,10 +5,15 @@ const Experiment = require('../../../src/api.v2/model/Experiment');
 const UserAccess = require('../../../src/api.v2/model/UserAccess');
 
 const pipelineConstruct = require('../../../src/api.v2/helpers/pipeline/pipelineConstruct/index');
+const ExperimentExecution = require('../../../src/api.v2/model/ExperimentExecution');
+const ExperimentParent = require('../../../src/api.v2/model/ExperimentParent');
+const { GEM2S_PROCESS_NAME } = require('../../../src/api.v2/constants');
 
 const { mockSqlClient } = require('../mocks/getMockSqlClient')();
 
 jest.mock('../../../src/api.v2/model/Experiment');
+jest.mock('../../../src/api.v2/model/ExperimentExecution');
+jest.mock('../../../src/api.v2/model/ExperimentParent');
 jest.mock('../../../src/api.v2/model/UserAccess');
 jest.mock('../../../src/api.v2/helpers/pipeline/pipelineConstruct/index');
 jest.mock('../../../src/sql/sqlClient', () => ({
@@ -23,6 +28,8 @@ const mockRes = {
 
 const experimentInstance = Experiment();
 const userAccessInstance = UserAccess();
+const experimentExecutionInstance = ExperimentExecution();
+const experimentParentInstance = ExperimentParent();
 
 describe('subsetController', () => {
   beforeEach(async () => {
@@ -45,12 +52,30 @@ describe('subsetController', () => {
 
     const childExperimentId = 'childExperimentId';
 
+    const newExecution = { stateMachineArn: 'mockStateMachineArn', executionArn: 'mockExecutionArn' };
+
     experimentInstance.createCopy.mockImplementationOnce(() => Promise.resolve(childExperimentId));
     pipelineConstruct.createSubsetPipeline.mockImplementationOnce(
-      () => Promise.resolve({ stateMachineArn: 'mockStateMachineArn', executionArn: 'mockExecutionArn' }),
+      () => Promise.resolve(newExecution),
     );
 
     await subsetController.runSubset(mockReq, mockRes);
+
+    expect(experimentExecutionInstance.upsert).toHaveBeenCalledWith(
+      {
+        experiment_id: childExperimentId,
+        pipeline_type: GEM2S_PROCESS_NAME,
+      },
+      {
+        params_hash: null,
+        state_machine_arn: newExecution.stateMachineArn,
+        execution_arn: newExecution.executionArn,
+      },
+    );
+
+    expect(experimentParentInstance.create).toHaveBeenCalledWith({
+      experiment_id: childExperimentId, parent_experiment_id: parentExperimentId,
+    });
 
     expect(userAccessInstance.createNewExperimentPermissions)
       .toHaveBeenCalledWith(mockReq.user.sub, childExperimentId);
