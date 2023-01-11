@@ -681,6 +681,54 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+
+  "/experiments/{experimentId}/rerunStatus":
+    get:
+      summary: Get rerun status of an experiment
+      description: "Get true if an experiment needs to be reran and false otherwise"
+      operationId: getRerunStatus
+      x-eov-operation-id: experiment#getRerunStatus
+      x-eov-operation-handler: routes/experiment
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Experiment not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "424":
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+    parameters:
+      - schema:
+          type: string
+        name: experimentId
+        in: path
+        required: true
+        description: ID of the experiment
+  
   "/experiments/{experimentId}/samples/{sampleId}":
     patch:
       summary: Patch sample
