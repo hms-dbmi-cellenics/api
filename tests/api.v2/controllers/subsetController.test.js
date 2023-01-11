@@ -46,7 +46,9 @@ describe('subsetController', () => {
     const childExperimentId = 'childExperimentId';
 
     experimentInstance.createCopy.mockImplementationOnce(() => Promise.resolve(childExperimentId));
-    pipelineConstruct.createSubsetPipeline.mockImplementationOnce(() => Promise.resolve());
+    pipelineConstruct.createSubsetPipeline.mockImplementationOnce(
+      () => Promise.resolve({ stateMachineArn: 'mockStateMachineArn', executionArn: 'mockExecutionArn' }),
+    );
 
     await subsetController.runSubset(mockReq, mockRes);
 
