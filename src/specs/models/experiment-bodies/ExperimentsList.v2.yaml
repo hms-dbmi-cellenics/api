@@ -11,8 +11,13 @@ items:
       type: string
     notifyByEmail:
       type: boolean
+    canRerunGem2S:
+      type: boolean
     pipelineVersion:
       type: number
+    parentExperimentId:
+      type: string
+      nullable: true
     samplesOrder:
       type: array
       items:
@@ -30,7 +35,9 @@ items:
     - name
     - description
     - notifyByEmail
+    - canRerunGem2S
     - pipelineVersion
+    - parentExperimentId
     - samplesOrder
     - metadataKeys
     - createdAt

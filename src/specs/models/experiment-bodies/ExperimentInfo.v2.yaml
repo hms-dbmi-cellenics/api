@@ -13,8 +13,13 @@ properties:
       type: string
   notifyByEmail:
     type: boolean
+  canRerunGem2S:
+    type: boolean
   pipelineVersion:
     type: number
+  parentExperimentId:
+    type: string
+    nullable: true
   processingConfig:
     anyOf:
       - type: object
@@ -65,7 +70,9 @@ required:
   - samplesOrder
   - processingConfig
   - notifyByEmail
+  - canRerunGem2S
   - pipelineVersion
+  - parentExperimentId
   - pipelines
   - createdAt
   - updatedAt
