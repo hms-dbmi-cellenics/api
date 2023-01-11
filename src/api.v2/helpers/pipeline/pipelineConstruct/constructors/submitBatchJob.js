@@ -1,4 +1,5 @@
 const config = require('../../../../../config');
+const { HANDLE_ERROR_STEP } = require('../../../../constants');
 
 const submitBatchJob = (context, step) => {
   const {
@@ -76,8 +77,8 @@ const submitBatchJob = (context, step) => {
     Catch: [
       {
         ErrorEquals: ['States.ALL'],
-        ResultPath: '$.error-info',
-        Next: step.XNextOnCatch || step.Next,
+        ResultPath: '$.errorInfo',
+        Next: HANDLE_ERROR_STEP,
       },
     ],
   };

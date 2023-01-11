@@ -20,7 +20,7 @@ const buildParams = (context, stepArgs) => {
   };
 };
 
-const createNewStep = (context, step, stepArgs) => {
+const createNewStep = (context, step, stepArgs, catchSteps) => {
   const { activityArn } = context;
 
   const params = buildParams(context, stepArgs);
@@ -33,7 +33,8 @@ const createNewStep = (context, step, stepArgs) => {
     TimeoutSeconds: 10800,
     HeartbeatSeconds: 90,
     Parameters: params,
-    ...!step.End && { Next: step.XNextOnCatch || step.Next },
+    ...!step.End && { Next: step.Next },
+    ...catchSteps && { Catch: catchSteps },
   };
 };
 
