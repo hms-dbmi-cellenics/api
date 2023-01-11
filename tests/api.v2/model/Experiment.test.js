@@ -56,7 +56,19 @@ describe('model/Experiment', () => {
     expect(helpers.collapseKeyIntoArray.mock.calls).toMatchSnapshot();
 
     expect(mockSqlClient.select).toHaveBeenCalledWith(
-      ['e.id', 'e.name', 'e.description', 'e.samples_order', 'e.notify_by_email', 'e.pipeline_version', 'e.created_at', 'e.updated_at', 'm.key'],
+      [
+        'e.id',
+        'e.name',
+        'e.description',
+        'e.samples_order',
+        'e.notify_by_email',
+        'e.pipeline_version',
+        'e.can_rerun_gem2s',
+        'e.created_at',
+        'e.updated_at',
+        'm.key',
+        'p.parent_experiment_id',
+      ],
     );
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
     expect(mockSqlClient.where).toHaveBeenCalledWith('user_id', 'mockUserId');
@@ -82,7 +94,7 @@ describe('model/Experiment', () => {
       'id', 'name', 'description',
       'samples_order', 'processing_config',
       'notify_by_email', 'pipeline_version',
-      'created_at', 'updated_at',
+      'can_rerun_gem2s', 'created_at', 'updated_at',
     ];
 
     const queryResult = 'result';
@@ -100,8 +112,8 @@ describe('model/Experiment', () => {
 
     expect(mockSqlClient.raw.mock.calls[0]).toMatchSnapshot();
 
-    expect(mockSqlClient.select).toHaveBeenCalledWith([...experimentFields, mockCollapsedObject]);
-    expect(mockSqlClient.groupBy).toHaveBeenCalledWith(experimentFields);
+    expect(mockSqlClient.select).toHaveBeenCalledWith([...experimentFields, 'parent_experiment_id', mockCollapsedObject]);
+    expect(mockSqlClient.groupBy).toHaveBeenCalledWith([...experimentFields, 'parent_experiment_id']);
     expect(mockSqlClient.from).toHaveBeenCalled();
 
     // Check that mainQuery is correct
