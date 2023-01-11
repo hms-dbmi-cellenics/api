@@ -50,16 +50,17 @@ class Experiment extends BasicModel {
     const aliasedExperimentFields = fields.map((field) => `e.${field}`);
 
     const mainQuery = this.sql
-      .select([...aliasedExperimentFields, 'm.key'])
+      .select([...aliasedExperimentFields, 'm.key', 'p.parent_experiment_id'])
       .from(tableNames.USER_ACCESS)
       .where('user_id', userId)
       .join(`${tableNames.EXPERIMENT} as e`, 'e.id', `${tableNames.USER_ACCESS}.experiment_id`)
       .leftJoin(`${tableNames.METADATA_TRACK} as m`, 'e.id', 'm.experiment_id')
+      .leftJoin(`${tableNames.EXPERIMENT_PARENT} as p`, 'e.id', 'p.experiment_id')
       .as('mainQuery');
 
     const result = await collapseKeyIntoArray(
       mainQuery,
-      [...fields],
+      [...fields, 'parent_experiment_id'],
       'key',
       'metadataKeys',
       this.sql,
@@ -78,6 +79,7 @@ class Experiment extends BasicModel {
       this.select('*')
         .from(tableNames.EXPERIMENT)
         .leftJoin(tableNames.EXPERIMENT_EXECUTION, `${tableNames.EXPERIMENT}.id`, `${tableNames.EXPERIMENT_EXECUTION}.experiment_id`)
+        .leftJoin(tableNames.EXPERIMENT_PARENT, `${tableNames.EXPERIMENT}.id`, `${tableNames.EXPERIMENT_PARENT}.experiment_id`)
         .where('id', experimentId)
         .as('mainQuery');
     }
@@ -96,6 +98,7 @@ class Experiment extends BasicModel {
     const result = await this.sql
       .select([
         ...experimentFields,
+        'parent_experiment_id',
         this.sql.raw(
           `${replaceNullsWithObject(
             `jsonb_object_agg(pipeline_type, jsonb_build_object(${pipelineExecutionKeys.join(', ')}))`,
@@ -104,7 +107,7 @@ class Experiment extends BasicModel {
         ),
       ])
       .from(mainQuery)
-      .groupBy(experimentFields)
+      .groupBy([...experimentFields, 'parent_experiment_id'])
       .first();
 
     if (_.isEmpty(result)) {
