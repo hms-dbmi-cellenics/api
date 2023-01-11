@@ -1,4 +1,7 @@
 // @ts-nocheck
+
+const Experiment = require('../../../src/api.v2/model/Experiment');
+
 const gem2sController = require('../../../src/api.v2/controllers/gem2sController');
 
 const { OK } = require('../../../src/utils/responses');
@@ -6,6 +9,9 @@ const { OK } = require('../../../src/utils/responses');
 const gem2s = require('../../../src/api.v2/helpers/pipeline/gem2s');
 const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
 
+const experimentInstance = Experiment();
+
+jest.mock('../../../src/api.v2/model/Experiment');
 jest.mock('../../../src/api.v2/helpers/pipeline/gem2s');
 jest.mock('../../../src/utils/parseSNSMessage');
 
@@ -15,7 +21,7 @@ const mockRes = {
   status: jest.fn(() => ({ send: mockJsonSend })),
 };
 
-const experimentId = 'experimentId';
+const experimentId = '0b5f622a-01b8-254c-6b69-9e2606ac0b40';
 const expectedTopic = 'arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2';
 const io = 'mockIo';
 
@@ -43,6 +49,10 @@ describe('gem2sController', () => {
     const newExecution = 'mockNewExecution';
 
     gem2s.startGem2sPipeline.mockReturnValue(newExecution);
+
+    experimentInstance.findById.mockReturnValueOnce(
+      { first: () => Promise.resolve({ canRerunGem2S: true }) },
+    );
 
     const mockReq = {
       params: { experimentId },

@@ -15,6 +15,7 @@ const runGem2s = async (req, res) => {
   logger.log(`Starting gem2s for experiment ${experimentId}`);
 
   const { canRerunGem2S } = await new Experiment().findById(experimentId).first();
+
   if (!canRerunGem2S) {
     throw new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`);
   }
