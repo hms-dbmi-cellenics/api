@@ -35,8 +35,8 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
           "ErrorEquals": [
             "States.ALL"
           ],
-          "ResultPath": "$.error-info",
-          "Next": "DownloadGem"
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
         }
       ]
     },
@@ -52,7 +52,16 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "downloadGem",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "PreProcessing": {
       "Next": "EmptyDrops",
@@ -66,7 +75,16 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "preproc",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "EmptyDrops": {
       "Next": "DoubletScores",
@@ -80,7 +98,16 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "emptyDrops",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "DoubletScores": {
       "Next": "CreateSeurat",
@@ -94,7 +121,16 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "doubletScores",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "CreateSeurat": {
       "Next": "PrepareExperiment",
@@ -108,7 +144,16 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "createSeurat",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "PrepareExperiment": {
       "Next": "UploadToAWS",
@@ -122,10 +167,19 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "prepareExperiment",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "UploadToAWS": {
-      "Next": "EndOfGem2S",
+      "Next": "EndOfPipeline",
       "Type": "Task",
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
@@ -136,9 +190,36 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "taskName": "uploadToAWS",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
+    },
+    "HandleError": {
+      "Next": "MarkAsFailed",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-development-pipeline-assignation-v2",
+        "Message.$": "States.Format('\\\\{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":\\\\{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"\\\\}\\\\}', $.errorInfo.Error)",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
+          }
+        }
       }
     },
-    "EndOfGem2S": {
+    "MarkAsFailed": {
+      "Type": "Fail"
+    },
+    "EndOfPipeline": {
       "Type": "Pass",
       "End": true
     }
@@ -242,7 +323,16 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "downloadGem",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "PreProcessing": {
       "Next": "EmptyDrops",
@@ -256,7 +346,16 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "preproc",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "EmptyDrops": {
       "Next": "DoubletScores",
@@ -270,7 +369,16 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "emptyDrops",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "DoubletScores": {
       "Next": "CreateSeurat",
@@ -284,7 +392,16 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "doubletScores",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "CreateSeurat": {
       "Next": "PrepareExperiment",
@@ -298,7 +415,16 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "createSeurat",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "PrepareExperiment": {
       "Next": "UploadToAWS",
@@ -312,10 +438,19 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "prepareExperiment",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "UploadToAWS": {
-      "Next": "EndOfGem2S",
+      "Next": "EndOfPipeline",
       "Type": "Task",
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
@@ -326,9 +461,36 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "taskName": "uploadToAWS",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
+    },
+    "HandleError": {
+      "Next": "MarkAsFailed",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
+        "Message.$": "States.Format('\\\\{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":\\\\{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"\\\\}\\\\}', $.errorInfo.Error)",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
+          }
+        }
       }
     },
-    "EndOfGem2S": {
+    "MarkAsFailed": {
+      "Type": "Fail"
+    },
+    "EndOfPipeline": {
       "Type": "Pass",
       "End": true
     }
@@ -432,7 +594,16 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "downloadGem",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "PreProcessing": {
       "Next": "EmptyDrops",
@@ -446,7 +617,16 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "preproc",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "EmptyDrops": {
       "Next": "DoubletScores",
@@ -460,7 +640,16 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "emptyDrops",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "DoubletScores": {
       "Next": "CreateSeurat",
@@ -474,7 +663,16 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "doubletScores",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "CreateSeurat": {
       "Next": "PrepareExperiment",
@@ -488,7 +686,16 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "createSeurat",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "PrepareExperiment": {
       "Next": "UploadToAWS",
@@ -502,10 +709,19 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "prepareExperiment",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "UploadToAWS": {
-      "Next": "EndOfGem2S",
+      "Next": "EndOfPipeline",
       "Type": "Task",
       "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
@@ -516,9 +732,36 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "taskName": "uploadToAWS",
         "processName": "gem2s",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
+    },
+    "HandleError": {
+      "Next": "MarkAsFailed",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-staging-pipeline-assignation-v2",
+        "Message.$": "States.Format('\\\\{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":\\\\{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"\\\\}\\\\}', $.errorInfo.Error)",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
+          }
+        }
       }
     },
-    "EndOfGem2S": {
+    "MarkAsFailed": {
+      "Type": "Fail"
+    },
+    "EndOfPipeline": {
       "Type": "Pass",
       "End": true
     }
@@ -561,8 +804,8 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           "ErrorEquals": [
             "States.ALL"
           ],
-          "ResultPath": "$.error-info",
-          "Next": "ClassifierFilterMap"
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
         }
       ]
     },
@@ -588,11 +831,21 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "CellSizeDistributionFilterMap": {
       "Type": "Map",
@@ -616,11 +869,21 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "MitochondrialContentFilterMap": {
       "Type": "Map",
@@ -644,11 +907,21 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "NumGenesVsNumUmisFilterMap": {
       "Type": "Map",
@@ -672,11 +945,21 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "DoubletScoresFilterMap": {
       "Type": "Map",
@@ -700,11 +983,21 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
@@ -720,8 +1013,18 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": true,
+        "authJWT": "mockAuthJWT",
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
@@ -737,8 +1040,36 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": false,
+        "authJWT": "mockAuthJWT",
         "config": {}
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
+    },
+    "HandleError": {
+      "Next": "MarkAsFailed",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-development-pipeline-assignation-v2",
+        "Message.$": "States.Format('\\\\{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":\\\\{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"\\\\}\\\\}', $.errorInfo.Error)",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
+          }
+        }
       }
+    },
+    "MarkAsFailed": {
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -854,11 +1185,21 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "CellSizeDistributionFilterMap": {
       "Type": "Map",
@@ -882,11 +1223,21 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "MitochondrialContentFilterMap": {
       "Type": "Map",
@@ -910,11 +1261,21 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "NumGenesVsNumUmisFilterMap": {
       "Type": "Map",
@@ -938,11 +1299,21 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "DoubletScoresFilterMap": {
       "Type": "Map",
@@ -966,11 +1337,21 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
@@ -986,8 +1367,18 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": true,
+        "authJWT": "mockAuthJWT",
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
@@ -1003,8 +1394,36 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": false,
+        "authJWT": "mockAuthJWT",
         "config": {}
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
+    },
+    "HandleError": {
+      "Next": "MarkAsFailed",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
+        "Message.$": "States.Format('\\\\{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":\\\\{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"\\\\}\\\\}', $.errorInfo.Error)",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
+          }
+        }
       }
+    },
+    "MarkAsFailed": {
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -1089,8 +1508,8 @@ exports[`non-tests to document the State Machines - qc production with specific 
           "ErrorEquals": [
             "States.ALL"
           ],
-          "ResultPath": "$.error-info",
-          "Next": "ClassifierFilterMap"
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
         }
       ]
     },
@@ -1116,11 +1535,21 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "CellSizeDistributionFilterMap": {
       "Type": "Map",
@@ -1144,11 +1573,21 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "MitochondrialContentFilterMap": {
       "Type": "Map",
@@ -1172,11 +1611,21 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "NumGenesVsNumUmisFilterMap": {
       "Type": "Map",
@@ -1200,11 +1649,21 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "DoubletScoresFilterMap": {
       "Type": "Map",
@@ -1228,11 +1687,21 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
@@ -1248,8 +1717,18 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": true,
+        "authJWT": "mockAuthJWT",
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
@@ -1265,8 +1744,36 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": false,
+        "authJWT": "mockAuthJWT",
         "config": {}
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
+    },
+    "HandleError": {
+      "Next": "MarkAsFailed",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
+        "Message.$": "States.Format('\\\\{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":\\\\{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"\\\\}\\\\}', $.errorInfo.Error)",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
+          }
+        }
       }
+    },
+    "MarkAsFailed": {
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",
@@ -1382,11 +1889,21 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "CellSizeDistributionFilterMap": {
       "Type": "Map",
@@ -1410,11 +1927,21 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "MitochondrialContentFilterMap": {
       "Type": "Map",
@@ -1438,11 +1965,21 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "NumGenesVsNumUmisFilterMap": {
       "Type": "Map",
@@ -1466,11 +2003,21 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "DoubletScoresFilterMap": {
       "Type": "Map",
@@ -1494,11 +2041,21 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
+              "authJWT": "mockAuthJWT",
               "config": {}
             }
           }
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
@@ -1514,8 +2071,18 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": true,
+        "authJWT": "mockAuthJWT",
         "config": {}
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
@@ -1531,8 +2098,36 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
         "sampleUuid": "",
         "uploadCountMatrix": false,
+        "authJWT": "mockAuthJWT",
         "config": {}
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.errorInfo",
+          "Next": "HandleError"
+        }
+      ]
+    },
+    "HandleError": {
+      "Next": "MarkAsFailed",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-staging-pipeline-assignation-v2",
+        "Message.$": "States.Format('\\\\{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":\\\\{\\"authJWT\\":\\"mockAuthJWT\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"\\\\}\\\\}', $.errorInfo.Error)",
+        "MessageAttributes": {
+          "type": {
+            "DataType": "String",
+            "StringValue": "PipelineResponse"
+          }
+        }
       }
+    },
+    "MarkAsFailed": {
+      "Type": "Fail"
     },
     "EndOfPipeline": {
       "Type": "Pass",

@@ -1,16 +1,6 @@
 const config = require('../../../../../config');
-const constants = require('../../../../constants');
-
-
-// the full activityArn is too long to be used as a tag (> 63 chars)
-// so we just send the last part of the arn as the rest can be constructed.
-//  E.g.
-// arn:aws:states:eu-west-1:242905224710:activity:pipeline-production-01037a63-a801-4ea4-a93e-...
-// => pipeline-production-01037a63-a801-4ea4-a93e-def76c1e5bd2
-const getActivityId = (activityArn) => {
-  const split = activityArn.split(':');
-  return split[split.length - 1];
-};
+const { ASSIGN_POD_TO_PIPELINE } = require('../../../../constants');
+const { getActivityId } = require('../utils');
 
 const buildPodRequest = (sandboxId, experimentId, taskName, processName, activityId) => ({
   taskName,
@@ -34,7 +24,7 @@ const requestPod = (context, step) => {
 
   const requestPodMessage = buildPodRequest(sandboxId,
     experimentId,
-    constants.ASSIGN_POD_TO_PIPELINE,
+    ASSIGN_POD_TO_PIPELINE,
     processName,
     activityId);
 
