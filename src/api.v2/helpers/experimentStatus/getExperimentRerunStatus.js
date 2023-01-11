@@ -10,10 +10,10 @@ const getExperimentRerunStatus = async (experimentId) => {
     };
   }
 
-  const currentHash = hashExperiment(experimentId);
+  const currentHash = await hashExperiment(experimentId);
 
   return {
-    rerun: currentHash !== execution.params_hash,
+    rerun: currentHash !== execution.paramsHash,
   };
 };
 

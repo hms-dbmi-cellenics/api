@@ -14,6 +14,7 @@ const HookRunner = require('./hooks/HookRunner');
 
 const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
+const hashExperiment = require('../experimentStatus/hashExperiment');
 
 const logger = getLogger('[Gem2sService] - ');
 
@@ -133,8 +134,7 @@ const generateGem2sParams = async (experimentId, authJWT) => {
 
 const startGem2sPipeline = async (experimentId, body, authJWT) => {
   logger.log('Creating GEM2S params...');
-  const { paramsHash } = body;
-
+  const paramsHash = await hashExperiment(experimentId);
   const taskParams = await generateGem2sParams(experimentId, authJWT);
 
   const { stateMachineArn, executionArn } = await createGem2SPipeline(experimentId, taskParams);
