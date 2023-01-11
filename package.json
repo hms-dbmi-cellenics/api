@@ -46,7 +46,7 @@
     "json-merger": "^1.1.7",
     "jsonwebtoken": "^9.0.0",
     "jwk-to-pem": "^2.0.5",
-    "knex": "^1.0.3",
+    "knex": "^2.4.0",
     "lodash": "^4.17.21",
     "log-timestamp": "^0.3.0",
     "lru-cache": "^5.1.1",
