@@ -1,6 +1,5 @@
 // @ts-nocheck
-
-const Experiment = require('../../../src/api.v2/model/Experiment');
+const ExperimentParent = require('../../../src/api.v2/model/ExperimentParent');
 
 const gem2sController = require('../../../src/api.v2/controllers/gem2sController');
 
@@ -8,12 +7,10 @@ const { OK } = require('../../../src/utils/responses');
 
 const gem2s = require('../../../src/api.v2/helpers/pipeline/gem2s');
 const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
-const ExperimentParent = require('../../../src/api.v2/model/ExperimentParent');
 
-const experimentInstance = Experiment();
 const experimentParentInstance = ExperimentParent();
 
-jest.mock('../../../src/api.v2/model/Experiment');
+jest.mock('../../../src/api.v2/model/ExperimentParent');
 jest.mock('../../../src/api.v2/helpers/pipeline/gem2s');
 jest.mock('../../../src/utils/parseSNSMessage');
 
@@ -53,7 +50,7 @@ describe('gem2sController', () => {
     gem2s.startGem2sPipeline.mockReturnValue(newExecution);
 
     experimentParentInstance.find.mockReturnValueOnce(
-      { first: () => Promise.resolve(null) },
+      { first: () => Promise.resolve({}) },
     );
 
     const mockReq = {
