@@ -3,7 +3,7 @@ const ExperimentParent = require('../../../src/api.v2/model/ExperimentParent');
 
 const gem2sController = require('../../../src/api.v2/controllers/gem2sController');
 
-const { OK } = require('../../../src/utils/responses');
+const { OK, MethodNotAllowedError } = require('../../../src/utils/responses');
 
 const gem2s = require('../../../src/api.v2/helpers/pipeline/gem2s');
 const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
@@ -67,6 +67,32 @@ describe('gem2sController', () => {
 
     // Response is ok
     expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
+
+  it('runGem2s throws method not allowed if the experiment is a subset', async () => {
+    const newExecution = 'mockNewExecution';
+
+    gem2s.startGem2sPipeline.mockReturnValue(newExecution);
+
+    experimentParentInstance.find.mockReturnValueOnce(
+      { first: () => Promise.resolve({ parentExperimentId: 'mockParentExperimentId' }) },
+    );
+
+    const mockReq = {
+      params: { experimentId },
+      headers: { authorization: 'mockAuthorization' },
+      body: { paramsHash: 'mockParamsHash' },
+    };
+
+    await expect(gem2sController.runGem2s(mockReq, mockRes)).rejects
+      .toThrow(
+        new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`),
+      );
+
+    expect(gem2s.startGem2sPipeline).not.toHaveBeenCalled();
+
+    // Response is ok
+    expect(mockRes.json).not.toHaveBeenCalledWith(OK());
   });
 
   it('handleResponse handles success message correctly', async () => {
