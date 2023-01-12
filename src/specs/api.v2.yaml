@@ -1720,17 +1720,17 @@ paths:
             type: string
           in: path
           required: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                paramsHash:
-                  type: string
-              required:
-                - paramsHash
-              additionalProperties: false
+      # requestBody:
+      #   content:
+      #     application/json:
+      #       schema:
+      #         type: object
+      #         properties:
+      #           paramsHash:
+      #             type: string
+      #         required:
+      #           - paramsHash
+      #         additionalProperties: false
       responses:
         "200":
           description: OK

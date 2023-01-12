@@ -132,7 +132,7 @@ const generateGem2sParams = async (experimentId, authJWT) => {
   return taskParams;
 };
 
-const startGem2sPipeline = async (experimentId, body, authJWT) => {
+const startGem2sPipeline = async (experimentId, authJWT) => {
   logger.log('Creating GEM2S params...');
   const paramsHash = await hashExperiment(experimentId);
   const taskParams = await generateGem2sParams(experimentId, authJWT);

@@ -13,7 +13,7 @@ const runGem2s = async (req, res) => {
 
   logger.log(`Starting gem2s for experiment ${experimentId}`);
 
-  const newExecution = await startGem2sPipeline(experimentId, req.body, req.headers.authorization);
+  const newExecution = await startGem2sPipeline(experimentId, req.headers.authorization);
 
   logger.log(`Started gem2s for experiment ${experimentId} successfully, `);
   logger.log('New executions data:');
