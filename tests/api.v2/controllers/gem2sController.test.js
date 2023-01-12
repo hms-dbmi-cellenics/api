@@ -8,8 +8,10 @@ const { OK } = require('../../../src/utils/responses');
 
 const gem2s = require('../../../src/api.v2/helpers/pipeline/gem2s');
 const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
+const ExperimentParent = require('../../../src/api.v2/model/ExperimentParent');
 
 const experimentInstance = Experiment();
+const experimentParentInstance = ExperimentParent();
 
 jest.mock('../../../src/api.v2/model/Experiment');
 jest.mock('../../../src/api.v2/helpers/pipeline/gem2s');
@@ -50,8 +52,8 @@ describe('gem2sController', () => {
 
     gem2s.startGem2sPipeline.mockReturnValue(newExecution);
 
-    experimentInstance.findById.mockReturnValueOnce(
-      { first: () => Promise.resolve({ canRerunGem2S: true }) },
+    experimentParentInstance.find.mockReturnValueOnce(
+      { first: () => Promise.resolve(null) },
     );
 
     const mockReq = {

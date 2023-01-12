@@ -5,7 +5,7 @@ const { OK, MethodNotAllowedError } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parseSNSMessage');
 const snsTopics = require('../../config/snsTopics');
-const Experiment = require('../model/Experiment');
+const ExperimentParent = require('../model/__mocks__/ExperimentParent');
 
 const logger = getLogger('[Gem2sController] - ');
 
@@ -14,9 +14,9 @@ const runGem2s = async (req, res) => {
 
   logger.log(`Starting gem2s for experiment ${experimentId}`);
 
-  const { canRerunGem2S } = await new Experiment().findById(experimentId).first();
+  const experimentParent = await new ExperimentParent().find({ experimentId }).first();
 
-  if (!canRerunGem2S) {
+  if (experimentParent !== null) {
     throw new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`);
   }
 

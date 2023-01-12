@@ -11,8 +11,6 @@ items:
       type: string
     notifyByEmail:
       type: boolean
-    canRerunGem2S:
-      type: boolean
     pipelineVersion:
       type: number
     parentExperimentId:
@@ -35,7 +33,6 @@ items:
     - name
     - description
     - notifyByEmail
-    - canRerunGem2S
     - pipelineVersion
     - parentExperimentId
     - samplesOrder

@@ -63,7 +63,6 @@ describe('model/Experiment', () => {
         'e.samples_order',
         'e.notify_by_email',
         'e.pipeline_version',
-        'e.can_rerun_gem2s',
         'e.created_at',
         'e.updated_at',
         'm.key',
@@ -94,7 +93,7 @@ describe('model/Experiment', () => {
       'id', 'name', 'description',
       'samples_order', 'processing_config',
       'notify_by_email', 'pipeline_version',
-      'can_rerun_gem2s', 'created_at', 'updated_at',
+      'created_at', 'updated_at',
     ];
 
     const queryResult = 'result';
@@ -156,13 +155,12 @@ describe('model/Experiment', () => {
       'mockNewExperimentId as id',
       'mockNewName as name',
       'description',
-      'true as can_rerun_gem2s',
       'pod_cpus',
       'pod_memory',
     );
 
     expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
-    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, can_rerun_gem2s, pod_cpus, pod_memory)');
+    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, pod_cpus, pod_memory)');
   });
 
   it('createCopy works correctly without a name', async () => {
@@ -185,13 +183,12 @@ describe('model/Experiment', () => {
       'mockNewExperimentId as id',
       'name',
       'description',
-      'true as can_rerun_gem2s',
       'pod_cpus',
       'pod_memory',
     );
 
     expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
-    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, can_rerun_gem2s, pod_cpus, pod_memory)');
+    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, pod_cpus, pod_memory)');
   });
 
   it('updateSamplePosition works correctly if valid params are passed', async () => {
