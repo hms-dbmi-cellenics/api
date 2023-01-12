@@ -5,7 +5,7 @@ const { OK, MethodNotAllowedError } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parseSNSMessage');
 const snsTopics = require('../../config/snsTopics');
-const ExperimentParent = require('../model/__mocks__/ExperimentParent');
+const ExperimentParent = require('../model/ExperimentParent');
 
 const logger = getLogger('[Gem2sController] - ');
 
