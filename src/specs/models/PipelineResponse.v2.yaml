@@ -5,6 +5,9 @@ properties:
     experimentId:
       type: string
       description: The ID of the experiment GEM2s was called against.
+    pipelineVersion:
+      type: number
+      description: The version that the pipeline runs at, used to perform non-backwards compatible changes in the pipeline without ruining with the users experiments
     taskName:
       type: string
       description: The name of the task that was executed

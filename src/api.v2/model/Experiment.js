@@ -6,13 +6,12 @@ const sqlClient = require('../../sql/sqlClient');
 const { collapseKeyIntoArray, replaceNullsWithObject } = require('../../sql/helpers');
 
 const { NotFoundError, BadRequestError } = require('../../utils/responses');
-const { formatExperimentId } = require('../helpers/v1Compatibility');
 const tableNames = require('./tableNames');
 const config = require('../../config');
 
 const getLogger = require('../../utils/getLogger');
-const bucketNames = require('../helpers/s3/bucketNames');
-const { getSignedUrl } = require('../../utils/aws/s3');
+const bucketNames = require('../../config/bucketNames');
+const { getSignedUrl } = require('../helpers/s3/signedUrl');
 const constants = require('../../utils/constants');
 
 const logger = getLogger('[ExperimentModel] - ');
@@ -24,6 +23,7 @@ const experimentFields = [
   'samples_order',
   'processing_config',
   'notify_by_email',
+  'pipeline_version',
   'created_at',
   'updated_at',
 ];
@@ -40,6 +40,7 @@ class Experiment extends BasicModel {
       'description',
       'samples_order',
       'notify_by_email',
+      'pipeline_version',
       'created_at',
       'updated_at',
     ];
@@ -64,6 +65,7 @@ class Experiment extends BasicModel {
 
     return result;
   }
+
 
   async getExampleExperiments() {
     return this.getAllExperiments(constants.PUBLIC_ACCESS_ID);
@@ -110,8 +112,8 @@ class Experiment extends BasicModel {
     return result;
   }
 
-  async createCopy(fromExperimentId) {
-    const toExperimentId = uuidv4().replace(/-/g, '');
+  async createCopy(fromExperimentId, name = null, canRerunGem2s = true) {
+    const toExperimentId = uuidv4();
 
     const { sql } = this;
 
@@ -120,12 +122,17 @@ class Experiment extends BasicModel {
         sql(tableNames.EXPERIMENT)
           .select(
             sql.raw('? as id', [toExperimentId]),
-            'name',
+            // Clone the original name if no new name is provided
+            name ? sql.raw('? as name', [name]) : 'name',
             'description',
+            // Take the parameter canRerunGem2s instead of cloning it
+            sql.raw('? as can_rerun_gem2s', [canRerunGem2s]),
+            'pod_cpus',
+            'pod_memory',
           )
           .where({ id: fromExperimentId }),
       )
-      .into(sql.raw(`${tableNames.EXPERIMENT} (id, name, description)`));
+      .into(sql.raw(`${tableNames.EXPERIMENT} (id, name, description, can_rerun_gem2s, pod_cpus, pod_memory)`));
 
     return toExperimentId;
   }
@@ -178,9 +185,35 @@ class Experiment extends BasicModel {
     return result.processingConfig;
   }
 
-  async updateProcessingConfig(experimentId, body) {
-    const { name: stepName, body: change } = body[0];
-    const updateString = JSON.stringify({ [stepName]: change });
+  // try to get specific hardware requirements for running an experiment pipeline
+  // return undefined in case of error to use default settings (fargate)
+  async getResourceRequirements(experimentId) {
+    let podCpus;
+    let podMemory;
+    try {
+      const result = await this.sql
+        .select('pod_memory', 'pod_cpus')
+        .from(tableNames.EXPERIMENT)
+        .where('id', experimentId)
+        .first();
+
+
+      if (_.isEmpty(result)) {
+        throw new NotFoundError('Experiment not found');
+      }
+
+      if (result.podMemory !== null) podMemory = result.podMemory;
+      if (result.podCpus !== null) podCpus = result.podCpus;
+    } catch (e) {
+      logger.error(`getResoureceRequirements: returning default values: ${e}`);
+    }
+
+    return { podCpus, podMemory };
+  }
+
+  async updateProcessingConfig(experimentId, changes) {
+    const { name: stepName, body: update } = changes[0];
+    const updateString = JSON.stringify({ [stepName]: update });
 
     await this.sql(tableNames.EXPERIMENT)
       .update({
@@ -188,10 +221,14 @@ class Experiment extends BasicModel {
       }).where('id', experimentId);
   }
 
-  async addSample(experimentId, sampleId) {
+  async addSamples(experimentId, sampleIds) {
+    const newSamplesArray = sampleIds
+      .map((sampleId) => `"${sampleId}"`)
+      .join(', ');
+
     await this.sql(tableNames.EXPERIMENT)
       .update({
-        samples_order: this.sql.raw(`samples_order || '["${sampleId}"]'::jsonb`),
+        samples_order: this.sql.raw(`samples_order || '[${newSamplesArray}]'::jsonb`),
       })
       .where('id', experimentId);
   }
@@ -211,14 +248,11 @@ class Experiment extends BasicModel {
 
     const filenamePrefix = experimentId.split('-')[0];
     const requestedBucketName = `${downloadType}-${clusterEnv}-${config.awsAccountId}`;
-    const objectKey = `${formatExperimentId(experimentId)}/r.rds`;
+    const objectKey = `${experimentId}/r.rds`;
 
     switch (requestedBucketName) {
       case bucketNames.PROCESSED_MATRIX:
         downloadedFileName = `${filenamePrefix}_processed_matrix.rds`;
-        break;
-      case bucketNames.RAW_SEURAT:
-        downloadedFileName = `${filenamePrefix}_raw_matrix.rds`;
         break;
       default:
         throw new BadRequestError('Invalid download type requested');
@@ -231,7 +265,7 @@ class Experiment extends BasicModel {
       Expires: 120,
     };
 
-    const signedUrl = getSignedUrl('getObject', params);
+    const signedUrl = await getSignedUrl('getObject', params);
 
     return signedUrl;
   }

@@ -1,6 +1,6 @@
 
-const { fileExists } = require('../../../../utils/aws/s3');
-const { FILTERED_CELLS } = require('../../s3/bucketNames');
+const { fileExists } = require('../../s3/fileExists');
+const { FILTERED_CELLS } = require('../../../../config/bucketNames');
 
 const filterToStepName = {
   classifier: 'ClassifierFilterMap',
@@ -22,6 +22,14 @@ const stepNames = [
   'ConfigureEmbedding',
 ];
 
+
+const qcStepsWithFilterSettings = [
+  'cellSizeDistribution',
+  'mitochondrialContent',
+  'classifier',
+  'numGenesVsNumUmis',
+  'doubletScores',
+];
 
 // checks whether an experiment has available filtered cell IDs in S3
 // meaning it can be started from any step in the QC pipeline without
@@ -70,4 +78,5 @@ const getQcStepsToRun = async (experimentId, processingConfigUpdates) => {
 
 module.exports = {
   getQcStepsToRun,
+  qcStepsWithFilterSettings,
 };

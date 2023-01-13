@@ -1,10 +1,8 @@
-const config = require('../../config');
+const getUser = require('../../api.v2/helpers/cognito/getUser');
 
-const { cognitoISP } = config;
 async function getAwsUserAttributesByEmail(email) {
-  const poolId = await config.awsUserPoolIdPromise;
-  const user = await cognitoISP.adminGetUser({ UserPoolId: poolId, Username: email }).promise();
-  return user.UserAttributes;
+  const user = await getUser(email);
+  return user;
 }
 
 module.exports = { getAwsUserAttributesByEmail };

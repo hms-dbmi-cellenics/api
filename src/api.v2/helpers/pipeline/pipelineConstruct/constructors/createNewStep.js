@@ -1,77 +1,31 @@
-const config = require('../../../../../config');
-const { QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SEURAT_PROCESS_NAME } = require('../../../../constants');
+const {
+  QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUBSET_PROCESS_NAME, SEURAT_PROCESS_NAME,
+} = require('../../../../constants');
+const getGeneralParams = require('./paramsGetters/getGeneralParams');
+const getQCParams = require('./paramsGetters/getQCParams');
+const getSubsetParams = require('./paramsGetters/getSubsetParams');
 
-const createTask = (taskName, context) => {
-  const {
-    projectId, processingConfig, experimentId, processName,
-  } = context;
+const buildParams = (context, stepArgs) => {
+  let stepParams;
 
-  const remoterServer = (
-    config.clusterEnv === 'development'
-  ) ? 'host.docker.internal'
-    : `remoter-server-${experimentId}.${config.pipelineNamespace}.svc.cluster.local`;
-
-  const task = {
-    projectId,
-    experimentId,
-    taskName,
-    processName,
-    config: processingConfig[taskName] || {},
-    server: remoterServer,
-  };
-
-  return task;
-};
-
-const getQCParams = (task, context, stepArgs) => {
-  const { perSample, uploadCountMatrix } = stepArgs;
-  return {
-    ...task,
-    ...perSample ? { 'sampleUuid.$': '$.sampleUuid' } : { sampleUuid: '' },
-    ...uploadCountMatrix ? { uploadCountMatrix: true } : { uploadCountMatrix: false },
-    authJWT: context.authJWT,
-  };
-};
-
-const getGem2SParams = (task, context) => {
-  const { taskParams } = context;
-  return {
-    ...task,
-    ...taskParams,
-  };
-};
-
-const getSeuratParams = (task, context) => {
-  const { taskParams } = context;
-  return {
-    ...task,
-    ...taskParams,
-  };
-};
-
-
-const buildParams = (task, context, stepArgs) => {
-  let processParams;
-
-  if (task.processName === QC_PROCESS_NAME) {
-    processParams = getQCParams(task, context, stepArgs);
-  } else if (task.processName === GEM2S_PROCESS_NAME) {
-    processParams = getGem2SParams(task, context);
-  } else if (task.processName === SEURAT_PROCESS_NAME) {
-    processParams = getSeuratParams(task, context);
+  if (context.processName === QC_PROCESS_NAME) {
+    stepParams = getQCParams(context, stepArgs);
+  } else if ([GEM2S_PROCESS_NAME, SEURAT_PROCESS_NAME].includes(context.processName)) {
+    stepParams = context.taskParams;
+  } else if (context.processName === SUBSET_PROCESS_NAME) {
+    stepParams = getSubsetParams(context, stepArgs);
   }
 
   return {
-    ...task,
-    ...processParams,
+    ...getGeneralParams(stepArgs.taskName, context),
+    ...stepParams,
   };
 };
 
 const createNewStep = (context, step, stepArgs) => {
   const { activityArn } = context;
-  const { taskName } = stepArgs;
-  const task = createTask(taskName, context);
-  const params = buildParams(task, context, stepArgs);
+
+  const params = buildParams(context, stepArgs);
 
   return {
     ...step,

@@ -11,6 +11,7 @@ const { promisify } = require('util');
 const jwtExpress = require('express-jwt');
 
 const config = require('../../config');
+const getAwsPoolId = require('../helpers/cognito/getAwsPoolId');
 const { isReqFromLocalhost, isReqFromCluster } = require('../../utils/isReqFrom');
 
 const CacheSingleton = require('../../cache');
@@ -108,7 +109,7 @@ const expressAuthenticationOnlyMiddleware = async (req, res, next) => {
  * @returns Promise that resolves or rejects based on authentication status.
  */
 const authenticationMiddlewareSocketIO = async (authHeader, ignoreExpiration = false) => {
-  const poolId = await config.awsUserPoolIdPromise;
+  const poolId = await getAwsPoolId();
   const cache = CacheSingleton.get();
 
   const issuer = `https://cognito-idp.${config.awsRegion}.amazonaws.com/${poolId}`;
@@ -155,7 +156,7 @@ const authenticationMiddlewareExpress = async (app) => {
 
   // This will be run outside a request context, so there is no X-Ray segment.
   // Disable tracing so we don't end up with errors logged into the console.
-  const poolId = await config.awsUserPoolIdPromise;
+  const poolId = await getAwsPoolId();
 
   return jwtExpress({
     // JWT tokens are susceptible for downgrade attacks if the algorithm used to sign
@@ -223,9 +224,8 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
     return next(new UnauthenticatedError('token has expired'));
   }
 
-
   // check if we should ignore expired jwt token for this path and request type
-  const longTimeoutEndpoints = [{ urlMatcher: /experiments\/.{32}\/cellSets$/, method: 'PATCH' }];
+  const longTimeoutEndpoints = [{ urlMatcher: /experiments\/.{36}\/cellSets$/, method: 'PATCH' }];
   const isEndpointIgnored = longTimeoutEndpoints.some(
     ({ urlMatcher, method }) => (
       req.method.toLowerCase() === method.toLowerCase() && urlMatcher.test(req.url)
@@ -234,14 +234,15 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
 
   // if endpoint is not in ignore list, the JWT is too old, send an error accordingly
   if (!isEndpointIgnored) {
-    return next(new UnauthenticatedError('token has expired for non-ignored endpoint'));
+    return next(new UnauthenticatedError(`expired token: non-ignored endpoint ${req.url}`));
   }
 
   promiseAny([isReqFromCluster(req), isReqFromLocalhost(req)])
     .then(() => next())
-    .catch((e) => {
-      next(new UnauthenticatedError(`invalid request origin ${e}`));
+    .catch((error) => {
+      next(new UnauthenticatedError(`invalid request origin ${error}: ${error.errors}`));
     });
+
 
   return null;
 };

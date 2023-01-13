@@ -3,11 +3,11 @@ const _ = require('lodash');
 const AWS = require('../../../utils/requireAWS');
 const config = require('../../../config');
 
-const bucketNames = require('./bucketNames');
+const bucketNames = require('../../../config/bucketNames');
 const SampleFile = require('../../model/SampleFile');
 const { NotFoundError } = require('../../../utils/responses');
 
-const getSignedUrl = (operation, params) => {
+const getSignedUrl = async (operation, params) => {
   if (!params.Bucket) throw new Error('Bucket is required');
   if (!params.Key) throw new Error('Key is required');
 
@@ -19,7 +19,7 @@ const getSignedUrl = (operation, params) => {
 
   const s3 = new AWS.S3(S3Config);
 
-  return s3.getSignedUrl(operation, params);
+  return s3.getSignedUrlPromise(operation, params);
 };
 
 const FILE_CHUNK_SIZE = 10000000;
@@ -104,6 +104,7 @@ const fileNameToReturn = {
   matrix10x: 'matrix.mtx.gz',
   barcodes10x: 'barcodes.tsv.gz',
   features10x: 'features.tsv.gz',
+  rhapsody: 'expression_data.st.gz',
   seurat: 'r.rds',
 };
 
@@ -122,7 +123,7 @@ const getSampleFileDownloadUrl = async (experimentId, sampleId, fileType) => {
     ResponseContentDisposition: `attachment; filename="${fileNameToReturn[fileType]}"`,
   };
 
-  const signedUrl = getSignedUrl('getObject', params);
+  const signedUrl = await getSignedUrl('getObject', params);
 
   return signedUrl;
 };

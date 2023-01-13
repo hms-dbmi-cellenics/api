@@ -1,6 +1,5 @@
 // @ts-nocheck
 const _ = require('lodash');
-const AWSMock = require('aws-sdk-mock');
 const io = require('socket.io-client');
 
 const handleQCResponse = require('../../../../src/api.v2/helpers/pipeline/handleQCResponse');
@@ -11,11 +10,13 @@ const fake = require('../../../test-utils/constants');
 
 const Experiment = require('../../../../src/api.v2/model/Experiment');
 const getPipelineStatus = require('../../../../src/api.v2/helpers/pipeline/getPipelineStatus');
+const { buildPodRequest } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/constructors/requestAssignPodToPipeline');
+
 const HookRunner = require('../../../../src/api.v2/helpers/pipeline/hooks/HookRunner');
 const podCleanup = require('../../../../src/api.v2/helpers/pipeline/hooks/podCleanup');
 const sendNotification = require('../../../../src/api.v2/helpers/pipeline/hooks/sendNotification');
+const updatePipelineVersion = require('../../../../src/api.v2/helpers/pipeline/hooks/updatePipelineVersion');
 const assignPodToPipeline = require('../../../../src/api.v2/helpers/pipeline/hooks/assignPodToPipeline');
-const { buildPodRequest } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/constructors/requestAssignPodToPipeline');
 
 const validateRequest = require('../../../../src/utils/schema-validator');
 
@@ -33,6 +34,7 @@ jest.mock('../../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 jest.mock('../../../../src/api.v2/helpers/pipeline/hooks/HookRunner');
 jest.mock('../../../../src/api.v2/helpers/pipeline/hooks/assignPodToPipeline');
 jest.mock('../../../../src/api.v2/helpers/pipeline/hooks/podCleanup');
+jest.mock('../../../../src/api.v2/helpers/pipeline/hooks/updatePipelineVersion');
 jest.mock('../../../../src/api.v2/helpers/pipeline/hooks/sendNotification');
 
 jest.mock('../../../../src/utils/schema-validator');
@@ -67,8 +69,10 @@ describe('handleQCResponse module', () => {
       const mockedMessage = { mock: true };
 
       configureEmbeddingHooks[0](mockedMessage);
-
       expect(podCleanup.cleanupPods).toHaveBeenCalledWith(mockedMessage);
+
+      configureEmbeddingHooks[1](mockedMessage);
+      expect(updatePipelineVersion).toHaveBeenCalledWith(mockedMessage);
     });
 
     it('registerAll hook works correctly', () => {

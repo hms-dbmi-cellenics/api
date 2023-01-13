@@ -1,9 +1,10 @@
 const AWSXRay = require('aws-xray-sdk');
 
-const { createGem2sPipeline, handleGem2sResponse } = require('../helpers/pipeline/gem2s');
+const { startGem2sPipeline, handleGem2sResponse } = require('../helpers/pipeline/gem2s');
 const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
-const parseSNSMessage = require('../../utils/parse-sns-message');
+const parseSNSMessage = require('../../utils/parseSNSMessage');
+const snsTopics = require('../../config/snsTopics');
 
 const logger = getLogger('[Gem2sController] - ');
 
@@ -12,7 +13,7 @@ const runGem2s = async (req, res) => {
 
   logger.log(`Starting gem2s for experiment ${experimentId}`);
 
-  const newExecution = await createGem2sPipeline(experimentId, req.body, req.headers.authorization);
+  const newExecution = await startGem2sPipeline(experimentId, req.body, req.headers.authorization);
 
   logger.log(`Started gem2s for experiment ${experimentId} successfully, `);
   logger.log('New executions data:');
@@ -25,7 +26,7 @@ const handleResponse = async (req, res) => {
   let result;
 
   try {
-    result = await parseSNSMessage(req);
+    result = await parseSNSMessage(req, snsTopics.WORK_RESULTS);
   } catch (e) {
     logger.error('Parsing initial SNS message failed:', e);
     AWSXRay.getSegment().addError(e);

@@ -1,19 +1,18 @@
 const getLogger = require('../../utils/getLogger');
 
 const getS3Object = require('../helpers/s3/getObject');
-const bucketNames = require('../helpers/s3/bucketNames');
-const formatExperimentId = require('../../utils/v1Compatibility/formatExperimentId');
+const bucketNames = require('../../config/bucketNames');
 
 const { OK } = require('../../utils/responses');
 
 const patchCellSetsObject = require('../helpers/s3/patchCellSetsObject');
+const invalidatePlotsForEvent = require('../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
+const events = require('../../utils/plotConfigInvalidation/events');
 
 const logger = getLogger('[CellSetsController] - ');
 
 const getCellSets = async (req, res) => {
-  let { experimentId } = req.params;
-
-  experimentId = formatExperimentId(experimentId);
+  const { experimentId } = req.params;
 
   logger.log(`Getting cell sets for experiment ${experimentId}`);
 
@@ -32,7 +31,10 @@ const patchCellSets = async (req, res) => {
   const patch = req.body;
 
   logger.log(`Patching cell sets for ${experimentId}`);
-  await patchCellSetsObject(formatExperimentId(experimentId), patch);
+  await patchCellSetsObject(experimentId, patch);
+
+  const { sockets } = req.app.get('io');
+  await invalidatePlotsForEvent(experimentId, events.CELL_SETS_MODIFIED, sockets);
 
   logger.log(`Finished patching cell sets for experiment ${experimentId}`);
 

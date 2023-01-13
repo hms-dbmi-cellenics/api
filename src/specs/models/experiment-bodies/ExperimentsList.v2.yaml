@@ -11,6 +11,8 @@ items:
       type: string
     notifyByEmail:
       type: boolean
+    pipelineVersion:
+      type: number
     samplesOrder:
       type: array
       items:
@@ -28,6 +30,7 @@ items:
     - name
     - description
     - notifyByEmail
+    - pipelineVersion
     - samplesOrder
     - metadataKeys
     - createdAt

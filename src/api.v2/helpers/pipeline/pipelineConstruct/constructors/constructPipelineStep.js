@@ -1,6 +1,7 @@
 const deleteCompletedJobs = require('./deleteCompleteJobs');
-const createNewStep = require('./createNewStep');
 const createNewJobIfNotExist = require('./createNewJobIfNotExist');
+const createNewStep = require('./createNewStep');
+const submitBatchJob = require('./submitBatchJob');
 const {
   requestPod, waitForPod,
 } = require('./requestAssignPodToPipeline');
@@ -15,6 +16,10 @@ const constructPipelineStep = (context, step) => {
     }
     case 'create-new-job-if-not-exist': {
       return createNewJobIfNotExist(context, step);
+    }
+    // create new job for big datasets in aws
+    case 'submit-batch-job': {
+      return submitBatchJob(context, step);
     }
     // Remote (aws) steps
     case 'request-pod': {

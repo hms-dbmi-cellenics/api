@@ -51,7 +51,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -66,7 +65,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -81,7 +79,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -96,7 +93,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -111,7 +107,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -126,7 +121,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -141,7 +135,6 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -166,8 +159,8 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
+        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -248,7 +241,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -263,7 +255,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -278,7 +269,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -293,7 +283,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -308,7 +297,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -323,7 +311,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -338,7 +325,6 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -363,8 +349,8 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-staging-pipeline-assignation-v2",
+        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -445,7 +431,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -460,7 +445,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -475,7 +459,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -490,7 +473,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -505,7 +487,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -520,7 +501,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -535,7 +515,6 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
         "processName": "gem2s",
-        "config": {},
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
       }
     },
@@ -572,9 +551,9 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "FunctionName": "arn:aws:lambda:eu-west-1:mock-account-id:function:local-container-launcher",
         "Payload": {
           "image": "biomage-pipeline-runner",
-          "name": "gem2s-runner",
+          "name": "qc-runner",
           "detached": true,
-          "activityArn": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
+          "activityArn": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713"
         }
       },
       "Catch": [
@@ -598,16 +577,18 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           "ClassifierFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -624,16 +605,18 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           "CellSizeDistributionFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -650,16 +633,18 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           "MitochondrialContentFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -676,16 +661,18 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           "NumGenesVsNumUmisFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -702,16 +689,18 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
           "DoubletScoresFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -720,31 +709,35 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
       "Type": "Task",
-      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
-        "processName": "gem2s",
-        "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "processName": "qc",
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "sampleUuid": "",
+        "uploadCountMatrix": true,
+        "config": {}
       }
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
       "Type": "Task",
-      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
-        "processName": "gem2s",
-        "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "processName": "qc",
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "sampleUuid": "",
+        "uploadCountMatrix": false,
+        "config": {}
       }
     },
     "EndOfPipeline": {
@@ -768,8 +761,8 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-production-pipeline-assignation-v2",
+        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -810,7 +803,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
               "QueryParameters": {
                 "labelSelector": [
-                  "type=pipeline,activityId=biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
+                  "type=pipeline,activityId=biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713"
                 ]
               }
             }
@@ -850,16 +843,18 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
           "ClassifierFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -876,16 +871,18 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
           "CellSizeDistributionFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -902,16 +899,18 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
           "MitochondrialContentFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -928,16 +927,18 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
           "NumGenesVsNumUmisFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -954,16 +955,18 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
           "DoubletScoresFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -972,31 +975,297 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
       "Type": "Task",
-      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
-        "processName": "gem2s",
-        "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "processName": "qc",
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "sampleUuid": "",
+        "uploadCountMatrix": true,
+        "config": {}
       }
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
       "Type": "Task",
-      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
-        "processName": "gem2s",
-        "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "processName": "qc",
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "sampleUuid": "",
+        "uploadCountMatrix": false,
+        "config": {}
+      }
+    },
+    "EndOfPipeline": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}
+`;
+
+exports[`non-tests to document the State Machines - qc production with specific CPUs & Mem 1`] = `
+
+{
+  "Comment": "QC Pipeline for clusterEnv 'production'",
+  "StartAt": "SubmitBatchJob",
+  "States": {
+    "SubmitBatchJob": {
+      "Next": "ClassifierFilterMap",
+      "ResultPath": null,
+      "Type": "Task",
+      "Resource": "arn:aws:states:::batch:submitJob",
+      "Parameters": {
+        "JobDefinition": "job-pipeline-production",
+        "JobName": "production-mock-experiment-id-qc",
+        "JobQueue": "queue-pipeline-production",
+        "ContainerOverrides": {
+          "Environment": [
+            {
+              "Name": "EXPERIMENT_ID",
+              "Value": "mock-experiment-id"
+            },
+            {
+              "Name": "ACTIVITY_ARN",
+              "Value": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713"
+            },
+            {
+              "Name": "CLUSTER_ENV",
+              "Value": "test"
+            },
+            {
+              "Name": "AWS_DEFAULT_REGION",
+              "Value": "eu-west-1"
+            },
+            {
+              "Name": "AWS_ACCOUNT_ID",
+              "Value": "000000000000"
+            },
+            {
+              "Name": "SANDBOX_ID",
+              "Value": "default"
+            },
+            {
+              "Name": "BATCH",
+              "Value": "true"
+            },
+            {
+              "Name": "DOMAIN_NAME",
+              "Value": "scp.biomage.net"
+            },
+            {
+              "Name": "DD_API_KEY",
+              "Value": "test-datadog-api-key"
+            },
+            {
+              "Name": "DD_APP_KEY",
+              "Value": "test-datadog-app-key"
+            }
+          ],
+          "ResourceRequirements": [
+            {
+              "Type": "VCPU",
+              "Value": "16"
+            },
+            {
+              "Type": "MEMORY",
+              "Value": "2048"
+            }
+          ]
+        }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error-info",
+          "Next": "ClassifierFilterMap"
+        }
+      ]
+    },
+    "ClassifierFilterMap": {
+      "Type": "Map",
+      "Next": "CellSizeDistributionFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "ClassifierFilter",
+        "States": {
+          "ClassifierFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "classifier",
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
+            }
+          }
+        }
+      }
+    },
+    "CellSizeDistributionFilterMap": {
+      "Type": "Map",
+      "Next": "MitochondrialContentFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "CellSizeDistributionFilter",
+        "States": {
+          "CellSizeDistributionFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "cellSizeDistribution",
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
+            }
+          }
+        }
+      }
+    },
+    "MitochondrialContentFilterMap": {
+      "Type": "Map",
+      "Next": "NumGenesVsNumUmisFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "MitochondrialContentFilter",
+        "States": {
+          "MitochondrialContentFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "mitochondrialContent",
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
+            }
+          }
+        }
+      }
+    },
+    "NumGenesVsNumUmisFilterMap": {
+      "Type": "Map",
+      "Next": "DoubletScoresFilterMap",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "NumGenesVsNumUmisFilter",
+        "States": {
+          "NumGenesVsNumUmisFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "numGenesVsNumUmis",
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
+            }
+          }
+        }
+      }
+    },
+    "DoubletScoresFilterMap": {
+      "Type": "Map",
+      "Next": "DataIntegration",
+      "ResultPath": null,
+      "ItemsPath": "$.samples",
+      "Iterator": {
+        "StartAt": "DoubletScoresFilter",
+        "States": {
+          "DoubletScoresFilter": {
+            "End": true,
+            "Type": "Task",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
+            "ResultPath": null,
+            "TimeoutSeconds": 10800,
+            "HeartbeatSeconds": 90,
+            "Parameters": {
+              "experimentId": "mock-experiment-id",
+              "taskName": "doubletScores",
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
+            }
+          }
+        }
+      }
+    },
+    "DataIntegration": {
+      "Next": "ConfigureEmbedding",
+      "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "HeartbeatSeconds": 90,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "dataIntegration",
+        "processName": "qc",
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "sampleUuid": "",
+        "uploadCountMatrix": true,
+        "config": {}
+      }
+    },
+    "ConfigureEmbedding": {
+      "Next": "EndOfPipeline",
+      "Type": "Task",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
+      "ResultPath": null,
+      "TimeoutSeconds": 10800,
+      "HeartbeatSeconds": 90,
+      "Parameters": {
+        "experimentId": "mock-experiment-id",
+        "taskName": "configureEmbedding",
+        "processName": "qc",
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "sampleUuid": "",
+        "uploadCountMatrix": false,
+        "config": {}
       }
     },
     "EndOfPipeline": {
@@ -1020,8 +1289,8 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
-        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-undefined-pipeline-assignation-v2",
-        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"gem2s\\"}}",
+        "TopicArn": "arn:aws:sns:eu-west-1:mock-account-id:work-results-staging-pipeline-assignation-v2",
+        "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"mock-experiment-id\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"experimentId\\":\\"mock-experiment-id\\",\\"sandboxId\\":\\"pipeline-assignation\\",\\"activityId\\":\\"biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713\\",\\"processName\\":\\"qc\\"}}",
         "MessageAttributes": {
           "type": {
             "DataType": "String",
@@ -1062,7 +1331,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
               "QueryParameters": {
                 "labelSelector": [
-                  "type=pipeline,activityId=biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713"
+                  "type=pipeline,activityId=biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713"
                 ]
               }
             }
@@ -1102,16 +1371,18 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
           "ClassifierFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "classifier",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -1128,16 +1399,18 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
           "CellSizeDistributionFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "cellSizeDistribution",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -1154,16 +1427,18 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
           "MitochondrialContentFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "mitochondrialContent",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -1180,16 +1455,18 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
           "NumGenesVsNumUmisFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "numGenesVsNumUmis",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -1206,16 +1483,18 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
           "DoubletScoresFilter": {
             "End": true,
             "Type": "Task",
-            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+            "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
             "ResultPath": null,
             "TimeoutSeconds": 10800,
             "HeartbeatSeconds": 90,
             "Parameters": {
               "experimentId": "mock-experiment-id",
               "taskName": "doubletScores",
-              "processName": "gem2s",
-              "config": {},
-              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+              "processName": "qc",
+              "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "sampleUuid.$": "$.sampleUuid",
+              "uploadCountMatrix": false,
+              "config": {}
             }
           }
         }
@@ -1224,31 +1503,35 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
     "DataIntegration": {
       "Next": "ConfigureEmbedding",
       "Type": "Task",
-      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "dataIntegration",
-        "processName": "gem2s",
-        "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "processName": "qc",
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "sampleUuid": "",
+        "uploadCountMatrix": true,
+        "config": {}
       }
     },
     "ConfigureEmbedding": {
       "Next": "EndOfPipeline",
       "Type": "Task",
-      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-gem2s-production-39249897-cfce-402b-a617-e58fbf251713",
+      "Resource": "arn:aws:states:eu-west-1:28592648592:activity:biomage-qc-production-39249897-cfce-402b-a617-e58fbf251713",
       "ResultPath": null,
       "TimeoutSeconds": 10800,
       "HeartbeatSeconds": 90,
       "Parameters": {
         "experimentId": "mock-experiment-id",
         "taskName": "configureEmbedding",
-        "processName": "gem2s",
-        "config": {},
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "processName": "qc",
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "sampleUuid": "",
+        "uploadCountMatrix": false,
+        "config": {}
       }
     },
     "EndOfPipeline": {

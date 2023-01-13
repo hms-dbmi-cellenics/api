@@ -88,37 +88,45 @@ describe('model/userAccess', () => {
     const sampleId = 'mockSampleId';
     const value = 'mockValue';
 
+    const metadataTrackId = 'mockMetadataTrackId';
+
+    // Find returns an existing experiment
     const mockFind = jest.spyOn(BasicModel.prototype, 'find')
-      .mockImplementationOnce(() => Promise.resolve([]));
+      .mockImplementationOnce(() => Promise.resolve([{ id: metadataTrackId }]));
+
+    // But there are no values to be updated
+    mockSqlClient.returning.mockImplementationOnce(() => Promise.resolve([]));
 
     await expect(
       new MetadataTrack().patchValueForSample(experimentId, sampleId, key, value),
-    ).rejects.toThrow();
+    ).rejects.toMatchSnapshot();
 
     expect(mockFind).toHaveBeenCalledWith({ experiment_id: experimentId, key });
   });
 
-  it('createNewExperimentPermissions works correctly when experiment has metadata tracks', async () => {
+  it('createNewSamplesValues works correctly when experiment has metadata tracks', async () => {
     const mockExperimentId = 'mockExperimentId';
-    const mockSampleId = 'mockSampleId';
+    const mockSampleIds = ['id1', 'id2'];
 
     mockSqlClient.where.mockImplementationOnce(() => Promise.resolve([{ id: 'track1Id' }, { id: 'track2Id' }]));
 
-    await new MetadataTrack().createNewSampleValues(mockExperimentId, mockSampleId);
+    await new MetadataTrack().createNewSamplesValues(mockExperimentId, mockSampleIds);
 
     expect(mockSqlClient.insert).toHaveBeenCalledWith([
-      { metadata_track_id: 'track1Id', sample_id: 'mockSampleId' },
-      { metadata_track_id: 'track2Id', sample_id: 'mockSampleId' },
+      { metadata_track_id: 'track1Id', sample_id: 'id1' },
+      { metadata_track_id: 'track2Id', sample_id: 'id1' },
+      { metadata_track_id: 'track1Id', sample_id: 'id2' },
+      { metadata_track_id: 'track2Id', sample_id: 'id2' },
     ]);
   });
 
-  it('createNewExperimentPermissions doesn\'t do anything when experiment has no metadata tracks', async () => {
+  it('createNewSamplesValues doesn\'t do anything when experiment has no metadata tracks', async () => {
     const mockExperimentId = 'mockExperimentId';
-    const mockSampleId = 'mockSampleId';
+    const mockSampleIds = ['id1', 'id2'];
 
     mockSqlClient.where.mockImplementationOnce(() => Promise.resolve([]));
 
-    await new MetadataTrack().createNewSampleValues(mockExperimentId, mockSampleId);
+    await new MetadataTrack().createNewSamplesValues(mockExperimentId, mockSampleIds);
 
     expect(mockSqlClient.insert).not.toHaveBeenCalled();
   });

@@ -14,24 +14,67 @@ const HookRunner = require('./hooks/HookRunner');
 
 const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
+const { qcStepsWithFilterSettings } = require('./pipelineConstruct/qcHelpers');
 
 const logger = getLogger('[Gem2sService] - ');
 
 const hookRunner = new HookRunner();
 
-const continueToQC = async (payload) => {
-  const { experimentId, item } = payload;
+/**
+ *
+ * @param {*} experimentId
+ * @param {*} processingConfig The full processing config for an experiment
+ * @returns A copy of processingConfig with each filterSettings entry
+ *  duplicated under defaultFilterSettings
+ */
+const addDefaultFilterSettings = (experimentId, processingConfig) => {
+  const processingConfigToReturn = _.cloneDeep(processingConfig);
 
-  await new Experiment().updateById(experimentId, { processing_config: item.processingConfig });
+  logger.log('Adding defaultFilterSettings to received processing config');
+
+  qcStepsWithFilterSettings.forEach((stepName) => {
+    const stepConfigSplitBySample = Object.values(processingConfigToReturn[stepName]);
+
+    stepConfigSplitBySample.forEach((sampleSettings) => {
+      if (!sampleSettings.filterSettings) {
+        logger.log(`Experiment: ${experimentId}. Skipping current sample config, it doesnt have filterSettings:`);
+        logger.log(JSON.stringify(sampleSettings.filterSettings));
+        return;
+      }
+
+      // eslint-disable-next-line no-param-reassign
+      sampleSettings.defaultFilterSettings = _.cloneDeep(sampleSettings.filterSettings);
+    });
+  });
+
+  logger.log('Finished adding defaultFilterSettings to received processing config');
+
+  return processingConfigToReturn;
+};
+
+const continueToQC = async (payload) => {
+  const { experimentId, item, jobId } = payload;
+
+  // Before persisting the new processing config,
+  // fill it in with default filter settings (to preserve the gem2s-generated settings)
+  const processingConfigWithDefaults = addDefaultFilterSettings(
+    experimentId, item.processingConfig,
+  );
+
+  await new Experiment().updateById(
+    experimentId, { processing_config: processingConfigWithDefaults },
+  );
 
   logger.log(`Experiment: ${experimentId}. Saved processing config received from gem2s`);
 
   logger.log(`Experiment: ${experimentId}. Starting qc run because gem2s finished successfully`);
 
+  logger.log(`continueToQc: previous jobId: ${jobId}`);
+
   // we need to change this once we rework the pipeline message response
   const authJWT = payload.authJWT || payload.input.authJWT;
 
-  await createQCPipeline(experimentId, [], authJWT);
+  await createQCPipeline(experimentId, [], authJWT, jobId);
 
   logger.log('Started qc successfully');
 };
@@ -68,13 +111,13 @@ const generateGem2sParams = async (experimentId, authJWT) => {
 
   logger.log('Generating gem2s params');
 
-  const getS3Paths = (files) => (
-    {
-      matrix10x: files.matrix10x.s3Path,
-      barcodes10x: files.barcodes10x.s3Path,
-      features10x: files.features10x.s3Path,
-    }
-  );
+  const getS3Paths = (files) => {
+    const s3Paths = {};
+    Object.keys(files).forEach((key) => {
+      s3Paths[key] = files[key].s3Path;
+    });
+    return s3Paths;
+  };
 
   const [experiment, samples] = await Promise.all([
     new Experiment().findById(experimentId).first(),
@@ -86,10 +129,13 @@ const generateGem2sParams = async (experimentId, authJWT) => {
   );
 
   const s3Paths = {};
+  const sampleOptions = {};
+
   experiment.samplesOrder.forEach((sampleId) => {
-    const { files } = _.find(samples, { id: sampleId });
+    const { files, options } = _.find(samples, { id: sampleId });
 
     s3Paths[sampleId] = getS3Paths(files);
+    sampleOptions[sampleId] = options || {};
   });
 
   const taskParams = {
@@ -100,6 +146,7 @@ const generateGem2sParams = async (experimentId, authJWT) => {
     sampleIds: experiment.samplesOrder,
     sampleNames: _.map(samplesInOrder, 'name'),
     sampleS3Paths: s3Paths,
+    sampleOptions,
     authJWT,
   };
 
@@ -125,7 +172,7 @@ const generateGem2sParams = async (experimentId, authJWT) => {
   return taskParams;
 };
 
-const createGem2sPipeline = async (experimentId, body, authJWT) => {
+const startGem2sPipeline = async (experimentId, body, authJWT) => {
   logger.log('Creating GEM2S params...');
   const { paramsHash } = body;
 
@@ -141,13 +188,20 @@ const createGem2sPipeline = async (experimentId, body, authJWT) => {
     execution_arn: executionArn,
   };
 
-  await new ExperimentExecution().upsert(
+  const experimentExecutionClient = new ExperimentExecution();
+
+  await experimentExecutionClient.upsert(
     {
       experiment_id: experimentId,
       pipeline_type: 'gem2s',
     },
     newExecution,
   );
+
+  await experimentExecutionClient.delete({
+    experiment_id: experimentId,
+    pipeline_type: 'qc',
+  });
 
   logger.log('GEM2S params saved.');
 
@@ -166,6 +220,16 @@ const handleGem2sResponse = async (io, message) => {
 
   const messageForClient = _.cloneDeep(message);
 
+  // If we are at uploadToAWS, then a new processingConfig was received
+  // Before being returned to the client we need to
+  // fill it in with default filter settings (to preserve the gem2s-generated settings)
+  if (messageForClient.taskName === 'uploadToAWS') {
+    messageForClient.item.processingConfig = addDefaultFilterSettings(
+      experimentId,
+      messageForClient.item.processingConfig,
+    );
+  }
+
   // Make sure authJWT doesn't get back to the client
   delete messageForClient.authJWT;
   delete messageForClient.input.authJWT;
@@ -174,6 +238,6 @@ const handleGem2sResponse = async (io, message) => {
 };
 
 module.exports = {
-  createGem2sPipeline,
+  startGem2sPipeline,
   handleGem2sResponse,
 };
