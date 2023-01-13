@@ -38,7 +38,7 @@ if (!process.env.K8S_ENV) {
 }
 
 const awsRegion = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || 'eu-west-1';
-
+const deploymentName = process.env.DEPLOYMENT_NAME || 'local-dev';
 const domainName = process.env.DOMAIN_NAME || 'localhost:5000';
 
 const cognitoISP = new AWS.CognitoIdentityServiceProvider({
@@ -61,6 +61,7 @@ const config = {
   pipelineNamespace: `pipeline-${process.env.SANDBOX_ID || 'default'}`,
   awsRegion,
   domainName,
+  deploymentName,
   cognitoISP,
   api: {
     prefix: '/',
