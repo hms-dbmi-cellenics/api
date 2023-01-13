@@ -115,8 +115,8 @@ const setupSubsetSamples = async (payload) => {
   // Add samples that were created
 };
 
-hookRunner.register('uploadToAWS', [continueToQC]);
 hookRunner.register('subsetSeurat', [setupSubsetSamples]);
+hookRunner.register('uploadToAWS', [continueToQC]);
 
 hookRunner.registerAll([sendNotification]);
 
