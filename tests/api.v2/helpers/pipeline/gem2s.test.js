@@ -164,7 +164,7 @@ describe('gem2sResponse', () => {
     );
 
     // There's a hook registered on the uploadToAWS step
-    expect(hookRunnerInstance.register.mock.calls[0][0]).toEqual('uploadToAWS');
+    expect(hookRunnerInstance.register.mock.calls[1][0]).toEqual('uploadToAWS');
 
     await handleGem2sResponse(io, message);
 
@@ -175,7 +175,7 @@ describe('gem2sResponse', () => {
     const uploadToAWSPayload = hookRunnerInstance.run.mock.calls[0][0];
 
     // Take the hookedFunctions
-    const hookedFunctions = hookRunnerInstance.register.mock.calls[0][1];
+    const hookedFunctions = hookRunnerInstance.register.mock.calls[1][1];
     expect(hookedFunctions).toHaveLength(1);
 
     // calling the hookedFunction triggers QC
@@ -209,7 +209,7 @@ describe('gem2sResponse', () => {
     );
 
     // There's a hook registered on the uploadToAWS step
-    expect(hookRunnerInstance.register.mock.calls[0][0]).toEqual('uploadToAWS');
+    expect(hookRunnerInstance.register.mock.calls[1][0]).toEqual('uploadToAWS');
 
     await handleGem2sResponse(io, payload);
 
@@ -220,7 +220,7 @@ describe('gem2sResponse', () => {
     const uploadToAWSPayload = hookRunnerInstance.run.mock.calls[0][0];
 
     // Take the hookedFunctions
-    const hookedFunctions = hookRunnerInstance.register.mock.calls[0][1];
+    const hookedFunctions = hookRunnerInstance.register.mock.calls[1][1];
     expect(hookedFunctions).toHaveLength(1);
 
     // calling the hookedFunction triggers QC
@@ -266,7 +266,7 @@ describe('gem2sResponse', () => {
     });
 
     // There's a hook registered on the subsetSeurat step
-    expect(hookRunnerInstance.register.mock.calls[1][0]).toEqual('subsetSeurat');
+    expect(hookRunnerInstance.register.mock.calls[0][0]).toEqual('subsetSeurat');
 
     await handleGem2sResponse(io, message);
 
@@ -277,7 +277,7 @@ describe('gem2sResponse', () => {
     const subsetSeuratPayload = hookRunnerInstance.run.mock.calls[0][0];
 
     // Take the hookedFunctions
-    const hookedFunctions = hookRunnerInstance.register.mock.calls[1][1];
+    const hookedFunctions = hookRunnerInstance.register.mock.calls[0][1];
     expect(hookedFunctions).toHaveLength(1);
 
     // calling the hookedFunction triggers updates on the subset experiment
