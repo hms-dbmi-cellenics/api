@@ -41,13 +41,11 @@ const sendFailedSlackMessage = async (message, user, process, stateMachineArn) =
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `
-          *Deployment*: ${config.deploymentName}
-          *ExperimentId:* ${experimentId}
-          *Process*: ${process}
-          *Step*: ${error ? `${taskName} - ${error}` : taskName}
-          *State machine ARN*: ${stateMachineArn}
-          `,
+          text: `\n*Deployment*: ${config.domainName}\n`
+          + `*ExperimentId:* ${experimentId}\n`
+          + `*Process*: ${process}\n`
+          + `*Step*: ${error ? `${taskName} - ${error}` : taskName}\n`
+          + `*State machine ARN*: ${stateMachineArn}\n`,
         },
       },
       {

@@ -21,7 +21,6 @@ Object {
   ],
   "datadogApiKey": "",
   "datadogAppKey": "",
-  "deploymentName": "local-dev",
   "domainName": "scp-staging.biomage.net",
   "emailDomainName": "https://ui-default.scp-staging.biomage.net",
   "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/staging/pipeline.yaml",
