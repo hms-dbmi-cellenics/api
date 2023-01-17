@@ -31,9 +31,7 @@ const sendNotification = async (message) => {
 
   const { status } = statusRes[processName];
 
-  // REMOVE BEFORE MERGING
-  if (status === FAILED && ['staging', 'test'].includes(config.clusterEnv)) {
-  // if (status === FAILED && ['production', 'test'].includes(config.clusterEnv)) {
+  if (status === FAILED && ['production', 'test'].includes(config.clusterEnv)) {
     try {
       const { stateMachineArn } = experiment.pipelines[processName];
 
