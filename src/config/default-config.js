@@ -38,7 +38,6 @@ if (!process.env.K8S_ENV) {
 }
 
 const awsRegion = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || 'eu-west-1';
-
 const domainName = process.env.DOMAIN_NAME || 'localhost:5000';
 
 const cognitoISP = new AWS.CognitoIdentityServiceProvider({
