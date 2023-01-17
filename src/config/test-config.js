@@ -21,4 +21,6 @@ module.exports = {
   },
   cachingEnabled: false,
   publicApiUrl: 'test-public-api-url',
+  datadogApiKey: 'test-datadog-api-key',
+  datadogAppKey: 'test-datadog-app-key',
 };

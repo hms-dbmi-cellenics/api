@@ -1,3 +1,6 @@
+const { END_OF_PIPELINE } = require('../../../../constants');
+const { createCatchSteps } = require('../constructors/createHandleErrorStep');
+
 const gem2SPipelineSteps = {
   DownloadGem: {
     XStepType: 'create-new-step',
@@ -5,6 +8,7 @@ const gem2SPipelineSteps = {
       taskName: 'downloadGem',
     },
     Next: 'PreProcessing',
+    XCatch: createCatchSteps(),
   },
   PreProcessing: {
     XStepType: 'create-new-step',
@@ -12,6 +16,7 @@ const gem2SPipelineSteps = {
       taskName: 'preproc',
     },
     Next: 'EmptyDrops',
+    XCatch: createCatchSteps(),
   },
   EmptyDrops: {
     XStepType: 'create-new-step',
@@ -19,6 +24,7 @@ const gem2SPipelineSteps = {
       taskName: 'emptyDrops',
     },
     Next: 'DoubletScores',
+    XCatch: createCatchSteps(),
   },
   DoubletScores: {
     XStepType: 'create-new-step',
@@ -26,6 +32,7 @@ const gem2SPipelineSteps = {
       taskName: 'doubletScores',
     },
     Next: 'CreateSeurat',
+    XCatch: createCatchSteps(),
   },
   CreateSeurat: {
     XStepType: 'create-new-step',
@@ -33,6 +40,7 @@ const gem2SPipelineSteps = {
       taskName: 'createSeurat',
     },
     Next: 'PrepareExperiment',
+    XCatch: createCatchSteps(),
   },
   PrepareExperiment: {
     XStepType: 'create-new-step',
@@ -40,17 +48,15 @@ const gem2SPipelineSteps = {
       taskName: 'prepareExperiment',
     },
     Next: 'UploadToAWS',
+    XCatch: createCatchSteps(),
   },
   UploadToAWS: {
     XStepType: 'create-new-step',
     XConstructorArgs: {
       taskName: 'uploadToAWS',
     },
-    Next: 'EndOfGem2S',
-  },
-  EndOfGem2S: {
-    Type: 'Pass',
-    End: true,
+    XCatch: createCatchSteps(),
+    Next: END_OF_PIPELINE,
   },
 };
 

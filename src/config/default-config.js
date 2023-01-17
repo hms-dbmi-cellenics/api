@@ -38,7 +38,6 @@ if (!process.env.K8S_ENV) {
 }
 
 const awsRegion = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || 'eu-west-1';
-
 const domainName = process.env.DOMAIN_NAME || 'localhost:5000';
 
 const cognitoISP = new AWS.CognitoIdentityServiceProvider({
@@ -70,6 +69,9 @@ const config = {
   corsOriginUrl: [...externalOrigins, `https://${domainName}`],
   emailDomainName: `https://${domainName}`,
   publicApiUrl: `https://api.${domainName}`,
+  // Used for Batch reporting
+  datadogApiKey: process.env.DD_API_KEY || '',
+  datadogAppKey: process.env.DD_APP_KEY || '',
 };
 
 // We are in permanent develop staging environment

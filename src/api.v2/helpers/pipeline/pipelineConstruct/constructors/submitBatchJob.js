@@ -1,4 +1,5 @@
 const config = require('../../../../../config');
+const { HANDLE_ERROR_STEP } = require('../../../../constants');
 
 const submitBatchJob = (context, step) => {
   const {
@@ -20,6 +21,10 @@ const submitBatchJob = (context, step) => {
       JobQueue: `queue-pipeline-${environment}`,
       ContainerOverrides: {
         Environment: [
+          {
+            Name: 'EXPERIMENT_ID',
+            Value: `${experimentId}`,
+          },
           {
             Name: 'ACTIVITY_ARN',
             Value: `${activityArn}`,
@@ -49,8 +54,12 @@ const submitBatchJob = (context, step) => {
             Value: `${config.domainName}`,
           },
           {
-            Name: 'EXPERIMENT_ID',
-            Value: `${experimentId}`,
+            Name: 'DD_API_KEY',
+            Value: `${config.datadogApiKey}`,
+          },
+          {
+            Name: 'DD_APP_KEY',
+            Value: `${config.datadogAppKey}`,
           },
         ],
         ResourceRequirements: [
@@ -68,8 +77,8 @@ const submitBatchJob = (context, step) => {
     Catch: [
       {
         ErrorEquals: ['States.ALL'],
-        ResultPath: '$.error-info',
-        Next: step.XNextOnCatch || step.Next,
+        ResultPath: '$.errorInfo',
+        Next: HANDLE_ERROR_STEP,
       },
     ],
   };

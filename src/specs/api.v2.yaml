@@ -1993,6 +1993,7 @@ paths:
                 type: string
                 pattern: nok
     parameters: []
+
   /pipelineResults:
     post:
       summary: "Placeholder endpoint for qc, necessary so subscriptions to sns work"
@@ -2026,6 +2027,7 @@ paths:
               schema:
                 type: string
                 pattern: nok
+
   "/experiments/{experimentId}/download/{type}":
     get:
       summary: Download data according to the requested type
