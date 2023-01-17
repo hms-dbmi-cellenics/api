@@ -1,5 +1,7 @@
+const _ = require('lodash');
+
 const ExperimentExecution = require('../../model/ExperimentExecution');
-const hashExperiment = require('./hashExperiment');
+const getGem2sParams = require('./getGem2sParams');
 
 const getExperimentRerunStatus = async (experimentId) => {
   const execution = await new ExperimentExecution().findOne({ experiment_id: experimentId, pipeline_type: 'gem2s' });
@@ -10,10 +12,10 @@ const getExperimentRerunStatus = async (experimentId) => {
     };
   }
 
-  const currentHash = await hashExperiment(experimentId);
+  const currentParams = await getGem2sParams(experimentId);
 
   return {
-    rerun: currentHash !== execution.paramsHash,
+    rerun: !_.isEqual(currentParams, execution.lastGem2SParams),
   };
 };
 

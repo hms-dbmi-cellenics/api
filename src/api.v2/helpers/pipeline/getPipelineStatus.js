@@ -38,7 +38,7 @@ const pipelineSteps = getPipelineStepNames();
 // buildResponse function is wrapper function to ensure that all pipeline-status
 // responses contain the same information and parameters
 // more specific building response should rely on calling this one
-const buildResponse = (processName, execution, paramsHash, error, completedSteps) => {
+const buildResponse = (processName, execution, shouldRerun, error, completedSteps) => {
   const response = {
     [processName]: {
       startDate: execution.startDate,
@@ -46,7 +46,7 @@ const buildResponse = (processName, execution, paramsHash, error, completedSteps
       status: execution.status,
       error,
       completedSteps,
-      paramsHash,
+      shouldRerun,
     },
   };
   return response;
@@ -58,13 +58,13 @@ const buildNotCreatedStatus = (processName) => {
     stopDate: null,
     status: pipelineConstants.NOT_CREATED,
   };
-  const paramsHash = undefined;
+  const shouldRerun = true;
   const error = false;
   const completedSteps = [];
-  return buildResponse(processName, execution, paramsHash, error, completedSteps);
+  return buildResponse(processName, execution, shouldRerun, error, completedSteps);
 };
 
-const buildCompletedStatus = (processName, date, paramsHash) => {
+const buildCompletedStatus = (processName, date, shouldRerun) => {
   const execution = {
     startDate: date,
     stopDate: date,
@@ -83,7 +83,7 @@ const buildCompletedStatus = (processName, date, paramsHash) => {
     default:
       throw new Error(`Unknown processName ${processName}`);
   }
-  return buildResponse(processName, execution, paramsHash, error, completedSteps);
+  return buildResponse(processName, execution, shouldRerun, error, completedSteps);
 };
 
 const getExecutionHistory = async (stepFunctions, executionArn) => {
@@ -233,7 +233,7 @@ const getPipelineStatus = async (experimentId, processName) => {
   let completedSteps = [];
   let error = false;
 
-  const { executionArn = null, paramsHash = null, lastStatusResponse } = pipelineExecution;
+  const { executionArn = null, shouldRerun = null, lastStatusResponse } = pipelineExecution;
 
   let response;
 
@@ -258,7 +258,7 @@ const getPipelineStatus = async (experimentId, processName) => {
         logger.error(`unknown process name ${processName}`);
     }
 
-    response = buildResponse(processName, execution, paramsHash, error, completedSteps);
+    response = buildResponse(processName, execution, shouldRerun, error, completedSteps);
   } catch (e) {
     // if we get the execution does not exist it means we are using a pulled experiment so
     // just return a mock sucess status
@@ -274,8 +274,8 @@ const getPipelineStatus = async (experimentId, processName) => {
     ) {
       if (lastStatusResponse) {
         logger.log(`Returning status stored in sql because AWS doesn't find arn ${executionArn}`);
-        // Update the paramsHash just in case it changed
-        response = { [processName]: { ...lastStatusResponse[processName], paramsHash } };
+        // Update the shouldRerun just in case it changed
+        response = { [processName]: { ...lastStatusResponse[processName], shouldRerun } };
       } else {
         logger.log(
           `Returning a mocked success ${processName} - pipeline status because ARN ${executionArn} `
@@ -287,7 +287,7 @@ const getPipelineStatus = async (experimentId, processName) => {
         // we set a custom date that can be used by the UI to reliably generate ETag
         const fixedPipelineDate = EXPIRED_EXECUTION_DATE;
 
-        response = buildCompletedStatus(processName, fixedPipelineDate, paramsHash);
+        response = buildCompletedStatus(processName, fixedPipelineDate, shouldRerun);
       }
     } else {
       throw e;

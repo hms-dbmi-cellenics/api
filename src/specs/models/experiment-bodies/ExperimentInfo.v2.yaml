@@ -32,24 +32,22 @@ properties:
         nullable: true
         type: object
         properties:
-          paramsHash:
-            nullable: true
-            type: string
+          shouldRerun:
+            type: boolean
           stateMachineArn:
             type: string
           executionArn:
             type: string
         required:
-          - paramsHash
+          - shouldRerun
           - stateMachineArn
           - executionArn
       qc:
         nullable: true
         type: object
         properties:
-          paramsHash:
-            nullable: true
-            type: string
+          shouldRerun:
+            type: boolean
           stateMachineArn:
             type: string
           executionArn:

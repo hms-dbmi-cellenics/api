@@ -1,16 +1,6 @@
-const crypto = require('crypto');
 const Sample = require('../../model/Sample');
 
-const hashObject = (object) => {
-  const shasum = crypto.createHash('sha1');
-
-  const stringObject = JSON.stringify(object);
-
-  shasum.update(stringObject);
-  return shasum.digest('hex');
-};
-
-const hashExperiment = async (experimentId) => {
+const getGem2sParams = async (experimentId) => {
   const samples = await new Sample().getSamples(experimentId);
 
   const samplesObj = samples.reduce(
@@ -41,15 +31,13 @@ const hashExperiment = async (experimentId) => {
     {},
   );
 
-  const params = {
+  return {
     sampleTechnology,
     sampleIds,
     sampleNames,
     sampleOptions,
     metadata: metadataField,
   };
-
-  return hashObject(params);
 };
 
-module.exports = hashExperiment;
+module.exports = getGem2sParams;
