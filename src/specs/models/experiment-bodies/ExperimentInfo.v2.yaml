@@ -15,6 +15,9 @@ properties:
     type: boolean
   pipelineVersion:
     type: number
+  parentExperimentId:
+    type: string
+    nullable: true
   processingConfig:
     anyOf:
       - type: object
@@ -66,6 +69,7 @@ required:
   - processingConfig
   - notifyByEmail
   - pipelineVersion
+  - parentExperimentId
   - pipelines
   - createdAt
   - updatedAt
