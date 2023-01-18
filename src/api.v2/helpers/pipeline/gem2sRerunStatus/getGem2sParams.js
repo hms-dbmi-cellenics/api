@@ -1,4 +1,4 @@
-const Sample = require('../../model/Sample');
+const Sample = require('../../../model/Sample');
 
 const getGem2sParams = async (experimentId) => {
   const samples = await new Sample().getSamples(experimentId);

@@ -16,7 +16,7 @@ const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
 
 const { qcStepsWithFilterSettings } = require('./pipelineConstruct/qcHelpers');
-const getGem2sParams = require('../experimentStatus/getGem2sParams');
+const getGem2sParams = require('./gem2sRerunStatus/getGem2sParams');
 
 const logger = getLogger('[Gem2sService] - ');
 
