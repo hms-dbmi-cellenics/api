@@ -50,7 +50,7 @@ module.exports = {
     (req, res, next) => getBackendStatus(req, res).catch(next),
   ],
   'experiment#getRerunStatus': [
-    // expressAuthorizationMiddleware,
+    expressAuthorizationMiddleware,
     (req, res, next) => getRerunStatus(req, res).catch(next),
   ],
   'experiment#downloadData': [
