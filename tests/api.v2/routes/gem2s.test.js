@@ -38,11 +38,8 @@ describe('tests for gem2s route', () => {
 
     const experimentId = 'experiment-id';
 
-    const mockReq = { paramsHash: 'mockParamsHash' };
-
     request(app)
       .post(`/v2/experiments/${experimentId}/gem2s`)
-      .send(mockReq)
       .expect(200)
       .end((err) => {
         if (err) {
@@ -54,13 +51,13 @@ describe('tests for gem2s route', () => {
       });
   });
 
-  it('Creating a new gem2s run with an invalid body fails', async (done) => {
+  it('Creating a new gem2s run with an invalid experiment body fails', async (done) => {
     gem2sController.runGem2s.mockImplementationOnce((req, res) => {
       res.json(OK());
       return Promise.resolve();
     });
 
-    const experimentId = 'experiment-id';
+    const experimentId = 'experiment-id-wrong';
 
     const mockReqBody = { paramsHashInvalidKey: 'mockParamsHash' };
 

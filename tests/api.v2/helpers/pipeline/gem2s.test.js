@@ -37,7 +37,6 @@ const experimentExecutionInstance = ExperimentExecution();
 const hookRunnerInstance = HookRunner();
 
 const experimentId = 'mockExperimentId';
-const paramsHash = 'mockParamsHash';
 const authJWT = 'mockAuthJWT';
 
 const mockExperiment = {
@@ -95,7 +94,7 @@ describe('startGem2sPipeline', () => {
   });
 
   it('works correctly', async () => {
-    await startGem2sPipeline(experimentId, { paramsHash }, authJWT);
+    await startGem2sPipeline(experimentId, authJWT);
 
     expect(experimentInstance.findById).toHaveBeenCalledWith(experimentId);
     expect(sampleInstance.getSamples).toHaveBeenCalledWith(experimentId);

@@ -45,7 +45,7 @@ const gem2sStatusResponseSql = {
       'PrepareExperiment',
       'UploadToAWS'],
     error: false,
-    paramsHash,
+    shouldRerun: true,
   },
 };
 
@@ -64,7 +64,7 @@ const qcStatusResponseSql = {
       'ConfigureEmbedding',
     ],
     error: false,
-    paramsHash: null,
+    shouldRerun: true,
   },
 };
 
@@ -330,7 +330,7 @@ describe('pipelineStatus', () => {
         error: false,
         status: constants.NOT_CREATED,
         completedSteps: [],
-        paramsHash: undefined,
+        shouldRerun: true,
       },
     };
 
@@ -350,6 +350,7 @@ describe('pipelineStatus', () => {
         startDate: null,
         stopDate: null,
         error: false,
+        shouldRerun: true,
         status: constants.NOT_CREATED,
         completedSteps: [],
       },
@@ -387,7 +388,6 @@ describe('pipelineStatus', () => {
     expect(status).toEqual({
       [GEM2S_PROCESS_NAME]: {
         ...gem2sStatusResponseSql[GEM2S_PROCESS_NAME],
-        paramsHash: notMatchingParamsHash,
       },
     });
     expect(status[GEM2S_PROCESS_NAME].startDate).toBeDefined();
@@ -404,7 +404,6 @@ describe('pipelineStatus', () => {
         last_status_response: {
           [GEM2S_PROCESS_NAME]: {
             ...gem2sStatusResponseSql[GEM2S_PROCESS_NAME],
-            paramsHash: notMatchingParamsHash,
           },
         },
       },
@@ -431,7 +430,7 @@ describe('pipelineStatus', () => {
             'PrepareExperiment',
             'UploadToAWS'],
           error: false,
-          paramsHash,
+          shouldRerun: true,
         },
       };
       expect(status).toEqual(expected);
@@ -468,8 +467,8 @@ describe('pipelineStatus', () => {
         startDate: new Date(0),
         stopDate: new Date(0),
         status: constants.SUCCEEDED,
-        paramsHash,
         error: false,
+        shouldRerun: true,
         completedSteps: [],
       },
     };
@@ -495,7 +494,7 @@ describe('pipelineStatus', () => {
         status: constants.SUCCEEDED,
         error: false,
         completedSteps: [],
-        paramsHash: null,
+        shouldRerun: true,
       },
     };
 
@@ -519,8 +518,8 @@ describe('pipelineStatus', () => {
         startDate: new Date(0),
         stopDate: new Date(0),
         status: constants.SUCCEEDED,
-        paramsHash,
         error: false,
+        shouldRerun: true,
         completedSteps: [],
       },
     };
@@ -530,7 +529,6 @@ describe('pipelineStatus', () => {
         pipelineType: GEM2S_PROCESS_NAME,
         stateMachineArn: SUCCEEDED_ID,
         executionArn: SUCCEEDED_ID,
-        paramsHash,
         lastStatusResponse: expectedStatus,
       },
     ];
