@@ -8,7 +8,6 @@ const { OK, NotFoundError } = require('../../utils/responses');
 const sqlClient = require('../../sql/sqlClient');
 
 const getExperimentBackendStatus = require('../helpers/experimentStatus/getExperimentBackendStatus');
-const getExperimentRerunStatus = require('../helpers/pipeline/gem2sRerunStatus/getGem2sRerunStatus');
 const Sample = require('../model/Sample');
 const invalidatePlotsForEvent = require('../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
 const events = require('../../utils/plotConfigInvalidation/events');
@@ -138,16 +137,6 @@ const getBackendStatus = async (req, res) => {
   res.json(response);
 };
 
-const getRerunStatus = async (req, res) => {
-  const { experimentId } = req.params;
-  logger.log(`Getting rerun status for experiment ${experimentId}`);
-
-  const response = await getExperimentRerunStatus(experimentId);
-
-  logger.log(`Finished getting rerun status for experiment ${experimentId} successfully`);
-  res.json(response);
-};
-
 const downloadData = async (req, res) => {
   const { experimentId, type: downloadType } = req.params;
 
@@ -210,7 +199,6 @@ module.exports = {
   updateProcessingConfig,
   updateSamplePosition,
   getBackendStatus,
-  getRerunStatus,
   downloadData,
   cloneExperiment,
 };
