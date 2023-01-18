@@ -14,9 +14,10 @@ const getExperimentRerunStatus = async (experimentId) => {
 
   const currentParams = await getGem2sParams(experimentId);
 
-  return {
-    rerun: !_.isEqual(currentParams, execution.lastGem2SParams),
-  };
+  return !_.isEqual(currentParams, execution.lastGem2SParams);
+  // return {
+  //   rerun: !_.isEqual(currentParams, execution.lastGem2SParams),
+  // };
 };
 
-module.exports = getExperimentRerunStatus;
+module.exports = { getExperimentRerunStatus };
