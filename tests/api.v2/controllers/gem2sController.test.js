@@ -1,11 +1,16 @@
 // @ts-nocheck
+const ExperimentParent = require('../../../src/api.v2/model/ExperimentParent');
+
 const gem2sController = require('../../../src/api.v2/controllers/gem2sController');
 
-const { OK } = require('../../../src/utils/responses');
+const { OK, MethodNotAllowedError } = require('../../../src/utils/responses');
 
 const gem2s = require('../../../src/api.v2/helpers/pipeline/gem2s');
 const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
 
+const experimentParentInstance = ExperimentParent();
+
+jest.mock('../../../src/api.v2/model/ExperimentParent');
 jest.mock('../../../src/api.v2/helpers/pipeline/gem2s');
 jest.mock('../../../src/utils/parseSNSMessage');
 
@@ -15,7 +20,7 @@ const mockRes = {
   status: jest.fn(() => ({ send: mockJsonSend })),
 };
 
-const experimentId = 'experimentId';
+const experimentId = '0b5f622a-01b8-254c-6b69-9e2606ac0b40';
 const expectedTopic = 'arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2';
 const io = 'mockIo';
 
@@ -44,6 +49,10 @@ describe('gem2sController', () => {
 
     gem2s.startGem2sPipeline.mockReturnValue(newExecution);
 
+    experimentParentInstance.find.mockReturnValueOnce(
+      { first: () => Promise.resolve({}) },
+    );
+
     const mockReq = {
       params: { experimentId },
       headers: { authorization: 'mockAuthorization' },
@@ -57,6 +66,32 @@ describe('gem2sController', () => {
 
     // Response is ok
     expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
+
+  it('runGem2s throws method not allowed if the experiment is a subset', async () => {
+    const newExecution = 'mockNewExecution';
+
+    gem2s.startGem2sPipeline.mockReturnValue(newExecution);
+
+    experimentParentInstance.find.mockReturnValueOnce(
+      { first: () => Promise.resolve({ parentExperimentId: 'mockParentExperimentId' }) },
+    );
+
+    const mockReq = {
+      params: { experimentId },
+      headers: { authorization: 'mockAuthorization' },
+      body: { paramsHash: 'mockParamsHash' },
+    };
+
+    await expect(gem2sController.runGem2s(mockReq, mockRes)).rejects
+      .toThrow(
+        new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`),
+      );
+
+    expect(gem2s.startGem2sPipeline).not.toHaveBeenCalled();
+
+    // Response is ok
+    expect(mockRes.json).not.toHaveBeenCalledWith(OK());
   });
 
   it('handleResponse handles success message correctly', async () => {

@@ -163,7 +163,7 @@ describe('gem2sResponse', () => {
     );
 
     // There's a hook registered on the uploadToAWS step
-    expect(hookRunnerInstance.register.mock.calls[0][0]).toEqual('uploadToAWS');
+    expect(hookRunnerInstance.register.mock.calls[1][0]).toEqual('uploadToAWS');
 
     await handleGem2sResponse(io, message);
 
@@ -174,7 +174,7 @@ describe('gem2sResponse', () => {
     const uploadToAWSPayload = hookRunnerInstance.run.mock.calls[0][0];
 
     // Take the hookedFunctions
-    const hookedFunctions = hookRunnerInstance.register.mock.calls[0][1];
+    const hookedFunctions = hookRunnerInstance.register.mock.calls[1][1];
     expect(hookedFunctions).toHaveLength(1);
 
     // calling the hookedFunction triggers QC
@@ -193,7 +193,7 @@ describe('gem2sResponse', () => {
     // Add an entry that is applied to the whole step
     itemWithSomeStepFlag.processingConfig.doubletScores.someStepFlag = true;
 
-    const message = {
+    const payload = {
       experimentId,
       authJWT: 'mockAuthJWT',
       input: { authJWT: 'mockAuthJWT' },
@@ -208,9 +208,9 @@ describe('gem2sResponse', () => {
     );
 
     // There's a hook registered on the uploadToAWS step
-    expect(hookRunnerInstance.register.mock.calls[0][0]).toEqual('uploadToAWS');
+    expect(hookRunnerInstance.register.mock.calls[1][0]).toEqual('uploadToAWS');
 
-    await handleGem2sResponse(io, message);
+    await handleGem2sResponse(io, payload);
 
     // It called hookRunner.run
     expect(hookRunnerInstance.run).toHaveBeenCalled();
@@ -219,7 +219,7 @@ describe('gem2sResponse', () => {
     const uploadToAWSPayload = hookRunnerInstance.run.mock.calls[0][0];
 
     // Take the hookedFunctions
-    const hookedFunctions = hookRunnerInstance.register.mock.calls[0][1];
+    const hookedFunctions = hookRunnerInstance.register.mock.calls[1][1];
     expect(hookedFunctions).toHaveLength(1);
 
     // calling the hookedFunction triggers QC
@@ -227,5 +227,62 @@ describe('gem2sResponse', () => {
 
     expect(experimentInstance.updateById.mock.calls).toMatchSnapshot();
     expect(pipelineConstruct.createQCPipeline.mock.calls).toMatchSnapshot();
+  });
+
+  it('Updates the subset experiment when subsetSeurat is notified to have finished', async () => {
+    const parentExperimentId = mockExperiment.id;
+    const subsetExperimentId = 'mockSubsetExperimentId';
+
+    const oldSampleId1 = 'old-sample-id-1';
+    const newSampleId1 = 'new-sample-id-1';
+    const oldSampleId2 = 'old-sample-id-2';
+    const newSampleId2 = 'new-sample-id-2';
+
+    const message = {
+      sampleIdMap: {
+        [oldSampleId1]: newSampleId1,
+        [oldSampleId2]: newSampleId2,
+      },
+      taskName: 'subsetSeurat',
+      experimentId: subsetExperimentId,
+      jobId: '',
+      authJWT: 'mockAuthJWT',
+      input: {
+        experimentId: subsetExperimentId,
+        taskName: 'subsetSeurat',
+        processName: 'subset',
+        parentExperimentId,
+        subsetExperimentId,
+        cellSetKeys: ['louvain-2', 'louvain-3', 'louvain-0'],
+      },
+    };
+
+    experimentInstance.findById.mockClear();
+    experimentInstance.findById.mockReturnValueOnce({
+      first: jest.fn(
+        () => Promise.resolve({ ...mockExperiment, samplesOrder: [oldSampleId1, oldSampleId2] }),
+      ),
+    });
+
+    // There's a hook registered on the subsetSeurat step
+    expect(hookRunnerInstance.register.mock.calls[0][0]).toEqual('subsetSeurat');
+
+    await handleGem2sResponse(io, message);
+
+    // It called hookRunner.run
+    expect(hookRunnerInstance.run).toHaveBeenCalled();
+
+    // Take the item passed to register
+    const subsetSeuratPayload = hookRunnerInstance.run.mock.calls[0][0];
+
+    // Take the hookedFunctions
+    const hookedFunctions = hookRunnerInstance.register.mock.calls[0][1];
+    expect(hookedFunctions).toHaveLength(1);
+
+    // calling the hookedFunction triggers updates on the subset experiment
+    await hookedFunctions[0](subsetSeuratPayload);
+
+    expect(sampleInstance.copyTo.mock.calls).toMatchSnapshot();
+    expect(experimentInstance.updateById.mock.calls).toMatchSnapshot();
   });
 });
