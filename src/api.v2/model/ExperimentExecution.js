@@ -10,7 +10,7 @@ const selectableProps = [
 
 class ExperimentExecution extends BasicModel {
   constructor(sql = sqlClient.get()) {
-    super(sql, tableNames.EXPERIMENT_EXECUTION, selectableProps);
+    super(sql, tableNames.EXPERIMENT_EXECUTION, selectableProps, undefined, ['metadata']);
   }
 }
 

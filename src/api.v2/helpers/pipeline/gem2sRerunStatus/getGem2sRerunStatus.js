@@ -8,6 +8,7 @@ const getGem2sRerunStatus = async (experimentId) => {
   if (execution === undefined) return true;
 
   const currentParams = await getGem2sParams(experimentId);
+
   return !_.isEqual(currentParams, execution.lastGem2SParams);
 };
 
