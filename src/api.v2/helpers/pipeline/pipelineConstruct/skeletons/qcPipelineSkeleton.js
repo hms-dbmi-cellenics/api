@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const { END_OF_PIPELINE } = require('../../../../constants');
+const { createCatchSteps } = require('../constructors/createHandleErrorStep');
 
 const qcPipelineSteps = {
   ClassifierFilterMap: {
@@ -19,6 +21,7 @@ const qcPipelineSteps = {
         },
       },
     },
+    Catch: createCatchSteps(),
   },
   CellSizeDistributionFilterMap: {
     Type: 'Map',
@@ -38,6 +41,7 @@ const qcPipelineSteps = {
         },
       },
     },
+    Catch: createCatchSteps(),
   },
   MitochondrialContentFilterMap: {
     Type: 'Map',
@@ -57,6 +61,7 @@ const qcPipelineSteps = {
         },
       },
     },
+    Catch: createCatchSteps(),
   },
   NumGenesVsNumUmisFilterMap: {
     Type: 'Map',
@@ -76,6 +81,7 @@ const qcPipelineSteps = {
         },
       },
     },
+    Catch: createCatchSteps(),
   },
   DoubletScoresFilterMap: {
     Type: 'Map',
@@ -95,6 +101,7 @@ const qcPipelineSteps = {
         },
       },
     },
+    Catch: createCatchSteps(),
   },
   DataIntegration: {
     XStepType: 'create-new-step',
@@ -104,6 +111,7 @@ const qcPipelineSteps = {
       uploadCountMatrix: true,
     },
     Next: 'ConfigureEmbedding',
+    XCatch: createCatchSteps(),
   },
   ConfigureEmbedding: {
     XStepType: 'create-new-step',
@@ -111,17 +119,16 @@ const qcPipelineSteps = {
       perSample: false,
       taskName: 'configureEmbedding',
     },
-    Next: 'EndOfPipeline',
-  },
-  EndOfPipeline: {
-    Type: 'Pass',
-    End: true,
+    Next: END_OF_PIPELINE,
+    XCatch: createCatchSteps(),
   },
 };
 
 
 const buildQCPipelineSteps = (qcSteps) => {
-  const stepsToRemove = Object.keys(qcPipelineSteps).filter((step) => !qcSteps.includes(step) && step !== 'EndOfPipeline');
+  const stepsToRemove = Object.keys(qcPipelineSteps)
+    .filter((step) => !qcSteps.includes(step) && step !== END_OF_PIPELINE);
+
   return _.omit(qcPipelineSteps, stepsToRemove);
 };
 

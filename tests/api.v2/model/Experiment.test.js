@@ -56,7 +56,18 @@ describe('model/Experiment', () => {
     expect(helpers.collapseKeyIntoArray.mock.calls).toMatchSnapshot();
 
     expect(mockSqlClient.select).toHaveBeenCalledWith(
-      ['e.id', 'e.name', 'e.description', 'e.samples_order', 'e.notify_by_email', 'e.pipeline_version', 'e.created_at', 'e.updated_at', 'm.key'],
+      [
+        'e.id',
+        'e.name',
+        'e.description',
+        'e.samples_order',
+        'e.notify_by_email',
+        'e.pipeline_version',
+        'e.created_at',
+        'e.updated_at',
+        'm.key',
+        'p.parent_experiment_id',
+      ],
     );
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
     expect(mockSqlClient.where).toHaveBeenCalledWith('user_id', 'mockUserId');
@@ -100,8 +111,8 @@ describe('model/Experiment', () => {
 
     expect(mockSqlClient.raw.mock.calls[0]).toMatchSnapshot();
 
-    expect(mockSqlClient.select).toHaveBeenCalledWith([...experimentFields, mockCollapsedObject]);
-    expect(mockSqlClient.groupBy).toHaveBeenCalledWith(experimentFields);
+    expect(mockSqlClient.select).toHaveBeenCalledWith([...experimentFields, 'parent_experiment_id', mockCollapsedObject]);
+    expect(mockSqlClient.groupBy).toHaveBeenCalledWith([...experimentFields, 'parent_experiment_id']);
     expect(mockSqlClient.from).toHaveBeenCalled();
 
     // Check that mainQuery is correct
@@ -144,13 +155,12 @@ describe('model/Experiment', () => {
       'mockNewExperimentId as id',
       'mockNewName as name',
       'description',
-      'true as can_rerun_gem2s',
       'pod_cpus',
       'pod_memory',
     );
 
     expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
-    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, can_rerun_gem2s, pod_cpus, pod_memory)');
+    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, pod_cpus, pod_memory)');
   });
 
   it('createCopy works correctly without a name', async () => {
@@ -173,13 +183,12 @@ describe('model/Experiment', () => {
       'mockNewExperimentId as id',
       'name',
       'description',
-      'true as can_rerun_gem2s',
       'pod_cpus',
       'pod_memory',
     );
 
     expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
-    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, can_rerun_gem2s, pod_cpus, pod_memory)');
+    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, pod_cpus, pod_memory)');
   });
 
   it('updateSamplePosition works correctly if valid params are passed', async () => {

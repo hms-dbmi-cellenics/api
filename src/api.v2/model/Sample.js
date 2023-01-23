@@ -110,9 +110,9 @@ class Sample extends BasicModel {
    * @param {*} fromExperimentId
    * @param {*} toExperimentId
    */
-  async copyTo(fromExperimentId, toExperimentId, samplesOrder) {
+  async copyTo(fromExperimentId, toExperimentId, samplesOrder, sampleIdsMap = null) {
     if (samplesOrder.length === 0) {
-      logger.log(`${fromExperimentId} doesnt have any samples to copy to ${toExperimentId}`);
+      logger.log(`samplesOrder is defined but empty when copying from experiment ${fromExperimentId} to ${toExperimentId}`);
       return [];
     }
 
@@ -139,7 +139,7 @@ class Sample extends BasicModel {
       samplesOrder.forEach((fromSampleId) => {
         const sample = fromSamples.find(({ id }) => id === fromSampleId);
 
-        const toSampleId = uuidv4();
+        const toSampleId = sampleIdsMap ? sampleIdsMap[fromSampleId] : uuidv4();
 
         newSampleIds.push(toSampleId);
 

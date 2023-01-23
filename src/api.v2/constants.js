@@ -4,7 +4,13 @@ const GEM2S_PROCESS_NAME = 'gem2s';
 const OLD_QC_NAME_TO_BE_REMOVED = 'pipeline';
 const SUBSET_PROCESS_NAME = 'subset';
 
+// Pipeline task names
 const ASSIGN_POD_TO_PIPELINE = 'assignPodToPipeline';
+const PIPELINE_ERROR = 'pipelineError';
+
+// Pipeline step name
+const HANDLE_ERROR_STEP = 'HandleError';
+const END_OF_PIPELINE = 'EndOfPipeline';
 
 // Pipeline states as defined in
 // https://docs.aws.amazon.com/step-functions/latest/apireference/API_DescribeExecution.html
@@ -38,6 +44,9 @@ module.exports = {
   GEM2S_PROCESS_NAME,
   OLD_QC_NAME_TO_BE_REMOVED,
   SUBSET_PROCESS_NAME,
+  PIPELINE_ERROR,
+  HANDLE_ERROR_STEP,
+  END_OF_PIPELINE,
   RUNNING,
   FAILED,
   TIMED_OUT,
