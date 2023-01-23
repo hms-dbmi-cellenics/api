@@ -48,16 +48,17 @@ class Experiment extends BasicModel {
     const aliasedExperimentFields = fields.map((field) => `e.${field}`);
 
     const mainQuery = this.sql
-      .select([...aliasedExperimentFields, 'm.key'])
+      .select([...aliasedExperimentFields, 'm.key', 'p.parent_experiment_id'])
       .from(tableNames.USER_ACCESS)
       .where('user_id', userId)
       .join(`${tableNames.EXPERIMENT} as e`, 'e.id', `${tableNames.USER_ACCESS}.experiment_id`)
       .leftJoin(`${tableNames.METADATA_TRACK} as m`, 'e.id', 'm.experiment_id')
+      .leftJoin(`${tableNames.EXPERIMENT_PARENT} as p`, 'e.id', 'p.experiment_id')
       .as('mainQuery');
 
     const result = await collapseKeyIntoArray(
       mainQuery,
-      [...fields],
+      [...fields, 'parent_experiment_id'],
       'key',
       'metadataKeys',
       this.sql,
@@ -76,6 +77,7 @@ class Experiment extends BasicModel {
       this.select('*')
         .from(tableNames.EXPERIMENT)
         .leftJoin(tableNames.EXPERIMENT_EXECUTION, `${tableNames.EXPERIMENT}.id`, `${tableNames.EXPERIMENT_EXECUTION}.experiment_id`)
+        .leftJoin(tableNames.EXPERIMENT_PARENT, `${tableNames.EXPERIMENT}.id`, `${tableNames.EXPERIMENT_PARENT}.experiment_id`)
         .where('id', experimentId)
         .as('mainQuery');
     }
@@ -94,6 +96,7 @@ class Experiment extends BasicModel {
     const result = await this.sql
       .select([
         ...experimentFields,
+        'parent_experiment_id',
         this.sql.raw(
           `${replaceNullsWithObject(
             `jsonb_object_agg(pipeline_type, jsonb_build_object(${pipelineExecutionKeys.join(', ')}))`,
@@ -102,7 +105,7 @@ class Experiment extends BasicModel {
         ),
       ])
       .from(mainQuery)
-      .groupBy(experimentFields)
+      .groupBy([...experimentFields, 'parent_experiment_id'])
       .first();
 
     if (_.isEmpty(result)) {
@@ -112,7 +115,7 @@ class Experiment extends BasicModel {
     return result;
   }
 
-  async createCopy(fromExperimentId, name = null, canRerunGem2s = true) {
+  async createCopy(fromExperimentId, name = null) {
     const toExperimentId = uuidv4();
 
     const { sql } = this;
@@ -125,14 +128,12 @@ class Experiment extends BasicModel {
             // Clone the original name if no new name is provided
             name ? sql.raw('? as name', [name]) : 'name',
             'description',
-            // Take the parameter canRerunGem2s instead of cloning it
-            sql.raw('? as can_rerun_gem2s', [canRerunGem2s]),
             'pod_cpus',
             'pod_memory',
           )
           .where({ id: fromExperimentId }),
       )
-      .into(sql.raw(`${tableNames.EXPERIMENT} (id, name, description, can_rerun_gem2s, pod_cpus, pod_memory)`));
+      .into(sql.raw(`${tableNames.EXPERIMENT} (id, name, description, pod_cpus, pod_memory)`));
 
     return toExperimentId;
   }

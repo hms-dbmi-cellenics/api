@@ -13,6 +13,7 @@ Array [
       "pipeline_version",
       "created_at",
       "updated_at",
+      "parent_experiment_id",
     ],
     "key",
     "metadataKeys",

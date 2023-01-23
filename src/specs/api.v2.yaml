@@ -1770,6 +1770,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+        "405":
+          description: Method not allowed for experiment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
   "/experiments/{experimentId}/plots/{plotUuid}":
     parameters:
       - schema:
