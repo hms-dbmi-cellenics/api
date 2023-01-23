@@ -2,6 +2,7 @@ const MetadataTrack = require('../model/MetadataTrack');
 
 const getLogger = require('../../utils/getLogger');
 const { OK, NotFoundError } = require('../../utils/responses');
+const Sample = require('../model/Sample');
 
 const logger = getLogger('[MetadataTrackController] - ');
 
@@ -72,9 +73,47 @@ const patchValueForSample = async (req, res) => {
   res.json(OK());
 };
 
+// parseMetadataFromTSV takes a TSV file with tag-value format like:
+// sample1\tmetadata_key_1\tmetadata_value_1
+// and turns it into an array like:
+// [{sampleId: sample1, metadataKey: key1, metadataValue: value1}, ...]
+const parseMetadataFromTSV = (data, sampleNameToId) => {
+  console.log('resplit: ', data.split('\n'));
+  const result = data.split('\n').map((line) => {
+    console.log('line ', line);
+    const [sampleName, metadataKey, metadataValue] = line.split('\t');
+    console.log('sampleNameToId[sampleName] ', sampleNameToId[sampleName]);
+    return { sampleId: sampleNameToId[sampleName], metadataKey, metadataValue };
+  });
+  return result;
+};
+
+const createMetadataFromFile = async (req, res) => {
+  const { experimentId } = req.params;
+  // console.log('request lcs: ', req);
+  const sampleNameToId = {};
+  const samples = await new Sample().getSamples(experimentId);
+  samples.forEach((sample) => {
+    sampleNameToId[sample.name] = sample.id;
+  });
+  console.log('sampleNameToId:', sampleNameToId);
+  const data = parseMetadataFromTSV(req.body, sampleNameToId);
+  console.log('d0 ', data);
+
+
+
+  try {
+    await new MetadataTrack().bulkUpdateMetadata(experimentId, data);
+    res.json(OK());
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   createMetadataTrack,
   patchMetadataTrack,
   deleteMetadataTrack,
   patchValueForSample,
+  createMetadataFromFile,
 };

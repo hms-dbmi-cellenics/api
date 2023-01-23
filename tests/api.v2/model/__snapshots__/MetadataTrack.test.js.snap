@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`model/userAccess bulkUpdateMetadata works correctly: fromParams 1`] = `Array []`;
+
+exports[`model/userAccess bulkUpdateMetadata works correctly: insertParams 1`] = `Array []`;
+
+exports[`model/userAccess bulkUpdateMetadata works correctly: selectParams 1`] = `Array []`;
+
+exports[`model/userAccess bulkUpdateMetadata works correctly: whereParams 1`] = `Array []`;
+
 exports[`model/userAccess createNewMetadataTrack skips insert into SAMPLE_IN_METADATA_TRACK_MAP when there are no samples: fromParams 1`] = `
 Array [
   Array [

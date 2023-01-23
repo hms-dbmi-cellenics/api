@@ -1,5 +1,7 @@
 // @ts-nocheck
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
+const fake = require('../../test-utils/constants');
+
 
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
@@ -129,5 +131,33 @@ describe('model/userAccess', () => {
     await new MetadataTrack().createNewSamplesValues(mockExperimentId, mockSampleIds);
 
     expect(mockSqlClient.insert).not.toHaveBeenCalled();
+  });
+
+  it('bulkUpdateMetadata works correctly', async () => {
+    const metadataUpdateObject = [
+      { metadataKey: 'metadata_key_1', metadataValue: 'metadata_value_1', sampleId: 'id1' },
+      { metadataKey: 'metadata_key_1', metadataValue: 'metadata_value_2', sampleId: 'id2' },
+      { metadataKey: 'metadata_key_2', metadataValue: 'metadata_value_4', sampleId: 'id2' }];
+
+    // mockSqlClient.where.mockImplementationOnce((params) => {
+    //   const { key } = params;
+    //   if (key === 'metadata_key_1') Promise.resolve([{ id: 'metadata_key_1' }]);
+    //   Promise.resolve([]);
+    // });
+    const mockFind = MetadataTrack.find
+      .mockImplementationOnce((params) => {
+        const { key } = params;
+        if (key === 'metadata_key_1') {
+          return Promise.resolve([{ id: 'metadata_key_1' }]);
+        }
+        return Promise.resolve([]);
+      });
+
+    mockSqlClient.insert.mockReturnValueOnce(1);
+    await new MetadataTrack().bulkUpdateMetadata(fake.EXPERIMENT_ID, metadataUpdateObject);
+    // expect(mockSqlClient.select.mock.calls).toMatchSnapshot('selectParams');
+    // expect(mockSqlClient.from.mock.calls).toMatchSnapshot('fromParams');
+    // expect(mockSqlClient.where.mock.calls).toMatchSnapshot('whereParams');
+    // expect(mockSqlClient.insert.mock.calls).toMatchSnapshot('insertParams');
   });
 });

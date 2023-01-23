@@ -7,13 +7,8 @@ const { OK } = require('../../../src/utils/responses');
 
 const metadataTrackController = require('../../../src/api.v2/controllers/metadataTrackController');
 
-jest.mock('../../../src/api.v2/controllers/metadataTrackController', () => ({
-  createMetadataTrack: jest.fn(),
-  patchMetadataTrack: jest.fn(),
-  deleteMetadataTrack: jest.fn(),
-  patchValueForSample: jest.fn(),
-}));
-
+// jest.mock('../../../src/api.v2/controllers/metadataTrackController');
+jest.mock('../../../src/api.v2/controllers/metadataTrackController');
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
 
 const experimentId = 'experimentId';
@@ -152,6 +147,30 @@ describe('tests for metadata track routes', () => {
         }
         // there is no point testing for the values of the response body
         // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
+  it('creating metadata from file works', async (done) => {
+    const tsvData = `sample1\tmetadata_key_1\tmetadata_value_1
+  sample2\tmetadata_key_1\tmetadata_value_2
+  sample1\tmetadata_key_2\tmetadata_value_3
+  sample2\tmetadata_key_2\tmetadata_value_4`;
+    metadataTrackController.createMetadataFromFile.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+
+    request(app)
+      .patch(`/v2/experiments/${experimentId}/metadataTracks`)
+      .set('Content-Type', 'text/plain')
+      .send(tsvData)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        expect(metadataTrackController.createMetadataFromFile).toHaveBeenCalled();
         return done();
       });
   });
