@@ -1,6 +1,6 @@
 // @ts-nocheck
 const metadataTrackController = require('../../../src/api.v2/controllers/metadataTrackController');
-const { OK, NotFoundError } = require('../../../src/utils/responses');
+const { OK, NotFoundError, BadRequestError } = require('../../../src/utils/responses');
 const MetadataTrack = require('../../../src/api.v2/model/MetadataTrack');
 const Sample = require('../../../src/api.v2/model/Sample');
 
@@ -187,5 +187,30 @@ describe('metadataTrackController', () => {
 
     // Response is ok
     expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
+
+  it('createMetadataFromFile throws BadRequest for incorrect sample names', async () => {
+    const experimentId = 'experimentId';
+    const tsvData = [
+      'wrong_sampel\tmetadata_key_1\tmetadata_value_1',
+    ].join('\n');
+
+    const mockSamples = [{
+      id: 'id1',
+      name: 'sample1',
+    }];
+
+
+    const mockReq = {
+      params: { experimentId },
+      body: tsvData,
+    };
+
+    metadataTrackInstance.bulkUpdateMetadata.mockImplementationOnce(() => Promise.resolve());
+    sampleInstance.getSamples.mockReturnValue(mockSamples);
+
+    await expect(
+      metadataTrackController.createMetadataFromFile(mockReq, mockRes),
+    ).rejects.toThrowError(BadRequestError);
   });
 });

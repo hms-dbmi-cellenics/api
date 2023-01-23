@@ -1,7 +1,7 @@
 const MetadataTrack = require('../model/MetadataTrack');
 
 const getLogger = require('../../utils/getLogger');
-const { OK, NotFoundError } = require('../../utils/responses');
+const { OK, NotFoundError, BadRequestError } = require('../../utils/responses');
 const Sample = require('../model/Sample');
 
 const logger = getLogger('[MetadataTrackController] - ');
@@ -79,10 +79,16 @@ const patchValueForSample = async (req, res) => {
 // [{sampleId: sample1, metadataKey: key1, metadataValue: value1}, ...]
 // sampleNameToId is used to converte the sample names into sample IDs
 const parseMetadataFromTSV = (data, sampleNameToId) => {
+  let wrongSamplesFound = false;
   const result = data.split('\n').map((line) => {
     const [sampleName, metadataKey, metadataValue] = line.split('\t');
+    if (!(sampleName in sampleNameToId)) {
+      wrongSamplesFound = true;
+    }
     return { sampleId: sampleNameToId[sampleName], metadataKey, metadataValue };
   });
+
+  if (wrongSamplesFound) throw new BadRequestError();
   return result;
 };
 
