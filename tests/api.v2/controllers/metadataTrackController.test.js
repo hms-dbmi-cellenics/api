@@ -149,7 +149,7 @@ describe('metadataTrackController', () => {
     expect(mockRes.json).toHaveBeenCalledWith(OK());
   });
 
-  it.only('createMetadataFromFile works correctly', async () => {
+  it('createMetadataFromFile works correctly', async () => {
     const experimentId = 'experimentId';
     const tsvData = [
       'sample1\tmetadata_key_1\tmetadata_value_1',

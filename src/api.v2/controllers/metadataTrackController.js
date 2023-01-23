@@ -74,33 +74,32 @@ const patchValueForSample = async (req, res) => {
 };
 
 // parseMetadataFromTSV takes a TSV file with tag-value format like:
-// sample1\tmetadata_key_1\tmetadata_value_1
+// sample1\tmetadata_key_1\tmetadata_value_1\n...
 // and turns it into an array like:
 // [{sampleId: sample1, metadataKey: key1, metadataValue: value1}, ...]
+// sampleNameToId is used to converte the sample names into sample IDs
 const parseMetadataFromTSV = (data, sampleNameToId) => {
-  console.log('resplit: ', data.split('\n'));
   const result = data.split('\n').map((line) => {
-    console.log('line ', line);
     const [sampleName, metadataKey, metadataValue] = line.split('\t');
-    console.log('sampleNameToId[sampleName] ', sampleNameToId[sampleName]);
     return { sampleId: sampleNameToId[sampleName], metadataKey, metadataValue };
   });
   return result;
 };
 
-const createMetadataFromFile = async (req, res) => {
-  const { experimentId } = req.params;
-  // console.log('request lcs: ', req);
+const buildSampleNameToIdMap = async (experimentId) => {
   const sampleNameToId = {};
   const samples = await new Sample().getSamples(experimentId);
   samples.forEach((sample) => {
     sampleNameToId[sample.name] = sample.id;
   });
-  console.log('sampleNameToId:', sampleNameToId);
+  return sampleNameToId;
+};
+
+const createMetadataFromFile = async (req, res) => {
+  const { experimentId } = req.params;
+
+  const sampleNameToId = await buildSampleNameToIdMap(experimentId);
   const data = parseMetadataFromTSV(req.body, sampleNameToId);
-  console.log('d0 ', data);
-
-
 
   try {
     await new MetadataTrack().bulkUpdateMetadata(experimentId, data);

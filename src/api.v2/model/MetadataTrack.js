@@ -17,17 +17,15 @@ class MetadataTrack extends BasicModel {
     super(sql, tableNames.METADATA_TRACK, sampleFields);
   }
 
-  // TODO rename to upsertNewMetadataTrack
+  // createNewMetadataTrack will create a new metadata track and return its ID
+  // if the key already exists it will do nothing but return the ID nonetheless
   async createNewMetadataTrack(experimentId, key) {
-    console.log('experiment, key', experimentId, key);
     const sampleIds = await this.sql.select(['id'])
       .from(tableNames.SAMPLE)
       .where({ experiment_id: experimentId });
 
-
-    // if track already exists return
+    // if track already exists return ID
     const result = await this.findOne({ experiment_id: experimentId, key });
-    console.log('result: ', result);
     if (result) {
       return { id: result.id, key: result.key };
     }
@@ -55,7 +53,6 @@ class MetadataTrack extends BasicModel {
       return metadataTrackId;
     });
 
-    console.log('id returned: ', id);
     return { id, key };
   }
 
@@ -91,39 +88,27 @@ class MetadataTrack extends BasicModel {
     }
   }
 
-  // data looks like:
+  // bulkUpdateMetadata will take data with the format:
   // [{sampleId: sample1, metadataKey: key1, metadataValue: value1}, ...]
-
+  // and will:
+  // * create any missing metadata keys (with default value)
+  // * insert the provided values for each key (replacing existing values)
   async bulkUpdateMetadata(experimentId, data) {
-    console.log('data ', data);
+    // first create all the metadata columns (if any exist it won't be replaced)
     const metadataKeys = [...new Set(data.map(((el) => el.metadataKey)))];
-    console.log('metadataKeys: ', metadataKeys);
-
-    // const [{ id }] = await this.find({ experiment_id: experimentId, key: metadataKeys[0] });
-    // console.log('result ', id);
     const createKeysPromises = metadataKeys.map(
       async (key) => this.createNewMetadataTrack(experimentId, key),
     );
     const result = await Promise.all(createKeysPromises);
 
-    console.log('created tracks', result);
-    // console.log('metadataTrackIds', metadataTrackIds);
-
-    // const metaIds = await this.sql.select(['id', 'key'])
-    //   .from(tableNames.METADATA_TRACK)
-    //   .where({ experiment_id: experimentId });
-
+    // we need a mapping of metadata key -> ID to insert the values
     const trackKeyToId = {};
     result.forEach((track) => {
       trackKeyToId[track.key] = track.id;
     });
-    // TODO need to retrieve the metadata key Ids to build this
-    // const tracks = await this.sql.select(['id'])
-    //   .from(tableNames.METADATA_TRACK)
-    //   .where({ experiment_id: experimentId });
 
-
-    console.log('trackKeyToId', trackKeyToId);
+    // create the final data to be inserted as rows with
+    // the sample_id, metadata_track_id, and value
     const fieldsToInsert = data.map((element) => (
       {
         sample_id: element.sampleId,
@@ -131,18 +116,10 @@ class MetadataTrack extends BasicModel {
         value: element.metadataValue,
       }));
 
-    console.log('fieldsToInsert', fieldsToInsert);
-
     await this.sql(tableNames.SAMPLE_IN_METADATA_TRACK_MAP)
       .insert(fieldsToInsert)
       .onConflict(['metadata_track_id', 'sample_id'])
       .merge('value');
-    // const promises = data.map(async (element) => {
-    //   const { sampleId, metadataKey, metadataValue } = element;
-    //   // Patch value for sample
-    //   await this.patchValueForSample(experimentId, sampleId, metadataKey, metadataValue);
-    // });
-    // await Promise.all(promises);
   }
 }
 
