@@ -7,7 +7,6 @@ const { OK } = require('../../../src/utils/responses');
 
 const metadataTrackController = require('../../../src/api.v2/controllers/metadataTrackController');
 
-// jest.mock('../../../src/api.v2/controllers/metadataTrackController');
 jest.mock('../../../src/api.v2/controllers/metadataTrackController');
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
 
