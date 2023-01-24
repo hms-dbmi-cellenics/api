@@ -94,7 +94,7 @@ const parseMetadataFromTSV = (data, sampleNameToId) => {
 
 const buildSampleNameToIdMap = async (experimentId) => {
   const sampleNameToId = {};
-  const samples = await new Sample().getSamples(experimentId);
+  const samples = await new Sample().find({ experiment_id: experimentId });
   samples.forEach((sample) => {
     sampleNameToId[sample.name] = sample.id;
   });

@@ -1,17 +1,15 @@
 // @ts-nocheck
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 const fake = require('../../test-utils/constants');
-
+const BasicModel = require('../../../src/api.v2/model/BasicModel');
 
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
 }));
 
 const MetadataTrack = require('../../../src/api.v2/model/MetadataTrack');
-const BasicModel = require('../../../src/api.v2/model/BasicModel');
 
 const tableNames = require('../../../src/api.v2/model/tableNames');
-const { mock } = require('aws-sdk-mock');
 
 describe('model/userAccess', () => {
   beforeEach(() => {

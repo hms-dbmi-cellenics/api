@@ -3,6 +3,7 @@ const metadataTrackController = require('../../../src/api.v2/controllers/metadat
 const { OK, NotFoundError, BadRequestError } = require('../../../src/utils/responses');
 const MetadataTrack = require('../../../src/api.v2/model/MetadataTrack');
 const Sample = require('../../../src/api.v2/model/Sample');
+const BasicModel = require('../../../src/api.v2/model/BasicModel');
 
 const metadataTrackInstance = new MetadataTrack();
 const sampleInstance = new Sample();
@@ -177,7 +178,7 @@ describe('metadataTrackController', () => {
     };
 
     metadataTrackInstance.bulkUpdateMetadata.mockImplementationOnce(() => Promise.resolve());
-    sampleInstance.getSamples.mockReturnValue(mockSamples);
+    sampleInstance.find.mockReturnValue(mockSamples);
 
     await metadataTrackController.createMetadataFromFile(mockReq, mockRes);
 
@@ -207,7 +208,7 @@ describe('metadataTrackController', () => {
     };
 
     metadataTrackInstance.bulkUpdateMetadata.mockImplementationOnce(() => Promise.resolve());
-    sampleInstance.getSamples.mockReturnValue(mockSamples);
+    sampleInstance.find.mockReturnValue(mockSamples);
 
     await expect(
       metadataTrackController.createMetadataFromFile(mockReq, mockRes),
