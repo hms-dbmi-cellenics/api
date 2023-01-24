@@ -50,6 +50,7 @@ const mockExperiment = {
   updatedAt: '2022-05-10 15:41:04.165961+00',
 };
 
+
 describe('startGem2sPipeline', () => {
   const mockSamples = [{
     id: 'fc68aefc-c3ca-467f-8589-f1dbaaac1c1e',
@@ -86,7 +87,7 @@ describe('startGem2sPipeline', () => {
       first: jest.fn(() => Promise.resolve(mockExperiment)),
     });
 
-    sampleInstance.getSamples.mockReturnValueOnce(Promise.resolve(mockSamples));
+    sampleInstance.getSamples.mockReturnValue(Promise.resolve(mockSamples));
 
     pipelineConstruct.createGem2SPipeline.mockReturnValueOnce(
       { stateMachineArn: mockStateMachineArn, executionArn: mockExecutionArn },
@@ -95,7 +96,6 @@ describe('startGem2sPipeline', () => {
 
   it('works correctly', async () => {
     await startGem2sPipeline(experimentId, authJWT);
-
     expect(experimentInstance.findById).toHaveBeenCalledWith(experimentId);
     expect(sampleInstance.getSamples).toHaveBeenCalledWith(experimentId);
     expect(experimentExecutionInstance.upsert.mock.calls[0]).toMatchSnapshot();
