@@ -80,7 +80,7 @@ const patchValueForSample = async (req, res) => {
 // sampleNameToId is used to converte the sample names into sample IDs
 const parseMetadataFromTSV = (data, sampleNameToId) => {
   let wrongSamplesFound = false;
-  const result = data.split('\n').map((line) => {
+  const result = data.trim().split('\n').map((line) => {
     const [sampleName, metadataKey, metadataValue] = line.split('\t');
     if (!(sampleName in sampleNameToId)) {
       wrongSamplesFound = true;
@@ -88,7 +88,7 @@ const parseMetadataFromTSV = (data, sampleNameToId) => {
     return { sampleId: sampleNameToId[sampleName], metadataKey, metadataValue };
   });
 
-  if (wrongSamplesFound) throw new BadRequestError();
+  if (wrongSamplesFound) throw new BadRequestError('Invalid data');
   return result;
 };
 
