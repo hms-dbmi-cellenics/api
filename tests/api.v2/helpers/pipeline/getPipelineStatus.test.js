@@ -158,7 +158,7 @@ const mockRandomExceptionResponse = [
     pipelineType: QC_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: RANDOM_EXCEPTION,
-    paramsHash: null,
+    shouldRerun: null,
     lastStatusResponse: qcStatusResponseSql,
   },
 ];
@@ -371,8 +371,6 @@ describe('pipelineStatus', () => {
       },
     };
 
-    // we don't check with StrictEqual because response will contain
-    // undefined paramsHash and that is OK (only needed in gem2s)
     expect(status).toEqual(expectedStatus);
 
     expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: EMPTY_ID });
@@ -395,7 +393,7 @@ describe('pipelineStatus', () => {
     expect(experimentExecutionInstance.update).not.toHaveBeenCalled();
   });
 
-  it('if gem2s execution sql last response doesnt match the latest paramsHash, it updates it', async () => {
+  it('if gem2s execution sql last response doesnt match the latest params, it updates it', async () => {
     const status = await getPipelineStatus(
       EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_LAST_RESPONSE, GEM2S_PROCESS_NAME,
     );
@@ -412,7 +410,7 @@ describe('pipelineStatus', () => {
       { experiment_id: EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_LAST_RESPONSE },
     );
 
-    // Updted the execution with the new paramsHash
+    // Updted the execution with the new parameters
     expect(experimentExecutionInstance.update).toHaveBeenCalledWith(
       { experiment_id: EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_LAST_RESPONSE, pipeline_type: 'gem2s' },
       {
@@ -513,8 +511,6 @@ describe('pipelineStatus', () => {
       },
     };
 
-    // we don't check with StrictEqual because response will contain
-    // undefined paramsHash and that is OK (only needed in gem2s)
     expect(status).toEqual(expectedStatus);
 
     expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: SUCCEEDED_ID });

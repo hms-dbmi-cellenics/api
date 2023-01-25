@@ -377,7 +377,7 @@ Array [
             "DownloadGem",
           ],
           "error": false,
-          "paramsHash": "mockParamsHash",
+          "shouldRerun": true,
           "startDate": "2022-05-10T16:30:16.268Z",
           "status": "RUNNING",
           "stopDate": null,

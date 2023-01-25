@@ -113,7 +113,7 @@ describe('gem2sResponse', () => {
         status: 'RUNNING',
         error: false,
         completedSteps: ['DownloadGem'],
-        paramsHash: 'mockParamsHash',
+        shouldRerun: true,
       },
     },
   };

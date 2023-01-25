@@ -80,7 +80,6 @@ describe('gem2sController', () => {
     const mockReq = {
       params: { experimentId },
       headers: { authorization: 'mockAuthorization' },
-      body: { paramsHash: 'mockParamsHash' },
     };
 
     await expect(gem2sController.runGem2s(mockReq, mockRes)).rejects
