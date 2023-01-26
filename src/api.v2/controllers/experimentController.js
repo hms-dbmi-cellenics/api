@@ -97,10 +97,11 @@ const updateSamplePosition = async (req, res) => {
     return;
   }
 
-  await new Experiment().updateSamplePosition(experimentId, oldPosition, newPosition);
+  const samplesOrder = await new Experiment()
+    .updateSamplePosition(experimentId, oldPosition, newPosition);
 
   logger.log(`Finished reordering samples in ${experimentId}`);
-  res.json(OK());
+  res.json(samplesOrder);
 };
 
 const getProcessingConfig = async (req, res) => {
