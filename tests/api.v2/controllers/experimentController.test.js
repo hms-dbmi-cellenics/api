@@ -38,6 +38,7 @@ jest.mock('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 jest.mock('../../../src/api.v2/helpers/worker/getWorkerStatus');
 
 jest.mock('../../../src/utils/plotConfigInvalidation/invalidatePlotsForEvent');
+jest.mock('../../../src/utils/getAdminSub', () => () => 'adminSubFakelol420');
 
 const getExperimentResponse = require('../mocks/data/getExperimentResponse.json');
 const getAllExperimentsResponse = require('../mocks/data/getAllExperimentsResponse.json');

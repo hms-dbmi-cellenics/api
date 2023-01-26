@@ -1392,8 +1392,6 @@ paths:
                   type: string
                 toUserId:
                   type: string
-              required:
-                - name
               additionalProperties: false
       responses:
         "200":
