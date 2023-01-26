@@ -79,16 +79,25 @@ const patchValueForSample = async (req, res) => {
 // [{sampleId: sample1, metadataKey: key1, metadataValue: value1}, ...]
 // sampleNameToId is used to converte the sample names into sample IDs
 const parseMetadataFromTSV = (data, sampleNameToId) => {
-  let wrongSamplesFound = false;
-  const result = data.trim().split('\n').map((line) => {
-    const [sampleName, metadataKey, metadataValue] = line.split('\t');
+  const invalidLines = [];
+  const invalidSamples = new Set();
+  const result = data.trim().split('\n').map((line, index) => {
+    const elements = line.split('\t');
+    if (elements.length !== 3) {
+      invalidLines.push(index + 1);
+    }
+    const [sampleName, metadataKey, metadataValue] = elements;
     if (!(sampleName in sampleNameToId)) {
-      wrongSamplesFound = true;
+      invalidSamples.add(sampleName);
+      // invalidSamples.push(`Sample ${sampleName} not found in experiment in line ${index + 1}`);
     }
     return { sampleId: sampleNameToId[sampleName], metadataKey, metadataValue };
   });
 
-  if (wrongSamplesFound) throw new BadRequestError('Invalid data');
+  const errors = [];
+  if (invalidSamples.size > 0) errors.push(`Invalid sample names: ${Array.from(invalidSamples).join(', ')}`);
+  if (invalidLines.length > 0) errors.push(`Invalid lines: ${invalidLines.join(', ')}`);
+  if (errors.length > 0) throw new BadRequestError(errors.join('\n'));
   return result;
 };
 
