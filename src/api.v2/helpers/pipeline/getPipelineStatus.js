@@ -8,7 +8,7 @@ const { EXPIRED_EXECUTION_DATE } = require('../../constants');
 const getLogger = require('../../../utils/getLogger');
 const pipelineConstants = require('../../constants');
 const { getPipelineStepNames } = require('./pipelineConstruct/skeletons');
-const { shouldGem2sRerun } = require('./shouldGem2sRerun/shouldGem2sRerun');
+const { shouldGem2sRerun } = require('./gem2s');
 
 const logger = getLogger();
 

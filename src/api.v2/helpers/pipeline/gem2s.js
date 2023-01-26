@@ -16,7 +16,6 @@ const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
 
 const { qcStepsWithFilterSettings } = require('./pipelineConstruct/qcHelpers');
-const getGem2sParams = require('./shouldGem2sRerun/getGem2sParams');
 
 const logger = getLogger('[Gem2sService] - ');
 
@@ -143,76 +142,118 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
 
-const generateGem2sParams = async (experimentId, authJWT) => {
-  const defaultMetadataValue = 'N.A.';
-
+const generateGem2sParams = async (experimentId, samples, authJWT) => {
   logger.log('Generating gem2s params');
 
-  const getS3Paths = (files) => {
-    const s3Paths = {};
-    Object.keys(files).forEach((key) => {
-      s3Paths[key] = files[key].s3Path;
-    });
-    return s3Paths;
-  };
+  const experiment = await new Experiment().findById(experimentId).first();
+  const { sampleIds, sampleNames, sampleS3Paths } = samples;
 
-  const [experiment, samples] = await Promise.all([
-    new Experiment().findById(experimentId).first(),
-    new Sample().getSamples(experimentId),
-  ]);
-
-  const samplesInOrder = experiment.samplesOrder.map(
-    (sampleId) => _.find(samples, { id: sampleId }),
-  );
-
-  const s3Paths = {};
-  const sampleOptions = {};
-
-  experiment.samplesOrder.forEach((sampleId) => {
-    const { files, options } = _.find(samples, { id: sampleId });
-
-    s3Paths[sampleId] = getS3Paths(files);
-    sampleOptions[sampleId] = options || {};
-  });
+  // Transform the list of options (ordered by id) to:
+  // sampleId: sampleOptions
+  const sampleOptions = samples.sampleIds.map((id, index) => ({
+    id,
+    options: samples.sampleOptions[index],
+  })).reduce((acc, entry) => ({
+    ...acc,
+    [entry.id]: entry.options || {},
+  }), {});
 
   const taskParams = {
     projectId: experimentId,
     experimentName: experiment.name,
     organism: null,
-    input: { type: samples[0].sampleTechnology },
-    sampleIds: experiment.samplesOrder,
-    sampleNames: _.map(samplesInOrder, 'name'),
-    sampleS3Paths: s3Paths,
+    input: { type: samples.sampleTechnology },
+    sampleIds,
+    sampleNames,
+    sampleS3Paths,
     sampleOptions,
     authJWT,
   };
 
-  const metadataKeys = Object.keys(samples[0].metadata);
+  if (Object.keys(samples.metadata).length === 0) return taskParams;
 
-  if (metadataKeys.length) {
-    logger.log('Adding metadatakeys to task params');
+  return {
+    ...taskParams,
+    metadata: samples.metadata,
+  };
+};
 
-    taskParams.metadata = metadataKeys.reduce((acc, key) => {
-      // Make sure the key does not contain '-' as it will cause failure in GEM2S
-      const sanitizedKey = key.replace(/-+/g, '_');
+const getGem2sParams = async (experimentId, includeSampleFileS3Paths = false) => {
+  const samples = await new Sample().getSamples(experimentId);
 
-      acc[sanitizedKey] = Object.values(samplesInOrder).map(
-        (sampleValue) => sampleValue.metadata[key] || defaultMetadataValue,
-      );
-
+  const samplesObj = samples.reduce(
+    (acc, current) => {
+      acc[current.id] = current;
       return acc;
-    }, {});
-  }
+    },
+    {},
+  );
 
-  logger.log('Task params generated');
+  const { sampleTechnology, metadata } = samples[0];
+  const sampleIds = Object.keys(samplesObj).sort();
+  const sampleNames = sampleIds.map((id) => samplesObj[id].name);
+  const sampleOptions = sampleIds.map((id) => samplesObj[id].options);
 
-  return taskParams;
+  // Handle metadata
+  const defaultMetadata = 'N.A.';
+  const metadataInvariant = Object.keys(metadata).sort();
+  const metadataField = metadataInvariant.reduce(
+    (acc, current) => {
+      // Make sure the key does not contain '-' as it will cause failure in GEM2S
+      const sanitizedKey = current.replace(/-+/g, '_');
+
+      const entries = sampleIds.map((id) => samplesObj[id].metadata[current] || defaultMetadata);
+      acc[sanitizedKey] = entries;
+      return acc;
+    },
+    {},
+  );
+
+  const gem2sParams = {
+    sampleTechnology,
+    sampleIds,
+    sampleNames,
+    sampleOptions,
+    metadata: metadataField,
+  };
+
+  // Handle S3 Paths
+
+  if (!includeSampleFileS3Paths) return gem2sParams;
+
+  // Below reducers achieve the following:
+  // {
+  //   sampleId: {
+  //     matrix10x: ...,
+  //     barcodes10x: ...,
+  //     features10x: ...,
+  //   }
+  //   ...
+  // }
+  const sampleS3Paths = sampleIds.reduce((sampleAcc, id) => {
+    const s3Path = Object.entries(samplesObj[id].files).reduce((fileAcc, [filename, body]) => ({
+      ...fileAcc,
+      [filename]: body.s3Path,
+    }), {});
+
+    return {
+      ...sampleAcc,
+      [id]: s3Path,
+    };
+  }, {});
+
+  return { gem2sParams, sampleS3Paths };
 };
 
 const startGem2sPipeline = async (experimentId, authJWT) => {
   logger.log('Creating GEM2S params...');
-  const currentGem2SParams = await getGem2sParams(experimentId);
-  const taskParams = await generateGem2sParams(experimentId, authJWT);
+  const {
+    gem2sParams: currentGem2SParams,
+    sampleS3Paths,
+  } = await getGem2sParams(experimentId, true);
+
+  const sampleData = { ...currentGem2SParams, sampleS3Paths };
+  const taskParams = await generateGem2sParams(experimentId, sampleData, authJWT);
 
   const {
     stateMachineArn,
@@ -276,7 +317,18 @@ const handleGem2sResponse = async (io, message) => {
   await sendUpdateToSubscribed(experimentId, messageForClient, io);
 };
 
+const shouldGem2sRerun = async (experimentId) => {
+  const execution = await new ExperimentExecution().findOne({ experiment_id: experimentId, pipeline_type: 'gem2s' });
+  if (execution === undefined) return true;
+
+  const currentParams = await getGem2sParams(experimentId);
+
+  return !_.isEqual(currentParams, execution.lastGem2SParams);
+};
+
 module.exports = {
   startGem2sPipeline,
   handleGem2sResponse,
+  getGem2sParams,
+  shouldGem2sRerun,
 };
