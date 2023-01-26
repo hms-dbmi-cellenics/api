@@ -8,7 +8,7 @@ const { EXPIRED_EXECUTION_DATE } = require('../../constants');
 const getLogger = require('../../../utils/getLogger');
 const pipelineConstants = require('../../constants');
 const { getPipelineStepNames } = require('./pipelineConstruct/skeletons');
-const { getGem2sRerunStatus } = require('./gem2sRerunStatus/getGem2sRerunStatus');
+const { shouldGem2sRerun } = require('./shouldGem2sRerun/shouldGem2sRerun');
 
 const logger = getLogger();
 
@@ -236,7 +236,7 @@ const getPipelineStatus = async (experimentId, processName) => {
   let response;
 
   const { executionArn = null, lastStatusResponse } = pipelineExecution;
-  const shouldRerun = await getGem2sRerunStatus(experimentId);
+  const shouldRerun = await shouldGem2sRerun(experimentId);
 
   try {
     execution = await stepFunctions.describeExecution({

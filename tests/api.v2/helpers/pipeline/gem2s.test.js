@@ -87,7 +87,7 @@ describe('startGem2sPipeline', () => {
       first: jest.fn(() => Promise.resolve(mockExperiment)),
     });
 
-    sampleInstance.getSamples.mockReturnValue(Promise.resolve(mockSamples));
+    sampleInstance.getSamples.mockReturnValueOnce(Promise.resolve(mockSamples));
 
     pipelineConstruct.createGem2SPipeline.mockReturnValueOnce(
       { stateMachineArn: mockStateMachineArn, executionArn: mockExecutionArn },

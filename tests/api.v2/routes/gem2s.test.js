@@ -7,7 +7,6 @@ const { OK } = require('../../../src/utils/responses');
 
 const gem2sController = require('../../../src/api.v2/controllers/gem2sController');
 
-
 jest.mock('../../../src/api.v2/controllers/gem2sController', () => ({
   runGem2s: jest.fn(),
   handleResponse: jest.fn(),

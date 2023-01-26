@@ -110,6 +110,7 @@ const getProcessingConfig = async (req, res) => {
   const result = await new Experiment().getProcessingConfig(experimentId);
 
   logger.log('Finished getting processing config for experiment ', experimentId);
+  console.log(result);
   res.json(result);
 };
 
