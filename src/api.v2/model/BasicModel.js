@@ -6,12 +6,12 @@
 // "models" will want to have.
 
 class BasicModel {
-  constructor(sql, tableName, selectableProps = [], timeout = 4000, camelCaseExceptions = []) {
+  constructor(sql, tableName, selectableProps = [], camelCaseExceptions = []) {
     this.sql = sql;
     this.tableName = tableName;
     this.selectableProps = selectableProps;
-    this.timeout = timeout;
     this.camelCaseExceptions = camelCaseExceptions;
+    this.timeout = 4000;
   }
 
   create(props) {
