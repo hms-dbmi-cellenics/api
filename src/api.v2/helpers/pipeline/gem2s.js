@@ -142,20 +142,15 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
 
-const generateGem2sParams = async (experimentId, samples, authJWT) => {
+const generateGem2sTaskParams = async (experimentId, samples, sampleS3Paths, authJWT) => {
   logger.log('Generating gem2s params');
 
   const experiment = await new Experiment().findById(experimentId).first();
-  const { sampleIds, sampleNames, sampleS3Paths } = samples;
+  const { sampleIds, sampleNames } = samples;
 
-  // Transform the list of options (ordered by id) to:
-  // sampleId: sampleOptions
-  const sampleOptions = samples.sampleIds.map((id, index) => ({
-    id,
-    options: samples.sampleOptions[index],
-  })).reduce((acc, entry) => ({
+  const sampleOptions = samples.sampleIds.reduce((acc, id, index) => ({
     ...acc,
-    [entry.id]: entry.options || {},
+    [id]: samples.sampleOptions[index] || {},
   }), {});
 
   const taskParams = {
@@ -178,11 +173,12 @@ const generateGem2sParams = async (experimentId, samples, authJWT) => {
   };
 };
 
-const getGem2sParams = async (experimentId, includeSampleFileS3Paths = false) => {
+const getGem2sParams = async (experimentId, returnSampleFileS3Paths = false) => {
   const samples = await new Sample().getSamples(experimentId);
 
   const samplesObj = samples.reduce(
-    (acc, current) => {
+    (acc,
+      current) => {
       acc[current.id] = current;
       return acc;
     },
@@ -218,8 +214,7 @@ const getGem2sParams = async (experimentId, includeSampleFileS3Paths = false) =>
   };
 
   // Handle S3 Paths
-
-  if (!includeSampleFileS3Paths) return gem2sParams;
+  if (!returnSampleFileS3Paths) return { gem2sParams };
 
   // Below reducers achieve the following:
   // {
@@ -252,8 +247,12 @@ const startGem2sPipeline = async (experimentId, authJWT) => {
     sampleS3Paths,
   } = await getGem2sParams(experimentId, true);
 
-  const sampleData = { ...currentGem2SParams, sampleS3Paths };
-  const taskParams = await generateGem2sParams(experimentId, sampleData, authJWT);
+  const taskParams = await generateGem2sTaskParams(
+    experimentId,
+    currentGem2SParams,
+    sampleS3Paths,
+    authJWT,
+  );
 
   const {
     stateMachineArn,
@@ -321,7 +320,7 @@ const shouldGem2sRerun = async (experimentId) => {
   const execution = await new ExperimentExecution().findOne({ experiment_id: experimentId, pipeline_type: 'gem2s' });
   if (execution === undefined) return true;
 
-  const currentParams = await getGem2sParams(experimentId);
+  const { gem2SParams: currentParams } = await getGem2sParams(experimentId);
 
   return !_.isEqual(currentParams, execution.lastGem2SParams);
 };
