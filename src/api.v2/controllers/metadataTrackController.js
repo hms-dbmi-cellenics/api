@@ -73,6 +73,7 @@ const patchValueForSample = async (req, res) => {
   res.json(OK());
 };
 
+
 // parseMetadataFromTSV takes a TSV file with tag-value format like:
 // sample1\tmetadata_key_1\tmetadata_value_1\n...
 // and turns it into an array like:
@@ -81,16 +82,20 @@ const patchValueForSample = async (req, res) => {
 const parseMetadataFromTSV = (data, sampleNameToId) => {
   const invalidLines = [];
   const invalidSamples = new Set();
+
   const result = data.trim().split('\n').map((line, index) => {
+    // check that there are 3 elements per line
     const elements = line.split('\t');
     if (elements.length !== 3) {
       invalidLines.push(index + 1);
     }
+
+    // check that the sample name exists in the experiment
     const [sampleName, metadataKey, metadataValue] = elements;
     if (!(sampleName in sampleNameToId)) {
       invalidSamples.add(sampleName);
-      // invalidSamples.push(`Sample ${sampleName} not found in experiment in line ${index + 1}`);
     }
+
     return { sampleId: sampleNameToId[sampleName], metadataKey, metadataValue };
   });
 
@@ -98,6 +103,7 @@ const parseMetadataFromTSV = (data, sampleNameToId) => {
   if (invalidSamples.size > 0) errors.push(`Invalid sample names: ${Array.from(invalidSamples).join(', ')}`);
   if (invalidLines.length > 0) errors.push(`Invalid lines: ${invalidLines.join(', ')}`);
   if (errors.length > 0) throw new BadRequestError(errors.join('\n'));
+
   return result;
 };
 
