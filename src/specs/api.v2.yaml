@@ -982,6 +982,62 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/metadataTracks":
+    patch:
+      summary: Update metadata tracks
+      operationId: createMetadataFromFile
+      x-eov-operation-id: metadataTrack#createMetadataFromFile
+      x-eov-operation-handler: routes/metadataTrack
+      tags:
+        - Metadata Tracks
+      parameters:
+        - in: path
+          name: experimentId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: |-
+                sample1 metadata_key_1 metadata_value_1
+                sample2 metadata_key_1 metadata_value_2
+                sample1 metadata_key_2 metadata_value_3
+                sample2 metadata_key_2 metadata_value_4
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
   "/experiments/{experimentId}/metadataTracks/{metadataTrackKey}":
     post:
       summary: Creates a new metadata track
