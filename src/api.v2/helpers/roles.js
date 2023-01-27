@@ -19,6 +19,7 @@ const allowedResources = {
     '/experiments/(?<experimentId>.*)/plots-tables/(?<plotUuid>.*)',
     '/experiments/(?<experimentId>.*)/cellSets',
     '/experiments/(?<experimentId>.*)/clone',
+    '/experiments/(?<experimentId>.*)/subset',
   ],
   [VIEWER]: [
     '/experiments/(?<experimentId>.*)/clone',
