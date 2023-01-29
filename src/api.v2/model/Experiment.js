@@ -171,6 +171,8 @@ class Experiment extends BasicModel {
       }
 
       trx.commit();
+
+      return samplesOrder;
     } catch (e) {
       trx.rollback();
       throw e;
