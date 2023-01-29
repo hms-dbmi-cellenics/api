@@ -6,8 +6,7 @@ const getGem2sParams = async (experimentId, returnSampleFileS3Paths = false) => 
   const samples = await new Sample().getSamples(experimentId);
 
   const samplesObj = samples.reduce(
-    (acc,
-      current) => {
+    (acc, current) => {
       acc[current.id] = current;
       return acc;
     },
@@ -43,7 +42,9 @@ const getGem2sParams = async (experimentId, returnSampleFileS3Paths = false) => 
   };
 
   // Handle S3 Paths
-  if (!returnSampleFileS3Paths) return { gem2sParams };
+  if (!returnSampleFileS3Paths) {
+    return { gem2sParams };
+  }
 
   // Below reducers achieve the following:
   // {
@@ -73,7 +74,7 @@ const shouldGem2sRerun = async (experimentId) => {
   const execution = await new ExperimentExecution().findOne({ experiment_id: experimentId, pipeline_type: 'gem2s' });
   if (execution === undefined) return true;
 
-  const { gem2SParams: currentParams } = await getGem2sParams(experimentId);
+  const { gem2sParams: currentParams } = await getGem2sParams(experimentId);
 
   return !_.isEqual(currentParams, execution.lastGem2SParams);
 };

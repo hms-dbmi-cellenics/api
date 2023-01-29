@@ -253,5 +253,4 @@ const handleGem2sResponse = async (io, message) => {
 module.exports = {
   startGem2sPipeline,
   handleGem2sResponse,
-  getGem2sParams,
 };

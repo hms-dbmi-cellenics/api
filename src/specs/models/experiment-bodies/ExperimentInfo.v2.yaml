@@ -35,22 +35,17 @@ properties:
         nullable: true
         type: object
         properties:
-          shouldRerun:
-            type: boolean
           stateMachineArn:
             type: string
           executionArn:
             type: string
         required:
-          - shouldRerun
           - stateMachineArn
           - executionArn
       qc:
         nullable: true
         type: object
         properties:
-          shouldRerun:
-            type: boolean
           stateMachineArn:
             type: string
           executionArn:
