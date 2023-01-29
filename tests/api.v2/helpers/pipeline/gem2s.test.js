@@ -7,6 +7,7 @@ const { startGem2sPipeline, handleGem2sResponse } = require('../../../../src/api
 const Experiment = require('../../../../src/api.v2/model/Experiment');
 const Sample = require('../../../../src/api.v2/model/Sample');
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
+const ExperimentParent = require('../../../../src/api.v2/model/ExperimentParent');
 
 const pipelineConstruct = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 const getPipelineStatus = require('../../../../src/api.v2/helpers/pipeline/getPipelineStatus');
@@ -21,6 +22,7 @@ jest.mock('socket.io-client');
 jest.mock('../../../../src/api.v2/model/Experiment');
 jest.mock('../../../../src/api.v2/model/Sample');
 jest.mock('../../../../src/api.v2/model/ExperimentExecution');
+jest.mock('../../../../src/api.v2/model/ExperimentParent');
 
 jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 jest.mock('../../../../src/api.v2/helpers/pipeline/getPipelineStatus');
@@ -33,7 +35,7 @@ const gem2sUploadToAWSPayload = require('../../mocks/data/gem2sUploadToAWSPayloa
 const experimentInstance = Experiment();
 const sampleInstance = Sample();
 const experimentExecutionInstance = ExperimentExecution();
-
+const experimentParentInstance = ExperimentParent();
 const hookRunnerInstance = HookRunner();
 
 const experimentId = 'mockExperimentId';
@@ -81,6 +83,7 @@ describe('startGem2sPipeline', () => {
     sampleInstance.getSamples.mockClear();
     experimentExecutionInstance.upsert.mockClear();
     experimentExecutionInstance.delete.mockClear();
+    experimentParentInstance.isChild.mockClear();
     pipelineConstruct.createGem2SPipeline.mockClear();
 
     experimentInstance.findById.mockReturnValueOnce({
@@ -88,7 +91,7 @@ describe('startGem2sPipeline', () => {
     });
 
     sampleInstance.getSamples.mockReturnValueOnce(Promise.resolve(mockSamples));
-
+    experimentParentInstance.isChild.mockReturnValueOnce(Promise.resolve(false));
     pipelineConstruct.createGem2SPipeline.mockReturnValueOnce(
       { stateMachineArn: mockStateMachineArn, executionArn: mockExecutionArn },
     );
