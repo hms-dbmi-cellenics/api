@@ -13,6 +13,11 @@ class ExperimentParent extends BasicModel {
   constructor(sql = sqlClient.get()) {
     super(sql, tableNames.EXPERIMENT_PARENT, selectableProps);
   }
+
+  isChild(experimentId) {
+    return this.findOne({ experiment_id: experimentId })
+      .then((result) => result !== undefined);
+  }
 }
 
 module.exports = ExperimentParent;

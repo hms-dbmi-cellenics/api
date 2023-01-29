@@ -1,8 +1,11 @@
 const _ = require('lodash');
 const ExperimentExecution = require('../../model/ExperimentExecution');
+const ExperimentParent = require('../../model/ExperimentParent');
 const Sample = require('../../model/Sample');
 
 const getGem2sParams = async (experimentId, returnSampleFileS3Paths = false) => {
+  if (await new ExperimentParent().isChild(experimentId)) return {};
+
   const samples = await new Sample().getSamples(experimentId);
 
   const samplesObj = samples.reduce(
@@ -73,9 +76,7 @@ const getGem2sParams = async (experimentId, returnSampleFileS3Paths = false) => 
 const shouldGem2sRerun = async (experimentId) => {
   const execution = await new ExperimentExecution().findOne({ experiment_id: experimentId, pipeline_type: 'gem2s' });
   if (execution === undefined) return true;
-
   const { gem2sParams: currentParams } = await getGem2sParams(experimentId);
-
   return !_.isEqual(currentParams, execution.lastGem2SParams);
 };
 
