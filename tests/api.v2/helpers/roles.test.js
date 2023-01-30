@@ -36,6 +36,11 @@ describe('tests for the roles logic', () => {
     });
   });
 
+  test(' isRoleAuthorized authorized explorer to run subset pipeline', async () => {
+    const isAuthorized = roles.isRoleAuthorized(roles.EXPLORER, `/experiments/${fake.EXPERIMENT_ID}/subset`, 'POST');
+    expect(isAuthorized).toEqual(true);
+  });
+
   test(' isRoleAuthorized authorizes admin & owner roles to everything', async () => {
     [roles.OWNER, roles.ADMIN].forEach((role) => {
       ['*', 'socket', '/experiments'].forEach((resource) => {
