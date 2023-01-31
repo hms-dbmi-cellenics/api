@@ -67,7 +67,6 @@ describe('subsetController', () => {
         pipeline_type: GEM2S_PROCESS_NAME,
       },
       {
-        last_gem2s_params: {},
         state_machine_arn: newExecution.stateMachineArn,
         execution_arn: newExecution.executionArn,
       },
