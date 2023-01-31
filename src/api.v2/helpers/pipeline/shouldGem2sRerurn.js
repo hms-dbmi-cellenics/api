@@ -4,7 +4,7 @@ const ExperimentParent = require('../../model/ExperimentParent');
 const Sample = require('../../model/Sample');
 
 const getGem2sParams = async (experimentId, returnSampleFileS3Paths = false) => {
-  if (await new ExperimentParent().isChild(experimentId)) return { gem2sParams: null };
+  if (await new ExperimentParent().isSubset(experimentId)) return { gem2sParams: null };
 
   const samples = await new Sample().getSamples(experimentId);
 

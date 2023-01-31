@@ -83,7 +83,7 @@ describe('startGem2sPipeline', () => {
     sampleInstance.getSamples.mockClear();
     experimentExecutionInstance.upsert.mockClear();
     experimentExecutionInstance.delete.mockClear();
-    experimentParentInstance.isChild.mockClear();
+    experimentParentInstance.isSubset.mockClear();
     pipelineConstruct.createGem2SPipeline.mockClear();
 
     experimentInstance.findById.mockReturnValueOnce({
@@ -91,7 +91,7 @@ describe('startGem2sPipeline', () => {
     });
 
     sampleInstance.getSamples.mockReturnValueOnce(Promise.resolve(mockSamples));
-    experimentParentInstance.isChild.mockReturnValueOnce(Promise.resolve(false));
+    experimentParentInstance.isSubset.mockReturnValueOnce(Promise.resolve(false));
     pipelineConstruct.createGem2SPipeline.mockReturnValueOnce(
       { stateMachineArn: mockStateMachineArn, executionArn: mockExecutionArn },
     );

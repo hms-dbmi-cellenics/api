@@ -14,8 +14,10 @@ class ExperimentParent extends BasicModel {
     super(sql, tableNames.EXPERIMENT_PARENT, selectableProps);
   }
 
-  async isChild(experimentId) {
-    return await this.findOne({ experiment_id: experimentId }) !== undefined;
+  async isSubset(experimentId) {
+    const entry = await this.findOne({ experiment_id: experimentId });
+
+    return entry !== undefined;
   }
 }
 

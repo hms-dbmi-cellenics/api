@@ -2,7 +2,7 @@ const BasicModel = require('./BasicModel')();
 
 const stub = {
   ...BasicModel,
-  isChild: jest.fn(),
+  isSubset: jest.fn(),
 };
 
 const ExperimentParent = jest.fn().mockImplementation(() => stub);
