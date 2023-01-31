@@ -46,7 +46,6 @@ const runSubset = async (req, res) => {
   );
 
   const newExecution = {
-    last_gem2s_params: {},
     state_machine_arn: stateMachineArn,
     execution_arn: executionArn,
   };
