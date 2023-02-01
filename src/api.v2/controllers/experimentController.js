@@ -7,7 +7,7 @@ const getLogger = require('../../utils/getLogger');
 const { OK, NotFoundError } = require('../../utils/responses');
 const sqlClient = require('../../sql/sqlClient');
 
-const getExperimentBackendStatus = require('../helpers/experimentStatus/getExperimentBackendStatus');
+const getExperimentBackendStatus = require('../helpers/backendStatus/getExperimentBackendStatus');
 const Sample = require('../model/Sample');
 const invalidatePlotsForEvent = require('../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
 const events = require('../../utils/plotConfigInvalidation/events');
