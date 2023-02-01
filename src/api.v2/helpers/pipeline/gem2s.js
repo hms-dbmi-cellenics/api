@@ -16,7 +16,7 @@ const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
 
 const { qcStepsWithFilterSettings } = require('./pipelineConstruct/qcHelpers');
-const { getGem2sParams } = require('./shouldGem2sRerurn');
+const { getGem2sParams, formatSamples } = require('./shouldGem2sRerurn');
 
 const logger = getLogger('[Gem2sService] - ');
 
@@ -143,50 +143,53 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
 
-const generateGem2sTaskParams = async (experimentId, samples, sampleS3Paths, authJWT) => {
+const generateGem2sTaskParams = async (experimentId, rawSamples, authJWT) => {
   logger.log('Generating gem2s params');
-
   const experiment = await new Experiment().findById(experimentId).first();
-  const { sampleIds, sampleNames } = samples;
+  const {
+    sampleTechnology,
+    sampleIds,
+    sampleNames,
+    sampleOptions,
+    sampleS3Paths,
+    metadata,
+  } = formatSamples(rawSamples);
 
-  const sampleOptions = samples.sampleIds.reduce((acc, id, index) => ({
+  const sampleOptionsById = sampleIds.reduce((acc, id, index) => ({
     ...acc,
-    [id]: samples.sampleOptions[index] || {},
+    [id]: sampleOptions[index] || {},
   }), {});
 
   const taskParams = {
     projectId: experimentId,
     experimentName: experiment.name,
     organism: null,
-    input: { type: samples.sampleTechnology },
+    input: { type: sampleTechnology },
     sampleIds,
     sampleNames,
     sampleS3Paths,
-    sampleOptions,
+    sampleOptions: sampleOptionsById,
     authJWT,
   };
 
-  if (Object.keys(samples.metadata).length === 0) return taskParams;
+  if (Object.keys(metadata).length === 0) return taskParams;
 
   return {
     ...taskParams,
-    metadata: samples.metadata,
+    metadata,
   };
 };
 
 const startGem2sPipeline = async (experimentId, authJWT) => {
   logger.log('Creating GEM2S params...');
-  const {
-    gem2sParams: currentGem2SParams,
-    sampleS3Paths,
-  } = await getGem2sParams(experimentId, true);
 
-  const taskParams = await generateGem2sTaskParams(
-    experimentId,
-    currentGem2SParams,
-    sampleS3Paths,
-    authJWT,
-  );
+  const samples = await new Sample().getSamples(experimentId);
+
+  const currentGem2SParams = await getGem2sParams(experimentId, samples);
+  const taskParams = await generateGem2sTaskParams(experimentId, samples, authJWT);
+
+  console.log('GEM2S', currentGem2SParams);
+  console.log('TASK', taskParams);
 
   const {
     stateMachineArn,

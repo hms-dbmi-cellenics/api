@@ -3,12 +3,8 @@ const ExperimentExecution = require('../../model/ExperimentExecution');
 const ExperimentParent = require('../../model/ExperimentParent');
 const Sample = require('../../model/Sample');
 
-const getGem2sParams = async (experimentId, returnSampleFileS3Paths = false) => {
-  if (await new ExperimentParent().isSubset(experimentId)) return { gem2sParams: null };
-
-  const samples = await new Sample().getSamples(experimentId);
-
-  const samplesObj = samples.reduce(
+const formatSamples = (rawSamples) => {
+  const samplesObj = rawSamples.reduce(
     (acc, current) => {
       acc[current.id] = current;
       return acc;
@@ -16,7 +12,7 @@ const getGem2sParams = async (experimentId, returnSampleFileS3Paths = false) => 
     {},
   );
 
-  const { sampleTechnology, metadata } = samples[0];
+  const { sampleTechnology, metadata } = rawSamples[0];
   const sampleIds = Object.keys(samplesObj).sort();
   const sampleNames = sampleIds.map((id) => samplesObj[id].name);
   const sampleOptions = sampleIds.map((id) => samplesObj[id].options);
@@ -36,19 +32,7 @@ const getGem2sParams = async (experimentId, returnSampleFileS3Paths = false) => 
     {},
   );
 
-  const gem2sParams = {
-    sampleTechnology,
-    sampleIds,
-    sampleNames,
-    sampleOptions,
-    metadata: metadataField,
-  };
-
-  // Handle S3 Paths
-  if (!returnSampleFileS3Paths) {
-    return { gem2sParams };
-  }
-
+  // Handle S3 paths
   // Below reducers achieve the following:
   // {
   //   sampleId: {
@@ -70,15 +54,43 @@ const getGem2sParams = async (experimentId, returnSampleFileS3Paths = false) => 
     };
   }, {});
 
-  return { gem2sParams, sampleS3Paths };
+  return {
+    sampleTechnology,
+    sampleIds,
+    sampleNames,
+    sampleOptions,
+    metadata: metadataField,
+    sampleS3Paths,
+  };
+};
+
+const getGem2sParams = async (experimentId, rawSamples = undefined) => {
+  if (await new ExperimentParent().isSubset(experimentId)) return null;
+
+  const {
+    sampleTechnology,
+    sampleIds,
+    sampleNames,
+    sampleOptions,
+    metadata,
+  } = formatSamples(rawSamples || await new Sample().getSamples(experimentId));
+
+  return {
+    sampleTechnology,
+    sampleIds,
+    sampleNames,
+    sampleOptions,
+    metadata,
+  };
 };
 
 const shouldGem2sRerun = async (experimentId) => {
   const execution = await new ExperimentExecution().findOne({ experiment_id: experimentId, pipeline_type: 'gem2s' });
   if (execution === undefined) return true;
-  const { gem2sParams: currentParams } = await getGem2sParams(experimentId);
+  const currentParams = await getGem2sParams(experimentId);
   return !_.isEqual(currentParams, execution.lastGem2SParams);
 };
 
 module.exports = shouldGem2sRerun;
 module.exports.getGem2sParams = getGem2sParams;
+module.exports.formatSamples = formatSamples;
