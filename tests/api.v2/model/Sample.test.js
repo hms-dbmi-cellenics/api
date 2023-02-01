@@ -11,7 +11,6 @@ const mockExperimentId = 'mockExperimentId';
 // @ts-nocheck
 // Disabled ts because it doesn't recognize jest mocks
 const tableNames = require('../../../src/api.v2/model/tableNames');
-const { replaceNullsWithObject } = require('../../../src/sql/helpers');
 
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
@@ -20,7 +19,7 @@ jest.mock('../../../src/sql/sqlClient', () => ({
 jest.mock('../../../src/sql/helpers', () => ({
   collapseKeysIntoObject: jest.fn(),
   collapseKeyIntoArray: jest.fn(),
-  replaceNullsWithObject: jest.fn(),
+  replaceNullsWithObject: jest.requireActual('../../../src/sql/helpers').replaceNullsWithObject,
 }));
 
 const mockSampleId = 'mockSampleId';
@@ -35,7 +34,6 @@ describe('model/Sample', () => {
 
   it('Get samples works correctly', async () => {
     await new Sample().getSamples(mockExperimentId).toString();
-    expect(replaceNullsWithObject).toHaveBeenCalledWith('jsonb_object_agg(key, value)', 'key');
     expect(mockSqlClient.where.mock.calls).toMatchSnapshot();
     expect(mockSqlClient.from.mock.calls).toMatchSnapshot();
     expect(mockSqlClient.select.mock.calls).toMatchSnapshot();

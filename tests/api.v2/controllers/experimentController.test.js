@@ -205,7 +205,11 @@ describe('experimentController', () => {
       body: { newPosition: 1, oldPosition: 5 },
     };
 
-    experimentInstance.updateSamplePosition.mockImplementationOnce(() => Promise.resolve());
+    const samplesNewOrder = ['sample-id0', 'sample-id5', 'sample-id1', 'sample-id2', 'sample-id3', 'sample-id4', 'sample-id6'];
+
+    experimentInstance.updateSamplePosition.mockImplementationOnce(
+      () => Promise.resolve(samplesNewOrder),
+    );
 
     await experimentController.updateSamplePosition(mockReq, mockRes);
 
@@ -215,7 +219,7 @@ describe('experimentController', () => {
       1,
     );
 
-    expect(mockRes.json).toHaveBeenCalledWith(OK());
+    expect(mockRes.json).toHaveBeenCalledWith(samplesNewOrder);
   });
 
   it('updateSamplePosition skips reordering if possible', async () => {
