@@ -90,6 +90,8 @@ const shouldGem2sRerun = async (experimentId) => {
   if (execution === undefined) return true;
   const currentParams = await getGem2sParams(experimentId);
 
+  console.log('experimentIdDebug');
+  console.log(experimentId);
   console.log('executionlastGem2SParamsDebug');
   console.log(JSON.stringify(execution.lastGem2SParams));
   console.log('currentParamsDebug');
