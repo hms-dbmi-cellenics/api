@@ -54,8 +54,9 @@ const getSkeletonStepNames = (skeleton) => {
 const getPipelineStepNames = () => {
   const gem2sStepNames = getSkeletonStepNames(gem2SPipelineSteps);
   const qcStepNames = getSkeletonStepNames(qcPipelineSteps);
+  const seuratStepNames = getSkeletonStepNames(seuratPipelineSteps);
 
-  return gem2sStepNames.concat(qcStepNames);
+  return gem2sStepNames.concat(qcStepNames).concat(seuratStepNames);
 };
 
 // getPipelineStepNames returns the names of the QC pipeline steps
