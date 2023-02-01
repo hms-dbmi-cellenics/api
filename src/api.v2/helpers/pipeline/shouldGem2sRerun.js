@@ -89,6 +89,12 @@ const shouldGem2sRerun = async (experimentId) => {
   const execution = await new ExperimentExecution().findOne({ experiment_id: experimentId, pipeline_type: 'gem2s' });
   if (execution === undefined) return true;
   const currentParams = await getGem2sParams(experimentId);
+
+  console.log('executionlastGem2SParamsDebug');
+  console.log(JSON.stringify(execution.lastGem2SParams));
+  console.log('currentParamsDebug');
+  console.log(JSON.stringify(currentParams));
+
   return !_.isEqual(currentParams, execution.lastGem2SParams);
 };
 
