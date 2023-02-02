@@ -68,13 +68,17 @@ const formatSamples = (rawSamples) => {
 const getGem2sParams = async (experimentId, rawSamples = undefined) => {
   if (await new ExperimentParent().isSubset(experimentId)) return null;
 
+  const samples = rawSamples || await new Sample().getSamples(experimentId);
+
+  if (samples.length === 0) return null;
+
   const {
     sampleTechnology,
     sampleIds,
     sampleNames,
     sampleOptions,
     metadata,
-  } = formatSamples(rawSamples || await new Sample().getSamples(experimentId));
+  } = formatSamples(samples);
 
   return {
     sampleTechnology,
@@ -89,13 +93,6 @@ const shouldGem2sRerun = async (experimentId) => {
   const execution = await new ExperimentExecution().findOne({ experiment_id: experimentId, pipeline_type: 'gem2s' });
   if (execution === undefined) return true;
   const currentParams = await getGem2sParams(experimentId);
-
-  console.log('experimentIdDebug');
-  console.log(experimentId);
-  console.log('executionlastGem2SParamsDebug');
-  console.log(JSON.stringify(execution.lastGem2SParams));
-  console.log('currentParamsDebug');
-  console.log(JSON.stringify(currentParams));
 
   return !_.isEqual(currentParams, execution.lastGem2SParams);
 };
