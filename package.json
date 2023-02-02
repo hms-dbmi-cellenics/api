@@ -53,7 +53,7 @@
     "micromatch": "^4.0.2",
     "node-cleanup": "^2.1.2",
     "node-fetch": "^2.6.7",
-    "node-jq": "^2.0.0",
+    "node-jq": "^2.3.5",
     "object-hash": "^2.0.3",
     "pg": "^8.7.3",
     "promise.any": "^2.0.2",
