@@ -681,6 +681,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+  
   "/experiments/{experimentId}/samples/{sampleId}":
     patch:
       summary: Patch sample
@@ -1730,17 +1731,6 @@ paths:
             type: string
           in: path
           required: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                paramsHash:
-                  type: string
-              required:
-                - paramsHash
-              additionalProperties: false
       responses:
         "200":
           description: OK
