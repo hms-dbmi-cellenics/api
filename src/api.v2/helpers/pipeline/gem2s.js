@@ -188,9 +188,6 @@ const startGem2sPipeline = async (experimentId, authJWT) => {
   const currentGem2SParams = await getGem2sParams(experimentId, samples);
   const taskParams = await generateGem2sTaskParams(experimentId, samples, authJWT);
 
-  console.log('GEM2S', currentGem2SParams);
-  console.log('TASK', taskParams);
-
   const {
     stateMachineArn,
     executionArn,
