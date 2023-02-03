@@ -70,7 +70,7 @@ const config = {
   emailDomainName: `https://${domainName}`,
   publicApiUrl: `https://api.${domainName}`,
   // Insert an env variable to Batch work to ignore certs for deployments with self-signed certs.
-  awsBatchIgnoreSSLCertificate: !!process.env.NODE_TLS_REJECT_UNAUTHORIZED,
+  awsBatchIgnoreSSLCertificate: Boolean(process.env.NODE_TLS_REJECT_UNAUTHORIZED),
   // Used for Batch reporting
   datadogApiKey: process.env.DD_API_KEY || '',
   datadogAppKey: process.env.DD_APP_KEY || '',
