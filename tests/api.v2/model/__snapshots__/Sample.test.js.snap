@@ -89,16 +89,6 @@ Array [
 exports[`model/Sample Get samples works correctly 4`] = `
 Array [
   Array [
-    "sample_to_sample_file_map as sf_map",
-    "s.id",
-    "sf_map.sample_id",
-  ],
-  Array [
-    "sample_file as sf",
-    "sf.id",
-    "sf_map.sample_file_id",
-  ],
-  Array [
     [MockFunction],
     "select_metadata.id",
     "select_sample_file.id",
@@ -128,10 +118,22 @@ Array [
 exports[`model/Sample Get samples works correctly 6`] = `
 Array [
   Array [
-    "undefined as metadata",
+    "COALESCE(
+      jsonb_object_agg(key, value)
+      FILTER(
+        WHERE key IS NOT NULL
+      ),
+      '{}'::jsonb
+    ) as metadata",
   ],
   Array [
-    "jsonb_object_agg(sample_file_type,json_build_object('sample_file_type',sample_file_type,'size',size,'upload_status',upload_status,'s3_path',s3_path,'id',sf_id)) as files",
+    "COALESCE(
+      jsonb_object_agg(sample_file_type,json_build_object('sample_file_type',sample_file_type,'size',size,'upload_status',upload_status,'s3_path',s3_path,'id',sf_id))
+      FILTER(
+        WHERE sample_file_type IS NOT NULL
+      ),
+      '{}'::jsonb
+    ) as files",
   ],
 ]
 `;
@@ -149,6 +151,16 @@ Array [
       "m.id": "sm_map.metadata_track_id",
       "s.id": "sm_map.sample_id",
     },
+  ],
+  Array [
+    "sample_to_sample_file_map as sf_map",
+    "s.id",
+    "sf_map.sample_id",
+  ],
+  Array [
+    "sample_file as sf",
+    "sf.id",
+    "sf_map.sample_file_id",
   ],
 ]
 `;
