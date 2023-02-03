@@ -6,6 +6,7 @@ Object {
     "prefix": "/",
   },
   "awsAccountId": "000000000000",
+  "awsBatchIgnoreSSLCertificate": false,
   "awsRegion": "eu-west-1",
   "cachingEnabled": false,
   "clusterEnv": "staging",
