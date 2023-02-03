@@ -56,13 +56,12 @@ describe('gem2sController', () => {
     const mockReq = {
       params: { experimentId },
       headers: { authorization: 'mockAuthorization' },
-      body: { paramsHash: 'mockParamsHash' },
     };
 
     await gem2sController.runGem2s(mockReq, mockRes);
 
     expect(gem2s.startGem2sPipeline).toHaveBeenCalledWith(
-      experimentId, mockReq.body, mockReq.headers.authorization,
+      experimentId, mockReq.headers.authorization,
     );
 
     // Response is ok
@@ -81,7 +80,6 @@ describe('gem2sController', () => {
     const mockReq = {
       params: { experimentId },
       headers: { authorization: 'mockAuthorization' },
-      body: { paramsHash: 'mockParamsHash' },
     };
 
     await expect(gem2sController.runGem2s(mockReq, mockRes)).rejects
