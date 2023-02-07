@@ -6,7 +6,9 @@ const getPipelineStatus = require('../helpers/pipeline/getPipelineStatus');
 const pipelineConstants = require('../constants');
 
 const validateAndSubmitWork = async (workRequest) => {
+  console.log('validateAndSubmitWork: ', workRequest);
   const { experimentId } = workRequest;
+
 
   // Check if pipeline is runnning
   const { qc: { status: qcPipelineStatus } } = await getPipelineStatus(
