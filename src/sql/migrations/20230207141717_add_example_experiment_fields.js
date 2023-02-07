@@ -1,11 +1,3 @@
-
-// publication_title
-// publication_url
-// data_source_title
-// data_source_url
-// species
-// cell_count
-
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
