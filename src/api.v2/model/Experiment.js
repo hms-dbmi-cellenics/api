@@ -56,6 +56,7 @@ class Experiment extends BasicModel {
       .leftJoin(`${tableNames.EXPERIMENT_PARENT} as p`, 'e.id', 'p.experiment_id')
       .as('mainQuery');
 
+
     const result = await collapseKeyIntoArray(
       mainQuery,
       [...fields, 'parent_experiment_id'],
@@ -63,6 +64,9 @@ class Experiment extends BasicModel {
       'metadataKeys',
       this.sql,
     );
+
+    console.log('MAINQUERY', result);
+
 
     return result;
   }
@@ -82,7 +86,7 @@ class Experiment extends BasicModel {
 
     const aliasedExperimentFields = fields.map((column) => `e.${column}`);
 
-    return this.sql
+    const result = await this.sql
       .select(aliasedExperimentFields)
       .min('s.sample_technology as sample_technology')
       .count('s.id as sample_count') // Returns a BigInt type which is represented as string (parse?)
@@ -91,6 +95,8 @@ class Experiment extends BasicModel {
       .join(`${tableNames.SAMPLE} as s`, 'e.id', 's.experiment_id')
       .where('user_id', constants.PUBLIC_ACCESS_ID)
       .groupBy('e.id');
+
+    return result;
   }
 
   async getExperimentData(experimentId) {

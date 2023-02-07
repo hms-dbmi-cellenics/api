@@ -12,12 +12,12 @@
  */
 exports.up = async (knex) => {
   await knex.schema.alterTable('experiment', (table) => {
-    table.string('publication_title').nullable().defaultTo(null);
-    table.string('publication_url').nullable().defaultTo(null);
-    table.string('data_source_title').nullable().defaultTo(null);
-    table.string('data_source_url').nullable().defaultTo(null);
-    table.string('species').nullable().defaultTo(null);
-    table.integer('cell_count').nullable().defaultTo(null);
+    table.string('publication_title').nullable();
+    table.string('publication_url').nullable();
+    table.string('data_source_title').nullable();
+    table.string('data_source_url').nullable();
+    table.string('species').nullable();
+    table.integer('cell_count').nullable();
   });
 };
 
