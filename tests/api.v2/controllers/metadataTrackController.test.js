@@ -1,11 +1,15 @@
 // @ts-nocheck
 const metadataTrackController = require('../../../src/api.v2/controllers/metadataTrackController');
-const { OK, NotFoundError } = require('../../../src/utils/responses');
+const { OK, NotFoundError, BadRequestError } = require('../../../src/utils/responses');
 const MetadataTrack = require('../../../src/api.v2/model/MetadataTrack');
+const Sample = require('../../../src/api.v2/model/Sample');
+const BasicModel = require('../../../src/api.v2/model/BasicModel');
 
 const metadataTrackInstance = new MetadataTrack();
+const sampleInstance = new Sample();
 
 jest.mock('../../../src/api.v2/model/MetadataTrack');
+jest.mock('../../../src/api.v2/model/Sample');
 
 const mockRes = {
   json: jest.fn(),
@@ -144,5 +148,70 @@ describe('metadataTrackController', () => {
 
     // Response is ok
     expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
+
+  it('createMetadataFromFile works correctly', async () => {
+    const experimentId = 'experimentId';
+    const tsvData = [
+      'sample1\tmetadata_key_1\tmetadata_value_1',
+      'sample2\tmetadata_key_1\tmetadata_value_2',
+      'sample2\tmetadata_key_2\tmetadata_value_4',
+    ].join('\n');
+
+    const mockSamples = [{
+      id: 'id1',
+      name: 'sample1',
+    }, {
+      id: 'id2',
+      name: 'sample2',
+    }];
+
+    const metadataUpdateObject = [
+      { metadataKey: 'metadata_key_1', metadataValue: 'metadata_value_1', sampleId: 'id1' },
+      { metadataKey: 'metadata_key_1', metadataValue: 'metadata_value_2', sampleId: 'id2' },
+      { metadataKey: 'metadata_key_2', metadataValue: 'metadata_value_4', sampleId: 'id2' }];
+
+
+    const mockReq = {
+      params: { experimentId },
+      body: tsvData,
+    };
+
+    metadataTrackInstance.bulkUpdateMetadata.mockImplementationOnce(() => Promise.resolve());
+    sampleInstance.find.mockReturnValue(mockSamples);
+
+    await metadataTrackController.createMetadataFromFile(mockReq, mockRes);
+
+    expect(metadataTrackInstance.bulkUpdateMetadata).toHaveBeenCalledWith(
+      experimentId, metadataUpdateObject,
+    );
+
+    // Response is ok
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
+
+  it('createMetadataFromFile throws BadRequest for incorrect sample names', async () => {
+    const experimentId = 'experimentId';
+    const tsvData = [
+      'wrong_sampel\tmetadata_key_1\tmetadata_value_1',
+    ].join('\n');
+
+    const mockSamples = [{
+      id: 'id1',
+      name: 'sample1',
+    }];
+
+
+    const mockReq = {
+      params: { experimentId },
+      body: tsvData,
+    };
+
+    metadataTrackInstance.bulkUpdateMetadata.mockImplementationOnce(() => Promise.resolve());
+    sampleInstance.find.mockReturnValue(mockSamples);
+
+    await expect(
+      metadataTrackController.createMetadataFromFile(mockReq, mockRes),
+    ).rejects.toThrowError(BadRequestError);
   });
 });

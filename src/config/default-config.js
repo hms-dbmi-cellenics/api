@@ -39,7 +39,6 @@ if (!process.env.K8S_ENV) {
 }
 
 const awsRegion = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || 'eu-west-1';
-
 const domainName = process.env.DOMAIN_NAME || 'localhost:5000';
 
 const cognitoISP = new AWS.CognitoIdentityServiceProvider({
@@ -72,6 +71,8 @@ const config = {
   emailDomainName: `https://${domainName}`,
   adminSub: ADMIN_SUB[process.env.AWS_ACCOUNT_ID],
   publicApiUrl: `https://api.${domainName}`,
+  // Insert an env variable to Batch work to ignore certs for deployments with self-signed certs.
+  awsBatchIgnoreSSLCertificate: Boolean(process.env.NODE_TLS_REJECT_UNAUTHORIZED),
   // Used for Batch reporting
   datadogApiKey: process.env.DD_API_KEY || '',
   datadogAppKey: process.env.DD_APP_KEY || '',

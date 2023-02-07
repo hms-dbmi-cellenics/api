@@ -42,6 +42,7 @@ const getContext = (processName, environment) => ({
     certAuthority: 'mock-ca',
   },
   processingConfig: {},
+  authJWT: 'mockAuthJWT',
 });
 
 

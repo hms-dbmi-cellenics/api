@@ -97,10 +97,11 @@ const updateSamplePosition = async (req, res) => {
     return;
   }
 
-  await new Experiment().updateSamplePosition(experimentId, oldPosition, newPosition);
+  const samplesOrder = await new Experiment()
+    .updateSamplePosition(experimentId, oldPosition, newPosition);
 
   logger.log(`Finished reordering samples in ${experimentId}`);
-  res.json(OK());
+  res.json(samplesOrder);
 };
 
 const getProcessingConfig = async (req, res) => {
@@ -173,14 +174,15 @@ const cloneExperiment = async (req, res) => {
     await new UserAccess(trx).createNewExperimentPermissions(userId, toExperimentId);
   });
 
-  logger.log(`Cloning experiment ${fromExperimentId} into ${toExperimentId}`);
+  logger.log(`Cloning experiment samples from experiment ${fromExperimentId} into ${toExperimentId}`);
 
-  const clonedSamplesOrder = await new Sample()
-    .copyTo(fromExperimentId, toExperimentId, samplesToCloneIds);
+  const cloneSamplesOrder = await new Sample().copyTo(
+    fromExperimentId, toExperimentId, samplesToCloneIds,
+  );
 
   await new Experiment().updateById(
     toExperimentId,
-    { samples_order: JSON.stringify(clonedSamplesOrder) },
+    { samples_order: JSON.stringify(cloneSamplesOrder) },
   );
 
   logger.log(`Finished cloning experiment ${fromExperimentId}, new experiment's id is ${toExperimentId}`);

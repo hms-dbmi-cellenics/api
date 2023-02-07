@@ -278,12 +278,12 @@
     "updatedAt": "2021-10-26 14:51:30.974+00",
     "pipelines": {
         "qc": {
-            "paramsHash": null,
+            "shouldRerun": null,
             "executionArn": "arn:aws:states:eu-west-1:242905224710:execution:biomage-qc-production-bc6c4292d46112103828a19eb6027b7d236ec0c2:90ed77ea-d440-4fe0-98ee-4d3fa36ed855",
             "stateMachineArn": "arn:aws:states:eu-west-1:242905224710:stateMachine:biomage-qc-production-bc6c4292d46112103828a19eb6027b7d236ec0c2"
         },
         "gem2s": {
-            "paramsHash": "ahash",
+            "shouldRerun": false,
             "executionArn": "arn:aws:states:eu-west-1:242905224710:execution:biomage-gem2s-production-bc6c4292d46112103828a19eb6027b7d236ec0c2:c270886a-12bc-404d-8a9d-d550cb48b685",
             "stateMachineArn": "arn:aws:states:eu-west-1:242905224710:stateMachine:biomage-gem2s-production-bc6c4292d46112103828a19eb6027b7d236ec0c2"
         }
