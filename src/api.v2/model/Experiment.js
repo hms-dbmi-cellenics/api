@@ -67,10 +67,34 @@ class Experiment extends BasicModel {
     return result;
   }
 
-
   async getExampleExperiments() {
-    return this.getAllExperiments(constants.PUBLIC_ACCESS_ID);
+    const fields = [
+      'id',
+      'name',
+      'publication_title',
+      'publication_url',
+      'data_source_title',
+      'data_source_url',
+      'species',
+      'cell_count',
+    ];
+
+    const aliasedExperimentFields = fields.map((column) => `e.${column}`);
+
+    return this.sql
+      .select(aliasedExperimentFields)
+      .min('s.sample_technology as sample_technology')
+      .count('s.id as sample_count') // Returns a BigInt type which is represented as string (parse?)
+      .from(tableNames.USER_ACCESS)
+      .join(`${tableNames.EXPERIMENT} as e`, 'e.id', `${tableNames.USER_ACCESS}.experiment_id`)
+      .join(`${tableNames.SAMPLE} as s`, 'e.id', 's.experiment_id')
+      .where('user_id', constants.PUBLIC_ACCESS_ID)
+      .groupBy('e.id');
   }
+
+  // async getExampleExperiments() {
+  //   return this.getAllExperiments(constants.PUBLIC_ACCESS_ID);
+  // }
 
   async getExperimentData(experimentId) {
     function mainQuery() {
