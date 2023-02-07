@@ -94,7 +94,7 @@ const seuratStatusResponseSql = {
       'UploadSeuratToAWS',
     ],
     error: false,
-    paramsHash: null,
+    shouldRerun: false,
   },
 };
 
@@ -112,7 +112,6 @@ const mockRunResponse = [
     pipelineType: SEURAT_PROCESS_NAME,
     stateMachineArn: SUCCEEDED_ID,
     executionArn: SUCCEEDED_ID,
-    paramsHash,
     lastStatusResponse: seuratStatusResponseSql,
   },
   {
@@ -136,7 +135,6 @@ const mockExecutionNotExistResponse = [
     pipelineType: SEURAT_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
-    paramsHash,
     lastStatusResponse: seuratStatusResponseSql,
   },
   {
@@ -170,7 +168,6 @@ const mockExecutionNotExistNullSqlResponse = [
     pipelineType: SEURAT_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
-    paramsHash,
     lastStatusResponse: null,
   },
   {
@@ -194,7 +191,6 @@ const mockRandomExceptionResponse = [
     pipelineType: SEURAT_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: RANDOM_EXCEPTION,
-    paramsHash,
     lastStatusResponse: seuratStatusResponseSql,
   },
   {
