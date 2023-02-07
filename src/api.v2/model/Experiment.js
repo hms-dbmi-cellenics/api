@@ -71,6 +71,7 @@ class Experiment extends BasicModel {
     const fields = [
       'id',
       'name',
+      'description',
       'publication_title',
       'publication_url',
       'data_source_title',
@@ -91,10 +92,6 @@ class Experiment extends BasicModel {
       .where('user_id', constants.PUBLIC_ACCESS_ID)
       .groupBy('e.id');
   }
-
-  // async getExampleExperiments() {
-  //   return this.getAllExperiments(constants.PUBLIC_ACCESS_ID);
-  // }
 
   async getExperimentData(experimentId) {
     function mainQuery() {
