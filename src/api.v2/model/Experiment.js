@@ -65,9 +65,6 @@ class Experiment extends BasicModel {
       this.sql,
     );
 
-    console.log('MAINQUERY', result);
-
-
     return result;
   }
 
