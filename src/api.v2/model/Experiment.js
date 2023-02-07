@@ -56,7 +56,6 @@ class Experiment extends BasicModel {
       .leftJoin(`${tableNames.EXPERIMENT_PARENT} as p`, 'e.id', 'p.experiment_id')
       .as('mainQuery');
 
-
     const result = await collapseKeyIntoArray(
       mainQuery,
       [...fields, 'parent_experiment_id'],
