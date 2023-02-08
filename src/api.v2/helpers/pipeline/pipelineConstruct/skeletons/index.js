@@ -130,6 +130,8 @@ const getSeuratPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
   States: {
     ...buildInitialSteps(clusterEnv, 'DownloadSeurat', runInBatch),
     ...seuratPipelineSteps,
+    ...buildErrorHandlingSteps(),
+    ...buildEndOfPipelineStep(),
   },
 });
 

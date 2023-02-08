@@ -94,7 +94,7 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
 
-const generateSeuratParams = async (experimentId, rawSamples, authJWT) => {
+const generateSeuratTaskParams = async (experimentId, rawSamples, authJWT) => {
   logger.log('Generating seurat params');
   const experiment = await new Experiment().findById(experimentId).first();
   const {
@@ -138,7 +138,7 @@ const startSeuratPipeline = async (experimentId, body, authJWT) => {
 
   const currentSeuratParams = await getPipelineParams(experimentId, samples);
 
-  const taskParams = await generateSeuratParams(experimentId, authJWT);
+  const taskParams = await generateSeuratTaskParams(experimentId, samples, authJWT);
 
   const {
     stateMachineArn,
