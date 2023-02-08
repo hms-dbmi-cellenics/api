@@ -94,7 +94,7 @@ const shouldPipelineRerun = async (experimentId, pipelineType) => {
   if (execution === undefined) return true;
   const currentParams = await getPipelineParams(experimentId);
 
-  return !_.isEqual(currentParams, execution.lastGem2SParams);
+  return !_.isEqual(currentParams, execution.lastPipelineParams);
 };
 
 module.exports = shouldPipelineRerun;
