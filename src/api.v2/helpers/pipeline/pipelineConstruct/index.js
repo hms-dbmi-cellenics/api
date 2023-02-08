@@ -195,11 +195,12 @@ const createSubsetPipeline = async (
 };
 
 
-const createSeuratObjectPipeline = async (experimentId, taskParams) => {
+const createSeuratObjectPipeline = async (experimentId, taskParams, authJWT) => {
   const context = {
     ...(await getGeneralPipelineContext(experimentId, SEURAT_PROCESS_NAME)),
     processingConfig: {},
     taskParams,
+    authJWT,
   };
 
   await cancelPreviousPipelines(experimentId);

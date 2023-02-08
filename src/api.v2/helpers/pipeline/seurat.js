@@ -15,6 +15,8 @@ const HookRunner = require('./hooks/HookRunner');
 const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
 
+const { getPipelineParams, formatSamples } = require('./shouldPipelineRerun');
+
 const logger = getLogger('[SeuratService] - ');
 
 const hookRunner = new HookRunner();
@@ -27,6 +29,43 @@ const updateProcessingConfig = async (payload) => {
   logger.log(`Experiment: ${experimentId}. Saved processing config received from seurat`);
 };
 
+/**
+ *
+ * Works with the subsetSeurat sns notification, it adds to sql
+ * the samples that were just duplicated
+ *
+ * Within payload, takes a sampleIdMap object with:
+ * - keys: ids of parent experiment samples that survived the subset
+ * - values: ids of corresponding subset experiment samples
+ *
+ * @param {*} payload
+ *
+ */
+const setupSubsetSamples = async (payload) => {
+  const { sampleIdMap, input: { parentExperimentId, subsetExperimentId } } = payload;
+
+  const {
+    samplesOrder: parentSamplesOrder,
+  } = await new Experiment().findById(parentExperimentId).first();
+
+  const samplesToCloneIds = parentSamplesOrder.filter((id) => sampleIdMap[id]);
+
+  logger.log(`Cloning retained experiment samples from experiment ${parentExperimentId} into subset: ${subsetExperimentId}`);
+
+  const cloneSamplesOrder = await new Sample().copyTo(
+    parentExperimentId, subsetExperimentId, samplesToCloneIds, sampleIdMap,
+  );
+
+  await new Experiment().updateById(
+    subsetExperimentId,
+    { samples_order: JSON.stringify(cloneSamplesOrder) },
+  );
+
+  logger.log(`Finished creating samples for new subset experiment: ${subsetExperimentId}`);
+  // Add samples that were created
+};
+
+hookRunner.register('subsetSeurat', [setupSubsetSamples]);
 hookRunner.register('uploadSeuratToAWS', [
   updateProcessingConfig,
 ]);
@@ -55,84 +94,68 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
 
-const generateSeuratParams = async (experimentId, authJWT) => {
-  const defaultMetadataValue = 'N.A.';
-
+const generateSeuratParams = async (experimentId, rawSamples, authJWT) => {
   logger.log('Generating seurat params');
+  const experiment = await new Experiment().findById(experimentId).first();
+  const {
+    sampleTechnology,
+    sampleIds,
+    sampleNames,
+    sampleOptions,
+    sampleS3Paths,
+    metadata,
+  } = formatSamples(rawSamples);
 
-  const getS3Paths = (files) => (
-    {
-      seurat: files.seurat.s3Path,
-    }
-  );
-
-  const [experiment, samples] = await Promise.all([
-    new Experiment().findById(experimentId).first(),
-    new Sample().getSamples(experimentId),
-  ]);
-
-  const samplesInOrder = experiment.samplesOrder.map(
-    (sampleId) => _.find(samples, { id: sampleId }),
-  );
-
-  const s3Paths = {};
-  experiment.samplesOrder.forEach((sampleId) => {
-    const { files } = _.find(samples, { id: sampleId });
-
-    s3Paths[sampleId] = getS3Paths(files);
-  });
+  const sampleOptionsById = sampleIds.reduce((acc, id, index) => ({
+    ...acc,
+    [id]: sampleOptions[index] || {},
+  }), {});
 
   const taskParams = {
     projectId: experimentId,
     experimentName: experiment.name,
     organism: null,
-    input: { type: samples[0].sampleTechnology },
-    sampleIds: experiment.samplesOrder,
-    sampleNames: _.map(samplesInOrder, 'name'),
-    sampleS3Paths: s3Paths,
+    input: { type: sampleTechnology },
+    sampleIds,
+    sampleNames,
+    sampleS3Paths,
+    sampleOptions: sampleOptionsById,
     authJWT,
   };
 
-  const metadataKeys = Object.keys(samples[0].metadata);
+  if (Object.keys(metadata).length === 0) return taskParams;
 
-  if (metadataKeys.length) {
-    logger.log('Adding metadatakeys to task params');
-
-    taskParams.metadata = metadataKeys.reduce((acc, key) => {
-      // Make sure the key does not contain '-' as it will cause failure in SEURAT
-      const sanitizedKey = key.replace(/-+/g, '_');
-
-      acc[sanitizedKey] = Object.values(samplesInOrder).map(
-        (sampleValue) => sampleValue.metadata[key] || defaultMetadataValue,
-      );
-
-      return acc;
-    }, {});
-  }
-
-  logger.log('Task params generated');
-
-  return taskParams;
+  return {
+    ...taskParams,
+    metadata,
+  };
 };
 
-const createSeuratPipeline = async (experimentId, body, authJWT) => {
+const startSeuratPipeline = async (experimentId, body, authJWT) => {
   logger.log('Creating SEURAT params...');
-  const { paramsHash } = body;
+
+  const samples = await new Sample().getSamples(experimentId);
+
+  const currentSeuratParams = await getPipelineParams(experimentId, samples);
 
   const taskParams = await generateSeuratParams(experimentId, authJWT);
 
-  const { stateMachineArn, executionArn } = await
-  createSeuratObjectPipeline(experimentId, taskParams);
+  const {
+    stateMachineArn,
+    executionArn,
+  } = await createSeuratObjectPipeline(experimentId, taskParams, authJWT);
 
   logger.log('SEURAT params created.');
 
   const newExecution = {
-    params_hash: paramsHash,
+    last_pipeline_params: currentSeuratParams,
     state_machine_arn: stateMachineArn,
     execution_arn: executionArn,
   };
 
-  await new ExperimentExecution().upsert(
+  const experimentExecutionClient = new ExperimentExecution();
+
+  await experimentExecutionClient.upsert(
     {
       experiment_id: experimentId,
       pipeline_type: 'seurat',
@@ -165,6 +188,6 @@ const handleSeuratResponse = async (io, message) => {
 };
 
 module.exports = {
-  createSeuratPipeline,
+  startSeuratPipeline,
   handleSeuratResponse,
 };

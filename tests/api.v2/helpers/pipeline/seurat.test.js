@@ -1,7 +1,7 @@
 // @ts-nocheck
 const io = require('socket.io-client');
 
-const { createSeuratPipeline, handleSeuratResponse } = require('../../../../src/api.v2/helpers/pipeline/seurat');
+const { startSeuratPipeline, handleSeuratResponse } = require('../../../../src/api.v2/helpers/pipeline/seurat');
 
 const Experiment = require('../../../../src/api.v2/model/Experiment');
 const Sample = require('../../../../src/api.v2/model/Sample');
@@ -85,7 +85,7 @@ describe('createSeuratObjectPipeline', () => {
   });
 
   it('works correctly', async () => {
-    await createSeuratPipeline(experimentId, { paramsHash }, authJWT);
+    await startSeuratPipeline(experimentId, { paramsHash }, authJWT);
 
     expect(experimentInstance.findById).toHaveBeenCalledWith(experimentId);
     expect(sampleInstance.getSamples).toHaveBeenCalledWith(experimentId);

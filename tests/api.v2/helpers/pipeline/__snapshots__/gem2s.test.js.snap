@@ -397,7 +397,7 @@ Array [
   },
   Object {
     "execution_arn": "mockExecutionArn",
-    "last_gem2s_params": Object {
+    "last_pipeline_params": Object {
       "metadata": Object {
         "Track_1": Array [
           "N.A.",

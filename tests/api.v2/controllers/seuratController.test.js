@@ -26,7 +26,7 @@ describe('seuratController', () => {
     const experimentId = 'experimentId';
     const newExecution = 'mockNewExecution';
 
-    seurat.createSeuratPipeline.mockReturnValue(newExecution);
+    seurat.startSeuratPipeline.mockReturnValue(newExecution);
 
     const mockReq = {
       params: { experimentId },
@@ -36,7 +36,7 @@ describe('seuratController', () => {
 
     await seuratController.runSeurat(mockReq, mockRes);
 
-    expect(seurat.createSeuratPipeline).toHaveBeenCalledWith(
+    expect(seurat.startSeuratPipeline).toHaveBeenCalledWith(
       experimentId, mockReq.body, mockReq.headers.authorization,
     );
 
