@@ -67,7 +67,6 @@ describe('subsetController', () => {
         pipeline_type: GEM2S_PROCESS_NAME,
       },
       {
-        params_hash: null,
         state_machine_arn: newExecution.stateMachineArn,
         execution_arn: newExecution.executionArn,
       },

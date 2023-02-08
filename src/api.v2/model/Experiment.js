@@ -83,7 +83,7 @@ class Experiment extends BasicModel {
     }
 
     const experimentExecutionFields = [
-      'params_hash', 'state_machine_arn', 'execution_arn',
+      'params_hash', 'state_machine_arn', 'execution_arn', 'last_gem2s_params',
     ];
 
     const pipelineExecutionKeys = experimentExecutionFields.reduce((acum, current) => {
@@ -171,6 +171,8 @@ class Experiment extends BasicModel {
       }
 
       trx.commit();
+
+      return samplesOrder;
     } catch (e) {
       trx.rollback();
       throw e;

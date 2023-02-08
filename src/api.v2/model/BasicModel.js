@@ -6,11 +6,12 @@
 // "models" will want to have.
 
 class BasicModel {
-  constructor(sql, tableName, selectableProps = [], timeout = 4000) {
+  constructor(sql, tableName, selectableProps = [], camelCaseExceptions = []) {
     this.sql = sql;
     this.tableName = tableName;
     this.selectableProps = selectableProps;
-    this.timeout = timeout;
+    this.camelCaseExceptions = camelCaseExceptions;
+    this.timeout = 4000;
   }
 
   create(props) {
@@ -23,12 +24,14 @@ class BasicModel {
   findAll() {
     return this.sql
       .select(this.selectableProps)
+      .queryContext({ camelCaseExceptions: this.camelCaseExceptions })
       .from(this.tableName)
       .timeout(this.timeout);
   }
 
   find(filters) {
     return this.sql.select(this.selectableProps)
+      .queryContext({ camelCaseExceptions: this.camelCaseExceptions })
       .from(this.tableName)
       .where(filters)
       .timeout(this.timeout);
@@ -47,6 +50,7 @@ class BasicModel {
 
   findById(id) {
     return this.sql.select(this.selectableProps)
+      .queryContext({ camelCaseExceptions: this.camelCaseExceptions })
       .from(this.tableName)
       .where({ id })
       .timeout(this.timeout);

@@ -1,5 +1,46 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`model/userAccess bulkUpdateMetadata works correctly: findParams 1`] = `
+Array [
+  Array [
+    Object {
+      "experiment_id": "experi-mentid-11111111-1111111-11111",
+      "key": "metadata_key_1",
+    },
+  ],
+  Array [
+    Object {
+      "experiment_id": "experi-mentid-11111111-1111111-11111",
+      "key": "metadata_key_2",
+    },
+  ],
+]
+`;
+
+exports[`model/userAccess bulkUpdateMetadata works correctly: insertParams 1`] = `
+Array [
+  Array [
+    Array [
+      Object {
+        "metadata_track_id": 1,
+        "sample_id": "id1",
+        "value": "metadata_value_1",
+      },
+      Object {
+        "metadata_track_id": 1,
+        "sample_id": "id2",
+        "value": "metadata_value_2",
+      },
+      Object {
+        "metadata_track_id": 2,
+        "sample_id": "id2",
+        "value": "metadata_value_4",
+      },
+    ],
+  ],
+]
+`;
+
 exports[`model/userAccess createNewMetadataTrack skips insert into SAMPLE_IN_METADATA_TRACK_MAP when there are no samples: fromParams 1`] = `
 Array [
   Array [

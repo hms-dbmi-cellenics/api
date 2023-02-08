@@ -21,6 +21,7 @@ module.exports = {
   },
   cachingEnabled: false,
   publicApiUrl: 'test-public-api-url',
+  awsBatchIgnoreSSLCertificate: false,
   datadogApiKey: 'test-datadog-api-key',
   datadogAppKey: 'test-datadog-app-key',
 };
