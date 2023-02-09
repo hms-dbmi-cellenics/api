@@ -1,6 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`createSeuratObjectPipeline works correctly 1`] = `
+exports[`seuratResponse works correctly 1`] = `
+Array [
+  "ExperimentUpdates-mockExperimentId",
+  Object {
+    "experimentId": "mockExperimentId",
+    "input": Object {},
+    "response": Object {},
+    "status": Object {
+      "status": Object {
+        "seurat": Object {
+          "completedSteps": Array [
+            "DownloadSeurat",
+          ],
+          "error": false,
+          "shouldRerun": true,
+          "startDate": "2022-05-10T16:30:16.268Z",
+          "status": "RUNNING",
+          "stopDate": null,
+        },
+      },
+    },
+    "type": "seurat",
+  },
+]
+`;
+
+exports[`startSeuratPipeline works correctly 1`] = `
 Array [
   Object {
     "experiment_id": "mockExperimentId",
@@ -8,13 +34,27 @@ Array [
   },
   Object {
     "execution_arn": "mockExecutionArn",
-    "params_hash": "mockParamsHash",
+    "last_pipeline_params": Object {
+      "metadata": Object {},
+      "sampleIds": Array [
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e",
+      ],
+      "sampleNames": Array [
+        "scdata",
+      ],
+      "sampleOptions": Array [
+        undefined,
+      ],
+      "sampleTechnology": "seurat",
+    },
     "state_machine_arn": "mockStateMachineArn",
   },
 ]
 `;
 
-exports[`createSeuratObjectPipeline works correctly 2`] = `
+exports[`startSeuratPipeline works correctly 2`] = `undefined`;
+
+exports[`startSeuratPipeline works correctly 3`] = `
 Array [
   "mockExperimentId",
   Object {
@@ -31,37 +71,15 @@ Array [
     "sampleNames": Array [
       "scdata",
     ],
+    "sampleOptions": Object {
+      "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {},
+    },
     "sampleS3Paths": Object {
       "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
         "seurat": "68f74995-3689-401a-90e0-145e08049cd5",
       },
     },
   },
-]
-`;
-
-exports[`seuratResponse works correctly 1`] = `
-Array [
-  "ExperimentUpdates-mockExperimentId",
-  Object {
-    "experimentId": "mockExperimentId",
-    "input": Object {},
-    "response": Object {},
-    "status": Object {
-      "status": Object {
-        "seurat": Object {
-          "completedSteps": Array [
-            "DownloadSeurat",
-          ],
-          "error": false,
-          "paramsHash": "mockParamsHash",
-          "startDate": "2022-05-10T16:30:16.268Z",
-          "status": "RUNNING",
-          "stopDate": null,
-        },
-      },
-    },
-    "type": "seurat",
-  },
+  "mockAuthJWT",
 ]
 `;

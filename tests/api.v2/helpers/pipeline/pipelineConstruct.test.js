@@ -22,7 +22,7 @@ jest.mock('../../../../src/api.v2/helpers/pipeline/batch/terminateJobs');
 jest.mock('../../../../src/api.v2/helpers/pipeline/batch/listJobsToDelete');
 jest.mock('../../../../src/api.v2/helpers/pipeline/hooks/podCleanup');
 
-const { createQCPipeline, createGem2SPipeline, createSeuratObjectPipeline } = jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
+const { createQCPipeline, createGem2SPipeline, createSeuratPipeline } = jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),

@@ -195,7 +195,7 @@ const createSubsetPipeline = async (
 };
 
 
-const createSeuratObjectPipeline = async (experimentId, taskParams, authJWT) => {
+const createSeuratPipeline = async (experimentId, taskParams, authJWT) => {
   const context = {
     ...(await getGeneralPipelineContext(experimentId, SEURAT_PROCESS_NAME)),
     processingConfig: {},
@@ -232,6 +232,6 @@ module.exports = {
   createQCPipeline,
   createGem2SPipeline,
   createSubsetPipeline,
-  createSeuratObjectPipeline,
+  createSeuratPipeline,
   buildStateMachineDefinition,
 };

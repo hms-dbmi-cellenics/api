@@ -1,10 +1,11 @@
 const AWSXRay = require('aws-xray-sdk');
 
 const { startSeuratPipeline, handleSeuratResponse } = require('../helpers/pipeline/seurat');
-const { OK } = require('../../utils/responses');
+const { OK, MethodNotAllowedError } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parseSNSMessage');
 const snsTopics = require('../../config/snsTopics');
+const ExperimentParent = require('../model/ExperimentParent');
 
 const logger = getLogger('[SeuratController] - ');
 
@@ -13,8 +14,16 @@ const runSeurat = async (req, res) => {
 
   logger.log(`Starting seurat for experiment ${experimentId}`);
 
+  const { parentExperimentId = null } = await new ExperimentParent()
+    .find({ experiment_id: experimentId })
+    .first();
+
+  if (parentExperimentId) {
+    throw new MethodNotAllowedError(`Experiment ${experimentId} can't run seurat`);
+  }
+
   const newExecution = await
-  startSeuratPipeline(experimentId, req.body, req.headers.authorization);
+  startSeuratPipeline(experimentId, req.headers.authorization);
 
   logger.log(`Started seurat for experiment ${experimentId} successfully, `);
   logger.log('New executions data:');

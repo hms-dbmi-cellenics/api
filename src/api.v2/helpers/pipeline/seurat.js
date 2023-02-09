@@ -3,7 +3,7 @@ const AWSXRay = require('aws-xray-sdk');
 
 const constants = require('../../constants');
 const getPipelineStatus = require('./getPipelineStatus');
-const { createSeuratObjectPipeline } = require('./pipelineConstruct');
+const { createSeuratPipeline } = require('./pipelineConstruct');
 
 const Sample = require('../../model/Sample');
 const Experiment = require('../../model/Experiment');
@@ -131,19 +131,18 @@ const generateSeuratTaskParams = async (experimentId, rawSamples, authJWT) => {
   };
 };
 
-const startSeuratPipeline = async (experimentId, body, authJWT) => {
+const startSeuratPipeline = async (experimentId, authJWT) => {
   logger.log('Creating SEURAT params...');
 
   const samples = await new Sample().getSamples(experimentId);
 
   const currentSeuratParams = await getPipelineParams(experimentId, samples);
-
   const taskParams = await generateSeuratTaskParams(experimentId, samples, authJWT);
 
   const {
     stateMachineArn,
     executionArn,
-  } = await createSeuratObjectPipeline(experimentId, taskParams, authJWT);
+  } = await createSeuratPipeline(experimentId, taskParams, authJWT);
 
   logger.log('SEURAT params created.');
 
