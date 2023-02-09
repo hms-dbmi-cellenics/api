@@ -1449,6 +1449,8 @@ paths:
                     type: string
                 name:
                   type: string
+                toUserId:
+                  type: string
               additionalProperties: false
       responses:
         "200":
