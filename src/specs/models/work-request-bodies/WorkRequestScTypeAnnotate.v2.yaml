@@ -1,0 +1,37 @@
+title: ScTypeAnnotate
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the work. Must be `ScTypeAnnotate`.
+    pattern: ScTypeAnnotate
+  species:
+    type: string
+    description: The species type of the cells to perform the annotation on.
+    enum:
+      - human
+      - mouse
+  tissue:
+    type: string
+    description: The tissue type of the cells to perform the annotation on.
+    enum:
+      - 'Immune system'
+      - 'Pancreas'
+      - 'Liver'
+      - 'Eye'
+      - 'Kidney'
+      - 'Brain'
+      - 'Lung'
+      - 'Adrenal'
+      - 'Heart'
+      - 'Intestine'
+      - 'Muscle'
+      - 'Placenta'
+      - 'Spleen'
+      - 'Stomach'
+      - 'Thymus'
+required:
+  - name
+  - species
+  - tissue
+description: Work request body for the ScTypeAnnotate task.
