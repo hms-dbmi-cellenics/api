@@ -1,4 +1,5 @@
 const hash = require('object-hash');
+const config = require('../../../../config');
 const validateAndSubmitWork = require('../../../events/validateAndSubmitWork');
 const getExperimentBackendStatus = require('../../backendStatus/getExperimentBackendStatus');
 const getExtraDependencies = require('./getExtraDependencies');
@@ -29,7 +30,7 @@ const submitMarkerHeatmapWork = async (message) => {
 
   const extras = undefined;
   const extraDependencies = await getExtraDependencies(experimentId, body.name);
-  const workerVersion = 3;
+  const { workerVersion } = config;
   const ETagBody = {
     experimentId,
     body,

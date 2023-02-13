@@ -1,4 +1,5 @@
 const hash = require('object-hash');
+const config = require('../../../../config');
 const validateAndSubmitWork = require('../../../events/validateAndSubmitWork');
 const getExperimentBackendStatus = require('../../backendStatus/getExperimentBackendStatus');
 
@@ -13,7 +14,7 @@ const submitEmbeddingWork = async (message) => {
     { authJWT, config: { embeddingSettings: { method, methodSettings } } },
   } = message;
 
-  const config = methodSettings[method];
+  const embeddingConfig = methodSettings[method];
   // consider replacing with getPipelineStatus
   const backendStatus = await getExperimentBackendStatus(experimentId);
   const { pipeline: { startDate: qcPipelineStartDate } } = backendStatus;
@@ -23,14 +24,18 @@ const submitEmbeddingWork = async (message) => {
   const body = {
     name: 'GetEmbedding',
     type: method,
-    config,
+    embeddingConfig,
   };
 
+  // these values need to match explicitly the default ones defined in the UI at
+  // src/utils/work/fetchWork.js when calling the function generateETag if this file
+  // or the one in the UI has any default changed, the pre-computing of embeddings/marker heatmp
+  // will stop working as the ETags will no longer match.
   const cacheUniquenessKey = null;
-
   const extras = undefined;
   const extraDependencies = [];
-  const workerVersion = 3;
+  const workerVersion = { config };
+
   const ETagBody = {
     experimentId,
     body,
