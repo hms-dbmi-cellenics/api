@@ -250,7 +250,6 @@ const getPipelineStatus = async (experimentId, processName) => {
     error = checkError(events);
     const executedSteps = getStepsFromExecutionHistory(events);
 
-    // console.l
     const stateMachine = await stepFunctions.describeStateMachine({
       stateMachineArn,
     }).promise();
