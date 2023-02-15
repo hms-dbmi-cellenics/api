@@ -9,6 +9,7 @@ const getLogger = require('../../../utils/getLogger');
 const pipelineConstants = require('../../constants');
 const { getPipelineStepNames } = require('./pipelineConstruct/skeletons');
 const shouldGem2sRerun = require('./shouldGem2sRerun');
+const { qcStepNames, stepNameToBackendStepNames } = require('./pipelineConstruct/qcHelpers');
 
 const logger = getLogger();
 
@@ -20,7 +21,8 @@ const qcPipelineSteps = [
   'NumGenesVsNumUmisFilter',
   'DoubletScoresFilter',
   'DataIntegration',
-  'ConfigureEmbedding'];
+  'ConfigureEmbedding',
+];
 
 const gem2sPipelineSteps = [
   'DownloadGem',
@@ -29,7 +31,8 @@ const gem2sPipelineSteps = [
   'DoubletScores',
   'CreateSeurat',
   'PrepareExperiment',
-  'UploadToAWS'];
+  'UploadToAWS',
+];
 
 // pipelineStepNames are the names of pipeline steps for which we
 // want to report the progress back to the user
@@ -231,11 +234,10 @@ const getPipelineStatus = async (experimentId, processName) => {
   });
 
   let execution = {};
-  let completedSteps = [];
   let error = false;
-  let response;
+  let response = null;
 
-  const { executionArn = null, lastStatusResponse } = pipelineExecution;
+  const { executionArn = null, stateMachineArn = null, lastStatusResponse } = pipelineExecution;
   const shouldRerun = await shouldGem2sRerun(experimentId);
 
   try {
@@ -247,16 +249,21 @@ const getPipelineStatus = async (experimentId, processName) => {
 
     error = checkError(events);
     const executedSteps = getStepsFromExecutionHistory(events);
-    const lastExecuted = executedSteps[executedSteps.length - 1];
-    switch (processName) {
-      case pipelineConstants.QC_PROCESS_NAME:
-        completedSteps = qcPipelineSteps.slice(0, qcPipelineSteps.indexOf(lastExecuted) + 1);
-        break;
-      case pipelineConstants.GEM2S_PROCESS_NAME:
-        completedSteps = gem2sPipelineSteps.slice(0, gem2sPipelineSteps.indexOf(lastExecuted) + 1);
-        break;
-      default:
-        logger.error(`unknown process name ${processName}`);
+
+    // console.l
+    const stateMachine = await stepFunctions.describeStateMachine({
+      stateMachineArn,
+    }).promise();
+
+    let completedSteps = executedSteps;
+
+    if (processName === 'qc') {
+      const stepFunctionSteps = Object.keys(JSON.parse(stateMachine.definition).States);
+
+      const qcStepsCompletedPreviousRuns = _.difference(qcStepNames, stepFunctionSteps)
+        .map((rawStepName) => stepNameToBackendStepNames[rawStepName]);
+
+      completedSteps = qcStepsCompletedPreviousRuns.concat(executedSteps);
     }
 
     response = buildResponse(processName, execution, shouldRerun, error, completedSteps);

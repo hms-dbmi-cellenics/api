@@ -1,4 +1,4 @@
-
+const _ = require('lodash');
 const { fileExists } = require('../../s3/fileExists');
 const { FILTERED_CELLS } = require('../../../../config/bucketNames');
 
@@ -12,7 +12,7 @@ const filterToStepName = {
   configureEmbedding: 'ConfigureEmbedding',
 };
 
-const stepNames = [
+const qcStepNames = [
   'ClassifierFilterMap',
   'CellSizeDistributionFilterMap',
   'MitochondrialContentFilterMap',
@@ -22,6 +22,31 @@ const stepNames = [
   'ConfigureEmbedding',
 ];
 
+// TODO: Check in the code review
+// I did to get over the hurdle and have something working but:
+// we need to talk about why we are using
+// ClassifierFilter vs ClassifierFilterMap for the backend status
+// can we switch it over to ClassifierFilterMap?
+// would make stuff way easier
+const backendStepNamesToStepName = {
+  ClassifierFilter: 'ClassifierFilterMap',
+  CellSizeDistributionFilter: 'CellSizeDistributionFilterMap',
+  MitochondrialContentFilter: 'MitochondrialContentFilterMap',
+  NumGenesVsNumUmisFilter: 'NumGenesVsNumUmisFilterMap',
+  DoubletScoresFilter: 'DoubletScoresFilterMap',
+  DataIntegration: 'DataIntegration',
+  ConfigureEmbedding: 'ConfigureEmbedding',
+};
+
+const stepNameToBackendStepNames = {
+  ClassifierFilterMap: 'ClassifierFilter',
+  CellSizeDistributionFilterMap: 'CellSizeDistributionFilter',
+  MitochondrialContentFilterMap: 'MitochondrialContentFilter',
+  NumGenesVsNumUmisFilterMap: 'NumGenesVsNumUmisFilter',
+  DoubletScoresFilterMap: 'DoubletScoresFilter',
+  DataIntegration: 'DataIntegration',
+  ConfigureEmbedding: 'ConfigureEmbedding',
+};
 
 const qcStepsWithFilterSettings = [
   'cellSizeDistribution',
@@ -39,21 +64,33 @@ const hasFilteredCellIdsAvailable = async (experimentId) => (
 );
 // getFirstQCStep returns which is the first step of the QC to be run
 // processingConfigUpdates is not ordered
-const getFirstQCStep = async (experimentId, processingConfigUpdates) => {
-  let earliestStep = stepNames[0]; // normally first step
+const getFirstQCStep = async (experimentId, processingConfigUpdates, backendCompletedSteps) => {
+  let earliestChangedStep;
   let earliestIdx = 9999;
   processingConfigUpdates.forEach(({ name }) => {
     const stepName = filterToStepName[name];
-    const idx = stepNames.indexOf(stepName);
+    const idx = qcStepNames.indexOf(stepName);
     if (idx < earliestIdx) {
       earliestIdx = idx;
-      earliestStep = stepName;
+      earliestChangedStep = stepName;
     }
   });
 
+  const completedSteps = backendCompletedSteps.map(
+    (currentStep) => backendStepNamesToStepName[currentStep],
+  );
+
+  const pendingSteps = _.difference(qcStepNames, completedSteps);
+
+  // Choose the earliestStep by checking:
+  // if pendingSteps includes it, then pendingSteps has the earliest step
+  // if not, earliestChangedStep is the earliest step
+  const earliestStep = (!earliestChangedStep || pendingSteps.includes(earliestChangedStep))
+    ? pendingSteps[0] : earliestChangedStep;
+
   // if the earlist step to run is the first one, just return it without
   // further checks
-  if (earliestStep === stepNames[0]) {
+  if (earliestStep === qcStepNames[0]) {
     return earliestStep;
   }
   // if the first step to run is not the first in the pipeline (stepNames[0])
@@ -67,16 +104,18 @@ const getFirstQCStep = async (experimentId, processingConfigUpdates) => {
   }
 
 
-  return stepNames[0];
+  return qcStepNames[0];
 };
 
-const getQcStepsToRun = async (experimentId, processingConfigUpdates) => {
-  const firstStep = await getFirstQCStep(experimentId, processingConfigUpdates);
-  return stepNames.slice(stepNames.indexOf(firstStep));
+const getQcStepsToRun = async (experimentId, processingConfigUpdates, completedSteps) => {
+  const firstStep = await getFirstQCStep(experimentId, processingConfigUpdates, completedSteps);
+  return qcStepNames.slice(qcStepNames.indexOf(firstStep));
 };
 
 
 module.exports = {
   getQcStepsToRun,
   qcStepsWithFilterSettings,
+  qcStepNames,
+  stepNameToBackendStepNames,
 };
