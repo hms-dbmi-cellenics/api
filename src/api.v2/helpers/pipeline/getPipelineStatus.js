@@ -213,6 +213,28 @@ const getStepsFromExecutionHistory = (events) => {
   return shortestCompletedToReport || [];
 };
 
+const getCompletedSteps = async (processName, stateMachineArn, executedSteps, stepFunctions) => {
+  let completedSteps;
+
+  if (processName === 'qc') {
+    const stateMachine = await stepFunctions.describeStateMachine({
+      stateMachineArn,
+    }).promise();
+
+
+    const stepFunctionSteps = Object.keys(JSON.parse(stateMachine.definition).States);
+
+    const qcStepsCompletedPreviousRuns = _.difference(qcStepNames, stepFunctionSteps)
+      .map((rawStepName) => stepNameToBackendStepNames[rawStepName]);
+
+    completedSteps = qcStepsCompletedPreviousRuns.concat(executedSteps);
+  } if (processName === 'gem2s') {
+    completedSteps = executedSteps;
+  }
+
+  return completedSteps;
+};
+
 /*
      * Return `completedSteps` of the state machine (SM) associated to the `experimentId`'s pipeline
      * The code assumes that
@@ -246,24 +268,13 @@ const getPipelineStatus = async (experimentId, processName) => {
     }).promise();
 
     const events = await getExecutionHistory(stepFunctions, executionArn);
-
     error = checkError(events);
+
     const executedSteps = getStepsFromExecutionHistory(events);
 
-    const stateMachine = await stepFunctions.describeStateMachine({
-      stateMachineArn,
-    }).promise();
-
-    let completedSteps = executedSteps;
-
-    if (processName === 'qc') {
-      const stepFunctionSteps = Object.keys(JSON.parse(stateMachine.definition).States);
-
-      const qcStepsCompletedPreviousRuns = _.difference(qcStepNames, stepFunctionSteps)
-        .map((rawStepName) => stepNameToBackendStepNames[rawStepName]);
-
-      completedSteps = qcStepsCompletedPreviousRuns.concat(executedSteps);
-    }
+    const completedSteps = await getCompletedSteps(
+      processName, stateMachineArn, executedSteps, stepFunctions,
+    );
 
     response = buildResponse(processName, execution, shouldRerun, error, completedSteps);
   } catch (e) {
