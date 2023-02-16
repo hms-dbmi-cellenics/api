@@ -7,7 +7,7 @@ const pipelineConstants = require('../../../../src/api.v2/constants');
 const config = require('../../../../src/config');
 
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
-const { qcStepNames } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/qcHelpers');
+const { qcStepNames } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/constructors/qcStepNameTranslations');
 
 const experimentExecutionInstance = ExperimentExecution();
 

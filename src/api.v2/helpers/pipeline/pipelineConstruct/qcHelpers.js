@@ -1,52 +1,7 @@
 const _ = require('lodash');
 const { fileExists } = require('../../s3/fileExists');
 const { FILTERED_CELLS } = require('../../../../config/bucketNames');
-
-const filterToStepName = {
-  classifier: 'ClassifierFilterMap',
-  cellSizeDistribution: 'CellSizeDistributionFilterMap',
-  mitochondrialContent: 'MitochondrialContentFilterMap',
-  numGenesVsNumUmis: 'NumGenesVsNumUmisFilterMap',
-  doubletScores: 'DoubletScoresFilterMap',
-  dataIntegration: 'DataIntegration',
-  configureEmbedding: 'ConfigureEmbedding',
-};
-
-const qcStepNames = [
-  'ClassifierFilterMap',
-  'CellSizeDistributionFilterMap',
-  'MitochondrialContentFilterMap',
-  'NumGenesVsNumUmisFilterMap',
-  'DoubletScoresFilterMap',
-  'DataIntegration',
-  'ConfigureEmbedding',
-];
-
-// TODO: Check in the code review
-// I did to get over the hurdle and have something working but:
-// we need to talk about why we are using
-// ClassifierFilter vs ClassifierFilterMap for the backend status
-// can we switch it over to ClassifierFilterMap?
-// would make stuff way easier
-const backendStepNamesToStepName = {
-  ClassifierFilter: 'ClassifierFilterMap',
-  CellSizeDistributionFilter: 'CellSizeDistributionFilterMap',
-  MitochondrialContentFilter: 'MitochondrialContentFilterMap',
-  NumGenesVsNumUmisFilter: 'NumGenesVsNumUmisFilterMap',
-  DoubletScoresFilter: 'DoubletScoresFilterMap',
-  DataIntegration: 'DataIntegration',
-  ConfigureEmbedding: 'ConfigureEmbedding',
-};
-
-const stepNameToBackendStepNames = {
-  ClassifierFilterMap: 'ClassifierFilter',
-  CellSizeDistributionFilterMap: 'CellSizeDistributionFilter',
-  MitochondrialContentFilterMap: 'MitochondrialContentFilter',
-  NumGenesVsNumUmisFilterMap: 'NumGenesVsNumUmisFilter',
-  DoubletScoresFilterMap: 'DoubletScoresFilter',
-  DataIntegration: 'DataIntegration',
-  ConfigureEmbedding: 'ConfigureEmbedding',
-};
+const { filterToStepName, qcStepNames, backendStepNamesToStepName } = require('./constructors/qcStepNameTranslations');
 
 const qcStepsWithFilterSettings = [
   'cellSizeDistribution',
@@ -112,10 +67,7 @@ const getQcStepsToRun = async (experimentId, processingConfigUpdates, completedS
   return qcStepNames.slice(qcStepNames.indexOf(firstStep));
 };
 
-
 module.exports = {
   getQcStepsToRun,
   qcStepsWithFilterSettings,
-  qcStepNames,
-  stepNameToBackendStepNames,
 };

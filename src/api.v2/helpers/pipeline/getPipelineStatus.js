@@ -9,7 +9,7 @@ const getLogger = require('../../../utils/getLogger');
 const pipelineConstants = require('../../constants');
 const { getPipelineStepNames } = require('./pipelineConstruct/skeletons');
 const shouldGem2sRerun = require('./shouldGem2sRerun');
-const { qcStepNames, stepNameToBackendStepNames } = require('./pipelineConstruct/qcHelpers');
+const { qcStepNames, stepNameToBackendStepNames } = require('./pipelineConstruct/constructors/qcStepNameTranslations');
 
 const logger = getLogger();
 
