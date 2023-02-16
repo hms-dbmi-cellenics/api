@@ -503,7 +503,7 @@ describe('pipelineStatus', () => {
     );
   });
 
-  it('handles properly a qc sql record', async () => {
+  it('returns a full qc run from sql correctly', async () => {
     mockDescribeStateMachine.mockImplementation((params, callback) => {
       const stateMachine = {
         definition: JSON.stringify({
@@ -527,6 +527,60 @@ describe('pipelineStatus', () => {
         status: constants.SUCCEEDED,
         error: false,
         completedSteps: [],
+        shouldRerun: true,
+      },
+    };
+
+    expect(status).toEqual(expectedStatus);
+
+    expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: SUCCEEDED_ID });
+
+    // sql last_status_response is updated because it differs
+    expect(experimentExecutionInstance.update).toHaveBeenCalledWith(
+      { experiment_id: SUCCEEDED_ID, pipeline_type: QC_PROCESS_NAME },
+      { last_status_response: expectedStatus },
+    );
+  });
+
+  it('returns a partial qc run from sql correctly', async () => {
+    // If only these 3 steps were scheduled for this state machine,
+    // The not shceduled steps were already completed from a previous run
+    const scheduledSteps = [
+      'DoubletScoresFilterMap',
+      'DataIntegration',
+      'ConfigureEmbedding',
+    ];
+
+    const previousRunCompletedSteps = [
+      'ClassifierFilter',
+      'CellSizeDistributionFilter',
+      'MitochondrialContentFilter',
+      'NumGenesVsNumUmisFilter',
+    ];
+
+    mockDescribeStateMachine.mockImplementation((params, callback) => {
+      const stateMachine = {
+        definition: JSON.stringify({
+          States: scheduledSteps.reduce((acum, current) => {
+            // eslint-disable-next-line no-param-reassign
+            acum[current] = {};
+            return acum;
+          }, {}),
+        }),
+      };
+
+      callback(null, stateMachine);
+    });
+
+    const status = await getPipelineStatus(SUCCEEDED_ID, QC_PROCESS_NAME);
+
+    const expectedStatus = {
+      [QC_PROCESS_NAME]: {
+        startDate: new Date(0),
+        stopDate: new Date(0),
+        status: constants.SUCCEEDED,
+        error: false,
+        completedSteps: previousRunCompletedSteps,
         shouldRerun: true,
       },
     };
