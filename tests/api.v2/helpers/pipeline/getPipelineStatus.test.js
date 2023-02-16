@@ -543,14 +543,17 @@ describe('pipelineStatus', () => {
   });
 
   it('returns a partial qc run from sql correctly', async () => {
-    // If only these 3 steps were scheduled for this state machine,
-    // The not shceduled steps were already completed from a previous run
+    // Only these 3 steps were scheduled for this state machine,
+    // The not scheduled steps were already completed from a previous run
     const scheduledSteps = [
       'DoubletScoresFilterMap',
       'DataIntegration',
       'ConfigureEmbedding',
     ];
 
+    // These are the steps that were already completed,
+    // we need to check that these are marked as "completed" even
+    // if they are not completed in this state machine
     const previousRunCompletedSteps = [
       'ClassifierFilter',
       'CellSizeDistributionFilter',
