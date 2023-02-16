@@ -7,6 +7,7 @@ const pipelineConstants = require('../../../../src/api.v2/constants');
 const config = require('../../../../src/config');
 
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
+const { qcStepNames } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/qcHelpers');
 
 const experimentExecutionInstance = ExperimentExecution();
 
@@ -293,6 +294,11 @@ describe('pipelineStatus', () => {
     callback(null, params);
   });
 
+  const mockDescribeStateMachine = jest.fn();
+  AWSMock.mock('StepFunctions', 'describeStateMachine', (params, callback) => {
+    mockDescribeStateMachine(params, callback);
+  });
+
   AWSMock.mock('StepFunctions', 'getExecutionHistory', (params, callback) => {
     callback(null, { events: [] });
   });
@@ -498,6 +504,20 @@ describe('pipelineStatus', () => {
   });
 
   it('handles properly a qc sql record', async () => {
+    mockDescribeStateMachine.mockImplementation((params, callback) => {
+      const stateMachine = {
+        definition: JSON.stringify({
+          States: qcStepNames.reduce((acum, current) => {
+            // eslint-disable-next-line no-param-reassign
+            acum[current] = {};
+            return acum;
+          }, {}),
+        }),
+      };
+
+      callback(null, stateMachine);
+    });
+
     const status = await getPipelineStatus(SUCCEEDED_ID, QC_PROCESS_NAME);
 
     const expectedStatus = {
