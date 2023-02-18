@@ -1,9 +1,7 @@
-const hash = require('object-hash');
 const config = require('../../../../config');
 const validateAndSubmitWork = require('../../../events/validateAndSubmitWork');
 const getExperimentBackendStatus = require('../../backendStatus/getExperimentBackendStatus');
-
-const createObjectHash = (object) => hash.MD5(object);
+const createObjectHash = require('../createObjectHash');
 
 
 const submitEmbeddingWork = async (message) => {
@@ -15,7 +13,6 @@ const submitEmbeddingWork = async (message) => {
   } = message;
 
   const embeddingConfig = methodSettings[method];
-  // consider replacing with getPipelineStatus
   const backendStatus = await getExperimentBackendStatus(experimentId);
   const { pipeline: { startDate: qcPipelineStartDate } } = backendStatus;
 
@@ -24,7 +21,7 @@ const submitEmbeddingWork = async (message) => {
   const body = {
     name: 'GetEmbedding',
     type: method,
-    embeddingConfig,
+    config: embeddingConfig,
   };
 
   // these values need to match explicitly the default ones defined in the UI at
@@ -34,7 +31,7 @@ const submitEmbeddingWork = async (message) => {
   const cacheUniquenessKey = null;
   const extras = undefined;
   const extraDependencies = [];
-  const workerVersion = { config };
+  const { workerVersion } = config;
 
   const ETagBody = {
     experimentId,
@@ -63,6 +60,9 @@ const submitEmbeddingWork = async (message) => {
   };
 
   await validateAndSubmitWork(request);
+
+  // explicitly return ETag to make it stand out more in tests and so harder to break
+  return ETag;
 };
 
 module.exports = submitEmbeddingWork;

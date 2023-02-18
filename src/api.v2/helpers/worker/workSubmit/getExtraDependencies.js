@@ -1,14 +1,8 @@
-// import workerVersions from 'utils/work/workerVersions';
-
 const workerVersions = require('../workerVersions');
 
-const Experiment = require('../../../model/Experiment');
-
-const getClusteringSettings = async (experimentId) => {
-  const processingConfig = await new Experiment().getProcessingConfig(experimentId);
-
-  console.log('processingConfig: ', processingConfig);
-  const { clusteringSettings } = processingConfig.configureEmbedding;
+const getClusteringSettings = async (message) => {
+  console.log('processingConfig: ', message);
+  const { input: { config: { clusteringSettings } } } = message;
 
 
   return clusteringSettings;
@@ -33,10 +27,12 @@ const dependencyGetters = {
   GetNormalizedExpression: [getClusteringSettings],
 };
 
-const getExtraDependencies = async (experimentId, name, dispatch, getState) => {
+// message is assumed to be the configureEmbedding payload received
+// from the pipeline containing clutering & embedding settings
+const getExtraDependencies = async (name, message) => {
   const dependencies = await Promise.all(
     dependencyGetters[name].map(
-      (dependencyGetter) => dependencyGetter(experimentId, dispatch, getState),
+      (dependencyGetter) => dependencyGetter(message),
     ),
   );
 

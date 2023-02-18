@@ -1,10 +1,8 @@
-const hash = require('object-hash');
+const createObjectHash = require('../createObjectHash');
 const config = require('../../../../config');
 const validateAndSubmitWork = require('../../../events/validateAndSubmitWork');
 const getExperimentBackendStatus = require('../../backendStatus/getExperimentBackendStatus');
 const getExtraDependencies = require('./getExtraDependencies');
-
-const createObjectHash = (object) => hash.MD5(object);
 
 
 const submitMarkerHeatmapWork = async (message) => {
@@ -29,7 +27,7 @@ const submitMarkerHeatmapWork = async (message) => {
   const cacheUniquenessKey = null;
 
   const extras = undefined;
-  const extraDependencies = await getExtraDependencies(experimentId, body.name);
+  const extraDependencies = await getExtraDependencies(body.name, message);
   const { workerVersion } = config;
   const ETagBody = {
     experimentId,
@@ -58,6 +56,9 @@ const submitMarkerHeatmapWork = async (message) => {
   };
 
   await validateAndSubmitWork(request);
+
+  // explicitly return ETag to make it stand out more in tests and so harder to break
+  return ETag;
 };
 
 module.exports = submitMarkerHeatmapWork;

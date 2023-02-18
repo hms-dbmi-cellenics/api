@@ -74,7 +74,7 @@ const config = {
   // Used for Batch reporting
   datadogApiKey: process.env.DD_API_KEY || '',
   datadogAppKey: process.env.DD_APP_KEY || '',
-  workerVersion: 3,
+  workerVersion: 3, // needs to match workerVersion in UI
 };
 
 // We are in permanent develop staging environment

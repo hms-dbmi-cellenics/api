@@ -202,6 +202,7 @@ class Experiment extends BasicModel {
     }
   }
 
+
   async getProcessingConfig(experimentId) {
     const result = await this.findOne({ id: experimentId });
     if (_.isEmpty(result)) {
