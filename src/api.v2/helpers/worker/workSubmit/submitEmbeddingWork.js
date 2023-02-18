@@ -5,8 +5,6 @@ const createObjectHash = require('../createObjectHash');
 
 
 const submitEmbeddingWork = async (message) => {
-  console.log('payload ', message);
-
   const {
     experimentId, input:
     { authJWT, config: { embeddingSettings: { method, methodSettings } } },
@@ -17,7 +15,6 @@ const submitEmbeddingWork = async (message) => {
   const { pipeline: { startDate: qcPipelineStartDate } } = backendStatus;
 
 
-  console.log(`qcPipelineStartDate: ${qcPipelineStartDate} ${typeof (qcPipelineStartDate)}`);
   const body = {
     name: 'GetEmbedding',
     type: method,
@@ -43,10 +40,7 @@ const submitEmbeddingWork = async (message) => {
     extraDependencies,
   };
 
-  console.log('embedding ETagBody: ', ETagBody);
   const ETag = createObjectHash(ETagBody);
-  console.log('submitEmbeddingWork: embedding Etag ', ETag);
-
   const now = new Date();
   const timeout = 15 * 60 * 1000; // 15min in ms
   const timeoutDate = new Date(now.getTime() + timeout);

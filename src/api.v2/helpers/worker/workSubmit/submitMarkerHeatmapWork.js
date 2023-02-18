@@ -6,14 +6,9 @@ const getExtraDependencies = require('./getExtraDependencies');
 
 
 const submitMarkerHeatmapWork = async (message) => {
-  console.log('payload ', message);
-
   const { experimentId, input: { authJWT } } = message;
 
-  // const { resolution } = methodSettings[method];
-  // consider replacing with getPipelineStatus
   const backendStatus = await getExperimentBackendStatus(experimentId);
-  // console.log('backendStatus: ', backendStatus);
   const { pipeline: { startDate: qcPipelineStartDate } } = backendStatus;
   const numGenes = 5;
   const selectedCellSet = 'louvain';
@@ -39,10 +34,7 @@ const submitMarkerHeatmapWork = async (message) => {
     extraDependencies,
   };
 
-  console.log('marker heatmap ETagBody: ', ETagBody);
   const ETag = createObjectHash(ETagBody);
-  console.log('submitEmbeddingWork: marker heatmap Etag ', ETag);
-
   const now = new Date();
   const timeout = 15 * 60 * 1000; // 15min in ms
   const timeoutDate = new Date(now.getTime() + timeout);
