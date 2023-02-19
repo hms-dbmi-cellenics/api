@@ -34,6 +34,7 @@ const submitMarkerHeatmapWork = async (message) => {
     extraDependencies,
   };
 
+
   const ETag = createObjectHash(ETagBody);
   const now = new Date();
   const timeout = 15 * 60 * 1000; // 15min in ms
@@ -49,6 +50,8 @@ const submitMarkerHeatmapWork = async (message) => {
 
   await validateAndSubmitWork(request);
 
+  console.log('markerHeatmap - body: ', ETagBody);
+  console.log('markerHeatmap - etag: ', ETag);
   // explicitly return ETag to make it stand out more in tests and so harder to break
   return ETag;
 };
