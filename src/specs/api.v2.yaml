@@ -301,7 +301,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ExperimentsList"
+                $ref: "#/components/schemas/ExampleExperimentsList"
         "400":
           description: Bad Request
           content:
@@ -681,7 +681,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
-  
   "/experiments/{experimentId}/samples/{sampleId}":
     patch:
       summary: Patch sample
@@ -1449,6 +1448,8 @@ paths:
                     type: string
                 name:
                   type: string
+                toUserId:
+                  type: string
               additionalProperties: false
       responses:
         "200":
@@ -2148,6 +2149,8 @@ components:
       $ref: ./models/experiment-bodies/ProcessingConfig.v2.yaml
     ExperimentsList:
       $ref: ./models/experiment-bodies/ExperimentsList.v2.yaml
+    ExampleExperimentsList:
+      $ref: ./models/experiment-bodies/ExampleExperimentsList.v2.yaml
     CreateSamples:
       $ref: ./models/samples-bodies/CreateSamples.v2.yaml
     GetSamples:

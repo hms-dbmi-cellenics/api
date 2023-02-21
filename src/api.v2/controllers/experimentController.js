@@ -4,13 +4,14 @@ const Experiment = require('../model/Experiment');
 const UserAccess = require('../model/UserAccess');
 
 const getLogger = require('../../utils/getLogger');
-const { OK, NotFoundError } = require('../../utils/responses');
+const { OK, NotFoundError, UnauthorizedError } = require('../../utils/responses');
 const sqlClient = require('../../sql/sqlClient');
 
 const getExperimentBackendStatus = require('../helpers/backendStatus/getExperimentBackendStatus');
 const Sample = require('../model/Sample');
 const invalidatePlotsForEvent = require('../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
 const events = require('../../utils/plotConfigInvalidation/events');
+const getAdminSub = require('../../utils/getAdminSub');
 
 const logger = getLogger('[ExperimentController] - ');
 
@@ -155,15 +156,21 @@ const cloneExperiment = async (req, res) => {
     const { samplesOrder } = await new Experiment().findById(experimentId).first();
     return samplesOrder;
   };
-
+  const userId = req.user.sub;
   const {
     params: { experimentId: fromExperimentId },
     body: {
       samplesToCloneIds = await getAllSampleIds(fromExperimentId),
       name = null,
+      toUserId = userId,
     },
-    user: { sub: userId },
   } = req;
+
+  const adminSub = await getAdminSub();
+
+  if (toUserId !== userId && userId !== adminSub) {
+    throw new UnauthorizedError(`User ${userId} cannot clone experiments for other users.`);
+  }
 
   logger.log(`Creating experiment to clone ${fromExperimentId} to`);
 
@@ -171,7 +178,7 @@ const cloneExperiment = async (req, res) => {
 
   await sqlClient.get().transaction(async (trx) => {
     toExperimentId = await new Experiment(trx).createCopy(fromExperimentId, name);
-    await new UserAccess(trx).createNewExperimentPermissions(userId, toExperimentId);
+    await new UserAccess(trx).createNewExperimentPermissions(toUserId, toExperimentId);
   });
 
   logger.log(`Cloning experiment samples from experiment ${fromExperimentId} into ${toExperimentId}`);

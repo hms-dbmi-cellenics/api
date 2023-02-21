@@ -3,6 +3,7 @@ description: Valid work request bodies.
 oneOf:
   - $ref: ./work-request-bodies/WorkRequestGetEmbedding.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestClusterCells.v2.yaml
+  - $ref: ./work-request-bodies/WorkRequestScTypeAnnotate.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestDifferentialExpression.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestListGenes.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestGetBackgroundExpressedGenes.v2.yaml
