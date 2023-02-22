@@ -20,14 +20,14 @@ const hasFilteredCellIdsAvailable = async (experimentId) => (
 // getFirstQCStep returns which is the first step of the QC to be run
 // processingConfigUpdates is not ordered
 const getFirstQCStep = async (experimentId, processingConfigUpdates, backendCompletedSteps) => {
-  let earliestChangedStep;
+  let firstChangedStep;
   let earliestIdx = 9999;
   processingConfigUpdates.forEach(({ name }) => {
     const stepName = filterToStepName[name];
     const idx = qcStepNames.indexOf(stepName);
     if (idx < earliestIdx) {
       earliestIdx = idx;
-      earliestChangedStep = stepName;
+      firstChangedStep = stepName;
     }
   });
 
@@ -40,8 +40,8 @@ const getFirstQCStep = async (experimentId, processingConfigUpdates, backendComp
   // Choose the earliestStep by checking:
   // if pendingSteps includes it, then pendingSteps has the earliest step
   // if not, earliestChangedStep is the earliest step
-  const firstStep = (!earliestChangedStep || pendingSteps.includes(earliestChangedStep))
-    ? pendingSteps[0] : earliestChangedStep;
+  const firstStep = (!firstChangedStep || pendingSteps.includes(firstChangedStep))
+    ? pendingSteps[0] : firstChangedStep;
 
   // if the earlist step to run is the first one, just return it without
   // further checks
