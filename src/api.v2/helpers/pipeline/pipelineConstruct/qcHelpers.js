@@ -35,15 +35,19 @@ const getFirstQCStep = async (experimentId, processingConfigUpdates, backendComp
     (currentStep) => backendStepNamesToStepName[currentStep],
   );
 
-  const pendingSteps = _.difference(qcStepNames, completedSteps);
+  const notCompletedSteps = _.difference(qcStepNames, completedSteps);
 
-  // Choose the earliestStep by checking:
-  // if pendingSteps includes it, then pendingSteps has the earliest step
-  // if not, earliestChangedStep is the earliest step
-  const firstStep = (!firstChangedStep || pendingSteps.includes(firstChangedStep))
-    ? pendingSteps[0] : firstChangedStep;
+  // notCompletedSteps: the steps that have not been run for the currently persisted qc config
+  // firstChangedStep: the first step that introduces a new change to the persisted qc config
+  // We need to rerun all the changed steps and all the notCompletedSteps,
+  // so start from whichever is earlier: firstChangedStep or first notCompletedStep
+  // We do this by checking notCompletedSteps:
+  // - if it includes firstChangedStep then we can start from notCompletedStep[0]
+  // - if it doesn't, then firstChangedStep is earlier, so start from it
+  const firstStep = (!firstChangedStep || notCompletedSteps.includes(firstChangedStep))
+    ? notCompletedSteps[0] : firstChangedStep;
 
-  // if the earlist step to run is the first one, just return it without
+  // if firstStep is the first out of all of qc, just return it without
   // further checks
   if (firstStep === qcStepNames[0]) {
     return firstStep;
