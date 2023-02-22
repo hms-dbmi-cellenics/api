@@ -222,7 +222,8 @@ const getStepsFromExecutionHistory = (events) => {
  * @param {*} stepFunctions stepFunctions client
  * @returns array of steps that can be considered completed
  *
- * If processName = gem2s, it returns executedSteps because we don't support partial reruns
+ * If processName = gem2s, it returns executedSteps because we don't support partial reruns so
+ * we can always assume all executedSteps are all completed steps
  *
  * If processName = qc: it returns lastRunExecutedSteps + stepsCompletedInPreviousRuns
  * stepsCompletedInPreviousRuns is all the steps that weren't scheduled to run in the last run
