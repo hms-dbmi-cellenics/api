@@ -228,7 +228,7 @@ const getStepsFromExecutionHistory = (events) => {
  * If processName = qc: it returns lastRunExecutedSteps + stepsCompletedInPreviousRuns
  * stepsCompletedInPreviousRuns is all the steps that weren't scheduled to run in the last run
  * The only reason we don't schedule steps is when we consider them completed,
- * so we can still consider them completed
+ * so we can keep considering them completed for future runs as well
  */
 const getCompletedSteps = async (
   processName, stateMachineArn, lastRunExecutedSteps, stepFunctions,
