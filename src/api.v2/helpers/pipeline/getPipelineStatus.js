@@ -213,7 +213,25 @@ const getStepsFromExecutionHistory = (events) => {
   return shortestCompletedToReport || [];
 };
 
-const getCompletedSteps = async (processName, stateMachineArn, executedSteps, stepFunctions) => {
+/**
+ *
+ * @param {*} processName The name of the pipeline to get the steps for,
+ * currently either qc or gem2s
+ * @param {*} stateMachineArn
+ * @param {*} lastRunExecutedSteps The steps that were executed in the last run
+ * @param {*} stepFunctions stepFunctions client
+ * @returns array of steps that can be considered completed
+ *
+ * If processName = gem2s, it returns executedSteps because we don't support partial reruns
+ *
+ * If processName = qc: it returns lastRunExecutedSteps + stepsCompletedInPreviousRuns
+ * stepsCompletedInPreviousRuns is all the steps that weren't scheduled to run in the last run
+ * The only reason we don't schedule steps is when we consider them completed,
+ * so we can still consider them completed
+ */
+const getCompletedSteps = async (
+  processName, stateMachineArn, lastRunExecutedSteps, stepFunctions,
+) => {
   let completedSteps;
 
   if (processName === 'qc') {
@@ -221,15 +239,19 @@ const getCompletedSteps = async (processName, stateMachineArn, executedSteps, st
       stateMachineArn,
     }).promise();
 
+    // Get all the steps that were scheduled to be run in the last execution
+    const lastScheduledSteps = Object.keys(JSON.parse(stateMachine.definition).States);
 
-    const stepFunctionSteps = Object.keys(JSON.parse(stateMachine.definition).States);
-
-    const qcStepsCompletedPreviousRuns = _.difference(qcStepNames, stepFunctionSteps)
+    // Remove from all qc steps the ones that were scheduled for execution in the last run
+    // We are left with all the qc steps that last run didn't consider necessary to rerun
+    // This means that these steps were considered completed in the last run so
+    // we can still consider them completed
+    const stepsCompletedInPreviousRuns = _.difference(qcStepNames, lastScheduledSteps)
       .map((rawStepName) => stepNameToBackendStepNames[rawStepName]);
 
-    completedSteps = qcStepsCompletedPreviousRuns.concat(executedSteps);
+    completedSteps = stepsCompletedInPreviousRuns.concat(lastRunExecutedSteps);
   } if (processName === 'gem2s') {
-    completedSteps = executedSteps;
+    completedSteps = lastRunExecutedSteps;
   }
 
   return completedSteps;
