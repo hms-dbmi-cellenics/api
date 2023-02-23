@@ -80,6 +80,14 @@ Array [
       "basis",
     ],
   ],
+  Array [
+    "mockExperimentId",
+    "trajectoryAnalysisMain",
+    Array [
+      "selectedNodes",
+      "selectedCellSets",
+    ],
+  ],
 ]
 `;
 
@@ -90,6 +98,7 @@ Array [
     "trajectoryAnalysisMain",
     Array [
       "selectedNodes",
+      "selectedCellSets",
     ],
   ],
 ]
