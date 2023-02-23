@@ -1,15 +1,16 @@
 const pipelineConstants = require('../../../constants');
 
+const date = new Date(1458619200000);
 const responseTemplates = {
   gem2s: {
     completedSteps: [],
-    startDate: null,
+    startDate: date,
     status: pipelineConstants.SUCCEEDED,
     stopDate: null,
   },
   qc: {
     completedSteps: [],
-    startDate: null,
+    startDate: date,
     status: pipelineConstants.SUCCEEDED,
     stopDate: null,
   },
