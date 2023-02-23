@@ -85,7 +85,7 @@ Array [
     "trajectoryAnalysisMain",
     Array [
       "selectedNodes",
-      "cellSets",
+      "selectedCellSets",
     ],
   ],
 ]
@@ -98,7 +98,7 @@ Array [
     "trajectoryAnalysisMain",
     Array [
       "selectedNodes",
-      "cellSets",
+      "selectedCellSets",
     ],
   ],
 ]
