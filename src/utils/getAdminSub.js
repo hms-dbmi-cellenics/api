@@ -23,7 +23,7 @@ const getAdminSub = async () => {
         MessageAction: 'SUPPRESS',
         UserAttributes: [
           { Name: 'email', Value: adminEmail },
-          { Name: 'name', Value: 'Biomage Admin' },
+          { Name: 'name', Value: 'Cellenics Admin' },
           { Name: 'email_verified', Value: 'true' },
         ],
       }).promise();
