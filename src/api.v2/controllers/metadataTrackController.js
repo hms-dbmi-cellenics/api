@@ -139,4 +139,5 @@ module.exports = {
   deleteMetadataTrack,
   patchValueForSample,
   createMetadataFromFile,
+  parseMetadataFromTSV,
 };
