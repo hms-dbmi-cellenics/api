@@ -85,13 +85,16 @@ const parseMetadataFromTSV = (data, sampleNameToId) => {
 
   const result = data.trim().split('\n').map((line, index) => {
     // check that there are 3 elements per line
-    const elements = line.split('\t');
+    const elements = line.trim().split('\t');
     if (elements.length !== 3) {
       invalidLines.push(index + 1);
     }
 
     // check that the sample name exists in the experiment
-    const [sampleName, metadataKey, metadataValue] = elements;
+    const sampleName = elements[0];
+    const metadataKey = elements[1].replace(/\s+/, '_');
+    const metadataValue = elements[2];
+
     if (!(sampleName in sampleNameToId)) {
       invalidSamples.add(sampleName);
     }
