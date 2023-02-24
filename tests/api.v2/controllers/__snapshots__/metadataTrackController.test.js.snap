@@ -18,17 +18,17 @@ Array [
     "sampleId": "mockSample3",
   },
   Object {
-    "metadataKey": "track_1",
+    "metadataKey": "track_2",
     "metadataValue": "value 1",
     "sampleId": "mockSample1",
   },
   Object {
-    "metadataKey": "track_1",
+    "metadataKey": "track_2",
     "metadataValue": "value 2",
     "sampleId": "mockSample2",
   },
   Object {
-    "metadataKey": "track_1",
+    "metadataKey": "track_2",
     "metadataValue": "value 3",
     "sampleId": "mockSample3",
   },
@@ -69,6 +69,8 @@ Array [
   },
 ]
 `;
+
+exports[`metadataTrackController parseMetadataFromTSV throws error if there are duplicated input 1`] = `"Multiple assignment on lines: 1 & 2, 4 & 5"`;
 
 exports[`metadataTrackController parseMetadataFromTSV throws error if there are invalid lines 1`] = `"Invalid lines: 1, 4, 5"`;
 

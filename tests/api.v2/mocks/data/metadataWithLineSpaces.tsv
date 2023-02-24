@@ -3,6 +3,6 @@
 sample 1	track_1	value 1    
 sample 2	track_1	value 2		 
 sample 3	track_1	value 3 	
-	sample 1	track_1	value 1
-   sample 2	track_1	value 2
- sample 3	track_1	value 3
+	sample 1	track_2	value 1
+   sample 2	track_2	value 2
+ sample 3	track_2	value 3

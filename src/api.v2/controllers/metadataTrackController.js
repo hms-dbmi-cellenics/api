@@ -82,6 +82,9 @@ const patchValueForSample = async (req, res) => {
 const parseMetadataFromTSV = (data, sampleNameToId) => {
   const invalidLines = [];
   const invalidSamples = new Set();
+  const invalidDuplicates = [];
+
+  const sampleMetadataPair = {};
 
   const result = data.trim().split('\n').map((line, index) => {
     // check that there are 3 elements per line
@@ -90,13 +93,22 @@ const parseMetadataFromTSV = (data, sampleNameToId) => {
       invalidLines.push(index + 1);
     }
 
-    // check that the sample name exists in the experiment
     const sampleName = elements[0];
     const metadataKey = elements[1].replace(/\s+/, '_');
     const metadataValue = elements[2];
 
+    // check that the sample name exists in the experiment
     if (!(sampleName in sampleNameToId)) {
       invalidSamples.add(sampleName);
+    }
+
+    // Check for duplicates
+    if (sampleMetadataPair[`${sampleName}@${metadataKey}`] === undefined) {
+      sampleMetadataPair[`${sampleName}@${metadataKey}`] = index;
+    } else {
+      // Show metadata track with unreplaced value
+      const duplicateLine = sampleMetadataPair[`${sampleName}@${metadataKey}`];
+      invalidDuplicates.push(`${duplicateLine} & ${index}`);
     }
 
     return { sampleId: sampleNameToId[sampleName], metadataKey, metadataValue };
@@ -105,6 +117,7 @@ const parseMetadataFromTSV = (data, sampleNameToId) => {
   const errors = [];
   if (invalidSamples.size > 0) errors.push(`Invalid sample names: ${Array.from(invalidSamples).join(', ')}`);
   if (invalidLines.length > 0) errors.push(`Invalid lines: ${invalidLines.join(', ')}`);
+  if (invalidDuplicates.length > 0) errors.push(`Multiple assignment on lines: ${invalidDuplicates.join(', ')}`);
   if (errors.length > 0) throw new BadRequestError(errors.join('\n'));
 
   return result;

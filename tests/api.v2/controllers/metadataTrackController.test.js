@@ -246,6 +246,14 @@ describe('metadataTrackController', () => {
     }).toThrowErrorMatchingSnapshot();
   });
 
+  it('parseMetadataFromTSV throws error if there are duplicated input', () => {
+    const mockData = fs.readFileSync(path.join(__dirname, '../mocks/data/metadataInvalidDuplicates.tsv'), { encoding: 'utf-8' });
+
+    expect(() => {
+      metadataTrackController.parseMetadataFromTSV(mockData, mockMetadataSampleNameToId);
+    }).toThrowErrorMatchingSnapshot();
+  });
+
   it('parseMetadataFromTSV tolerates spaces after a line', () => {
     const mockData = fs.readFileSync(path.join(__dirname, '../mocks/data/metadataWithTrackSpaces.tsv'), { encoding: 'utf-8' });
     const result = metadataTrackController.parseMetadataFromTSV(
