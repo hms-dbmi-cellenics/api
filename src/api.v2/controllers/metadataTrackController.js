@@ -84,7 +84,7 @@ const parseMetadataFromTSV = (data, sampleNameToId) => {
   const invalidSamples = new Set();
   const invalidDuplicates = [];
 
-  const sampleMetadataPair = {};
+  const sampleMetadataPairCounts = {};
 
   const result = data.trim().split('\n').map((line, index) => {
     // check that there are 3 elements per line
@@ -103,10 +103,10 @@ const parseMetadataFromTSV = (data, sampleNameToId) => {
     }
 
     // Check for multiple metadata assignment to the same sample and track
-    if (!Object.prototype.hasOwnProperty.call(sampleMetadataPair, `${sampleName}@${metadataKey}`)) {
-      sampleMetadataPair[`${sampleName}@${metadataKey}`] = index + 1;
+    if (!Object.prototype.hasOwnProperty.call(sampleMetadataPairCounts, `${sampleName}@${metadataKey}`)) {
+      sampleMetadataPairCounts[`${sampleName}@${metadataKey}`] = index + 1;
     } else {
-      const duplicateLine = sampleMetadataPair[`${sampleName}@${metadataKey}`];
+      const duplicateLine = sampleMetadataPairCounts[`${sampleName}@${metadataKey}`];
       invalidDuplicates.push(`${duplicateLine} & ${index + 1}`);
     }
 
