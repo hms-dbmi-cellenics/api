@@ -102,13 +102,12 @@ const parseMetadataFromTSV = (data, sampleNameToId) => {
       invalidSamples.add(sampleName);
     }
 
-    // Check for duplicates
+    // Check for multiple metadata assignment to the same sample and track
     if (sampleMetadataPair[`${sampleName}@${metadataKey}`] === undefined) {
-      sampleMetadataPair[`${sampleName}@${metadataKey}`] = index;
+      sampleMetadataPair[`${sampleName}@${metadataKey}`] = index + 1;
     } else {
-      // Show metadata track with unreplaced value
       const duplicateLine = sampleMetadataPair[`${sampleName}@${metadataKey}`];
-      invalidDuplicates.push(`${duplicateLine} & ${index}`);
+      invalidDuplicates.push(`${duplicateLine} & ${index + 1}`);
     }
 
     return { sampleId: sampleNameToId[sampleName], metadataKey, metadataValue };

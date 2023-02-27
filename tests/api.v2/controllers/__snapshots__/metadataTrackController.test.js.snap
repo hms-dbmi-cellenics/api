@@ -70,7 +70,7 @@ Array [
 ]
 `;
 
-exports[`metadataTrackController parseMetadataFromTSV throws error if there are duplicated input 1`] = `"Multiple assignment(s) to the same entry on line(s): 1 & 2, 4 & 5"`;
+exports[`metadataTrackController parseMetadataFromTSV throws error if there are duplicated input 1`] = `"Multiple assignment(s) to the same entry on line(s): 2 & 3, 5 & 6"`;
 
 exports[`metadataTrackController parseMetadataFromTSV throws error if there are invalid lines 1`] = `"Invalid line(s): 1, 4, 5"`;
 
