@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`metadataTrackController parseMetadataFromTSV can parse metadata tracks with spaces 1`] = `
+Array [
+  Object {
+    "metadataKey": "track_1",
+    "metadataValue": "value 1",
+    "sampleId": "mockSample1",
+  },
+  Object {
+    "metadataKey": "track_1",
+    "metadataValue": "value 2",
+    "sampleId": "mockSample2",
+  },
+  Object {
+    "metadataKey": "track_1",
+    "metadataValue": "value 3",
+    "sampleId": "mockSample3",
+  },
+  Object {
+    "metadataKey": "track_2",
+    "metadataValue": "value 1",
+    "sampleId": "mockSample1",
+  },
+  Object {
+    "metadataKey": "track_2",
+    "metadataValue": "value 2",
+    "sampleId": "mockSample2",
+  },
+  Object {
+    "metadataKey": "track_2",
+    "metadataValue": "value 3",
+    "sampleId": "mockSample3",
+  },
+]
+`;
+
+exports[`metadataTrackController parseMetadataFromTSV parses correctly 1`] = `
+Array [
+  Object {
+    "metadataKey": "track_1",
+    "metadataValue": "value 1",
+    "sampleId": "mockSample1",
+  },
+  Object {
+    "metadataKey": "track_1",
+    "metadataValue": "value 2",
+    "sampleId": "mockSample2",
+  },
+  Object {
+    "metadataKey": "track_1",
+    "metadataValue": "value 3",
+    "sampleId": "mockSample3",
+  },
+  Object {
+    "metadataKey": "track_2",
+    "metadataValue": "value 1",
+    "sampleId": "mockSample1",
+  },
+  Object {
+    "metadataKey": "track_2",
+    "metadataValue": "value 2",
+    "sampleId": "mockSample2",
+  },
+  Object {
+    "metadataKey": "track_2",
+    "metadataValue": "value 3",
+    "sampleId": "mockSample3",
+  },
+]
+`;
+
+exports[`metadataTrackController parseMetadataFromTSV throws error if there are duplicated input 1`] = `"Multiple assignments to the same entry on lines: 2 & 3, 5 & 6"`;
+
+exports[`metadataTrackController parseMetadataFromTSV throws error if there are invalid lines 1`] = `"Cannot read property 'trim' of undefined"`;
+
+exports[`metadataTrackController parseMetadataFromTSV throws error if there are invalid samples 1`] = `"Invalid sample names on line(s): sample A, sample C"`;
+
+exports[`metadataTrackController parseMetadataFromTSV tolerates spaces after a line 1`] = `
+Array [
+  Object {
+    "metadataKey": "track_1",
+    "metadataValue": "value 1",
+    "sampleId": "mockSample1",
+  },
+  Object {
+    "metadataKey": "track_1",
+    "metadataValue": "value 2",
+    "sampleId": "mockSample2",
+  },
+  Object {
+    "metadataKey": "track_1",
+    "metadataValue": "value 3",
+    "sampleId": "mockSample3",
+  },
+  Object {
+    "metadataKey": "track_2",
+    "metadataValue": "value 1",
+    "sampleId": "mockSample1",
+  },
+  Object {
+    "metadataKey": "track_2",
+    "metadataValue": "value 2",
+    "sampleId": "mockSample2",
+  },
+  Object {
+    "metadataKey": "track_2",
+    "metadataValue": "value 3",
+    "sampleId": "mockSample3",
+  },
+]
+`;

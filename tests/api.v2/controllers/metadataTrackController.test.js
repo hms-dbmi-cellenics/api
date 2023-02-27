@@ -1,12 +1,19 @@
 // @ts-nocheck
+const fs = require('fs');
+const path = require('path');
 const metadataTrackController = require('../../../src/api.v2/controllers/metadataTrackController');
 const { OK, NotFoundError, BadRequestError } = require('../../../src/utils/responses');
 const MetadataTrack = require('../../../src/api.v2/model/MetadataTrack');
 const Sample = require('../../../src/api.v2/model/Sample');
-const BasicModel = require('../../../src/api.v2/model/BasicModel');
 
 const metadataTrackInstance = new MetadataTrack();
 const sampleInstance = new Sample();
+
+const mockMetadataSampleNameToId = {
+  'sample 1': 'mockSample1',
+  'sample 2': 'mockSample2',
+  'sample 3': 'mockSample3',
+};
 
 jest.mock('../../../src/api.v2/model/MetadataTrack');
 jest.mock('../../../src/api.v2/model/Sample');
@@ -213,5 +220,53 @@ describe('metadataTrackController', () => {
     await expect(
       metadataTrackController.createMetadataFromFile(mockReq, mockRes),
     ).rejects.toThrowError(BadRequestError);
+  });
+
+  it('parseMetadataFromTSV parses correctly', () => {
+    const mockData = fs.readFileSync(path.join(__dirname, '../mocks/data/metadata.tsv'), { encoding: 'utf-8' });
+    const result = metadataTrackController.parseMetadataFromTSV(
+      mockData, mockMetadataSampleNameToId,
+    );
+    expect(result).toMatchSnapshot();
+  });
+
+  it('parseMetadataFromTSV throws error if there are invalid samples', () => {
+    const mockData = fs.readFileSync(path.join(__dirname, '../mocks/data/metadataInvalidSamples.tsv'), { encoding: 'utf-8' });
+
+    expect(() => {
+      metadataTrackController.parseMetadataFromTSV(mockData, mockMetadataSampleNameToId);
+    }).toThrowErrorMatchingSnapshot();
+  });
+
+  it('parseMetadataFromTSV throws error if there are invalid lines', () => {
+    const mockData = fs.readFileSync(path.join(__dirname, '../mocks/data/metadataInvalidLines.tsv'), { encoding: 'utf-8' });
+
+    expect(() => {
+      metadataTrackController.parseMetadataFromTSV(mockData, mockMetadataSampleNameToId);
+    }).toThrowErrorMatchingSnapshot();
+  });
+
+  it('parseMetadataFromTSV throws error if there are duplicated input', () => {
+    const mockData = fs.readFileSync(path.join(__dirname, '../mocks/data/metadataInvalidDuplicates.tsv'), { encoding: 'utf-8' });
+
+    expect(() => {
+      metadataTrackController.parseMetadataFromTSV(mockData, mockMetadataSampleNameToId);
+    }).toThrowErrorMatchingSnapshot();
+  });
+
+  it('parseMetadataFromTSV tolerates spaces after a line', () => {
+    const mockData = fs.readFileSync(path.join(__dirname, '../mocks/data/metadataWithTrackSpaces.tsv'), { encoding: 'utf-8' });
+    const result = metadataTrackController.parseMetadataFromTSV(
+      mockData, mockMetadataSampleNameToId,
+    );
+    expect(result).toMatchSnapshot();
+  });
+
+  it('parseMetadataFromTSV can parse metadata tracks with spaces', () => {
+    const mockData = fs.readFileSync(path.join(__dirname, '../mocks/data/metadataWithLineSpaces.tsv'), { encoding: 'utf-8' });
+    const result = metadataTrackController.parseMetadataFromTSV(
+      mockData, mockMetadataSampleNameToId,
+    );
+    expect(result).toMatchSnapshot();
   });
 });
