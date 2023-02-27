@@ -70,11 +70,11 @@ Array [
 ]
 `;
 
-exports[`metadataTrackController parseMetadataFromTSV throws error if there are duplicated input 1`] = `"Multiple assignment on lines: 1 & 2, 4 & 5"`;
+exports[`metadataTrackController parseMetadataFromTSV throws error if there are duplicated input 1`] = `"Multiple metadata assignment(s) on line(s): 1 & 2, 4 & 5"`;
 
-exports[`metadataTrackController parseMetadataFromTSV throws error if there are invalid lines 1`] = `"Invalid lines: 1, 4, 5"`;
+exports[`metadataTrackController parseMetadataFromTSV throws error if there are invalid lines 1`] = `"Invalid line(s): 1, 4, 5"`;
 
-exports[`metadataTrackController parseMetadataFromTSV throws error if there are invalid samples 1`] = `"Invalid sample names: sample A, sample C"`;
+exports[`metadataTrackController parseMetadataFromTSV throws error if there are invalid samples 1`] = `"Invalid sample names on line(s): sample A, sample C"`;
 
 exports[`metadataTrackController parseMetadataFromTSV tolerates spaces after a line 1`] = `
 Array [
