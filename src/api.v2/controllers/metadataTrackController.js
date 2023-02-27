@@ -117,7 +117,7 @@ const parseMetadataFromTSV = (data, sampleNameToId) => {
   const errors = [];
   if (invalidSamples.size > 0) errors.push(`Invalid sample names on line(s): ${Array.from(invalidSamples).join(', ')}`);
   if (invalidLines.length > 0) errors.push(`Invalid line(s): ${invalidLines.join(', ')}`);
-  if (invalidDuplicates.length > 0) errors.push(`Multiple metadata assignment(s) on line(s): ${invalidDuplicates.join(', ')}`);
+  if (invalidDuplicates.length > 0) errors.push(`Multiple assignment(s) to the same entry on line(s): ${invalidDuplicates.join(', ')}`);
   if (errors.length > 0) throw new BadRequestError(errors.join('\n'));
 
   return result;
