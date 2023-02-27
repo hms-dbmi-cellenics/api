@@ -52,12 +52,12 @@ class Sample extends BasicModel {
     sampleFileFieldsWithAlias.push('sf.id as sf_id');
     fileObjectFormatted.push(['\'id\'', 'sf_id']);
 
-    const sampleFileObject = `jsonb_object_agg(sample_file_type,json_build_object(${fileObjectFormatted})) as files`;
+    const sampleFileObject = `${replaceNullsWithObject(`jsonb_object_agg(sample_file_type,json_build_object(${fileObjectFormatted}))`, 'sample_file_type')} as files`;
     const fileNamesQuery = sql.select(['id', sql.raw(sampleFileObject)])
       .from(sql.select([...sampleFileFieldsWithAlias, 's.id'])
         .from({ s: tableNames.SAMPLE })
-        .join(`${tableNames.SAMPLE_TO_SAMPLE_FILE_MAP} as sf_map`, 's.id', 'sf_map.sample_id')
-        .join(`${tableNames.SAMPLE_FILE} as sf`, 'sf.id', 'sf_map.sample_file_id')
+        .leftJoin(`${tableNames.SAMPLE_TO_SAMPLE_FILE_MAP} as sf_map`, 's.id', 'sf_map.sample_id')
+        .leftJoin(`${tableNames.SAMPLE_FILE} as sf`, 'sf.id', 'sf_map.sample_file_id')
         .where('s.experiment_id', experimentId)
         .as('mainQuery'))
       .groupBy('id')
@@ -110,9 +110,9 @@ class Sample extends BasicModel {
    * @param {*} fromExperimentId
    * @param {*} toExperimentId
    */
-  async copyTo(fromExperimentId, toExperimentId, samplesOrder) {
+  async copyTo(fromExperimentId, toExperimentId, samplesOrder, sampleIdsMap = null) {
     if (samplesOrder.length === 0) {
-      logger.log(`${fromExperimentId} doesnt have any samples to copy to ${toExperimentId}`);
+      logger.log(`samplesOrder is defined but empty when copying from experiment ${fromExperimentId} to ${toExperimentId}`);
       return [];
     }
 
@@ -139,7 +139,7 @@ class Sample extends BasicModel {
       samplesOrder.forEach((fromSampleId) => {
         const sample = fromSamples.find(({ id }) => id === fromSampleId);
 
-        const toSampleId = uuidv4();
+        const toSampleId = sampleIdsMap ? sampleIdsMap[fromSampleId] : uuidv4();
 
         newSampleIds.push(toSampleId);
 

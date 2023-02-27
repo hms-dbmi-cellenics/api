@@ -1,6 +1,7 @@
 const tableNames = {
   EXPERIMENT: 'experiment',
   EXPERIMENT_EXECUTION: 'experiment_execution',
+  EXPERIMENT_PARENT: 'experiment_parent',
   SAMPLE: 'sample',
   SAMPLE_FILE: 'sample_file',
   USER_ACCESS: 'user_access',

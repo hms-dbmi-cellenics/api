@@ -1,0 +1,52 @@
+title: Get all example experiments
+type: array
+items:
+  type: object
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    description:
+      type: string
+      nullable: true
+    publicationTitle:
+      type: string
+      nullable: true
+    publicationUrl:
+      type: string
+      nullable: true
+    dataSourceTitle:
+      type: string
+      nullable: true
+    dataSourceUrl:
+      type: string
+      nullable: true
+    species:
+      type: string
+      nullable: true
+    cellCount:
+      type: string
+      nullable: true
+    sampleCount:
+      type: string
+    sampleTechnology:
+      type: string
+      nullable: true
+
+  required:
+    - id
+    - name
+    - description
+    - publicationTitle
+    - publicationUrl
+    - dataSourceTitle
+    - dataSourceUrl
+    - species
+    - cellCount
+    - sampleCount
+    - sampleTechnology
+
+  additionalProperties: false
+
+additionalProperties: false

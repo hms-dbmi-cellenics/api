@@ -38,12 +38,14 @@ jest.mock('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 jest.mock('../../../src/api.v2/helpers/worker/getWorkerStatus');
 
 jest.mock('../../../src/utils/plotConfigInvalidation/invalidatePlotsForEvent');
+jest.mock('../../../src/utils/getAdminSub');
 
 const getExperimentResponse = require('../mocks/data/getExperimentResponse.json');
 const getAllExperimentsResponse = require('../mocks/data/getAllExperimentsResponse.json');
 
 const experimentController = require('../../../src/api.v2/controllers/experimentController');
 const { OK, NotFoundError } = require('../../../src/utils/responses');
+const getAdminSub = require('../../../src/utils/__mocks__/getAdminSub');
 
 const mockReqCreateExperiment = {
   params: {
@@ -204,7 +206,11 @@ describe('experimentController', () => {
       body: { newPosition: 1, oldPosition: 5 },
     };
 
-    experimentInstance.updateSamplePosition.mockImplementationOnce(() => Promise.resolve());
+    const samplesNewOrder = ['sample-id0', 'sample-id5', 'sample-id1', 'sample-id2', 'sample-id3', 'sample-id4', 'sample-id6'];
+
+    experimentInstance.updateSamplePosition.mockImplementationOnce(
+      () => Promise.resolve(samplesNewOrder),
+    );
 
     await experimentController.updateSamplePosition(mockReq, mockRes);
 
@@ -214,7 +220,7 @@ describe('experimentController', () => {
       1,
     );
 
-    expect(mockRes.json).toHaveBeenCalledWith(OK());
+    expect(mockRes.json).toHaveBeenCalledWith(samplesNewOrder);
   });
 
   it('updateSamplePosition skips reordering if possible', async () => {
@@ -451,5 +457,40 @@ describe('experimentController', () => {
     );
 
     expect(mockRes.json).toHaveBeenCalledWith(toExperimentId);
+  });
+
+  it('Clone experiment for another user works', async () => {
+    const mockClonedExperimentName = 'cloned this experiment for you';
+    const toExperimentId = 'mockToExperimentId';
+
+    const mockReq = {
+      params: { experimentId: mockExperiment.id },
+      body: {
+        name: mockClonedExperimentName,
+        toUserId: 'mockUserId-asdasd-343-123sd',
+      },
+      user: { sub: await getAdminSub() },
+    };
+    const allSampleIds = ['mockSample1', 'mockSample2', 'mockSample3', 'mockSample4'];
+    const clonedSamplesIds = ['mockClonedSample1', 'mockClonedSample2', 'mockClonedSample3', 'mockClonedSample4'];
+
+    experimentInstance.createCopy.mockImplementation(() => Promise.resolve(toExperimentId));
+    experimentInstance.findById.mockReturnValue(
+      { first: () => Promise.resolve({ samplesOrder: allSampleIds }) },
+    );
+    experimentInstance.updateById.mockImplementation(() => Promise.resolve());
+    sampleInstance.copyTo.mockImplementation(
+      () => Promise.resolve(clonedSamplesIds),
+    );
+
+    // this request should pass
+    await expect(experimentController.cloneExperiment(mockReq, mockRes))
+      .resolves;
+
+    // should fail if the request is not from the admin
+    mockReq.user.sub = 'not-admin-user';
+    await expect(experimentController.cloneExperiment(mockReq, mockRes))
+      . rejects
+      .toThrow(`User ${mockReq.user.sub} cannot clone experiments for other users.`);
   });
 });
