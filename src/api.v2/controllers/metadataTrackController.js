@@ -93,9 +93,9 @@ const parseMetadataFromTSV = (data, sampleNameToId) => {
       invalidLines.push(index + 1);
     }
 
-    const sampleName = elements[0];
-    const metadataKey = elements[1].replace(/\s+/, '_');
-    const metadataValue = elements[2];
+    const sampleName = elements[0].trim();
+    const metadataKey = elements[1].trim().replace(/\s+/, '_');
+    const metadataValue = elements[2].trim();
 
     // check that the sample name exists in the experiment
     if (!(sampleName in sampleNameToId)) {
@@ -103,7 +103,7 @@ const parseMetadataFromTSV = (data, sampleNameToId) => {
     }
 
     // Check for multiple metadata assignment to the same sample and track
-    if (sampleMetadataPair[`${sampleName}@${metadataKey}`] === undefined) {
+    if (!Object.prototype.hasOwnProperty.call(sampleMetadataPair, `${sampleName}@${metadataKey}`)) {
       sampleMetadataPair[`${sampleName}@${metadataKey}`] = index + 1;
     } else {
       const duplicateLine = sampleMetadataPair[`${sampleName}@${metadataKey}`];
