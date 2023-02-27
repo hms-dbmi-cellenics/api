@@ -12,6 +12,9 @@ properties:
   cellSetKey:
     type: string
     description: Cell set key to be be used in the heatmap
+  cellIds:
+    type: array
+    description: CellIds
 required:
   - name
   - nGenes
