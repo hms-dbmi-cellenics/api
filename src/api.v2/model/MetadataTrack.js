@@ -1,3 +1,6 @@
+// REMOVE BEFORE MERGING
+// Test flux propagating changes
+
 // @ts-nocheck
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
