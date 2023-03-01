@@ -51,7 +51,7 @@ const submitBatchJob = (context, step) => {
           },
           {
             Name: 'IGNORE_SSL_CERTIFICATE',
-            Value: `${config.awsBatchIgnoreSSLCertificate}`,
+            Value: `${config.pipelineIgnoreSSLCertificate}`,
           },
           {
             Name: 'DOMAIN_NAME',
