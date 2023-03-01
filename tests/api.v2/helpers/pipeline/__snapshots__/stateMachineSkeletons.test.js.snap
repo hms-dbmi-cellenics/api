@@ -1514,10 +1514,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "Value": "true"
             },
             {
-              "Name": "IGNORE_SSL_CERTIFICATE",
-              "Value": "false"
-            },
-            {
               "Name": "DOMAIN_NAME",
               "Value": "scp.biomage.net"
             },
