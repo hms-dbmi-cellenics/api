@@ -32,5 +32,6 @@ Object {
   "rdsSandboxId": "default",
   "sandboxId": "mockedSandboxId",
   "workerNamespace": "worker-mockedSandboxId",
+  "workerVersion": 3,
 }
 `;

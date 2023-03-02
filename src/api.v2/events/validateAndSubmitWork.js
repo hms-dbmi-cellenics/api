@@ -8,6 +8,7 @@ const pipelineConstants = require('../constants');
 const validateAndSubmitWork = async (workRequest) => {
   const { experimentId } = workRequest;
 
+
   // Check if pipeline is runnning
   const { qc: { status: qcPipelineStatus } } = await getPipelineStatus(
     experimentId, pipelineConstants.QC_PROCESS_NAME,

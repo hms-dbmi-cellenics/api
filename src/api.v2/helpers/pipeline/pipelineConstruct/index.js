@@ -26,6 +26,8 @@ const {
 } = require('./utils');
 
 const buildStateMachineDefinition = require('./constructors/buildStateMachineDefinition');
+const getPipelineStatus = require('../getPipelineStatus');
+const constants = require('../../../constants');
 
 const logger = getLogger();
 
@@ -52,6 +54,11 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
 
   const { processingConfig, samplesOrder } = await new Experiment().findById(experimentId).first();
 
+  const {
+    // @ts-ignore
+    [constants.QC_PROCESS_NAME]: status,
+  } = await getPipelineStatus(experimentId, constants.QC_PROCESS_NAME);
+
   if (processingConfigUpdates.length) {
     processingConfigUpdates.forEach(({ name, body }) => {
       if (!processingConfig[name]) {
@@ -72,7 +79,9 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
 
   await cancelPreviousPipelines(experimentId, previousJobId);
 
-  const qcSteps = await getQcStepsToRun(experimentId, processingConfigUpdates);
+  const qcSteps = await getQcStepsToRun(
+    experimentId, processingConfigUpdates, status.completedSteps,
+  );
 
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 

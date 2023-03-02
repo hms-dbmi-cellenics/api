@@ -34,6 +34,10 @@ properties:
         type: string
       resolution:
         type: number
+  cellSets:
+    type: array
+    items:
+      type: string
   rootNodes:
     type: array
     items:
@@ -42,5 +46,6 @@ required:
   - name
   - embedding
   - clustering
+  - cellSets
   - rootNodes
 additionalProperties: false
