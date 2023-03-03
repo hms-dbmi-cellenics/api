@@ -16,6 +16,7 @@ const getGeneralParams = (taskName, context) => {
     taskName,
     processName,
     server: remoterServer,
+    ignoreSslCert: config.pipelineIgnoreSSLCertificate,
   };
 
   return params;
