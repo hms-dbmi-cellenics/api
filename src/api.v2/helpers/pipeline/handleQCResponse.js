@@ -29,6 +29,7 @@ hookRunner.registerAll([sendNotification]);
 // Temporarily disable api submitMarkerHeatmapWork
 // Running it for bigger experiments has the potential to make the api crash
 // or get blocked for a pretty long time
+// Enable when the downsampling is moved to the worker
 // hookRunner.register('configureEmbedding', [cleanupPods, updatePipelineVersion,
 //  submitEmbeddingWork, submitMarkerHeatmapWork]);
 hookRunner.register('configureEmbedding', [cleanupPods, updatePipelineVersion, submitEmbeddingWork]);
