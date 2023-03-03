@@ -11,10 +11,16 @@ properties:
     description: Amount of marker genes to get
   cellSetKey:
     type: string
-    description: Cell set key to be be used in the heatmap
-  cellIds:
+    description: the cellClass key to be used in the marker genes
+  groupByClasses:
     type: array
-    description: CellIds
+    description: The keys of the cellSet classes that the cells are grouped by
+  selectedPoints:
+    type: string
+    description: Can be either 'All' or the key of a cellClass
+  hiddenCellSetKeys: 
+    type: array
+    description: The keys of the cellSets that are hidden
 required:
   - name
   - nGenes
