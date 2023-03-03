@@ -51,7 +51,8 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -74,7 +75,8 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -97,7 +99,8 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -120,7 +123,8 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -143,7 +147,8 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -166,7 +171,8 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -189,7 +195,8 @@ exports[`non-tests to document the State Machines - gem2s local development 1`] 
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -322,7 +329,8 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -345,7 +353,8 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -368,7 +377,8 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -391,7 +401,8 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -414,7 +425,8 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -437,7 +449,8 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -460,7 +473,8 @@ exports[`non-tests to document the State Machines - gem2s production 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -593,7 +607,8 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "downloadGem",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -616,7 +631,8 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "preproc",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -639,7 +655,8 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "emptyDrops",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -662,7 +679,8 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "doubletScores",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -685,7 +703,8 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "createSeurat",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -708,7 +727,8 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "prepareExperiment",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -731,7 +751,8 @@ exports[`non-tests to document the State Machines - gem2s staging 1`] = `
         "experimentId": "mock-experiment-id",
         "taskName": "uploadToAWS",
         "processName": "gem2s",
-        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local"
+        "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false
       },
       "Catch": [
         {
@@ -829,6 +850,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "taskName": "classifier",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -867,6 +889,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "taskName": "cellSizeDistribution",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -905,6 +928,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "taskName": "mitochondrialContent",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -943,6 +967,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "taskName": "numGenesVsNumUmis",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -981,6 +1006,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
               "taskName": "doubletScores",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -1011,6 +1037,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "taskName": "dataIntegration",
         "processName": "qc",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false,
         "sampleUuid": "",
         "uploadCountMatrix": true,
         "authJWT": "mockAuthJWT",
@@ -1038,6 +1065,7 @@ exports[`non-tests to document the State Machines - qc local development 1`] = `
         "taskName": "configureEmbedding",
         "processName": "qc",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false,
         "sampleUuid": "",
         "uploadCountMatrix": false,
         "authJWT": "mockAuthJWT",
@@ -1183,6 +1211,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "taskName": "classifier",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -1221,6 +1250,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "taskName": "cellSizeDistribution",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -1259,6 +1289,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "taskName": "mitochondrialContent",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -1297,6 +1328,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "taskName": "numGenesVsNumUmis",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -1335,6 +1367,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
               "taskName": "doubletScores",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -1365,6 +1398,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "taskName": "dataIntegration",
         "processName": "qc",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false,
         "sampleUuid": "",
         "uploadCountMatrix": true,
         "authJWT": "mockAuthJWT",
@@ -1392,6 +1426,7 @@ exports[`non-tests to document the State Machines - qc production 1`] = `
         "taskName": "configureEmbedding",
         "processName": "qc",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false,
         "sampleUuid": "",
         "uploadCountMatrix": false,
         "authJWT": "mockAuthJWT",
@@ -1479,10 +1514,6 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "Value": "true"
             },
             {
-              "Name": "IGNORE_SSL_CERTIFICATE",
-              "Value": "false"
-            },
-            {
               "Name": "DOMAIN_NAME",
               "Value": "scp.biomage.net"
             },
@@ -1537,6 +1568,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "taskName": "classifier",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -1575,6 +1607,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "taskName": "cellSizeDistribution",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -1613,6 +1646,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "taskName": "mitochondrialContent",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -1651,6 +1685,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "taskName": "numGenesVsNumUmis",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -1689,6 +1724,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
               "taskName": "doubletScores",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -1719,6 +1755,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "taskName": "dataIntegration",
         "processName": "qc",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false,
         "sampleUuid": "",
         "uploadCountMatrix": true,
         "authJWT": "mockAuthJWT",
@@ -1746,6 +1783,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
         "taskName": "configureEmbedding",
         "processName": "qc",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false,
         "sampleUuid": "",
         "uploadCountMatrix": false,
         "authJWT": "mockAuthJWT",
@@ -1891,6 +1929,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "taskName": "classifier",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -1929,6 +1968,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "taskName": "cellSizeDistribution",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -1967,6 +2007,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "taskName": "mitochondrialContent",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -2005,6 +2046,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "taskName": "numGenesVsNumUmis",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -2043,6 +2085,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
               "taskName": "doubletScores",
               "processName": "qc",
               "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+              "ignoreSslCert": false,
               "sampleUuid.$": "$.sampleUuid",
               "uploadCountMatrix": false,
               "authJWT": "mockAuthJWT",
@@ -2073,6 +2116,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "taskName": "dataIntegration",
         "processName": "qc",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false,
         "sampleUuid": "",
         "uploadCountMatrix": true,
         "authJWT": "mockAuthJWT",
@@ -2100,6 +2144,7 @@ exports[`non-tests to document the State Machines - qc staging 1`] = `
         "taskName": "configureEmbedding",
         "processName": "qc",
         "server": "remoter-server-mock-experiment-id.pipeline-test-namespace.svc.cluster.local",
+        "ignoreSslCert": false,
         "sampleUuid": "",
         "uploadCountMatrix": false,
         "authJWT": "mockAuthJWT",
