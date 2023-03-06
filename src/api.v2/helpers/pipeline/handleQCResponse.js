@@ -18,7 +18,7 @@ const getPipelineStatus = require('./getPipelineStatus');
 const Experiment = require('../../model/Experiment');
 const Plot = require('../../model/Plot');
 const submitEmbeddingWork = require('../worker/workSubmit/submitEmbeddingWork');
-// const submitMarkerHeatmapWork = require('../worker/workSubmit/submitMarkerHeatmapWork');
+const submitMarkerHeatmapWork = require('../worker/workSubmit/submitMarkerHeatmapWork');
 
 const logger = getLogger();
 
@@ -26,13 +26,7 @@ const hookRunner = new HookRunner();
 
 hookRunner.register(constants.ASSIGN_POD_TO_PIPELINE, [assignPodToPipeline]);
 hookRunner.registerAll([sendNotification]);
-// Temporarily disable api submitMarkerHeatmapWork
-// Running it for bigger experiments has the potential to make the api crash
-// or get blocked for a pretty long time
-// Enable when the downsampling is moved to the worker
-// hookRunner.register('configureEmbedding', [cleanupPods, updatePipelineVersion,
-//  submitEmbeddingWork, submitMarkerHeatmapWork]);
-hookRunner.register('configureEmbedding', [cleanupPods, updatePipelineVersion, submitEmbeddingWork]);
+hookRunner.register('configureEmbedding', [cleanupPods, updatePipelineVersion, submitEmbeddingWork, submitMarkerHeatmapWork]);
 
 const getOutputFromS3 = async (message) => {
   const { output: { bucket, key } } = message;
