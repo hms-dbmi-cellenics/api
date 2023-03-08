@@ -13,7 +13,7 @@
           "sample1Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-          
+
             "enabled": true,
             "filterSettings": {
               "binStep": 0.05,
@@ -27,7 +27,7 @@
           "sample2Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-          
+
             "enabled": true,
             "filterSettings": {
               "binStep": 0.05,
@@ -41,7 +41,7 @@
           "sample3Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-          
+
             "enabled": true,
             "filterSettings": {
               "binStep": 0.05,
@@ -55,7 +55,7 @@
         },
         "dataIntegration": {
           "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-        
+
           "dataIntegration": {
             "method": "harmony",
             "methodSettings": {
@@ -96,7 +96,7 @@
           "sample1Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-          
+
             "enabled": true,
             "filterSettings": {
               "regressionType": "linear",
@@ -124,7 +124,7 @@
           "sample2Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-          
+
             "enabled": true,
             "filterSettings": {
               "regressionType": "linear",
@@ -152,7 +152,7 @@
           "sample3Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-          
+
             "enabled": true,
             "filterSettings": {
               "regressionType": "linear",
@@ -180,7 +180,7 @@
         },
         "configureEmbedding": {
           "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-        
+
           "embeddingSettings": {
             "method": "umap",
             "methodSettings": {
@@ -213,7 +213,7 @@
           "sample1Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-          
+
             "enabled": false,
             "filterSettings": {
               "binStep": 200,
@@ -227,7 +227,7 @@
           "sample2Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-          
+
             "enabled": false,
             "filterSettings": {
               "binStep": 200,
@@ -241,7 +241,7 @@
           "sample3Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-          
+
             "enabled": false,
             "filterSettings": {
               "binStep": 200,
@@ -268,7 +268,7 @@
           "sample1Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-          
+
             "enabled": true,
             "filterSettings": {
               "method": "absoluteThreshold",
@@ -292,7 +292,7 @@
           "sample2Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-          
+
             "enabled": true,
             "filterSettings": {
               "method": "absoluteThreshold",
@@ -316,7 +316,7 @@
           "sample3Id": {
             "auto": true,
             "apiUrl": "http://api.api-default.svc.cluster.local:3000",
-          
+
             "enabled": true,
             "filterSettings": {
               "method": "absoluteThreshold",

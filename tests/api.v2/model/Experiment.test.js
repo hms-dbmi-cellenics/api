@@ -32,6 +32,7 @@ jest.mock('../../../src/sql/helpers', () => ({
 
 const Experiment = require('../../../src/api.v2/model/Experiment');
 const constants = require('../../../src/utils/constants');
+const tableNames = require('../../../src/api.v2/model/tableNames');
 
 const mockExperimentId = 'mockExperimentId';
 const mockSampleId = 'mockSampleId';
@@ -77,15 +78,35 @@ describe('model/Experiment', () => {
   });
 
   it('getExampleExperiments works correctly', async () => {
-    const expectedResult = { isMockResult: true };
+    const queryResult = 'result';
 
-    const getAllExperimentsSpy = jest.spyOn(Experiment.prototype, 'getAllExperiments')
-      .mockImplementationOnce(() => Promise.resolve(expectedResult));
+    mockSqlClient.groupBy.mockReturnValueOnce(queryResult);
 
-    const result = await new Experiment().getExampleExperiments('mockUserId');
+    const expectedResult = await new Experiment().getExampleExperiments();
 
-    expect(result).toBe(expectedResult);
-    expect(getAllExperimentsSpy).toHaveBeenCalledWith(constants.PUBLIC_ACCESS_ID);
+    expect(queryResult).toEqual(expectedResult);
+
+    expect(sqlClient.get).toHaveBeenCalled();
+    expect(mockSqlClient.select).toHaveBeenCalledWith(
+      [
+        'e.id',
+        'e.name',
+        'e.description',
+        'e.publication_title',
+        'e.publication_url',
+        'e.data_source_title',
+        'e.data_source_url',
+        'e.species',
+        'e.cell_count',
+      ],
+    );
+    expect(mockSqlClient.min).toHaveBeenCalledWith('s.sample_technology as sample_technology');
+    expect(mockSqlClient.count).toHaveBeenCalledWith('s.id as sample_count');
+    expect(mockSqlClient.from).toHaveBeenCalledWith(tableNames.USER_ACCESS);
+    expect(mockSqlClient.join).toHaveBeenCalledWith(`${tableNames.EXPERIMENT} as e`, 'e.id', `${tableNames.USER_ACCESS}.experiment_id`);
+    expect(mockSqlClient.join).toHaveBeenCalledWith(`${tableNames.SAMPLE} as s`, 'e.id', 's.experiment_id');
+    expect(mockSqlClient.where).toHaveBeenCalledWith('user_id', constants.PUBLIC_ACCESS_ID);
+    expect(mockSqlClient.groupBy).toHaveBeenCalledWith('e.id');
   });
 
   it('getExperimentData works correctly', async () => {
