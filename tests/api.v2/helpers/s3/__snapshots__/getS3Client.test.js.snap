@@ -3,6 +3,7 @@
 exports[`getS3Client Returns an S3 client with defau lt config values if not given any params 1`] = `
 Object {
   "apiVersion": "2006-03-01",
+  "maxRetries": 3,
   "region": "eu-west-1",
   "signatureVersion": "v4",
 }
@@ -12,6 +13,7 @@ exports[`getS3Client Takes in params and return S3 client with those params 1`] 
 Object {
   "apiVersion": "2006-03-01",
   "endpointUrl": "https://s3.biomage-cloud.com",
+  "maxRetries": 3,
   "region": "us-east-1",
   "signatureVersion": "v4",
 }
