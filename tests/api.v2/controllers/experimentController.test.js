@@ -124,11 +124,7 @@ describe('experimentController', () => {
     expect(Experiment).not.toHaveBeenCalledWith(mockSqlClient);
     expect(UserAccess).not.toHaveBeenCalledWith(mockSqlClient);
 
-    expect(experimentInstance.create).toHaveBeenCalledWith({
-      id: mockExperiment.id,
-      name: 'mockName',
-      description: 'mockDescription',
-    });
+    expect(experimentInstance.create.mock.calls).toMatchSnapshot();
 
     expect(userAccessInstance.createNewExperimentPermissions).toHaveBeenCalledWith('mockSub', mockExperiment.id);
 
