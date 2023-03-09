@@ -17,10 +17,14 @@ const config = require('../../config');
 const logger = getLogger('[ExperimentController] - ');
 
 const getDefaultCPUMem = (env) => {
-  if (env === 'development') {
-    return { podCPUs: null, podMemory: null };
+  switch (env) {
+    case 'development':
+      return { podCPUs: null, podMemory: null };
+    case 'staging':
+      return { podCPUs: 1, podMemory: 14000 };
+    default:
+      return { podCPUs: 2, podMemory: 28000 };
   }
-  return { podCPUs: 2, podMemory: 28000 };
 };
 
 const getAllExperiments = async (req, res) => {
