@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`experimentController createExperiment works correctly 1`] = `
+Array [
+  Array [
+    Object {
+      "description": "mockDescription",
+      "id": "mockExperimentId",
+      "name": "mockName",
+      "pod_cpus": 2,
+      "pod_memory": 28000,
+    },
+  ],
+]
+`;
