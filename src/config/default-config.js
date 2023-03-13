@@ -71,11 +71,12 @@ const config = {
   emailDomainName: `https://${domainName}`,
   adminSub: ADMIN_SUB[process.env.AWS_ACCOUNT_ID],
   publicApiUrl: `https://api.${domainName}`,
-  // Insert an env variable to Batch work to ignore certs for deployments with self-signed certs.
-  awsBatchIgnoreSSLCertificate: Boolean(process.env.NODE_TLS_REJECT_UNAUTHORIZED),
+  // Insert an env variable to allow pipeline to work for deployments with self-signed certs.
+  pipelineIgnoreSSLCertificate: Boolean(process.env.NODE_TLS_REJECT_UNAUTHORIZED),
   // Used for Batch reporting
   datadogApiKey: process.env.DD_API_KEY || '',
   datadogAppKey: process.env.DD_APP_KEY || '',
+  workerVersion: 3, // needs to match workerVersion in UI
 };
 
 // We are in permanent develop staging environment

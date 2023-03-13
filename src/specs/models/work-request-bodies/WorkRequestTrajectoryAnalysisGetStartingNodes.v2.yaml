@@ -34,8 +34,13 @@ properties:
         type: string
       resolution:
         type: number
+  cellSets:
+    type: array
+    items:
+      type: string
 required:
   - name
   - embedding
   - clustering
+  - cellSets
 additionalProperties: false

@@ -35,7 +35,7 @@ describe('parseSNSMessage', () => {
     const mockReq = {
       params: { experimentId },
       headers: { authorization: 'mockAuthorization', 'x-amz-sns-topic-arn': receivedTopicArn },
-      body: JSON.stringify({ paramsHash: 'mockParamsHash' }),
+
     };
 
     await expect(parseSNSMessage(mockReq, expectedTopicArn)).rejects.toThrow(new Error('SNS topic doesn\'t match'));
@@ -45,17 +45,17 @@ describe('parseSNSMessage', () => {
     const mockReq = {
       params: { experimentId },
       headers: { authorization: 'mockAuthorization', 'x-amz-sns-topic-arn': expectedTopicArn },
-      body: '{ paramsHash: /invalid/ }',
+      body: '{ invalid: /body/ }',
     };
 
-    await expect(parseSNSMessage(mockReq, expectedTopicArn)).rejects.toThrow(new Error('Unexpected token p in JSON at position 2'));
+    await expect(parseSNSMessage(mockReq, expectedTopicArn)).rejects.toThrow(new Error('Unexpected token i in JSON at position 2'));
   });
 
   it('Fails if request body parsing doesnt work', async () => {
     const mockReq = {
       params: { experimentId },
       headers: { authorization: 'mockAuthorization', 'x-amz-sns-topic-arn': expectedTopicArn },
-      body: JSON.stringify({ paramsHash: 'mockParamsHash' }),
+      body: JSON.stringify({}),
     };
 
     mockValidate.mockImplementation(() => { throw new Error('Validation error'); });
@@ -67,7 +67,7 @@ describe('parseSNSMessage', () => {
     const mockReq = {
       params: { experimentId },
       headers: { authorization: 'mockAuthorization', 'x-amz-sns-topic-arn': expectedTopicArn },
-      body: JSON.stringify({ paramsHash: 'mockParamsHash' }),
+      body: JSON.stringify({}),
     };
 
     const mockMsg = 'mockMsg';
@@ -87,7 +87,7 @@ describe('parseSNSMessage', () => {
     const mockReq = {
       params: { experimentId },
       headers: { authorization: 'mockAuthorization', 'x-amz-sns-topic-arn': expectedTopicArn },
-      body: JSON.stringify({ paramsHash: 'mockParamsHash' }),
+      body: JSON.stringify({}),
     };
 
     const mockMsg = 'mockMsg';
@@ -108,7 +108,7 @@ describe('parseSNSMessage', () => {
     const mockReq = {
       params: { experimentId },
       headers: { authorization: 'mockAuthorization', 'x-amz-sns-topic-arn': expectedTopicArn },
-      body: JSON.stringify({ paramsHash: 'mockParamsHash' }),
+      body: JSON.stringify({}),
       app: { get: jest.fn(() => mockIo) },
     };
 

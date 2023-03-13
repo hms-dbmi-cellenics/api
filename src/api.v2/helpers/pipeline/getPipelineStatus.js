@@ -9,6 +9,7 @@ const getLogger = require('../../../utils/getLogger');
 const pipelineConstants = require('../../constants');
 const { getPipelineStepNames } = require('./pipelineConstruct/skeletons');
 const shouldPipelineRerun = require('./shouldPipelineRerun');
+const { qcStepNames, stepNameToBackendStepNames } = require('./pipelineConstruct/constructors/qcStepNameTranslations');
 
 const logger = getLogger();
 
@@ -20,7 +21,8 @@ const qcPipelineSteps = [
   'NumGenesVsNumUmisFilter',
   'DoubletScoresFilter',
   'DataIntegration',
-  'ConfigureEmbedding'];
+  'ConfigureEmbedding',
+];
 
 const gem2sPipelineSteps = [
   'DownloadGem',
@@ -29,12 +31,14 @@ const gem2sPipelineSteps = [
   'DoubletScores',
   'CreateSeurat',
   'PrepareExperiment',
-  'UploadToAWS'];
+  'UploadToAWS',
+];
 
 const seuratPipelineSteps = [
   'DownloadSeurat',
   'ProcessSeurat',
-  'UploadSeuratToAWS'];
+  'UploadSeuratToAWS'
+];
 
 // pipelineStepNames are the names of pipeline steps for which we
 // want to report the progress back to the user
@@ -218,6 +222,51 @@ const getStepsFromExecutionHistory = (events) => {
   return shortestCompletedToReport || [];
 };
 
+/**
+ *
+ * @param {*} processName The name of the pipeline to get the steps for,
+ * currently either qc or gem2s
+ * @param {*} stateMachineArn
+ * @param {*} lastRunExecutedSteps The steps that were executed in the last run
+ * @param {*} stepFunctions stepFunctions client
+ * @returns array of steps that can be considered completed
+ *
+ * If processName = gem2s, it returns executedSteps because we don't support partial reruns so
+ * we can always assume all executedSteps are all completed steps
+ *
+ * If processName = qc: it returns lastRunExecutedSteps + stepsCompletedInPreviousRuns
+ * stepsCompletedInPreviousRuns is all the steps that weren't scheduled to run in the last run
+ * The only reason we don't schedule steps is when we consider them completed,
+ * so we can keep considering them completed for future runs as well
+ */
+const getCompletedSteps = async (
+  processName, stateMachineArn, lastRunExecutedSteps, stepFunctions,
+) => {
+  let completedSteps;
+
+  if (processName === 'qc') {
+    const stateMachine = await stepFunctions.describeStateMachine({
+      stateMachineArn,
+    }).promise();
+
+    // Get all the steps that were scheduled to be run in the last execution
+    const lastScheduledSteps = Object.keys(JSON.parse(stateMachine.definition).States);
+
+    // Remove from all qc steps the ones that were scheduled for execution in the last run
+    // We are left with all the qc steps that last run didn't consider necessary to rerun
+    // This means that these steps were considered completed in the last run so
+    // we can still consider them completed
+    const stepsCompletedInPreviousRuns = _.difference(qcStepNames, lastScheduledSteps)
+      .map((rawStepName) => stepNameToBackendStepNames[rawStepName]);
+
+    completedSteps = stepsCompletedInPreviousRuns.concat(lastRunExecutedSteps);
+  } if (processName === 'gem2s' || processName === 'seurat') {
+    completedSteps = lastRunExecutedSteps;
+  }
+
+  return completedSteps;
+};
+
 /*
      * Return `completedSteps` of the state machine (SM) associated to the `experimentId`'s pipeline
      * The code assumes that
@@ -239,12 +288,11 @@ const getPipelineStatus = async (experimentId, processName) => {
   });
 
   let execution = {};
-  let completedSteps = [];
   let error = false;
-  let response;
+  let response = null;
 
-  const { executionArn = null, lastStatusResponse } = pipelineExecution;
-  const shouldRerun = await shouldPipelineRerun(experimentId, processName);
+  const { executionArn = null, stateMachineArn = null, lastStatusResponse } = pipelineExecution;
+    const shouldRerun = await shouldPipelineRerun(experimentId, processName);
 
   try {
     execution = await stepFunctions.describeExecution({
@@ -252,23 +300,13 @@ const getPipelineStatus = async (experimentId, processName) => {
     }).promise();
 
     const events = await getExecutionHistory(stepFunctions, executionArn);
-
     error = checkError(events);
+
     const executedSteps = getStepsFromExecutionHistory(events);
-    const lastExecuted = executedSteps[executedSteps.length - 1];
-    switch (processName) {
-      case pipelineConstants.QC_PROCESS_NAME:
-        completedSteps = qcPipelineSteps.slice(0, qcPipelineSteps.indexOf(lastExecuted) + 1);
-        break;
-      case pipelineConstants.GEM2S_PROCESS_NAME:
-        completedSteps = gem2sPipelineSteps.slice(0, gem2sPipelineSteps.indexOf(lastExecuted) + 1);
-        break;
-      case pipelineConstants.SEURAT_PROCESS_NAME:
-        completedSteps = seuratPipelineSteps.slice(0, seuratPipelineSteps.indexOf(lastExecuted) + 1);
-        break;
-      default:
-        logger.error(`unknown process name ${processName}`);
-    }
+
+    const completedSteps = await getCompletedSteps(
+      processName, stateMachineArn, executedSteps, stepFunctions,
+    );
 
     response = buildResponse(processName, execution, shouldRerun, error, completedSteps);
   } catch (e) {

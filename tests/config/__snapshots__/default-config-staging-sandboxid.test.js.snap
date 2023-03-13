@@ -2,12 +2,10 @@
 
 exports[`default-config Returns correct values for staging sandboxid 1`] = `
 Object {
-  "adminSub": "0b17683f-363b-4466-b2e2-5bf11c38a76e",
   "api": Object {
     "prefix": "/",
   },
   "awsAccountId": "000000000000",
-  "awsBatchIgnoreSSLCertificate": false,
   "awsRegion": "eu-west-1",
   "cachingEnabled": false,
   "clusterEnv": "staging",
@@ -25,6 +23,7 @@ Object {
   "datadogAppKey": "",
   "domainName": "scp-staging.biomage.net",
   "emailDomainName": "https://ui-mockedSandboxId.scp-staging.biomage.net",
+  "pipelineIgnoreSSLCertificate": false,
   "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/releases/master/staging/mockedSandboxId.yaml",
   "pipelineNamespace": "pipeline-mockedSandboxId",
   "podName": "local",
@@ -33,5 +32,6 @@ Object {
   "rdsSandboxId": "default",
   "sandboxId": "mockedSandboxId",
   "workerNamespace": "worker-mockedSandboxId",
+  "workerVersion": 3,
 }
 `;

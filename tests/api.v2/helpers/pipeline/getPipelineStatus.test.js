@@ -7,6 +7,7 @@ const pipelineConstants = require('../../../../src/api.v2/constants');
 const config = require('../../../../src/config');
 
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
+const { qcStepNames } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/constructors/qcStepNameTranslations');
 
 const experimentExecutionInstance = ExperimentExecution();
 
@@ -332,6 +333,11 @@ describe('pipelineStatus', () => {
     callback(null, params);
   });
 
+  const mockDescribeStateMachine = jest.fn();
+  AWSMock.mock('StepFunctions', 'describeStateMachine', (params, callback) => {
+    mockDescribeStateMachine(params, callback);
+  });
+
   AWSMock.mock('StepFunctions', 'getExecutionHistory', (params, callback) => {
     callback(null, { events: [] });
   });
@@ -536,7 +542,21 @@ describe('pipelineStatus', () => {
     );
   });
 
-  it('handles properly a qc sql record', async () => {
+  it('returns a full qc run from sql correctly', async () => {
+    mockDescribeStateMachine.mockImplementation((params, callback) => {
+      const stateMachine = {
+        definition: JSON.stringify({
+          States: qcStepNames.reduce((acum, current) => {
+            // eslint-disable-next-line no-param-reassign
+            acum[current] = {};
+            return acum;
+          }, {}),
+        }),
+      };
+
+      callback(null, stateMachine);
+    });
+
     const status = await getPipelineStatus(SUCCEEDED_ID, QC_PROCESS_NAME);
 
     const expectedStatus = {
@@ -546,6 +566,63 @@ describe('pipelineStatus', () => {
         status: constants.SUCCEEDED,
         error: false,
         completedSteps: [],
+        shouldRerun: true,
+      },
+    };
+
+    expect(status).toEqual(expectedStatus);
+
+    expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: SUCCEEDED_ID });
+
+    // sql last_status_response is updated because it differs
+    expect(experimentExecutionInstance.update).toHaveBeenCalledWith(
+      { experiment_id: SUCCEEDED_ID, pipeline_type: QC_PROCESS_NAME },
+      { last_status_response: expectedStatus },
+    );
+  });
+
+  it('returns a partial qc run from sql correctly', async () => {
+    // Only these 3 steps were scheduled for this state machine,
+    // The not scheduled steps were already completed from a previous run
+    const scheduledSteps = [
+      'DoubletScoresFilterMap',
+      'DataIntegration',
+      'ConfigureEmbedding',
+    ];
+
+    // These are the steps that were already completed,
+    // we need to check that these are marked as "completed" even
+    // if they are not completed in this state machine
+    const previousRunCompletedSteps = [
+      'ClassifierFilter',
+      'CellSizeDistributionFilter',
+      'MitochondrialContentFilter',
+      'NumGenesVsNumUmisFilter',
+    ];
+
+    mockDescribeStateMachine.mockImplementation((params, callback) => {
+      const stateMachine = {
+        definition: JSON.stringify({
+          States: scheduledSteps.reduce((acum, current) => {
+            // eslint-disable-next-line no-param-reassign
+            acum[current] = {};
+            return acum;
+          }, {}),
+        }),
+      };
+
+      callback(null, stateMachine);
+    });
+
+    const status = await getPipelineStatus(SUCCEEDED_ID, QC_PROCESS_NAME);
+
+    const expectedStatus = {
+      [QC_PROCESS_NAME]: {
+        startDate: new Date(0),
+        stopDate: new Date(0),
+        status: constants.SUCCEEDED,
+        error: false,
+        completedSteps: previousRunCompletedSteps,
         shouldRerun: true,
       },
     };

@@ -12,8 +12,20 @@ const Sample = require('../model/Sample');
 const invalidatePlotsForEvent = require('../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
 const events = require('../../utils/plotConfigInvalidation/events');
 const getAdminSub = require('../../utils/getAdminSub');
+const config = require('../../config');
 
 const logger = getLogger('[ExperimentController] - ');
+
+const getDefaultCPUMem = (env) => {
+  switch (env) {
+    case 'development':
+      return { podCPUs: null, podMemory: null };
+    case 'staging':
+      return { podCPUs: 1, podMemory: 14000 };
+    default:
+      return { podCPUs: 2, podMemory: 28000 };
+  }
+};
 
 const getAllExperiments = async (req, res) => {
   const { user: { sub: userId } } = req;
@@ -49,8 +61,12 @@ const createExperiment = async (req, res) => {
   const { name, description } = body;
   logger.log('Creating experiment');
 
+  const { podCPUs, podMemory } = getDefaultCPUMem(config.clusterEnv);
+
   await sqlClient.get().transaction(async (trx) => {
-    await new Experiment(trx).create({ id: experimentId, name, description });
+    await new Experiment(trx).create({
+      id: experimentId, name, description, pod_cpus: podCPUs, pod_memory: podMemory,
+    });
     await new UserAccess(trx).createNewExperimentPermissions(user.sub, experimentId);
   });
 
