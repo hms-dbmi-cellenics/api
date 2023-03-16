@@ -478,11 +478,13 @@ Array [
                       "filterSettings": Object {
                         "oneSetting": 7,
                       },
+                      "recomputeDoubletScore": true,
                     },
                     "otherSample": Object {
                       "filterSettings": Object {
                         "oneSetting": 15,
                       },
+                      "recomputeDoubletScore": true,
                     },
                   },
                   "experimentId": "testExperimentId",

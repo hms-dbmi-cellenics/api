@@ -71,6 +71,23 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
     });
   }
 
+  // TODO add comment about why this is needed
+  const classifierAutoEnabled = Object.values(
+    processingConfig.doubletScores,
+  ).some((sample) => sample.auto);
+
+  const cellSizeEnabled = Object.values(
+    processingConfig.cellSizeDistribution,
+  ).some((sample) => sample.enabled);
+
+  const recomputeDoubletScore = !classifierAutoEnabled || cellSizeEnabled;
+  Object.keys(processingConfig.doubletScores).forEach((sample) => {
+    processingConfig.doubletScores[sample].recomputeDoubletScore = recomputeDoubletScore;
+  });
+
+  // TODO remove this log
+  logger.log('processingConfig: ', processingConfig);
+
   const context = {
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
     processingConfig: withoutDefaultFilterSettings(processingConfig, samplesOrder),
