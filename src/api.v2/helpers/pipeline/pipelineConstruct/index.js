@@ -71,7 +71,8 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
     });
   }
 
-  // TODO add comment about why this is needed
+  // If count distribution changes (i.e. enabled cellsize) recompute the doublet
+  // scores in QC for correctness.
   const classifierAutoEnabled = Object.values(
     processingConfig.doubletScores,
   ).some((sample) => sample.auto);
@@ -84,9 +85,6 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
   Object.keys(processingConfig.doubletScores).forEach((sample) => {
     processingConfig.doubletScores[sample].recomputeDoubletScore = recomputeDoubletScore;
   });
-
-  // TODO remove this log
-  logger.log('processingConfig: ', processingConfig);
 
   const context = {
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
