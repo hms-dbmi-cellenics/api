@@ -12,8 +12,10 @@ const submitMarkerHeatmapWork = async (message) => {
     name: 'MarkerHeatmap',
     nGenes: numGenes,
     cellSetKey: selectedCellSet,
+    groupByClasses: ['louvain'],
+    selectedPoints: 'All',
+    hiddenCellSetKeys: [],
   };
-
 
   const extraDependencies = await getExtraDependencies(body.name, message);
   const ETag = await submitWork(experimentId, authJWT, body, extraDependencies);
