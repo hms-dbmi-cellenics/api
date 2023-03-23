@@ -9,6 +9,7 @@ const getS3Client = (options) => {
     apiVersion: '2006-03-01',
     signatureVersion: 'v4',
     region: config.awsRegion,
+    maxRetries: 3,
     ...options,
   };
 
