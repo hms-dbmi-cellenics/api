@@ -1,7 +1,7 @@
 const NotFoundError = require('../../../utils/responses/NotFoundError');
 const getS3Client = require('./getS3Client');
 
-const pubObject = async (params) => {
+const putObject = async (params) => {
   if (!params.Bucket) throw new Error('Bucket is required');
   if (!params.Key) throw new Error('Key is required');
   if (!params.Body) throw new Error('Body is required');
@@ -19,4 +19,4 @@ const pubObject = async (params) => {
   }
 };
 
-module.exports = pubObject;
+module.exports = putObject;
