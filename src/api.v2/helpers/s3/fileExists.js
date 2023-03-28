@@ -1,4 +1,5 @@
 const getS3Client = require('./getS3Client');
+const logger = require('../../../utils/getLogger')();
 
 const fileExists = async (bucket, prefix) => {
   const s3 = getS3Client();
@@ -16,7 +17,7 @@ const fileExists = async (bucket, prefix) => {
       return false;
     }
     // if there is an exception
-    console.log(`could not check whether ${bucket}/${prefix} exists: ${err}`);
+    logger.log(`could not check whether ${bucket}/${prefix} exists: ${err}`);
     return false;
   }
   return true;

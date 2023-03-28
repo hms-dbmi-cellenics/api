@@ -22,7 +22,7 @@ jest.mock('../../../src/sql/helpers', () => ({
   collapseKeysIntoObject: jest.fn(),
   collapseKeyIntoArray: jest.fn(),
   replaceNullsWithObject: () => (`COALESCE(
-      jsonb_object_agg(pipeline_type, jsonb_build_object('params_hash', params_hash, 'state_machine_arn', state_machine_arn, 'execution_arn', execution_arn))
+      jsonb_object_agg(pipeline_type, jsonb_build_object('state_machine_arn', state_machine_arn, 'execution_arn', execution_arn))
       FILTER(
         WHERE pipeline_type IS NOT NULL
       ),

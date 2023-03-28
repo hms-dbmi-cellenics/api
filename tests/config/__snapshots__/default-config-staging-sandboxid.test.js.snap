@@ -7,7 +7,6 @@ Object {
     "prefix": "/",
   },
   "awsAccountId": "000000000000",
-  "awsBatchIgnoreSSLCertificate": false,
   "awsRegion": "eu-west-1",
   "cachingEnabled": false,
   "clusterEnv": "staging",
@@ -25,6 +24,7 @@ Object {
   "datadogAppKey": "",
   "domainName": "scp-staging.biomage.net",
   "emailDomainName": "https://ui-mockedSandboxId.scp-staging.biomage.net",
+  "pipelineIgnoreSSLCertificate": false,
   "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/releases/master/staging/mockedSandboxId.yaml",
   "pipelineNamespace": "pipeline-mockedSandboxId",
   "podName": "local",
@@ -33,5 +33,6 @@ Object {
   "rdsSandboxId": "default",
   "sandboxId": "mockedSandboxId",
   "workerNamespace": "worker-mockedSandboxId",
+  "workerVersion": 3,
 }
 `;

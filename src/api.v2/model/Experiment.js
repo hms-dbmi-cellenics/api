@@ -106,7 +106,7 @@ class Experiment extends BasicModel {
     }
 
     const experimentExecutionFields = [
-      'params_hash', 'state_machine_arn', 'execution_arn', 'last_pipeline_params',
+      'state_machine_arn', 'execution_arn', 'last_pipeline_params',
     ];
 
     const pipelineExecutionKeys = experimentExecutionFields.reduce((acum, current) => {
@@ -201,6 +201,7 @@ class Experiment extends BasicModel {
       throw e;
     }
   }
+
 
   async getProcessingConfig(experimentId) {
     const result = await this.findOne({ id: experimentId });

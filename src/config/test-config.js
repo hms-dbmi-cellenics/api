@@ -21,7 +21,8 @@ module.exports = {
   },
   cachingEnabled: false,
   publicApiUrl: 'test-public-api-url',
-  awsBatchIgnoreSSLCertificate: false,
-  datadogApiKey: 'test-datadog-api-key',
+  pipelineIgnoreSSLCertificate: false,
+  datadogApiKey: 'test-datadog-api-key', // pragma: allowlist secret
   datadogAppKey: 'test-datadog-app-key',
+  workerVersion: 3, // needs to match workerVersion in UI
 };
