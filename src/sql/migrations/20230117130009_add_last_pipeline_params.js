@@ -1,7 +1,11 @@
 exports.up = async (knex) => {
-  await knex.schema.alterTable('experiment_execution', (table) => {
-    table.renameColumn('last_gem2s_params', 'last_pipeline_params');
-  });
+  const hasLastGem2sParams = await knex.schema.hasColumn('experiment_execution', 'last_gem2s_params');
+
+  if (hasLastGem2sParams) {
+    await knex.schema.alterTable('experiment_execution', (table) => {
+      table.renameColumn('last_gem2s_params', 'last_pipeline_params');
+    });
+  }
 };
 
 exports.down = async (knex) => {
