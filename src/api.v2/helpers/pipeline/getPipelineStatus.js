@@ -37,7 +37,7 @@ const gem2sPipelineSteps = [
 const seuratPipelineSteps = [
   'DownloadSeurat',
   'ProcessSeurat',
-  'UploadSeuratToAWS'
+  'UploadSeuratToAWS',
 ];
 
 // pipelineStepNames are the names of pipeline steps for which we
@@ -292,7 +292,7 @@ const getPipelineStatus = async (experimentId, processName) => {
   let response = null;
 
   const { executionArn = null, stateMachineArn = null, lastStatusResponse } = pipelineExecution;
-    const shouldRerun = await shouldPipelineRerun(experimentId, processName);
+  const shouldRerun = await shouldPipelineRerun(experimentId, processName);
 
   try {
     execution = await stepFunctions.describeExecution({

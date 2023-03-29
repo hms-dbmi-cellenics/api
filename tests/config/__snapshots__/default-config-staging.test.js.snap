@@ -33,6 +33,6 @@ Object {
   "rdsSandboxId": "default",
   "sandboxId": "default",
   "workerNamespace": "worker-default",
-  "workerVersion": 3,
+  "workerVersion": 4,
 }
 `;

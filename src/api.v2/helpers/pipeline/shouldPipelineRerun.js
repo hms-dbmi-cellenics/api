@@ -90,7 +90,9 @@ const getPipelineParams = async (experimentId, rawSamples = undefined) => {
 };
 
 const shouldPipelineRerun = async (experimentId, pipelineType) => {
-  const execution = await new ExperimentExecution().findOne({ experiment_id: experimentId, pipeline_type: pipelineType });
+  const execution = await new ExperimentExecution()
+    .findOne({ experiment_id: experimentId, pipeline_type: pipelineType });
+
   if (execution === undefined) return true;
   const currentParams = await getPipelineParams(experimentId);
 

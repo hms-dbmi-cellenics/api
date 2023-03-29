@@ -12,8 +12,12 @@ const ExperimentExecution = require('../../../model/ExperimentExecution');
 const getLogger = require('../../../../utils/getLogger');
 
 const {
-  getGem2sPipelineSkeleton, getQcPipelineSkeleton, getSubsetPipelineSkeleton, getSeuratPipelineSkeleton,
+  getGem2sPipelineSkeleton,
+  getQcPipelineSkeleton,
+  getSubsetPipelineSkeleton,
+  getSeuratPipelineSkeleton,
 } = require('./skeletons');
+
 const { getQcStepsToRun, qcStepsWithFilterSettings } = require('./qcHelpers');
 const needsBatchJob = require('../batch/needsBatchJob');
 
