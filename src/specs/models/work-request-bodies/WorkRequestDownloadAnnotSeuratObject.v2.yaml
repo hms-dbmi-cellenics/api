@@ -1,0 +1,10 @@
+title: Download Annotated Seurat Object
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the work. Must be `DownloadAnnotSeuratObject`.
+    pattern: DownloadAnnotSeuratObject
+required:
+  - name
+additionalProperties: false
