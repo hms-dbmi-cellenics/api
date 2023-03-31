@@ -49,6 +49,36 @@ const withoutDefaultFilterSettings = (processingConfig, samplesOrder) => {
   return slimmedProcessingConfig;
 };
 
+/**
+ * Adds a flag to recompute doublet scores in the processingConfig object.
+ *
+ * This function is a hotfix/workaround and should ideally be handled in the pipeline.
+ * It is used in cases when the count distribution changes
+ * (e.g., enabling cell size distribution) which may affect the correctness of doublet scores.
+ * It checks if the classifier is auto-enabled or cell size distribution is enabled and sets
+ * the `recomputeDoubletScore` flag accordingly for each sample in the processingConfig.
+ *
+ * @param {Object} processingConfig - The processing configuration object containing
+ * doubletScores and cellSizeDistribution configurations for each sample.
+ */
+const addRecomputeDoubletScores = (processingConfig) => {
+  // If count distribution changes (i.e. enabled cellsize) recompute the doublet
+  // scores in QC for correctness.
+  const classifierAutoEnabled = Object.values(
+    processingConfig.doubletScores,
+  ).some((sample) => sample.auto);
+
+  const cellSizeEnabled = Object.values(
+    processingConfig.cellSizeDistribution,
+  ).some((sample) => sample.enabled);
+
+  const recomputeDoubletScore = !classifierAutoEnabled || cellSizeEnabled;
+  Object.keys(processingConfig.doubletScores).forEach((sample) => {
+    // eslint-disable-next-line no-param-reassign
+    processingConfig.doubletScores[sample].recomputeDoubletScore = recomputeDoubletScore;
+  });
+};
+
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
   logger.log(`createQCPipeline: fetch processing settings ${experimentId}`);
 
@@ -70,6 +100,9 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
       _.assign(processingConfig[name], body);
     });
   }
+
+  // woraround to add a flag to recompute doublet scores in the processingConfig object.
+  addRecomputeDoubletScores(processingConfig);
 
   const context = {
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
