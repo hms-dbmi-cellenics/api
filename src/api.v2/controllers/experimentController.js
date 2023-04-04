@@ -23,7 +23,9 @@ const getDefaultCPUMem = (env) => {
     case 'staging':
       return { podCPUs: 1, podMemory: 14000 };
     default:
-      return { podCPUs: 2, podMemory: 28000 };
+      // not using Batch by default in 'production':
+      return { podCPUs: null, podMemory: null };
+      // return { podCPUs: 2, podMemory: 28000 };
   }
 };
 
