@@ -7,8 +7,8 @@ Array [
       "description": "mockDescription",
       "id": "mockExperimentId",
       "name": "mockName",
-      "pod_cpus": 2,
-      "pod_memory": 28000,
+      "pod_cpus": null,
+      "pod_memory": null,
     },
   ],
 ]
