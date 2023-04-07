@@ -106,11 +106,14 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
   }
 
   // woraround to add a flag to recompute doublet scores in the processingConfig object.
-  const processingConfigForContext = withRecomputeDoubletScores(processingConfig);
+  const fullProcessingConfig = withRecomputeDoubletScores(processingConfig);
+
+  // Store the processing config with all changes back in sql
+  await new Experiment().updateById(experimentId, { processing_config: fullProcessingConfig });
 
   const context = {
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
-    processingConfig: withoutDefaultFilterSettings(processingConfigForContext, samplesOrder),
+    processingConfig: withoutDefaultFilterSettings(fullProcessingConfig, samplesOrder),
     authJWT,
   };
 
