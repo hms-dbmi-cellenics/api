@@ -1,6 +1,7 @@
 title: Work request bodies
 description: Valid work request bodies.
 oneOf:
+  - $ref: ./work-request-bodies/WorkRequestBatchDifferentialExpression.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestGetEmbedding.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestClusterCells.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestScTypeAnnotate.v2.yaml

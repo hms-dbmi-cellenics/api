@@ -1,0 +1,44 @@
+title: Batch Differential Expression
+type: object
+description: |-
+  Runs batch differential expression requests for each cluster in a chosen cell set. The functional behavior of this task shall be as follows:
+
+  (1) The cells in the experiment should be subset by the cell set specified in `basis`. Differential expression should only be run on cell that are in the `basis` cell set.
+  (2) Differential expression should be run on two cell sets, as specified in `cellSet` and `compareWith`.
+properties:
+  name:
+    type: string
+    description: The name of this work -- must be `BatchDifferentialExpression`.
+    pattern: BatchDifferentialExpression
+  basis:
+    type: array
+    description: |-
+      An array of clusters to run batch differential expression for
+  cellSet:
+    type: array
+    description: The first cell set differential expression is run on. This must be a valid UUID of a cell set as found in the DB.
+  compareWith:
+    type: string
+    description: |-
+      The second cell set to compare against. This may be another cell set UUID, `rest`, or `background`.
+
+      If it is a UUID, the comparison is made between the UUID in `cellSet` and the UUID specified here.
+
+      If it is `rest`, the comparison is made between the UUID in `cellSet` and all remaning cells under the same cell set hierarchy (e.g. scratchpad).
+
+      If it is `background`, the comparison is made between the UUID in `cellSet` and all other cells in the experiment.
+  comparisonType:
+    type: string
+    enum:
+      - between
+      - within
+    description: |-
+      The comparison type that is chosen. This can be  `within` or `between`.
+
+      `within` signifies that the comparison is done between clusters within a group.
+
+      `between` signifies that the comparison is between groups within a cluster.
+required:
+  - name
+  - basis
+  - comparisonType
