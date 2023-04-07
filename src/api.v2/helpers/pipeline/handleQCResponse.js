@@ -142,22 +142,22 @@ const handleQCResponse = async (io, message) => {
 
   await hookRunner.run(message);
 
-  const { experimentId } = message;
+  const { experimentId, input: { sampleUuid, taskName } } = message;
   const { error = false } = message.response || {};
+
 
   let qcStepOutput = null;
 
-  // if there aren't errors proceed with the updates
-  if (!error && 'output' in message) {
-    const { input: { sampleUuid, taskName } } = message;
-
+  if ('output' in message) {
     qcStepOutput = await getOutputFromS3(message);
-
-    await updatePlotDataKeys(taskName, experimentId, qcStepOutput);
 
     qcStepOutput.config = await updateProcessingConfigWithQCStep(
       taskName, experimentId, qcStepOutput, sampleUuid,
     );
+
+    if (!error) {
+      await updatePlotDataKeys(taskName, experimentId, qcStepOutput);
+    }
   }
 
   // we want to send the update to the subscribed both in successful and error case
