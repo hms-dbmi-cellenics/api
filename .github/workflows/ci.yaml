@@ -40,7 +40,7 @@ jobs:
 
       - id: uncheck-integration-checkbox
         name: Uncheck the integration checkbox
-        uses: aerlaut/pr-update-action@v1
+        uses: aerlaut/pr-update-action@v2
         with:
           repo-token: "${{ secrets.API_TOKEN_GITHUB }}"
           head-branch-regex: "${{ github.head_ref }}"
