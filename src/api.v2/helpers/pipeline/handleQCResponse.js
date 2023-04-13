@@ -145,7 +145,6 @@ const handleQCResponse = async (io, message) => {
   const { experimentId, input: { sampleUuid, taskName } } = message;
   const { error = false } = message.response || {};
 
-
   let qcStepOutput = null;
 
   if ('output' in message) {
