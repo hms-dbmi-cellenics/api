@@ -36,7 +36,7 @@ jobs:
           echo "Unchecked PR body"
           echo $UNCHECKED_BODY
 
-          echo "body='$UNCHECKED_BODY'" >> $GITHUB_OUTPUT
+          echo "body=$UNCHECKED_BODY" >> $GITHUB_OUTPUT
 
       - id: uncheck-integration-checkbox
         name: Uncheck the integration checkbox
@@ -45,7 +45,7 @@ jobs:
           repo-token: "${{ secrets.API_TOKEN_GITHUB }}"
           head-branch-regex: "${{ github.head_ref }}"
           lowercase-branch: false
-          body-template: "${{  steps.create-unchecked-pr-body.outputs.body }}"
+          body-template: ${{  steps.create-unchecked-pr-body.outputs.body }}
           body-update-action: 'replace'
 
   test:
