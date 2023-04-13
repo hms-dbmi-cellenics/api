@@ -195,9 +195,9 @@ jobs:
           EOF
           )
 
-          UNCHECKED_BODY="${UNCHECKED_BODY//'%'/'%25'}"
-          UNCHECKED_BODY="${UNCHECKED_BODY//$'\n'/'%0A'}"
-          UNCHECKED_BODY="${UNCHECKED_BODY//$'\r'/'%0D'}"
+          # UNCHECKED_BODY="${UNCHECKED_BODY//'%'/'%25'}"
+          # UNCHECKED_BODY="${UNCHECKED_BODY//$'\n'/'%0A'}"
+          # UNCHECKED_BODY="${UNCHECKED_BODY//$'\r'/'%0D'}"
 
           echo "Unchecked PR body"
           echo $UNCHECKED_BODY
@@ -212,5 +212,5 @@ jobs:
           repo-token: "${{ secrets.API_TOKEN_GITHUB }}"
           head-branch-regex: "${{ github.head_ref }}"
           lowercase-branch: false
-          body-template: ${{  steps.create-unchecked-pr-body.outputs.body }}
+          body-template: "${{  steps.create-unchecked-pr-body.outputs.body }}"
           body-update-action: 'replace'
