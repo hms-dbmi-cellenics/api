@@ -18,12 +18,12 @@ const logger = getLogger('[ExperimentController] - ');
 
 const getDefaultCPUMem = (env) => {
   switch (env) {
-    case 'development':
-      return { podCPUs: null, podMemory: null };
     case 'staging':
       return { podCPUs: 1, podMemory: 14000 };
+      // Stop using Batch by default in 'production':
+    //   return { podCPUs: 2, podMemory: 28000 };
     default:
-      return { podCPUs: 2, podMemory: 28000 };
+      return { podCPUs: null, podMemory: null };
   }
 };
 
