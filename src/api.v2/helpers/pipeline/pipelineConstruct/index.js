@@ -105,7 +105,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
     });
   }
 
-  //workaround to add a flag to recompute doublet scores in the processingConfig object.
+  // workaround to add a flag to recompute doublet scores in the processingConfig object.
   const fullProcessingConfig = withRecomputeDoubletScores(processingConfig);
 
   // Store the processing config with all changes back in sql

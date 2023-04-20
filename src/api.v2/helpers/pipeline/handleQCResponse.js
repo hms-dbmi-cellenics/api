@@ -150,11 +150,13 @@ const handleQCResponse = async (io, message) => {
   if ('output' in message) {
     qcStepOutput = await getOutputFromS3(message);
 
-    qcStepOutput.config = await updateProcessingConfigWithQCStep(
-      taskName, experimentId, qcStepOutput, sampleUuid,
-    );
+    if (qcStepOutput.config) {
+      qcStepOutput.config = await updateProcessingConfigWithQCStep(
+        taskName, experimentId, qcStepOutput, sampleUuid,
+      );
+    }
 
-    if (!error) {
+    if (qcStepOutput.plotDataKeys) {
       await updatePlotDataKeys(taskName, experimentId, qcStepOutput);
     }
   }
