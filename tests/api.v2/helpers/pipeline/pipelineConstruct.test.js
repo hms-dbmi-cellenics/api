@@ -268,7 +268,15 @@ describe('test for pipeline services', () => {
       { first: () => Promise.resolve(mockExperimentRow) },
     );
 
-    await createSubsetPipeline('fromExperimentId', 'toExperimentId', 'toExperimentName', ['louvain-1', 'louvain-2'], 'mockAuthJWT');
+    await createSubsetPipeline(
+      'fromExperimentId',
+      'toExperimentId',
+      'toExperimentName',
+      ['louvain-1', 'louvain-2'],
+      mockExperimentRow.processingConfig,
+      'mockAuthJWT',
+    );
+
     expect(describeClusterSpy).toMatchSnapshot();
 
     expect(createStateMachineSpy.mock.calls).toMatchSnapshot('createStateMachineSpy calls');
