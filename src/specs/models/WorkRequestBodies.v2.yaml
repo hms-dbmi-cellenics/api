@@ -18,3 +18,4 @@ oneOf:
   - $ref: ./work-request-bodies/WorkRequestTrajectoryAnalysisGetStartingNodes.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestTrajectoryAnalysisGetPseudoTime.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestGetNormalizedExpression.v2.yaml
+  - $ref: ./work-request-bodies/WorkRequestDownloadAnnotSeuratObject.v2.yaml
