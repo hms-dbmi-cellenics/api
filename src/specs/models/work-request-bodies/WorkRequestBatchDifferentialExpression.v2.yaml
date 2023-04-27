@@ -13,7 +13,7 @@ properties:
   basis:
     type: array
     description: |-
-      An array of clusters to run batch differential expression for
+      An array of cellSets to run batch differential expression for
   cellSet:
     type: array
     description: One or more cell sets differential expression is run for. This must be a valid UUID of a cell set as found in the DB.
@@ -42,3 +42,4 @@ required:
   - name
   - basis
   - comparisonType
+additionalProperties: false
