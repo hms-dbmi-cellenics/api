@@ -377,7 +377,7 @@ jobs:
 
       - id: enable-admin-enforcement
         name: Re-enable admin enforcement
-        uses: benjefferies/branch-protection-bot@1.0.7
+        uses: benjefferies/branch-protection-bot@master
         if: always()
         with:
           access_token: ${{ secrets.API_TOKEN_GITHUB }}
