@@ -318,7 +318,7 @@ jobs:
 
       - id: disable-admin-enforcement
         name: Temporarily disable admin enforcement
-        uses: benjefferies/branch-protection-bot@1.0.7
+        uses: benjefferies/branch-protection-bot@master
         with:
           access_token: ${{ secrets.API_TOKEN_GITHUB }}
           owner: ${{ github.repository_owner }}
