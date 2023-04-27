@@ -25,6 +25,7 @@ const dependencyGetters = {
   GetTrajectoryAnalysisStartingNodes: [getClusteringSettings],
   GetTrajectoryAnalysisPseudoTime: [getClusteringSettings],
   GetNormalizedExpression: [getClusteringSettings],
+  DownloadAnnotSeuratObject: [getClusteringSettings],
 };
 
 // message is assumed to be the configureEmbedding payload received
