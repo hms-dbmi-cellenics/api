@@ -61,22 +61,26 @@ const withoutDefaultFilterSettings = (processingConfig, samplesOrder) => {
  * @param {Object} processingConfig - The processing configuration object containing
  * doubletScores and cellSizeDistribution configurations for each sample.
  */
-const addRecomputeDoubletScores = (processingConfig) => {
+const withRecomputeDoubletScores = (processingConfig) => {
+  const newProcessingConfig = _.cloneDeep(processingConfig);
+
   // If count distribution changes (i.e. enabled cellsize) recompute the doublet
   // scores in QC for correctness.
   const classifierAutoEnabled = Object.values(
-    processingConfig.doubletScores,
+    newProcessingConfig.doubletScores,
   ).some((sample) => sample.auto);
 
   const cellSizeEnabled = Object.values(
-    processingConfig.cellSizeDistribution,
+    newProcessingConfig.cellSizeDistribution,
   ).some((sample) => sample.enabled);
 
   const recomputeDoubletScore = !classifierAutoEnabled || cellSizeEnabled;
-  Object.keys(processingConfig.doubletScores).forEach((sample) => {
+  Object.keys(newProcessingConfig.doubletScores).forEach((sample) => {
     // eslint-disable-next-line no-param-reassign
-    processingConfig.doubletScores[sample].recomputeDoubletScore = recomputeDoubletScore;
+    newProcessingConfig.doubletScores[sample].recomputeDoubletScore = recomputeDoubletScore;
   });
+
+  return newProcessingConfig;
 };
 
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
@@ -101,12 +105,15 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
     });
   }
 
-  // woraround to add a flag to recompute doublet scores in the processingConfig object.
-  addRecomputeDoubletScores(processingConfig);
+  // workaround to add a flag to recompute doublet scores in the processingConfig object.
+  const fullProcessingConfig = withRecomputeDoubletScores(processingConfig);
+
+  // Store the processing config with all changes back in sql
+  await new Experiment().updateById(experimentId, { processing_config: fullProcessingConfig });
 
   const context = {
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
-    processingConfig: withoutDefaultFilterSettings(processingConfig, samplesOrder),
+    processingConfig: withoutDefaultFilterSettings(fullProcessingConfig, samplesOrder),
     authJWT,
   };
 
