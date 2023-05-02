@@ -129,6 +129,11 @@ describe('test for pipeline services', () => {
     expect(experimentInstance.findById).toHaveBeenCalledWith('testExperimentId');
     expect(experimentExecutionInstance.upsert.mock.calls).toMatchSnapshot();
 
+
+    // Updates the processing config with the new changes
+    expect(experimentInstance.updateById).toHaveBeenCalledTimes(1);
+    expect(experimentInstance.updateById.mock.calls).toMatchSnapshot('experimentInstance processingConfig update');
+
     expect(createActivitySpy).toHaveBeenCalled();
     expect(startExecutionSpy).toHaveBeenCalled();
     expect(startExecutionSpy.mock.results).toMatchSnapshot();
