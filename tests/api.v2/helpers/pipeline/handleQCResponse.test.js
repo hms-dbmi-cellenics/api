@@ -1,6 +1,7 @@
 // @ts-nocheck
 const _ = require('lodash');
 const io = require('socket.io-client');
+const AWSMock = require('aws-sdk-mock');
 
 const handleQCResponse = require('../../../../src/api.v2/helpers/pipeline/handleQCResponse');
 const constants = require('../../../../src/api.v2/constants');
@@ -88,12 +89,14 @@ describe('handleQCResponse module', () => {
   describe('handleQCResponse main function', () => {
     const mockSocket = io(fake.SOCKET_ENDPOINT);
     const mockIO = { sockets: mockSocket };
+    const s3Output = { Body: JSON.stringify(fake.S3_WORKER_RESULT) };
 
     const experimentInstance = Experiment();
 
     beforeEach(() => {
       jest.clearAllMocks();
 
+      AWSMock.restore();
       getPipelineStatus.mockImplementationOnce(() => ({
         qc: {
           status: constants.SUCCEEDED,
@@ -126,14 +129,11 @@ describe('handleQCResponse module', () => {
 
 
     it('Updates processing config when output contains a valid config', async () => {
-      const s3output = {
-        Body: JSON.stringify(fake.S3_WORKER_RESULT),
-      };
-      const s3Spy = mockS3GetObject(s3output);
-
       experimentInstance.findById.mockReturnValueOnce(
         { first: () => Promise.resolve({ processingConfig: fake.CELL_SIZE_PROCESSING_CONFIG }) },
       );
+
+      const s3Spy = mockS3GetObject(s3Output);
 
       const message = {
         experimentId: fake.EXPERIMENT_ID,
@@ -180,10 +180,7 @@ describe('handleQCResponse module', () => {
     });
 
     it('Sends updates when there are errors in the message', async () => {
-      const s3output = {
-        Body: JSON.stringify(fake.S3_WORKER_RESULT),
-      };
-      const s3Spy = mockS3GetObject(s3output);
+      const s3Spy = mockS3GetObject(s3Output);
 
       experimentInstance.findById.mockReturnValueOnce(
         { first: () => Promise.resolve({ processingConfig: fake.CELL_SIZE_PROCESSING_CONFIG }) },
@@ -206,9 +203,11 @@ describe('handleQCResponse module', () => {
 
       await handleQCResponse(mockIO, message);
 
-      expect(s3Spy).not.toHaveBeenCalled();
+      expect(s3Spy).toHaveBeenCalledWith({ Bucket: fake.S3_BUCKET, Key: fake.S3_KEY });
 
-      expect(experimentInstance.updateProcessingConfig).not.toHaveBeenCalled();
+      expect(experimentInstance.updateProcessingConfig).toHaveBeenCalledTimes(1);
+      expect(experimentInstance.updateProcessingConfig.mock.calls).toMatchSnapshot();
+
       expect(mockSocket.emit).toHaveBeenCalledTimes(1);
       expect(mockSocket.emit).toHaveBeenCalledWith(`ExperimentUpdates-${fake.EXPERIMENT_ID}`,
         expect.objectContaining({

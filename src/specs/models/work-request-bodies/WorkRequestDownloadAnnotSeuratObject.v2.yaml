@@ -1,0 +1,14 @@
+title: Download Annotated Seurat Object
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the work. Must be `DownloadAnnotSeuratObject`.
+    pattern: DownloadAnnotSeuratObject
+  embeddingETag:
+    type: string
+    description: ETag of the current embedding displayed in the experiment.
+required:
+  - name
+  - embeddingETag
+additionalProperties: false
