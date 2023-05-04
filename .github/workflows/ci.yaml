@@ -363,17 +363,6 @@ jobs:
           target-branch: master
           target-directory: 'migrations/sql/${{ steps.fill-metadata.outputs.kubernetes-env }}'
 
-      - id: enable-admin-enforcement
-        name: Re-enable admin enforcement
-        uses: benjefferies/branch-protection-bot@1.0.7
-        if: always()
-        with:
-          access_token: ${{ secrets.API_TOKEN_GITHUB }}
-          owner: ${{ github.repository_owner }}
-          repo: iac
-          enforce_admins: true
-          retries: 8
-
   ready-to-merge:
     name: Ready for merging
     runs-on: ubuntu-20.04
