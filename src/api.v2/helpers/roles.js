@@ -16,7 +16,7 @@ const allowedResources = {
   ],
   [EXPLORER]: [
     'socket',
-    '/experiments/(?<experimentId>.*)/plots-tables/(?<plotUuid>.*)',
+    '/experiments/(?<experimentId>.*)/plots/.*',
     '/experiments/(?<experimentId>.*)/cellSets',
     '/experiments/(?<experimentId>.*)/clone',
   ],
