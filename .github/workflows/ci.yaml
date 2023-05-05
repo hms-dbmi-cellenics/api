@@ -390,6 +390,3 @@ jobs:
           channel: workflow-failures
           status: FAILED
           color: danger
-
-
-# REMOVE BEFORE MERGING
