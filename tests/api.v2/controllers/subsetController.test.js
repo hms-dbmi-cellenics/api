@@ -11,6 +11,8 @@ const { GEM2S_PROCESS_NAME } = require('../../../src/api.v2/constants');
 
 const { mockSqlClient } = require('../mocks/getMockSqlClient')();
 
+const mockExperimentRow = require('../mocks/data/experimentRow.json');
+
 jest.mock('../../../src/api.v2/model/Experiment');
 jest.mock('../../../src/api.v2/model/ExperimentExecution');
 jest.mock('../../../src/api.v2/model/ExperimentParent');
@@ -55,6 +57,11 @@ describe('subsetController', () => {
     const newExecution = { stateMachineArn: 'mockStateMachineArn', executionArn: 'mockExecutionArn' };
 
     experimentInstance.createCopy.mockImplementationOnce(() => Promise.resolve(childExperimentId));
+
+    experimentInstance.findById.mockReturnValueOnce(
+      { first: () => Promise.resolve(mockExperimentRow) },
+    );
+
     pipelineConstruct.createSubsetPipeline.mockImplementationOnce(
       () => Promise.resolve(newExecution),
     );
@@ -85,6 +92,7 @@ describe('subsetController', () => {
         childExperimentId,
         mockReq.body.name,
         mockReq.body.cellSetKeys,
+        mockExperimentRow.processingConfig,
         mockReq.headers.authorization,
       );
 

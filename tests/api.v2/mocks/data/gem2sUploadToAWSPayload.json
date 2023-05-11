@@ -121,6 +121,121 @@
           }
         }
       }
+    },
+    "defaultProcessingConfig": {
+      "classifier": {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": {
+          "auto": true,
+          "enabled": false,
+          "prefiltered": true,
+          "filterSettings": {
+            "FDR": 0.02
+          }
+        }
+      },
+      "doubletScores": {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": {
+          "auto": true,
+          "enabled": true,
+          "filterSettings": {
+            "binStep": 0.05,
+            "probabilityThreshold": 0.6569474
+          }
+        }
+      },
+      "dataIntegration": {
+        "dataIntegration": {
+          "method": "harmony",
+          "methodSettings": {
+            "fastmnn": {
+              "numGenes": 2000,
+              "normalisation": "logNormalize"
+            },
+            "harmony": {
+              "numGenes": 2000,
+              "normalisation": "logNormalize"
+            },
+            "seuratv4": {
+              "numGenes": 2000,
+              "normalisation": "logNormalize"
+            },
+            "unisample": {
+              "numGenes": 2000,
+              "normalisation": "logNormalize"
+            }
+          }
+        },
+        "dimensionalityReduction": {
+          "method": "rpca",
+          "numPCs": 30,
+          "excludeGeneCategories": []
+        }
+      },
+      "numGenesVsNumUmis": {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": {
+          "auto": true,
+          "enabled": true,
+          "filterSettings": {
+            "regressionType": "linear",
+            "regressionTypeSettings": {
+              "linear": {
+                "p.level": 0.001
+              },
+              "spline": {
+                "p.level": 0.001
+              }
+            }
+          }
+        }
+      },
+      "configureEmbedding": {
+        "embeddingSettings": {
+          "method": "umap",
+          "methodSettings": {
+            "tsne": {
+              "perplexity": 30,
+              "learningRate": 200
+            },
+            "umap": {
+              "distanceMetric": "cosine",
+              "minimumDistance": 0.3
+            }
+          }
+        },
+        "clusteringSettings": {
+          "method": "louvain",
+          "methodSettings": {
+            "louvain": {
+              "resolution": 0.8
+            }
+          }
+        }
+      },
+      "cellSizeDistribution": {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": {
+          "auto": true,
+          "enabled": false,
+          "filterSettings": {
+            "binStep": 200,
+            "minCellSize": 1044
+          }
+        }
+      },
+      "mitochondrialContent": {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": {
+          "auto": true,
+          "enabled": true,
+          "filterSettings": {
+            "method": "absoluteThreshold",
+            "methodSettings": {
+              "absoluteThreshold": {
+                "binStep": 0.6,
+                "maxFraction": 0.07181355
+              }
+            }
+          }
+        }
+      }
     }
   },
   "table": "experiments-development",

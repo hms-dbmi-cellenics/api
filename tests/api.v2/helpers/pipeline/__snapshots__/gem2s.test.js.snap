@@ -24,7 +24,7 @@ Array [
           "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
-              "FDR": 0.01,
+              "FDR": 0.02,
             },
             "enabled": false,
             "filterSettings": Object {
@@ -88,7 +88,7 @@ Array [
           "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
-              "binStep": 0.02,
+              "binStep": 0.05,
               "probabilityThreshold": 0.6569474,
             },
             "enabled": true,
@@ -105,8 +105,8 @@ Array [
               "method": "absoluteThreshold",
               "methodSettings": Object {
                 "absoluteThreshold": Object {
-                  "binStep": 0.3,
-                  "maxFraction": 0.07181329,
+                  "binStep": 0.6,
+                  "maxFraction": 0.07181355,
                 },
               },
             },
@@ -191,7 +191,7 @@ Array [
           "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
-              "FDR": 0.01,
+              "FDR": 0.02,
             },
             "enabled": false,
             "filterSettings": Object {
@@ -255,7 +255,7 @@ Array [
           "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
-              "binStep": 0.02,
+              "binStep": 0.05,
               "probabilityThreshold": 0.6569474,
             },
             "enabled": true,
@@ -273,8 +273,8 @@ Array [
               "method": "absoluteThreshold",
               "methodSettings": Object {
                 "absoluteThreshold": Object {
-                  "binStep": 0.3,
-                  "maxFraction": 0.07181329,
+                  "binStep": 0.6,
+                  "maxFraction": 0.07181355,
                 },
               },
             },
