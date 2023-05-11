@@ -196,12 +196,13 @@ const createGem2SPipeline = async (experimentId, taskParams, authJWT) => {
 };
 
 const createSubsetPipeline = async (
-  fromExperimentId, toExperimentId, toExperimentName, cellSetKeys, authJWT,
+  fromExperimentId, toExperimentId, toExperimentName, cellSetKeys, parentProcessingConfig, authJWT,
 ) => {
   const stepsParams = {
     parentExperimentId: fromExperimentId,
     subsetExperimentId: toExperimentId,
     cellSetKeys,
+    parentProcessingConfig,
   };
 
   // None of the other normal gem2s params are necessary for these 2 steps
