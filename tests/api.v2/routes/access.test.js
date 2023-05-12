@@ -198,4 +198,21 @@ describe('User access endpoint', () => {
         return done();
       });
   });
+
+  it('isUserAuthorized experiment resolves successfully', async (done) => {
+    accessController.isUserAuthorized.mockImplementationOnce((req, res) => {
+      res.json(true);
+    });
+
+    request(app)
+      .get('/v2/access/experiment-id/check?url=%2Fv2%2Fexperiments%2Fexperiment-id%2Fqc&method=POST')
+      .send()
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
 });
