@@ -53,6 +53,40 @@ const withoutDefaultFilterSettings = (processingConfig, samplesOrder) => {
   return slimmedProcessingConfig;
 };
 
+/**
+ * Adds a flag to recompute doublet scores in the processingConfig object.
+ *
+ * This function is a hotfix/workaround and should ideally be handled in the pipeline.
+ * It is used in cases when the count distribution changes
+ * (e.g., enabling cell size distribution) which may affect the correctness of doublet scores.
+ * It checks if the classifier is auto-enabled or cell size distribution is enabled and sets
+ * the `recomputeDoubletScore` flag accordingly for each sample in the processingConfig.
+ *
+ * @param {Object} processingConfig - The processing configuration object containing
+ * doubletScores and cellSizeDistribution configurations for each sample.
+ */
+const withRecomputeDoubletScores = (processingConfig) => {
+  const newProcessingConfig = _.cloneDeep(processingConfig);
+
+  // If count distribution changes (i.e. enabled cellsize) recompute the doublet
+  // scores in QC for correctness.
+  const classifierAutoEnabled = Object.values(
+    newProcessingConfig.doubletScores,
+  ).some((sample) => sample.auto);
+
+  const cellSizeEnabled = Object.values(
+    newProcessingConfig.cellSizeDistribution,
+  ).some((sample) => sample.enabled);
+
+  const recomputeDoubletScore = !classifierAutoEnabled || cellSizeEnabled;
+  Object.keys(newProcessingConfig.doubletScores).forEach((sample) => {
+    // eslint-disable-next-line no-param-reassign
+    newProcessingConfig.doubletScores[sample].recomputeDoubletScore = recomputeDoubletScore;
+  });
+
+  return newProcessingConfig;
+};
+
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
   logger.log(`createQCPipeline: fetch processing settings ${experimentId}`);
 
@@ -75,9 +109,15 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
     });
   }
 
+  // workaround to add a flag to recompute doublet scores in the processingConfig object.
+  const fullProcessingConfig = withRecomputeDoubletScores(processingConfig);
+
+  // Store the processing config with all changes back in sql
+  await new Experiment().updateById(experimentId, { processing_config: fullProcessingConfig });
+
   const context = {
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
-    processingConfig: withoutDefaultFilterSettings(processingConfig, samplesOrder),
+    processingConfig: withoutDefaultFilterSettings(fullProcessingConfig, samplesOrder),
     authJWT,
   };
 
@@ -160,12 +200,13 @@ const createGem2SPipeline = async (experimentId, taskParams, authJWT) => {
 };
 
 const createSubsetPipeline = async (
-  fromExperimentId, toExperimentId, toExperimentName, cellSetKeys, authJWT,
+  fromExperimentId, toExperimentId, toExperimentName, cellSetKeys, parentProcessingConfig, authJWT,
 ) => {
   const stepsParams = {
     parentExperimentId: fromExperimentId,
     subsetExperimentId: toExperimentId,
     cellSetKeys,
+    parentProcessingConfig,
   };
 
   // None of the other normal gem2s params are necessary for these 2 steps

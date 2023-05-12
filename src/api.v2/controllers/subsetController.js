@@ -16,32 +16,37 @@ const runSubset = async (req, res) => {
   logger.log(`Starting subset for experiment ${experimentId}`);
 
   const {
-    params: { experimentId: fromExperimentId },
+    params: { experimentId: parentExperimentId },
     body: { name, cellSetKeys },
     user: { sub: userId },
   } = req;
 
-  logger.log(`Creating experiment to subset ${fromExperimentId}`);
+  logger.log(`Creating experiment to subset ${parentExperimentId}`);
 
-  let toExperimentId;
+  let subsetExperimentId;
   await sqlClient.get().transaction(async (trx) => {
-    toExperimentId = await new Experiment(trx).createCopy(fromExperimentId, name, false);
-    await new UserAccess(trx).createNewExperimentPermissions(userId, toExperimentId);
+    subsetExperimentId = await new Experiment(trx).createCopy(parentExperimentId, name);
+    await new UserAccess(trx).createNewExperimentPermissions(userId, subsetExperimentId);
 
     await new ExperimentParent(trx).create(
-      { experiment_id: toExperimentId, parent_experiment_id: fromExperimentId },
+      { experiment_id: subsetExperimentId, parent_experiment_id: parentExperimentId },
     );
   });
 
   // Samples are not created here, we add them in handleResponse of SubsetSeurat
 
-  logger.log(`Created ${toExperimentId}, subsetting experiment ${fromExperimentId} to it`);
+  logger.log(`Created ${subsetExperimentId}, subsetting experiment ${parentExperimentId} to it`);
+
+  const {
+    processingConfig: parentProcessingConfig,
+  } = await new Experiment().findById(parentExperimentId).first();
 
   const { stateMachineArn, executionArn } = await createSubsetPipeline(
-    fromExperimentId,
-    toExperimentId,
+    parentExperimentId,
+    subsetExperimentId,
     name,
     cellSetKeys,
+    parentProcessingConfig,
     req.headers.authorization,
   );
 
@@ -54,15 +59,15 @@ const runSubset = async (req, res) => {
 
   await experimentExecutionClient.upsert(
     {
-      experiment_id: toExperimentId,
+      experiment_id: subsetExperimentId,
       pipeline_type: GEM2S_PROCESS_NAME,
     },
     newExecution,
   );
 
-  logger.log(`Started subset for experiment ${experimentId} successfully, subset experimentId: ${toExperimentId}`);
+  logger.log(`Started subset for experiment ${experimentId} successfully, subset experimentId: ${subsetExperimentId}`);
 
-  res.json(toExperimentId);
+  res.json(subsetExperimentId);
 };
 
 module.exports = {

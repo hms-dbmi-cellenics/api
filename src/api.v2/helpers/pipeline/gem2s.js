@@ -26,26 +26,31 @@ const hookRunner = new HookRunner();
  *
  * @param {*} experimentId
  * @param {*} processingConfig The full processing config for an experiment
- * @returns A copy of processingConfig with each filterSettings entry
- *  duplicated under defaultFilterSettings
+ * @param {*} defaultProcessingConfig The default processing config for an
+ * experiment (when user sets "auto")
+ *
+ * @returns A copy of processingConfig with each filterSettings entry of defaultProcessingConfig
+ * added with defaultFilterSettings key
  */
-const addDefaultFilterSettings = (experimentId, processingConfig) => {
+const formatDefaultFilterSettings = (experimentId, processingConfig, defaultProcessingConfig) => {
   const processingConfigToReturn = _.cloneDeep(processingConfig);
 
   logger.log('Adding defaultFilterSettings to received processing config');
 
   qcStepsWithFilterSettings.forEach((stepName) => {
-    const stepConfigSplitBySample = Object.values(processingConfigToReturn[stepName]);
+    const stepConfigSplitBySample = Object.entries(processingConfigToReturn[stepName]);
 
-    stepConfigSplitBySample.forEach((sampleSettings) => {
+    stepConfigSplitBySample.forEach(([sampleId, sampleSettings]) => {
       if (!sampleSettings.filterSettings) {
         logger.log(`Experiment: ${experimentId}. Skipping current sample config, it doesnt have filterSettings:`);
         logger.log(JSON.stringify(sampleSettings.filterSettings));
         return;
       }
 
+      const defaultFilterSettings = defaultProcessingConfig[stepName][sampleId].filterSettings;
+
       // eslint-disable-next-line no-param-reassign
-      sampleSettings.defaultFilterSettings = _.cloneDeep(sampleSettings.filterSettings);
+      sampleSettings.defaultFilterSettings = _.cloneDeep(defaultFilterSettings);
     });
   });
 
@@ -59,8 +64,8 @@ const continueToQC = async (payload) => {
 
   // Before persisting the new processing config,
   // fill it in with default filter settings (to preserve the gem2s-generated settings)
-  const processingConfigWithDefaults = addDefaultFilterSettings(
-    experimentId, item.processingConfig,
+  const processingConfigWithDefaults = formatDefaultFilterSettings(
+    experimentId, item.processingConfig, item.defaultProcessingConfig,
   );
 
   await new Experiment().updateById(
@@ -237,9 +242,10 @@ const handleGem2sResponse = async (io, message) => {
   // Before being returned to the client we need to
   // fill it in with default filter settings (to preserve the gem2s-generated settings)
   if (messageForClient.taskName === 'uploadToAWS') {
-    messageForClient.item.processingConfig = addDefaultFilterSettings(
+    messageForClient.item.processingConfig = formatDefaultFilterSettings(
       experimentId,
       messageForClient.item.processingConfig,
+      messageForClient.item.defaultProcessingConfig,
     );
   }
 
