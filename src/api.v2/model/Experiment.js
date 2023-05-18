@@ -48,7 +48,12 @@ class Experiment extends BasicModel {
     const aliasedExperimentFields = fields.map((field) => `e.${field}`);
 
     const mainQuery = this.sql
-      .select([...aliasedExperimentFields, 'm.key', 'p.parent_experiment_id'])
+      .select([
+        ...aliasedExperimentFields,
+        'm.key',
+        'p.parent_experiment_id',
+        this.sql.raw('CASE WHEN p.experiment_id IS NOT NULL THEN true ELSE false END as is_subsetted'),
+      ])
       .from(tableNames.USER_ACCESS)
       .where('user_id', userId)
       .join(`${tableNames.EXPERIMENT} as e`, 'e.id', `${tableNames.USER_ACCESS}.experiment_id`)
@@ -58,7 +63,7 @@ class Experiment extends BasicModel {
 
     const result = await collapseKeyIntoArray(
       mainQuery,
-      [...fields, 'parent_experiment_id'],
+      [...fields, 'parent_experiment_id', 'is_subsetted'],
       'key',
       'metadataKeys',
       this.sql,
