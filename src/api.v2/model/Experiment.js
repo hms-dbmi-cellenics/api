@@ -147,12 +147,14 @@ class Experiment extends BasicModel {
       .insert(
         sql(tableNames.EXPERIMENT)
           .select(
-            sql.raw('? as id', [toExperimentId]),
-            // Clone the original name if no new name is provided
-            name ? sql.raw('? as name', [name]) : 'name',
-            'description',
-            'pod_cpus',
-            'pod_memory',
+            [
+              sql.raw('? as id', [toExperimentId]),
+              // Clone the original name if no new name is provided
+              name ? sql.raw('? as name', [name]) : 'name',
+              'description',
+              'pod_cpus',
+              'pod_memory',
+            ],
           )
           .where({ id: fromExperimentId }),
       )

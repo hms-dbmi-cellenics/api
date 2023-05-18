@@ -13,14 +13,29 @@ const invalidatePlotsForEvent = require('../../utils/plotConfigInvalidation/inva
 const events = require('../../utils/plotConfigInvalidation/events');
 const getAdminSub = require('../../utils/getAdminSub');
 const config = require('../../config');
+const ExperimentExecution = require('../model/ExperimentExecution');
 
 const logger = getLogger('[ExperimentController] - ');
+
+// TODO check with reviewer:
+// Perhaps lump in this transform with the sql knexfile one into a recursiveTransform
+const translateProcessingConfig = (processingConfig, sampleIdsMap) => (
+  _.transform(processingConfig, (acc, value, key) => {
+    // If the key is a sample id, then replace it with the new id
+    const newKey = sampleIdsMap[key] || key;
+
+    // Keep going and translate the rest of the object
+    acc[newKey] = _.isObject(value)
+      ? translateProcessingConfig(value, sampleIdsMap)
+      : value;
+  })
+);
 
 const getDefaultCPUMem = (env) => {
   switch (env) {
     case 'staging':
       return { podCPUs: 1, podMemory: 14000 };
-      // Stop using Batch by default in 'production':
+    // Stop using Batch by default in 'production':
     //   return { podCPUs: 2, podMemory: 28000 };
     default:
       return { podCPUs: null, podMemory: null };
@@ -166,6 +181,46 @@ const downloadData = async (req, res) => {
   res.json(downloadLink);
 };
 
+const deepCloneExperiment = async (req, res) => {
+  const userId = req.user.sub;
+  const {
+    params: { experimentId: fromExperimentId },
+    body: { toUserId = userId, name },
+  } = req;
+
+  logger.log(`Creating experiment to deep clone ${fromExperimentId} to`);
+
+  let toExperimentId;
+
+  await sqlClient.get().transaction(async (trx) => {
+    toExperimentId = await new Experiment(trx).createCopy(fromExperimentId, name);
+    await new UserAccess(trx).createNewExperimentPermissions(toUserId, toExperimentId);
+  });
+
+  const { samplesOrder: samplesToCloneIds, processingConfig } = await new Experiment()
+    .findById(fromExperimentId)
+    .first();
+
+  const cloneSamplesOrder = await new Sample()
+    .copyTo(fromExperimentId, toExperimentId, samplesToCloneIds);
+
+  // Group together the original and copy sample ids for cleaner handling
+  const sampleIdsMap = _.zipObject(samplesToCloneIds, cloneSamplesOrder);
+
+  const translatedProcessingConfig = translateProcessingConfig(processingConfig, sampleIdsMap);
+
+  await new Experiment().updateById(
+    toExperimentId,
+    {
+      samples_order: JSON.stringify(cloneSamplesOrder),
+      processing_config: JSON.stringify(translatedProcessingConfig),
+    },
+  );
+
+  await new ExperimentExecution().createCopy(fromExperimentId, toExperimentId, sampleIdsMap);
+
+  res.json(OK());
+};
 
 const cloneExperiment = async (req, res) => {
   const getAllSampleIds = async (experimentId) => {
@@ -226,4 +281,5 @@ module.exports = {
   getBackendStatus,
   downloadData,
   cloneExperiment,
+  deepCloneExperiment,
 };
