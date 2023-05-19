@@ -14,10 +14,10 @@ const runGem2s = async (req, res) => {
 
   logger.log(`Starting gem2s for experiment ${experimentId}`);
 
-  const result = await new ExperimentParent()
+  const { parentExperimentId = null } = await new ExperimentParent()
     .find({ experiment_id: experimentId })
     .first();
-  if (result.parentExperimentId) {
+  if (parentExperimentId) {
     throw new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`);
   }
 

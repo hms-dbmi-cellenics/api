@@ -52,6 +52,8 @@ class Experiment extends BasicModel {
         ...aliasedExperimentFields,
         'm.key',
         'p.parent_experiment_id',
+        // the parent_experiment_id can be null when the parent experiment is deleted
+        // if a row with the experiment_id in experiment_parent table exists that means its subsetted
         this.sql.raw('CASE WHEN p.experiment_id IS NOT NULL THEN true ELSE false END as is_subsetted'),
       ])
       .from(tableNames.USER_ACCESS)
