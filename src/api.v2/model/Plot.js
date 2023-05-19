@@ -88,6 +88,41 @@ class Plot extends BasicModel {
 
     return configsToReturn;
   }
+
+  async createCopy(fromExperimentId, toExperimentId, sampleIdsMap) {
+    const { sql } = this;
+
+    const fromPlots = await sql(tableNames.PLOT)
+      .select()
+      .where({ experiment_id: fromExperimentId });
+
+    const fromSampleIds = Object.keys(sampleIdsMap);
+
+    const toPlots = fromPlots.map((plot) => {
+      const { config, s3DataKey, id: fromPlotId } = plot;
+
+      let toPlotId = fromPlotId;
+
+      // Plot ids we want to change look like this: "{sampleId}-{plotName}-{someNumber}"
+      // If it matches, we will swap the sampleId value with the new one
+      const fromSampleId = fromSampleIds.find((sampleId) => fromPlotId.includes(sampleId));
+      if (fromSampleId !== undefined) {
+        toPlotId = fromPlotId.replace(fromSampleId, sampleIdsMap[fromSampleId]);
+      }
+
+      const newPlot = {
+        id: toPlotId,
+        experiment_id: toExperimentId,
+        config,
+        s3_data_key: s3DataKey,
+      };
+
+      return newPlot;
+    });
+
+
+    await sql(tableNames.PLOT).insert(toPlots);
+  }
 }
 
 module.exports = Plot;

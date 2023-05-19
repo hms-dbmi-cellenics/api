@@ -14,6 +14,7 @@ const events = require('../../utils/plotConfigInvalidation/events');
 const getAdminSub = require('../../utils/getAdminSub');
 const config = require('../../config');
 const ExperimentExecution = require('../model/ExperimentExecution');
+const Plot = require('../model/Plot');
 
 const logger = getLogger('[ExperimentController] - ');
 
@@ -218,6 +219,7 @@ const deepCloneExperiment = async (req, res) => {
   );
 
   await new ExperimentExecution().createCopy(fromExperimentId, toExperimentId, sampleIdsMap);
+  await new Plot().createCopy(fromExperimentId, toExperimentId, sampleIdsMap);
 
   res.json(OK());
 };
