@@ -15,6 +15,7 @@ const getAdminSub = require('../../utils/getAdminSub');
 const config = require('../../config');
 const ExperimentExecution = require('../model/ExperimentExecution');
 const Plot = require('../model/Plot');
+const { createCopyPipeline } = require('../helpers/pipeline/pipelineConstruct');
 
 const logger = getLogger('[ExperimentController] - ');
 
@@ -220,6 +221,8 @@ const deepCloneExperiment = async (req, res) => {
 
   await new ExperimentExecution().createCopy(fromExperimentId, toExperimentId, sampleIdsMap);
   await new Plot().createCopy(fromExperimentId, toExperimentId, sampleIdsMap);
+
+  await createCopyPipeline(fromExperimentId, toExperimentId, sampleIdsMap);
 
   res.json(OK());
 };

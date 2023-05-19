@@ -6,6 +6,7 @@ const {
   END_OF_PIPELINE,
   HANDLE_ERROR_STEP,
 } = require('../../../../constants');
+const copyPipelineSteps = require('./copyPipelineSteps');
 
 
 const createLocalPipeline = (nextStep) => ({
@@ -145,6 +146,17 @@ const getSubsetPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
   },
 });
 
+const getCopyPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
+  Comment: `Copy Pipeline for clusterEnv '${clusterEnv}'`,
+  StartAt: getStateMachineFirstStep(clusterEnv, runInBatch),
+  States: {
+    ...buildInitialSteps(clusterEnv, 'CopyS3Objects', runInBatch),
+    ...copyPipelineSteps,
+    ...buildErrorHandlingSteps(),
+    ...buildEndOfPipelineStep(),
+  },
+});
+
 
 module.exports = {
   getPipelineStepNames,
@@ -152,4 +164,5 @@ module.exports = {
   getGem2sPipelineSkeleton,
   getQcPipelineSkeleton,
   getSubsetPipelineSkeleton,
+  getCopyPipelineSkeleton,
 };
