@@ -16,6 +16,8 @@ items:
     parentExperimentId:
       type: string
       nullable: true
+    isSubsetted:
+      type: boolean
     samplesOrder:
       type: array
       items:
