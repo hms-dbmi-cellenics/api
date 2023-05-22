@@ -49,7 +49,7 @@ const buildUserInvitedEmailBody = (email, experimentId, inviterUser) => {
         Data: 'Invitation to join a project in Cellenics',
       },
     },
-    Source: isHMS ? 'alex_pickering@hms.harvard.edu' : 'notification@biomage.net',
+    Source: isHMS ? 'alex_pickering@hms.harvard.edu' : `notification@${process.env.DOMAIN_NAME}`,
   };
   return params;
 };
