@@ -57,7 +57,7 @@ Object {
       "Data": "Cellenics experiment status",
     },
   },
-  "Source": "notification@biomage.net",
+  "Source": "notification@localhost.test",
 }
 `;
 
@@ -120,7 +120,7 @@ Object {
       "Data": "Cellenics experiment status",
     },
   },
-  "Source": "notification@biomage.net",
+  "Source": "notification@localhost.test",
 }
 `;
 

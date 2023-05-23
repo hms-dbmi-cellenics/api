@@ -59,7 +59,7 @@ Object {
       "Data": "Invitation to join a project in Cellenics",
     },
   },
-  "Source": "notification@biomage.net",
+  "Source": "notification@localhost.test",
 }
 `;
 
@@ -124,6 +124,6 @@ Object {
       "Data": "Invitation to join a project in Cellenics",
     },
   },
-  "Source": "notification@biomage.net",
+  "Source": "notification@localhost.test",
 }
 `;
