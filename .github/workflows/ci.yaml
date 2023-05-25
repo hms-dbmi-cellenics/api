@@ -315,7 +315,6 @@ jobs:
           REF_ID: ${{ needs.build-docker.outputs.ref-id }}
           IMAGE_TAG: ${{ needs.build-docker.outputs.image-tag }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-
       - name: Push production/develop template to releases
         if:
           (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
@@ -350,7 +349,17 @@ jobs:
           destination_folder: 'staging-candidates/${{ steps.fill-metadata.outputs.deployment-name }}'
           user_email: 'ci@biomage.net'
           user_name: 'Biomage CI/CD'
-
+      - id: disable-admin-enforcement
+        if:
+          (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
+        name: Temporarily disable admin enforcement
+        uses: benjefferies/branch-protection-bot@master
+        with:
+          access_token: ${{ secrets.API_TOKEN_GITHUB }}
+          owner: ${{ github.repository_owner }}
+          repo: iac
+          enforce_admins: false
+          retries: 8
       - name: Push migrations into iac
         if:
           (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
