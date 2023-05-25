@@ -54,7 +54,7 @@ const buildPipelineStatusEmailBody = (experimentId, status, user) => {
         Data: 'Cellenics experiment status',
       },
     },
-    Source: isHMS ? 'alex_pickering@hms.harvard.edu' : 'notification@biomage.net',
+    Source: isHMS ? 'alex_pickering@hms.harvard.edu' : `notification@${process.env.DOMAIN_NAME}`,
   };
   return params;
 };

@@ -8,6 +8,8 @@ const mockUser = {
   email: 'test@example.com',
 };
 
+process.env.DOMAIN_NAME = 'localhost.test';
+
 describe('buildUserInvitedNotRegisteredEmailBody', () => {
   it('Should build the correct message for SUCCEEDED status', () => {
     const emailParams = buildPipelineStatusEmailBody(mockExperimentId, SUCCEEDED, mockUser);
