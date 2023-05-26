@@ -11,11 +11,6 @@ const getLogger = require('../../../utils/getLogger');
 
 const logger = getLogger('[AccessModel] - ');
 
-const handleUnexpectedError = (e) => {
-  logger.error(e);
-  throw new Error('We weren\'t able to share the project');
-};
-
 const createUserInvite = async (experimentId, invitedUserEmail, role, inviterUser) => {
   let userAttributes;
   let emailBody;
@@ -28,24 +23,21 @@ const createUserInvite = async (experimentId, invitedUserEmail, role, inviterUse
     emailBody = buildUserInvitedEmailBody(invitedUserEmail, experimentId, inviterUser);
   } catch (e) {
     if (e.code !== 'UserNotFoundException') {
-      handleUnexpectedError(e);
+      throw e;
     }
 
     logger.log('Invited user does not have an account yet. Sending invitation email.');
 
-    try {
-      await new UserAccess().addToInviteAccess(invitedUserEmail, experimentId, role);
-      emailBody = buildUserInvitedNotRegisteredEmailBody(invitedUserEmail, inviterUser);
-    } catch (e2) {
-      handleUnexpectedError(e2);
-    }
+    await new UserAccess().addToInviteAccess(invitedUserEmail, experimentId, role);
+    emailBody = buildUserInvitedNotRegisteredEmailBody(invitedUserEmail, inviterUser);
   }
 
   try {
     await sendEmail(emailBody);
   } catch (e) {
-    logger.log('Share notification send failure');
-    throw new Error('The project was shared, but we weren’t able to notify the new collaborator');
+    logger.error(e);
+    // This message is picked up in the ui and transformed to a nice end user message
+    throw new Error('NotificationFailure');
   }
 
   return OK();
