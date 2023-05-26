@@ -11,6 +11,11 @@ const getLogger = require('../../../utils/getLogger');
 
 const logger = getLogger('[AccessModel] - ');
 
+const handleUnexpectedError = (e) => {
+  logger.error(e);
+  throw new Error('We weren\'t able to share the project');
+};
+
 const createUserInvite = async (experimentId, invitedUserEmail, role, inviterUser) => {
   let userAttributes;
   let emailBody;
@@ -19,20 +24,29 @@ const createUserInvite = async (experimentId, invitedUserEmail, role, inviterUse
     userAttributes = await getAwsUserAttributesByEmail(invitedUserEmail);
 
     const invitedUserId = userAttributes.find((attr) => attr.Name === 'sub').Value;
-    new UserAccess().grantAccess(invitedUserId, experimentId, role);
+    await new UserAccess().grantAccess(invitedUserId, experimentId, role);
     emailBody = buildUserInvitedEmailBody(invitedUserEmail, experimentId, inviterUser);
   } catch (e) {
     if (e.code !== 'UserNotFoundException') {
-      throw e;
+      handleUnexpectedError(e);
     }
 
     logger.log('Invited user does not have an account yet. Sending invitation email.');
 
-    new UserAccess().addToInviteAccess(invitedUserEmail, experimentId, role);
-    emailBody = buildUserInvitedNotRegisteredEmailBody(invitedUserEmail, inviterUser);
+    try {
+      await new UserAccess().addToInviteAccess(invitedUserEmail, experimentId, role);
+      emailBody = buildUserInvitedNotRegisteredEmailBody(invitedUserEmail, inviterUser);
+    } catch (e2) {
+      handleUnexpectedError(e2);
+    }
   }
 
-  await sendEmail(emailBody);
+  try {
+    await sendEmail(emailBody);
+  } catch (e) {
+    logger.log('Share notification send failure');
+    throw new Error('The project was shared, but we weren’t able to notify the new collaborator');
+  }
 
   return OK();
 };
