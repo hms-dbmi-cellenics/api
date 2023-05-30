@@ -128,6 +128,11 @@ describe('test for pipeline services', () => {
     expect(experimentInstance.findById).toHaveBeenCalledWith('testExperimentId');
     expect(experimentExecutionInstance.upsert.mock.calls).toMatchSnapshot();
 
+
+    // Updates the processing config with the new changes
+    expect(experimentInstance.updateById).toHaveBeenCalledTimes(1);
+    expect(experimentInstance.updateById.mock.calls).toMatchSnapshot('experimentInstance processingConfig update');
+
     expect(createActivitySpy).toHaveBeenCalled();
     expect(startExecutionSpy).toHaveBeenCalled();
     expect(startExecutionSpy.mock.results).toMatchSnapshot();
@@ -267,7 +272,15 @@ describe('test for pipeline services', () => {
       { first: () => Promise.resolve(mockExperimentRow) },
     );
 
-    await createSubsetPipeline('fromExperimentId', 'toExperimentId', 'toExperimentName', ['louvain-1', 'louvain-2'], 'mockAuthJWT');
+    await createSubsetPipeline(
+      'fromExperimentId',
+      'toExperimentId',
+      'toExperimentName',
+      ['louvain-1', 'louvain-2'],
+      mockExperimentRow.processingConfig,
+      'mockAuthJWT',
+    );
+
     expect(describeClusterSpy).toMatchSnapshot();
 
     expect(createStateMachineSpy.mock.calls).toMatchSnapshot('createStateMachineSpy calls');

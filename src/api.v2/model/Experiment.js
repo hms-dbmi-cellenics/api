@@ -224,7 +224,6 @@ class Experiment extends BasicModel {
         .where('id', experimentId)
         .first();
 
-
       if (_.isEmpty(result)) {
         throw new NotFoundError('Experiment not found');
       }

@@ -275,10 +275,10 @@ describe('checkError', () => {
   const failedEvents = [
     {
       timestamp: '2021-10-13T14:36:14.228000+02:00',
-      type: 'ExecutionFailed',
+      type: 'ActivityFailed',
       id: 130,
       previousEventId: 129,
-      executionFailedEventDetails: {
+      activityFailedEventDetails: {
         error: 'NoPodsAvailable',
         cause: 'No available and running pipeline pods.',
       },
