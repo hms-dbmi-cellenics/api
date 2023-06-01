@@ -41,16 +41,14 @@ class ExperimentExecution extends BasicModel {
       };
 
       if (originalRow.pipelineType === 'gem2s') {
-        copyRow.last_gem2s_params.sampleIds = originalRow.lastGem2SParams.sampleIds.reduce(
-          (acum, currSampleId) => {
-            acum.push(sampleIdsMap[currSampleId]);
-            return acum;
-          }, [],
-        );
+        copyRow.last_gem2s_params.sampleIds = originalRow.lastGem2SParams.sampleIds
+          .reduce(
+            (acum, currSampleId) => {
+              acum.push(sampleIdsMap[currSampleId]);
+              return acum;
+            }, [],
+          );
       }
-
-      console.log('copyRowDebug');
-      console.log(copyRow);
 
       copyRows.push(copyRow);
     });

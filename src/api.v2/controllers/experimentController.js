@@ -222,7 +222,17 @@ const deepCloneExperiment = async (req, res) => {
   await new ExperimentExecution().createCopy(fromExperimentId, toExperimentId, sampleIdsMap);
   await new Plot().createCopy(fromExperimentId, toExperimentId, sampleIdsMap);
 
-  await createCopyPipeline(fromExperimentId, toExperimentId, sampleIdsMap);
+  const {
+    stateMachineArn,
+    executionArn,
+  } = await createCopyPipeline(fromExperimentId, toExperimentId, sampleIdsMap);
+
+  const experimentExecutionClient = new ExperimentExecution();
+
+  await experimentExecutionClient.upsert(
+    { experiment_id: toExperimentId, pipeline_type: 'gem2s' },
+    { state_machine_arn: stateMachineArn, execution_arn: executionArn },
+  );
 
   res.json(OK());
 };
