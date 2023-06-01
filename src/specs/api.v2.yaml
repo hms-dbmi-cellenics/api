@@ -1439,13 +1439,8 @@ paths:
         content:
           application/json:
             schema:
-              description: If samplesToCloneIds is sent then the cloned experiment only contains the subset samples instead of all of them
               type: object
               properties:
-                samplesToCloneIds:
-                  type: array
-                  items:
-                    type: string
                 name:
                   type: string
                 toUserId:

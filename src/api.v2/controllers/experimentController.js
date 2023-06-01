@@ -181,7 +181,7 @@ const downloadData = async (req, res) => {
   res.json(downloadLink);
 };
 
-const deepCloneExperiment = async (req, res) => {
+const cloneExperiment = async (req, res) => {
   const userId = req.user.sub;
   const {
     params: { experimentId: fromExperimentId },
@@ -189,6 +189,12 @@ const deepCloneExperiment = async (req, res) => {
   } = req;
 
   logger.log(`Creating experiment to deep clone ${fromExperimentId} to`);
+
+  const adminSub = await getAdminSub();
+
+  if (toUserId !== userId && userId !== adminSub) {
+    throw new UnauthorizedError(`User ${userId} cannot clone experiments for other users.`);
+  }
 
   let toExperimentId;
 
@@ -232,51 +238,7 @@ const deepCloneExperiment = async (req, res) => {
     { state_machine_arn: stateMachineArn, execution_arn: executionArn },
   );
 
-  res.json(OK());
-};
-
-const cloneExperiment = async (req, res) => {
-  const getAllSampleIds = async (experimentId) => {
-    const { samplesOrder } = await new Experiment().findById(experimentId).first();
-    return samplesOrder;
-  };
-  const userId = req.user.sub;
-  const {
-    params: { experimentId: fromExperimentId },
-    body: {
-      samplesToCloneIds = await getAllSampleIds(fromExperimentId),
-      name = null,
-      toUserId = userId,
-    },
-  } = req;
-
-  const adminSub = await getAdminSub();
-
-  if (toUserId !== userId && userId !== adminSub) {
-    throw new UnauthorizedError(`User ${userId} cannot clone experiments for other users.`);
-  }
-
-  logger.log(`Creating experiment to clone ${fromExperimentId} to`);
-
-  let toExperimentId;
-
-  await sqlClient.get().transaction(async (trx) => {
-    toExperimentId = await new Experiment(trx).createCopy(fromExperimentId, name);
-    await new UserAccess(trx).createNewExperimentPermissions(toUserId, toExperimentId);
-  });
-
-  logger.log(`Cloning experiment samples from experiment ${fromExperimentId} into ${toExperimentId}`);
-
-  const cloneSamplesOrder = await new Sample().copyTo(
-    fromExperimentId, toExperimentId, samplesToCloneIds,
-  );
-
-  await new Experiment().updateById(
-    toExperimentId,
-    { samples_order: JSON.stringify(cloneSamplesOrder) },
-  );
-
-  logger.log(`Finished cloning experiment ${fromExperimentId}, new experiment's id is ${toExperimentId}`);
+  logger.log(`Began pipeline for cloning experiment ${fromExperimentId}, new experiment's id is ${toExperimentId}`);
 
   res.json(toExperimentId);
 };
@@ -294,5 +256,4 @@ module.exports = {
   getBackendStatus,
   downloadData,
   cloneExperiment,
-  deepCloneExperiment,
 };
