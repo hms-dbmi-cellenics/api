@@ -30,7 +30,7 @@ class HookRunner {
   }
 
   // run requires taskName to be present as a key in the payload
-  async run(payload) {
+  async run(payload, io) {
     // run all hooks inside a try catch because they are side-effects and as such, they should
     // not break the main program execution
     try {
@@ -45,13 +45,13 @@ class HookRunner {
       for (let i = 0; this.hooks[taskName] !== undefined && i < this.hooks[taskName].length; i += 1) {
         // calling the hooks sequentially since they may depend on each other
         // eslint-disable-next-line no-await-in-loop
-        this.results[taskName].push(await this.hooks[taskName][i](payload));
+        this.results[taskName].push(await this.hooks[taskName][i](payload, io));
       }
 
       // Runs hooks that apply to all tasks (assigning the results to current task)
       for (let i = 0; this.hooks[ALL] !== undefined && i < this.hooks[ALL].length; i += 1) {
         // eslint-disable-next-line no-await-in-loop
-        this.results[taskName].push(await this.hooks[ALL][i](payload));
+        this.results[taskName].push(await this.hooks[ALL][i](payload, io));
       }
 
       logger.log(`Completed ${this.results[taskName].length} hooks for pipeline task ${taskName}`);
