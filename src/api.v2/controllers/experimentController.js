@@ -188,13 +188,13 @@ const cloneExperiment = async (req, res) => {
     body: { toUserId = userId, name },
   } = req;
 
-  logger.log(`Creating experiment to deep clone ${fromExperimentId} to`);
-
   const adminSub = await getAdminSub();
 
   if (toUserId !== userId && userId !== adminSub) {
     throw new UnauthorizedError(`User ${userId} cannot clone experiments for other users.`);
   }
+
+  logger.log(`Creating experiment to clone ${fromExperimentId} to`);
 
   let toExperimentId;
 
