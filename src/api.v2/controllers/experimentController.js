@@ -19,8 +19,6 @@ const { createCopyPipeline } = require('../helpers/pipeline/pipelineConstruct');
 
 const logger = getLogger('[ExperimentController] - ');
 
-// TODO check with reviewer:
-// Perhaps lump in this transform with the sql knexfile one into a recursiveTransform
 const translateProcessingConfig = (processingConfig, sampleIdsMap) => (
   _.transform(processingConfig, (acc, value, key) => {
     // If the key is a sample id, then replace it with the new id
