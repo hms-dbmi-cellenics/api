@@ -27,3 +27,4 @@ exports.down = async (knex) => {
 
   await knex.schema.dropTable('experiment_parent');
 };
+

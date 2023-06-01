@@ -14,6 +14,7 @@ Array [
       "created_at",
       "updated_at",
       "parent_experiment_id",
+      "is_subsetted",
     ],
     "key",
     "metadataKeys",
