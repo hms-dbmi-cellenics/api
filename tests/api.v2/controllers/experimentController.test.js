@@ -24,6 +24,7 @@ const { OK, NotFoundError } = require('../../../src/utils/responses');
 const {
   OLD_QC_NAME_TO_BE_REMOVED, QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUCCEEDED, NOT_CREATED,
 } = require('../../../src/api.v2/constants');
+const getAdminSub = require('../../../src/utils/getAdminSub');
 
 const experimentInstance = Experiment();
 const sampleInstance = Sample();
@@ -539,38 +540,38 @@ describe('experimentController', () => {
     expect(mockRes.json).toHaveBeenCalledWith(toExperimentId);
   });
 
-  // it('Clone experiment for another user works', async () => {
-  //   const mockClonedExperimentName = 'cloned this experiment for you';
-  //   const toExperimentId = 'mockToExperimentId';
+  it('Clone experiment for another user works', async () => {
+    const mockClonedExperimentName = 'cloned this experiment for you';
+    const toExperimentId = 'mockToExperimentId';
 
-  //   const mockReq = {
-  //     params: { experimentId: mockExperiment.id },
-  //     body: {
-  //       name: mockClonedExperimentName,
-  //       toUserId: 'mockUserId-asdasd-343-123sd',
-  //     },
-  //     user: { sub: await getAdminSub() },
-  //   };
-  //   const allSampleIds = ['mockSample1', 'mockSample2', 'mockSample3', 'mockSample4'];
-  //   const clonedSamplesIds = ['mockClonedSample1', 'mockClonedSample2', 'mockClonedSample3', 'mockClonedSample4'];
+    const mockReq = {
+      params: { experimentId: mockExperiment.id },
+      body: {
+        name: mockClonedExperimentName,
+        toUserId: 'mockUserId-asdasd-343-123sd',
+      },
+      user: { sub: await getAdminSub() },
+    };
+    const allSampleIds = ['mockSample1', 'mockSample2', 'mockSample3', 'mockSample4'];
+    const clonedSamplesIds = ['mockClonedSample1', 'mockClonedSample2', 'mockClonedSample3', 'mockClonedSample4'];
 
-  //   experimentInstance.createCopy.mockImplementation(() => Promise.resolve(toExperimentId));
-  //   experimentInstance.findById.mockReturnValue(
-  //     { first: () => Promise.resolve({ samplesOrder: allSampleIds }) },
-  //   );
-  //   experimentInstance.updateById.mockImplementation(() => Promise.resolve());
-  //   sampleInstance.copyTo.mockImplementation(
-  //     () => Promise.resolve(clonedSamplesIds),
-  //   );
+    experimentInstance.createCopy.mockImplementation(() => Promise.resolve(toExperimentId));
+    experimentInstance.findById.mockReturnValue(
+      { first: () => Promise.resolve({ samplesOrder: allSampleIds }) },
+    );
+    experimentInstance.updateById.mockImplementation(() => Promise.resolve());
+    sampleInstance.copyTo.mockImplementation(
+      () => Promise.resolve(clonedSamplesIds),
+    );
 
-  //   // this request should pass
-  //   await expect(experimentController.cloneExperiment(mockReq, mockRes))
-  //     .resolves;
+    // this request should pass
+    await expect(experimentController.cloneExperiment(mockReq, mockRes))
+      .resolves;
 
-  //   // should fail if the request is not from the admin
-  //   mockReq.user.sub = 'not-admin-user';
-  //   await expect(experimentController.cloneExperiment(mockReq, mockRes))
-  //     .rejects
-  //     .toThrow(`User ${mockReq.user.sub} cannot clone experiments for other users.`);
-  // });
+    // should fail if the request is not from the admin
+    mockReq.user.sub = 'not-admin-user';
+    await expect(experimentController.cloneExperiment(mockReq, mockRes))
+      .rejects
+      .toThrow(`User ${mockReq.user.sub} cannot clone experiments for other users.`);
+  });
 });
