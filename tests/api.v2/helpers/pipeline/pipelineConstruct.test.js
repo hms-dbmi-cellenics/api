@@ -8,7 +8,7 @@ const { getQcPipelineStepNames } = require('../../../../src/api.v2/helpers/pipel
 
 const Experiment = require('../../../../src/api.v2/model/Experiment');
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
-const { createSubsetPipeline } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
+const { createSubsetPipeline, createCopyPipeline } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 const { cancelPreviousPipelines } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils');
 
 const experimentInstance = new Experiment();
@@ -293,5 +293,57 @@ describe('test for pipeline services', () => {
 
     // It cancelled previous pipelines on this experiment
     expect(cancelPreviousPipelines).toHaveBeenCalled();
+  });
+
+  it('Create copy pipeline works', async () => {
+    AWSMock.setSDKInstance(AWS);
+
+    const describeClusterSpy = jest.fn((x) => x);
+    AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
+      describeClusterSpy(params);
+      callback(null, mockCluster);
+    });
+
+    const createStateMachineSpy = jest.fn(
+      (stateMachineObject) => _.omit(stateMachineObject, ['definition', 'image']),
+    );
+
+    AWSMock.mock('StepFunctions', 'createStateMachine', (params, callback) => {
+      createStateMachineSpy(params);
+      callback(null, { stateMachineArn: 'test-machine' });
+    });
+
+    const createActivitySpy = jest.fn((x) => x);
+    AWSMock.mock('StepFunctions', 'createActivity', (params, callback) => {
+      createActivitySpy(params);
+      callback(null, { activityArn: 'test-actvitiy' });
+    });
+
+    const startExecutionSpy = jest.fn((x) => x);
+    AWSMock.mock('StepFunctions', 'startExecution', (params, callback) => {
+      startExecutionSpy(params);
+      callback(null, { executionArn: 'test-machine' });
+    });
+
+    experimentInstance.findById.mockReturnValueOnce(
+      { first: () => Promise.resolve(mockExperimentRow) },
+    );
+
+    const sampleIdsMap = { originalSampleId1: 'clonedSampleId1', originalSampleId2: 'clonedSampleId2' };
+
+    await createCopyPipeline(
+      'fromExperimentId',
+      'toExperimentId',
+      sampleIdsMap,
+    );
+
+    expect(describeClusterSpy).toMatchSnapshot();
+
+    expect(createStateMachineSpy.mock.calls).toMatchSnapshot('createStateMachineSpy calls');
+    expect(createStateMachineSpy.mock.results).toMatchSnapshot('createStateMachineSpy results');
+
+    expect(createActivitySpy).toHaveBeenCalled();
+    expect(startExecutionSpy).toHaveBeenCalled();
+    expect(startExecutionSpy.mock.results).toMatchSnapshot();
   });
 });
