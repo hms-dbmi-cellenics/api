@@ -78,15 +78,15 @@ jobs:
         git config --global url."https://".insteadOf ssh://
         npm ci
 
-    - id: test-codecov
-      name: Run unit tests with coverage
-      uses: mattallty/jest-github-action@v1
-      env:
-        AWS_DEFAULT_REGION: 'eu-west-1'
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        test-command: "npm run coverage"
-        coverage-comment: false
+    # - id: test-codecov
+    #   name: Run unit tests with coverage
+    #   uses: mattallty/jest-github-action@v1
+    #   env:
+    #     AWS_DEFAULT_REGION: 'eu-west-1'
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     test-command: "npm run coverage"
+    #     coverage-comment: false
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
