@@ -9,7 +9,6 @@ const stub = {
   updateById: jest.fn(),
   delete: jest.fn(),
   deleteById: jest.fn(),
-  copy: jest.fn(),
 };
 
 const BasicModel = jest.fn().mockImplementation(() => stub);

@@ -95,23 +95,6 @@ class BasicModel {
       .returning(this.selectableProps)
       .timeout(this.timeout);
   }
-
-  // copy(filters, updates) {
-  //   return this.sql
-  //     .insert(
-  //       this.sql(this.tableName)
-  //         .select(
-  //           this.sql.raw('? as id', [toExperimentId]),
-  //           // Clone the original name if no new name is provided
-  //           name ? sql.raw('? as name', [name]) : 'name',
-  //           'description',
-  //           'pod_cpus',
-  //           'pod_memory',
-  //         )
-  //         .where(filters),
-  //     )
-  //     .into(this.sql.raw(`${this.tableName} (id, name, description, pod_cpus, pod_memory)`));
-  // }
 }
 
 module.exports = BasicModel;
