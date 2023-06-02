@@ -22,9 +22,10 @@ const getAllExperimentsResponse = require('../mocks/data/getAllExperimentsRespon
 const experimentController = require('../../../src/api.v2/controllers/experimentController');
 const { OK, NotFoundError } = require('../../../src/utils/responses');
 const {
-  OLD_QC_NAME_TO_BE_REMOVED, QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUCCEEDED, NOT_CREATED,
+  OLD_QC_NAME_TO_BE_REMOVED, QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUCCEEDED, NOT_CREATED, RUNNING,
 } = require('../../../src/api.v2/constants');
 const getAdminSub = require('../../../src/utils/getAdminSub');
+const LockedError = require('../../../src/utils/responses/LockedError');
 
 const experimentInstance = Experiment();
 const sampleInstance = Sample();
@@ -540,7 +541,7 @@ describe('experimentController', () => {
     expect(mockRes.json).toHaveBeenCalledWith(toExperimentId);
   });
 
-  it('Clone experiment for another user works', async () => {
+  it('cloneExperiment for another user fails', async () => {
     const mockClonedExperimentName = 'cloned this experiment for you';
     const toExperimentId = 'mockToExperimentId';
 
@@ -556,22 +557,46 @@ describe('experimentController', () => {
     const clonedSamplesIds = ['mockClonedSample1', 'mockClonedSample2', 'mockClonedSample3', 'mockClonedSample4'];
 
     experimentInstance.createCopy.mockImplementation(() => Promise.resolve(toExperimentId));
-    experimentInstance.findById.mockReturnValue(
-      { first: () => Promise.resolve({ samplesOrder: allSampleIds }) },
-    );
+    experimentInstance.findById
+      .mockReturnValue({ first: () => Promise.resolve({ samplesOrder: allSampleIds }) });
     experimentInstance.updateById.mockImplementation(() => Promise.resolve());
-    sampleInstance.copyTo.mockImplementation(
-      () => Promise.resolve(clonedSamplesIds),
-    );
-
-    // this request should pass
-    await expect(experimentController.cloneExperiment(mockReq, mockRes))
-      .resolves;
+    sampleInstance.copyTo.mockImplementation(() => Promise.resolve(clonedSamplesIds));
 
     // should fail if the request is not from the admin
     mockReq.user.sub = 'not-admin-user';
     await expect(experimentController.cloneExperiment(mockReq, mockRes))
       .rejects
       .toThrow(`User ${mockReq.user.sub} cannot clone experiments for other users.`);
+  });
+
+  it('cloneExperiment fails if the original experiment is running a pipeline', async () => {
+    const toExperimentId = 'mockToExperimentId';
+
+    const mockReq = {
+      params: { experimentId: mockExperiment.id },
+      body: {},
+      user: { sub: 'mockUserId' },
+    };
+
+    const mockBackendStatus = {
+      [OLD_QC_NAME_TO_BE_REMOVED]: { status: RUNNING },
+      [GEM2S_PROCESS_NAME]: { status: SUCCEEDED },
+    };
+
+    const allSampleIds = ['mockSample1', 'mockSample2', 'mockSample3', 'mockSample4'];
+    const clonedSamplesIds = ['mockClonedSample1', 'mockClonedSample2', 'mockClonedSample3', 'mockClonedSample4'];
+
+    experimentInstance.createCopy.mockImplementation(() => Promise.resolve(toExperimentId));
+    experimentInstance.findById.mockReturnValue(
+      { first: () => Promise.resolve({ samplesOrder: allSampleIds }) },
+    );
+    experimentInstance.updateById.mockImplementation(() => Promise.resolve());
+    sampleInstance.copyTo.mockImplementation(() => Promise.resolve(clonedSamplesIds));
+    getExperimentBackendStatus.mockImplementationOnce(() => Promise.resolve(mockBackendStatus));
+
+    // this request should pass
+    await expect(experimentController.cloneExperiment(mockReq, mockRes))
+      .rejects
+      .toThrow(new LockedError('Experiment is currently running a pipeline and can\'t be copied'));
   });
 });
