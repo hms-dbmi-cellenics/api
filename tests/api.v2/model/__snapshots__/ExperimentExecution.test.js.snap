@@ -1,31 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ExperimentExecution copyTo works correctly 1`] = `
-Array [
-  Array [
-    Array [
-      "experiment_id",
-      "pipeline_type",
-      "state_machine_arn",
-      "execution_arn",
-      "last_status_response",
-      "last_gem2s_params",
-    ],
-  ],
-]
-`;
-
-exports[`ExperimentExecution copyTo works correctly 2`] = `
-Array [
-  Array [
-    Object {
-      "experiment_id": "mockFromExperimentId",
-    },
-  ],
-]
-`;
-
-exports[`ExperimentExecution copyTo works correctly 3`] = `
+exports[`ExperimentExecution copyTo works correctly: insert calls 1`] = `
 Array [
   Array [
     Array [
@@ -95,6 +70,31 @@ Array [
         "state_machine_arn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-qc-development-mock",
       },
     ],
+  ],
+]
+`;
+
+exports[`ExperimentExecution copyTo works correctly: select calls 1`] = `
+Array [
+  Array [
+    Array [
+      "experiment_id",
+      "pipeline_type",
+      "state_machine_arn",
+      "execution_arn",
+      "last_status_response",
+      "last_gem2s_params",
+    ],
+  ],
+]
+`;
+
+exports[`ExperimentExecution copyTo works correctly: where calls 1`] = `
+Array [
+  Array [
+    Object {
+      "experiment_id": "mockFromExperimentId",
+    },
   ],
 ]
 `;

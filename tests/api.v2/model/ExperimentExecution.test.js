@@ -28,8 +28,8 @@ describe('ExperimentExecution', () => {
     await new ExperimentExecution().copyTo(fromExperimentId, toExperimentId, sampleIdsMap);
 
     expect(mockSqlClient.queryContext).toHaveBeenCalledWith({ camelCaseExceptions: ['metadata'] });
-    expect(mockSqlClient.select.mock.calls).toMatchSnapshot();
-    expect(mockSqlClient.where.mock.calls).toMatchSnapshot();
-    expect(mockSqlClient.insert.mock.calls).toMatchSnapshot();
+    expect(mockSqlClient.select.mock.calls).toMatchSnapshot('select calls');
+    expect(mockSqlClient.where.mock.calls).toMatchSnapshot('where calls');
+    expect(mockSqlClient.insert.mock.calls).toMatchSnapshot('insert calls');
   });
 });
