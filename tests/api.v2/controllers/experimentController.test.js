@@ -467,6 +467,78 @@ describe('experimentController', () => {
     expect(mockRes.json).toHaveBeenCalledWith(toExperimentId);
   });
 
+  it('cloneExperiment works correctly when the original experiment never ran gem2s', async () => {
+    const originalSampleIds = getExperimentResponse.samplesOrder;
+    const mockClonedExperimentName = 'customNameClonedExp';
+
+    const clonedSamplesIds = ['mockClonedSample1', 'mockClonedSample2'];
+
+    const userId = 'mockUserId';
+    const toExperimentId = 'mockToExperimentId';
+
+    const mockReq = {
+      params: { experimentId: mockExperiment.id },
+      body: { name: mockClonedExperimentName },
+      user: { sub: userId },
+    };
+
+    const mockBackendStatus = {
+      [OLD_QC_NAME_TO_BE_REMOVED]: { status: SUCCEEDED },
+      [GEM2S_PROCESS_NAME]: { status: SUCCEEDED },
+    };
+
+    const stateMachineArn = 'mockStateMachineArn';
+    const executionArn = 'mockExecutionArn';
+
+    const expectedSampleIdsMap = _.zipObject(originalSampleIds, clonedSamplesIds);
+
+    getExperimentBackendStatus.mockImplementationOnce(() => Promise.resolve(mockBackendStatus));
+    experimentInstance.createCopy.mockImplementationOnce(() => Promise.resolve(toExperimentId));
+    experimentInstance.findById.mockReturnValueOnce(
+      { first: () => Promise.resolve(getExperimentResponse) },
+    );
+    sampleInstance.copyTo.mockImplementationOnce(() => Promise.resolve(clonedSamplesIds));
+    experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
+    experimentExecutionInstance.createCopy.mockImplementationOnce(() => Promise.resolve());
+    plotInstance.createCopy.mockImplementationOnce(() => Promise.resolve());
+
+    pipelineConstruct.createCopyPipeline.mockImplementationOnce(() => Promise.resolve({
+      stateMachineArn,
+      executionArn,
+    }));
+
+    await experimentController.cloneExperiment(mockReq, mockRes);
+
+    expect(experimentInstance.findById).toHaveBeenCalledWith(mockExperiment.id);
+
+    // Creates new experiment with custom name
+    expect(experimentInstance.createCopy)
+      .toHaveBeenCalledWith(mockExperiment.id, mockClonedExperimentName);
+    expect(userAccessInstance.createNewExperimentPermissions)
+      .toHaveBeenCalledWith(userId, toExperimentId);
+
+    // Creates copy samples for new experiment
+    expect(sampleInstance.copyTo)
+      .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, originalSampleIds);
+
+    // Sets created samples and translated processing config in experiment
+    expect(experimentInstance.updateById.mock.calls).toMatchSnapshot();
+
+    expect(experimentExecutionInstance.createCopy)
+      .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, expectedSampleIdsMap);
+    expect(plotInstance.createCopy)
+      .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, expectedSampleIdsMap);
+    expect(pipelineConstruct.createCopyPipeline)
+      .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, expectedSampleIdsMap);
+
+    expect(experimentExecutionInstance.upsert).toHaveBeenCalledWith(
+      { experiment_id: toExperimentId, pipeline_type: 'gem2s' },
+      { state_machine_arn: stateMachineArn, execution_arn: executionArn },
+    );
+
+    expect(mockRes.json).toHaveBeenCalledWith(toExperimentId);
+  });
+
   // it('Clone experiment for another user works', async () => {
   //   const mockClonedExperimentName = 'cloned this experiment for you';
   //   const toExperimentId = 'mockToExperimentId';
