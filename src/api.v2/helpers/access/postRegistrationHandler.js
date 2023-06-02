@@ -8,8 +8,6 @@ const logger = getLogger('[PostRegistrationHandler] - ');
 const postRegistrationHandler = async (req) => {
   const { userEmail, userId } = req.body;
 
-  console.log('*** req.body', req.body);
-
   new UserAccess().registerNewUserAccess(userEmail, userId);
 
   logger.log(`Post registration handled for user ${userId}`);
