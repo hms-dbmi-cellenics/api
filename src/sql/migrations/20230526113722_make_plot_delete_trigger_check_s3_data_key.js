@@ -21,7 +21,7 @@ const deleteFromS3IfNoOtherPlotReferencesS3Data = (dbEnv, key, bucketName) => {
     return `
       IF NOT EXISTS (
         SELECT FROM plot 
-        WHERE plot.s3_path = OLD.s3_data_key
+        WHERE plot.s3_data_key = OLD.s3_data_key
       ) THEN ${callDeleteLambda}
       END IF;
     `;

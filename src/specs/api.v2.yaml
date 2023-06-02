@@ -1477,6 +1477,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+        "423":
+          description: A qc or gem2s pipeline running error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
         "424":
           description: Terms not accepted error.
           content:

@@ -259,11 +259,6 @@ const createCopyPipeline = async (fromExperimentId, toExperimentId, sampleIdsMap
     taskParams: { copyS3Objects: stepsParams },
   };
 
-  // Don't allow gem2s, qc runs doing changes on the data we need to perform the copy
-  // This also cancels other subset pipeline runs on the same from experiment,
-  //  need to check if that is fine
-  await cancelPreviousPipelines(fromExperimentId);
-
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
   const skeleton = getCopyPipelineSkeleton(config.clusterEnv, runInBatch);

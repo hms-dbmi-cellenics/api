@@ -16,6 +16,10 @@ const config = require('../../config');
 const ExperimentExecution = require('../model/ExperimentExecution');
 const Plot = require('../model/Plot');
 const { createCopyPipeline } = require('../helpers/pipeline/pipelineConstruct');
+const { OLD_QC_NAME_TO_BE_REMOVED } = require('../constants');
+const { RUNNING } = require('../constants');
+const { GEM2S_PROCESS_NAME } = require('../constants');
+const LockedError = require('../../utils/responses/LockedError');
 
 const logger = getLogger('[ExperimentController] - ');
 
@@ -192,6 +196,15 @@ const cloneExperiment = async (req, res) => {
 
   if (toUserId !== userId && userId !== adminSub) {
     throw new UnauthorizedError(`User ${userId} cannot clone experiments for other users.`);
+  }
+
+  const {
+    [OLD_QC_NAME_TO_BE_REMOVED]: { status: qcStatus },
+    [GEM2S_PROCESS_NAME]: { status: gem2sStatus },
+  } = await getExperimentBackendStatus(fromExperimentId);
+
+  if (qcStatus === RUNNING || gem2sStatus === RUNNING) {
+    throw new LockedError('Experiment is currently running a pipeline and can\'t be copied');
   }
 
   logger.log(`Creating experiment to clone ${fromExperimentId} to`);
