@@ -157,61 +157,61 @@ describe('model/Experiment', () => {
     await expect(new Experiment().getExperimentData(mockExperimentId)).rejects.toThrow(new Error('Experiment not found'));
   });
 
-  // it('createCopy works correctly', async () => {
-  //   mockSqlClient.raw.mockImplementation((template, values) => {
-  //     if (values && values.length) return template.replace('?', values[0]);
-  //     return template;
-  //   });
+  it('createCopy works correctly', async () => {
+    mockSqlClient.raw.mockImplementation((template, values) => {
+      if (values && values.length) return template.replace('?', values[0]);
+      return template;
+    });
 
-  //   mockSqlClient.where.mockImplementationOnce(() => 'mockQuery');
+    mockSqlClient.where.mockImplementationOnce(() => 'mockQuery');
 
-  //   const expectedResult = await new Experiment().createCopy(mockExperimentId, mockExperimentName);
+    const expectedResult = await new Experiment().createCopy(mockExperimentId, mockExperimentName);
 
-  //   expect(expectedResult).toEqual('mockNewExperimentId');
+    expect(expectedResult).toEqual('mockNewExperimentId');
 
-  //   expect(sqlClient.get).toHaveBeenCalled();
+    expect(sqlClient.get).toHaveBeenCalled();
 
-  //   expect(mockSqlClient.insert).toHaveBeenCalledWith('mockQuery');
+    expect(mockSqlClient.insert).toHaveBeenCalledWith('mockQuery');
 
-  //   expect(mockSqlClient.select).toHaveBeenCalledWith(
-  //     'mockNewExperimentId as id',
-  //     'mockNewName as name',
-  //     'description',
-  //     'pod_cpus',
-  //     'pod_memory',
-  //   );
+    expect(mockSqlClient.select).toHaveBeenCalledWith([
+      'mockNewExperimentId as id',
+      'mockNewName as name',
+      'description',
+      'pod_cpus',
+      'pod_memory',
+    ]);
 
-  //   expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
-  //   expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, pod_cpus, pod_memory)');
-  // });
+    expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
+    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, pod_cpus, pod_memory)');
+  });
 
-  // it('createCopy works correctly without a name', async () => {
-  //   mockSqlClient.raw.mockImplementation((template, values) => {
-  //     if (values && values.length) return template.replace('?', values[0]);
-  //     return template;
-  //   });
+  it('createCopy works correctly without a name', async () => {
+    mockSqlClient.raw.mockImplementation((template, values) => {
+      if (values && values.length) return template.replace('?', values[0]);
+      return template;
+    });
 
-  //   mockSqlClient.where.mockImplementationOnce(() => 'mockQuery');
+    mockSqlClient.where.mockImplementationOnce(() => 'mockQuery');
 
-  //   const expectedResult = await new Experiment().createCopy(mockExperimentId);
+    const expectedResult = await new Experiment().createCopy(mockExperimentId);
 
-  //   expect(expectedResult).toEqual('mockNewExperimentId');
+    expect(expectedResult).toEqual('mockNewExperimentId');
 
-  //   expect(sqlClient.get).toHaveBeenCalled();
+    expect(sqlClient.get).toHaveBeenCalled();
 
-  //   expect(mockSqlClient.insert).toHaveBeenCalledWith('mockQuery');
+    expect(mockSqlClient.insert).toHaveBeenCalledWith('mockQuery');
 
-  //   expect(mockSqlClient.select).toHaveBeenCalledWith(
-  //     'mockNewExperimentId as id',
-  //     'name',
-  //     'description',
-  //     'pod_cpus',
-  //     'pod_memory',
-  //   );
+    expect(mockSqlClient.select).toHaveBeenCalledWith([
+      'mockNewExperimentId as id',
+      'name',
+      'description',
+      'pod_cpus',
+      'pod_memory',
+    ]);
 
-  //   expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
-  //   expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, pod_cpus, pod_memory)');
-  // });
+    expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
+    expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, pod_cpus, pod_memory)');
+  });
 
   it('updateSamplePosition works correctly if valid params are passed', async () => {
     mockTrx.returning.mockImplementationOnce(
