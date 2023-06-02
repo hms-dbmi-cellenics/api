@@ -16,7 +16,7 @@ const config = require('../../config');
 const ExperimentExecution = require('../model/ExperimentExecution');
 const Plot = require('../model/Plot');
 const { createCopyPipeline } = require('../helpers/pipeline/pipelineConstruct');
-const { OLD_QC_NAME_TO_BE_REMOVED } = require('../constants');
+const { OLD_QC_NAME_TO_BE_REMOVED, NOT_CREATED } = require('../constants');
 const { RUNNING } = require('../constants');
 const { GEM2S_PROCESS_NAME } = require('../constants');
 const LockedError = require('../../utils/responses/LockedError');
@@ -235,6 +235,15 @@ const cloneExperiment = async (req, res) => {
       processing_config: JSON.stringify(translatedProcessingConfig),
     },
   );
+
+  // If the experiment didn't run yet, there's nothing else to update
+  if (gem2sStatus === NOT_CREATED) {
+    logger.log(`Finished cloning ${fromExperimentId}, no pipeline to run because experiment never ran`);
+
+    res.json(toExperimentId);
+    return;
+  }
+
   await new ExperimentExecution().createCopy(fromExperimentId, toExperimentId, sampleIdsMap);
   await new Plot().createCopy(fromExperimentId, toExperimentId, sampleIdsMap);
 

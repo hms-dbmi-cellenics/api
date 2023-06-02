@@ -1448,11 +1448,11 @@ paths:
               additionalProperties: false
       responses:
         "200":
-          description: Clone experiment
+          description: Returns the id of the new cloned experiment
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ExperimentInfo"
+                type: string
         "400":
           description: Bad Request
           content:
