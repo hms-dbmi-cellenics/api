@@ -235,7 +235,6 @@ const cloneExperiment = async (req, res) => {
       processing_config: JSON.stringify(translatedProcessingConfig),
     },
   );
-
   await new ExperimentExecution().createCopy(fromExperimentId, toExperimentId, sampleIdsMap);
   await new Plot().createCopy(fromExperimentId, toExperimentId, sampleIdsMap);
 
@@ -244,9 +243,7 @@ const cloneExperiment = async (req, res) => {
     executionArn,
   } = await createCopyPipeline(fromExperimentId, toExperimentId, sampleIdsMap);
 
-  const experimentExecutionClient = new ExperimentExecution();
-
-  await experimentExecutionClient.upsert(
+  await new ExperimentExecution().upsert(
     { experiment_id: toExperimentId, pipeline_type: 'gem2s' },
     { state_machine_arn: stateMachineArn, execution_arn: executionArn },
   );
