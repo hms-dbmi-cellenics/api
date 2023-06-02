@@ -1,0 +1,170 @@
+[
+  {
+    "id": "mockSample1-classifier-1",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample1-classifier-2",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample2-classifier-2",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample1-cellSizeDistribution-3",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample2-cellSizeDistribution-1",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample2-mitochondrialContent-2",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample1-mitochondrialContent-1",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample2-classifier-0",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample1-cellSizeDistribution-1",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample2-cellSizeDistribution-3",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample2-mitochondrialContent-1",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample1-mitochondrialContent-0",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample1-numGenesVsNumUmis-1",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample2-numGenesVsNumUmis-0",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample2-doubletScores-1",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample1-doubletScores-0",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample2-classifier-1",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample1-cellSizeDistribution-0",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample2-cellSizeDistribution-0",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample2-mitochondrialContent-0",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample1-mitochondrialContent-2",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample1-numGenesVsNumUmis-0",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample2-numGenesVsNumUmis-1",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample2-doubletScores-0",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample1-doubletScores-1",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "dataIntegration-0",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "dataIntegration-1",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  },
+  {
+    "id": "mockSample1-classifier-0",
+    "experimentId": "mockExperimentId",
+    "config": {},
+    "s3DataKey": "mockS3DataKey"
+  }
+]
