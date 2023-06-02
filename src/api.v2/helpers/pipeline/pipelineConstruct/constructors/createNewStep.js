@@ -14,8 +14,7 @@ const buildParams = (context, stepArgs) => {
   } else if ([SUBSET_PROCESS_NAME, COPY_PROCESS_NAME].includes(context.processName)) {
     stepParams = context.taskParams[stepArgs.taskName];
   } else {
-    // TODO Question for reviewers: maybe we should throw an error??
-    // We don't have any other pipeline types anyways
+    throw new Error(`processName not recognized: ${context.processName}`);
   }
 
   return {
