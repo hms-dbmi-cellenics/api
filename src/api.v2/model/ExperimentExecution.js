@@ -13,7 +13,7 @@ class ExperimentExecution extends BasicModel {
     super(sql, tableNames.EXPERIMENT_EXECUTION, selectableProps, ['metadata']);
   }
 
-  async createCopy(fromExperimentId, toExperimentId, sampleIdsMap) {
+  async copyTo(fromExperimentId, toExperimentId, sampleIdsMap) {
     const { sql } = this;
 
     const originalRows = await sql(tableNames.EXPERIMENT_EXECUTION)

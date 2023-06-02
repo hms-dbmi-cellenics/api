@@ -368,8 +368,8 @@ describe('experimentController', () => {
     );
     sampleInstance.copyTo.mockImplementationOnce(() => Promise.resolve(clonedSamplesIds));
     experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
-    experimentExecutionInstance.createCopy.mockImplementationOnce(() => Promise.resolve());
-    plotInstance.createCopy.mockImplementationOnce(() => Promise.resolve());
+    experimentExecutionInstance.copyTo.mockImplementationOnce(() => Promise.resolve());
+    plotInstance.copyTo.mockImplementationOnce(() => Promise.resolve());
 
     pipelineConstruct.createCopyPipeline.mockImplementationOnce(() => Promise.resolve({
       stateMachineArn,
@@ -392,9 +392,9 @@ describe('experimentController', () => {
     // Sets created samples and translated processing config in experiment
     expect(experimentInstance.updateById.mock.calls).toMatchSnapshot();
 
-    expect(experimentExecutionInstance.createCopy)
+    expect(experimentExecutionInstance.copyTo)
       .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, expectedSampleIdsMap);
-    expect(plotInstance.createCopy)
+    expect(plotInstance.copyTo)
       .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, expectedSampleIdsMap);
     expect(pipelineConstruct.createCopyPipeline)
       .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, expectedSampleIdsMap);
@@ -460,8 +460,8 @@ describe('experimentController', () => {
     );
 
     // There's nothing to copy, so check nothing is copied
-    expect(experimentExecutionInstance.createCopy).not.toHaveBeenCalled();
-    expect(plotInstance.createCopy).not.toHaveBeenCalled();
+    expect(experimentExecutionInstance.copyTo).not.toHaveBeenCalled();
+    expect(plotInstance.copyTo).not.toHaveBeenCalled();
     expect(pipelineConstruct.createCopyPipeline).not.toHaveBeenCalled();
 
     expect(experimentExecutionInstance.upsert).not.toHaveBeenCalled();
@@ -501,8 +501,8 @@ describe('experimentController', () => {
     );
     sampleInstance.copyTo.mockImplementationOnce(() => Promise.resolve(clonedSamplesIds));
     experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
-    experimentExecutionInstance.createCopy.mockImplementationOnce(() => Promise.resolve());
-    plotInstance.createCopy.mockImplementationOnce(() => Promise.resolve());
+    experimentExecutionInstance.copyTo.mockImplementationOnce(() => Promise.resolve());
+    plotInstance.copyTo.mockImplementationOnce(() => Promise.resolve());
 
     pipelineConstruct.createCopyPipeline.mockImplementationOnce(() => Promise.resolve({
       stateMachineArn,
@@ -526,9 +526,9 @@ describe('experimentController', () => {
     // Sets created samples and translated processing config in experiment
     expect(experimentInstance.updateById.mock.calls).toMatchSnapshot();
 
-    expect(experimentExecutionInstance.createCopy)
+    expect(experimentExecutionInstance.copyTo)
       .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, expectedSampleIdsMap);
-    expect(plotInstance.createCopy)
+    expect(plotInstance.copyTo)
       .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, expectedSampleIdsMap);
     expect(pipelineConstruct.createCopyPipeline)
       .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, expectedSampleIdsMap);

@@ -4,7 +4,7 @@ const stub = {
   getConfig: jest.fn(),
   updateConfig: jest.fn(),
   invalidateAttributesForMatches: jest.fn(),
-  createCopy: jest.fn(),
+  copyTo: jest.fn(),
   ...BasicModel,
 };
 

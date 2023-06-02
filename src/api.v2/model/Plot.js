@@ -89,7 +89,7 @@ class Plot extends BasicModel {
     return configsToReturn;
   }
 
-  async createCopy(fromExperimentId, toExperimentId, sampleIdsMap) {
+  async copyTo(fromExperimentId, toExperimentId, sampleIdsMap) {
     const { sql } = this;
 
     const fromPlots = await sql(tableNames.PLOT)

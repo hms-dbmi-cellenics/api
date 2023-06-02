@@ -244,8 +244,8 @@ const cloneExperiment = async (req, res) => {
     return;
   }
 
-  await new ExperimentExecution().createCopy(fromExperimentId, toExperimentId, sampleIdsMap);
-  await new Plot().createCopy(fromExperimentId, toExperimentId, sampleIdsMap);
+  await new ExperimentExecution().copyTo(fromExperimentId, toExperimentId, sampleIdsMap);
+  await new Plot().copyTo(fromExperimentId, toExperimentId, sampleIdsMap);
 
   const {
     stateMachineArn,
