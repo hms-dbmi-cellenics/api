@@ -5,7 +5,7 @@ const expressLoader = require('../../../src/loaders/express');
 
 const accessController = require('../../../src/api.v2/controllers/accessController');
 const {
-  UnauthenticatedError, UnauthorizedError, NotFoundError, OK,
+  UnauthenticatedError, UnauthorizedError, NotFoundError, OK, BadRequestError,
 } = require('../../../src/utils/responses');
 const AccessRole = require('../../../src/utils/enums/AccessRole');
 
@@ -181,16 +181,33 @@ describe('User access endpoint', () => {
       Promise.resolve();
     });
 
-    const mockUserInfo = JSON.stringify({
-      userId: 'mockUserId',
-      userEmail: 'user@example.com',
-    });
+    const mockPayload = 'mock.payload';
 
     request(app)
       .post('/v2/access/post-registration')
-      .send(mockUserInfo)
-      .set('Content-type', 'application/json')
+      .send(mockPayload)
+      .set('Content-type', 'text/plain')
       .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        return done();
+      });
+  });
+
+  it('Post-user registration endpoint returns error on invalid body', async (done) => {
+    accessController.postRegistration.mockImplementationOnce((req, res) => {
+      throw new BadRequestError('Invalid request');
+    });
+
+    const mockPayload = 'invalid.payload';
+
+    request(app)
+      .post('/v2/access/post-registration')
+      .send(mockPayload)
+      .set('Content-type', 'text/plain')
+      .expect(400)
       .end((err) => {
         if (err) {
           return done(err);
