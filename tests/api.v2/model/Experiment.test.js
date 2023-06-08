@@ -68,6 +68,7 @@ describe('model/Experiment', () => {
         'e.updated_at',
         'm.key',
         'p.parent_experiment_id',
+        mockSqlClient.raw('CASE WHEN p.experiment_id IS NOT NULL THEN true ELSE false END as is_subsetted'),
       ],
     );
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
