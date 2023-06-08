@@ -1659,8 +1659,17 @@ paths:
           text/plain:
             schema:
               type: string
-
-
+            examples: {}
+          application/json:
+            schema:
+              type: object
+              properties:
+                userEmail:
+                  type: string
+                  minLength: 1
+                userId:
+                  type: string
+                  minLength: 1
   "/workResults/{experimentId}/{ETag}":
     get:
       summary: Get the work results from S3
