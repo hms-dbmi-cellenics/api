@@ -1,0 +1,40 @@
+{
+  "experimentId": "mockExperimentId",
+  "pipelineType": "gem2s",
+  "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-gem2s-development-mock",
+  "executionArn": "arn:aws:states:eu-west-1:000000000000:execution:biomage-gem2s-development-mock",
+  "lastStatusResponse": {
+    "gem2s": {
+      "error": false,
+      "status": "SUCCEEDED",
+      "stopDate": "2023-06-02T19:15:19.852Z",
+      "startDate": "2023-06-02T19:13:32.629Z",
+      "shouldRerun": false,
+      "completedSteps": [
+        "DownloadGem",
+        "PreProcessing",
+        "EmptyDrops",
+        "DoubletScores",
+        "CreateSeurat",
+        "PrepareExperiment",
+        "UploadToAWS"
+      ]
+    }
+  },
+  "lastGem2SParams": {
+    "metadata": {},
+    "sampleIds": [
+      "mockSampleId1",
+      "mockSampleId2"
+    ],
+    "sampleNames": [
+      "KO",
+      "WT1"
+    ],
+    "sampleOptions": [
+      {},
+      {}
+    ],
+    "sampleTechnology": "10x"
+  }
+}

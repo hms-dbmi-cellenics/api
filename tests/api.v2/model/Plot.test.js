@@ -17,6 +17,8 @@ const BasicModel = require('../../../src/api.v2/model/BasicModel');
 const { NotFoundError } = require('../../../src/utils/responses');
 const tableNames = require('../../../src/api.v2/model/tableNames');
 
+const plotRows = require('../mocks/data/plotRows.json');
+
 const mockExperimentId = 'mockExperimentId';
 const mockPlotUuid = 'mockPlotUuid';
 
@@ -222,5 +224,19 @@ describe('model/Plot', () => {
     expect(mockTrx.andWhereLike.mock.calls).toMatchSnapshot({}, 'andWhereLike calls');
     expect(mockTrx.update.mock.calls).toMatchSnapshot({}, 'update calls');
     expect(mockTrx.returning.mock.calls).toMatchSnapshot({}, 'returning calls');
+  });
+
+  it('copyTo works correctly', async () => {
+    const fromExperimentId = 'mockFromExperimentId';
+    const toExperimentId = 'mockToExperimentId';
+    const sampleIdsMap = { mockSample1: 'mockSample1Copy', mockSample2: 'mockSample2Copy' };
+
+    mockSqlClient.where.mockImplementationOnce(() => Promise.resolve(plotRows));
+
+    await new Plot().copyTo(fromExperimentId, toExperimentId, sampleIdsMap);
+
+    expect(mockSqlClient.select.mock.calls).toMatchSnapshot('select calls');
+    expect(mockSqlClient.where.mock.calls).toMatchSnapshot('where calls');
+    expect(mockSqlClient.insert.mock.calls).toMatchSnapshot('insert calls');
   });
 });

@@ -1,5 +1,198 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`model/Plot copyTo works correctly: insert calls 1`] = `
+Array [
+  Array [
+    Array [
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample1Copy-classifier-1",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample1Copy-classifier-2",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample2Copy-classifier-2",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample1Copy-cellSizeDistribution-3",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample2Copy-cellSizeDistribution-1",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample2Copy-mitochondrialContent-2",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample1Copy-mitochondrialContent-1",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample2Copy-classifier-0",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample1Copy-cellSizeDistribution-1",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample2Copy-cellSizeDistribution-3",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample2Copy-mitochondrialContent-1",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample1Copy-mitochondrialContent-0",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample1Copy-numGenesVsNumUmis-1",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample2Copy-numGenesVsNumUmis-0",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample2Copy-doubletScores-1",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample1Copy-doubletScores-0",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample2Copy-classifier-1",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample1Copy-cellSizeDistribution-0",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample2Copy-cellSizeDistribution-0",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample2Copy-mitochondrialContent-0",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample1Copy-mitochondrialContent-2",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample1Copy-numGenesVsNumUmis-0",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample2Copy-numGenesVsNumUmis-1",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample2Copy-doubletScores-0",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample1Copy-doubletScores-1",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "dataIntegration-0",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "dataIntegration-1",
+        "s3_data_key": "mockS3DataKey",
+      },
+      Object {
+        "config": Object {},
+        "experiment_id": "mockToExperimentId",
+        "id": "mockSample1Copy-classifier-0",
+        "s3_data_key": "mockS3DataKey",
+      },
+    ],
+  ],
+]
+`;
+
+exports[`model/Plot copyTo works correctly: select calls 1`] = `
+Array [
+  Array [],
+]
+`;
+
+exports[`model/Plot copyTo works correctly: where calls 1`] = `
+Array [
+  Array [
+    Object {
+      "experiment_id": "mockFromExperimentId",
+    },
+  ],
+]
+`;
+
 exports[`model/Plot invalidateAttributesForMatches works correctly: andWhereLike calls 1`] = `
 Array [
   Array [

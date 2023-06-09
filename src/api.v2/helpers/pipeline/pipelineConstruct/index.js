@@ -12,7 +12,10 @@ const ExperimentExecution = require('../../../model/ExperimentExecution');
 const getLogger = require('../../../../utils/getLogger');
 
 const {
-  getGem2sPipelineSkeleton, getQcPipelineSkeleton, getSubsetPipelineSkeleton,
+  getGem2sPipelineSkeleton,
+  getQcPipelineSkeleton,
+  getSubsetPipelineSkeleton,
+  getCopyPipelineSkeleton,
 } = require('./skeletons');
 const { getQcStepsToRun, qcStepsWithFilterSettings } = require('./qcHelpers');
 const needsBatchJob = require('../batch/needsBatchJob');
@@ -125,7 +128,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
 
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
-  const qcPipelineSkeleton = await getQcPipelineSkeleton(
+  const skeleton = await getQcPipelineSkeleton(
     config.clusterEnv,
     qcSteps,
     runInBatch,
@@ -133,7 +136,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
 
   logger.log('Skeleton constructed, now building state machine definition...');
 
-  const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
+  const stateMachine = buildStateMachineDefinition(skeleton, context);
   logger.log('State machine definition built, now creating activity if not already present...');
 
   const activityArn = await createActivity(context); // the context contains the activityArn
@@ -175,10 +178,10 @@ const createGem2SPipeline = async (experimentId, taskParams, authJWT) => {
 
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
-  const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch);
+  const skeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch);
   logger.log('Skeleton constructed, now building state machine definition...');
 
-  const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
+  const stateMachine = buildStateMachineDefinition(skeleton, context);
   logger.log('State machine definition built, now creating activity if not already present...');
 
   const activityArn = await createActivity(context);
@@ -224,10 +227,10 @@ const createSubsetPipeline = async (
 
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
-  const subsetPipelineSkeleton = getSubsetPipelineSkeleton(config.clusterEnv, runInBatch);
+  const skeleton = getSubsetPipelineSkeleton(config.clusterEnv, runInBatch);
   logger.log('Skeleton constructed, now building state machine definition...');
 
-  const stateMachine = buildStateMachineDefinition(subsetPipelineSkeleton, context);
+  const stateMachine = buildStateMachineDefinition(skeleton, context);
   logger.log('State machine definition built, now creating activity if not already present...');
 
   const activityArn = await createActivity(context);
@@ -244,10 +247,47 @@ const createSubsetPipeline = async (
   return { stateMachineArn, executionArn };
 };
 
+const createCopyPipeline = async (fromExperimentId, toExperimentId, sampleIdsMap) => {
+  const stepsParams = {
+    fromExperimentId,
+    toExperimentId,
+    sampleIdsMap,
+  };
+
+  const context = {
+    ...(await getGeneralPipelineContext(toExperimentId, constants.COPY_PROCESS_NAME)),
+    taskParams: { copyS3Objects: stepsParams },
+  };
+
+  const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
+
+  const skeleton = getCopyPipelineSkeleton(config.clusterEnv, runInBatch);
+  logger.log('Skeleton constructed, now building state machine definition...');
+
+  const stateMachine = buildStateMachineDefinition(skeleton, context);
+  logger.log('State machine definition built, now creating activity if not already present...');
+
+  const activityArn = await createActivity(context);
+  logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
+
+  const stateMachineArn = await createNewStateMachine(
+    context, stateMachine, constants.COPY_PROCESS_NAME,
+  );
+  logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
+  logger.log('Context:', util.inspect(context, { showHidden: false, depth: null, colors: false }));
+  logger.log('State machine:', util.inspect(stateMachine, { showHidden: false, depth: null, colors: false }));
+
+  const executionArn = await executeStateMachine(stateMachineArn);
+  logger.log(`Execution with ARN ${executionArn} created.`);
+
+  return { stateMachineArn, executionArn };
+};
+
 
 module.exports = {
   createQCPipeline,
   createGem2SPipeline,
   createSubsetPipeline,
+  createCopyPipeline,
   buildStateMachineDefinition,
 };

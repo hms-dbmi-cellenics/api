@@ -1439,13 +1439,8 @@ paths:
         content:
           application/json:
             schema:
-              description: If samplesToCloneIds is sent then the cloned experiment only contains the subset samples instead of all of them
               type: object
               properties:
-                samplesToCloneIds:
-                  type: array
-                  items:
-                    type: string
                 name:
                   type: string
                 toUserId:
@@ -1453,11 +1448,11 @@ paths:
               additionalProperties: false
       responses:
         "200":
-          description: Clone experiment
+          description: Returns the id of the new cloned experiment
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ExperimentInfo"
+                type: string
         "400":
           description: Bad Request
           content:
@@ -1478,6 +1473,12 @@ paths:
                 $ref: "#/components/schemas/HTTPError"
         "404":
           description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "423":
+          description: A qc or gem2s pipeline running error
           content:
             application/json:
               schema:
