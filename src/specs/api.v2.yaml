@@ -1670,6 +1670,50 @@ paths:
                 userId:
                   type: string
                   minLength: 1
+  /access/{experimentId}/check:
+    get:
+      summary: Check whether user has access to an endpoint
+      operationId: isUserAuthorized
+      x-eov-operation-id: access#isUserAuthorized
+      x-eov-operation-handler: routes/access
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      parameters:
+        - name: experimentId
+          description: Id of the experiment
+          schema:
+            type: string
+          in: path
+          required: true
+        - name: url
+          description: Url of the endpoint to check
+          schema:
+            type: string
+          in: query
+          required: true
+        - name: method
+          description: Method of the endpoint to check
+          schema:
+            type: string
+          in: query
+          required: true
   "/workResults/{experimentId}/{ETag}":
     get:
       summary: Get the work results from S3
