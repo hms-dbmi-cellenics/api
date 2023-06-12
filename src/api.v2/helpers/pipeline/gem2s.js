@@ -17,6 +17,8 @@ const getLogger = require('../../../utils/getLogger');
 
 const { qcStepsWithFilterSettings } = require('./pipelineConstruct/qcHelpers');
 const { getPipelineParams, formatSamples } = require('./shouldPipelineRerun');
+const invalidatePlotsForEvent = require('../../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
+const events = require('../../../utils/plotConfigInvalidation/events');
 
 const logger = getLogger('[Gem2sService] - ');
 
@@ -122,8 +124,13 @@ const setupSubsetSamples = async (payload) => {
   // Add samples that were created
 };
 
+const invalidatePlotsForExperiment = async (payload, io) => {
+  await invalidatePlotsForEvent(payload.experimentId, events.CELL_SETS_MODIFIED, io.sockets);
+};
+
 hookRunner.register('subsetSeurat', [setupSubsetSamples]);
 hookRunner.register('uploadToAWS', [continueToQC]);
+hookRunner.register('copyS3Objects', [invalidatePlotsForExperiment]);
 
 hookRunner.registerAll([sendNotification]);
 
@@ -201,7 +208,7 @@ const startGem2sPipeline = async (experimentId, authJWT) => {
   logger.log('GEM2S params created.');
 
   const newExecution = {
-    last_pipeline_params: currentGem2SParams,
+    last_gem2s_params: currentGem2SParams,
     state_machine_arn: stateMachineArn,
     execution_arn: executionArn,
   };
@@ -232,7 +239,7 @@ const handleGem2sResponse = async (io, message) => {
   // Fail hard if there was an error.
   await validateRequest(message, 'GEM2SResponse.v2.yaml');
 
-  await hookRunner.run(message);
+  await hookRunner.run(message, io);
 
   const { experimentId } = message;
 

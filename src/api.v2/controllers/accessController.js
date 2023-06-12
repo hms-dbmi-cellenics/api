@@ -5,6 +5,7 @@ const postRegistrationHandler = require('../helpers/access/postRegistrationHandl
 
 const OK = require('../../utils/responses/OK');
 const getLogger = require('../../utils/getLogger');
+const UserAccess = require('../model/UserAccess');
 
 const logger = getLogger('[AccessController] - ');
 
@@ -54,9 +55,22 @@ const postRegistration = async (req, res) => {
   res.json(OK());
 };
 
+const isUserAuthorized = async (req, res) => {
+  const { params: { experimentId }, query: { url, method }, user: { sub: userId } } = req;
+
+  logger.log(`Checking access permissions for ${userId}`);
+
+  const result = await (new UserAccess().canAccessExperiment(userId, experimentId, url, method));
+
+  logger.log(`Finished, returning access permissions for ${userId}`);
+
+  res.json(result);
+};
+
 module.exports = {
   getUserAccess,
   inviteUser,
   revokeAccess,
   postRegistration,
+  isUserAuthorized,
 };

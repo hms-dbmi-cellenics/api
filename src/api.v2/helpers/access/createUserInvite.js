@@ -19,7 +19,7 @@ const createUserInvite = async (experimentId, invitedUserEmail, role, inviterUse
     userAttributes = await getAwsUserAttributesByEmail(invitedUserEmail);
 
     const invitedUserId = userAttributes.find((attr) => attr.Name === 'sub').Value;
-    new UserAccess().grantAccess(invitedUserId, experimentId, role);
+    await new UserAccess().grantAccess(invitedUserId, experimentId, role);
     emailBody = buildUserInvitedEmailBody(invitedUserEmail, experimentId, inviterUser);
   } catch (e) {
     if (e.code !== 'UserNotFoundException') {
@@ -28,11 +28,17 @@ const createUserInvite = async (experimentId, invitedUserEmail, role, inviterUse
 
     logger.log('Invited user does not have an account yet. Sending invitation email.');
 
-    new UserAccess().addToInviteAccess(invitedUserEmail, experimentId, role);
+    await new UserAccess().addToInviteAccess(invitedUserEmail, experimentId, role);
     emailBody = buildUserInvitedNotRegisteredEmailBody(invitedUserEmail, inviterUser);
   }
 
-  await sendEmail(emailBody);
+  try {
+    await sendEmail(emailBody);
+  } catch (e) {
+    logger.error(e);
+    // This message is picked up in the ui and transformed to a nice end user message
+    throw new Error('NotificationFailure');
+  }
 
   return OK();
 };
