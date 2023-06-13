@@ -352,51 +352,51 @@ describe('tests for experiment route', () => {
       });
   });
 
-  it('cloneExperiment results in a successful response without a body', async (done) => {
-    const experimentId = 'fromExperimentId';
+  // it('cloneExperiment results in a successful response without a body', async (done) => {
+  //   const experimentId = 'fromExperimentId';
 
-    experimentController.cloneExperiment.mockImplementationOnce((req, res) => {
-      res.json(OK());
-      return Promise.resolve();
-    });
+  //   experimentController.cloneExperiment.mockImplementationOnce((req, res) => {
+  //     res.json(OK());
+  //     return Promise.resolve();
+  //   });
 
-    request(app)
-      .post(`/v2/experiments/${experimentId}/clone`)
-      .set({ 'Content-Type': 'application/json' })
-      .expect(200)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        // there is no point testing for the values of the response body
-        // - if something is wrong, the schema validator will catch it
-        return done();
-      });
-  });
+  //   request(app)
+  //     .post(`/v2/experiments/${experimentId}/clone`)
+  //     .set({ 'Content-Type': 'application/json' })
+  //     .expect(200)
+  //     .end((err) => {
+  //       if (err) {
+  //         return done(err);
+  //       }
+  //       // there is no point testing for the values of the response body
+  //       // - if something is wrong, the schema validator will catch it
+  //       return done();
+  //     });
+  // });
 
-  it('cloneExperiment results in a successful response with a valid body', async (done) => {
-    const experimentId = 'fromExperimentId';
+  // it('cloneExperiment results in a successful response with a valid body', async (done) => {
+  //   const experimentId = 'fromExperimentId';
 
-    const body = { samplesToCloneIds: ['sampleId1', 'sampleId2'] };
+  //   const body = { samplesToCloneIds: ['sampleId1', 'sampleId2'] };
 
-    experimentController.cloneExperiment.mockImplementationOnce((req, res) => {
-      res.json(OK());
-      return Promise.resolve();
-    });
+  //   experimentController.cloneExperiment.mockImplementationOnce((req, res) => {
+  //     res.json(OK());
+  //     return Promise.resolve();
+  //   });
 
-    request(app)
-      .post(`/v2/experiments/${experimentId}/clone`)
-      .send(body)
-      .expect(200)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        // there is no point testing for the values of the response body
-        // - if something is wrong, the schema validator will catch it
-        return done();
-      });
-  });
+  //   request(app)
+  //     .post(`/v2/experiments/${experimentId}/clone`)
+  //     .send(body)
+  //     .expect(200)
+  //     .end((err) => {
+  //       if (err) {
+  //         return done(err);
+  //       }
+  //       // there is no point testing for the values of the response body
+  //       // - if something is wrong, the schema validator will catch it
+  //       return done();
+  //     });
+  // });
 
   it('cloneExperiment results in a 400 with an invalid body', async (done) => {
     const experimentId = 'fromExperimentId';

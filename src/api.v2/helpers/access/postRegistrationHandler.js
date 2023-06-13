@@ -1,32 +1,18 @@
-const parseSNSMessage = require('../../../utils/parseSNSMessage');
 const getLogger = require('../../../utils/getLogger');
+const { OK } = require('../../../utils/responses');
 
 const UserAccess = require('../../model/UserAccess');
-const snsTopics = require('../../../config/snsTopics');
 
 const logger = getLogger('[PostRegistrationHandler] - ');
 
 const postRegistrationHandler = async (req) => {
-  let data;
-  let messageType;
-
-  try {
-    const { parsedMessage, msg } = await parseSNSMessage(req, snsTopics.POST_REGISTRATION);
-    data = parsedMessage;
-    messageType = msg.Type;
-  } catch (e) {
-    logger.error('Parsing initial SNS message failed:', e);
-    return;
-  }
-
-  // If this is a subscription confirmation, we can just return.
-  if (messageType !== 'Notification') return;
-
-  const { userEmail, userId } = data;
+  const { userEmail, userId } = req.body;
 
   new UserAccess().registerNewUserAccess(userEmail, userId);
 
   logger.log(`Post registration handled for user ${userId}`);
+
+  return OK();
 };
 
 module.exports = postRegistrationHandler;

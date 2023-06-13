@@ -109,11 +109,23 @@ class Sample extends BasicModel {
    *
    * @param {*} fromExperimentId
    * @param {*} toExperimentId
+   * @param {*} sampleIdsMapInput If null, we should copy all the samples over
    */
-  async copyTo(fromExperimentId, toExperimentId, samplesOrder, sampleIdsMap = null) {
+  async copyTo(fromExperimentId, toExperimentId, samplesOrder, sampleIdsMapInput = null) {
     if (samplesOrder.length === 0) {
       logger.log(`samplesOrder is defined but empty when copying from experiment ${fromExperimentId} to ${toExperimentId}`);
       return [];
+    }
+
+    let sampleIdsMap = sampleIdsMapInput;
+
+    // Make sure the new sample ids mapping sort() order matches the old one,
+    // this is necessary to make sure shouldGem2sRerun still produces the same results
+    if (sampleIdsMap === null) {
+      const sortedSamplesOrder = [...samplesOrder].sort();
+      const newSortedSamplesOrder = _.times(samplesOrder.length, uuidv4).sort();
+
+      sampleIdsMap = _.zipObject(sortedSamplesOrder, newSortedSamplesOrder);
     }
 
     const fromSamples = await this.getSamples(fromExperimentId);
@@ -139,7 +151,7 @@ class Sample extends BasicModel {
       samplesOrder.forEach((fromSampleId) => {
         const sample = fromSamples.find(({ id }) => id === fromSampleId);
 
-        const toSampleId = sampleIdsMap ? sampleIdsMap[fromSampleId] : uuidv4();
+        const toSampleId = sampleIdsMap[fromSampleId];
 
         newSampleIds.push(toSampleId);
 
