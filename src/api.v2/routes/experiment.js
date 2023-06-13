@@ -1,6 +1,7 @@
 const {
   getAllExperiments, getExampleExperiments,
-  createExperiment, getExperiment, patchExperiment, deleteExperiment, cloneExperiment,
+  createExperiment, getExperiment, patchExperiment, deleteExperiment,
+  cloneExperiment,
   getProcessingConfig, updateProcessingConfig,
   updateSamplePosition,
   getBackendStatus, downloadData,

@@ -173,13 +173,13 @@ describe('model/Experiment', () => {
 
     expect(mockSqlClient.insert).toHaveBeenCalledWith('mockQuery');
 
-    expect(mockSqlClient.select).toHaveBeenCalledWith(
+    expect(mockSqlClient.select).toHaveBeenCalledWith([
       'mockNewExperimentId as id',
       'mockNewName as name',
       'description',
       'pod_cpus',
       'pod_memory',
-    );
+    ]);
 
     expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
     expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, pod_cpus, pod_memory)');
@@ -201,13 +201,13 @@ describe('model/Experiment', () => {
 
     expect(mockSqlClient.insert).toHaveBeenCalledWith('mockQuery');
 
-    expect(mockSqlClient.select).toHaveBeenCalledWith(
+    expect(mockSqlClient.select).toHaveBeenCalledWith([
       'mockNewExperimentId as id',
       'name',
       'description',
       'pod_cpus',
       'pod_memory',
-    );
+    ]);
 
     expect(mockSqlClient.where).toHaveBeenCalledWith({ id: mockExperimentId });
     expect(mockSqlClient.into).toHaveBeenCalledWith('experiment (id, name, description, pod_cpus, pod_memory)');
