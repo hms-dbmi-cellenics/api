@@ -208,7 +208,7 @@ const startGem2sPipeline = async (experimentId, authJWT) => {
   logger.log('GEM2S params created.');
 
   const newExecution = {
-    last_gem2s_params: currentGem2SParams,
+    last_pipeline_params: currentGem2SParams,
     state_machine_arn: stateMachineArn,
     execution_arn: executionArn,
   };
