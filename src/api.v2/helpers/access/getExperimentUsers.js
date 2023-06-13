@@ -12,11 +12,16 @@ const getExperimentUsers = async (experimentId) => {
     ({ accessRole }) => accessRole !== AccessRole.ADMIN,
   );
 
-  const requests = filteredUsers.map(
-    async (entry) => getAwsUserAttributesByEmail(entry.userId),
-  );
+  const requests = filteredUsers.map(async (entry) => {
+    try {
+      return await getAwsUserAttributesByEmail(entry.userId);
+    } catch (err) {
+      console.error(`Error fetching user attributes for user ${entry.userId}: ${err}`);
+      return null;
+    }
+  });
 
-  const cognitoUserData = await Promise.all(requests);
+  const cognitoUserData = (await Promise.all(requests)).filter((user) => user !== null);
 
   const experimentUsers = cognitoUserData.map((userInfo, idx) => {
     const email = userInfo.find((attr) => attr.Name === 'email').Value;

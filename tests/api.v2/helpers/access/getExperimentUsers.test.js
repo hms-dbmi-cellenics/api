@@ -57,10 +57,10 @@ describe('getUserRoles', () => {
     expect(result).toMatchSnapshot();
   });
 
-  it('getUserRoles throws a server error if there is an error fetching Cognito user data', async () => {
+  it('getUserRoles ignores if there is an error fetching Cognito user data', async () => {
     getUser.mockReturnValueOnce(Promise.reject(new Error('Error fetching user data')));
 
-    await expect(getExperimentUsers(experimentId)).rejects.toThrow();
+    await expect(getExperimentUsers(experimentId)).resolves.toEqual([]);
 
     expect(mockUserAccess.getExperimentUsers).toHaveBeenCalledWith(experimentId);
     expect(mockUserAccess.getExperimentUsers).toHaveBeenCalledTimes(1);
