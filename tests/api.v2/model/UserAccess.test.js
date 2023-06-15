@@ -220,6 +220,32 @@ describe('model/userAccess', () => {
     expect(result).toEqual(true);
   });
 
+  it('canAccessExperiment allows access if more than one entry exist and one of them allows for isRoleAuthorized', async () => {
+    const url = 'url';
+    const method = 'method';
+
+    mockSqlClient.from.mockImplementationOnce(() => ([{ accessRole: 'roleThatIsNotOk' }, { accessRole: 'roleThatIsOk' }]));
+
+    // Return true for the role is ok only
+    roles.isRoleAuthorized.mockImplementation((role) => role === 'roleThatIsOk');
+
+    const result = await new UserAccess()
+      .canAccessExperiment(mockUserId, mockExperimentId, url, method);
+
+    expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
+    expect(mockSqlClient.where).toHaveBeenCalledWith(
+      { experiment_id: mockExperimentId, user_id: mockUserId },
+    );
+    expect(mockSqlClient.orWhere).toHaveBeenCalledWith(
+      { experiment_id: mockExperimentId, user_id: constants.PUBLIC_ACCESS_ID },
+    );
+
+    expect(roles.isRoleAuthorized).toHaveBeenCalledTimes(2);
+    expect(roles.isRoleAuthorized).toHaveBeenCalledWith('roleThatIsNotOk', url, method);
+    expect(roles.isRoleAuthorized).toHaveBeenCalledWith('roleThatIsOk', url, method);
+    expect(result).toEqual(true);
+  });
+
   it('canAccessExperiment denies access if no entry exists', async () => {
     const url = 'url';
     const method = 'method';
@@ -250,7 +276,8 @@ describe('model/userAccess', () => {
 
     roles.isRoleAuthorized.mockImplementationOnce(() => false);
 
-    const result = await new UserAccess().canAccessExperiment(mockUserId, mockExperimentId, url, method);
+    const result = await new UserAccess()
+      .canAccessExperiment(mockUserId, mockExperimentId, url, method);
 
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
     expect(mockSqlClient.where).toHaveBeenCalledWith(
