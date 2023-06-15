@@ -201,14 +201,13 @@ describe('model/userAccess', () => {
     const url = 'url';
     const method = 'method';
 
-    mockSqlClient.first.mockImplementationOnce(() => ({ accessRole: 'roleThatIsOk' }));
+    mockSqlClient.from.mockImplementationOnce(() => ([{ accessRole: 'roleThatIsOk' }]));
 
     roles.isRoleAuthorized.mockImplementationOnce(() => true);
 
     const result = await new UserAccess()
       .canAccessExperiment(mockUserId, mockExperimentId, url, method);
 
-    expect(mockSqlClient.first).toHaveBeenCalled();
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
     expect(mockSqlClient.where).toHaveBeenCalledWith(
       { experiment_id: mockExperimentId, user_id: mockUserId },
@@ -225,11 +224,11 @@ describe('model/userAccess', () => {
     const url = 'url';
     const method = 'method';
 
-    mockSqlClient.first.mockImplementationOnce(() => undefined);
+    mockSqlClient.from.mockImplementationOnce(() => []);
 
-    const result = await new UserAccess().canAccessExperiment(mockUserId, mockExperimentId, url, method);
+    const result = await new UserAccess()
+      .canAccessExperiment(mockUserId, mockExperimentId, url, method);
 
-    expect(mockSqlClient.first).toHaveBeenCalled();
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
     expect(mockSqlClient.where).toHaveBeenCalledWith(
       { experiment_id: mockExperimentId, user_id: mockUserId },
@@ -247,13 +246,12 @@ describe('model/userAccess', () => {
     const url = 'url';
     const method = 'method';
 
-    mockSqlClient.first.mockImplementationOnce(() => ({ accessRole: 'roleThatIsNotOk' }));
+    mockSqlClient.from.mockImplementationOnce(() => ([{ accessRole: 'roleThatIsNotOk' }]));
 
     roles.isRoleAuthorized.mockImplementationOnce(() => false);
 
     const result = await new UserAccess().canAccessExperiment(mockUserId, mockExperimentId, url, method);
 
-    expect(mockSqlClient.first).toHaveBeenCalled();
     expect(mockSqlClient.from).toHaveBeenCalledWith('user_access');
     expect(mockSqlClient.where).toHaveBeenCalledWith(
       { experiment_id: mockExperimentId, user_id: mockUserId },
