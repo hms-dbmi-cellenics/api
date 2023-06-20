@@ -26,8 +26,7 @@ const buildPipelineStatusEmailBody = (experimentId, status, user) => {
             <h3>Hello ${firstname},</h3>
             <p>Thanks for using Cellenics! <br/>
             <br />
-              ${status === SUCCEEDED ? successMessage : failMessage}<br/><br/>${isHMS ? '' : `
-              The Biomage Team`}
+              ${status === SUCCEEDED ? successMessage : failMessage}<br/><br/>
               <small> <br/> <br/> You can disable the notifications for this experiment when you start processing it again. </small>
             <p/>
         </body>

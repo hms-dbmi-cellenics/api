@@ -7,7 +7,7 @@ info:
     name: MIT
     url: "https://github.com/hms-dbmi-cellenics/api/blob/master/LICENSE"
   contact:
-    name: Biomage Ltd.
+    name: Cellenics
 servers:
   - url: /v2
 tags:
@@ -1503,13 +1503,8 @@ paths:
         content:
           application/json:
             schema:
-              description: If samplesToCloneIds is sent then the cloned experiment only contains the subset samples instead of all of them
               type: object
               properties:
-                samplesToCloneIds:
-                  type: array
-                  items:
-                    type: string
                 name:
                   type: string
                 toUserId:
@@ -1517,11 +1512,11 @@ paths:
               additionalProperties: false
       responses:
         "200":
-          description: Clone experiment
+          description: Returns the id of the new cloned experiment
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ExperimentInfo"
+                type: string
         "400":
           description: Bad Request
           content:
@@ -1542,6 +1537,12 @@ paths:
                 $ref: "#/components/schemas/HTTPError"
         "404":
           description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "423":
+          description: A qc or gem2s pipeline running error
           content:
             application/json:
               schema:
@@ -1734,6 +1735,50 @@ paths:
                 userId:
                   type: string
                   minLength: 1
+  /access/{experimentId}/check:
+    get:
+      summary: Check whether user has access to an endpoint
+      operationId: isUserAuthorized
+      x-eov-operation-id: access#isUserAuthorized
+      x-eov-operation-handler: routes/access
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      parameters:
+        - name: experimentId
+          description: Id of the experiment
+          schema:
+            type: string
+          in: path
+          required: true
+        - name: url
+          description: Url of the endpoint to check
+          schema:
+            type: string
+          in: query
+          required: true
+        - name: method
+          description: Method of the endpoint to check
+          schema:
+            type: string
+          in: query
+          required: true
   "/workResults/{experimentId}/{ETag}":
     get:
       summary: Get the work results from S3

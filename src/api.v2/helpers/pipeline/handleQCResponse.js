@@ -140,7 +140,7 @@ const handleQCResponse = async (io, message) => {
 
   await validateRequest(message, 'PipelineResponse.v2.yaml');
 
-  await hookRunner.run(message);
+  await hookRunner.run(message, io);
 
   const { experimentId, input: { sampleUuid, taskName } } = message;
   const { error = false } = message.response || {};

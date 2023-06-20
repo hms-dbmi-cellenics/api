@@ -7,7 +7,7 @@
 # Targets
 #--------------------------------------------------
 install: ## Installs node dependencies
-	@npm install
+	@rm -rf node_modules && npm ci
 check: ## Checks code for linting/construct errors
 	@echo "==> Checking if files are well formatted..."
 	@npm run lint

@@ -3,6 +3,7 @@ const {
   inviteUser,
   revokeAccess,
   postRegistration,
+  isUserAuthorized,
 } = require('../controllers/accessController');
 
 const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
@@ -22,5 +23,8 @@ module.exports = {
   ],
   'access#postRegistration': [
     (req, res, next) => postRegistration(req, res).catch(next),
+  ],
+  'access#isUserAuthorized': [
+    (req, res, next) => isUserAuthorized(req, res).catch(next),
   ],
 };
