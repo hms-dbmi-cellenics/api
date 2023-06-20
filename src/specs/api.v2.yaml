@@ -7,7 +7,7 @@ info:
     name: MIT
     url: "https://github.com/hms-dbmi-cellenics/api/blob/master/LICENSE"
   contact:
-    name: Biomage Ltd.
+    name: Cellenics
 servers:
   - url: /v2
 tags:

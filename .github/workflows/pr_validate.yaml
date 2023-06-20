@@ -28,7 +28,7 @@ jobs:
       - id: check-issue-url
         name: Check issue URL
         run: |-
-          REGEX="#### URL to issue\s?\r\n(https:\/\/biomage\.atlassian\.net\/browse\/BIOMAGE-[0-9]+|https:\/\/github\.com\/biomage-org\/issues\/issues\/[0-9]+|N\/A)"
+          REGEX="#### URL to issue\s?\r\n(https:\/\/github\.com\/hms-dbmi-cellenics\/issues\/issues\/[0-9]+|N\/A)"
 
           echo "REGEX to test against:"
           echo $REGEX
@@ -41,7 +41,7 @@ jobs:
       - id: extract-staging
         name: Check staging URL
         run: |-
-          REGEX="#### Link to staging deployment URL \(or set N\/A\)\s?\r\n(https:\/\/ui-(.+)\.scp-staging\.biomage\.net|N\/A)"
+          REGEX="#### Link to staging deployment URL \(or set N\/A\)\s?\r\n(https:\/\/ui-(.+)\.staging\.single-cell-platform\.net|N\/A)"
 
           echo "REGEX to test against:"
           echo $REGEX
