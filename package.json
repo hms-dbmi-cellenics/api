@@ -49,7 +49,7 @@
     "pg": "^8.7.3",
     "promise.any": "^2.0.2",
     "sns-validator": "^0.3.4",
-    "socket.io": "^4.5.3",
+    "socket.io": "^4.6.2",
     "socket.io-redis": "^6.0.1",
     "swagger-client": "^3.12.2",
     "swagger-model-validator": "^3.0.18",
