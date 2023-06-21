@@ -46,6 +46,7 @@ const fileNameToReturn = {
   barcodes10x: 'barcodes.tsv.gz',
   features10x: 'features.tsv.gz',
   rhapsody: 'expression_data.st.gz',
+  '10x_h5': 'matrix.md.gz',
 };
 
 const getSampleFileDownloadUrl = async (experimentId, sampleId, fileType) => {
