@@ -8,6 +8,12 @@ const responseTemplates = {
     status: pipelineConstants.SUCCEEDED,
     stopDate: null,
   },
+  seurat: {
+    completedSteps: [],
+    startDate: null,
+    status: pipelineConstants.NOT_CREATED,
+    stopDate: null,
+  },
   qc: {
     completedSteps: [],
     startDate: date,

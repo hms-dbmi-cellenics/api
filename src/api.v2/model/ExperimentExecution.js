@@ -5,7 +5,7 @@ const tableNames = require('./tableNames');
 
 const selectableProps = [
   'experiment_id', 'pipeline_type', 'state_machine_arn', 'execution_arn',
-  'last_status_response', 'last_gem2s_params',
+  'last_status_response', 'last_pipeline_params',
 ];
 
 class ExperimentExecution extends BasicModel {
@@ -24,7 +24,7 @@ class ExperimentExecution extends BasicModel {
         'state_machine_arn',
         'execution_arn',
         'last_status_response',
-        'last_gem2s_params',
+        'last_pipeline_params',
       ])
       .where({ experiment_id: fromExperimentId });
 
@@ -37,11 +37,11 @@ class ExperimentExecution extends BasicModel {
         state_machine_arn: originalRow.stateMachineArn,
         execution_arn: originalRow.executionArn,
         last_status_response: originalRow.lastStatusResponse,
-        last_gem2s_params: originalRow.lastGem2SParams,
+        last_pipeline_params: originalRow.lastPipelineParams,
       };
 
-      if (originalRow.pipelineType === 'gem2s') {
-        copyRow.last_gem2s_params.sampleIds = originalRow.lastGem2SParams.sampleIds
+      if (['gem2s', 'seurat'].includes(originalRow.pipelineType)) {
+        copyRow.last_pipeline_params.sampleIds = originalRow.lastPipelineParams.sampleIds
           .reduce(
             (acum, currSampleId) => {
               acum.push(sampleIdsMap[currSampleId]);

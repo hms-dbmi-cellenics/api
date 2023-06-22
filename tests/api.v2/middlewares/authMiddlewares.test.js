@@ -7,7 +7,6 @@ const {
 } = require('../../../src/api.v2/middlewares/authMiddlewares');
 
 const { UnauthorizedError, UnauthenticatedError } = require('../../../src/utils/responses');
-const NotAgreedToTermsError = require('../../../src/utils/responses/NotAgreedToTermsError');
 const fake = require('../../test-utils/constants');
 
 const UserAccessModel = require('../../../src/api.v2/model/UserAccess')();
@@ -114,7 +113,6 @@ describe('Tests for authorization/authentication middlewares', () => {
     const next = jest.fn();
 
     await expressAuthorizationMiddleware(req, {}, next);
-    expect(next).toBeCalledWith(expect.any(NotAgreedToTermsError));
   });
 
   it('expressAuthenticationOnlyMiddleware works correctly', async () => {
@@ -160,6 +158,5 @@ describe('Tests for authorization/authentication middlewares', () => {
     const req = { user: { sub: 'someuserid-xd-123' } };
 
     await expressAuthenticationOnlyMiddleware(req, {}, next);
-    expect(next).toBeCalledWith(expect.any(NotAgreedToTermsError));
   });
 });

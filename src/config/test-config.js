@@ -1,4 +1,4 @@
-const githubOrganisationName = 'biomage-org';
+const githubOrganisationName = 'hms-dbmi-cellenics';
 
 process.env.NODE_ENV = 'test';
 
@@ -24,5 +24,5 @@ module.exports = {
   pipelineIgnoreSSLCertificate: false,
   datadogApiKey: 'test-datadog-api-key', // pragma: allowlist secret
   datadogAppKey: 'test-datadog-app-key',
-  workerVersion: 3, // needs to match workerVersion in UI
+  workerVersion: 4, // needs to match workerVersion in UI
 };

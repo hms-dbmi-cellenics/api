@@ -7,7 +7,7 @@ Array [
       Object {
         "execution_arn": "arn:aws:states:eu-west-1:000000000000:execution:biomage-gem2s-development-mock",
         "experiment_id": "mockToExperimentId",
-        "last_gem2s_params": Object {
+        "last_pipeline_params": Object {
           "metadata": Object {},
           "sampleIds": Array [
             undefined,
@@ -47,7 +47,7 @@ Array [
       Object {
         "execution_arn": "arn:aws:states:eu-west-1:000000000000:execution:biomage-qc-development-mock",
         "experiment_id": "mockToExperimentId",
-        "last_gem2s_params": null,
+        "last_pipeline_params": null,
         "last_status_response": Object {
           "qc": Object {
             "completedSteps": Array [
@@ -83,7 +83,7 @@ Array [
       "state_machine_arn",
       "execution_arn",
       "last_status_response",
-      "last_gem2s_params",
+      "last_pipeline_params",
     ],
   ],
 ]

@@ -1,5 +1,40 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`completeMultipartUpload works correctly  1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "Bucket": "biomage-originals-test-000000000000",
+        "Key": "mockSampleFileId",
+        "MultipartUpload": Object {
+          "Parts": Array [],
+        },
+        "UploadId": "uploadId",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [MockFunction] {
+          "calls": Array [
+            Array [],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
+          ],
+        },
+      },
+    },
+  ],
+}
+`;
+
 exports[`getSampleFileDownloadUrl works correctly 1`] = `
 [MockFunction] {
   "calls": Array [
@@ -21,24 +56,161 @@ exports[`getSampleFileDownloadUrl works correctly 1`] = `
 }
 `;
 
-exports[`getSampleFileUploadUrl works correctly with metadata cellrangerVersion 1`] = `
-Array [
-  "putObject",
-  Object {
-    "Bucket": "biomage-originals-test-000000000000",
-    "Expires": 3600,
-    "Key": "mockSampleFileId",
-  },
-]
+exports[`getSampleFileUploadUrls works correctly with metadata cellrangerVersion 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "Bucket": "biomage-originals-test-000000000000",
+        "Expires": 3600,
+        "Key": "mockSampleFileId",
+      },
+    ],
+    Array [
+      Object {
+        "Bucket": "biomage-originals-test-000000000000",
+        "Expires": 3600,
+        "Key": "mockSampleFileId",
+        "Metadata": Object {
+          "cellranger_version": "v2",
+        },
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [MockFunction] {
+          "calls": Array [
+            Array [],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": Object {
+                "UploadId": "uploadId",
+              },
+            },
+          ],
+        },
+      },
+    },
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [MockFunction] {
+          "calls": Array [
+            Array [],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": Object {
+                "UploadId": "uploadId",
+              },
+            },
+          ],
+        },
+      },
+    },
+  ],
+}
 `;
 
-exports[`getSampleFileUploadUrl works correctly without metadata 1`] = `
-Array [
-  "putObject",
-  Object {
-    "Bucket": "biomage-originals-test-000000000000",
-    "Expires": 3600,
-    "Key": "mockSampleFileId",
-  },
-]
+exports[`getSampleFileUploadUrls works correctly with metadata cellrangerVersion 2`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "uploadPart",
+      Object {
+        "Bucket": "biomage-originals-test-000000000000",
+        "Expires": 3600,
+        "Key": "mockSampleFileId",
+        "PartNumber": 1,
+        "UploadId": "uploadId",
+      },
+    ],
+    Array [
+      "uploadPart",
+      Object {
+        "Bucket": "biomage-originals-test-000000000000",
+        "Expires": 3600,
+        "Key": "mockSampleFileId",
+        "Metadata": Object {
+          "cellranger_version": "v2",
+        },
+        "PartNumber": 1,
+        "UploadId": "uploadId",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": "signedUrl",
+    },
+    Object {
+      "type": "return",
+      "value": "signedUrl",
+    },
+  ],
+}
+`;
+
+exports[`getSampleFileUploadUrls works correctly without metadata 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "Bucket": "biomage-originals-test-000000000000",
+        "Expires": 3600,
+        "Key": "mockSampleFileId",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [MockFunction] {
+          "calls": Array [
+            Array [],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": Object {
+                "UploadId": "uploadId",
+              },
+            },
+          ],
+        },
+      },
+    },
+  ],
+}
+`;
+
+exports[`getSampleFileUploadUrls works correctly without metadata 2`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "uploadPart",
+      Object {
+        "Bucket": "biomage-originals-test-000000000000",
+        "Expires": 3600,
+        "Key": "mockSampleFileId",
+        "PartNumber": 1,
+        "UploadId": "uploadId",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": "signedUrl",
+    },
+  ],
+}
 `;

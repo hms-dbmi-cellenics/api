@@ -118,7 +118,7 @@ class Experiment extends BasicModel {
     }
 
     const experimentExecutionFields = [
-      'state_machine_arn', 'execution_arn', 'last_gem2s_params',
+      'state_machine_arn', 'execution_arn', 'last_pipeline_params',
     ];
 
     const pipelineExecutionKeys = experimentExecutionFields.reduce((acum, current) => {

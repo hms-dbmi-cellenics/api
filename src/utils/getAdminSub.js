@@ -1,7 +1,7 @@
 const config = require('../config');
 const getAwsPoolId = require('../api.v2/helpers/cognito/getAwsPoolId');
 
-const adminEmail = 'admin@biomage.net';
+const adminEmail = 'cellenics_admin@listserv.med.harvard.edu';
 
 const getAdminSub = async () => {
   const userPoolId = await getAwsPoolId();
@@ -23,7 +23,7 @@ const getAdminSub = async () => {
         MessageAction: 'SUPPRESS',
         UserAttributes: [
           { Name: 'email', Value: adminEmail },
-          { Name: 'name', Value: 'Biomage Admin' },
+          { Name: 'name', Value: 'Cellenics Admin' },
           { Name: 'email_verified', Value: 'true' },
         ],
       }).promise();
