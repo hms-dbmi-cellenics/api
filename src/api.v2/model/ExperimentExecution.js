@@ -40,7 +40,8 @@ class ExperimentExecution extends BasicModel {
         last_gem2s_params: originalRow.lastGem2SParams,
       };
 
-      if (originalRow.pipelineType === 'gem2s') {
+      // If it's an actual gem2s run, translate sample ids from lastGem2SParams
+      if (originalRow.pipelineType === 'gem2s' && originalRow.stateMachineArn.includes('gem2s')) {
         copyRow.last_gem2s_params.sampleIds = originalRow.lastGem2SParams.sampleIds
           .reduce(
             (acum, currSampleId) => {

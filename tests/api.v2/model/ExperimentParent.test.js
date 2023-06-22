@@ -33,4 +33,37 @@ describe('ExperimentParent', () => {
 
     expect(mockFindOne).toBeCalledWith({ experiment_id: experimentId });
   });
+
+  it('copyTo works correctly when the experiment has a parent', async () => {
+    const fromExperimentId = 'fromExperimentId';
+    const toExperimentId = 'toExperimentId';
+
+    const mockFindOne = jest.spyOn(BasicModel.prototype, 'findOne')
+      .mockImplementationOnce(() => Promise.resolve({
+        experimentId: fromExperimentId,
+        parentExperimentId: 'parentExperimentId',
+      }));
+
+    const mockCreate = jest.spyOn(BasicModel.prototype, 'create').mockImplementationOnce(() => Promise.resolve());
+
+    await new ExperimentParent().copyTo(fromExperimentId, toExperimentId);
+
+    expect(mockFindOne).toBeCalledWith({ experiment_id: fromExperimentId });
+    expect(mockCreate).toBeCalledWith({ experiment_id: toExperimentId, parent_experiment_id: 'parentExperimentId' });
+  });
+
+  it('copyTo works correctly when the experiment doesnt have a parent', async () => {
+    const fromExperimentId = 'fromExperimentId';
+    const toExperimentId = 'toExperimentId';
+
+    const mockFindOne = jest.spyOn(BasicModel.prototype, 'findOne')
+      .mockImplementationOnce(() => Promise.resolve(undefined));
+
+    const mockCreate = jest.spyOn(BasicModel.prototype, 'create');
+
+    await new ExperimentParent().copyTo(fromExperimentId, toExperimentId);
+
+    expect(mockFindOne).toBeCalledWith({ experiment_id: fromExperimentId });
+    expect(mockCreate).not.toHaveBeenCalled();
+  });
 });

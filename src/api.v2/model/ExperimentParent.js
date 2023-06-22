@@ -19,6 +19,17 @@ class ExperimentParent extends BasicModel {
 
     return entry !== undefined;
   }
+
+  async copyTo(fromExperimentId, toExperimentId) {
+    const { parentExperimentId } = await this.findOne({ experiment_id: fromExperimentId }) || {};
+
+    if (parentExperimentId) {
+      await this.create({
+        experiment_id: toExperimentId,
+        parent_experiment_id: parentExperimentId,
+      });
+    }
+  }
 }
 
 module.exports = ExperimentParent;
