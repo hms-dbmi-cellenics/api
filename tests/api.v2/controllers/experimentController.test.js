@@ -497,8 +497,6 @@ describe('experimentController', () => {
     const stateMachineArn = 'mockStateMachineArn';
     const executionArn = 'mockExecutionArn';
 
-    const expectedSampleIdsMap = _.zipObject(originalSampleIds, clonedSamplesIds);
-
     getExperimentBackendStatus.mockImplementationOnce(() => Promise.resolve(mockBackendStatus));
     experimentInstance.createCopy.mockImplementationOnce(() => Promise.resolve(toExperimentId));
     experimentInstance.findById.mockReturnValueOnce(
@@ -506,9 +504,6 @@ describe('experimentController', () => {
     );
     sampleInstance.copyTo.mockImplementationOnce(() => Promise.resolve(clonedSamplesIds));
     experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
-    experimentExecutionInstance.copyTo.mockImplementationOnce(() => Promise.resolve());
-    plotInstance.copyTo.mockImplementationOnce(() => Promise.resolve());
-    experimentParentInstance.copyTo.mockImplementationOnce(() => Promise.resolve());
 
     pipelineConstruct.createCopyPipeline.mockImplementationOnce(() => Promise.resolve({
       stateMachineArn,
