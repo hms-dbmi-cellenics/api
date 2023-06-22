@@ -212,6 +212,7 @@ const cloneExperiment = async (req, res) => {
 
   let toExperimentId;
   let sampleIdsMap;
+  let hasS3FilesToCopy;
 
   await sqlClient.get().transaction(async (trx) => {
     toExperimentId = await new Experiment(trx).createCopy(fromExperimentId, name);
@@ -242,26 +243,30 @@ const cloneExperiment = async (req, res) => {
     if (gem2sStatus === NOT_CREATED) {
       logger.log(`Finished cloning ${fromExperimentId}, no pipeline to run because experiment never ran`);
 
-      res.json(toExperimentId);
+      hasS3FilesToCopy = false;
       return;
     }
 
     await new ExperimentExecution(trx).copyTo(fromExperimentId, toExperimentId, sampleIdsMap);
     await new Plot(trx).copyTo(fromExperimentId, toExperimentId, sampleIdsMap);
     await new ExperimentParent(trx).copyTo(fromExperimentId, toExperimentId);
+
+    hasS3FilesToCopy = true;
   });
 
-  const {
-    stateMachineArn,
-    executionArn,
-  } = await createCopyPipeline(fromExperimentId, toExperimentId, sampleIdsMap);
+  if (hasS3FilesToCopy) {
+    const {
+      stateMachineArn,
+      executionArn,
+    } = await createCopyPipeline(fromExperimentId, toExperimentId, sampleIdsMap);
 
-  await new ExperimentExecution().upsert(
-    { experiment_id: toExperimentId, pipeline_type: 'gem2s' },
-    { state_machine_arn: stateMachineArn, execution_arn: executionArn },
-  );
+    await new ExperimentExecution().upsert(
+      { experiment_id: toExperimentId, pipeline_type: 'gem2s' },
+      { state_machine_arn: stateMachineArn, execution_arn: executionArn },
+    );
 
-  logger.log(`Began pipeline for cloning experiment ${fromExperimentId}, new experiment's id is ${toExperimentId}`);
+    logger.log(`Began pipeline for cloning experiment ${fromExperimentId}, new experiment's id is ${toExperimentId}`);
+  }
 
   res.json(toExperimentId);
 };

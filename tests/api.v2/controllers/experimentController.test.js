@@ -6,6 +6,7 @@ const Sample = require('../../../src/api.v2/model/Sample');
 const UserAccess = require('../../../src/api.v2/model/UserAccess');
 const ExperimentExecution = require('../../../src/api.v2/model/ExperimentExecution');
 const Plot = require('../../../src/api.v2/model/Plot');
+const ExperimentParent = require('../../../src/api.v2/model/ExperimentParent');
 
 const getExperimentBackendStatus = require('../../../src/api.v2/helpers/backendStatus/getExperimentBackendStatus');
 const pipelineConstruct = require('../../../src/api.v2/helpers/pipeline/pipelineConstruct');
@@ -32,6 +33,7 @@ const sampleInstance = Sample();
 const userAccessInstance = UserAccess();
 const experimentExecutionInstance = ExperimentExecution();
 const plotInstance = Plot();
+const experimentParentInstance = ExperimentParent();
 
 const mockExperiment = {
   id: 'mockExperimentId',
@@ -49,6 +51,7 @@ jest.mock('../../../src/api.v2/model/UserAccess');
 jest.mock('../../../src/api.v2/model/MetadataTrack');
 jest.mock('../../../src/api.v2/model/ExperimentExecution');
 jest.mock('../../../src/api.v2/model/Plot');
+jest.mock('../../../src/api.v2/model/ExperimentParent');
 
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),
@@ -370,6 +373,7 @@ describe('experimentController', () => {
     experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
     experimentExecutionInstance.copyTo.mockImplementationOnce(() => Promise.resolve());
     plotInstance.copyTo.mockImplementationOnce(() => Promise.resolve());
+    experimentParentInstance.copyTo.mockImplementationOnce(() => Promise.resolve());
 
     pipelineConstruct.createCopyPipeline.mockImplementationOnce(() => Promise.resolve({
       stateMachineArn,
@@ -436,6 +440,7 @@ describe('experimentController', () => {
     );
     sampleInstance.copyTo.mockImplementationOnce(() => Promise.resolve(clonedSamplesIds));
     experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
+    experimentParentInstance.copyTo.mockImplementationOnce(() => Promise.resolve());
 
     await experimentController.cloneExperiment(mockReq, mockRes);
 
@@ -485,8 +490,8 @@ describe('experimentController', () => {
     };
 
     const mockBackendStatus = {
-      [OLD_QC_NAME_TO_BE_REMOVED]: { status: SUCCEEDED },
-      [GEM2S_PROCESS_NAME]: { status: SUCCEEDED },
+      [OLD_QC_NAME_TO_BE_REMOVED]: { status: NOT_CREATED },
+      [GEM2S_PROCESS_NAME]: { status: NOT_CREATED },
     };
 
     const stateMachineArn = 'mockStateMachineArn';
@@ -503,6 +508,7 @@ describe('experimentController', () => {
     experimentInstance.updateById.mockImplementationOnce(() => Promise.resolve());
     experimentExecutionInstance.copyTo.mockImplementationOnce(() => Promise.resolve());
     plotInstance.copyTo.mockImplementationOnce(() => Promise.resolve());
+    experimentParentInstance.copyTo.mockImplementationOnce(() => Promise.resolve());
 
     pipelineConstruct.createCopyPipeline.mockImplementationOnce(() => Promise.resolve({
       stateMachineArn,
@@ -526,19 +532,12 @@ describe('experimentController', () => {
     // Sets created samples and translated processing config in experiment
     expect(experimentInstance.updateById.mock.calls).toMatchSnapshot();
 
-    expect(experimentExecutionInstance.copyTo)
-      .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, expectedSampleIdsMap);
-    expect(plotInstance.copyTo)
-      .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, expectedSampleIdsMap);
-    expect(pipelineConstruct.createCopyPipeline)
-      .toHaveBeenCalledWith(mockExperiment.id, toExperimentId, expectedSampleIdsMap);
-
-    expect(experimentExecutionInstance.upsert).toHaveBeenCalledWith(
-      { experiment_id: toExperimentId, pipeline_type: 'gem2s' },
-      { state_machine_arn: stateMachineArn, execution_arn: executionArn },
-    );
-
     expect(mockRes.json).toHaveBeenCalledWith(toExperimentId);
+
+    expect(experimentExecutionInstance.copyTo).not.toHaveBeenCalled();
+    expect(plotInstance.copyTo).not.toHaveBeenCalled();
+    expect(pipelineConstruct.createCopyPipeline).not.toHaveBeenCalled();
+    expect(experimentExecutionInstance.upsert).not.toHaveBeenCalled();
   });
 
   it('cloneExperiment for another user fails', async () => {
