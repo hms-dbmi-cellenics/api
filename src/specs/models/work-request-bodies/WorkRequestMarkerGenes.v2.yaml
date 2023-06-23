@@ -9,26 +9,31 @@ properties:
   nGenes:
     type: number
     description: Amount of marker genes to get
-  cellSetKey:
-    type: string
-    description: the cellClass key to be used in the marker genes
-  groupByClasses:
-    description: The keys of the cellSet classes that the cells are grouped by
-    type: array
-    items:
-      type: string
-  selectedPoints:
-    type: string
-    description: Can be either `All` or the key of a cellClass
-  hiddenCellSetKeys:
-    description: The keys of the cellSets that are hidden
-    type: array
-    items:
-      type: string
+  downsampleSettings:
+    type: object
+    properties:    
+      - selectedCellSet:
+        type: string
+        description: the cellClass key to be used in the marker genes
+      - groupedTracks:
+        description: The keys of the cellSet classes that the cells are grouped by
+        type: array
+        items:
+          type: string
+      - selectedPoints:
+        type: string
+        description: Can be either `All` or the key of a cellClass
+      - hiddenCellSetKeys:
+        description: The keys of the cellSets that are hidden
+        type: array
+        items:
+          type: string
+    required:
+      - selectedCellSet
+      - groupedTracks
+      - selectedPoints
+      - hiddenCellSetKeys
 required:
   - name
   - nGenes
-  - cellSetKey
-  - groupByClasses
-  - selectedPoints
-  - hiddenCellSetKeys
+  - downsampleSettings
