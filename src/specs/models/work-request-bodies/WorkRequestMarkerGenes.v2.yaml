@@ -23,7 +23,7 @@ properties:
       - selectedPoints:
         type: string
         description: Can be either `All` or the key of a cellClass
-      - hiddenCellSetKeys:
+      - hiddenCellSets:
         description: The keys of the cellSets that are hidden
         type: array
         items:
@@ -32,7 +32,7 @@ properties:
       - selectedCellSet
       - groupedTracks
       - selectedPoints
-      - hiddenCellSetKeys
+      - hiddenCellSets
 required:
   - name
   - nGenes
