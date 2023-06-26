@@ -40,7 +40,7 @@ class ExperimentExecution extends BasicModel {
         last_pipeline_params: originalRow.lastPipelineParams,
       };
 
-      if (['gem2s', 'seurat'].includes(originalRow.pipelineType)) {
+      if (['gem2s', 'seurat'].includes(originalRow.pipelineType) && ['gem2s', 'seurat'].includes(originalRow.stateMachineArn)) {
         copyRow.last_pipeline_params.sampleIds = originalRow.lastPipelineParams.sampleIds
           .reduce(
             (acum, currSampleId) => {

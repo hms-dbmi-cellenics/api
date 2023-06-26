@@ -106,6 +106,7 @@ const fileNameToReturn = {
   features10x: 'features.tsv.gz',
   rhapsody: 'expression_data.st.gz',
   seurat: 'r.rds',
+  '10x_h5': 'matrix.h5.gz',
 };
 
 const getSampleFileDownloadUrl = async (experimentId, sampleId, fileType) => {
