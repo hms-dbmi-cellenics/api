@@ -82,7 +82,7 @@ jobs:
       name: Run unit tests with coverage
       uses: mattallty/jest-github-action@v1
       env:
-        AWS_DEFAULT_REGION: us-east-1
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         test-command: "npm run coverage"
@@ -176,8 +176,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
+          aws-region: ${{ secrets.AWS_REGION }}
       - id: login-ecr
         name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
@@ -229,7 +228,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - id: login-ecr
         name: Login to Amazon ECR

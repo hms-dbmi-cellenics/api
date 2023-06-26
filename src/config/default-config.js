@@ -1,10 +1,11 @@
 const AWS = require('aws-sdk');
 const getLogger = require('../utils/getLogger');
+const { ACCOUNT_ID } = require('../api.v2/constants');
 
 const logger = getLogger();
 const { ADMIN_SUB } = require('../api.v2/constants');
 
-const githubOrganisationName = 'hms-dbmi-cellenics';
+const githubOrganisationName = process.env.AWS_ACCOUNT_ID === ACCOUNT_ID.BIOMAGE ? 'biomage-org' : 'hms-dbmi-cellenics';
 
 // If we are not deployed on Github (AWS/k8s), the environment is given by
 // NODE_ENV, or development if NODE_ENV is not set.
