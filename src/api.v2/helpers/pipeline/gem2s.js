@@ -16,7 +16,7 @@ const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
 
 const { qcStepsWithFilterSettings } = require('./pipelineConstruct/qcHelpers');
-const { getPipelineParams, formatSamples } = require('./shouldPipelineRerun');
+const { getGem2sParams, formatSamples } = require('./shouldPipelineRerun');
 const invalidatePlotsForEvent = require('../../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
 const events = require('../../../utils/plotConfigInvalidation/events');
 
@@ -197,7 +197,7 @@ const startGem2sPipeline = async (experimentId, authJWT) => {
 
   const samples = await new Sample().getSamples(experimentId);
 
-  const currentGem2SParams = await getPipelineParams(experimentId, samples);
+  const currentGem2SParams = await getGem2sParams(experimentId, samples);
   const taskParams = await generateGem2sTaskParams(experimentId, samples, authJWT);
 
   const {
