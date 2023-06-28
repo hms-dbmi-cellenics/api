@@ -89,7 +89,7 @@ const getGem2sParams = async (experimentId, rawSamples = undefined) => {
   };
 };
 
-const shouldPipelineRerun = async (experimentId, pipelineType) => {
+const shouldGem2sRerun = async (experimentId, pipelineType) => {
   const execution = await new ExperimentExecution()
     .findOne({ experiment_id: experimentId, pipeline_type: pipelineType });
 
@@ -99,6 +99,6 @@ const shouldPipelineRerun = async (experimentId, pipelineType) => {
   return !_.isEqual(currentParams, execution.lastPipelineParams);
 };
 
-module.exports = shouldPipelineRerun;
+module.exports = shouldGem2sRerun;
 module.exports.getGem2sParams = getGem2sParams;
 module.exports.formatSamples = formatSamples;
