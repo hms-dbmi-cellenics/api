@@ -2,7 +2,6 @@
 
 exports[`default-config Returns correct values for staging sandboxid 1`] = `
 Object {
-  "adminSub": "0b17683f-363b-4466-b2e2-5bf11c38a76e",
   "api": Object {
     "prefix": "/",
   },
@@ -25,7 +24,7 @@ Object {
   "domainName": "scp-staging.biomage.net",
   "emailDomainName": "https://ui-mockedSandboxId.scp-staging.biomage.net",
   "pipelineIgnoreSSLCertificate": false,
-  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/releases/master/staging/mockedSandboxId.yaml",
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/staging/mockedSandboxId.yaml",
   "pipelineNamespace": "pipeline-mockedSandboxId",
   "podName": "local",
   "port": 3000,

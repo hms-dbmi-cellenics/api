@@ -2,7 +2,6 @@
 
 exports[`default-config Returns correct values for BIOMAGE production 1`] = `
 Object {
-  "adminSub": "032abd44-0cd3-4d58-af21-850ca0b95ac7",
   "api": Object {
     "prefix": "/",
   },
@@ -25,7 +24,7 @@ Object {
   "domainName": "localhost:5000",
   "emailDomainName": "https://localhost:5000",
   "pipelineIgnoreSSLCertificate": false,
-  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/releases/master/production/pipeline.yaml",
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/production/pipeline.yaml",
   "pipelineNamespace": "pipeline-default",
   "podName": "local",
   "port": 3000,
@@ -39,7 +38,6 @@ Object {
 
 exports[`default-config Returns correct values for HMS production 1`] = `
 Object {
-  "adminSub": "a01e8bcc-c9a2-4c56-bd66-39de93764be8",
   "api": Object {
     "prefix": "/",
   },
