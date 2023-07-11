@@ -47,15 +47,11 @@ properties:
         nullable: true
         type: object
         properties:
-          paramsHash:
-            nullable: true
-            type: string
           stateMachineArn:
             type: string
           executionArn:
             type: string
         required:
-          - paramsHash
           - stateMachineArn
           - executionArn
       qc:
