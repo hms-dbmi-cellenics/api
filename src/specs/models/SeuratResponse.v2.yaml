@@ -1,0 +1,32 @@
+title: Seurat response
+description: This is the format the seurat clients communicate the result of a seurat run.
+properties:
+    experimentId:
+      type: string
+      description: The ID of the experiment Seurat was called against.
+    taskName:
+      type: string
+      description: The name of the task that was excecuted
+    authJWT:
+      type: string
+      description: A Bearer-style HTTP authentication token passed by the user that ran Seurat.
+    processingConfig:
+      $ref: './ProcessingConfig.v2.yaml#/properties'
+    meta:
+      type: object
+    table:
+      type: string
+    response:
+      type: object
+      required:
+        - error
+      description: Object storing non-typical response information.
+      properties:
+        error:
+          oneOf:
+            - type: string
+            - type: boolean
+          description: Whether or not an error occurred or a message describing the error.
+required:
+  - experimentId
+type: object

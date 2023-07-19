@@ -34,6 +34,12 @@ const gem2sPipelineSteps = [
   'UploadToAWS',
 ];
 
+const seuratPipelineSteps = [
+  'DownloadSeurat',
+  'ProcessSeurat',
+  'UploadSeuratToAWS',
+];
+
 // pipelineStepNames are the names of pipeline steps for which we
 // want to report the progress back to the user
 // does not include steps used to initialize the infrastructure (like pod deletion assignation)
@@ -81,6 +87,9 @@ const buildCompletedStatus = (processName, date, shouldRerun) => {
     case pipelineConstants.GEM2S_PROCESS_NAME:
       completedSteps = gem2sPipelineSteps;
       break;
+    case pipelineConstants.SEURAT_PROCESS_NAME:
+      completedSteps = seuratPipelineSteps;
+      break;
     case pipelineConstants.QC_PROCESS_NAME:
       completedSteps = qcPipelineSteps;
       break;
@@ -109,10 +118,10 @@ const getExecutionHistory = async (stepFunctions, executionArn) => {
 };
 
 const checkError = (events) => {
-  const error = _.findLast(events, (elem) => elem.type === 'ExecutionFailed');
+  const error = _.findLast(events, (elem) => elem.type === 'ActivityFailed');
 
   if (error) {
-    return error.executionFailedEventDetails;
+    return error.activityFailedEventDetails;
   }
 
   return false;
@@ -251,7 +260,7 @@ const getCompletedSteps = async (
       .map((rawStepName) => stepNameToBackendStepNames[rawStepName]);
 
     completedSteps = stepsCompletedInPreviousRuns.concat(lastRunExecutedSteps);
-  } if (processName === 'gem2s') {
+  } if (processName === 'gem2s' || processName === 'seurat') {
     completedSteps = lastRunExecutedSteps;
   }
 
@@ -283,7 +292,7 @@ const getPipelineStatus = async (experimentId, processName) => {
   let response = null;
 
   const { executionArn = null, stateMachineArn = null, lastStatusResponse } = pipelineExecution;
-  const shouldRerun = await shouldGem2sRerun(experimentId);
+  const shouldRerun = await shouldGem2sRerun(experimentId, processName);
 
   try {
     execution = await stepFunctions.describeExecution({

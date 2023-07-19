@@ -89,12 +89,14 @@ const getGem2sParams = async (experimentId, rawSamples = undefined) => {
   };
 };
 
-const shouldGem2sRerun = async (experimentId) => {
-  const execution = await new ExperimentExecution().findOne({ experiment_id: experimentId, pipeline_type: 'gem2s' });
+const shouldGem2sRerun = async (experimentId, pipelineType) => {
+  const execution = await new ExperimentExecution()
+    .findOne({ experiment_id: experimentId, pipeline_type: pipelineType });
+
   if (execution === undefined) return true;
   const currentParams = await getGem2sParams(experimentId);
 
-  return !_.isEqual(currentParams, execution.lastGem2SParams);
+  return !_.isEqual(currentParams, execution.lastPipelineParams);
 };
 
 module.exports = shouldGem2sRerun;

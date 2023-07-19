@@ -1,0 +1,25 @@
+{
+  "experimentId": "mockExperimentId",
+  "pipelineType": "qc",
+  "stateMachineArn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-qc-development-mock",
+  "executionArn": "arn:aws:states:eu-west-1:000000000000:execution:biomage-qc-development-mock",
+  "lastStatusResponse": {
+    "qc": {
+      "error": false,
+      "status": "SUCCEEDED",
+      "stopDate": "2023-06-02T19:16:30.978Z",
+      "startDate": "2023-06-02T19:15:20.792Z",
+      "shouldRerun": false,
+      "completedSteps": [
+        "ClassifierFilter",
+        "CellSizeDistributionFilter",
+        "MitochondrialContentFilter",
+        "NumGenesVsNumUmisFilter",
+        "DoubletScoresFilter",
+        "DataIntegration",
+        "ConfigureEmbedding"
+      ]
+    }
+  },
+  "lastPipelineParams": null
+}

@@ -13,17 +13,37 @@ const invalidatePlotsForEvent = require('../../utils/plotConfigInvalidation/inva
 const events = require('../../utils/plotConfigInvalidation/events');
 const getAdminSub = require('../../utils/getAdminSub');
 const config = require('../../config');
+const ExperimentExecution = require('../model/ExperimentExecution');
+const Plot = require('../model/Plot');
+const { createCopyPipeline } = require('../helpers/pipeline/pipelineConstruct');
+const { OLD_QC_NAME_TO_BE_REMOVED, NOT_CREATED } = require('../constants');
+const { RUNNING } = require('../constants');
+const { GEM2S_PROCESS_NAME } = require('../constants');
+const LockedError = require('../../utils/responses/LockedError');
+const ExperimentParent = require('../model/ExperimentParent');
 
 const logger = getLogger('[ExperimentController] - ');
 
+const translateProcessingConfig = (processingConfig, sampleIdsMap) => (
+  _.transform(processingConfig, (acc, value, key) => {
+    // If the key is a sample id, then replace it with the new id
+    const newKey = sampleIdsMap[key] || key;
+
+    // Keep going and translate the rest of the object
+    acc[newKey] = _.isObject(value)
+      ? translateProcessingConfig(value, sampleIdsMap)
+      : value;
+  })
+);
+
 const getDefaultCPUMem = (env) => {
   switch (env) {
-    case 'development':
-      return { podCPUs: null, podMemory: null };
     case 'staging':
       return { podCPUs: 1, podMemory: 14000 };
+    // Stop using Batch by default in 'production':
+    //   return { podCPUs: 2, podMemory: 28000 };
     default:
-      return { podCPUs: 2, podMemory: 28000 };
+      return { podCPUs: null, podMemory: null };
   }
 };
 
@@ -166,20 +186,11 @@ const downloadData = async (req, res) => {
   res.json(downloadLink);
 };
 
-
 const cloneExperiment = async (req, res) => {
-  const getAllSampleIds = async (experimentId) => {
-    const { samplesOrder } = await new Experiment().findById(experimentId).first();
-    return samplesOrder;
-  };
   const userId = req.user.sub;
   const {
     params: { experimentId: fromExperimentId },
-    body: {
-      samplesToCloneIds = await getAllSampleIds(fromExperimentId),
-      name = null,
-      toUserId = userId,
-    },
+    body: { toUserId = userId, name },
   } = req;
 
   const adminSub = await getAdminSub();
@@ -188,27 +199,74 @@ const cloneExperiment = async (req, res) => {
     throw new UnauthorizedError(`User ${userId} cannot clone experiments for other users.`);
   }
 
+  const {
+    [OLD_QC_NAME_TO_BE_REMOVED]: { status: qcStatus },
+    [GEM2S_PROCESS_NAME]: { status: gem2sStatus },
+  } = await getExperimentBackendStatus(fromExperimentId);
+
+  if (qcStatus === RUNNING || gem2sStatus === RUNNING) {
+    throw new LockedError('Experiment is currently running a pipeline and can\'t be copied');
+  }
+
   logger.log(`Creating experiment to clone ${fromExperimentId} to`);
 
   let toExperimentId;
+  let sampleIdsMap;
+  let hasS3FilesToCopy;
 
   await sqlClient.get().transaction(async (trx) => {
     toExperimentId = await new Experiment(trx).createCopy(fromExperimentId, name);
     await new UserAccess(trx).createNewExperimentPermissions(toUserId, toExperimentId);
+
+
+    const { samplesOrder: samplesToCloneIds, processingConfig } = await new Experiment()
+      .findById(fromExperimentId)
+      .first();
+
+    const cloneSamplesOrder = await new Sample(trx)
+      .copyTo(fromExperimentId, toExperimentId, samplesToCloneIds);
+
+    // Group together the original and copy sample ids for cleaner handling
+    sampleIdsMap = _.zipObject(samplesToCloneIds, cloneSamplesOrder);
+
+    const translatedProcessingConfig = translateProcessingConfig(processingConfig, sampleIdsMap);
+
+    await new Experiment(trx).updateById(
+      toExperimentId,
+      {
+        samples_order: JSON.stringify(cloneSamplesOrder),
+        processing_config: JSON.stringify(translatedProcessingConfig),
+      },
+    );
+
+    // If the experiment didn't run yet, there's nothing else to update
+    if (gem2sStatus === NOT_CREATED) {
+      logger.log(`Finished cloning ${fromExperimentId}, no pipeline to run because experiment never ran`);
+
+      hasS3FilesToCopy = false;
+      return;
+    }
+
+    await new ExperimentExecution(trx).copyTo(fromExperimentId, toExperimentId, sampleIdsMap);
+    await new Plot(trx).copyTo(fromExperimentId, toExperimentId, sampleIdsMap);
+    await new ExperimentParent(trx).copyTo(fromExperimentId, toExperimentId);
+
+    hasS3FilesToCopy = true;
   });
 
-  logger.log(`Cloning experiment samples from experiment ${fromExperimentId} into ${toExperimentId}`);
+  if (hasS3FilesToCopy) {
+    const {
+      stateMachineArn,
+      executionArn,
+    } = await createCopyPipeline(fromExperimentId, toExperimentId, sampleIdsMap);
 
-  const cloneSamplesOrder = await new Sample().copyTo(
-    fromExperimentId, toExperimentId, samplesToCloneIds,
-  );
+    await new ExperimentExecution().upsert(
+      { experiment_id: toExperimentId, pipeline_type: 'gem2s' },
+      { state_machine_arn: stateMachineArn, execution_arn: executionArn },
+    );
 
-  await new Experiment().updateById(
-    toExperimentId,
-    { samples_order: JSON.stringify(cloneSamplesOrder) },
-  );
-
-  logger.log(`Finished cloning experiment ${fromExperimentId}, new experiment's id is ${toExperimentId}`);
+    logger.log(`Began pipeline for cloning experiment ${fromExperimentId}, new experiment's id is ${toExperimentId}`);
+  }
 
   res.json(toExperimentId);
 };

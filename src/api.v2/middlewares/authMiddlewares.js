@@ -32,7 +32,6 @@ const checkUserAuthenticated = (req, next) => {
 
   return true;
 };
-
 // Throws if the user hasnt agreed to the privacy policy yet
 const checkForPrivacyPolicyAgreement = (req, next) => {
   const isBiomageDeployment = BIOMAGE_DOMAIN_NAMES.includes(config.domainName) || config.clusterEnv === 'development';
@@ -44,7 +43,6 @@ const checkForPrivacyPolicyAgreement = (req, next) => {
 
   return true;
 };
-
 /**
  * General authorization middleware. Resolves with nothing on
  * successful authorization, or an exception on unauthorized access.

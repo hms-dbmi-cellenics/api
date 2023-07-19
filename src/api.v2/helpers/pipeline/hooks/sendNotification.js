@@ -1,7 +1,7 @@
 const { authenticationMiddlewareSocketIO } = require('../../../middlewares/authMiddlewares');
 
 const {
-  SUCCEEDED, FAILED, QC_PROCESS_NAME,
+  SUCCEEDED, FAILED, QC_PROCESS_NAME, SEURAT_PROCESS_NAME,
 } = require('../../../constants');
 
 const getPipelineStatus = require('../getPipelineStatus');
@@ -42,8 +42,8 @@ const sendNotification = async (message) => {
   }
 
   if (experiment.notifyByEmail
-    && ((processName === QC_PROCESS_NAME && status === SUCCEEDED)
-      || status === FAILED)) {
+    && (([QC_PROCESS_NAME, SEURAT_PROCESS_NAME].includes(processName) && status === SUCCEEDED)
+    || status === FAILED)) {
     try {
       const emailParams = buildPipelineStatusEmailBody(message.experimentId, status, user);
       await sendEmail(emailParams);

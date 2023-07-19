@@ -142,7 +142,7 @@ describe('gem2sResponse', () => {
     await handleGem2sResponse(io, message);
 
     expect(validateRequest).toHaveBeenCalledWith(message, 'GEM2SResponse.v2.yaml');
-    expect(hookRunnerInstance.run).toHaveBeenCalledWith(message);
+    expect(hookRunnerInstance.run).toHaveBeenCalledWith(message, io);
 
     expect(getPipelineStatus).toHaveBeenCalledWith(experimentId, constants.GEM2S_PROCESS_NAME);
     expect(io.sockets.emit.mock.calls[0]).toMatchSnapshot();

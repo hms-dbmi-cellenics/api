@@ -42,6 +42,18 @@ properties:
         required:
           - stateMachineArn
           - executionArn
+      seurat:
+        # Couldn't import PipelineExecution.v2.yaml twice for some reason
+        nullable: true
+        type: object
+        properties:
+          stateMachineArn:
+            type: string
+          executionArn:
+            type: string
+        required:
+          - stateMachineArn
+          - executionArn
       qc:
         nullable: true
         type: object

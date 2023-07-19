@@ -17,7 +17,6 @@ const runGem2s = async (req, res) => {
   const { parentExperimentId = null } = await new ExperimentParent()
     .find({ experiment_id: experimentId })
     .first();
-
   if (parentExperimentId) {
     throw new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`);
   }

@@ -23,6 +23,8 @@ const mockInvitedUserEmail = 'invited@example.com';
 const mockInviterUser = { email: 'inviter@example.com' };
 const mockRole = AccessRole.EXPLORER;
 
+process.env.DOMAIN_NAME = 'localhost.test';
+
 describe('creatUserInvite', () => {
   beforeEach(async () => {
     jest.clearAllMocks();

@@ -1,9 +1,7 @@
 const workerVersions = require('../workerVersions');
 
 const getClusteringSettings = async (message) => {
-  console.log('processingConfig: ', message);
   const { input: { config: { clusteringSettings } } } = message;
-
 
   return clusteringSettings;
 };
@@ -25,6 +23,7 @@ const dependencyGetters = {
   GetTrajectoryAnalysisStartingNodes: [getClusteringSettings],
   GetTrajectoryAnalysisPseudoTime: [getClusteringSettings],
   GetNormalizedExpression: [getClusteringSettings],
+  DownloadAnnotSeuratObject: [getClusteringSettings],
 };
 
 // message is assumed to be the configureEmbedding payload received

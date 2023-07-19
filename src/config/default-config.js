@@ -1,9 +1,10 @@
 const AWS = require('aws-sdk');
 const getLogger = require('../utils/getLogger');
+const { ACCOUNT_ID } = require('../api.v2/constants');
 
 const logger = getLogger();
 
-const githubOrganisationName = 'biomage-org';
+const githubOrganisationName = process.env.AWS_ACCOUNT_ID === ACCOUNT_ID.HMS ? 'hms-dbmi-cellenics' : 'biomage-org';
 
 // If we are not deployed on Github (AWS/k8s), the environment is given by
 // NODE_ENV, or development if NODE_ENV is not set.
@@ -74,7 +75,7 @@ const config = {
   // Used for Batch reporting
   datadogApiKey: process.env.DD_API_KEY || '',
   datadogAppKey: process.env.DD_APP_KEY || '',
-  workerVersion: 3, // needs to match workerVersion in UI
+  workerVersion: 4, // needs to match workerVersion in UI
 };
 
 // We are in permanent develop staging environment

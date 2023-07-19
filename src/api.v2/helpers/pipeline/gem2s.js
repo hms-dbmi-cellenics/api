@@ -17,6 +17,8 @@ const getLogger = require('../../../utils/getLogger');
 
 const { qcStepsWithFilterSettings } = require('./pipelineConstruct/qcHelpers');
 const { getGem2sParams, formatSamples } = require('./shouldGem2sRerun');
+const invalidatePlotsForEvent = require('../../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
+const events = require('../../../utils/plotConfigInvalidation/events');
 
 const logger = getLogger('[Gem2sService] - ');
 
@@ -26,26 +28,31 @@ const hookRunner = new HookRunner();
  *
  * @param {*} experimentId
  * @param {*} processingConfig The full processing config for an experiment
- * @returns A copy of processingConfig with each filterSettings entry
- *  duplicated under defaultFilterSettings
+ * @param {*} defaultProcessingConfig The default processing config for an
+ * experiment (when user sets "auto")
+ *
+ * @returns A copy of processingConfig with each filterSettings entry of defaultProcessingConfig
+ * added with defaultFilterSettings key
  */
-const addDefaultFilterSettings = (experimentId, processingConfig) => {
+const formatDefaultFilterSettings = (experimentId, processingConfig, defaultProcessingConfig) => {
   const processingConfigToReturn = _.cloneDeep(processingConfig);
 
   logger.log('Adding defaultFilterSettings to received processing config');
 
   qcStepsWithFilterSettings.forEach((stepName) => {
-    const stepConfigSplitBySample = Object.values(processingConfigToReturn[stepName]);
+    const stepConfigSplitBySample = Object.entries(processingConfigToReturn[stepName]);
 
-    stepConfigSplitBySample.forEach((sampleSettings) => {
+    stepConfigSplitBySample.forEach(([sampleId, sampleSettings]) => {
       if (!sampleSettings.filterSettings) {
         logger.log(`Experiment: ${experimentId}. Skipping current sample config, it doesnt have filterSettings:`);
         logger.log(JSON.stringify(sampleSettings.filterSettings));
         return;
       }
 
+      const defaultFilterSettings = defaultProcessingConfig[stepName][sampleId].filterSettings;
+
       // eslint-disable-next-line no-param-reassign
-      sampleSettings.defaultFilterSettings = _.cloneDeep(sampleSettings.filterSettings);
+      sampleSettings.defaultFilterSettings = _.cloneDeep(defaultFilterSettings);
     });
   });
 
@@ -59,8 +66,8 @@ const continueToQC = async (payload) => {
 
   // Before persisting the new processing config,
   // fill it in with default filter settings (to preserve the gem2s-generated settings)
-  const processingConfigWithDefaults = addDefaultFilterSettings(
-    experimentId, item.processingConfig,
+  const processingConfigWithDefaults = formatDefaultFilterSettings(
+    experimentId, item.processingConfig, item.defaultProcessingConfig,
   );
 
   await new Experiment().updateById(
@@ -117,8 +124,13 @@ const setupSubsetSamples = async (payload) => {
   // Add samples that were created
 };
 
+const invalidatePlotsForExperiment = async (payload, io) => {
+  await invalidatePlotsForEvent(payload.experimentId, events.CELL_SETS_MODIFIED, io.sockets);
+};
+
 hookRunner.register('subsetSeurat', [setupSubsetSamples]);
 hookRunner.register('uploadToAWS', [continueToQC]);
+hookRunner.register('copyS3Objects', [invalidatePlotsForExperiment]);
 
 hookRunner.registerAll([sendNotification]);
 
@@ -196,7 +208,7 @@ const startGem2sPipeline = async (experimentId, authJWT) => {
   logger.log('GEM2S params created.');
 
   const newExecution = {
-    last_gem2s_params: currentGem2SParams,
+    last_pipeline_params: currentGem2SParams,
     state_machine_arn: stateMachineArn,
     execution_arn: executionArn,
   };
@@ -227,7 +239,7 @@ const handleGem2sResponse = async (io, message) => {
   // Fail hard if there was an error.
   await validateRequest(message, 'GEM2SResponse.v2.yaml');
 
-  await hookRunner.run(message);
+  await hookRunner.run(message, io);
 
   const { experimentId } = message;
 
@@ -237,9 +249,10 @@ const handleGem2sResponse = async (io, message) => {
   // Before being returned to the client we need to
   // fill it in with default filter settings (to preserve the gem2s-generated settings)
   if (messageForClient.taskName === 'uploadToAWS') {
-    messageForClient.item.processingConfig = addDefaultFilterSettings(
+    messageForClient.item.processingConfig = formatDefaultFilterSettings(
       experimentId,
       messageForClient.item.processingConfig,
+      messageForClient.item.defaultProcessingConfig,
     );
   }
 

@@ -5,9 +5,9 @@ info:
   description: The main Node.js pipeline API.
   license:
     name: MIT
-    url: "https://github.com/biomage-org/api/blob/master/LICENSE"
+    url: "https://github.com/hms-dbmi-cellenics/api/blob/master/LICENSE"
   contact:
-    name: Biomage Ltd.
+    name: Cellenics
 servers:
   - url: /v2
 tags:
@@ -1330,7 +1330,7 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: object
         "400":
           description: Bad Request
           content:
@@ -1428,36 +1428,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
-  "/experiments/{experimentId}/clone":
+  /completeMultipartUpload:
     post:
-      summary: Clone an experiment
-      description: "Clone an experiment, returns the id of the new experiment"
-      operationId: cloneExperiment
-      x-eov-operation-id: experiment#clone
-      x-eov-operation-handler: routes/experiment
+      summary: Complete a multipart upload
+      description: Complete a multipart upload of a sample file
+      operationId: completeMultipart
+      x-eov-operation-id: sampleFile#completeMultipart
+      x-eov-operation-handler: routes/sampleFile
       requestBody:
         content:
           application/json:
             schema:
-              description: If samplesToCloneIds is sent then the cloned experiment only contains the subset samples instead of all of them
+              description: information here
               type: object
               properties:
-                samplesToCloneIds:
+                sampleFileId:
+                  type: string
+                uploadId:
+                  type: string
+                parts:
                   type: array
                   items:
-                    type: string
-                name:
-                  type: string
-                toUserId:
-                  type: string
+                    type: object   
               additionalProperties: false
+              required:
+                  - sampleFileId
+                  - uploadId
+                  - parts
       responses:
         "200":
-          description: Clone experiment
+          description: Success
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ExperimentInfo"
+                $ref: "#/components/schemas/HTTPSuccess"
         "400":
           description: Bad Request
           content:
@@ -1478,6 +1482,67 @@ paths:
                 $ref: "#/components/schemas/HTTPError"
         "404":
           description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "424":
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/clone":
+    post:
+      summary: Clone an experiment
+      description: "Clone an experiment, returns the id of the new experiment"
+      operationId: cloneExperiment
+      x-eov-operation-id: experiment#clone
+      x-eov-operation-handler: routes/experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                toUserId:
+                  type: string
+              additionalProperties: false
+      responses:
+        "200":
+          description: Returns the id of the new cloned experiment
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "423":
+          description: A qc or gem2s pipeline running error
           content:
             application/json:
               schema:
@@ -1670,6 +1735,50 @@ paths:
                 userId:
                   type: string
                   minLength: 1
+  /access/{experimentId}/check:
+    get:
+      summary: Check whether user has access to an endpoint
+      operationId: isUserAuthorized
+      x-eov-operation-id: access#isUserAuthorized
+      x-eov-operation-handler: routes/access
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      parameters:
+        - name: experimentId
+          description: Id of the experiment
+          schema:
+            type: string
+          in: path
+          required: true
+        - name: url
+          description: Url of the endpoint to check
+          schema:
+            type: string
+          in: query
+          required: true
+        - name: method
+          description: Method of the endpoint to check
+          schema:
+            type: string
+          in: query
+          required: true
   "/workResults/{experimentId}/{ETag}":
     get:
       summary: Get the work results from S3
@@ -1769,6 +1878,52 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/seurat":
+    post:
+      summary: Run seurat
+      operationId: runSeurat
+      x-eov-operation-id: seurat#run
+      x-eov-operation-handler: routes/seurat
+      description: Triggers a new seurat run
+      parameters:
+        - name: experimentId
+          description: Id of the experiment
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Experiment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+
   "/experiments/{experimentId}/plots/{plotUuid}":
     parameters:
       - schema:
@@ -2000,7 +2155,44 @@ paths:
                 type: string
                 pattern: nok
     parameters: []
-
+  /seuratResults:
+    post:
+      summary: Retrieve results from pipeline step functions
+      description: |-
+        Results from Step Function pipeline steps are relayed to the API through this endpoint.
+        Note that this endpoint is only exposed to AWS SNS, and since it has a specific communication protocol with limited feedback, the schema defined here is designed to be liberally enforceable. This endpoint is also used by SNS to handle subscribe/unsubscribe events.
+        The actual JSON passed by SNS is found in the `PipelineResponse` model, which is to be validated by the API.
+      operationId: receiveSeuratResponse
+      x-eov-operation-id: seurat#response
+      x-eov-operation-handler: routes/seurat
+      requestBody:
+        description: "The results from the execution of a pipeline step, sent via SNS."
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        "200":
+          description: "A JSON-parseable was received by the server, *irrespective of whether it was correct/acceptable or not*."
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: ok
+        "500":
+          description: The data sent by the server could not be parsed as JSON.
+          content:
+            text/plain:
+              schema:
+                type: string
+                pattern: nok
+    parameters: []
+    
   /pipelineResults:
     post:
       summary: "Placeholder endpoint for qc, necessary so subscriptions to sns work"

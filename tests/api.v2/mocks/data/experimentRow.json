@@ -36,7 +36,8 @@
         },
         "defaultFilterSettings": {
           "oneSetting": 1
-        }
+        },
+        "recomputeDoubletScore": true
       },
       "otherSample": {
         "enabled": true,
@@ -45,7 +46,8 @@
         },
         "defaultFilterSettings": {
           "oneSetting": 1
-        }
+        },
+        "recomputeDoubletScore": true
       }
     },
     "dataIntegration": {

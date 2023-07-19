@@ -140,24 +140,25 @@ const handleQCResponse = async (io, message) => {
 
   await validateRequest(message, 'PipelineResponse.v2.yaml');
 
-  await hookRunner.run(message);
+  await hookRunner.run(message, io);
 
-  const { experimentId } = message;
+  const { experimentId, input: { sampleUuid, taskName } } = message;
   const { error = false } = message.response || {};
 
   let qcStepOutput = null;
 
-  // if there aren't errors proceed with the updates
-  if (!error && 'output' in message) {
-    const { input: { sampleUuid, taskName } } = message;
-
+  if ('output' in message) {
     qcStepOutput = await getOutputFromS3(message);
 
-    await updatePlotDataKeys(taskName, experimentId, qcStepOutput);
+    if (qcStepOutput.config) {
+      qcStepOutput.config = await updateProcessingConfigWithQCStep(
+        taskName, experimentId, qcStepOutput, sampleUuid,
+      );
+    }
 
-    qcStepOutput.config = await updateProcessingConfigWithQCStep(
-      taskName, experimentId, qcStepOutput, sampleUuid,
-    );
+    if (qcStepOutput.plotDataKeys) {
+      await updatePlotDataKeys(taskName, experimentId, qcStepOutput);
+    }
   }
 
   // we want to send the update to the subscribed both in successful and error case
