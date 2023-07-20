@@ -34,7 +34,7 @@ const checkUserAuthenticated = (req, next) => {
 };
 // Throws if the user hasnt agreed to the privacy policy yet
 const checkForPrivacyPolicyAgreement = (req, next) => {
-  const isBiomageDeployment = BIOMAGE_DOMAIN_NAMES.includes(config.domainName) || config.clusterEnv === 'development';
+  const isBiomageDeployment = BIOMAGE_DOMAIN_NAMES.includes(config.domainName);
 
   if (req.user['custom:agreed_terms'] !== 'true' && isBiomageDeployment) {
     next(new NotAgreedToTermsError('The user hasnt agreed to the privacy policy yet.'));
