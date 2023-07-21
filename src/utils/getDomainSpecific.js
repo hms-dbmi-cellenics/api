@@ -4,13 +4,13 @@ const { ACCOUNT_ID } = require('../api.v2/constants');
 
 const domainSpecific = {
   HMS: {
-
+    adminEmail: 'cellenics_admin@listserv.med.harvard.edu',
   },
   BIOMAGE: {
-
+    adminEmail: 'admin@biomage.net',
   },
   BIOMAGE_PRIVATE: {
-
+    adminEmail: 'admin@biomage.net',
   },
 };
 
