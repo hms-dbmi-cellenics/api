@@ -7,6 +7,7 @@ const NotAgreedToTermsError = require('./responses/NotAgreedToTermsError');
 const checkForPrivacyPolicyAgreement = (req, next) => {
   // TODO: These commented out lines might not be necessary if we can rely on the
   // account_id check from getDomainSpecific(), but test before we actually remove them
+  // const BIOMAGE_DOMAIN_NAMES = ['scp.biomage.net', 'scp-staging.biomage.net'];
   // const isBiomageDeployment = BIOMAGE_DOMAIN_NAMES.includes(config.domainName);
 
   // if (req.user['custom:agreed_terms'] !== 'true' && isBiomageDeployment) {
