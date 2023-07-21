@@ -1,0 +1,21 @@
+name: Sync Fork
+
+on:
+  workflow_dispatch:  # Allows manual trigger
+  # schedule:
+  #   - cron: '0 0 * * *'  # Runs every day at midnight
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Fetch all history
+
+    - name: Fetch Upstream
+      run: |
+        gh repo sync --branch master
+      env:
+        GH_TOKEN: ${{ github.token }}
