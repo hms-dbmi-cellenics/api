@@ -5,7 +5,7 @@ Array [
   Array [
     "http://mockSlackHook.com/asdasd",
     Object {
-      "body": "{\\"blocks\\":[{\\"type\\":\\"section\\",\\"text\\":{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"\\\\n*Deployment*: scp.biomage.net\\\\n*ExperimentId:* anotherExpId\\\\n*Process*: gem2s\\\\n*Step*: someStep\\\\n*State machine ARN*: gem2sArn\\\\n\\"}},{\\"type\\":\\"context\\",\\"elements\\":[{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User email:*\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"johncena@gmail.com\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User name:*\\"},{\\"type\\":\\"plain_text\\",\\"text\\":\\"John Cena\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User UUID:*\\"},{\\"type\\":\\"plain_text\\",\\"text\\":\\"032cdb44-0cd3-4d58-af21-850kp0b95ac7\\"}]}]}",
+      "body": "{\\"blocks\\":[{\\"type\\":\\"section\\",\\"text\\":{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"\\\\n*Deployment*: test.com\\\\n*ExperimentId:* anotherExpId\\\\n*Process*: gem2s\\\\n*Step*: someStep\\\\n*State machine ARN*: gem2sArn\\\\n\\"}},{\\"type\\":\\"context\\",\\"elements\\":[{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User email:*\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"johncena@gmail.com\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User name:*\\"},{\\"type\\":\\"plain_text\\",\\"text\\":\\"John Cena\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User UUID:*\\"},{\\"type\\":\\"plain_text\\",\\"text\\":\\"032cdb44-0cd3-4d58-af21-850kp0b95ac7\\"}]}]}",
       "method": "POST",
     },
   ],
@@ -17,7 +17,7 @@ Array [
   Array [
     "http://mockSlackHook.com/asdasd",
     Object {
-      "body": "{\\"blocks\\":[{\\"type\\":\\"section\\",\\"text\\":{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"\\\\n*Deployment*: scp.biomage.net\\\\n*ExperimentId:* asd123\\\\n*Process*: qc\\\\n*Step*: Task 1\\\\n*State machine ARN*: qcArn\\\\n\\"}},{\\"type\\":\\"context\\",\\"elements\\":[{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User email:*\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"johncena@gmail.com\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User name:*\\"},{\\"type\\":\\"plain_text\\",\\"text\\":\\"John Cena\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User UUID:*\\"},{\\"type\\":\\"plain_text\\",\\"text\\":\\"032cdb44-0cd3-4d58-af21-850kp0b95ac7\\"}]}]}",
+      "body": "{\\"blocks\\":[{\\"type\\":\\"section\\",\\"text\\":{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"\\\\n*Deployment*: test.com\\\\n*ExperimentId:* asd123\\\\n*Process*: qc\\\\n*Step*: Task 1\\\\n*State machine ARN*: qcArn\\\\n\\"}},{\\"type\\":\\"context\\",\\"elements\\":[{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User email:*\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"johncena@gmail.com\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User name:*\\"},{\\"type\\":\\"plain_text\\",\\"text\\":\\"John Cena\\"},{\\"type\\":\\"mrkdwn\\",\\"text\\":\\"*User UUID:*\\"},{\\"type\\":\\"plain_text\\",\\"text\\":\\"032cdb44-0cd3-4d58-af21-850kp0b95ac7\\"}]}]}",
       "method": "POST",
     },
   ],
