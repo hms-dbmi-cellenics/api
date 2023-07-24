@@ -24,7 +24,7 @@ Object {
   "domainName": "scp-staging.biomage.net",
   "emailDomainName": "https://ui-mockedSandboxId.scp-staging.biomage.net",
   "pipelineIgnoreSSLCertificate": false,
-  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/staging/mockedSandboxId.yaml",
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/org/releases/master/staging/mockedSandboxId.yaml",
   "pipelineNamespace": "pipeline-mockedSandboxId",
   "podName": "local",
   "port": 3000,

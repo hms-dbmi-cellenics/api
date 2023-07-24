@@ -1,8 +1,8 @@
 const config = require('../config');
 const getAwsPoolId = require('../api.v2/helpers/cognito/getAwsPoolId');
-const { ACCOUNT_ID } = require('../api.v2/constants');
+const getDomainSpecificContent = require('../config/getDomainSpecificContent');
 
-const adminEmail = process.env.AWS_ACCOUNT_ID === ACCOUNT_ID.HMS ? 'cellenics_admin@listserv.med.harvard.edu' : 'admin@biomage.net';
+const { adminEmail } = getDomainSpecificContent();
 
 const getAdminSub = async () => {
   const userPoolId = await getAwsPoolId();
