@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 const AWS = require('aws-sdk');
 const isPromise = require('../../src/utils/isPromise');
-const { ACCOUNT_ID } = require('../../src/api.v2/constants');
+const { domainSpecificContent } = require('../../src/config/getDomainSpecificContent');
 
 jest.mock('aws-sdk');
 jest.mock('../../src/utils/getLogger');
@@ -21,74 +21,42 @@ describe('default-config', () => {
     process.env = OLD_ENV;
   });
 
-  it('Returns correct values for BIOMAGE production', () => {
-    const prodEnvironment = 'production';
-    process.env.NODE_ENV = prodEnvironment;
-    process.env.K8S_ENV = prodEnvironment;
-    process.env.CLUSTER_ENV = prodEnvironment;
-    process.env.AWS_DEFAULT_REGION = 'eu-west-1';
-    process.env.AWS_ACCOUNT_ID = ACCOUNT_ID.BIOMAGE;
+  const accounts = Object.keys(domainSpecificContent)
+    .filter((key) => key !== 'test'); // Exclude 'test' as it's not a real account.
 
-    const userPoolId = 'mockUserPoolId';
-    const accountId = 'mockAccountId';
+  accounts.forEach((account) => {
+    it(`Returns correct values for ${account} production`, () => {
+      const prodEnvironment = 'production';
+      process.env.NODE_ENV = prodEnvironment;
+      process.env.K8S_ENV = prodEnvironment;
+      process.env.CLUSTER_ENV = prodEnvironment;
+      process.env.AWS_DEFAULT_REGION = 'eu-west-1';
+      process.env.AWS_ACCOUNT_ID = account;
 
-    AWS.CognitoIdentityServiceProvider = jest.fn(() => ({
-      listUserPools: {
-        promise: jest.fn(() => Promise.resolve(
-          { UserPools: [{ id: userPoolId, Name: `biomage-user-pool-case-insensitive-${prodEnvironment}` }] },
-        )),
-      },
-    }));
+      const userPoolId = 'mockUserPoolId';
+      const accountId = 'mockAccountId';
 
-    AWS.STS = jest.fn(() => ({
-      getCallerIdentity: {
-        promise: jest.fn(() => Promise.resolve({ Account: accountId })),
-      },
-    }));
+      AWS.CognitoIdentityServiceProvider = jest.fn(() => ({
+        listUserPools: {
+          promise: jest.fn(() => Promise.resolve(
+            { UserPools: [{ id: userPoolId, Name: `biomage-user-pool-case-insensitive-${prodEnvironment}` }] },
+          )),
+        },
+      }));
 
-    const defaultConfig = jest.requireActual('../../src/config/default-config');
+      AWS.STS = jest.fn(() => ({
+        getCallerIdentity: {
+          promise: jest.fn(() => Promise.resolve({ Account: accountId })),
+        },
+      }));
 
-    const defaultConfigEntries = Object.entries(defaultConfig);
-    const filteredEntries = defaultConfigEntries.filter(([, value]) => !isPromise(value));
-    const defaultConfigFiltered = Object.fromEntries(filteredEntries);
+      const defaultConfig = jest.requireActual('../../src/config/default-config');
 
-    expect(defaultConfigFiltered).toMatchSnapshot();
-  });
+      const defaultConfigEntries = Object.entries(defaultConfig);
+      const filteredEntries = defaultConfigEntries.filter(([, value]) => !isPromise(value));
+      const defaultConfigFiltered = Object.fromEntries(filteredEntries);
 
-  it('Returns correct values for HMS production', () => {
-    jest.unmock('../../src/config/default-config');
-    jest.resetModules();
-
-    const prodEnvironment = 'production';
-    process.env.NODE_ENV = prodEnvironment;
-    process.env.K8S_ENV = prodEnvironment;
-    process.env.CLUSTER_ENV = prodEnvironment;
-    process.env.AWS_DEFAULT_REGION = 'eu-west-1';
-    process.env.AWS_ACCOUNT_ID = ACCOUNT_ID.HMS;
-
-    const userPoolId = 'mockUserPoolId';
-    const accountId = 'mockAccountId';
-
-    AWS.CognitoIdentityServiceProvider = jest.fn(() => ({
-      listUserPools: {
-        promise: jest.fn(() => Promise.resolve(
-          { UserPools: [{ id: userPoolId, Name: `biomage-user-pool-case-insensitive-${prodEnvironment}` }] },
-        )),
-      },
-    }));
-
-    AWS.STS = jest.fn(() => ({
-      getCallerIdentity: {
-        promise: jest.fn(() => Promise.resolve({ Account: accountId })),
-      },
-    }));
-
-    const defaultConfig = jest.requireActual('../../src/config/default-config');
-
-    const defaultConfigEntries = Object.entries(defaultConfig);
-    const filteredEntries = defaultConfigEntries.filter(([, value]) => !isPromise(value));
-    const defaultConfigFiltered = Object.fromEntries(filteredEntries);
-
-    expect(defaultConfigFiltered).toMatchSnapshot();
+      expect(defaultConfigFiltered).toMatchSnapshot();
+    });
   });
 });

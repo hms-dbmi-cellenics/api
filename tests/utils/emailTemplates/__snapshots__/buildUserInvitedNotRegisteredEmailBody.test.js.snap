@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`buildUserInvitedNotRegisteredEmailBody Should build the correct message 1`] = `
+exports[`buildUserInvitedNotRegisteredEmailBody Testing for account 160782110667 Should build the correct message 1`] = `
 Object {
   "Destination": Object {
     "ToAddresses": Array [
@@ -23,9 +23,7 @@ Object {
               Register at <a href=\\"https://scp.biomage.net\\">https://scp.biomage.net</a> using this email address.<br/> <br/>
 
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
-              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
-              More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
-              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>
+              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/><div>test hi info</div>
               Best Regards, <br/>
               Cellenics team
             <p/>
@@ -46,9 +44,7 @@ Object {
               Register at <a href=\\"https://scp.biomage.net\\">https://scp.biomage.net</a> using this email address.<br/> <br/>
 
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
-              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
-              More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
-              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>
+              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/><div>test hi info</div>
               Best Regards, <br/>
               Cellenics team
             <p/>
@@ -61,11 +57,11 @@ Object {
       "Data": "Invitation to join a project in Cellenics",
     },
   },
-  "Source": "notification@localhost.test",
+  "Source": "some@email.com",
 }
 `;
 
-exports[`buildUserInvitedNotRegisteredEmailBody Should build the correct message for HMS 1`] = `
+exports[`buildUserInvitedNotRegisteredEmailBody Testing for account 242905224710 Should build the correct message 1`] = `
 Object {
   "Destination": Object {
     "ToAddresses": Array [
@@ -88,7 +84,7 @@ Object {
               Register at <a href=\\"https://scp.biomage.net\\">https://scp.biomage.net</a> using this email address.<br/> <br/>
 
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
-              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
+              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/><div>test hi info</div>
               Best Regards, <br/>
               Cellenics team
             <p/>
@@ -109,7 +105,7 @@ Object {
               Register at <a href=\\"https://scp.biomage.net\\">https://scp.biomage.net</a> using this email address.<br/> <br/>
 
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
-              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
+              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/><div>test hi info</div>
               Best Regards, <br/>
               Cellenics team
             <p/>
@@ -122,6 +118,6 @@ Object {
       "Data": "Invitation to join a project in Cellenics",
     },
   },
-  "Source": "alex_pickering@hms.harvard.edu",
+  "Source": "some@email.com",
 }
 `;
