@@ -22,9 +22,7 @@ Object {
               Access it with the link below: <br/>
               <a href=\\"https://test.com/experiments/experimentId/data-exploration\\">https://test.com/experiments/experimentId/data-exploration</a> <br/> <br/>
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
-              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
-              More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
-              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>
+              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/><div>test hi info</div>
               Best Regards, <br/>
               Cellenics team
             <p/>
@@ -44,9 +42,7 @@ Object {
               Access it with the link below: <br/>
               <a href=\\"https://test.com/experiments/experimentId/data-exploration\\">https://test.com/experiments/experimentId/data-exploration</a> <br/> <br/>
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
-              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
-              More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
-              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>
+              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/><div>test hi info</div>
               Best Regards, <br/>
               Cellenics team
             <p/>
@@ -59,7 +55,7 @@ Object {
       "Data": "Invitation to join a project in Cellenics",
     },
   },
-  "Source": "notification@localhost.test",
+  "Source": "some@email.com",
 }
 `;
 
@@ -86,9 +82,7 @@ Object {
               Register at <a href=\\"https://test.com\\">https://test.com</a> using this email address.<br/> <br/>
 
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
-              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
-              More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
-              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>
+              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/><div>test hi info</div>
               Best Regards, <br/>
               Cellenics team
             <p/>
@@ -109,9 +103,7 @@ Object {
               Register at <a href=\\"https://test.com\\">https://test.com</a> using this email address.<br/> <br/>
 
               Cellenics is a user-friendly online tool for single cell RNA-seq data analysis. <br/>
-              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/>
-              More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
-              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>
+              The platform is designed specifically for biologists, and it's completely free for academic researchers.<br/><br/><div>test hi info</div>
               Best Regards, <br/>
               Cellenics team
             <p/>
@@ -124,6 +116,6 @@ Object {
       "Data": "Invitation to join a project in Cellenics",
     },
   },
-  "Source": "notification@localhost.test",
+  "Source": "some@email.com",
 }
 `;
