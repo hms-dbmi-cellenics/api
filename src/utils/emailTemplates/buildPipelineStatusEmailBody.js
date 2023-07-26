@@ -1,10 +1,10 @@
 const config = require('../../config');
 
-const { ACCOUNT_ID, SUCCEEDED } = require('../../api.v2/constants');
+const { SUCCEEDED } = require('../../api.v2/constants');
+const getDomainSpecificContent = require('../../config/getDomainSpecificContent');
 
 const buildPipelineStatusEmailBody = (experimentId, status, user) => {
-  const isHMS = config.awsAccountId === ACCOUNT_ID.HMS;
-
+  const { notificationEmail } = getDomainSpecificContent();
   const firstname = user.name.split(' ')[0];
   const link = `${config.emailDomainName}/experiments/${experimentId}/data-processing`;
   const successMessage = `
@@ -53,7 +53,7 @@ const buildPipelineStatusEmailBody = (experimentId, status, user) => {
         Data: 'Cellenics experiment status',
       },
     },
-    Source: isHMS ? 'alex_pickering@hms.harvard.edu' : `notification@${process.env.DOMAIN_NAME}`,
+    Source: notificationEmail,
   };
   return params;
 };
