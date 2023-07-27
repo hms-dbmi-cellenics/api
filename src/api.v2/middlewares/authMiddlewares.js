@@ -20,7 +20,8 @@ const { CacheMissError } = require('../../cache/cache-utils');
 const { UnauthorizedError, UnauthenticatedError } = require('../../utils/responses');
 
 const UserAccess = require('../model/UserAccess');
-const getDomainSpecific = require('../../utils/getDomainSpecific');
+
+const getDomainSpecific = require('../../config/getDomainSpecificContent');
 
 // Throws if the user isnt authenticated
 const checkUserAuthenticated = (req, next) => {

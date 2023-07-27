@@ -1,10 +1,11 @@
 const AWS = require('aws-sdk');
 const getLogger = require('../utils/getLogger');
-const { ACCOUNT_ID } = require('../api.v2/constants');
+
+const getDomainSpecificContent = require('./getDomainSpecificContent');
 
 const logger = getLogger();
 
-const githubOrganisationName = process.env.AWS_ACCOUNT_ID === ACCOUNT_ID.HMS ? 'hms-dbmi-cellenics' : 'biomage-org';
+const { githubOrganisationName } = getDomainSpecificContent();
 
 // If we are not deployed on Github (AWS/k8s), the environment is given by
 // NODE_ENV, or development if NODE_ENV is not set.

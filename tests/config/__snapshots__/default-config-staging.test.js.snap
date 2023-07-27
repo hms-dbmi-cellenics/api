@@ -24,7 +24,7 @@ Object {
   "domainName": "scp-staging.biomage.net",
   "emailDomainName": "https://ui-default.scp-staging.biomage.net",
   "pipelineIgnoreSSLCertificate": false,
-  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/staging/pipeline.yaml",
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/org/releases/master/staging/pipeline.yaml",
   "pipelineNamespace": "pipeline-default",
   "podName": "local",
   "port": 3000,

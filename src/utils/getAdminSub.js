@@ -1,7 +1,7 @@
 const config = require('../config');
 const getAwsPoolId = require('../api.v2/helpers/cognito/getAwsPoolId');
 
-const getDomainSpecific = require('./getDomainSpecific');
+const getDomainSpecific = require('../config/getDomainSpecificContent');
 
 const getAdminSub = async () => {
   const userPoolId = await getAwsPoolId();
