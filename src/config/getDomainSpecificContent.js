@@ -4,7 +4,7 @@ const domainSpecificContent = {
   test: {
     githubOrganisationName: 'org',
     adminEmail: 'admin@example.com',
-    enforcePrivacyPolicyAgreement: true,
+    enforcePrivacyPolicyAgreement: false,
     notificationEmail: 'some@email.com',
     moreEmailInfo: '<div>test hi info</div>',
   },

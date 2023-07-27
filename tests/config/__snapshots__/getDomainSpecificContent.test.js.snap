@@ -24,7 +24,7 @@ Object {
 exports[`getDomainSpecificContent tests check content for the default account 1`] = `
 Object {
   "adminEmail": "admin@example.com",
-  "enforcePrivacyPolicyAgreement": true,
+  "enforcePrivacyPolicyAgreement": false,
   "githubOrganisationName": "org",
   "moreEmailInfo": "<div>test hi info</div>",
   "notificationEmail": "some@email.com",
