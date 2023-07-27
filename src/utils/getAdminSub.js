@@ -1,12 +1,12 @@
 const config = require('../config');
 const getAwsPoolId = require('../api.v2/helpers/cognito/getAwsPoolId');
 
-const getDomainSpecific = require('../config/getDomainSpecificContent');
+const getDomainSpecificContent = require('../config/getDomainSpecificContent');
 
 const getAdminSub = async () => {
   const userPoolId = await getAwsPoolId();
 
-  const adminEmail = getDomainSpecific('adminEmail');
+  const adminEmail = getDomainSpecificContent('adminEmail');
 
   try {
     const result = await config.cognitoISP.adminGetUser({
