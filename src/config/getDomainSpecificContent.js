@@ -47,7 +47,7 @@ const domainSpecific = {
   },
 };
 
-const getDomainSpecific = (component) => {
+const getDomainSpecificContent = (component) => {
   if (process.env.NODE_ENV === 'test') return domainSpecific.TEST;
 
   switch (process.env.AWS_ACCOUNT_ID) {
@@ -60,7 +60,7 @@ const getDomainSpecific = (component) => {
   }
 };
 
-module.exports = getDomainSpecific;
+module.exports = getDomainSpecificContent;
 
 
 // test: {
