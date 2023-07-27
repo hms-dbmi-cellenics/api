@@ -69,7 +69,7 @@ const authorize = async (userId, resource, method, experimentId) => {
  */
 const expressAuthorizationMiddleware = async (req, res, next) => {
   if (!checkUserAuthenticated(req, next)) return;
-  if (!getDomainSpecificContent('middlewareChecks')(req, next)) return;
+  if (!getDomainSpecificContent().middlewareChecks(req, next)) return;
 
   try {
     await authorize(req.user.sub, req.url, req.method, req.params.experimentId);
@@ -81,7 +81,7 @@ const expressAuthorizationMiddleware = async (req, res, next) => {
 
 const expressAuthenticationOnlyMiddleware = async (req, res, next) => {
   if (!checkUserAuthenticated(req, next)) return;
-  if (!getDomainSpecificContent('middlewareChecks')(req, next)) return;
+  if (!getDomainSpecificContent().middlewareChecks(req, next)) return;
 
   next();
 };
