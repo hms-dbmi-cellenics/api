@@ -7,7 +7,8 @@ describe('getDomainSpecificContent tests', () => {
     it(`check content for ${accountId}`, () => {
       // Set the environment variables
       process.env.AWS_ACCOUNT_ID = ACCOUNT_ID[accountId];
-      process.env.NODE_ENV = 'production'; // Since the function checks if env is not 'test'
+      process.env.NODE_ENV = 'production'; // Since the function checks if env is not 'development'
+      process.env.K8S_ENV = 'production';
 
       const content = getDomainSpecificContent();
       expect(content).toMatchSnapshot(`getDomainSpecificContent for ${accountId}`);
