@@ -3,7 +3,7 @@ const sqlClient = require('../../sql/sqlClient');
 const Sample = require('../model/Sample');
 const SampleFile = require('../model/SampleFile');
 
-const { getSampleFileUploadUrl, getSampleFileDownloadUrl } = require('../helpers/s3/signedUrl');
+const { getSampleFileUploadUrls, getSampleFileDownloadUrl, completeMultipartUpload } = require('../helpers/s3/signedUrl');
 const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 
@@ -24,17 +24,19 @@ const createFile = async (req, res) => {
     upload_status: 'uploading',
   };
 
-  let signedUrl;
+  let uploadUrlParams;
 
   await sqlClient.get().transaction(async (trx) => {
     await new SampleFile(trx).create(newSampleFile);
     await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType);
 
-    signedUrl = await getSampleFileUploadUrl(sampleFileId, metadata);
+    logger.log(`Getting multipart upload urls for ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
+    uploadUrlParams = await getSampleFileUploadUrls(sampleFileId, metadata, size);
   });
 
+
   logger.log(`Finished creating sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
-  res.json(signedUrl);
+  res.json(uploadUrlParams);
 };
 
 const patchFile = async (req, res) => {
@@ -47,6 +49,19 @@ const patchFile = async (req, res) => {
   await new SampleFile().updateUploadStatus(sampleId, sampleFileType, uploadStatus);
 
   logger.log(`Finished patching sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
+  res.json(OK());
+};
+
+const completeMultipart = async (req, res) => {
+  const {
+    body: { sampleFileId, parts, uploadId },
+  } = req;
+
+  logger.log(`completing multipart upload for sampleFileId ${sampleFileId}`);
+
+  completeMultipartUpload(sampleFileId, parts, uploadId);
+
+  logger.log(`completed multipart upload for sampleFileId ${sampleFileId}`);
   res.json(OK());
 };
 
@@ -63,5 +78,5 @@ const getS3DownloadUrl = async (req, res) => {
 };
 
 module.exports = {
-  createFile, patchFile, getS3DownloadUrl,
+  createFile, patchFile, getS3DownloadUrl, completeMultipart,
 };

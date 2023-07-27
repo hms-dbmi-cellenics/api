@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/biomage-org/api/branch/master/graph/badge.svg?token=hC9LshrTQm)](https://codecov.io/gh/biomage-org/api)
+[![codecov](https://codecov.io/gh/hms-dbmi-cellenics/api/branch/master/graph/badge.svg?token=hC9LshrTQm)](https://codecov.io/gh/hms-dbmi-cellenics/api)
 API
 ======
 
@@ -36,7 +36,7 @@ Default output format: json
 #### Step 1. Connect with Inframock
 
 Inframock is a tool that we have developed in order to run Cellenics locally, without the need to access AWS resources. It enables local end-to-end testing and development and it is compulsory to have it running when developing a new feature.
-Go to the [Inframock repo](https://github.com/biomage-org/inframock) and follow the instructions in the README to set it up and start it on a separate terminal.
+Go to the [Inframock repo](https://github.com/hms-dbmi-cellenics/inframock) and follow the instructions in the README to set it up and start it on a separate terminal.
 After Inframock service is started, the next step is to start the API.
 
 #### Step 2. Start the API
@@ -91,26 +91,26 @@ If you did complete step 1 and are runnig Inframock locally, you should see the 
 
 #### Step 3. Run the UI locally
 This is required to run the API with a local version of the UI.
-Go to the [UI repo](https://github.com/biomage-org/ui) and follow the instructions in the README to set it up and start it on a separate terminal.
+Go to the [UI repo](https://github.com/hms-dbmi-cellenics/ui) and follow the instructions in the README to set it up and start it on a separate terminal.
 After the UI service is started, any request from the UI will be automatically forwarded to the API and vice versa.
 
 #### Step 4. Run the pipeline locally
 
 This is required for working on the Data Processing module of Cellenics or if you want to obtain an `.rds` file for the Data Exploration module.
-Go to the [pipeline repo](https://github.com/biomage-org/pipeline) and follow the instructions in the README to set up and start it on a separate terminal.
+Go to the [pipeline repo](https://github.com/hms-dbmi-cellenics/pipeline) and follow the instructions in the README to set up and start it on a separate terminal.
 After the pipeline service is started, any request from the API will be automatically forwarded to the pipeline and vice versa.
 
 #### Step 5. Run the worker locally
 
 This is required for running the API with a local version of the worker.
-Go to the [worker repo](https://github.com/biomage-org/worker) and follow the instructions in the README to set up and start it on a separate terminal.
+Go to the [worker repo](https://github.com/hms-dbmi-cellenics/worker) and follow the instructions in the README to set up and start it on a separate terminal.
 After the worker service is started, any request from the API will be automatically forwarded to the worker by default and the reponse from the worker will be received back by the API.
 
 ## Deployment
 
-The API is deployed as a Helm chart to an AWS-managed Kubernetes cluster. The deployment is handled by the cluster Helm operator and the [API Github Actions workflow](https://github.com/biomage-org/api/blob/master/.github/workflows/ci.yaml). 
+The API is deployed as a Helm chart to an AWS-managed Kubernetes cluster. The deployment is handled by the cluster Helm operator and the [API Github Actions workflow](https://github.com/hms-dbmi-cellenics/api/blob/master/.github/workflows/ci.yaml). 
 
 During a deployment, API Github Actions workflow does the following:
 - It pushes new API images to ECR.
-- Adds API-specific configurations to the [nodejs Helm chart](https://github.com/biomage-org/iac/tree/master/charts/nodejs), that is used for the deployment of the API. 
-- Pushes the API-specific configuration changes into the [releases/](https://github.com/biomage-org/iac/tree/master/releases) folder in iac, under the relevant environment.
+- Adds API-specific configurations to the [nodejs Helm chart](https://github.com/hms-dbmi-cellenics/iac/tree/master/charts/nodejs), that is used for the deployment of the API. 
+- Pushes the API-specific configuration changes into the [releases/](https://github.com/hms-dbmi-cellenics/iac/tree/master/releases) folder in iac, under the relevant environment.

@@ -21,7 +21,7 @@ const { UnauthorizedError, UnauthenticatedError } = require('../../utils/respons
 
 const UserAccess = require('../model/UserAccess');
 const NotAgreedToTermsError = require('../../utils/responses/NotAgreedToTermsError');
-const { BIOMAGE_DOMAIN_NAMES } = require('../../utils/constants');
+const getDomainSpecificContent = require('../../config/getDomainSpecificContent');
 
 // Throws if the user isnt authenticated
 const checkUserAuthenticated = (req, next) => {
@@ -32,19 +32,17 @@ const checkUserAuthenticated = (req, next) => {
 
   return true;
 };
-
 // Throws if the user hasnt agreed to the privacy policy yet
 const checkForPrivacyPolicyAgreement = (req, next) => {
-  const isBiomageDeployment = BIOMAGE_DOMAIN_NAMES.includes(config.domainName) || config.clusterEnv === 'development';
+  const { enforcePrivacyPolicyAgreement } = getDomainSpecificContent();
 
-  if (req.user['custom:agreed_terms'] !== 'true' && isBiomageDeployment) {
+  if (req.user['custom:agreed_terms'] !== 'true' && enforcePrivacyPolicyAgreement) {
     next(new NotAgreedToTermsError('The user hasnt agreed to the privacy policy yet.'));
     return false;
   }
 
   return true;
 };
-
 /**
  * General authorization middleware. Resolves with nothing on
  * successful authorization, or an exception on unauthorized access.

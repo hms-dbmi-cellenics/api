@@ -1,5 +1,3 @@
-const { ACCOUNT_ID } = require('../../../src/api.v2/constants');
-const config = require('../../../src/config');
 const buildUserInvitedEmailBody = require('../../../src/utils/emailTemplates/buildUserInvitedEmailBody');
 
 const testUserEmail = 'test@email.com';
@@ -10,13 +8,6 @@ process.env.DOMAIN_NAME = 'localhost.test';
 
 describe('buildUserInvitedEmailBody', () => {
   it('Should build the correct message', () => {
-    const emailParams = buildUserInvitedEmailBody(testUserEmail, mockExperimentId, mockInviterUser);
-    expect(emailParams).toMatchSnapshot();
-  });
-
-  it('Should build the correct message for HMS', () => {
-    config.awsAccountId = ACCOUNT_ID.HMS;
-
     const emailParams = buildUserInvitedEmailBody(testUserEmail, mockExperimentId, mockInviterUser);
     expect(emailParams).toMatchSnapshot();
   });

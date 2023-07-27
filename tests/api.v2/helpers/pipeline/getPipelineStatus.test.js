@@ -16,7 +16,7 @@ jest.mock('../../../../src/api.v2/model/ExperimentExecution');
 jest.useFakeTimers('modern').setSystemTime(new Date(pipelineConstants.EXPIRED_EXECUTION_DATE).getTime());
 
 const {
-  GEM2S_PROCESS_NAME, QC_PROCESS_NAME,
+  GEM2S_PROCESS_NAME, QC_PROCESS_NAME, SEURAT_PROCESS_NAME,
 } = constants;
 
 // these are constants used to indicate to a mocked component whether they should return a
@@ -84,6 +84,21 @@ const qcStatusResponseSql = {
   },
 };
 
+const seuratStatusResponseSql = {
+  [SEURAT_PROCESS_NAME]: {
+    startDate: new Date(5),
+    stopDate: new Date(5),
+    status: 'SUCCEEDED',
+    completedSteps: [
+      'DownloadSeurat',
+      'ProcessSeurat',
+      'UploadSeuratToAWS',
+    ],
+    error: false,
+    shouldRerun: false,
+  },
+};
+
 const mockNoRunsResponse = [];
 
 const mockRunResponse = [
@@ -93,6 +108,12 @@ const mockRunResponse = [
     executionArn: SUCCEEDED_ID,
     shouldRerun: true,
     lastStatusResponse: gem2sStatusResponseSql,
+  },
+  {
+    pipelineType: SEURAT_PROCESS_NAME,
+    stateMachineArn: SUCCEEDED_ID,
+    executionArn: SUCCEEDED_ID,
+    lastStatusResponse: seuratStatusResponseSql,
   },
   {
     pipelineType: QC_PROCESS_NAME,
@@ -110,6 +131,12 @@ const mockExecutionNotExistResponse = [
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
     shouldRerun: true,
     lastStatusResponse: gem2sStatusResponseSql,
+  },
+  {
+    pipelineType: SEURAT_PROCESS_NAME,
+    stateMachineArn: '',
+    executionArn: EXECUTION_DOES_NOT_EXIST_ID,
+    lastStatusResponse: seuratStatusResponseSql,
   },
   {
     pipelineType: QC_PROCESS_NAME,
@@ -139,6 +166,12 @@ const mockExecutionNotExistNullSqlResponse = [
     lastStatusResponse: null,
   },
   {
+    pipelineType: SEURAT_PROCESS_NAME,
+    stateMachineArn: '',
+    executionArn: EXECUTION_DOES_NOT_EXIST_ID,
+    lastStatusResponse: null,
+  },
+  {
     pipelineType: QC_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
@@ -154,6 +187,12 @@ const mockRandomExceptionResponse = [
     executionArn: RANDOM_EXCEPTION,
     shouldRerun: true,
     lastStatusResponse: gem2sStatusResponseSql,
+  },
+  {
+    pipelineType: SEURAT_PROCESS_NAME,
+    stateMachineArn: '',
+    executionArn: RANDOM_EXCEPTION,
+    lastStatusResponse: seuratStatusResponseSql,
   },
   {
     pipelineType: QC_PROCESS_NAME,
@@ -236,10 +275,10 @@ describe('checkError', () => {
   const failedEvents = [
     {
       timestamp: '2021-10-13T14:36:14.228000+02:00',
-      type: 'ExecutionFailed',
+      type: 'ActivityFailed',
       id: 130,
       previousEventId: 129,
-      executionFailedEventDetails: {
+      activityFailedEventDetails: {
         error: 'NoPodsAvailable',
         cause: 'No available and running pipeline pods.',
       },

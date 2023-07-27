@@ -1,6 +1,7 @@
 // Pipeline names
 const QC_PROCESS_NAME = 'qc';
 const GEM2S_PROCESS_NAME = 'gem2s';
+const SEURAT_PROCESS_NAME = 'seurat';
 const OLD_QC_NAME_TO_BE_REMOVED = 'pipeline';
 
 const ASSIGN_POD_TO_PIPELINE = 'assignPodToPipeline';
@@ -25,11 +26,10 @@ const ACCESS_DENIED = 'AccessDeniedException';
 
 const PUBLIC_ACCESS_ID = '00000000-0000-0000-0000-000000000000';
 
-const BIOMAGE_DOMAIN_NAMES = ['scp.biomage.net', 'scp-staging.biomage.net'];
-
 module.exports = {
   QC_PROCESS_NAME,
   GEM2S_PROCESS_NAME,
+  SEURAT_PROCESS_NAME,
   OLD_QC_NAME_TO_BE_REMOVED,
   RUNNING,
   FAILED,
@@ -41,5 +41,4 @@ module.exports = {
   ACCESS_DENIED,
   ASSIGN_POD_TO_PIPELINE,
   PUBLIC_ACCESS_ID,
-  BIOMAGE_DOMAIN_NAMES,
 };

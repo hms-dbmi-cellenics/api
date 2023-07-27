@@ -82,7 +82,7 @@ jobs:
       name: Run unit tests with coverage
       uses: mattallty/jest-github-action@v1
       env:
-        AWS_DEFAULT_REGION: 'eu-west-1'
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         test-command: "npm run coverage"
@@ -90,6 +90,26 @@ jobs:
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
+
+    - id: check-licenses
+      name: Check licenses
+      env:
+        ALLOWED_LICENSES: "MIT;ISC;Apache-2.0;BSD-3-Clause;BSD-2-Clause;(MIT OR Apache-2.0);Unlicense;Python-2.0;BSD;(AFL-2.1 OR BSD-3-Clause);0BSD"
+        EXCLUDE_PACKAGES: "cluster-key-slot@1.1.0"
+      run: |-
+        npm install -g license-checker
+        license-checker --production --json --onlyAllow="${ALLOWED_LICENSES}" --excludePackages="${EXCLUDE_PACKAGES}"
+
+    - id: send-to-slack
+      name: Send failure notification to Slack
+      if: failure() && github.event_name == 'push'
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.BUILD_STATUS_BOT_TOKEN }}
+      uses: voxmedia/github-action-slack-notify-build@v1
+      with:
+        channel: pipelines
+        status: FAILED
+        color: danger
 
   build-docker:
     name: Build Docker container
@@ -144,7 +164,7 @@ jobs:
           # Images for production uses semantic versioning to determine the latest image.
           echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
 
-          # This will take a GitHub repo name like `biomage-org/iac`
+          # This will take a GitHub repo name like `hms-dbmi-cellenics/iac`
           # and turns it into `iac`. This will be the name of the
           # ECR repository.
           IMAGE_REPO_NAME=$(echo $GITHUB_REPOSITORY | awk -F '/' '{print $2}')
@@ -156,8 +176,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-
+          aws-region: ${{ secrets.AWS_REGION }}
       - id: login-ecr
         name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
@@ -209,7 +228,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - id: login-ecr
         name: Login to Amazon ECR
@@ -279,6 +298,7 @@ jobs:
             select(di == 0).metadata.labels.sandboxId = strenv(SANDBOX_ID) |
             select(di == 1).metadata.name = strenv(CHART_SOURCE_NAME) |
             select(di == 1).metadata.namespace = strenv(NAMESPACE) |
+            select(di == 1).spec.url = "https://github.com/" + strenv(GITHUB_OWNER) + "/iac" |
             select(di == 1).spec.ref.branch = strenv(CHART_REF) |
             select(di == 2).metadata.name = strenv(DEPLOYMENT_NAME) |
             select(di == 2).metadata.namespace = strenv(NAMESPACE) |
@@ -312,6 +332,7 @@ jobs:
 
           cat $DEPLOYMENT_NAME.yaml
         env:
+          GITHUB_OWNER: ${{ github.repository_owner }}
           REF_ID: ${{ needs.build-docker.outputs.ref-id }}
           IMAGE_TAG: ${{ needs.build-docker.outputs.image-tag }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}

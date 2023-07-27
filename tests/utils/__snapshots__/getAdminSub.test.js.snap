@@ -7,11 +7,11 @@ Array [
     "UserAttributes": Array [
       Object {
         "Name": "email",
-        "Value": "admin@biomage.net",
+        "Value": "admin@example.com",
       },
       Object {
         "Name": "name",
-        "Value": "Biomage Admin",
+        "Value": "Cellenics Admin",
       },
       Object {
         "Name": "email_verified",
@@ -19,7 +19,7 @@ Array [
       },
     ],
     "UserPoolId": "trivial-pool-id",
-    "Username": "admin@biomage.net",
+    "Username": "admin@example.com",
   },
 ]
 `;
@@ -28,7 +28,7 @@ exports[`getAdminSub Should return the correct admin sub 1`] = `
 Array [
   Object {
     "UserPoolId": "trivial-pool-id",
-    "Username": "admin@biomage.net",
+    "Username": "admin@example.com",
   },
 ]
 `;

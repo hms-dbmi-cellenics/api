@@ -17,16 +17,7 @@
     "lint",
     "detect-secrets"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://gitlab.com/biomage/api.git"
-  },
-  "author": "Biomage, Ltd.",
   "license": "MIT",
-  "bugs": {
-    "url": "https://gitlab.com/biomage/api/issues"
-  },
-  "homepage": "https://gitlab.com/biomage/api#readme",
   "dependencies": {
     "@kubernetes/client-node": "^0.12.3",
     "async-lock": "^1.3.0",
