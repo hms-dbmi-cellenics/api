@@ -47,10 +47,35 @@ const domainSpecific = {
   },
 };
 
+const getAccountId = () => {
+  const {
+    NODE_ENV: nodeEnv,
+    K8S_ENV: k8sEnv,
+  } = process.env;
+
+  let awsAccountId = process.env.AWS_ACCOUNT_ID;
+
+  // Based on the explanation in default-config.js, NODE_ENV may not be set in development
+  // So rely on checking if K8S_ENV is undefined as backup
+  if (nodeEnv === 'development' || k8sEnv === undefined) {
+    if (process.env.DEV_ACCOUNT === undefined) {
+      throw new Error(
+        `In local environment, DEV_ACCOUNT is expected to be set, possible values are: ${Object.keys(ACCOUNT_ID)} or "private" for private aws accounts`,
+      );
+    }
+
+    awsAccountId = ACCOUNT_ID[process.env.DEV_ACCOUNT];
+  }
+
+  return awsAccountId;
+};
+
 const getDomainSpecificContent = () => {
   if (process.env.NODE_ENV === 'test') return domainSpecific.TEST;
 
-  switch (process.env.AWS_ACCOUNT_ID) {
+  const awsAccountId = getAccountId();
+
+  switch (awsAccountId) {
     case ACCOUNT_ID.HMS:
       return domainSpecific.HMS;
     case ACCOUNT_ID.BIOMAGE:
