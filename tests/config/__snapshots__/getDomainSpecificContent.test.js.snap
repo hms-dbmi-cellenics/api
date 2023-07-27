@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getDomainSpecificContent tests check content for BIOMAGE 1`] = `
+Object {
+  "adminEmail": "admin@biomage.net",
+  "enforcePrivacyPolicyAgreement": true,
+  "githubOrganisationName": "biomage-org",
+  "moreEmailInfo": "More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
+              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>",
+  "notificationEmail": "notification@undefined",
+}
+`;
+
+exports[`getDomainSpecificContent tests check content for HMS 1`] = `
+Object {
+  "adminEmail": "cellenics_admin@listserv.med.harvard.edu",
+  "enforcePrivacyPolicyAgreement": false,
+  "githubOrganisationName": "hms-dbmi-cellenics",
+  "moreEmailInfo": "",
+  "notificationEmail": "alex_pickering@hms.harvard.edu",
+}
+`;
+
+exports[`getDomainSpecificContent tests check content for the default account 1`] = `
+Object {
+  "adminEmail": "admin@example.com",
+  "enforcePrivacyPolicyAgreement": true,
+  "githubOrganisationName": "org",
+  "moreEmailInfo": "<div>test hi info</div>",
+  "notificationEmail": "some@email.com",
+}
+`;

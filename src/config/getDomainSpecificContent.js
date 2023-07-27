@@ -37,5 +37,4 @@ const getDomainSpecificContent = () => {
 };
 
 module.exports = getDomainSpecificContent;
-module.exports.domainSpecificContent = domainSpecificContent;
 
