@@ -1,10 +1,11 @@
 const AWS = require('aws-sdk');
 const getLogger = require('../utils/getLogger');
 
-const logger = getLogger();
-const { ADMIN_SUB } = require('../api.v2/constants');
+const getDomainSpecificContent = require('./getDomainSpecificContent');
 
-const githubOrganisationName = 'hms-dbmi-cellenics';
+const logger = getLogger();
+
+const { githubOrganisationName } = getDomainSpecificContent();
 
 // If we are not deployed on Github (AWS/k8s), the environment is given by
 // NODE_ENV, or development if NODE_ENV is not set.
@@ -69,7 +70,6 @@ const config = {
   cachingEnabled: true,
   corsOriginUrl: [...externalOrigins, `https://${domainName}`],
   emailDomainName: `https://${domainName}`,
-  adminSub: ADMIN_SUB[process.env.AWS_ACCOUNT_ID],
   publicApiUrl: `https://api.${domainName}`,
   // Insert an env variable to allow pipeline to work for deployments with self-signed certs.
   pipelineIgnoreSSLCertificate: Boolean(process.env.NODE_TLS_REJECT_UNAUTHORIZED),
@@ -85,7 +85,6 @@ if (config.clusterEnv === 'staging' && config.sandboxId === 'default') {
   config.cachingEnabled = false;
   config.corsOriginUrl = [...externalOrigins, `https://ui-default.${domainName}`];
   config.emailDomainName = `https://ui-default.${domainName}`;
-  config.adminSub = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
   config.publicApiUrl = `https://api-${config.sandboxId}.${domainName}`;
 }
 
@@ -95,7 +94,6 @@ if (config.clusterEnv === 'staging' && config.sandboxId !== 'default') {
   config.cachingEnabled = false;
   config.corsOriginUrl = [...externalOrigins, `https://ui-${config.sandboxId}.${domainName}`];
   config.emailDomainName = `https://ui-${config.sandboxId}.${domainName}`;
-  config.adminSub = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
   config.publicApiUrl = `https://api-${config.sandboxId}.${domainName}`;
 }
 
@@ -115,7 +113,6 @@ if (config.clusterEnv === 'development') {
 
   config.corsOriginUrl = [...externalOrigins, 'http://localhost:5000'];
   config.emailDomainName = 'http://localhost:5000';
-  config.adminSub = '0b17683f-363b-4466-b2e2-5bf11c38a76e';
 }
 
 module.exports = config;

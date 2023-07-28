@@ -1515,7 +1515,7 @@ exports[`non-tests to document the State Machines - qc production with specific 
             },
             {
               "Name": "DOMAIN_NAME",
-              "Value": "scp.biomage.net"
+              "Value": "test.com"
             },
             {
               "Name": "DD_API_KEY",

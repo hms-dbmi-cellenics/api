@@ -41,12 +41,6 @@ const ACCOUNT_ID = {
   HMS: '160782110667',
 };
 
-const ADMIN_SUB = {
-  [ACCOUNT_ID.BIOMAGE]: '032abd44-0cd3-4d58-af21-850ca0b95ac7',
-  [ACCOUNT_ID.HMS]: 'a01e8bcc-c9a2-4c56-bd66-39de93764be8',
-
-};
-
 module.exports = {
   QC_PROCESS_NAME,
   GEM2S_PROCESS_NAME,
@@ -68,5 +62,4 @@ module.exports = {
   ASSIGN_POD_TO_PIPELINE,
   EXPIRED_EXECUTION_DATE,
   ACCOUNT_ID,
-  ADMIN_SUB,
 };

@@ -15,7 +15,7 @@ const HookRunner = require('./hooks/HookRunner');
 const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
 
-const { getPipelineParams, formatSamples } = require('./shouldPipelineRerun');
+const { getGem2sParams, formatSamples } = require('./shouldGem2sRerun');
 
 const logger = getLogger('[SeuratService] - ');
 
@@ -136,7 +136,7 @@ const startSeuratPipeline = async (experimentId, authJWT) => {
 
   const samples = await new Sample().getSamples(experimentId);
 
-  const currentSeuratParams = await getPipelineParams(experimentId, samples);
+  const currentSeuratParams = await getGem2sParams(experimentId, samples);
   const taskParams = await generateSeuratTaskParams(experimentId, samples, authJWT);
 
   const {
