@@ -25,7 +25,7 @@ describe('getDomainSpecificContent tests', () => {
   });
 
   // Test for the 'test' account
-  it('check content for the biomage account', () => {
+  it('check content for the test account', () => {
     process.env.AWS_ACCOUNT_ID = 'non_existent_account_id';
     process.env.NODE_ENV = 'test'; // Since the function checks if env is not 'test'
 
