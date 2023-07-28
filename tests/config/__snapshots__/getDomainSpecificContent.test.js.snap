@@ -7,7 +7,7 @@ Object {
   "middlewareChecks": [Function],
   "moreEmailInfo": "More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
               If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>",
-  "notificationEmail": "notification@undefined",
+  "notificationEmail": "notification@localhost:5000",
 }
 `;
 
@@ -24,7 +24,11 @@ Object {
 exports[`getDomainSpecificContent tests check content for the biomage account: getDomainSpecificContent for biomage private account 1`] = `
 Object {
   "adminEmail": "admin@biomage.net",
+  "githubOrganisationName": "biomage-org",
   "middlewareChecks": [Function],
+  "moreEmailInfo": "More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
+              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>",
+  "notificationEmail": "notification@localhost:5000",
 }
 `;
 

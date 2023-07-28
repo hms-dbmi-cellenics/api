@@ -18,6 +18,8 @@ const checkForPrivacyPolicyAgreement = (req, next) => {
   return true;
 };
 
+const domainName = process.env.DOMAIN_NAME || 'localhost:5000';
+
 const domainSpecific = {
   HMS: {
     adminEmail: 'cellenics_admin@listserv.med.harvard.edu',
@@ -30,7 +32,7 @@ const domainSpecific = {
     adminEmail: 'admin@biomage.net',
     middlewareChecks: (req, next) => checkForPrivacyPolicyAgreement(req, next),
     githubOrganisationName: 'biomage-org',
-    notificationEmail: `notification@${process.env.DOMAIN_NAME}`,
+    notificationEmail: `notification@${domainName}`,
     moreEmailInfo: `More information about Cellenics can be found at <a href="https://biomage.net">biomage.net</a>.<br/><br/>
               If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>`,
   },
@@ -38,7 +40,7 @@ const domainSpecific = {
     adminEmail: 'admin@biomage.net',
     middlewareChecks: () => true,
     githubOrganisationName: 'biomage-org',
-    notificationEmail: `notification@${process.env.DOMAIN_NAME}`,
+    notificationEmail: `notification@${domainName}`,
     moreEmailInfo: `More information about Cellenics can be found at <a href="https://biomage.net">biomage.net</a>.<br/><br/>
               If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>`,
   },
