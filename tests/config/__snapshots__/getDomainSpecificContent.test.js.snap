@@ -32,7 +32,7 @@ Object {
 }
 `;
 
-exports[`getDomainSpecificContent tests check content for the biomage account: getDomainSpecificContent for test 1`] = `
+exports[`getDomainSpecificContent tests check content for the test account: getDomainSpecificContent for test 1`] = `
 Object {
   "adminEmail": "admin@example.com",
   "githubOrganisationName": "org",
