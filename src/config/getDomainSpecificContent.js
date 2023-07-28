@@ -4,12 +4,6 @@ const NotAgreedToTermsError = require('../utils/responses/NotAgreedToTermsError'
 
 // Throws if the user hasnt agreed to the privacy policy yet
 const checkForPrivacyPolicyAgreement = (req, next) => {
-  // TODO: These commented out lines might not be necessary if we can rely on the
-  // account_id check from getDomainSpecificContent(), but test before we actually remove them
-  // const BIOMAGE_DOMAIN_NAMES = ['scp.biomage.net', 'scp-staging.biomage.net'];
-  // const isBiomageDeployment = BIOMAGE_DOMAIN_NAMES.includes(config.domainName);
-
-  // if (req.user['custom:agreed_terms'] !== 'true' && isBiomageDeployment) {
   if (req.user['custom:agreed_terms'] !== 'true') {
     next(new NotAgreedToTermsError('The user hasnt agreed to the privacy policy yet.'));
     return false;
