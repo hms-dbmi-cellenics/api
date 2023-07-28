@@ -37,6 +37,10 @@ const domainSpecific = {
   BIOMAGE_PRIVATE: {
     adminEmail: 'admin@biomage.net',
     middlewareChecks: () => true,
+    githubOrganisationName: 'biomage-org',
+    notificationEmail: `notification@${process.env.DOMAIN_NAME}`,
+    moreEmailInfo: `More information about Cellenics can be found at <a href="https://biomage.net">biomage.net</a>.<br/><br/>
+              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>`,
   },
   TEST: {
     adminEmail: 'admin@example.com',
