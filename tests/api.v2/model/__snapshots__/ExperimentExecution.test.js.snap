@@ -10,8 +10,8 @@ Array [
         "last_pipeline_params": Object {
           "metadata": Object {},
           "sampleIds": Array [
-            undefined,
-            undefined,
+            "toSample1",
+            "toSample2",
           ],
           "sampleNames": Array [
             "KO",

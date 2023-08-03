@@ -21,7 +21,7 @@ const getExperimentUsers = async (experimentId) => {
     }
   });
 
-  const cognitoUserData = await Promise.all(requests);
+  const cognitoUserData = (await Promise.all(requests)).filter((user) => user !== null);
 
   const experimentUsers = cognitoUserData.map((userInfo, idx) => {
     const email = userInfo.find((attr) => attr.Name === 'email').Value;

@@ -21,6 +21,8 @@ const { UnauthorizedError, UnauthenticatedError } = require('../../utils/respons
 
 const UserAccess = require('../model/UserAccess');
 
+const getDomainSpecificContent = require('../../config/getDomainSpecificContent');
+
 // Throws if the user isnt authenticated
 const checkUserAuthenticated = (req, next) => {
   if (!req.user) {
@@ -67,6 +69,7 @@ const authorize = async (userId, resource, method, experimentId) => {
  */
 const expressAuthorizationMiddleware = async (req, res, next) => {
   if (!checkUserAuthenticated(req, next)) return;
+  if (!getDomainSpecificContent().middlewareChecks(req, next)) return;
 
   try {
     await authorize(req.user.sub, req.url, req.method, req.params.experimentId);
@@ -78,6 +81,7 @@ const expressAuthorizationMiddleware = async (req, res, next) => {
 
 const expressAuthenticationOnlyMiddleware = async (req, res, next) => {
   if (!checkUserAuthenticated(req, next)) return;
+  if (!getDomainSpecificContent().middlewareChecks(req, next)) return;
 
   next();
 };

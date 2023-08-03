@@ -2,7 +2,6 @@
 
 exports[`default-config Returns correct values for staging default 1`] = `
 Object {
-  "adminSub": "0b17683f-363b-4466-b2e2-5bf11c38a76e",
   "api": Object {
     "prefix": "/",
   },
@@ -18,18 +17,18 @@ Object {
   "corsOriginUrl": Array [
     "https://sandbox.elabjournal.com",
     "https://elabjournal.com",
-    "https://ui-default.scp-staging.biomage.net",
+    "https://ui-default.test.com",
   ],
   "datadogApiKey": "",
   "datadogAppKey": "",
-  "domainName": "scp-staging.biomage.net",
-  "emailDomainName": "https://ui-default.scp-staging.biomage.net",
+  "domainName": "test.com",
+  "emailDomainName": "https://ui-default.test.com",
   "pipelineIgnoreSSLCertificate": false,
-  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/releases/master/staging/pipeline.yaml",
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/org/releases/master/staging/pipeline.yaml",
   "pipelineNamespace": "pipeline-default",
   "podName": "local",
   "port": 3000,
-  "publicApiUrl": "https://api-default.scp-staging.biomage.net",
+  "publicApiUrl": "https://api-default.test.com",
   "rdsSandboxId": "default",
   "sandboxId": "default",
   "workerNamespace": "worker-default",

@@ -18,7 +18,7 @@ describe('ExperimentExecution', () => {
   it('copyTo works correctly', async () => {
     const fromExperimentId = 'mockFromExperimentId';
     const toExperimentId = 'mockToExperimentId';
-    const sampleIdsMap = { fromSample1: 'toSample1', fromSample2: 'toSample2' };
+    const sampleIdsMap = { mockSampleId1: 'toSample1', mockSampleId2: 'toSample2' };
 
     mockSqlClient.where.mockImplementationOnce(() => Promise.resolve([
       experimentExecutionGem2sRow,

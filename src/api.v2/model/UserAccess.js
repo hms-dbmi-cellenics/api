@@ -93,17 +93,12 @@ class UserAccess extends BasicModel {
       .where({ experiment_id: experimentId, user_id: userId })
       // Or if it is a public access experiment
       .orWhere({ experiment_id: experimentId, user_id: constants.PUBLIC_ACCESS_ID })
-      .from(tableNames.USER_ACCESS)
-      .first();
+      .from(tableNames.USER_ACCESS);
 
-    // If there is no entry for this user and role, then user definitely doesn't have access
-    if (_.isNil(result)) {
-      return false;
-    }
+    const roles = _.map(result, 'accessRole');
 
-    const { accessRole: role } = result;
-
-    return isRoleAuthorized(role, url, method);
+    // Check if any of user's roles for this exp are authorized
+    return roles.some((role) => isRoleAuthorized(role, url, method));
   }
 }
 
