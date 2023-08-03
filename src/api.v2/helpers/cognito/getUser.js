@@ -16,8 +16,8 @@ async function getUser(userFilterValue, userFilterKey) {
   };
 
   const { Users } = await config.cognitoISP.listUsers(params).promise();
-  const { UserAttributes } = Users[0];
-  return UserAttributes;
+  const { Attributes } = Users[0];
+  return Attributes;
 }
 
 
