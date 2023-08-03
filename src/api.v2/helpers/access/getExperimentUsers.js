@@ -1,4 +1,4 @@
-const { getAwsUserAttributesByEmail } = require('../../../utils/aws/user');
+const { getAwsUserAttributes } = require('../../../utils/aws/user');
 
 const UserAccess = require('../../model/UserAccess');
 
@@ -12,9 +12,14 @@ const getExperimentUsers = async (experimentId) => {
     ({ accessRole }) => accessRole !== AccessRole.ADMIN,
   );
 
-  const requests = filteredUsers.map(
-    async (entry) => getAwsUserAttributesByEmail(entry.userId),
-  );
+  const requests = filteredUsers.map(async (entry) => {
+    try {
+      return await getAwsUserAttributes(entry.userId, 'sub');
+    } catch (err) {
+      console.error(`Error fetching user attributes for user ${entry.userId}: ${err}`);
+      return null;
+    }
+  });
 
   const cognitoUserData = await Promise.all(requests);
 
