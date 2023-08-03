@@ -17,6 +17,8 @@ const getPipelineStatus = require('./getPipelineStatus');
 
 const Experiment = require('../../model/Experiment');
 const Plot = require('../../model/Plot');
+const submitEmbeddingWork = require('../worker/workSubmit/submitEmbeddingWork');
+const submitMarkerHeatmapWork = require('../worker/workSubmit/submitMarkerHeatmapWork');
 
 const logger = getLogger();
 
@@ -24,7 +26,7 @@ const hookRunner = new HookRunner();
 
 hookRunner.register(constants.ASSIGN_POD_TO_PIPELINE, [assignPodToPipeline]);
 hookRunner.registerAll([sendNotification]);
-hookRunner.register('configureEmbedding', [cleanupPods, updatePipelineVersion]);
+hookRunner.register('configureEmbedding', [cleanupPods, updatePipelineVersion, submitEmbeddingWork, submitMarkerHeatmapWork]);
 
 const getOutputFromS3 = async (message) => {
   const { output: { bucket, key } } = message;
@@ -138,24 +140,25 @@ const handleQCResponse = async (io, message) => {
 
   await validateRequest(message, 'PipelineResponse.v2.yaml');
 
-  await hookRunner.run(message);
+  await hookRunner.run(message, io);
 
-  const { experimentId } = message;
+  const { experimentId, input: { sampleUuid, taskName } } = message;
   const { error = false } = message.response || {};
 
   let qcStepOutput = null;
 
-  // if there aren't errors proceed with the updates
-  if (!error && 'output' in message) {
-    const { input: { sampleUuid, taskName } } = message;
-
+  if ('output' in message) {
     qcStepOutput = await getOutputFromS3(message);
 
-    await updatePlotDataKeys(taskName, experimentId, qcStepOutput);
+    if (qcStepOutput.config) {
+      qcStepOutput.config = await updateProcessingConfigWithQCStep(
+        taskName, experimentId, qcStepOutput, sampleUuid,
+      );
+    }
 
-    qcStepOutput.config = await updateProcessingConfigWithQCStep(
-      taskName, experimentId, qcStepOutput, sampleUuid,
-    );
+    if (qcStepOutput.plotDataKeys) {
+      await updatePlotDataKeys(taskName, experimentId, qcStepOutput);
+    }
   }
 
   // we want to send the update to the subscribed both in successful and error case

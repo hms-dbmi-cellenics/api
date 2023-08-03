@@ -4,6 +4,8 @@ const { SUCCEEDED, FAILED } = require('../../src/api.v2/constants');
 const { USER } = require('../test-utils/constants');
 const buildPipelineStatusEmailBody = require('../../src/utils/emailTemplates/buildPipelineStatusEmailBody');
 
+process.env.DOMAIN_NAME = 'localhost.test';
+
 describe('sending email works', () => {
   const experimentId = 'other-id';
   let sendEmailSpy;

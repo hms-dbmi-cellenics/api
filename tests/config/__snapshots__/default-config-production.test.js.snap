@@ -23,7 +23,8 @@ Object {
   "datadogAppKey": "",
   "domainName": "localhost:5000",
   "emailDomainName": "https://localhost:5000",
-  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/biomage-org/releases/master/production/pipeline.yaml",
+  "pipelineIgnoreSSLCertificate": false,
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/org/releases/master/production/pipeline.yaml",
   "pipelineNamespace": "pipeline-default",
   "podName": "local",
   "port": 3000,
@@ -31,5 +32,6 @@ Object {
   "rdsSandboxId": "default",
   "sandboxId": "default",
   "workerNamespace": "worker-default",
+  "workerVersion": 4,
 }
 `;

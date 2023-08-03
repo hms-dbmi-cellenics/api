@@ -1,12 +1,13 @@
 const { buildQCPipelineSteps, qcPipelineSteps } = require('./qcPipelineSkeleton');
 const { gem2SPipelineSteps } = require('./gem2sPipelineSkeleton');
+const { seuratPipelineSteps } = require('./seuratPipelineSkeleton');
 const subsetPipelineSteps = require('./subsetPipelineSteps');
 const { createCatchSteps } = require('../constructors/createHandleErrorStep');
 const {
   END_OF_PIPELINE,
   HANDLE_ERROR_STEP,
 } = require('../../../../constants');
-
+const copyPipelineSteps = require('./copyPipelineSteps');
 
 const createLocalPipeline = (nextStep) => ({
   DeleteCompletedPipelineWorker: {
@@ -60,8 +61,9 @@ const getSkeletonStepNames = (skeleton) => {
 const getPipelineStepNames = () => {
   const gem2sStepNames = getSkeletonStepNames(gem2SPipelineSteps);
   const qcStepNames = getSkeletonStepNames(qcPipelineSteps);
+  const seuratStepNames = getSkeletonStepNames(seuratPipelineSteps);
 
-  return gem2sStepNames.concat(qcStepNames);
+  return gem2sStepNames.concat(qcStepNames).concat(seuratStepNames);
 };
 
 // getPipelineStepNames returns the names of the QC pipeline steps
@@ -123,6 +125,17 @@ const getGem2sPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
   },
 });
 
+const getSeuratPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
+  Comment: `Seurat Pipeline for clusterEnv '${clusterEnv}'`,
+  StartAt: getStateMachineFirstStep(clusterEnv, runInBatch),
+  States: {
+    ...buildInitialSteps(clusterEnv, 'DownloadSeurat', runInBatch),
+    ...seuratPipelineSteps,
+    ...buildErrorHandlingSteps(),
+    ...buildEndOfPipelineStep(),
+  },
+});
+
 const getQcPipelineSkeleton = (clusterEnv, qcSteps, runInBatch = false) => ({
   Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
   StartAt: getStateMachineFirstStep(clusterEnv, runInBatch),
@@ -145,11 +158,24 @@ const getSubsetPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
   },
 });
 
+const getCopyPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
+  Comment: `Copy Pipeline for clusterEnv '${clusterEnv}'`,
+  StartAt: getStateMachineFirstStep(clusterEnv, runInBatch),
+  States: {
+    ...buildInitialSteps(clusterEnv, 'CopyS3Objects', runInBatch),
+    ...copyPipelineSteps,
+    ...buildErrorHandlingSteps(),
+    ...buildEndOfPipelineStep(),
+  },
+});
+
 
 module.exports = {
   getPipelineStepNames,
   getQcPipelineStepNames,
   getGem2sPipelineSkeleton,
   getQcPipelineSkeleton,
+  getSeuratPipelineSkeleton,
   getSubsetPipelineSkeleton,
+  getCopyPipelineSkeleton,
 };

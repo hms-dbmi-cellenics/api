@@ -15,7 +15,7 @@ const plots = {
   },
   TRAJECTORY_ANALYSIS: {
     plotIdMatcher: 'trajectoryAnalysisMain',
-    keys: ['selectedNodes'],
+    keys: ['selectedNodes', 'selectedCellSets'],
   },
   CONTINUOUS_EMBEDDING: {
     plotIdMatcher: 'embeddingContinuousMain',
@@ -62,6 +62,7 @@ const plotsChangedByEvent = {
     plots.DOT_PLOT,
     plots.NORMALIZED_MATRIX,
     plots.VOLCANO_PLOT,
+    plots.TRAJECTORY_ANALYSIS,
   ],
   [events.EMBEDDING_MODIFIED]: [
     plots.TRAJECTORY_ANALYSIS,

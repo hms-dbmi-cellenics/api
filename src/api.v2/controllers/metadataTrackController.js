@@ -82,26 +82,41 @@ const patchValueForSample = async (req, res) => {
 const parseMetadataFromTSV = (data, sampleNameToId) => {
   const invalidLines = [];
   const invalidSamples = new Set();
+  const invalidDuplicates = [];
+
+  const sampleMetadataPairCounts = {};
 
   const result = data.trim().split('\n').map((line, index) => {
     // check that there are 3 elements per line
-    const elements = line.split('\t');
+    const elements = line.trim().split('\t');
     if (elements.length !== 3) {
       invalidLines.push(index + 1);
     }
 
+    const sampleName = elements[0].trim();
+    const metadataKey = elements[1].trim().replace(/\s+/, '_');
+    const metadataValue = elements[2].trim();
+
     // check that the sample name exists in the experiment
-    const [sampleName, metadataKey, metadataValue] = elements;
     if (!(sampleName in sampleNameToId)) {
       invalidSamples.add(sampleName);
+    }
+
+    // Check for multiple metadata assignment to the same sample and track
+    if (!Object.prototype.hasOwnProperty.call(sampleMetadataPairCounts, `${sampleName}@${metadataKey}`)) {
+      sampleMetadataPairCounts[`${sampleName}@${metadataKey}`] = index + 1;
+    } else {
+      const duplicateLine = sampleMetadataPairCounts[`${sampleName}@${metadataKey}`];
+      invalidDuplicates.push(`${duplicateLine} & ${index + 1}`);
     }
 
     return { sampleId: sampleNameToId[sampleName], metadataKey, metadataValue };
   });
 
   const errors = [];
-  if (invalidSamples.size > 0) errors.push(`Invalid sample names: ${Array.from(invalidSamples).join(', ')}`);
-  if (invalidLines.length > 0) errors.push(`Invalid lines: ${invalidLines.join(', ')}`);
+  if (invalidSamples.size > 0) errors.push(`Invalid sample names on line(s): ${Array.from(invalidSamples).join(', ')}`);
+  if (invalidLines.length > 0) errors.push(`Invalid line(s): ${invalidLines.join(', ')}`);
+  if (invalidDuplicates.length > 0) errors.push(`Multiple assignments to the same entry on lines: ${invalidDuplicates.join(', ')}`);
   if (errors.length > 0) throw new BadRequestError(errors.join('\n'));
 
   return result;
@@ -136,4 +151,5 @@ module.exports = {
   deleteMetadataTrack,
   patchValueForSample,
   createMetadataFromFile,
+  parseMetadataFromTSV,
 };

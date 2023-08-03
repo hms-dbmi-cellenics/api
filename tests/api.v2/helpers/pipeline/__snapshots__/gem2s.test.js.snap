@@ -24,7 +24,7 @@ Array [
           "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
-              "FDR": 0.01,
+              "FDR": 0.02,
             },
             "enabled": false,
             "filterSettings": Object {
@@ -88,7 +88,7 @@ Array [
           "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
-              "binStep": 0.02,
+              "binStep": 0.05,
               "probabilityThreshold": 0.6569474,
             },
             "enabled": true,
@@ -105,8 +105,8 @@ Array [
               "method": "absoluteThreshold",
               "methodSettings": Object {
                 "absoluteThreshold": Object {
-                  "binStep": 0.3,
-                  "maxFraction": 0.07181329,
+                  "binStep": 0.6,
+                  "maxFraction": 0.07181355,
                 },
               },
             },
@@ -191,7 +191,7 @@ Array [
           "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
-              "FDR": 0.01,
+              "FDR": 0.02,
             },
             "enabled": false,
             "filterSettings": Object {
@@ -255,7 +255,7 @@ Array [
           "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
             "auto": true,
             "defaultFilterSettings": Object {
-              "binStep": 0.02,
+              "binStep": 0.05,
               "probabilityThreshold": 0.6569474,
             },
             "enabled": true,
@@ -273,8 +273,8 @@ Array [
               "method": "absoluteThreshold",
               "methodSettings": Object {
                 "absoluteThreshold": Object {
-                  "binStep": 0.3,
-                  "maxFraction": 0.07181329,
+                  "binStep": 0.6,
+                  "maxFraction": 0.07181355,
                 },
               },
             },
@@ -377,7 +377,7 @@ Array [
             "DownloadGem",
           ],
           "error": false,
-          "paramsHash": "mockParamsHash",
+          "shouldRerun": true,
           "startDate": "2022-05-10T16:30:16.268Z",
           "status": "RUNNING",
           "stopDate": null,
@@ -397,7 +397,23 @@ Array [
   },
   Object {
     "execution_arn": "mockExecutionArn",
-    "params_hash": "mockParamsHash",
+    "last_pipeline_params": Object {
+      "metadata": Object {
+        "Track_1": Array [
+          "N.A.",
+        ],
+      },
+      "sampleIds": Array [
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e",
+      ],
+      "sampleNames": Array [
+        "WT1",
+      ],
+      "sampleOptions": Array [
+        undefined,
+      ],
+      "sampleTechnology": "10x",
+    },
     "state_machine_arn": "mockStateMachineArn",
   },
 ]

@@ -3,7 +3,7 @@ const util = require('util');
 
 const config = require('../../../../config');
 const {
-  QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUBSET_PROCESS_NAME,
+  QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUBSET_PROCESS_NAME, SEURAT_PROCESS_NAME,
 } = require('../../../constants');
 
 const Experiment = require('../../../model/Experiment');
@@ -12,7 +12,11 @@ const ExperimentExecution = require('../../../model/ExperimentExecution');
 const getLogger = require('../../../../utils/getLogger');
 
 const {
-  getGem2sPipelineSkeleton, getQcPipelineSkeleton, getSubsetPipelineSkeleton,
+  getGem2sPipelineSkeleton,
+  getQcPipelineSkeleton,
+  getSubsetPipelineSkeleton,
+  getSeuratPipelineSkeleton,
+  getCopyPipelineSkeleton,
 } = require('./skeletons');
 const { getQcStepsToRun, qcStepsWithFilterSettings } = require('./qcHelpers');
 const needsBatchJob = require('../batch/needsBatchJob');
@@ -26,6 +30,8 @@ const {
 } = require('./utils');
 
 const buildStateMachineDefinition = require('./constructors/buildStateMachineDefinition');
+const getPipelineStatus = require('../getPipelineStatus');
+const constants = require('../../../constants');
 
 const logger = getLogger();
 
@@ -47,10 +53,49 @@ const withoutDefaultFilterSettings = (processingConfig, samplesOrder) => {
   return slimmedProcessingConfig;
 };
 
+/**
+ * Adds a flag to recompute doublet scores in the processingConfig object.
+ *
+ * This function is a hotfix/workaround and should ideally be handled in the pipeline.
+ * It is used in cases when the count distribution changes
+ * (e.g., enabling cell size distribution) which may affect the correctness of doublet scores.
+ * It checks if the classifier is auto-enabled or cell size distribution is enabled and sets
+ * the `recomputeDoubletScore` flag accordingly for each sample in the processingConfig.
+ *
+ * @param {Object} processingConfig - The processing configuration object containing
+ * doubletScores and cellSizeDistribution configurations for each sample.
+ */
+const withRecomputeDoubletScores = (processingConfig) => {
+  const newProcessingConfig = _.cloneDeep(processingConfig);
+
+  // If count distribution changes (i.e. enabled cellsize) recompute the doublet
+  // scores in QC for correctness.
+  const classifierAutoEnabled = Object.values(
+    newProcessingConfig.doubletScores,
+  ).some((sample) => sample.auto);
+
+  const cellSizeEnabled = Object.values(
+    newProcessingConfig.cellSizeDistribution,
+  ).some((sample) => sample.enabled);
+
+  const recomputeDoubletScore = !classifierAutoEnabled || cellSizeEnabled;
+  Object.keys(newProcessingConfig.doubletScores).forEach((sample) => {
+    // eslint-disable-next-line no-param-reassign
+    newProcessingConfig.doubletScores[sample].recomputeDoubletScore = recomputeDoubletScore;
+  });
+
+  return newProcessingConfig;
+};
+
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
   logger.log(`createQCPipeline: fetch processing settings ${experimentId}`);
 
   const { processingConfig, samplesOrder } = await new Experiment().findById(experimentId).first();
+
+  const {
+    // @ts-ignore
+    [constants.QC_PROCESS_NAME]: status,
+  } = await getPipelineStatus(experimentId, constants.QC_PROCESS_NAME);
 
   if (processingConfigUpdates.length) {
     processingConfigUpdates.forEach(({ name, body }) => {
@@ -64,19 +109,27 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
     });
   }
 
+  // workaround to add a flag to recompute doublet scores in the processingConfig object.
+  const fullProcessingConfig = withRecomputeDoubletScores(processingConfig);
+
+  // Store the processing config with all changes back in sql
+  await new Experiment().updateById(experimentId, { processing_config: fullProcessingConfig });
+
   const context = {
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
-    processingConfig: withoutDefaultFilterSettings(processingConfig, samplesOrder),
+    processingConfig: withoutDefaultFilterSettings(fullProcessingConfig, samplesOrder),
     authJWT,
   };
 
   await cancelPreviousPipelines(experimentId, previousJobId);
 
-  const qcSteps = await getQcStepsToRun(experimentId, processingConfigUpdates);
+  const qcSteps = await getQcStepsToRun(
+    experimentId, processingConfigUpdates, status.completedSteps,
+  );
 
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
-  const qcPipelineSkeleton = await getQcPipelineSkeleton(
+  const skeleton = await getQcPipelineSkeleton(
     config.clusterEnv,
     qcSteps,
     runInBatch,
@@ -84,7 +137,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
 
   logger.log('Skeleton constructed, now building state machine definition...');
 
-  const stateMachine = buildStateMachineDefinition(qcPipelineSkeleton, context);
+  const stateMachine = buildStateMachineDefinition(skeleton, context);
   logger.log('State machine definition built, now creating activity if not already present...');
 
   const activityArn = await createActivity(context); // the context contains the activityArn
@@ -126,10 +179,10 @@ const createGem2SPipeline = async (experimentId, taskParams, authJWT) => {
 
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
-  const gem2sPipelineSkeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch);
+  const skeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch);
   logger.log('Skeleton constructed, now building state machine definition...');
 
-  const stateMachine = buildStateMachineDefinition(gem2sPipelineSkeleton, context);
+  const stateMachine = buildStateMachineDefinition(skeleton, context);
   logger.log('State machine definition built, now creating activity if not already present...');
 
   const activityArn = await createActivity(context);
@@ -146,13 +199,46 @@ const createGem2SPipeline = async (experimentId, taskParams, authJWT) => {
   return { stateMachineArn, executionArn };
 };
 
+const createSeuratPipeline = async (experimentId, taskParams, authJWT) => {
+  const context = {
+    ...(await getGeneralPipelineContext(experimentId, SEURAT_PROCESS_NAME)),
+    processingConfig: {},
+    taskParams,
+    authJWT,
+  };
+
+  await cancelPreviousPipelines(experimentId);
+
+  const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
+
+  const skeleton = getSeuratPipelineSkeleton(config.clusterEnv, runInBatch);
+  logger.log('Skeleton constructed, now building state machine definition...');
+
+  const stateMachine = buildStateMachineDefinition(skeleton, context);
+  logger.log('State machine definition built, now creating activity if not already present...');
+
+  const activityArn = await createActivity(context);
+  logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
+
+  const stateMachineArn = await createNewStateMachine(context, stateMachine, SEURAT_PROCESS_NAME);
+  logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
+  logger.log('Context:', util.inspect(context, { showHidden: false, depth: null, colors: false }));
+  logger.log('State machine:', util.inspect(stateMachine, { showHidden: false, depth: null, colors: false }));
+
+  const executionArn = await executeStateMachine(stateMachineArn);
+  logger.log(`Execution with ARN ${executionArn} created.`);
+
+  return { stateMachineArn, executionArn };
+};
+
 const createSubsetPipeline = async (
-  fromExperimentId, toExperimentId, toExperimentName, cellSetKeys, authJWT,
+  fromExperimentId, toExperimentId, toExperimentName, cellSetKeys, parentProcessingConfig, authJWT,
 ) => {
   const stepsParams = {
     parentExperimentId: fromExperimentId,
     subsetExperimentId: toExperimentId,
     cellSetKeys,
+    parentProcessingConfig,
   };
 
   // None of the other normal gem2s params are necessary for these 2 steps
@@ -174,10 +260,10 @@ const createSubsetPipeline = async (
 
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
-  const subsetPipelineSkeleton = getSubsetPipelineSkeleton(config.clusterEnv, runInBatch);
+  const skeleton = getSubsetPipelineSkeleton(config.clusterEnv, runInBatch);
   logger.log('Skeleton constructed, now building state machine definition...');
 
-  const stateMachine = buildStateMachineDefinition(subsetPipelineSkeleton, context);
+  const stateMachine = buildStateMachineDefinition(skeleton, context);
   logger.log('State machine definition built, now creating activity if not already present...');
 
   const activityArn = await createActivity(context);
@@ -194,10 +280,48 @@ const createSubsetPipeline = async (
   return { stateMachineArn, executionArn };
 };
 
+const createCopyPipeline = async (fromExperimentId, toExperimentId, sampleIdsMap) => {
+  const stepsParams = {
+    fromExperimentId,
+    toExperimentId,
+    sampleIdsMap,
+  };
+
+  const context = {
+    ...(await getGeneralPipelineContext(toExperimentId, constants.COPY_PROCESS_NAME)),
+    taskParams: { copyS3Objects: stepsParams },
+  };
+
+  const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
+
+  const skeleton = getCopyPipelineSkeleton(config.clusterEnv, runInBatch);
+  logger.log('Skeleton constructed, now building state machine definition...');
+
+  const stateMachine = buildStateMachineDefinition(skeleton, context);
+  logger.log('State machine definition built, now creating activity if not already present...');
+
+  const activityArn = await createActivity(context);
+  logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
+
+  const stateMachineArn = await createNewStateMachine(
+    context, stateMachine, constants.COPY_PROCESS_NAME,
+  );
+  logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
+  logger.log('Context:', util.inspect(context, { showHidden: false, depth: null, colors: false }));
+  logger.log('State machine:', util.inspect(stateMachine, { showHidden: false, depth: null, colors: false }));
+
+  const executionArn = await executeStateMachine(stateMachineArn);
+  logger.log(`Execution with ARN ${executionArn} created.`);
+
+  return { stateMachineArn, executionArn };
+};
+
 
 module.exports = {
   createQCPipeline,
   createGem2SPipeline,
   createSubsetPipeline,
+  createSeuratPipeline,
+  createCopyPipeline,
   buildStateMachineDefinition,
 };

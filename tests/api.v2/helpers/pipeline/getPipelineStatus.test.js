@@ -7,6 +7,7 @@ const pipelineConstants = require('../../../../src/api.v2/constants');
 const config = require('../../../../src/config');
 
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
+const { qcStepNames } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/constructors/qcStepNameTranslations');
 
 const experimentExecutionInstance = ExperimentExecution();
 
@@ -15,7 +16,7 @@ jest.mock('../../../../src/api.v2/model/ExperimentExecution');
 jest.useFakeTimers('modern').setSystemTime(new Date(pipelineConstants.EXPIRED_EXECUTION_DATE).getTime());
 
 const {
-  GEM2S_PROCESS_NAME, QC_PROCESS_NAME,
+  GEM2S_PROCESS_NAME, QC_PROCESS_NAME, SEURAT_PROCESS_NAME,
 } = constants;
 
 // these are constants used to indicate to a mocked component whether they should return a
@@ -24,12 +25,9 @@ const SUCCEEDED_ID = 'succeded_id';
 const EMPTY_ID = 'empty_id';
 // experimentID used to trigger an execution does not exist
 const EXECUTION_DOES_NOT_EXIST_ID = 'EXECUTION_DOES_NOT_EXIST';
-const EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_PARAMS_HASH = 'EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_PARAMS_HASH';
+const EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_LAST_RESPONSE = 'EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_LAST_RESPONSE';
 const EXECUTION_DOES_NOT_EXIST_NULL_SQL_ID = 'EXECUTION_DOES_NOT_EXIST_NULL_SQL';
 const RANDOM_EXCEPTION = 'RANDOM_EXCEPTION';
-
-const paramsHash = '44c4c6e190e54c4b2740d37a861bb6954921730cnotASecret';
-const notMatchingParamsHash = 'notMatching44c4c6e190e54c4b2740d37a861bb6954921730cnotASecret';
 
 const gem2sStatusResponseSql = {
   [GEM2S_PROCESS_NAME]: {
@@ -45,7 +43,25 @@ const gem2sStatusResponseSql = {
       'PrepareExperiment',
       'UploadToAWS'],
     error: false,
-    paramsHash,
+    shouldRerun: true,
+  },
+};
+
+const gem2sStatusResponseSqlNotMatching = {
+  [GEM2S_PROCESS_NAME]: {
+    startDate: new Date(5),
+    stopDate: new Date(5),
+    status: 'SUCCEEDED',
+    completedSteps: [
+      'DownloadGem',
+      'PreProcessing',
+      'EmptyDrops',
+      'DoubletScores',
+      'CreateSeurat',
+      'PrepareExperiment',
+      'UploadToAWS'],
+    error: false,
+    shouldRerun: false, // Difference is here
   },
 };
 
@@ -64,7 +80,22 @@ const qcStatusResponseSql = {
       'ConfigureEmbedding',
     ],
     error: false,
-    paramsHash: null,
+    shouldRerun: true,
+  },
+};
+
+const seuratStatusResponseSql = {
+  [SEURAT_PROCESS_NAME]: {
+    startDate: new Date(5),
+    stopDate: new Date(5),
+    status: 'SUCCEEDED',
+    completedSteps: [
+      'DownloadSeurat',
+      'ProcessSeurat',
+      'UploadSeuratToAWS',
+    ],
+    error: false,
+    shouldRerun: false,
   },
 };
 
@@ -75,14 +106,20 @@ const mockRunResponse = [
     pipelineType: GEM2S_PROCESS_NAME,
     stateMachineArn: SUCCEEDED_ID,
     executionArn: SUCCEEDED_ID,
-    paramsHash,
+    shouldRerun: true,
     lastStatusResponse: gem2sStatusResponseSql,
+  },
+  {
+    pipelineType: SEURAT_PROCESS_NAME,
+    stateMachineArn: SUCCEEDED_ID,
+    executionArn: SUCCEEDED_ID,
+    lastStatusResponse: seuratStatusResponseSql,
   },
   {
     pipelineType: QC_PROCESS_NAME,
     stateMachineArn: SUCCEEDED_ID,
     executionArn: SUCCEEDED_ID,
-    paramsHash: null,
+    shouldRerun: null,
     lastStatusResponse: qcStatusResponseSql,
   },
 ];
@@ -92,25 +129,31 @@ const mockExecutionNotExistResponse = [
     pipelineType: GEM2S_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
-    paramsHash,
+    shouldRerun: true,
     lastStatusResponse: gem2sStatusResponseSql,
+  },
+  {
+    pipelineType: SEURAT_PROCESS_NAME,
+    stateMachineArn: '',
+    executionArn: EXECUTION_DOES_NOT_EXIST_ID,
+    lastStatusResponse: seuratStatusResponseSql,
   },
   {
     pipelineType: QC_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
-    paramsHash: null,
+    shouldRerun: null,
     lastStatusResponse: qcStatusResponseSql,
   },
 ];
 
-const mockExecutionNotExistResponseNotMatchingParamsHash = [
+const mockExecutionNotExistResponseNotMatchingResponse = [
   {
     pipelineType: GEM2S_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
-    paramsHash: notMatchingParamsHash,
-    lastStatusResponse: gem2sStatusResponseSql,
+    shouldRerun: true,
+    lastStatusResponse: gem2sStatusResponseSqlNotMatching,
   },
 ];
 
@@ -119,14 +162,20 @@ const mockExecutionNotExistNullSqlResponse = [
     pipelineType: GEM2S_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
-    paramsHash,
+    shouldRerun: true,
+    lastStatusResponse: null,
+  },
+  {
+    pipelineType: SEURAT_PROCESS_NAME,
+    stateMachineArn: '',
+    executionArn: EXECUTION_DOES_NOT_EXIST_ID,
     lastStatusResponse: null,
   },
   {
     pipelineType: QC_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
-    paramsHash: null,
+    shouldRerun: null,
     lastStatusResponse: null,
   },
 ];
@@ -136,14 +185,20 @@ const mockRandomExceptionResponse = [
     pipelineType: GEM2S_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: RANDOM_EXCEPTION,
-    paramsHash,
+    shouldRerun: true,
     lastStatusResponse: gem2sStatusResponseSql,
+  },
+  {
+    pipelineType: SEURAT_PROCESS_NAME,
+    stateMachineArn: '',
+    executionArn: RANDOM_EXCEPTION,
+    lastStatusResponse: seuratStatusResponseSql,
   },
   {
     pipelineType: QC_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: RANDOM_EXCEPTION,
-    paramsHash: null,
+    shouldRerun: null,
     lastStatusResponse: qcStatusResponseSql,
   },
 ];
@@ -220,10 +275,10 @@ describe('checkError', () => {
   const failedEvents = [
     {
       timestamp: '2021-10-13T14:36:14.228000+02:00',
-      type: 'ExecutionFailed',
+      type: 'ActivityFailed',
       id: 130,
       previousEventId: 129,
-      executionFailedEventDetails: {
+      activityFailedEventDetails: {
         error: 'NoPodsAvailable',
         cause: 'No available and running pipeline pods.',
       },
@@ -254,7 +309,7 @@ describe('pipelineStatus', () => {
       stopDate: new Date(0),
       status: constants.SUCCEEDED,
       error: true,
-      paramsHash,
+      shouldRerun: true,
     };
     const emptyExecution = {};
     const errDoesNotExist = new Error(pipelineConstants.EXECUTION_DOES_NOT_EXIST);
@@ -276,6 +331,11 @@ describe('pipelineStatus', () => {
     }
 
     callback(null, params);
+  });
+
+  const mockDescribeStateMachine = jest.fn();
+  AWSMock.mock('StepFunctions', 'describeStateMachine', (params, callback) => {
+    mockDescribeStateMachine(params, callback);
   });
 
   AWSMock.mock('StepFunctions', 'getExecutionHistory', (params, callback) => {
@@ -303,8 +363,8 @@ describe('pipelineStatus', () => {
         case EXECUTION_DOES_NOT_EXIST_ID:
           response = mockExecutionNotExistResponse;
           break;
-        case EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_PARAMS_HASH:
-          response = mockExecutionNotExistResponseNotMatchingParamsHash;
+        case EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_LAST_RESPONSE:
+          response = mockExecutionNotExistResponseNotMatchingResponse;
           break;
         case EXECUTION_DOES_NOT_EXIST_NULL_SQL_ID:
           response = mockExecutionNotExistNullSqlResponse;
@@ -330,7 +390,7 @@ describe('pipelineStatus', () => {
         error: false,
         status: constants.NOT_CREATED,
         completedSteps: [],
-        paramsHash: undefined,
+        shouldRerun: true,
       },
     };
 
@@ -350,13 +410,12 @@ describe('pipelineStatus', () => {
         startDate: null,
         stopDate: null,
         error: false,
+        shouldRerun: true,
         status: constants.NOT_CREATED,
         completedSteps: [],
       },
     };
 
-    // we don't check with StrictEqual because response will contain
-    // undefined paramsHash and that is OK (only needed in gem2s)
     expect(status).toEqual(expectedStatus);
 
     expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: EMPTY_ID });
@@ -379,32 +438,30 @@ describe('pipelineStatus', () => {
     expect(experimentExecutionInstance.update).not.toHaveBeenCalled();
   });
 
-  it('if gem2s execution sql last response doesnt match the latest paramsHash, it updates it', async () => {
+  it('if gem2s execution sql last response doesnt match the latest params, it updates it', async () => {
     const status = await getPipelineStatus(
-      EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_PARAMS_HASH, GEM2S_PROCESS_NAME,
+      EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_LAST_RESPONSE, GEM2S_PROCESS_NAME,
     );
 
     expect(status).toEqual({
       [GEM2S_PROCESS_NAME]: {
         ...gem2sStatusResponseSql[GEM2S_PROCESS_NAME],
-        paramsHash: notMatchingParamsHash,
       },
     });
     expect(status[GEM2S_PROCESS_NAME].startDate).toBeDefined();
     expect(status[GEM2S_PROCESS_NAME].stopDate).toBeDefined();
 
     expect(experimentExecutionInstance.find).toHaveBeenCalledWith(
-      { experiment_id: EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_PARAMS_HASH },
+      { experiment_id: EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_LAST_RESPONSE },
     );
 
-    // Updted the execution with the new paramsHash
+    // Updted the execution with the new parameters
     expect(experimentExecutionInstance.update).toHaveBeenCalledWith(
-      { experiment_id: EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_PARAMS_HASH, pipeline_type: 'gem2s' },
+      { experiment_id: EXECUTION_DOES_NOT_EXIST_ID_NOT_MATCHING_LAST_RESPONSE, pipeline_type: 'gem2s' },
       {
         last_status_response: {
           [GEM2S_PROCESS_NAME]: {
             ...gem2sStatusResponseSql[GEM2S_PROCESS_NAME],
-            paramsHash: notMatchingParamsHash,
           },
         },
       },
@@ -431,7 +488,7 @@ describe('pipelineStatus', () => {
             'PrepareExperiment',
             'UploadToAWS'],
           error: false,
-          paramsHash,
+          shouldRerun: true,
         },
       };
       expect(status).toEqual(expected);
@@ -468,8 +525,8 @@ describe('pipelineStatus', () => {
         startDate: new Date(0),
         stopDate: new Date(0),
         status: constants.SUCCEEDED,
-        paramsHash,
         error: false,
+        shouldRerun: true,
         completedSteps: [],
       },
     };
@@ -485,7 +542,21 @@ describe('pipelineStatus', () => {
     );
   });
 
-  it('handles properly a qc sql record', async () => {
+  it('returns a full qc run from sql correctly', async () => {
+    mockDescribeStateMachine.mockImplementation((params, callback) => {
+      const stateMachine = {
+        definition: JSON.stringify({
+          States: qcStepNames.reduce((acum, current) => {
+            // eslint-disable-next-line no-param-reassign
+            acum[current] = {};
+            return acum;
+          }, {}),
+        }),
+      };
+
+      callback(null, stateMachine);
+    });
+
     const status = await getPipelineStatus(SUCCEEDED_ID, QC_PROCESS_NAME);
 
     const expectedStatus = {
@@ -495,12 +566,67 @@ describe('pipelineStatus', () => {
         status: constants.SUCCEEDED,
         error: false,
         completedSteps: [],
-        paramsHash: null,
+        shouldRerun: true,
       },
     };
 
-    // we don't check with StrictEqual because response will contain
-    // undefined paramsHash and that is OK (only needed in gem2s)
+    expect(status).toEqual(expectedStatus);
+
+    expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: SUCCEEDED_ID });
+
+    // sql last_status_response is updated because it differs
+    expect(experimentExecutionInstance.update).toHaveBeenCalledWith(
+      { experiment_id: SUCCEEDED_ID, pipeline_type: QC_PROCESS_NAME },
+      { last_status_response: expectedStatus },
+    );
+  });
+
+  it('returns a partial qc run from sql correctly', async () => {
+    // Only these 3 steps were scheduled for this state machine,
+    // The not scheduled steps were already completed from a previous run
+    const scheduledSteps = [
+      'DoubletScoresFilterMap',
+      'DataIntegration',
+      'ConfigureEmbedding',
+    ];
+
+    // These are the steps that were already completed,
+    // we need to check that these are marked as "completed" even
+    // if they are not completed in this state machine
+    const previousRunCompletedSteps = [
+      'ClassifierFilter',
+      'CellSizeDistributionFilter',
+      'MitochondrialContentFilter',
+      'NumGenesVsNumUmisFilter',
+    ];
+
+    mockDescribeStateMachine.mockImplementation((params, callback) => {
+      const stateMachine = {
+        definition: JSON.stringify({
+          States: scheduledSteps.reduce((acum, current) => {
+            // eslint-disable-next-line no-param-reassign
+            acum[current] = {};
+            return acum;
+          }, {}),
+        }),
+      };
+
+      callback(null, stateMachine);
+    });
+
+    const status = await getPipelineStatus(SUCCEEDED_ID, QC_PROCESS_NAME);
+
+    const expectedStatus = {
+      [QC_PROCESS_NAME]: {
+        startDate: new Date(0),
+        stopDate: new Date(0),
+        status: constants.SUCCEEDED,
+        error: false,
+        completedSteps: previousRunCompletedSteps,
+        shouldRerun: true,
+      },
+    };
+
     expect(status).toEqual(expectedStatus);
 
     expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: SUCCEEDED_ID });
@@ -519,8 +645,8 @@ describe('pipelineStatus', () => {
         startDate: new Date(0),
         stopDate: new Date(0),
         status: constants.SUCCEEDED,
-        paramsHash,
         error: false,
+        shouldRerun: true,
         completedSteps: [],
       },
     };
@@ -530,7 +656,6 @@ describe('pipelineStatus', () => {
         pipelineType: GEM2S_PROCESS_NAME,
         stateMachineArn: SUCCEEDED_ID,
         executionArn: SUCCEEDED_ID,
-        paramsHash,
         lastStatusResponse: expectedStatus,
       },
     ];

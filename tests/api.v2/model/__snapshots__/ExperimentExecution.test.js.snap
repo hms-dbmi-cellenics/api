@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExperimentExecution copyTo works correctly: insert calls 1`] = `
+Array [
+  Array [
+    Array [
+      Object {
+        "execution_arn": "arn:aws:states:eu-west-1:000000000000:execution:biomage-gem2s-development-mock",
+        "experiment_id": "mockToExperimentId",
+        "last_pipeline_params": Object {
+          "metadata": Object {},
+          "sampleIds": Array [
+            "toSample1",
+            "toSample2",
+          ],
+          "sampleNames": Array [
+            "KO",
+            "WT1",
+          ],
+          "sampleOptions": Array [
+            Object {},
+            Object {},
+          ],
+          "sampleTechnology": "10x",
+        },
+        "last_status_response": Object {
+          "gem2s": Object {
+            "completedSteps": Array [
+              "DownloadGem",
+              "PreProcessing",
+              "EmptyDrops",
+              "DoubletScores",
+              "CreateSeurat",
+              "PrepareExperiment",
+              "UploadToAWS",
+            ],
+            "error": false,
+            "shouldRerun": false,
+            "startDate": "2023-06-02T19:13:32.629Z",
+            "status": "SUCCEEDED",
+            "stopDate": "2023-06-02T19:15:19.852Z",
+          },
+        },
+        "pipeline_type": "gem2s",
+        "state_machine_arn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-gem2s-development-mock",
+      },
+      Object {
+        "execution_arn": "arn:aws:states:eu-west-1:000000000000:execution:biomage-qc-development-mock",
+        "experiment_id": "mockToExperimentId",
+        "last_pipeline_params": null,
+        "last_status_response": Object {
+          "qc": Object {
+            "completedSteps": Array [
+              "ClassifierFilter",
+              "CellSizeDistributionFilter",
+              "MitochondrialContentFilter",
+              "NumGenesVsNumUmisFilter",
+              "DoubletScoresFilter",
+              "DataIntegration",
+              "ConfigureEmbedding",
+            ],
+            "error": false,
+            "shouldRerun": false,
+            "startDate": "2023-06-02T19:15:20.792Z",
+            "status": "SUCCEEDED",
+            "stopDate": "2023-06-02T19:16:30.978Z",
+          },
+        },
+        "pipeline_type": "qc",
+        "state_machine_arn": "arn:aws:states:eu-west-1:000000000000:stateMachine:biomage-qc-development-mock",
+      },
+    ],
+  ],
+]
+`;
+
+exports[`ExperimentExecution copyTo works correctly: select calls 1`] = `
+Array [
+  Array [
+    Array [
+      "experiment_id",
+      "pipeline_type",
+      "state_machine_arn",
+      "execution_arn",
+      "last_status_response",
+      "last_pipeline_params",
+    ],
+  ],
+]
+`;
+
+exports[`ExperimentExecution copyTo works correctly: where calls 1`] = `
+Array [
+  Array [
+    Object {
+      "experiment_id": "mockFromExperimentId",
+    },
+  ],
+]
+`;

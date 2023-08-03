@@ -14,7 +14,11 @@ const HookRunner = require('./hooks/HookRunner');
 
 const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
+
 const { qcStepsWithFilterSettings } = require('./pipelineConstruct/qcHelpers');
+const { getGem2sParams, formatSamples } = require('./shouldGem2sRerun');
+const invalidatePlotsForEvent = require('../../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
+const events = require('../../../utils/plotConfigInvalidation/events');
 
 const logger = getLogger('[Gem2sService] - ');
 
@@ -24,26 +28,31 @@ const hookRunner = new HookRunner();
  *
  * @param {*} experimentId
  * @param {*} processingConfig The full processing config for an experiment
- * @returns A copy of processingConfig with each filterSettings entry
- *  duplicated under defaultFilterSettings
+ * @param {*} defaultProcessingConfig The default processing config for an
+ * experiment (when user sets "auto")
+ *
+ * @returns A copy of processingConfig with each filterSettings entry of defaultProcessingConfig
+ * added with defaultFilterSettings key
  */
-const addDefaultFilterSettings = (experimentId, processingConfig) => {
+const formatDefaultFilterSettings = (experimentId, processingConfig, defaultProcessingConfig) => {
   const processingConfigToReturn = _.cloneDeep(processingConfig);
 
   logger.log('Adding defaultFilterSettings to received processing config');
 
   qcStepsWithFilterSettings.forEach((stepName) => {
-    const stepConfigSplitBySample = Object.values(processingConfigToReturn[stepName]);
+    const stepConfigSplitBySample = Object.entries(processingConfigToReturn[stepName]);
 
-    stepConfigSplitBySample.forEach((sampleSettings) => {
+    stepConfigSplitBySample.forEach(([sampleId, sampleSettings]) => {
       if (!sampleSettings.filterSettings) {
         logger.log(`Experiment: ${experimentId}. Skipping current sample config, it doesnt have filterSettings:`);
         logger.log(JSON.stringify(sampleSettings.filterSettings));
         return;
       }
 
+      const defaultFilterSettings = defaultProcessingConfig[stepName][sampleId].filterSettings;
+
       // eslint-disable-next-line no-param-reassign
-      sampleSettings.defaultFilterSettings = _.cloneDeep(sampleSettings.filterSettings);
+      sampleSettings.defaultFilterSettings = _.cloneDeep(defaultFilterSettings);
     });
   });
 
@@ -57,8 +66,8 @@ const continueToQC = async (payload) => {
 
   // Before persisting the new processing config,
   // fill it in with default filter settings (to preserve the gem2s-generated settings)
-  const processingConfigWithDefaults = addDefaultFilterSettings(
-    experimentId, item.processingConfig,
+  const processingConfigWithDefaults = formatDefaultFilterSettings(
+    experimentId, item.processingConfig, item.defaultProcessingConfig,
   );
 
   await new Experiment().updateById(
@@ -115,8 +124,13 @@ const setupSubsetSamples = async (payload) => {
   // Add samples that were created
 };
 
+const invalidatePlotsForExperiment = async (payload, io) => {
+  await invalidatePlotsForEvent(payload.experimentId, events.CELL_SETS_MODIFIED, io.sockets);
+};
+
 hookRunner.register('subsetSeurat', [setupSubsetSamples]);
 hookRunner.register('uploadToAWS', [continueToQC]);
+hookRunner.register('copyS3Objects', [invalidatePlotsForExperiment]);
 
 hookRunner.registerAll([sendNotification]);
 
@@ -141,77 +155,50 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
 
-const generateGem2sParams = async (experimentId, authJWT) => {
-  const defaultMetadataValue = 'N.A.';
-
+const generateGem2sTaskParams = async (experimentId, rawSamples, authJWT) => {
   logger.log('Generating gem2s params');
+  const experiment = await new Experiment().findById(experimentId).first();
+  const {
+    sampleTechnology,
+    sampleIds,
+    sampleNames,
+    sampleOptions,
+    sampleS3Paths,
+    metadata,
+  } = formatSamples(rawSamples);
 
-  const getS3Paths = (files) => {
-    const s3Paths = {};
-    Object.keys(files).forEach((key) => {
-      s3Paths[key] = files[key].s3Path;
-    });
-    return s3Paths;
-  };
-
-  const [experiment, samples] = await Promise.all([
-    new Experiment().findById(experimentId).first(),
-    new Sample().getSamples(experimentId),
-  ]);
-
-  const samplesInOrder = experiment.samplesOrder.map(
-    (sampleId) => _.find(samples, { id: sampleId }),
-  );
-
-  const s3Paths = {};
-  const sampleOptions = {};
-
-  experiment.samplesOrder.forEach((sampleId) => {
-    const { files, options } = _.find(samples, { id: sampleId });
-
-    s3Paths[sampleId] = getS3Paths(files);
-    sampleOptions[sampleId] = options || {};
-  });
+  const sampleOptionsById = sampleIds.reduce((acc, id, index) => ({
+    ...acc,
+    [id]: sampleOptions[index] || {},
+  }), {});
 
   const taskParams = {
     projectId: experimentId,
     experimentName: experiment.name,
     organism: null,
-    input: { type: samples[0].sampleTechnology },
-    sampleIds: experiment.samplesOrder,
-    sampleNames: _.map(samplesInOrder, 'name'),
-    sampleS3Paths: s3Paths,
-    sampleOptions,
+    input: { type: sampleTechnology },
+    sampleIds,
+    sampleNames,
+    sampleS3Paths,
+    sampleOptions: sampleOptionsById,
     authJWT,
   };
 
-  const metadataKeys = Object.keys(samples[0].metadata);
+  if (Object.keys(metadata).length === 0) return taskParams;
 
-  if (metadataKeys.length) {
-    logger.log('Adding metadatakeys to task params');
-
-    taskParams.metadata = metadataKeys.reduce((acc, key) => {
-      // Make sure the key does not contain '-' as it will cause failure in GEM2S
-      const sanitizedKey = key.replace(/-+/g, '_');
-
-      acc[sanitizedKey] = Object.values(samplesInOrder).map(
-        (sampleValue) => sampleValue.metadata[key] || defaultMetadataValue,
-      );
-
-      return acc;
-    }, {});
-  }
-
-  logger.log('Task params generated');
-
-  return taskParams;
+  return {
+    ...taskParams,
+    metadata,
+  };
 };
 
-const startGem2sPipeline = async (experimentId, body, authJWT) => {
+const startGem2sPipeline = async (experimentId, authJWT) => {
   logger.log('Creating GEM2S params...');
-  const { paramsHash } = body;
 
-  const taskParams = await generateGem2sParams(experimentId, authJWT);
+  const samples = await new Sample().getSamples(experimentId);
+
+  const currentGem2SParams = await getGem2sParams(experimentId, samples);
+  const taskParams = await generateGem2sTaskParams(experimentId, samples, authJWT);
 
   const {
     stateMachineArn,
@@ -221,7 +208,7 @@ const startGem2sPipeline = async (experimentId, body, authJWT) => {
   logger.log('GEM2S params created.');
 
   const newExecution = {
-    params_hash: paramsHash,
+    last_pipeline_params: currentGem2SParams,
     state_machine_arn: stateMachineArn,
     execution_arn: executionArn,
   };
@@ -252,7 +239,7 @@ const handleGem2sResponse = async (io, message) => {
   // Fail hard if there was an error.
   await validateRequest(message, 'GEM2SResponse.v2.yaml');
 
-  await hookRunner.run(message);
+  await hookRunner.run(message, io);
 
   const { experimentId } = message;
 
@@ -262,9 +249,10 @@ const handleGem2sResponse = async (io, message) => {
   // Before being returned to the client we need to
   // fill it in with default filter settings (to preserve the gem2s-generated settings)
   if (messageForClient.taskName === 'uploadToAWS') {
-    messageForClient.item.processingConfig = addDefaultFilterSettings(
+    messageForClient.item.processingConfig = formatDefaultFilterSettings(
       experimentId,
       messageForClient.item.processingConfig,
+      messageForClient.item.defaultProcessingConfig,
     );
   }
 

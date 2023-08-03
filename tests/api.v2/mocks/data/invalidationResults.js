@@ -202,6 +202,34 @@ const invalidationResults = {
       },
     }],
     'normalized-matrix': [{ id: 'normalized-matrix', config: {} }],
+    trajectoryAnalysisMain: [{
+      id: 'trajectoryAnalysisMain',
+      config: {
+        axes: {
+          offset: 0, gridWidth: 10, xAxisText: 'Umap 1', yAxisText: 'Umap 2', domainWidth: 2, gridOpacity: 0, defaultValues: ['x', 'y'], labelFontSize: 12, titleFontSize: 13, xAxisRotateLabels: false,
+        },
+        spec: '1.0.0',
+        title: {
+          dx: 10, text: '', anchor: 'start', fontSize: 20,
+        },
+        colour: {
+          invert: 'standard', gradient: 'default', masterColour: '#000000', toggleInvert: '#FFFFFF', reverseColourBar: false,
+        },
+        labels: { size: 18, enabled: false },
+        legend: { colour: '#000000', enabled: true, position: 'top' },
+        marker: {
+          size: 20, shape: 'circle', opacity: 5, showOpacity: true,
+        },
+        fontStyle: { font: 'sans-serif', colour: '#000000' },
+        axesRanges: {
+          xMax: 10, xMin: 0, yMax: 10, yMin: 0, xAxisAuto: true, yAxisAuto: true,
+        },
+        dimensions: { width: 700, height: 550 },
+        selectedCellSets: ['louvain'],
+        embeddingCellSet: 'louvain',
+        embeddingSample: 'All',
+      },
+    }],
     heatmapPlotMain: [],
     volcanoPlotMain: [],
   },
@@ -229,8 +257,9 @@ const invalidationResults = {
           xMax: 10, xMin: 0, yMax: 10, yMin: 0, xAxisAuto: true, yAxisAuto: true,
         },
         dimensions: { width: 700, height: 550 },
-        selectedSample: 'All',
-        selectedCellSet: 'louvain',
+        selectedCellSets: ['louvain'],
+        embeddingCellSet: 'louvain',
+        embeddingSample: 'All',
       },
     }],
   },

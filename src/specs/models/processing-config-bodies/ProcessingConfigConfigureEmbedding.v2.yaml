@@ -10,6 +10,8 @@ properties:
       method:
         type: string
         minLength: 1
+      useSaved:
+        type: boolean
       methodSettings:
         type: object
         properties:

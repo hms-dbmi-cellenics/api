@@ -13,6 +13,12 @@ const response = {
     status: pipelineConstants.NOT_CREATED,
     stopDate: null,
   },
+  seurat: {
+    completedSteps: [],
+    startDate: null,
+    status: pipelineConstants.NOT_CREATED,
+    stopDate: null,
+  },
   worker: {
     ready: true,
     restartCount: 0,

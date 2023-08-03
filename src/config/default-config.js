@@ -1,9 +1,11 @@
 const AWS = require('aws-sdk');
 const getLogger = require('../utils/getLogger');
 
+const getDomainSpecificContent = require('./getDomainSpecificContent');
+
 const logger = getLogger();
 
-const githubOrganisationName = 'biomage-org';
+const { githubOrganisationName } = getDomainSpecificContent();
 
 // If we are not deployed on Github (AWS/k8s), the environment is given by
 // NODE_ENV, or development if NODE_ENV is not set.
@@ -69,9 +71,12 @@ const config = {
   corsOriginUrl: [...externalOrigins, `https://${domainName}`],
   emailDomainName: `https://${domainName}`,
   publicApiUrl: `https://api.${domainName}`,
+  // Insert an env variable to allow pipeline to work for deployments with self-signed certs.
+  pipelineIgnoreSSLCertificate: Boolean(process.env.NODE_TLS_REJECT_UNAUTHORIZED),
   // Used for Batch reporting
   datadogApiKey: process.env.DD_API_KEY || '',
   datadogAppKey: process.env.DD_APP_KEY || '',
+  workerVersion: 4, // needs to match workerVersion in UI
 };
 
 // We are in permanent develop staging environment

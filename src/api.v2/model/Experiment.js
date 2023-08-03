@@ -48,7 +48,19 @@ class Experiment extends BasicModel {
     const aliasedExperimentFields = fields.map((field) => `e.${field}`);
 
     const mainQuery = this.sql
-      .select([...aliasedExperimentFields, 'm.key', 'p.parent_experiment_id'])
+      .select([
+        ...aliasedExperimentFields,
+        'm.key',
+        'p.parent_experiment_id',
+        /*
+        The parent_experiment_id could be null in cases where the
+        parent experiment has been deleted.
+        The existence of a row with the experiment_id in the experiment_parent
+         table after doing a leftJoin,
+        indicates that it's a subsetted experiment.
+        */
+        this.sql.raw('CASE WHEN p.experiment_id IS NOT NULL THEN true ELSE false END as is_subsetted'),
+      ])
       .from(tableNames.USER_ACCESS)
       .where('user_id', userId)
       .join(`${tableNames.EXPERIMENT} as e`, 'e.id', `${tableNames.USER_ACCESS}.experiment_id`)
@@ -58,7 +70,7 @@ class Experiment extends BasicModel {
 
     const result = await collapseKeyIntoArray(
       mainQuery,
-      [...fields, 'parent_experiment_id'],
+      [...fields, 'parent_experiment_id', 'is_subsetted'],
       'key',
       'metadataKeys',
       this.sql,
@@ -67,9 +79,32 @@ class Experiment extends BasicModel {
     return result;
   }
 
-
   async getExampleExperiments() {
-    return this.getAllExperiments(constants.PUBLIC_ACCESS_ID);
+    const fields = [
+      'id',
+      'name',
+      'description',
+      'publication_title',
+      'publication_url',
+      'data_source_title',
+      'data_source_url',
+      'species',
+      'cell_count',
+    ];
+
+    const aliasedExperimentFields = fields.map((column) => `e.${column}`);
+
+    const result = await this.sql
+      .select(aliasedExperimentFields)
+      .min('s.sample_technology as sample_technology')
+      .count('s.id as sample_count') // Returns a BigInt type which is represented as string (parse?)
+      .from(tableNames.USER_ACCESS)
+      .join(`${tableNames.EXPERIMENT} as e`, 'e.id', `${tableNames.USER_ACCESS}.experiment_id`)
+      .join(`${tableNames.SAMPLE} as s`, 'e.id', 's.experiment_id')
+      .where('user_id', constants.PUBLIC_ACCESS_ID)
+      .groupBy('e.id');
+
+    return result;
   }
 
   async getExperimentData(experimentId) {
@@ -83,7 +118,7 @@ class Experiment extends BasicModel {
     }
 
     const experimentExecutionFields = [
-      'params_hash', 'state_machine_arn', 'execution_arn',
+      'state_machine_arn', 'execution_arn', 'last_pipeline_params',
     ];
 
     const pipelineExecutionKeys = experimentExecutionFields.reduce((acum, current) => {
@@ -124,12 +159,14 @@ class Experiment extends BasicModel {
       .insert(
         sql(tableNames.EXPERIMENT)
           .select(
-            sql.raw('? as id', [toExperimentId]),
-            // Clone the original name if no new name is provided
-            name ? sql.raw('? as name', [name]) : 'name',
-            'description',
-            'pod_cpus',
-            'pod_memory',
+            [
+              sql.raw('? as id', [toExperimentId]),
+              // Clone the original name if no new name is provided
+              name ? sql.raw('? as name', [name]) : 'name',
+              'description',
+              'pod_cpus',
+              'pod_memory',
+            ],
           )
           .where({ id: fromExperimentId }),
       )
@@ -179,6 +216,7 @@ class Experiment extends BasicModel {
     }
   }
 
+
   async getProcessingConfig(experimentId) {
     const result = await this.findOne({ id: experimentId });
     if (_.isEmpty(result)) {
@@ -199,7 +237,6 @@ class Experiment extends BasicModel {
         .from(tableNames.EXPERIMENT)
         .where('id', experimentId)
         .first();
-
 
       if (_.isEmpty(result)) {
         throw new NotFoundError('Experiment not found');

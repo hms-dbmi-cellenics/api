@@ -8,6 +8,8 @@ const { EXPIRED_EXECUTION_DATE } = require('../../constants');
 const getLogger = require('../../../utils/getLogger');
 const pipelineConstants = require('../../constants');
 const { getPipelineStepNames } = require('./pipelineConstruct/skeletons');
+const shouldGem2sRerun = require('./shouldGem2sRerun');
+const { qcStepNames, stepNameToBackendStepNames } = require('./pipelineConstruct/constructors/qcStepNameTranslations');
 
 const logger = getLogger();
 
@@ -19,7 +21,8 @@ const qcPipelineSteps = [
   'NumGenesVsNumUmisFilter',
   'DoubletScoresFilter',
   'DataIntegration',
-  'ConfigureEmbedding'];
+  'ConfigureEmbedding',
+];
 
 const gem2sPipelineSteps = [
   'DownloadGem',
@@ -28,7 +31,14 @@ const gem2sPipelineSteps = [
   'DoubletScores',
   'CreateSeurat',
   'PrepareExperiment',
-  'UploadToAWS'];
+  'UploadToAWS',
+];
+
+const seuratPipelineSteps = [
+  'DownloadSeurat',
+  'ProcessSeurat',
+  'UploadSeuratToAWS',
+];
 
 // pipelineStepNames are the names of pipeline steps for which we
 // want to report the progress back to the user
@@ -38,7 +48,7 @@ const pipelineSteps = getPipelineStepNames();
 // buildResponse function is wrapper function to ensure that all pipeline-status
 // responses contain the same information and parameters
 // more specific building response should rely on calling this one
-const buildResponse = (processName, execution, paramsHash, error, completedSteps) => {
+const buildResponse = (processName, execution, shouldRerun, error, completedSteps) => {
   const response = {
     [processName]: {
       startDate: execution.startDate,
@@ -46,7 +56,7 @@ const buildResponse = (processName, execution, paramsHash, error, completedSteps
       status: execution.status,
       error,
       completedSteps,
-      paramsHash,
+      shouldRerun,
     },
   };
   return response;
@@ -58,13 +68,13 @@ const buildNotCreatedStatus = (processName) => {
     stopDate: null,
     status: pipelineConstants.NOT_CREATED,
   };
-  const paramsHash = undefined;
+  const shouldRerun = true;
   const error = false;
   const completedSteps = [];
-  return buildResponse(processName, execution, paramsHash, error, completedSteps);
+  return buildResponse(processName, execution, shouldRerun, error, completedSteps);
 };
 
-const buildCompletedStatus = (processName, date, paramsHash) => {
+const buildCompletedStatus = (processName, date, shouldRerun) => {
   const execution = {
     startDate: date,
     stopDate: date,
@@ -77,13 +87,16 @@ const buildCompletedStatus = (processName, date, paramsHash) => {
     case pipelineConstants.GEM2S_PROCESS_NAME:
       completedSteps = gem2sPipelineSteps;
       break;
+    case pipelineConstants.SEURAT_PROCESS_NAME:
+      completedSteps = seuratPipelineSteps;
+      break;
     case pipelineConstants.QC_PROCESS_NAME:
       completedSteps = qcPipelineSteps;
       break;
     default:
       throw new Error(`Unknown processName ${processName}`);
   }
-  return buildResponse(processName, execution, paramsHash, error, completedSteps);
+  return buildResponse(processName, execution, shouldRerun, error, completedSteps);
 };
 
 const getExecutionHistory = async (stepFunctions, executionArn) => {
@@ -105,10 +118,10 @@ const getExecutionHistory = async (stepFunctions, executionArn) => {
 };
 
 const checkError = (events) => {
-  const error = _.findLast(events, (elem) => elem.type === 'ExecutionFailed');
+  const error = _.findLast(events, (elem) => elem.type === 'ActivityFailed');
 
   if (error) {
-    return error.executionFailedEventDetails;
+    return error.activityFailedEventDetails;
   }
 
   return false;
@@ -209,6 +222,51 @@ const getStepsFromExecutionHistory = (events) => {
   return shortestCompletedToReport || [];
 };
 
+/**
+ *
+ * @param {*} processName The name of the pipeline to get the steps for,
+ * currently either qc or gem2s
+ * @param {*} stateMachineArn
+ * @param {*} lastRunExecutedSteps The steps that were executed in the last run
+ * @param {*} stepFunctions stepFunctions client
+ * @returns array of steps that can be considered completed
+ *
+ * If processName = gem2s, it returns executedSteps because we don't support partial reruns so
+ * we can always assume all executedSteps are all completed steps
+ *
+ * If processName = qc: it returns lastRunExecutedSteps + stepsCompletedInPreviousRuns
+ * stepsCompletedInPreviousRuns is all the steps that weren't scheduled to run in the last run
+ * The only reason we don't schedule steps is when we consider them completed,
+ * so we can keep considering them completed for future runs as well
+ */
+const getCompletedSteps = async (
+  processName, stateMachineArn, lastRunExecutedSteps, stepFunctions,
+) => {
+  let completedSteps;
+
+  if (processName === 'qc') {
+    const stateMachine = await stepFunctions.describeStateMachine({
+      stateMachineArn,
+    }).promise();
+
+    // Get all the steps that were scheduled to be run in the last execution
+    const lastScheduledSteps = Object.keys(JSON.parse(stateMachine.definition).States);
+
+    // Remove from all qc steps the ones that were scheduled for execution in the last run
+    // We are left with all the qc steps that last run didn't consider necessary to rerun
+    // This means that these steps were considered completed in the last run so
+    // we can still consider them completed
+    const stepsCompletedInPreviousRuns = _.difference(qcStepNames, lastScheduledSteps)
+      .map((rawStepName) => stepNameToBackendStepNames[rawStepName]);
+
+    completedSteps = stepsCompletedInPreviousRuns.concat(lastRunExecutedSteps);
+  } if (processName === 'gem2s' || processName === 'seurat') {
+    completedSteps = lastRunExecutedSteps;
+  }
+
+  return completedSteps;
+};
+
 /*
      * Return `completedSteps` of the state machine (SM) associated to the `experimentId`'s pipeline
      * The code assumes that
@@ -230,12 +288,11 @@ const getPipelineStatus = async (experimentId, processName) => {
   });
 
   let execution = {};
-  let completedSteps = [];
   let error = false;
+  let response = null;
 
-  const { executionArn = null, paramsHash = null, lastStatusResponse } = pipelineExecution;
-
-  let response;
+  const { executionArn = null, stateMachineArn = null, lastStatusResponse } = pipelineExecution;
+  const shouldRerun = await shouldGem2sRerun(experimentId, processName);
 
   try {
     execution = await stepFunctions.describeExecution({
@@ -243,22 +300,15 @@ const getPipelineStatus = async (experimentId, processName) => {
     }).promise();
 
     const events = await getExecutionHistory(stepFunctions, executionArn);
-
     error = checkError(events);
-    const executedSteps = getStepsFromExecutionHistory(events);
-    const lastExecuted = executedSteps[executedSteps.length - 1];
-    switch (processName) {
-      case pipelineConstants.QC_PROCESS_NAME:
-        completedSteps = qcPipelineSteps.slice(0, qcPipelineSteps.indexOf(lastExecuted) + 1);
-        break;
-      case pipelineConstants.GEM2S_PROCESS_NAME:
-        completedSteps = gem2sPipelineSteps.slice(0, gem2sPipelineSteps.indexOf(lastExecuted) + 1);
-        break;
-      default:
-        logger.error(`unknown process name ${processName}`);
-    }
 
-    response = buildResponse(processName, execution, paramsHash, error, completedSteps);
+    const executedSteps = getStepsFromExecutionHistory(events);
+
+    const completedSteps = await getCompletedSteps(
+      processName, stateMachineArn, executedSteps, stepFunctions,
+    );
+
+    response = buildResponse(processName, execution, shouldRerun, error, completedSteps);
   } catch (e) {
     // if we get the execution does not exist it means we are using a pulled experiment so
     // just return a mock sucess status
@@ -274,8 +324,8 @@ const getPipelineStatus = async (experimentId, processName) => {
     ) {
       if (lastStatusResponse) {
         logger.log(`Returning status stored in sql because AWS doesn't find arn ${executionArn}`);
-        // Update the paramsHash just in case it changed
-        response = { [processName]: { ...lastStatusResponse[processName], paramsHash } };
+        // Update the shouldRerun just in case it changed
+        response = { [processName]: { ...lastStatusResponse[processName], shouldRerun } };
       } else {
         logger.log(
           `Returning a mocked success ${processName} - pipeline status because ARN ${executionArn} `
@@ -287,7 +337,7 @@ const getPipelineStatus = async (experimentId, processName) => {
         // we set a custom date that can be used by the UI to reliably generate ETag
         const fixedPipelineDate = EXPIRED_EXECUTION_DATE;
 
-        response = buildCompletedStatus(processName, fixedPipelineDate, paramsHash);
+        response = buildCompletedStatus(processName, fixedPipelineDate, shouldRerun);
       }
     } else {
       throw e;

@@ -1,6 +1,7 @@
 const BasicModel = require('./BasicModel')();
 
 const stub = {
+  copyTo: jest.fn(),
   ...BasicModel,
 };
 

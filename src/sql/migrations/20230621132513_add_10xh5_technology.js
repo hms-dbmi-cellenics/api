@@ -1,0 +1,13 @@
+/**
+ * @param { import("knex").Knex } knex
+ * @returns { Promise<void> }
+ */
+exports.up = async (knex) => {
+  await knex.raw("ALTER TYPE sample_technology ADD VALUE '10x_h5';");
+  await knex.raw("ALTER TYPE sample_file_type ADD VALUE '10x_h5';");
+};
+
+/**
+ * @returns { void }
+ */
+exports.down = () => { };
