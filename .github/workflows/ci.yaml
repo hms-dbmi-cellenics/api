@@ -218,9 +218,6 @@ jobs:
       matrix:
         environment: ['production', 'staging', 'develop']
     steps:
-      # - id: checkout
-      #   name: Check out source code
-      #   uses: actions/checkout@v2
       - name: Checkout
         uses: actions/checkout@v3
         with:
