@@ -19,7 +19,7 @@ jobs:
   is-safe-to-run:
     name: Sensitive jobs are safe to be run
     runs-on: ubuntu-20.04
-    if: (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'safe to run')) || github.event_name != 'pull_request'
+    if: (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'safe to run')) || github.event_name == 'release' || github.event_name == 'push'
     steps:
       - id: is-safe-to-run
         name: Is safe to run
