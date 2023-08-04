@@ -16,6 +16,12 @@ async function getUser(userFilterValue, userFilterKey) {
   };
 
   const { Users } = await config.cognitoISP.listUsers(params).promise();
+
+  if (Users.length === 0) {
+    const error = Object.assign(new Error('User not found'), { code: 'UserNotFoundException' });
+    throw error;
+  }
+
   const { Attributes } = Users[0];
   return Attributes;
 }
