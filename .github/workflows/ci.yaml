@@ -37,7 +37,7 @@ jobs:
   uncheck-integration-test:
     name: Mark integration test as not run
     runs-on: ubuntu-20.04
-    needs: check-is-safe-to-run
+    needs: is-safe-to-run
     if: github.event_name == 'pull_request'
     steps:
       - id: get-pr-body
@@ -76,7 +76,7 @@ jobs:
   test:
     name: Run tests
     runs-on: ubuntu-20.04
-    needs: check-is-safe-to-run
+    needs: is-safe-to-run
     env:
       CI: "true"
     steps:
@@ -143,7 +143,7 @@ jobs:
   build-docker:
     name: Build Docker container
     runs-on: ubuntu-20.04
-    needs: [test, check-is-safe-to-run]
+    needs: [test, is-safe-to-run]
     outputs:
       ref-id: ${{ steps.ref.outputs.ref-id }}
       image-tag: ${{ steps.ref.outputs.image-tag }}
@@ -244,7 +244,7 @@ jobs:
   deploy:
     name: Deploy to Kubernetes
     runs-on: ubuntu-20.04
-    needs: [build-docker, check-is-safe-to-run]
+    needs: [build-docker, is-safe-to-run]
     strategy:
       max-parallel: 1
       matrix:
@@ -433,7 +433,7 @@ jobs:
   ready-to-merge:
     name: Ready for merging
     runs-on: ubuntu-20.04
-    needs: [deploy, check-is-safe-to-run]
+    needs: [deploy, is-safe-to-run]
     steps:
       - id: ready-to-merge
         name: Signal readiness to merge
@@ -443,7 +443,7 @@ jobs:
   report-if-failed:
     name: Report if workflow failed
     runs-on: ubuntu-20.04
-    needs: [test, build-docker, deploy, check-is-safe-to-run]
+    needs: [test, build-docker, deploy, is-safe-to-run]
     if: failure() && github.ref == 'refs/heads/master'
     steps:
       - id: send-to-slack
