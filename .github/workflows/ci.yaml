@@ -6,14 +6,21 @@ on:
   release:
     types:
       - released
-  pull_request:
+  pull_request_target:
     branches:
       - master
+    types: 
+      - labeled
 jobs:
+  check-is-safe-to-run:
+    name: Check the pull request checks are safe to be run
+    if: contains(github.event.pull_request.labels.*.name, 'Safe to run')
+
   uncheck-integration-test:
     name: Mark integration test as not run
     runs-on: ubuntu-20.04
-    if: github.event_name == 'pull_request'
+    needs: check-is-safe-to-run
+    if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'safe to test')
     steps:
       - id: get-pr-body
         name: Get the current PR body
@@ -51,6 +58,7 @@ jobs:
   test:
     name: Run tests
     runs-on: ubuntu-20.04
+    needs: check-is-safe-to-run
     env:
       CI: "true"
     steps:
@@ -63,6 +71,9 @@ jobs:
     - id: checkout
       name: Check out source code
       uses: actions/checkout@v3
+      with:
+        ref: ${{github.head_ref}}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
 
     - id: cache-seek
       name: Check for npm cache hit
@@ -114,7 +125,7 @@ jobs:
   build-docker:
     name: Build Docker container
     runs-on: ubuntu-20.04
-    needs: test
+    needs: [test, check-is-safe-to-run]
     outputs:
       ref-id: ${{ steps.ref.outputs.ref-id }}
       image-tag: ${{ steps.ref.outputs.image-tag }}
@@ -123,6 +134,9 @@ jobs:
       - id: checkout
         name: Check out source code
         uses: actions/checkout@v3
+        with:
+          ref: ${{github.head_ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
 
       - id: ref
         name: Format docker tag and repository name.
@@ -212,7 +226,7 @@ jobs:
   deploy:
     name: Deploy to Kubernetes
     runs-on: ubuntu-20.04
-    needs: build-docker
+    needs: [build-docker, check-is-safe-to-run]
     strategy:
       max-parallel: 1
       matrix:
@@ -221,6 +235,9 @@ jobs:
       - id: checkout
         name: Check out source code
         uses: actions/checkout@v3
+        with:
+          ref: ${{github.head_ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
 
       - id: setup-aws
         name: Configure AWS credentials
@@ -398,7 +415,7 @@ jobs:
   ready-to-merge:
     name: Ready for merging
     runs-on: ubuntu-20.04
-    needs: deploy
+    needs: [deploy, check-is-safe-to-run]
     steps:
       - id: ready-to-merge
         name: Signal readiness to merge
@@ -408,7 +425,7 @@ jobs:
   report-if-failed:
     name: Report if workflow failed
     runs-on: ubuntu-20.04
-    needs: [test, build-docker, deploy]
+    needs: [test, build-docker, deploy, check-is-safe-to-run]
     if: failure() && github.ref == 'refs/heads/master'
     steps:
       - id: send-to-slack
