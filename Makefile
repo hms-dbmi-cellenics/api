@@ -13,10 +13,11 @@ check: ## Checks code for linting/construct errors
 	@npm run lint
 	@npm run detect-secrets
 	@echo "    [✓]\n"
-test: ## Runs UI tests
+test: ## Runs API tests
 	@npm test
 build: ## Empty target for uniform make interfaces because API does not neet to be build
-run: ## Runs the UI 
+run: ## Runs the API
+	@git config core.hooksPath .githooks
 	@npm start
 .PHONY:install check run help
 clean: ## Cleans up node modules files
