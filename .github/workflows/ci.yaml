@@ -14,7 +14,13 @@ on:
 jobs:
   check-is-safe-to-run:
     name: Check the pull request checks are safe to be run
+    runs-on: ubuntu-20.04
     if: contains(github.event.pull_request.labels.*.name, 'safe to run')
+    steps:
+      - id: is-safe-to-run
+        name: Is safe to run
+        run: |-
+          echo "Pull request is labeled as safe to run, so checks will proceed"
 
   uncheck-integration-test:
     name: Mark integration test as not run
