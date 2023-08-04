@@ -1,31 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`getDomainSpecificContent tests check content for BIOMAGE 1`] = `
+exports[`getDomainSpecificContent tests check content for BIOMAGE: getDomainSpecificContent for BIOMAGE 1`] = `
 Object {
   "adminEmail": "admin@biomage.net",
-  "enforcePrivacyPolicyAgreement": true,
   "githubOrganisationName": "biomage-org",
+  "middlewareChecks": [Function],
   "moreEmailInfo": "More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
               If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>",
-  "notificationEmail": "notification@undefined",
+  "notificationEmail": "notification@localhost:5000",
 }
 `;
 
-exports[`getDomainSpecificContent tests check content for HMS 1`] = `
+exports[`getDomainSpecificContent tests check content for HMS: getDomainSpecificContent for HMS 1`] = `
 Object {
   "adminEmail": "cellenics_admin@listserv.med.harvard.edu",
-  "enforcePrivacyPolicyAgreement": false,
   "githubOrganisationName": "hms-dbmi-cellenics",
+  "middlewareChecks": [Function],
   "moreEmailInfo": "",
   "notificationEmail": "alex_pickering@hms.harvard.edu",
 }
 `;
 
-exports[`getDomainSpecificContent tests check content for the default account 1`] = `
+exports[`getDomainSpecificContent tests check content for the biomage account: getDomainSpecificContent for biomage private account 1`] = `
+Object {
+  "adminEmail": "admin@biomage.net",
+  "githubOrganisationName": "biomage-org",
+  "middlewareChecks": [Function],
+  "moreEmailInfo": "More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
+              If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>",
+  "notificationEmail": "notification@localhost:5000",
+}
+`;
+
+exports[`getDomainSpecificContent tests check content for the test account: getDomainSpecificContent for test 1`] = `
 Object {
   "adminEmail": "admin@example.com",
-  "enforcePrivacyPolicyAgreement": false,
   "githubOrganisationName": "org",
+  "middlewareChecks": [Function],
   "moreEmailInfo": "<div>test hi info</div>",
   "notificationEmail": "some@email.com",
 }
