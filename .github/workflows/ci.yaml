@@ -62,7 +62,10 @@ jobs:
 
     - id: checkout
       name: Check out source code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
+      with:
+        ref: ${{github.head_ref}}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
 
     - id: cache-seek
       name: Check for npm cache hit
@@ -122,7 +125,10 @@ jobs:
     steps:
       - id: checkout
         name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          ref: ${{github.head_ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
 
       - id: ref
         name: Format docker tag and repository name.
@@ -218,10 +224,11 @@ jobs:
       matrix:
         environment: ['production', 'staging', 'develop']
     steps:
-      - name: Checkout
+      - id: checkout
+        name: Check out source code
         uses: actions/checkout@v3
         with:
-          ref: ${{github.event.pull_request.head_ref}}
+          ref: ${{github.head_ref}}
           repository: ${{github.event.pull_request.head.repo.full_name}}
 
       - id: setup-aws
