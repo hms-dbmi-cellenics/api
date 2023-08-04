@@ -287,6 +287,7 @@ const getPipelineStatus = async (experimentId, processName) => {
     region: config.awsRegion,
   });
 
+
   let execution = {};
   let error = false;
   let response = null;
