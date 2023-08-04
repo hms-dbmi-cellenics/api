@@ -5,7 +5,7 @@ const UserAccess = require('../../../../src/api.v2/model/UserAccess');
 const removeAccess = require('../../../../src/api.v2/helpers/access/removeAccess');
 
 jest.mock('../../../../src/utils/aws/user', () => ({
-  getAwsUserAttributesByEmail: jest.fn(() => [
+  getAwsUserAttributes: jest.fn(() => [
     { Name: 'sub', Value: 'mock-user-id' },
     { Name: 'email_verified', Value: 'true' },
     { Name: 'name', Value: 'mock user' },

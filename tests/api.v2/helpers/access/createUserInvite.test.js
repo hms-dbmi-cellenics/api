@@ -5,7 +5,7 @@ const UserAccess = require('../../../../src/api.v2/model/UserAccess');
 const createUserInvite = require('../../../../src/api.v2/helpers/access/createUserInvite');
 const AccessRole = require('../../../../src/utils/enums/AccessRole');
 const sendEmail = require('../../../../src/utils/sendEmail');
-const { getAwsUserAttributesByEmail } = require('../../../../src/utils/aws/user');
+const { getAwsUserAttributes } = require('../../../../src/utils/aws/user');
 
 jest.mock('../../../../src/utils/aws/user');
 jest.mock('../../../../src/api.v2/model/UserAccess');
@@ -31,7 +31,7 @@ describe('creatUserInvite', () => {
   });
 
   it('Grants access if user is already registered and sends an email', async () => {
-    getAwsUserAttributesByEmail.mockImplementationOnce(() => [
+    getAwsUserAttributes.mockImplementationOnce(() => [
       { Name: 'sub', Value: 'mock-user-id' },
       { Name: 'email_verified', Value: 'true' },
       { Name: 'name', Value: 'Mock Invited' },
@@ -50,7 +50,7 @@ describe('creatUserInvite', () => {
   });
 
   it('Sends an invitation to sign up if user is not registered', async () => {
-    getAwsUserAttributesByEmail.mockImplementationOnce(() => {
+    getAwsUserAttributes.mockImplementationOnce(() => {
       const error = Object.assign(new Error('User not found'), { code: 'UserNotFoundException' });
       throw error;
     });
@@ -68,7 +68,7 @@ describe('creatUserInvite', () => {
   });
 
   it('Throws error if there is an error when trying to check for existence of invited user', async () => {
-    getAwsUserAttributesByEmail.mockImplementationOnce(() => Promise.reject(new Error('Some error')));
+    getAwsUserAttributes.mockImplementationOnce(() => Promise.reject(new Error('Some error')));
 
     expect(async () => {
       await createUserInvite(mockExperimentId);
