@@ -11,9 +11,10 @@ on:
       - master
     types:
       - labeled
+      - unlabeled
 jobs:
-  check-is-safe-to-run:
-    name: Check the pull request checks are safe to be run
+  is-safe-to-run:
+    name: The pull request checks are safe to be run
     runs-on: ubuntu-20.04
     if: (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'safe to run')) || github.event_name != 'pull_request'
     steps:
@@ -21,6 +22,17 @@ jobs:
         name: Is safe to run
         run: |-
           echo "Safe to run, checks will proceed"
+
+  is-not-safe-to-run:
+    name: The pull request checks aren't safe to be run
+    runs-on: ubuntu-20.04
+    if: (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'safe to run'))
+    steps:
+      - id: is-not-safe-to-run
+        name: The pull request hasn't been labeled safe to run
+        run: |-
+          echo "Pull request not labeled safe to run"
+          exit 1
 
   uncheck-integration-test:
     name: Mark integration test as not run
