@@ -19,7 +19,7 @@ jobs:
   is-safe-to-run:
     name: Sensitive jobs are safe to be run
     runs-on: ubuntu-20.04
-    if: (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'safe to run')) || github.event_name == 'release' || github.event_name == 'push'
+    if: (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe to run')) || github.event_name == 'release' || github.event_name == 'push'
     steps:
       - id: is-safe-to-run
         name: Is safe to run
@@ -29,7 +29,7 @@ jobs:
   is-not-safe-to-run:
     name: Sensitive jobs aren't labeled safe to be run
     runs-on: ubuntu-20.04
-    if: (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'safe to run'))
+    if: (github.event_name == 'pull_request_target' && !contains(github.event.pull_request.labels.*.name, 'safe to run'))
     steps:
       - id: is-not-safe-to-run
         name: The pull request hasn't been labeled safe to run
@@ -41,7 +41,7 @@ jobs:
     name: Mark integration test as not run
     runs-on: ubuntu-20.04
     needs: is-safe-to-run
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request_target'
     steps:
       - id: get-pr-body
         name: Get the current PR body
@@ -389,7 +389,7 @@ jobs:
 
       - name: Change name of deployment file for staging deployment
         if:
-          (github.event_name == 'pull_request' || github.event_name == 'push') && matrix.environment == 'staging'
+          (github.event_name == 'pull_request_target' || github.event_name == 'push') && matrix.environment == 'staging'
         env:
           DEPLOYMENT_NAME: ${{ steps.fill-metadata.outputs.deployment-name }}
           REF_ID: ${{ needs.build-docker.outputs.ref-id }}
@@ -398,7 +398,7 @@ jobs:
 
       - name: Push staging deployment template to releases
         if:
-          (github.event_name == 'pull_request' || github.event_name == 'push') && matrix.environment == 'staging'
+          (github.event_name == 'pull_request_target' || github.event_name == 'push') && matrix.environment == 'staging'
         uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
