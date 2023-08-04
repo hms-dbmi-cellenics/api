@@ -16,7 +16,7 @@ check: ## Checks code for linting/construct errors
 test: ## Runs API tests
 	@npm test
 build: ## Empty target for uniform make interfaces because API does not neet to be build
-setup-hooks: ## Configures path to git hooks
+hooks: ## Configures path to git hooks
 	@git config core.hooksPath .githooks
 run: ## Runs the API
 	@npm start
