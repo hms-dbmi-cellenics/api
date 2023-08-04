@@ -6,7 +6,7 @@ on:
   release:
     types:
       - released
-  pull_request_target:
+  pull_request:
     branches:
       - master
 jobs:
@@ -63,9 +63,6 @@ jobs:
     - id: checkout
       name: Check out source code
       uses: actions/checkout@v3
-      with:
-        ref: ${{github.head_ref}}
-        repository: ${{github.event.pull_request.head.repo.full_name}}
 
     - id: cache-seek
       name: Check for npm cache hit
@@ -126,9 +123,6 @@ jobs:
       - id: checkout
         name: Check out source code
         uses: actions/checkout@v3
-        with:
-          ref: ${{github.head_ref}}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
 
       - id: ref
         name: Format docker tag and repository name.
@@ -227,9 +221,6 @@ jobs:
       - id: checkout
         name: Check out source code
         uses: actions/checkout@v3
-        with:
-          ref: ${{github.head_ref}}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
 
       - id: setup-aws
         name: Configure AWS credentials
