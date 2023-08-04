@@ -14,7 +14,7 @@ on:
       - unlabeled
 jobs:
   is-safe-to-run:
-    name: The pull request checks are safe to be run
+    name: Sensitive jobs are safe to be run
     runs-on: ubuntu-20.04
     if: (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'safe to run')) || github.event_name != 'pull_request'
     steps:
@@ -24,7 +24,7 @@ jobs:
           echo "Safe to run, checks will proceed"
 
   is-not-safe-to-run:
-    name: The pull request checks aren't safe to be run
+    name: Sensitive jobs aren't labeled safe to be run
     runs-on: ubuntu-20.04
     if: (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'safe to run'))
     steps:
