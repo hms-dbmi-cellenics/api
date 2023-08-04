@@ -9,12 +9,12 @@ on:
   pull_request_target:
     branches:
       - master
-    types: 
+    types:
       - labeled
 jobs:
   check-is-safe-to-run:
     name: Check the pull request checks are safe to be run
-    if: contains(github.event.pull_request.labels.*.name, 'Safe to run')
+    if: contains(github.event.pull_request.labels.*.name, 'safe to run')
 
   uncheck-integration-test:
     name: Mark integration test as not run
