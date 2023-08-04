@@ -16,8 +16,9 @@ check: ## Checks code for linting/construct errors
 test: ## Runs API tests
 	@npm test
 build: ## Empty target for uniform make interfaces because API does not neet to be build
-run: ## Runs the API
+setup-hooks: ## Configures path to git hooks
 	@git config core.hooksPath .githooks
+run: ## Runs the API
 	@npm start
 .PHONY:install check run help
 clean: ## Cleans up node modules files
