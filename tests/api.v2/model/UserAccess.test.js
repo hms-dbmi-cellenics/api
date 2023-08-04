@@ -9,7 +9,7 @@ jest.mock('../../../src/sql/sqlClient', () => ({
 }));
 jest.mock('../../../src/utils/getAdminSub');
 jest.mock('../../../src/utils/aws/user', () => ({
-  getAwsUserAttributesByEmail: jest.fn((userId) => Promise.resolve(
+  getAwsUserAttributes: jest.fn((userId) => Promise.resolve(
     [
       { Name: 'sub', Value: userId },
       { Name: 'email_verified', Value: 'true' },
