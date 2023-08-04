@@ -20,7 +20,7 @@ jobs:
     name: Mark integration test as not run
     runs-on: ubuntu-20.04
     needs: check-is-safe-to-run
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request_target'
     steps:
       - id: get-pr-body
         name: Get the current PR body
@@ -160,7 +160,7 @@ jobs:
           if [ "${{ github.event_name }}" = "release" ] && [ "${{ github.event.action }}" = "released" ]; then
             COMMIT_SHA=""
             IMAGE_TAG="${REF_ID/refs-tags-/}"
-          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+          elif [ "${{ github.event_name }}" = "pull_request_target" ]; then
             COMMIT_SHA="${{ github.event.pull_request.head.sha }}"
             IMAGE_TAG="$REF_ID-$COMMIT_SHA-$TIMESTAMP"
           else
@@ -368,7 +368,7 @@ jobs:
 
       - name: Change name of deployment file for staging deployment
         if:
-          (github.event_name == 'pull_request' || github.event_name == 'push') && matrix.environment == 'staging'
+          (github.event_name == 'pull_request_target' || github.event_name == 'push') && matrix.environment == 'staging'
         env:
           DEPLOYMENT_NAME: ${{ steps.fill-metadata.outputs.deployment-name }}
           REF_ID: ${{ needs.build-docker.outputs.ref-id }}
@@ -377,7 +377,7 @@ jobs:
 
       - name: Push staging deployment template to releases
         if:
-          (github.event_name == 'pull_request' || github.event_name == 'push') && matrix.environment == 'staging'
+          (github.event_name == 'pull_request_target' || github.event_name == 'push') && matrix.environment == 'staging'
         uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
