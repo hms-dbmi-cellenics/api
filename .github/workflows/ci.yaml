@@ -12,6 +12,9 @@ on:
     types:
       - labeled
       - unlabeled
+      - opened
+      - synchronize
+      - reopened
 jobs:
   is-safe-to-run:
     name: Sensitive jobs are safe to be run
