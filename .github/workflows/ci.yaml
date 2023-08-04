@@ -20,7 +20,7 @@ jobs:
     name: Mark integration test as not run
     runs-on: ubuntu-20.04
     needs: check-is-safe-to-run
-    if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'safe to test')
+    if: github.event_name == 'pull_request'
     steps:
       - id: get-pr-body
         name: Get the current PR body
