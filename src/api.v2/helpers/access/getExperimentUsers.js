@@ -1,4 +1,4 @@
-const { getAwsUserAttributesByEmail } = require('../../../utils/aws/user');
+const { getAwsUserAttributes } = require('../../../utils/aws/user');
 
 const UserAccess = require('../../model/UserAccess');
 
@@ -14,7 +14,7 @@ const getExperimentUsers = async (experimentId) => {
 
   const requests = filteredUsers.map(async (entry) => {
     try {
-      return await getAwsUserAttributesByEmail(entry.userId);
+      return await getAwsUserAttributes(entry.userId, 'sub');
     } catch (err) {
       console.error(`Error fetching user attributes for user ${entry.userId}: ${err}`);
       return null;
