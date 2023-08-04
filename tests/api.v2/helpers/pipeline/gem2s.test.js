@@ -98,7 +98,6 @@ describe('startGem2sPipeline', () => {
   });
 
   it('works correctly', async () => {
-    throw new Error();
     await startGem2sPipeline(experimentId, authJWT);
     expect(experimentInstance.findById).toHaveBeenCalledWith(experimentId);
     expect(sampleInstance.getSamples).toHaveBeenCalledWith(experimentId);
