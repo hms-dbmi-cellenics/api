@@ -2126,9 +2126,9 @@ paths:
 
   /experiments/{experimentId}/retry:
     post:
-      summary: Clone an experiment
-      description: "Clone an experiment, returns the id of the new experiment"
-      operationId: cloneExperiment
+      summary: Retry experiment execution
+      description: "Retry an experiment execution, returns 200 if successful"
+      operationId: retryExperiment
       x-eov-operation-id: experiment#retry
       x-eov-operation-handler: routes/experiment
       responses:
@@ -2137,7 +2137,7 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: object
 
   /gem2sResults:
     post:

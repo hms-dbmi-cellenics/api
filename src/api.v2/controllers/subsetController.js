@@ -59,7 +59,7 @@ const runSubset = async (stateMachineParams, authorization) => {
   logger.log(`Started subset for experiment ${parentExperimentId} successfully, subset experimentId: ${subsetExperimentId}`);
 };
 
-const handleSeuratRequest = async (req, res) => {
+const handleSubsetRequest = async (req, res) => {
   const {
     params: { experimentId },
     body: { name, cellSetKeys },
@@ -78,5 +78,6 @@ const handleSeuratRequest = async (req, res) => {
 };
 
 module.exports = {
-  handleSeuratRequest,
+  handleSubsetRequest,
+  runSubset,
 };

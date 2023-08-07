@@ -69,5 +69,6 @@ const handleQCRequest = async (req, res) => {
 
 module.exports = {
   handleQCRequest,
+  runQC,
   handleResponse,
 };

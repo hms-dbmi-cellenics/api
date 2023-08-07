@@ -72,5 +72,6 @@ const handleSeuratRequest = async (req, res) => {
 
 module.exports = {
   handleSeuratRequest,
+  runSeurat,
   handleResponse,
 };

@@ -70,5 +70,6 @@ const handleGem2sRequest = async (req, res) => {
 
 module.exports = {
   handleGem2sRequest,
+  runGem2s,
   handleResponse,
 };
