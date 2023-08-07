@@ -1,6 +1,6 @@
 const UserAccess = require('../../model/UserAccess');
 
-const { getAwsUserAttributesByEmail } = require('../../../utils/aws/user');
+const { getAwsUserAttributes } = require('../../../utils/aws/user');
 const sendEmail = require('../../../utils/sendEmail');
 const buildUserInvitedEmailBody = require('../../../utils/emailTemplates/buildUserInvitedEmailBody');
 const buildUserInvitedNotRegisteredEmailBody = require('../../../utils/emailTemplates/buildUserInvitedNotRegisteredEmailBody');
@@ -16,7 +16,7 @@ const createUserInvite = async (experimentId, invitedUserEmail, role, inviterUse
   let emailBody;
 
   try {
-    userAttributes = await getAwsUserAttributesByEmail(invitedUserEmail);
+    userAttributes = await getAwsUserAttributes(invitedUserEmail, 'email');
 
     const invitedUserId = userAttributes.find((attr) => attr.Name === 'sub').Value;
     await new UserAccess().grantAccess(invitedUserId, experimentId, role);
