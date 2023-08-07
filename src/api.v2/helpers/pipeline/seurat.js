@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const AWSXRay = require('aws-xray-sdk');
 
-const constants = require('../../constants');
 const getPipelineStatus = require('./getPipelineStatus');
 const { createSeuratPipeline } = require('./pipelineConstruct');
 
@@ -18,6 +17,8 @@ const getLogger = require('../../../utils/getLogger');
 const { getGem2sParams, formatSamples } = require('./shouldGem2sRerun');
 
 const logger = getLogger('[SeuratService] - ');
+
+const { SEURAT_PROCESS_NAME } = require('../../constants');
 
 const hookRunner = new HookRunner();
 
@@ -74,18 +75,18 @@ hookRunner.register('uploadSeuratToAWS', [
 hookRunner.registerAll([sendNotification]);
 
 const sendUpdateToSubscribed = async (experimentId, message, io) => {
-  const statusRes = await getPipelineStatus(experimentId, constants.SEURAT_PROCESS_NAME);
+  const statusRes = await getPipelineStatus(experimentId, SEURAT_PROCESS_NAME);
 
   // Concatenate into a proper response.
   const response = {
     ...message,
     status: statusRes,
-    type: constants.SEURAT_PROCESS_NAME,
+    type: SEURAT_PROCESS_NAME,
   };
 
   const { error = null } = message.response || {};
   if (error) {
-    logger.log(`Error in ${constants.SEURAT_PROCESS_NAME} received`);
+    logger.log(`Error in ${SEURAT_PROCESS_NAME} received`);
     AWSXRay.getSegment().addError(error);
   }
 
@@ -131,9 +132,9 @@ const generateSeuratTaskParams = async (experimentId, rawSamples, authJWT) => {
   };
 };
 
-const startSeuratPipeline = async (experimentId, authJWT) => {
+const startSeuratPipeline = async (stateMachineParams, authJWT) => {
   logger.log('Creating SEURAT params...');
-
+  const { experimentId } = stateMachineParams;
   const samples = await new Sample().getSamples(experimentId);
 
   const currentSeuratParams = await getGem2sParams(experimentId, samples);
@@ -152,16 +153,13 @@ const startSeuratPipeline = async (experimentId, authJWT) => {
     execution_arn: executionArn,
   };
 
-  const experimentExecutionClient = new ExperimentExecution();
-
-  await experimentExecutionClient.upsert(
-    {
-      experiment_id: experimentId,
-      pipeline_type: 'seurat',
-    },
+  // Save execution params
+  await new ExperimentExecution().updateExecution(
+    experimentId,
+    SEURAT_PROCESS_NAME,
     newExecution,
+    stateMachineParams,
   );
-
   logger.log('SEURAT params saved.');
 
   return newExecution;

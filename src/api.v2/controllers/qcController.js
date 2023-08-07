@@ -1,4 +1,3 @@
-// const { OK } = require('../../utils/responses');
 const AWSXRay = require('aws-xray-sdk');
 
 const { OK } = require('../../utils/responses');
@@ -12,21 +11,18 @@ const snsTopics = require('../../config/snsTopics');
 
 const logger = getLogger('[QCController] - ');
 
-const runQC = async (req, res) => {
-  const { experimentId } = req.params;
-  const { processingConfig } = req.body;
+const runQC = async (stateMachineParams, authorization) => {
+  const { experimentId, processingConfig } = stateMachineParams;
 
   logger.log(`Starting qc for experiment ${experimentId}`);
 
   await createQCPipeline(
-    req.params.experimentId,
+    experimentId,
     processingConfig || [],
-    req.headers.authorization,
+    authorization,
   );
 
   logger.log(`Started qc for experiment ${experimentId} successfully, `);
-
-  res.json(OK());
 };
 
 const handleResponse = async (req, res) => {
@@ -61,7 +57,17 @@ const handleResponse = async (req, res) => {
   res.status(200).send('ok');
 };
 
+const handleQCRequest = async (req, res) => {
+  const stateMachineParams = {
+    experimentId: req.params.experimentId,
+    processingConfig: req.body.processingConfig,
+  };
+
+  await runQC(stateMachineParams, req.headers.authorization);
+  res.json(OK());
+};
+
 module.exports = {
-  runQC,
+  handleQCRequest,
   handleResponse,
 };

@@ -9,8 +9,8 @@ const ExperimentParent = require('../model/ExperimentParent');
 
 const logger = getLogger('[Gem2sController] - ');
 
-const runGem2s = async (req, res) => {
-  const { experimentId } = req.params;
+const runGem2s = async (stateMachineParams, authorization) => {
+  const { experimentId } = stateMachineParams;
 
   logger.log(`Starting gem2s for experiment ${experimentId}`);
 
@@ -21,13 +21,11 @@ const runGem2s = async (req, res) => {
     throw new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`);
   }
 
-  const newExecution = await startGem2sPipeline(experimentId, req.headers.authorization);
+  const newExecution = await startGem2sPipeline(stateMachineParams, authorization);
 
   logger.log(`Started gem2s for experiment ${experimentId} successfully, `);
   logger.log('New executions data:');
   logger.log(JSON.stringify(newExecution));
-
-  res.json(OK());
 };
 
 const handleResponse = async (req, res) => {
@@ -62,7 +60,15 @@ const handleResponse = async (req, res) => {
   res.status(200).send('ok');
 };
 
+const handleGem2sRequest = async (req, res) => {
+  const stateMachineParams = { experimentId: req.params.experimentId };
+
+  await runGem2s(stateMachineParams, req.headers.authorization);
+
+  res.json(OK());
+};
+
 module.exports = {
-  runGem2s,
+  handleGem2sRequest,
   handleResponse,
 };

@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const AWSXRay = require('aws-xray-sdk');
 
-const constants = require('../../constants');
+const { GEM2S_PROCESS_NAME, QC_PROCESS_NAME } = require('../../constants');
 const getPipelineStatus = require('./getPipelineStatus');
 const { createGem2SPipeline, createQCPipeline } = require('./pipelineConstruct');
 
@@ -135,18 +135,18 @@ hookRunner.register('copyS3Objects', [invalidatePlotsForExperiment]);
 hookRunner.registerAll([sendNotification]);
 
 const sendUpdateToSubscribed = async (experimentId, message, io) => {
-  const statusRes = await getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME);
+  const statusRes = await getPipelineStatus(experimentId, GEM2S_PROCESS_NAME);
 
   // Concatenate into a proper response.
   const response = {
     ...message,
     status: statusRes,
-    type: constants.GEM2S_PROCESS_NAME,
+    type: GEM2S_PROCESS_NAME,
   };
 
   const { error = null } = message.response || {};
   if (error) {
-    logger.log(`Error in ${constants.GEM2S_PROCESS_NAME} received`);
+    logger.log(`Error in ${GEM2S_PROCESS_NAME} received`);
     AWSXRay.getSegment().addError(error);
   }
 
@@ -192,8 +192,10 @@ const generateGem2sTaskParams = async (experimentId, rawSamples, authJWT) => {
   };
 };
 
-const startGem2sPipeline = async (experimentId, authJWT) => {
+const startGem2sPipeline = async (stateMachineParams, authJWT) => {
   logger.log('Creating GEM2S params...');
+
+  const { experimentId } = stateMachineParams;
 
   const samples = await new Sample().getSamples(experimentId);
 
@@ -213,19 +215,17 @@ const startGem2sPipeline = async (experimentId, authJWT) => {
     execution_arn: executionArn,
   };
 
-  const experimentExecutionClient = new ExperimentExecution();
-
-  await experimentExecutionClient.upsert(
-    {
-      experiment_id: experimentId,
-      pipeline_type: 'gem2s',
-    },
+  // Save new execution
+  await new ExperimentExecution().updateExecution(
+    experimentId,
+    GEM2S_PROCESS_NAME,
     newExecution,
+    stateMachineParams,
   );
 
-  await experimentExecutionClient.delete({
+  await new ExperimentExecution().delete({
     experiment_id: experimentId,
-    pipeline_type: 'qc',
+    pipeline_type: QC_PROCESS_NAME,
   });
 
   logger.log('GEM2S params saved.');

@@ -1,7 +1,7 @@
 const sqlClient = require('../../sql/sqlClient');
 const getLogger = require('../../utils/getLogger');
 const { GEM2S_PROCESS_NAME } = require('../constants');
-
+const { OK } = require('../../utils/responses');
 const { createSubsetPipeline } = require('../helpers/pipeline/pipelineConstruct');
 const Experiment = require('../model/Experiment');
 const ExperimentExecution = require('../model/ExperimentExecution');
@@ -10,16 +10,12 @@ const UserAccess = require('../model/UserAccess');
 
 const logger = getLogger('[SubsetController] - ');
 
-const runSubset = async (req, res) => {
-  const { experimentId } = req.params;
-
-  logger.log(`Starting subset for experiment ${experimentId}`);
-
+const runSubset = async (stateMachineParams, authorization) => {
   const {
-    params: { experimentId: parentExperimentId },
-    body: { name, cellSetKeys },
-    user: { sub: userId },
-  } = req;
+    experimentId: parentExperimentId,
+    name,
+    userId,
+  } = stateMachineParams;
 
   logger.log(`Creating experiment to subset ${parentExperimentId}`);
 
@@ -42,12 +38,10 @@ const runSubset = async (req, res) => {
   } = await new Experiment().findById(parentExperimentId).first();
 
   const { stateMachineArn, executionArn } = await createSubsetPipeline(
-    parentExperimentId,
+    stateMachineParams,
     subsetExperimentId,
-    name,
-    cellSetKeys,
     parentProcessingConfig,
-    req.headers.authorization,
+    authorization,
   );
 
   const newExecution = {
@@ -55,21 +49,34 @@ const runSubset = async (req, res) => {
     execution_arn: executionArn,
   };
 
-  const experimentExecutionClient = new ExperimentExecution();
-
-  await experimentExecutionClient.upsert(
-    {
-      experiment_id: subsetExperimentId,
-      pipeline_type: GEM2S_PROCESS_NAME,
-    },
+  await new ExperimentExecution().updateExecution(
+    subsetExperimentId,
+    GEM2S_PROCESS_NAME,
     newExecution,
+    stateMachineParams,
   );
 
-  logger.log(`Started subset for experiment ${experimentId} successfully, subset experimentId: ${subsetExperimentId}`);
+  logger.log(`Started subset for experiment ${parentExperimentId} successfully, subset experimentId: ${subsetExperimentId}`);
+};
 
-  res.json(subsetExperimentId);
+const handleSeuratRequest = async (req, res) => {
+  const {
+    params: { experimentId },
+    body: { name, cellSetKeys },
+    user: { sub: userId },
+  } = req;
+
+  const stateMachineParams = {
+    experimentId,
+    name,
+    cellSetKeys,
+    userId,
+  };
+
+  await runSubset(stateMachineParams, req.headers.authorization);
+  res.json(OK());
 };
 
 module.exports = {
-  runSubset,
+  handleSeuratRequest,
 };

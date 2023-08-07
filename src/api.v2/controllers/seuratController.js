@@ -9,8 +9,8 @@ const ExperimentParent = require('../model/ExperimentParent');
 
 const logger = getLogger('[SeuratController] - ');
 
-const runSeurat = async (req, res) => {
-  const { experimentId } = req.params;
+const runSeurat = async (stateMachineParams, authorization) => {
+  const { experimentId } = stateMachineParams;
 
   logger.log(`Starting seurat for experiment ${experimentId}`);
 
@@ -22,14 +22,11 @@ const runSeurat = async (req, res) => {
     throw new MethodNotAllowedError(`Experiment ${experimentId} can't run seurat`);
   }
 
-  const newExecution = await
-  startSeuratPipeline(experimentId, req.headers.authorization);
+  const newExecution = await startSeuratPipeline(stateMachineParams, authorization);
 
   logger.log(`Started seurat for experiment ${experimentId} successfully, `);
   logger.log('New executions data:');
   logger.log(JSON.stringify(newExecution));
-
-  res.json(OK());
 };
 
 const handleResponse = async (req, res) => {
@@ -64,7 +61,16 @@ const handleResponse = async (req, res) => {
   res.status(200).send('ok');
 };
 
+const handleSeuratRequest = async (req, res) => {
+  const stateMachineParams = {
+    experimentId: req.params.experimentId,
+  };
+
+  await runSeurat(stateMachineParams, req.headers.authorization);
+  res.json(OK());
+};
+
 module.exports = {
-  runSeurat,
+  handleSeuratRequest,
   handleResponse,
 };
