@@ -1,9 +1,8 @@
 // @ts-nocheck
 const _ = require('lodash');
-
 const AWS = require('aws-sdk');
+
 const isPromise = require('../../src/utils/isPromise');
-const { domainSpecificContent } = require('../../src/config/getDomainSpecificContent');
 
 jest.mock('aws-sdk');
 jest.mock('../../src/utils/getLogger');
@@ -21,42 +20,36 @@ describe('default-config', () => {
     process.env = OLD_ENV;
   });
 
-  const accounts = Object.keys(domainSpecificContent)
-    .filter((key) => key !== 'test'); // Exclude 'test' as it's not a real account.
+  it('Returns correct values for production', () => {
+    const prodEnvironment = 'production';
+    process.env.NODE_ENV = 'test';
+    process.env.K8S_ENV = prodEnvironment;
+    process.env.CLUSTER_ENV = prodEnvironment;
+    process.env.AWS_DEFAULT_REGION = 'eu-west-1';
 
-  accounts.forEach((account) => {
-    it(`Returns correct values for ${account} production`, () => {
-      const prodEnvironment = 'production';
-      process.env.NODE_ENV = prodEnvironment;
-      process.env.K8S_ENV = prodEnvironment;
-      process.env.CLUSTER_ENV = prodEnvironment;
-      process.env.AWS_DEFAULT_REGION = 'eu-west-1';
-      process.env.AWS_ACCOUNT_ID = account;
+    const userPoolId = 'mockUserPoolId';
+    const accountId = 'mockAccountId';
 
-      const userPoolId = 'mockUserPoolId';
-      const accountId = 'mockAccountId';
+    AWS.CognitoIdentityServiceProvider = jest.fn(() => ({
+      listUserPools: {
+        promise: jest.fn(() => Promise.resolve(
+          { UserPools: [{ id: userPoolId, Name: `biomage-user-pool-case-insensitive-${prodEnvironment}` }] },
+        )),
+      },
+    }));
 
-      AWS.CognitoIdentityServiceProvider = jest.fn(() => ({
-        listUserPools: {
-          promise: jest.fn(() => Promise.resolve(
-            { UserPools: [{ id: userPoolId, Name: `biomage-user-pool-case-insensitive-${prodEnvironment}` }] },
-          )),
-        },
-      }));
+    AWS.STS = jest.fn(() => ({
+      getCallerIdentity: {
+        promise: jest.fn(() => Promise.resolve({ Account: accountId })),
+      },
+    }));
 
-      AWS.STS = jest.fn(() => ({
-        getCallerIdentity: {
-          promise: jest.fn(() => Promise.resolve({ Account: accountId })),
-        },
-      }));
+    const defaultConfig = jest.requireActual('../../src/config/default-config');
 
-      const defaultConfig = jest.requireActual('../../src/config/default-config');
+    const defaultConfigEntries = Object.entries(defaultConfig);
+    const filteredEntries = defaultConfigEntries.filter(([, value]) => !isPromise(value));
+    const defaultConfigFiltered = Object.fromEntries(filteredEntries);
 
-      const defaultConfigEntries = Object.entries(defaultConfig);
-      const filteredEntries = defaultConfigEntries.filter(([, value]) => !isPromise(value));
-      const defaultConfigFiltered = Object.fromEntries(filteredEntries);
-
-      expect(defaultConfigFiltered).toMatchSnapshot();
-    });
+    expect(defaultConfigFiltered).toMatchSnapshot();
   });
 });

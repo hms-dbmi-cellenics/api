@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`default-config Returns correct values for 160782110667 production 1`] = `
+exports[`default-config Returns correct values for production 1`] = `
 Object {
   "api": Object {
     "prefix": "/",
   },
-  "awsAccountId": "160782110667",
+  "awsAccountId": "000000000000",
   "awsRegion": "eu-west-1",
   "cachingEnabled": true,
   "clusterEnv": "production",
@@ -24,43 +24,7 @@ Object {
   "domainName": "localhost:5000",
   "emailDomainName": "https://localhost:5000",
   "pipelineIgnoreSSLCertificate": false,
-  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/releases/master/production/pipeline.yaml",
-  "pipelineNamespace": "pipeline-default",
-  "podName": "local",
-  "port": 3000,
-  "publicApiUrl": "https://api.localhost:5000",
-  "rdsSandboxId": "default",
-  "sandboxId": "default",
-  "workerNamespace": "worker-default",
-  "workerVersion": 4,
-}
-`;
-
-exports[`default-config Returns correct values for 242905224710 production 1`] = `
-Object {
-  "api": Object {
-    "prefix": "/",
-  },
-  "awsAccountId": "160782110667",
-  "awsRegion": "eu-west-1",
-  "cachingEnabled": true,
-  "clusterEnv": "production",
-  "cognitoISP": Object {
-    "listUserPools": Object {
-      "promise": [MockFunction],
-    },
-  },
-  "corsOriginUrl": Array [
-    "https://sandbox.elabjournal.com",
-    "https://elabjournal.com",
-    "https://localhost:5000",
-  ],
-  "datadogApiKey": "",
-  "datadogAppKey": "",
-  "domainName": "localhost:5000",
-  "emailDomainName": "https://localhost:5000",
-  "pipelineIgnoreSSLCertificate": false,
-  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/hms-dbmi-cellenics/releases/master/production/pipeline.yaml",
+  "pipelineInstanceConfigUrl": "https://raw.githubusercontent.com/org/releases/master/production/pipeline.yaml",
   "pipelineNamespace": "pipeline-default",
   "podName": "local",
   "port": 3000,
