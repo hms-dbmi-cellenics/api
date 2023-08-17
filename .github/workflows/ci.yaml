@@ -182,15 +182,9 @@ jobs:
             COMMIT_SHA=""
             IMAGE_TAG="${REF_ID/refs-tags-/}"
           elif [ "${{ github.event_name }}" = "pull_request_target" ]; then
-            echo "stagingsandboxidDebug"
-
-            echo "${{ github.event.pull_request.head.sha }}"
-            echo "${{ github.head_ref }}"
-            echo "${{ github.sha }}"
             COMMIT_SHA="${{ github.sha }}"
             IMAGE_TAG="$REF_ID-$COMMIT_SHA-$TIMESTAMP"
           else
-            echo "stagingdefaultDebug"
             COMMIT_SHA=$GITHUB_SHA
             IMAGE_TAG="$REF_ID-$COMMIT_SHA-$TIMESTAMP"
           fi
