@@ -164,7 +164,7 @@ jobs:
         run: |-
           # This will take a ref like `refs/heads/master`
           # and turn it into `refs-heads-master`
-          REF_ID=$(echo $GITHUB_REF | sed 's/\//-/g')
+          REF_ID=$(echo ${{ github.head_ref }} | sed 's/\//-/g')
           echo "ref-id=$REF_ID" >> $GITHUB_OUTPUT
 
           # the final tag is something like:
