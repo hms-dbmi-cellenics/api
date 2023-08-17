@@ -174,7 +174,7 @@ jobs:
 
           # In push & PR events we want the tag to contain the latest commit on the branch:
           # in push events, the latest commit of the master branch is GITHUB_SHA
-          # in PR synch the latest commit of the branch is found in github.event.pull_request.head.sha instead
+          # in PR synch the latest commit of the branch is found in github.head_ref instead
 
           TIMESTAMP=$(date +%s)
 
@@ -182,9 +182,15 @@ jobs:
             COMMIT_SHA=""
             IMAGE_TAG="${REF_ID/refs-tags-/}"
           elif [ "${{ github.event_name }}" = "pull_request_target" ]; then
-            COMMIT_SHA="${{ github.event.pull_request.head.sha }}"
+            echo "stagingsandboxidDebug"
+
+            echo "${{ github.event.pull_request.head.sha }}"
+            echo "${{ github.head_ref }}"
+            echo "${{ github.sha }}"
+            COMMIT_SHA="${{ github.sha }}"
             IMAGE_TAG="$REF_ID-$COMMIT_SHA-$TIMESTAMP"
           else
+            echo "stagingdefaultDebug"
             COMMIT_SHA=$GITHUB_SHA
             IMAGE_TAG="$REF_ID-$COMMIT_SHA-$TIMESTAMP"
           fi
