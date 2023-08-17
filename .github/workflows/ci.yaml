@@ -165,14 +165,15 @@ jobs:
           # This will take a ref like `refs/heads/master`
           # and turn it into `refs-heads-master`
 
-          if [ "${{ github.event_name }}" = "pull_request_target" ]:
+          if [ "${{ github.event_name }}" = "pull_request_target" ]; then
             # Construct the REF_ID for our pull request in the same format
             # We can't use GITHUB_REF because it is set to master
             # More info: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request_target
             PR_GITHUB_REF="refs/pull/${{ github.event.pull_request.number }}/merge"
             REF_ID=$(echo $PR_GITHUB_REF | sed 's/\//-/g')
-          else:
+          else
             REF_ID=$(echo $GITHUB_REF | sed 's/\//-/g')
+          fi
 
           echo "ref-id=$REF_ID" >> $GITHUB_OUTPUT
 
