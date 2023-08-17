@@ -1,5 +1,3 @@
-const AWSXRay = require('aws-xray-sdk');
-
 const { startSeuratPipeline, handleSeuratResponse } = require('../helpers/pipeline/seurat');
 const { OK, MethodNotAllowedError } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
@@ -39,7 +37,6 @@ const handleResponse = async (req, res) => {
     result = await parseSNSMessage(req, snsTopics.WORK_RESULTS);
   } catch (e) {
     logger.error('Parsing initial SNS message failed:', e);
-    AWSXRay.getSegment().addError(e);
     res.status(200).send('nok');
     return;
   }
@@ -55,7 +52,6 @@ const handleResponse = async (req, res) => {
         'seurat pipeline response handler failed with error: ', e,
       );
 
-      AWSXRay.getSegment().addError(e);
       res.status(200).send('nok');
       return;
     }

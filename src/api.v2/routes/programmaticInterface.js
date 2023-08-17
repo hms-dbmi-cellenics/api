@@ -1,4 +1,3 @@
-const AWSXRay = require('aws-xray-sdk');
 const getLogger = require('../../utils/getLogger');
 const getAwsProgrammaticClientInfo = require('../helpers/cognito/getAwsProgrammaticClientInfo');
 const { InternalServerError } = require('../../utils/responses');
@@ -15,7 +14,6 @@ module.exports = {
     } catch (e) {
       const err = new InternalServerError(`programmaticInterface#getClient: ${e}`);
       logger.error(err);
-      AWSXRay.getSegment().addError(err);
       next(err);
     }
   },

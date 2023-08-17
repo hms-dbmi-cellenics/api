@@ -1,4 +1,3 @@
-const AWSXRay = require('aws-xray-sdk');
 const k8s = require('@kubernetes/client-node');
 const getLogger = require('../../utils/getLogger');
 
@@ -26,7 +25,6 @@ module.exports = {
       res.status(200).send('ok');
     } catch (e) {
       logger.error('error processing k8s event', e);
-      AWSXRay.getSegment().addError(e);
       next(e);
     }
   },

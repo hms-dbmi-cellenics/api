@@ -1,5 +1,3 @@
-const AWSXRay = require('aws-xray-sdk');
-
 const { startGem2sPipeline, handleGem2sResponse } = require('../helpers/pipeline/gem2s');
 const { OK, MethodNotAllowedError } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
@@ -37,7 +35,6 @@ const handleResponse = async (req, res) => {
     result = await parseSNSMessage(req, snsTopics.WORK_RESULTS);
   } catch (e) {
     logger.error('Parsing initial SNS message failed:', e);
-    AWSXRay.getSegment().addError(e);
     res.status(200).send('nok');
     return;
   }
@@ -53,7 +50,6 @@ const handleResponse = async (req, res) => {
         'gem2s pipeline response handler failed with error: ', e,
       );
 
-      AWSXRay.getSegment().addError(e);
       res.status(200).send('nok');
       return;
     }

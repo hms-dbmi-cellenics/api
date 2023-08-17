@@ -21,8 +21,6 @@ const assignPodToPipeline = require('../../../../src/api.v2/helpers/pipeline/hoo
 
 const validateRequest = require('../../../../src/utils/schema-validator');
 
-jest.mock('aws-xray-sdk');
-
 jest.mock('socket.io-client', () => {
   const mSocket = {
     emit: jest.fn(),
