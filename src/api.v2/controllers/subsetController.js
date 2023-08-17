@@ -57,6 +57,7 @@ const runSubset = async (stateMachineParams, authorization) => {
   );
 
   logger.log(`Started subset for experiment ${parentExperimentId} successfully, subset experimentId: ${subsetExperimentId}`);
+  return subsetExperimentId;
 };
 
 const handleSubsetRequest = async (req, res) => {
@@ -73,8 +74,8 @@ const handleSubsetRequest = async (req, res) => {
     userId,
   };
 
-  await runSubset(stateMachineParams, req.headers.authorization);
-  res.json(OK());
+  const subsetExperimentId = await runSubset(stateMachineParams, req.headers.authorization);
+  res.json(subsetExperimentId);
 };
 
 module.exports = {
