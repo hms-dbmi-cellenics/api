@@ -58,10 +58,14 @@ describe('gem2sController', () => {
       headers: { authorization: 'mockAuthorization' },
     };
 
-    await gem2sController.runGem2s(mockReq, mockRes);
+    const mockStateMachineParams = {
+      experimentId,
+    };
+
+    await gem2sController.handleGem2sRequest(mockReq, mockRes);
 
     expect(gem2s.startGem2sPipeline).toHaveBeenCalledWith(
-      experimentId, mockReq.headers.authorization,
+      mockStateMachineParams, mockReq.headers.authorization,
     );
 
     // Response is ok
@@ -82,7 +86,7 @@ describe('gem2sController', () => {
       headers: { authorization: 'mockAuthorization' },
     };
 
-    await expect(gem2sController.runGem2s(mockReq, mockRes)).rejects
+    await expect(gem2sController.handleGem2sRequest(mockReq, mockRes)).rejects
       .toThrow(
         new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`),
       );

@@ -1,7 +1,6 @@
 const sqlClient = require('../../sql/sqlClient');
 const getLogger = require('../../utils/getLogger');
 const { GEM2S_PROCESS_NAME } = require('../constants');
-const { OK } = require('../../utils/responses');
 const { createSubsetPipeline } = require('../helpers/pipeline/pipelineConstruct');
 const Experiment = require('../model/Experiment');
 const ExperimentExecution = require('../model/ExperimentExecution');
@@ -36,12 +35,6 @@ const runSubset = async (stateMachineParams, authorization) => {
 
     // Samples are not created here, we add them in handleResponse of SubsetSeurat
     logger.log(`Created ${subsetExperimentId}, subsetting experiment ${parentExperimentId} to it`);
-
-    // Persist the subsetExperimentId instead of creating a new experiment one every time
-    stateMachineParams = {
-      ...stateMachineParams,
-      subsetExperimentId
-    };
   }
 
   const {
@@ -49,14 +42,17 @@ const runSubset = async (stateMachineParams, authorization) => {
   } = await new Experiment().findById(parentExperimentId).first();
 
   const { stateMachineArn, executionArn } = await createSubsetPipeline(
-    stateMachineParams,
+    {
+      ...stateMachineParams,
+      subsetExperimentId,
+    },
     subsetExperimentId,
     parentProcessingConfig,
     authorization,
   );
 
   const newExecution = {
-    state_machine_arn: stateMachineArn,
+    stateMachine_arn: stateMachineArn,
     execution_arn: executionArn,
   };
 
@@ -64,7 +60,10 @@ const runSubset = async (stateMachineParams, authorization) => {
     subsetExperimentId,
     GEM2S_PROCESS_NAME,
     newExecution,
-    stateMachineParams,
+    {
+      ...stateMachineParams,
+      subsetExperimentId,
+    },
   );
 
   logger.log(`Started subset for experiment ${parentExperimentId} successfully, subset experimentId: ${subsetExperimentId}`);

@@ -46,6 +46,9 @@ describe('seuratController', () => {
 
   it('runSeurat works correctly', async () => {
     const newExecution = 'mockNewExecution';
+    const mockExecutionParams = {
+      experimentId,
+    };
 
     seurat.startSeuratPipeline.mockReturnValue(newExecution);
 
@@ -58,10 +61,10 @@ describe('seuratController', () => {
       headers: { authorization: 'mockAuthorization' },
     };
 
-    await seuratController.runSeurat(mockReq, mockRes);
+    await seuratController.handleSeuratRequest(mockReq, mockRes);
 
     expect(seurat.startSeuratPipeline).toHaveBeenCalledWith(
-      experimentId, mockReq.headers.authorization,
+      mockExecutionParams, mockReq.headers.authorization,
     );
 
     // Response is ok

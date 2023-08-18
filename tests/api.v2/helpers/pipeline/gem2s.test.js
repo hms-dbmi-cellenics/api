@@ -98,10 +98,13 @@ describe('startGem2sPipeline', () => {
   });
 
   it('works correctly', async () => {
-    await startGem2sPipeline(experimentId, authJWT);
+    const mockExecutionParams = {
+      experimentId,
+    };
+    await startGem2sPipeline(mockExecutionParams, authJWT);
     expect(experimentInstance.findById).toHaveBeenCalledWith(experimentId);
     expect(sampleInstance.getSamples).toHaveBeenCalledWith(experimentId);
-    expect(experimentExecutionInstance.upsert.mock.calls[0]).toMatchSnapshot();
+    expect(experimentExecutionInstance.updateExecution.mock.calls[0]).toMatchSnapshot();
     expect(experimentExecutionInstance.delete.mock.calls[0]).toMatchSnapshot();
     expect(pipelineConstruct.createGem2SPipeline.mock.calls[0]).toMatchSnapshot();
   });

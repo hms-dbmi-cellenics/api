@@ -8,6 +8,7 @@ const { OK } = require('../../../src/utils/responses');
 const seuratController = require('../../../src/api.v2/controllers/seuratController');
 
 jest.mock('../../../src/api.v2/controllers/seuratController', () => ({
+  handleSeuratRequest: jest.fn(),
   runSeurat: jest.fn(),
   handleResponse: jest.fn(),
 }));
@@ -31,7 +32,7 @@ describe('tests for seurat route', () => {
   });
 
   it('Creating a new seurat run results in a successful response', async (done) => {
-    seuratController.runSeurat.mockImplementationOnce((req, res) => {
+    seuratController.handleSeuratRequest.mockImplementationOnce((req, res) => {
       res.json(OK());
       return Promise.resolve();
     });

@@ -84,6 +84,7 @@ Array [
       "execution_arn",
       "last_status_response",
       "last_pipeline_params",
+      "retry_params",
     ],
   ],
 ]
