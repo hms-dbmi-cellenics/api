@@ -1,11 +1,10 @@
 const { OK } = require('../../../utils/responses');
 
 const { runGem2s } = require('../../controllers/gem2sController');
-const { runQC } = require('../../controllers/qcController');
 const { runSeurat } = require('../../controllers/seuratController');
 const { runSubset } = require('../../controllers/subsetController');
 const {
-  GEM2S_PROCESS_NAME, QC_PROCESS_NAME, SEURAT_PROCESS_NAME, SUBSET_PROCESS_NAME,
+  GEM2S_PROCESS_NAME, SEURAT_PROCESS_NAME, SUBSET_PROCESS_NAME,
 } = require('../../constants');
 const ExperimentExecution = require('../../model/ExperimentExecution');
 
@@ -15,7 +14,6 @@ const logger = getLogger();
 
 const stateMachineToPipeline = {
   [SUBSET_PROCESS_NAME]: runSubset,
-  [QC_PROCESS_NAME]: runQC,
   [GEM2S_PROCESS_NAME]: runGem2s,
   [SEURAT_PROCESS_NAME]: runSeurat,
 };
@@ -23,7 +21,6 @@ const stateMachineToPipeline = {
 const getPipelineType = (stateMachineArn) => {
   const processNames = [
     SUBSET_PROCESS_NAME,
-    QC_PROCESS_NAME,
     GEM2S_PROCESS_NAME,
     SEURAT_PROCESS_NAME,
   ];
