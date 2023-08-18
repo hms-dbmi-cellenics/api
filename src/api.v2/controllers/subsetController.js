@@ -15,23 +15,33 @@ const runSubset = async (stateMachineParams, authorization) => {
     experimentId: parentExperimentId,
     name,
     userId,
+    subsetExperimentId, // Doesn't exist initially
   } = stateMachineParams;
 
-  logger.log(`Creating experiment to subset ${parentExperimentId}`);
+  // Upon retrying the subset experiment id already exists,
+  // and we don't want to create a new experiment
+  if (!subsetExperimentId) {
+    logger.log(`Creating experiment to subset ${parentExperimentId}`);
 
-  let subsetExperimentId;
-  await sqlClient.get().transaction(async (trx) => {
-    subsetExperimentId = await new Experiment(trx).createCopy(parentExperimentId, name);
-    await new UserAccess(trx).createNewExperimentPermissions(userId, subsetExperimentId);
+    let subsetExperimentId;
+    await sqlClient.get().transaction(async (trx) => {
+      subsetExperimentId = await new Experiment(trx).createCopy(parentExperimentId, name);
+      await new UserAccess(trx).createNewExperimentPermissions(userId, subsetExperimentId);
 
-    await new ExperimentParent(trx).create(
-      { experiment_id: subsetExperimentId, parent_experiment_id: parentExperimentId },
-    );
-  });
+      await new ExperimentParent(trx).create(
+        { experiment_id: subsetExperimentId, parent_experiment_id: parentExperimentId },
+      );
+    });
 
-  // Samples are not created here, we add them in handleResponse of SubsetSeurat
+    // Samples are not created here, we add them in handleResponse of SubsetSeurat
+    logger.log(`Created ${subsetExperimentId}, subsetting experiment ${parentExperimentId} to it`);
 
-  logger.log(`Created ${subsetExperimentId}, subsetting experiment ${parentExperimentId} to it`);
+    // Persist the subsetExperimentId instead of creating a new experiment one every time
+    stateMachineParams = {
+      ...stateMachineParams,
+      subsetExperimentId
+    };
+  }
 
   const {
     processingConfig: parentProcessingConfig,
