@@ -15,15 +15,16 @@ const runSubset = async (stateMachineParams, authorization) => {
     experimentId: parentExperimentId,
     name,
     userId,
-    subsetExperimentId, // Doesn't exist initially
   } = stateMachineParams;
+
+  // Doesn't exist initially
+  let { subsetExperimentId } = stateMachineParams;
 
   // Upon retrying the subset experiment id already exists,
   // and we don't want to create a new experiment
   if (!subsetExperimentId) {
     logger.log(`Creating experiment to subset ${parentExperimentId}`);
 
-    let subsetExperimentId;
     await sqlClient.get().transaction(async (trx) => {
       subsetExperimentId = await new Experiment(trx).createCopy(parentExperimentId, name);
       await new UserAccess(trx).createNewExperimentPermissions(userId, subsetExperimentId);
