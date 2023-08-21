@@ -88,11 +88,11 @@ describe('startSeuratPipeline', () => {
   });
 
   it('works correctly', async () => {
-    const mockStateMachineParams = {
+    const mockParams = {
       experimentId,
     };
 
-    await startSeuratPipeline(mockStateMachineParams, authJWT);
+    await startSeuratPipeline(mockParams, authJWT);
     expect(experimentInstance.findById).toHaveBeenCalledWith(experimentId);
     expect(sampleInstance.getSamples).toHaveBeenCalledWith(experimentId);
     expect(experimentExecutionInstance.updateExecution.mock.calls[0]).toMatchSnapshot();

@@ -1,8 +1,8 @@
 const { OK } = require('../../../utils/responses');
 
-const { runGem2s } = require('../../controllers/gem2sController');
-const { runSeurat } = require('../../controllers/seuratController');
-const { runSubset } = require('../../controllers/subsetController');
+const { runGem2s } = require('./gem2s');
+const { runSeurat } = require('./seurat');
+const { executeSubsetPipeline } = require('./subset');
 const {
   GEM2S_PROCESS_NAME, SEURAT_PROCESS_NAME, SUBSET_PROCESS_NAME,
 } = require('../../constants');
@@ -13,21 +13,15 @@ const getLogger = require('../../../utils/getLogger');
 const logger = getLogger();
 
 const stateMachineToPipeline = {
-  [SUBSET_PROCESS_NAME]: runSubset,
+  [SUBSET_PROCESS_NAME]: executeSubsetPipeline,
   [GEM2S_PROCESS_NAME]: runGem2s,
   [SEURAT_PROCESS_NAME]: runSeurat,
 };
 
-const getPipelineType = (stateMachineArn) => {
-  const processNames = [
-    SUBSET_PROCESS_NAME,
-    GEM2S_PROCESS_NAME,
-    SEURAT_PROCESS_NAME,
-  ];
-
-  // Check which processName the string stateMachineArn includes
-  return processNames.find((processName) => stateMachineArn.includes(processName));
-};
+const getPipelineType = (stateMachineArn) => Object.keys(stateMachineToPipeline)
+  .find(
+    (processName) => stateMachineArn.includes(processName),
+  );
 
 const retryExperiment = async (req, res) => {
   const { experimentId } = req.params;
@@ -36,8 +30,10 @@ const retryExperiment = async (req, res) => {
     retryParams,
     stateMachineArn,
   } = await new ExperimentExecution().findOne({ experiment_id: experimentId });
-  logger.log(`Previously called with ${JSON.stringify(retryParams)}`);
+
   const pipelineType = getPipelineType(stateMachineArn);
+
+  logger.log(`Previously called with ${JSON.stringify(retryParams)}`);
   logger.log(`Pipeline type is: ${pipelineType}`);
 
   // Retry the pipeline

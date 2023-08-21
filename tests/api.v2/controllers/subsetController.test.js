@@ -68,7 +68,7 @@ describe('subsetController', () => {
 
     await subsetController.handleSubsetRequest(mockReq, mockRes);
 
-    const mockStateMachineParams = {
+    const mockParams = {
       experimentId: parentExperimentId,
       name: mockReq.body.name,
       cellSetKeys: mockReq.body.cellSetKeys,
@@ -77,7 +77,7 @@ describe('subsetController', () => {
     };
 
     const mockNewExecution = {
-      stateMachine_arn: newExecution.stateMachineArn,
+      state_machine_arn: newExecution.stateMachineArn,
       execution_arn: newExecution.executionArn,
     };
 
@@ -85,7 +85,7 @@ describe('subsetController', () => {
       childExperimentId,
       GEM2S_PROCESS_NAME,
       mockNewExecution,
-      mockStateMachineParams,
+      mockParams,
     );
 
     expect(experimentParentInstance.create).toHaveBeenCalledWith({
@@ -97,7 +97,7 @@ describe('subsetController', () => {
 
     expect(pipelineConstruct.createSubsetPipeline)
       .toHaveBeenCalledWith(
-        mockStateMachineParams,
+        mockParams,
         childExperimentId,
         mockExperimentRow.processingConfig,
         mockReq.headers.authorization,

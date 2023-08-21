@@ -192,10 +192,10 @@ const generateGem2sTaskParams = async (experimentId, rawSamples, authJWT) => {
   };
 };
 
-const startGem2sPipeline = async (stateMachineParams, authJWT) => {
+const startGem2sPipeline = async (params, authJWT) => {
   logger.log('Creating GEM2S params...');
 
-  const { experimentId } = stateMachineParams;
+  const { experimentId } = params;
 
   const samples = await new Sample().getSamples(experimentId);
 
@@ -220,7 +220,7 @@ const startGem2sPipeline = async (stateMachineParams, authJWT) => {
     experimentId,
     GEM2S_PROCESS_NAME,
     newExecution,
-    stateMachineParams,
+    params,
   );
 
   await new ExperimentExecution().delete({
@@ -232,6 +232,26 @@ const startGem2sPipeline = async (stateMachineParams, authJWT) => {
 
   return newExecution;
 };
+
+// const runGem2s = async (params, authorization) => {
+//   const { experimentId } = params;
+
+//   logger.log(`Starting gem2s for experiment ${experimentId}`);
+//   logger.log(ExperimentParent);
+//   const { parentExperimentId = null } = await new ExperimentParent()
+//     .find({ experiment_id: experimentId })
+//     .first();
+//   if (parentExperimentId) {
+//     throw new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`);
+//   }
+
+//   logger.log(startGem2sPipeline);
+//   const newExecution = await startGem2sPipeline(params, authorization);
+
+//   logger.log(`Started gem2s for experiment ${experimentId} successfully, `);
+//   logger.log('New executions data:');
+//   logger.log(JSON.stringify(newExecution));
+// };
 
 const handleGem2sResponse = async (io, message) => {
   AWSXRay.getSegment().addMetadata('message', message);
@@ -264,6 +284,7 @@ const handleGem2sResponse = async (io, message) => {
 };
 
 module.exports = {
+  // runGem2s,
   startGem2sPipeline,
   handleGem2sResponse,
 };

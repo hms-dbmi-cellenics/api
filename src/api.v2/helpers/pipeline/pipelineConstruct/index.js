@@ -232,17 +232,17 @@ const createSeuratPipeline = async (experimentId, taskParams, authJWT) => {
 };
 
 const createSubsetPipeline = async (
-  stateMachineParams,
+  params,
   toExperimentId,
   parentProcessingConfig,
   authJWT,
 ) => {
-  const { experimentId: fromExperimentId, name: toExperimentName } = stateMachineParams;
+  const { experimentId: fromExperimentId, name: toExperimentName } = params;
 
   const stepsParams = {
     parentExperimentId: fromExperimentId,
     subsetExperimentId: toExperimentId,
-    cellSetKeys: stateMachineParams.cellSetKeys,
+    cellSetKeys: params.cellSetKeys,
     parentProcessingConfig,
   };
 

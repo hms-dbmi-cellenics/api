@@ -6,13 +6,15 @@ const gem2sController = require('../../../src/api.v2/controllers/gem2sController
 const { OK, MethodNotAllowedError } = require('../../../src/utils/responses');
 
 const gem2s = require('../../../src/api.v2/helpers/pipeline/gem2s');
+
 const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
 
 const experimentParentInstance = ExperimentParent();
 
 jest.mock('../../../src/api.v2/model/ExperimentParent');
-jest.mock('../../../src/api.v2/helpers/pipeline/gem2s');
 jest.mock('../../../src/utils/parseSNSMessage');
+jest.mock('../../../src/api.v2/helpers/pipeline/gem2s');
+
 
 const mockJsonSend = jest.fn();
 const mockRes = {
@@ -58,14 +60,14 @@ describe('gem2sController', () => {
       headers: { authorization: 'mockAuthorization' },
     };
 
-    const mockStateMachineParams = {
+    const mockParams = {
       experimentId,
     };
 
     await gem2sController.handleGem2sRequest(mockReq, mockRes);
 
     expect(gem2s.startGem2sPipeline).toHaveBeenCalledWith(
-      mockStateMachineParams, mockReq.headers.authorization,
+      mockParams, mockReq.headers.authorization,
     );
 
     // Response is ok
