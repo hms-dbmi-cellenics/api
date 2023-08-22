@@ -105,9 +105,13 @@ const continueToQC = async (payload) => {
 const setupSubsetSamples = async (payload) => {
   const { sampleIdMap, input: { parentExperimentId, subsetExperimentId } } = payload;
 
+  const o = await new Experiment().findById(parentExperimentId).first();
+
+  console.log(o);
+
   const {
     samplesOrder: parentSamplesOrder,
-  } = await new Experiment().findById(parentExperimentId).first();
+  } = o;
 
   const samplesToCloneIds = parentSamplesOrder.filter((id) => sampleIdMap[id]);
 

@@ -54,78 +54,6 @@ const mockExperiment = {
 };
 
 
-describe('startGem2sPipeline', () => {
-  const mockSamples = [{
-    id: 'fc68aefc-c3ca-467f-8589-f1dbaaac1c1e',
-    experimentId: '8e282f0d-aadb-8032-a334-982a371efd0f',
-    name: 'WT1',
-    sampleTechnology: '10x',
-    createdAt: '2022-05-10 15:41:10.057808+00',
-    updatedAt: '2022-05-10 15:41:10.057808+00',
-    metadata: { Track_1: 'N.A.' },
-    files: {
-      matrix10x: {
-        size: 5079737, s3Path: '68f74995-3689-401a-90e0-145e08049cd5', uploadStatus: 'uploaded', sampleFileType: 'matrix10x',
-      },
-      barcodes10x: {
-        size: 5331, s3Path: '37d9e601-9278-437c-a776-40fe94680833', uploadStatus: 'uploaded', sampleFileType: 'barcodes10x',
-      },
-      features10x: {
-        size: 279361, s3Path: '1ee00087-e98a-4390-a3cb-392a3f6d09d8', uploadStatus: 'uploaded', sampleFileType: 'features10x',
-      },
-    },
-  }];
-
-  const mockStateMachineArn = 'mockStateMachineArn';
-  const mockExecutionArn = 'mockExecutionArn';
-
-  beforeEach(() => {
-    experimentInstance.findById.mockClear();
-    sampleInstance.getSamples.mockClear();
-    experimentExecutionInstance.upsert.mockClear();
-    experimentExecutionInstance.delete.mockClear();
-    experimentParentInstance.isSubset.mockClear();
-    pipelineConstruct.createGem2SPipeline.mockClear();
-
-    experimentInstance.findById.mockReturnValueOnce({
-      first: jest.fn(() => Promise.resolve(mockExperiment)),
-    });
-
-    sampleInstance.getSamples.mockReturnValueOnce(Promise.resolve(mockSamples));
-    experimentParentInstance.isSubset.mockReturnValueOnce(Promise.resolve(false));
-    pipelineConstruct.createGem2SPipeline.mockReturnValueOnce(
-      { stateMachineArn: mockStateMachineArn, executionArn: mockExecutionArn },
-    );
-  });
-
-  it('works correctly', async () => {
-    const mockExecutionParams = {
-      experimentId,
-    };
-    await startGem2sPipeline(mockExecutionParams, authJWT);
-    expect(experimentInstance.findById).toHaveBeenCalledWith(experimentId);
-    expect(sampleInstance.getSamples).toHaveBeenCalledWith(experimentId);
-    expect(experimentExecutionInstance.updateExecution.mock.calls[0]).toMatchSnapshot();
-    expect(experimentExecutionInstance.delete.mock.calls[0]).toMatchSnapshot();
-    expect(pipelineConstruct.createGem2SPipeline.mock.calls[0]).toMatchSnapshot();
-  });
-
-  it('throws method not allowed if the experiment is a subset', async () => {
-    experimentParentInstance.find.mockReturnValueOnce(
-      { first: () => Promise.resolve({ parentExperimentId: 'mockParentExperimentId' }) },
-    );
-
-    const mockParams = {
-      experimentId,
-    };
-
-    await expect(runGem2s(mockParams, 'mockAuthorization')).rejects
-      .toThrow(
-        new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`),
-      );
-  });
-});
-
 describe('gem2sResponse', () => {
   const mockGetPipelineStatusResponse = {
     status: {
@@ -145,6 +73,7 @@ describe('gem2sResponse', () => {
     io.sockets = { emit: jest.fn() };
 
     experimentInstance.updateById.mockClear();
+    experimentInstance.findById.mockClear();
 
     pipelineConstruct.createQCPipeline.mockClear();
 
@@ -306,5 +235,77 @@ describe('gem2sResponse', () => {
 
     expect(sampleInstance.copyTo.mock.calls).toMatchSnapshot();
     expect(experimentInstance.updateById.mock.calls).toMatchSnapshot();
+  });
+});
+
+describe('startGem2sPipeline', () => {
+  const mockSamples = [{
+    id: 'fc68aefc-c3ca-467f-8589-f1dbaaac1c1e',
+    experimentId: '8e282f0d-aadb-8032-a334-982a371efd0f',
+    name: 'WT1',
+    sampleTechnology: '10x',
+    createdAt: '2022-05-10 15:41:10.057808+00',
+    updatedAt: '2022-05-10 15:41:10.057808+00',
+    metadata: { Track_1: 'N.A.' },
+    files: {
+      matrix10x: {
+        size: 5079737, s3Path: '68f74995-3689-401a-90e0-145e08049cd5', uploadStatus: 'uploaded', sampleFileType: 'matrix10x',
+      },
+      barcodes10x: {
+        size: 5331, s3Path: '37d9e601-9278-437c-a776-40fe94680833', uploadStatus: 'uploaded', sampleFileType: 'barcodes10x',
+      },
+      features10x: {
+        size: 279361, s3Path: '1ee00087-e98a-4390-a3cb-392a3f6d09d8', uploadStatus: 'uploaded', sampleFileType: 'features10x',
+      },
+    },
+  }];
+
+  const mockStateMachineArn = 'mockStateMachineArn';
+  const mockExecutionArn = 'mockExecutionArn';
+
+  beforeEach(() => {
+    experimentInstance.findById.mockClear();
+    sampleInstance.getSamples.mockClear();
+    experimentExecutionInstance.upsert.mockClear();
+    experimentExecutionInstance.delete.mockClear();
+    experimentParentInstance.isSubset.mockClear();
+    pipelineConstruct.createGem2SPipeline.mockClear();
+
+    experimentInstance.findById.mockReturnValueOnce({
+      first: jest.fn(() => Promise.resolve(mockExperiment)),
+    });
+
+    sampleInstance.getSamples.mockReturnValueOnce(Promise.resolve(mockSamples));
+    experimentParentInstance.isSubset.mockReturnValueOnce(Promise.resolve(false));
+    pipelineConstruct.createGem2SPipeline.mockReturnValueOnce(
+      { stateMachineArn: mockStateMachineArn, executionArn: mockExecutionArn },
+    );
+  });
+
+  it('works correctly', async () => {
+    const mockExecutionParams = {
+      experimentId,
+    };
+    await startGem2sPipeline(mockExecutionParams, authJWT);
+    expect(experimentInstance.findById).toHaveBeenCalledWith(experimentId);
+    expect(sampleInstance.getSamples).toHaveBeenCalledWith(experimentId);
+    expect(experimentExecutionInstance.updateExecution.mock.calls[0]).toMatchSnapshot();
+    expect(experimentExecutionInstance.delete.mock.calls[0]).toMatchSnapshot();
+    expect(pipelineConstruct.createGem2SPipeline.mock.calls[0]).toMatchSnapshot();
+  });
+
+  it('throws method not allowed if the experiment is a subset', async () => {
+    experimentParentInstance.find.mockReturnValueOnce(
+      { first: () => Promise.resolve({ parentExperimentId: 'mockParentExperimentId' }) },
+    );
+
+    const mockParams = {
+      experimentId,
+    };
+
+    await expect(runGem2s(mockParams, 'mockAuthorization')).rejects
+      .toThrow(
+        new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`),
+      );
   });
 });
