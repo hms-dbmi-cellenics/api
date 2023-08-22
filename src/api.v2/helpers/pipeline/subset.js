@@ -30,7 +30,7 @@ const createExperimentToSubset = async (parentExperimentId, userId, name) => {
 
 const executeSubsetPipeline = async (params, authorization) => {
   const {
-    parentExperimentId,
+    experimentId: parentExperimentId,
     subsetExperimentId,
   } = params;
 

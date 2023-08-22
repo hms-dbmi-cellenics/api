@@ -8,7 +8,7 @@ const { createGem2SPipeline, createQCPipeline } = require('./pipelineConstruct')
 const Sample = require('../../model/Sample');
 const Experiment = require('../../model/Experiment');
 const ExperimentExecution = require('../../model/ExperimentExecution');
-
+const ExperimentParent = require('../../model/ExperimentParent');
 const sendNotification = require('./hooks/sendNotification');
 const HookRunner = require('./hooks/HookRunner');
 
@@ -19,6 +19,8 @@ const { qcStepsWithFilterSettings } = require('./pipelineConstruct/qcHelpers');
 const { getGem2sParams, formatSamples } = require('./shouldGem2sRerun');
 const invalidatePlotsForEvent = require('../../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
 const events = require('../../../utils/plotConfigInvalidation/events');
+
+const { MethodNotAllowedError } = require('../../../utils/responses');
 
 const logger = getLogger('[Gem2sService] - ');
 
@@ -233,25 +235,23 @@ const startGem2sPipeline = async (params, authJWT) => {
   return newExecution;
 };
 
-// const runGem2s = async (params, authorization) => {
-//   const { experimentId } = params;
+const runGem2s = async (params, authorization) => {
+  const { experimentId } = params;
 
-//   logger.log(`Starting gem2s for experiment ${experimentId}`);
-//   logger.log(ExperimentParent);
-//   const { parentExperimentId = null } = await new ExperimentParent()
-//     .find({ experiment_id: experimentId })
-//     .first();
-//   if (parentExperimentId) {
-//     throw new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`);
-//   }
+  logger.log(`Starting gem2s for experiment ${experimentId}`);
+  const { parentExperimentId = null } = await new ExperimentParent()
+    .find({ experiment_id: experimentId })
+    .first();
+  if (parentExperimentId) {
+    throw new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`);
+  }
 
-//   logger.log(startGem2sPipeline);
-//   const newExecution = await startGem2sPipeline(params, authorization);
+  const newExecution = await startGem2sPipeline(params, authorization);
 
-//   logger.log(`Started gem2s for experiment ${experimentId} successfully, `);
-//   logger.log('New executions data:');
-//   logger.log(JSON.stringify(newExecution));
-// };
+  logger.log(`Started gem2s for experiment ${experimentId} successfully, `);
+  logger.log('New executions data:');
+  logger.log(JSON.stringify(newExecution));
+};
 
 const handleGem2sResponse = async (io, message) => {
   AWSXRay.getSegment().addMetadata('message', message);
@@ -284,7 +284,7 @@ const handleGem2sResponse = async (io, message) => {
 };
 
 module.exports = {
-  // runGem2s,
+  runGem2s,
   startGem2sPipeline,
   handleGem2sResponse,
 };

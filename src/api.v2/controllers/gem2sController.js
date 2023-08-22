@@ -1,8 +1,6 @@
 const AWSXRay = require('aws-xray-sdk');
 
-// const { runGem2s, handleGem2sResponse } = require('../helpers/pipeline/gem2s');
-const { handleGem2sResponse } = require('../helpers/pipeline/gem2s');
-const { runGem2s } = require('../helpers/pipeline/runGem2s');
+const { runGem2s, handleGem2sResponse } = require('../helpers/pipeline/gem2s');
 const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parseSNSMessage');

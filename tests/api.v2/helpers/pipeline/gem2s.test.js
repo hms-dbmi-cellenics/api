@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const io = require('socket.io-client');
 
-const { startGem2sPipeline, handleGem2sResponse } = require('../../../../src/api.v2/helpers/pipeline/gem2s');
+const { runGem2s, startGem2sPipeline, handleGem2sResponse } = require('../../../../src/api.v2/helpers/pipeline/gem2s');
 
 const Experiment = require('../../../../src/api.v2/model/Experiment');
 const Sample = require('../../../../src/api.v2/model/Sample');
@@ -16,6 +16,7 @@ const HookRunner = require('../../../../src/api.v2/helpers/pipeline/hooks/HookRu
 const validateRequest = require('../../../../src/utils/schema-validator');
 
 const constants = require('../../../../src/api.v2/constants');
+const { MethodNotAllowedError } = require('../../../../src/utils/responses');
 
 jest.mock('socket.io-client');
 
@@ -107,6 +108,21 @@ describe('startGem2sPipeline', () => {
     expect(experimentExecutionInstance.updateExecution.mock.calls[0]).toMatchSnapshot();
     expect(experimentExecutionInstance.delete.mock.calls[0]).toMatchSnapshot();
     expect(pipelineConstruct.createGem2SPipeline.mock.calls[0]).toMatchSnapshot();
+  });
+
+  it('throws method not allowed if the experiment is a subset', async () => {
+    experimentParentInstance.find.mockReturnValueOnce(
+      { first: () => Promise.resolve({ parentExperimentId: 'mockParentExperimentId' }) },
+    );
+
+    const mockParams = {
+      experimentId,
+    };
+
+    await expect(runGem2s(mockParams, 'mockAuthorization')).rejects
+      .toThrow(
+        new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`),
+      );
   });
 });
 

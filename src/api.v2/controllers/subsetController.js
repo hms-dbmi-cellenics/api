@@ -10,7 +10,7 @@ const handleSubsetRequest = async (req, res) => {
   const subsetExperimentId = await createExperimentToSubset(experimentId, userId, name);
 
   const params = {
-    parentExperimentId: experimentId,
+    experimentId,
     name,
     cellSetKeys,
     userId,
