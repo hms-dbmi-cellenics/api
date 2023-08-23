@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const AWSXRay = require('aws-xray-sdk');
 
 const constants = require('../../constants');
 const getPipelineStatus = require('./getPipelineStatus');
@@ -86,7 +85,6 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
   const { error = null } = message.response || {};
   if (error) {
     logger.log(`Error in ${constants.SEURAT_PROCESS_NAME} received`);
-    AWSXRay.getSegment().addError(error);
   }
 
   logger.log('Sending to all clients subscribed to experiment', experimentId);
@@ -168,8 +166,6 @@ const startSeuratPipeline = async (experimentId, authJWT) => {
 };
 
 const handleSeuratResponse = async (io, message) => {
-  AWSXRay.getSegment().addMetadata('message', message);
-
   // Fail hard if there was an error.
   await validateRequest(message, 'SeuratResponse.v2.yaml');
 

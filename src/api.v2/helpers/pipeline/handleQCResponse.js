@@ -1,6 +1,4 @@
 const _ = require('lodash');
-const AWSXRay = require('aws-xray-sdk');
-
 const validateRequest = require('../../../utils/schema-validator');
 const AWS = require('../../../utils/requireAWS');
 const getLogger = require('../../../utils/getLogger');
@@ -129,15 +127,12 @@ const sendUpdateToSubscribed = async (experimentId, message, output, error, io) 
   }
   if (error) {
     logger.log(`Error in ${constants.QC_PROCESS_NAME} received`);
-    AWSXRay.getSegment().addError(error);
   }
   logger.log('Sending to all clients subscribed to experiment', experimentId);
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
 
 const handleQCResponse = async (io, message) => {
-  AWSXRay.getSegment().addMetadata('message', message);
-
   await validateRequest(message, 'PipelineResponse.v2.yaml');
 
   await hookRunner.run(message, io);
