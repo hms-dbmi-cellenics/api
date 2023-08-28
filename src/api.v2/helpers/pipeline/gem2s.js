@@ -1,6 +1,4 @@
 const _ = require('lodash');
-const AWSXRay = require('aws-xray-sdk');
-
 const constants = require('../../constants');
 const getPipelineStatus = require('./getPipelineStatus');
 const { createGem2SPipeline, createQCPipeline } = require('./pipelineConstruct');
@@ -147,7 +145,6 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
   const { error = null } = message.response || {};
   if (error) {
     logger.log(`Error in ${constants.GEM2S_PROCESS_NAME} received`);
-    AWSXRay.getSegment().addError(error);
   }
 
   logger.log('Sending to all clients subscribed to experiment', experimentId);
@@ -234,7 +231,6 @@ const startGem2sPipeline = async (experimentId, authJWT) => {
 };
 
 const handleGem2sResponse = async (io, message) => {
-  AWSXRay.getSegment().addMetadata('message', message);
 
   // Fail hard if there was an error.
   await validateRequest(message, 'GEM2SResponse.v2.yaml');
