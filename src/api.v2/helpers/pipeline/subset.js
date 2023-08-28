@@ -28,10 +28,12 @@ const createExperimentToSubset = async (parentExperimentId, userId, name) => {
   return subsetExperimentId;
 };
 
-const executeSubsetPipeline = async (params, authorization) => {
+const startSubsetPipeline = async (params, authorization) => {
   const {
     experimentId: parentExperimentId,
+    name: toExperimentName,
     subsetExperimentId,
+    cellSetKeys,
   } = params;
 
   const {
@@ -39,8 +41,10 @@ const executeSubsetPipeline = async (params, authorization) => {
   } = await new Experiment().findById(parentExperimentId).first();
 
   const { stateMachineArn, executionArn } = await createSubsetPipeline(
-    params,
+    parentExperimentId,
     subsetExperimentId,
+    toExperimentName,
+    cellSetKeys,
     parentProcessingConfig,
     authorization,
   );
@@ -62,5 +66,5 @@ const executeSubsetPipeline = async (params, authorization) => {
 
 module.exports = {
   createExperimentToSubset,
-  executeSubsetPipeline,
+  startSubsetPipeline,
 };

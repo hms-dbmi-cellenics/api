@@ -2,7 +2,7 @@ const { OK } = require('../../../utils/responses');
 
 const { runGem2s } = require('./gem2s');
 const { runSeurat } = require('./seurat');
-const { executeSubsetPipeline } = require('./subset');
+const { startSubsetPipeline } = require('./subset');
 const {
   GEM2S_PROCESS_NAME, SEURAT_PROCESS_NAME, SUBSET_PROCESS_NAME,
 } = require('../../constants');
@@ -13,7 +13,7 @@ const getLogger = require('../../../utils/getLogger');
 const logger = getLogger();
 
 const stateMachineToPipeline = {
-  [SUBSET_PROCESS_NAME]: executeSubsetPipeline,
+  [SUBSET_PROCESS_NAME]: startSubsetPipeline,
   [GEM2S_PROCESS_NAME]: runGem2s,
   [SEURAT_PROCESS_NAME]: runSeurat,
 };

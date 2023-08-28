@@ -97,8 +97,10 @@ describe('subsetController', () => {
 
     expect(pipelineConstruct.createSubsetPipeline)
       .toHaveBeenCalledWith(
-        mockParams,
+        parentExperimentId,
         childExperimentId,
+        mockParams.name,
+        mockParams.cellSetKeys,
         mockExperimentRow.processingConfig,
         mockReq.headers.authorization,
       );

@@ -1,4 +1,4 @@
-const { createExperimentToSubset, executeSubsetPipeline } = require('../helpers/pipeline/subset');
+const { createExperimentToSubset, startSubsetPipeline } = require('../helpers/pipeline/subset');
 
 const handleSubsetRequest = async (req, res) => {
   const {
@@ -17,7 +17,7 @@ const handleSubsetRequest = async (req, res) => {
     subsetExperimentId,
   };
 
-  await executeSubsetPipeline(params, req.headers.authorization);
+  await startSubsetPipeline(params, req.headers.authorization);
   res.json(subsetExperimentId);
 };
 
