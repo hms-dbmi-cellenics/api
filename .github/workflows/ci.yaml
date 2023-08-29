@@ -70,7 +70,7 @@ jobs:
         name: Uncheck the integration checkbox
         uses: tzkhan/pr-update-action@v2
         with:
-          repo-token: "${{ secrets.API_TOKEN_GITHUB }}"
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
           head-branch-regex: "${{ github.head_ref }}"
           lowercase-branch: false
           body-template: ${{  steps.create-unchecked-pr-body.outputs.body }}
@@ -389,7 +389,7 @@ jobs:
           (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
         uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
         env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           source_file: '${{ steps.fill-metadata.outputs.deployment-name }}.yaml'
           destination_repo: '${{ github.repository_owner }}/releases'
@@ -411,7 +411,7 @@ jobs:
           (github.event_name == 'pull_request_target' || github.event_name == 'push') && matrix.environment == 'staging'
         uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
         env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           source_file: ${{ needs.build-docker.outputs.ref-id }}.yaml
           destination_repo: '${{ github.repository_owner }}/releases'
@@ -424,7 +424,7 @@ jobs:
         name: Temporarily disable admin enforcement
         uses: benjefferies/branch-protection-bot@master
         with:
-          access_token: ${{ secrets.API_TOKEN_GITHUB }}
+          access_token: ${{ secrets.GITHUB_TOKEN }}
           owner: ${{ github.repository_owner }}
           repo: iac
           enforce_admins: false
@@ -434,7 +434,7 @@ jobs:
           (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
         uses: cpina/github-action-push-to-another-repository@main
         env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           source-directory: 'src/sql/migrations'
           destination-github-username: '${{ github.repository_owner }}'
