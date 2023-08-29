@@ -5,7 +5,6 @@ const jwkToPem = require('jwk-to-pem');
 const promiseAny = require('promise.any');
 const fetch = require('node-fetch');
 
-const AWSXRay = require('aws-xray-sdk');
 
 const { promisify } = require('util');
 const jwtExpress = require('express-jwt');
@@ -131,7 +130,6 @@ const authenticationMiddlewareSocketIO = async (authHeader, ignoreExpiration = f
       issuer,
     },
   );
-  AWSXRay.getSegment().setUser(result.sub);
   return result;
 };
 
@@ -169,7 +167,6 @@ const authenticationMiddlewareExpress = async (app) => {
       // Get the issuer from the JWT claim.
       const { iss, sub } = payload;
 
-      AWSXRay.getSegment().setUser(sub);
 
       if (!iss.endsWith(poolId)) {
         done('Issuer does not correspond to the correct environment.');

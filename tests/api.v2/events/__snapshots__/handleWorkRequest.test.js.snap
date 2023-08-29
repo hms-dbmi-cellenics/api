@@ -12,7 +12,6 @@ Array [
     "response": Object {
       "cacheable": false,
       "error": "fail",
-      "trace": undefined,
     },
     "results": Array [],
   },
@@ -40,7 +39,6 @@ Array [
     "response": Object {
       "cacheable": false,
       "error": "Authentication token must be present.",
-      "trace": undefined,
     },
     "results": Array [],
   },
@@ -53,7 +51,6 @@ Array [
   Object {
     "response": Object {
       "podInfo": undefined,
-      "trace": undefined,
     },
   },
 ]

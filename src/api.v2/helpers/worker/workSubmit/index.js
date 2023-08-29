@@ -1,6 +1,5 @@
 
 const crypto = require('crypto');
-const AWSXRay = require('aws-xray-sdk');
 const AWS = require('../../../../utils/requireAWS');
 const createWorkerResources = require('./createWorkerK8s');
 const config = require('../../../../config');
@@ -123,7 +122,6 @@ class WorkSubmitService {
 
     const podInfo = result[0];
 
-    AWSXRay.getSegment().addAnnotation('result', 'success-worker');
     return podInfo;
   }
 }
