@@ -146,7 +146,7 @@ jobs:
   build-docker:
     name: Build Docker container
     runs-on: ubuntu-20.04
-    needs: [test, is-safe-to-run]
+    needs: [is-safe-to-run]
     outputs:
       ref-id: ${{ steps.ref.outputs.ref-id }}
       image-tag: ${{ steps.ref.outputs.image-tag }}
