@@ -8,6 +8,7 @@ const { OK } = require('../../../src/utils/responses');
 const gem2sController = require('../../../src/api.v2/controllers/gem2sController');
 
 jest.mock('../../../src/api.v2/controllers/gem2sController', () => ({
+  handleGem2sRequest: jest.fn(),
   runGem2s: jest.fn(),
   handleResponse: jest.fn(),
 }));
@@ -31,7 +32,7 @@ describe('tests for gem2s route', () => {
   });
 
   it('Creating a new gem2s run results in a successful response', async (done) => {
-    gem2sController.runGem2s.mockImplementationOnce((req, res) => {
+    gem2sController.handleGem2sRequest.mockImplementationOnce((req, res) => {
       res.json(OK());
       return Promise.resolve();
     });

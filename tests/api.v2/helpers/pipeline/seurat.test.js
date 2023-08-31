@@ -57,7 +57,7 @@ describe('startSeuratPipeline', () => {
     sampleTechnology: 'seurat',
     createdAt: '2022-05-10 15:41:10.057808+00',
     updatedAt: '2022-05-10 15:41:10.057808+00',
-    metadata: { },
+    metadata: {},
     files: {
       seurat: {
         size: 5079737, s3Path: '68f74995-3689-401a-90e0-145e08049cd5', uploadStatus: 'uploaded', sampleFileType: 'seurat',
@@ -88,10 +88,14 @@ describe('startSeuratPipeline', () => {
   });
 
   it('works correctly', async () => {
-    await startSeuratPipeline(experimentId, authJWT);
+    const mockParams = {
+      experimentId,
+    };
+
+    await startSeuratPipeline(mockParams, authJWT);
     expect(experimentInstance.findById).toHaveBeenCalledWith(experimentId);
     expect(sampleInstance.getSamples).toHaveBeenCalledWith(experimentId);
-    expect(experimentExecutionInstance.upsert.mock.calls[0]).toMatchSnapshot();
+    expect(experimentExecutionInstance.updateExecution.mock.calls[0]).toMatchSnapshot();
     expect(experimentExecutionInstance.delete.mock.calls[0]).toMatchSnapshot();
     expect(pipelineConstruct.createSeuratPipeline.mock.calls[0]).toMatchSnapshot();
   });

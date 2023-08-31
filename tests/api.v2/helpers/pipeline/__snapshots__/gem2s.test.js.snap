@@ -391,10 +391,8 @@ Array [
 
 exports[`startGem2sPipeline works correctly 1`] = `
 Array [
-  Object {
-    "experiment_id": "mockExperimentId",
-    "pipeline_type": "gem2s",
-  },
+  "mockExperimentId",
+  "gem2s",
   Object {
     "execution_arn": "mockExecutionArn",
     "last_pipeline_params": Object {
@@ -415,6 +413,9 @@ Array [
       "sampleTechnology": "10x",
     },
     "state_machine_arn": "mockStateMachineArn",
+  },
+  Object {
+    "experimentId": "mockExperimentId",
   },
 ]
 `;

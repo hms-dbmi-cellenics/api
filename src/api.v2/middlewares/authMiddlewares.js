@@ -165,7 +165,7 @@ const authenticationMiddlewareExpress = async (app) => {
       // key ID that was used to sign the JWT
       const { kid } = JSON.parse(Buffer.from(jwtHeaderRaw, 'base64').toString('ascii'));
       // Get the issuer from the JWT claim.
-      const { iss, sub } = payload;
+      const { iss } = payload;
 
 
       if (!iss.endsWith(poolId)) {

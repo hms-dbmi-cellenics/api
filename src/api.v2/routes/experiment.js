@@ -7,6 +7,8 @@ const {
   getBackendStatus, downloadData,
 } = require('../controllers/experimentController');
 
+const { retryExperiment } = require('../helpers/pipeline/retryExperiment');
+
 const { expressAuthenticationOnlyMiddleware, expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
 
 module.exports = {
@@ -57,5 +59,9 @@ module.exports = {
   'experiment#clone': [
     expressAuthorizationMiddleware,
     (req, res, next) => cloneExperiment(req, res).catch(next),
+  ],
+  'experiment#retry': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => retryExperiment(req, res).catch(next),
   ],
 };

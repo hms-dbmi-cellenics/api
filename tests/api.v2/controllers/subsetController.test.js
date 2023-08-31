@@ -66,17 +66,26 @@ describe('subsetController', () => {
       () => Promise.resolve(newExecution),
     );
 
-    await subsetController.runSubset(mockReq, mockRes);
+    await subsetController.handleSubsetRequest(mockReq, mockRes);
 
-    expect(experimentExecutionInstance.upsert).toHaveBeenCalledWith(
-      {
-        experiment_id: childExperimentId,
-        pipeline_type: GEM2S_PROCESS_NAME,
-      },
-      {
-        state_machine_arn: newExecution.stateMachineArn,
-        execution_arn: newExecution.executionArn,
-      },
+    const mockParams = {
+      experimentId: parentExperimentId,
+      name: mockReq.body.name,
+      cellSetKeys: mockReq.body.cellSetKeys,
+      userId: mockReq.user.sub,
+      subsetExperimentId: childExperimentId,
+    };
+
+    const mockNewExecution = {
+      state_machine_arn: newExecution.stateMachineArn,
+      execution_arn: newExecution.executionArn,
+    };
+
+    expect(experimentExecutionInstance.updateExecution).toHaveBeenCalledWith(
+      childExperimentId,
+      GEM2S_PROCESS_NAME,
+      mockNewExecution,
+      mockParams,
     );
 
     expect(experimentParentInstance.create).toHaveBeenCalledWith({
@@ -90,8 +99,8 @@ describe('subsetController', () => {
       .toHaveBeenCalledWith(
         parentExperimentId,
         childExperimentId,
-        mockReq.body.name,
-        mockReq.body.cellSetKeys,
+        mockParams.name,
+        mockParams.cellSetKeys,
         mockExperimentRow.processingConfig,
         mockReq.headers.authorization,
       );

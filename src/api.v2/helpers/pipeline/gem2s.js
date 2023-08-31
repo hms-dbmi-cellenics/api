@@ -1,12 +1,13 @@
 const _ = require('lodash');
-const constants = require('../../constants');
+
+const { GEM2S_PROCESS_NAME, QC_PROCESS_NAME } = require('../../constants');
 const getPipelineStatus = require('./getPipelineStatus');
 const { createGem2SPipeline, createQCPipeline } = require('./pipelineConstruct');
 
 const Sample = require('../../model/Sample');
 const Experiment = require('../../model/Experiment');
 const ExperimentExecution = require('../../model/ExperimentExecution');
-
+const ExperimentParent = require('../../model/ExperimentParent');
 const sendNotification = require('./hooks/sendNotification');
 const HookRunner = require('./hooks/HookRunner');
 
@@ -17,6 +18,8 @@ const { qcStepsWithFilterSettings } = require('./pipelineConstruct/qcHelpers');
 const { getGem2sParams, formatSamples } = require('./shouldGem2sRerun');
 const invalidatePlotsForEvent = require('../../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
 const events = require('../../../utils/plotConfigInvalidation/events');
+
+const { MethodNotAllowedError } = require('../../../utils/responses');
 
 const logger = getLogger('[Gem2sService] - ');
 
@@ -133,18 +136,18 @@ hookRunner.register('copyS3Objects', [invalidatePlotsForExperiment]);
 hookRunner.registerAll([sendNotification]);
 
 const sendUpdateToSubscribed = async (experimentId, message, io) => {
-  const statusRes = await getPipelineStatus(experimentId, constants.GEM2S_PROCESS_NAME);
+  const statusRes = await getPipelineStatus(experimentId, GEM2S_PROCESS_NAME);
 
   // Concatenate into a proper response.
   const response = {
     ...message,
     status: statusRes,
-    type: constants.GEM2S_PROCESS_NAME,
+    type: GEM2S_PROCESS_NAME,
   };
 
   const { error = null } = message.response || {};
   if (error) {
-    logger.log(`Error in ${constants.GEM2S_PROCESS_NAME} received`);
+    logger.log(`Error in ${GEM2S_PROCESS_NAME} received`);
   }
 
   logger.log('Sending to all clients subscribed to experiment', experimentId);
@@ -189,8 +192,10 @@ const generateGem2sTaskParams = async (experimentId, rawSamples, authJWT) => {
   };
 };
 
-const startGem2sPipeline = async (experimentId, authJWT) => {
+const startGem2sPipeline = async (params, authJWT) => {
   logger.log('Creating GEM2S params...');
+
+  const { experimentId } = params;
 
   const samples = await new Sample().getSamples(experimentId);
 
@@ -210,19 +215,17 @@ const startGem2sPipeline = async (experimentId, authJWT) => {
     execution_arn: executionArn,
   };
 
-  const experimentExecutionClient = new ExperimentExecution();
-
-  await experimentExecutionClient.upsert(
-    {
-      experiment_id: experimentId,
-      pipeline_type: 'gem2s',
-    },
+  // Save new execution
+  await new ExperimentExecution().updateExecution(
+    experimentId,
+    GEM2S_PROCESS_NAME,
     newExecution,
+    params,
   );
 
-  await experimentExecutionClient.delete({
+  await new ExperimentExecution().delete({
     experiment_id: experimentId,
-    pipeline_type: 'qc',
+    pipeline_type: QC_PROCESS_NAME,
   });
 
   logger.log('GEM2S params saved.');
@@ -230,8 +233,25 @@ const startGem2sPipeline = async (experimentId, authJWT) => {
   return newExecution;
 };
 
-const handleGem2sResponse = async (io, message) => {
+const runGem2s = async (params, authorization) => {
+  const { experimentId } = params;
 
+  logger.log(`Starting gem2s for experiment ${experimentId}`);
+  const { parentExperimentId = null } = await new ExperimentParent()
+    .find({ experiment_id: experimentId })
+    .first();
+  if (parentExperimentId) {
+    throw new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`);
+  }
+
+  const newExecution = await startGem2sPipeline(params, authorization);
+
+  logger.log(`Started gem2s for experiment ${experimentId} successfully, `);
+  logger.log('New executions data:');
+  logger.log(JSON.stringify(newExecution));
+};
+
+const handleGem2sResponse = async (io, message) => {
   // Fail hard if there was an error.
   await validateRequest(message, 'GEM2SResponse.v2.yaml');
 
@@ -260,6 +280,7 @@ const handleGem2sResponse = async (io, message) => {
 };
 
 module.exports = {
+  runGem2s,
   startGem2sPipeline,
   handleGem2sResponse,
 };

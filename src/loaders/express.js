@@ -3,7 +3,6 @@ const cors = require('cors');
 const path = require('path');
 const OpenApiValidator = require('express-openapi-validator');
 const http = require('http');
-const _ = require('lodash');
 const config = require('../config');
 const { authenticationMiddlewareExpress, checkAuthExpiredMiddleware } = require('../api.v2/middlewares/authMiddlewares');
 

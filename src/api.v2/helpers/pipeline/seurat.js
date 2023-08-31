@@ -1,6 +1,5 @@
 const _ = require('lodash');
 
-const constants = require('../../constants');
 const getPipelineStatus = require('./getPipelineStatus');
 const { createSeuratPipeline } = require('./pipelineConstruct');
 
@@ -18,7 +17,12 @@ const { getGem2sParams, formatSamples } = require('./shouldGem2sRerun');
 
 const logger = getLogger('[SeuratService] - ');
 
+const { SEURAT_PROCESS_NAME } = require('../../constants');
+
 const hookRunner = new HookRunner();
+
+const ExperimentParent = require('../../model/ExperimentParent');
+const { MethodNotAllowedError } = require('../../../utils/responses');
 
 const updateProcessingConfig = async (payload) => {
   const { experimentId, item } = payload;
@@ -73,18 +77,18 @@ hookRunner.register('uploadSeuratToAWS', [
 hookRunner.registerAll([sendNotification]);
 
 const sendUpdateToSubscribed = async (experimentId, message, io) => {
-  const statusRes = await getPipelineStatus(experimentId, constants.SEURAT_PROCESS_NAME);
+  const statusRes = await getPipelineStatus(experimentId, SEURAT_PROCESS_NAME);
 
   // Concatenate into a proper response.
   const response = {
     ...message,
     status: statusRes,
-    type: constants.SEURAT_PROCESS_NAME,
+    type: SEURAT_PROCESS_NAME,
   };
 
   const { error = null } = message.response || {};
   if (error) {
-    logger.log(`Error in ${constants.SEURAT_PROCESS_NAME} received`);
+    logger.log(`Error in ${SEURAT_PROCESS_NAME} received`);
   }
 
   logger.log('Sending to all clients subscribed to experiment', experimentId);
@@ -129,9 +133,9 @@ const generateSeuratTaskParams = async (experimentId, rawSamples, authJWT) => {
   };
 };
 
-const startSeuratPipeline = async (experimentId, authJWT) => {
+const startSeuratPipeline = async (params, authJWT) => {
   logger.log('Creating SEURAT params...');
-
+  const { experimentId } = params;
   const samples = await new Sample().getSamples(experimentId);
 
   const currentSeuratParams = await getGem2sParams(experimentId, samples);
@@ -150,16 +154,13 @@ const startSeuratPipeline = async (experimentId, authJWT) => {
     execution_arn: executionArn,
   };
 
-  const experimentExecutionClient = new ExperimentExecution();
-
-  await experimentExecutionClient.upsert(
-    {
-      experiment_id: experimentId,
-      pipeline_type: 'seurat',
-    },
+  // Save execution params
+  await new ExperimentExecution().updateExecution(
+    experimentId,
+    SEURAT_PROCESS_NAME,
     newExecution,
+    params,
   );
-
   logger.log('SEURAT params saved.');
 
   return newExecution;
@@ -182,7 +183,28 @@ const handleSeuratResponse = async (io, message) => {
   await sendUpdateToSubscribed(experimentId, messageForClient, io);
 };
 
+const runSeurat = async (params, authorization) => {
+  const { experimentId } = params;
+
+  logger.log(`Starting seurat for experiment ${experimentId}`);
+
+  const { parentExperimentId = null } = await new ExperimentParent()
+    .find({ experiment_id: experimentId })
+    .first();
+
+  if (parentExperimentId) {
+    throw new MethodNotAllowedError(`Experiment ${experimentId} can't run seurat`);
+  }
+
+  const newExecution = await startSeuratPipeline(params, authorization);
+
+  logger.log(`Started seurat for experiment ${experimentId} successfully, `);
+  logger.log('New executions data:');
+  logger.log(JSON.stringify(newExecution));
+};
+
 module.exports = {
+  runSeurat,
   startSeuratPipeline,
   handleSeuratResponse,
 };
