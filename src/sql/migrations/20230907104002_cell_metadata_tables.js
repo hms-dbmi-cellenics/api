@@ -44,23 +44,27 @@ const getTriggerFunction = (dbEnv, key, bucketName) => {
   return body;
 };
 
+const nativeEnum = (table, tableName) => (
+  table.enu(tableName, null, { useNative: true, existingType: true, enumName: tableName })
+);
+
 const createDeleteCellMetadataTriggerFunc = (env) => {
   const body = getTriggerFunction(env, 'id', CELL_METADATA);
 
   const template = `
-      CREATE OR REPLACE FUNCTION public.delete_file_from_s3_after_cell_metadata_delete()
-        RETURNS trigger
-        LANGUAGE plpgsql
-      AS $function$
-      BEGIN
-        ${body}
-        return OLD;
-      END;
-      $function$;
+    CREATE OR REPLACE FUNCTION public.delete_file_from_s3_after_cell_metadata_delete()
+      RETURNS trigger
+      LANGUAGE plpgsql
+    AS $function$
+    BEGIN
+      ${body}
+      return OLD;
+    END;
+    $function$;
 
-      CREATE TRIGGER delete_file_from_s3_after_cell_metadata_delete_trigger
-      AFTER DELETE ON plot
-      FOR EACH ROW EXECUTE FUNCTION public.delete_file_from_s3_after_cell_metadata_delete();
+    CREATE TRIGGER delete_file_from_s3_after_cell_metadata_delete_trigger
+    AFTER DELETE ON cell_metadata_file
+    FOR EACH ROW EXECUTE FUNCTION public.delete_file_from_s3_after_cell_metadata_delete();
     `;
 
   return template;
@@ -70,29 +74,34 @@ exports.up = async (knex) => {
   await knex.schema.createTable('cell_metadata_file', (table) => {
     table.uuid('id').primary();
     table.string('name', 255).notNullable();
-    table.enum('upload_status', ['PENDING', 'IN_PROGRESS', 'COMPLETED', 'FAILED']).defaultTo('PENDING');
+    nativeEnum(table, 'upload_status').notNullable();
     table.timestamp('created_at').defaultTo(knex.fn.now());
-  })
-    .then(() => knex.schema.createTable('cell_metadata_file_to_experiment', (table) => {
-      table.uuid('experiment_id')
-        .references('id')
-        .inTable('experiment')
-        .onDelete('CASCADE')
-        .onUpdate('CASCADE');
-      table.uuid('cell_metadata_file_id')
-        .references('id')
-        .inTable('cell_metadata_file')
-        .onDelete('CASCADE')
-        .onUpdate('CASCADE');
-    }))
-    .then(() => knex.raw(defineDeleteCellMetadataFileIfOrphanFunc))
-    .then(() => knex.raw(createDeleteCellMetadataFileIfOrphanTrigger));
-
+  });
+  await knex.schema.createTable('cell_metadata_file_to_experiment', (table) => {
+    table.uuid('experiment_id')
+      .references('id')
+      .inTable('experiment')
+      .onDelete('CASCADE');
+    table.uuid('cell_metadata_file_id')
+      .references('id')
+      .inTable('cell_metadata_file')
+      .onDelete('CASCADE');
+    table.primary(['experiment_id', 'cell_metadata_file_id']);
+  });
+  await knex.raw(defineDeleteCellMetadataFileIfOrphanFunc);
+  await knex.raw(createDeleteCellMetadataFileIfOrphanTrigger);
   await knex.raw(createDeleteCellMetadataTriggerFunc(process.env.NODE_ENV));
 };
 
 exports.down = async (knex) => {
   // Drop the tables in reverse order to avoid foreign key constraints
-  await knex.schema.dropTableIfExists('cell_metadata_file_to_experiment')
-    .then(() => knex.schema.dropTableIfExists('cell_metadata_file'));
+  await knex.schema.dropTableIfExists('cell_metadata_file_to_experiment');
+  await knex.schema.dropTableIfExists('cell_metadata_file');
+  await knex.raw(`
+    DROP TRIGGER IF EXISTS delete_file_from_s3_after_cell_metadata_delete_trigger ON cell_metadata_file;
+    DROP FUNCTION IF EXISTS public.delete_file_from_s3_after_cell_metadata_delete;
+
+    DROP TRIGGER IF EXISTS delete_cell_metadata_file_if_orphan_trigger ON cell_metadata_file;
+    DROP FUNCTION IF EXISTS public.delete_cell_metadata_file_if_orphan;
+  `);
 };
