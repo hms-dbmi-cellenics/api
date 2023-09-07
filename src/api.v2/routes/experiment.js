@@ -4,7 +4,7 @@ const {
   cloneExperiment,
   getProcessingConfig, updateProcessingConfig,
   updateSamplePosition,
-  getBackendStatus, downloadData,
+  getBackendStatus, downloadData, handleETagRequest,
 } = require('../controllers/experimentController');
 
 const { retryExperiment } = require('../helpers/pipeline/retryExperiment');
@@ -63,5 +63,9 @@ module.exports = {
   'experiment#retry': [
     expressAuthorizationMiddleware,
     (req, res, next) => retryExperiment(req, res).catch(next),
+  ],
+  'experiment#generateEtag': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => handleETagRequest(req, res).catch(next),
   ],
 };

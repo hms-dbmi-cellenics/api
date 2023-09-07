@@ -1768,6 +1768,46 @@ paths:
               schema:
                 $ref: "#/components/schemas/HTTPError"
 
+  /experiments/{experimentId}/ETag:
+    post:
+      summary: Generate ETag according to the work body
+      description: Download data according to the requested type
+      operationId: downloadExperimentData
+      x-eov-operation-id: experiment#generateEtag
+      x-eov-operation-handler: routes/experiment
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+    requestBody:
+      description: "Request body"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              workBody:
+                type: object
+                description: The work body object
+                properties: {}
+              extraDependencies:
+                type: object
+                description: The extra dependencies object
+                properties: {}
+
+      responses:
+        "200":
+          description: ETag successfully generated.
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Generated ETag
+
   "/experiments/{experimentId}/plots/{plotUuid}":
     parameters:
       - schema:
