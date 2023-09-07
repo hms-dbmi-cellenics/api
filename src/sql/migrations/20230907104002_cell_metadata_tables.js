@@ -1,3 +1,7 @@
+const {
+  CELL_METADATA,
+} = require('../../config/bucketNames');
+
 const defineDeleteCellMetadataFileIfOrphanFunc = `
   CREATE OR REPLACE FUNCTION delete_cell_metadata_file_if_orphan()
     RETURNS trigger AS $$
@@ -21,6 +25,47 @@ const createDeleteCellMetadataFileIfOrphanTrigger = `
   EXECUTE FUNCTION delete_cell_metadata_file_if_orphan();
 `;
 
+const getTriggerFunction = (dbEnv, key, bucketName) => {
+  let body = '';
+  const triggerLambdaARN = `arn:aws:lambda:${process.env.AWS_REGION}:${process.env.AWS_ACCOUNT_ID}:function:delete-s3-file-lambda-${dbEnv}`;
+
+  // Removing the environment and account id from the bucket name.
+  // When making a migration, the environment would be development,
+  // due to the fact that the migration is ran locally,
+  // so we need to add the environment and accountID in the lambda itself
+  const rawBucketName = bucketName.split('-').slice(0, -2).join('-');
+
+  // We skip creation of the triggers and functions in development
+  // because it requires aws_commons and aws_lambda modules which are proprietary.
+  if (['production', 'staging'].includes(dbEnv)) {
+    body = `PERFORM aws_lambda.invoke('${triggerLambdaARN}', json_build_object('key',OLD.${key}, 'bucketName', '${rawBucketName}'), '${process.env.AWS_REGION}', 'Event');`;
+  }
+
+  return body;
+};
+
+const createDeleteCellMetadataTriggerFunc = (env) => {
+  const body = getTriggerFunction(env, 'id', CELL_METADATA);
+
+  const template = `
+      CREATE OR REPLACE FUNCTION public.delete_file_from_s3_after_cell_metadata_delete()
+        RETURNS trigger
+        LANGUAGE plpgsql
+      AS $function$
+      BEGIN
+        ${body}
+        return OLD;
+      END;
+      $function$;
+
+      CREATE TRIGGER delete_file_from_s3_after_cell_metadata_delete_trigger
+      AFTER DELETE ON plot
+      FOR EACH ROW EXECUTE FUNCTION public.delete_file_from_s3_after_cell_metadata_delete();
+    `;
+
+  return template;
+};
+
 exports.up = async (knex) => {
   await knex.schema.createTable('cell_metadata_file', (table) => {
     table.uuid('id').primary();
@@ -42,6 +87,8 @@ exports.up = async (knex) => {
     }))
     .then(() => knex.raw(defineDeleteCellMetadataFileIfOrphanFunc))
     .then(() => knex.raw(createDeleteCellMetadataFileIfOrphanTrigger));
+
+  await knex.raw(createDeleteCellMetadataTriggerFunc(process.env.NODE_ENV));
 };
 
 exports.down = async (knex) => {
