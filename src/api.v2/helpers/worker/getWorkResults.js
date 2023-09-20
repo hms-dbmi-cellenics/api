@@ -1,3 +1,4 @@
+const generateETag = require('./generateETag');
 const { WORKER_RESULTS } = require('../../../config/bucketNames');
 
 const AWS = require('../../../utils/requireAWS');
@@ -42,7 +43,7 @@ const validateTagMatching = async (experimentId, params) => {
   }
 };
 
-const getWorkResults = async (experimentId, ETag) => {
+const tryFetchFromS3 = async (experimentId, ETag) => {
   logger.log(`Getting worker result for experiment: ${experimentId}, Etag: ${ETag}`);
 
   const params = {
@@ -53,8 +54,39 @@ const getWorkResults = async (experimentId, ETag) => {
   await validateTagMatching(experimentId, params);
   logger.log(`Found worker results for experiment: ${experimentId}, Etag: ${ETag}`);
 
-  const signedUrl = await getSignedUrl('getObject', params);
-  return { signedUrl };
+  return getSignedUrl('getObject', params);
 };
 
-module.exports = getWorkResults;
+const getWorkResults = async (
+  experimentId,
+  body,
+  extras,
+  extraDependencies,
+  disableCache,
+) => {
+  const ETag = await generateETag(
+    experimentId,
+    body,
+    extras,
+    extraDependencies,
+    disableCache,
+  );
+
+  logger.log(`Getting worker result for experiment: ${experimentId}, Etag: ${ETag}`);
+
+  const params = {
+    Bucket: WORKER_RESULTS,
+    Key: ETag,
+  };
+
+  await validateTagMatching(experimentId, params);
+  logger.log(`Found worker results for experiment: ${experimentId}, Etag: ${ETag}`);
+
+  const signedUrl = await tryFetchFromS3(experimentId, ETag);
+  return { ETag, signedUrl };
+};
+
+module.exports = {
+  getWorkResults,
+  tryFetchFromS3,
+};
