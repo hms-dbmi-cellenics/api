@@ -3,7 +3,6 @@ const validateAndSubmitWork = require('../../../src/api.v2/events/validateAndSub
 const fake = require('../../test-utils/constants');
 
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
-jest.mock('aws-xray-sdk');
 
 jest.mock('../../../src/api.v2/events/validateAndSubmitWork', () => jest.fn());
 
@@ -11,11 +10,11 @@ const data = {
   uuid: 'someuuid-asd-asd-asdddasa',
   Authorization: 'Bearer some-token',
   experimentId: fake.EXPERIMENT_ID,
+  ETag: 'etag-of-the-work-request',
 };
 
 describe('Handle work socket callback', () => {
   const mockSocket = { emit: jest.fn() };
-  const mockXraySegment = { addError: jest.fn() };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -24,7 +23,7 @@ describe('Handle work socket callback', () => {
   it('submits work', async () => {
     validateAndSubmitWork.mockImplementation(() => Promise.resolve());
 
-    await handleWorkRequest(mockSocket, data, mockXraySegment);
+    await handleWorkRequest(mockSocket, data);
     expect(mockSocket.emit.mock.calls[0]).toMatchSnapshot();
     expect(validateAndSubmitWork.mock.calls[0]).toMatchSnapshot();
   });
@@ -32,15 +31,14 @@ describe('Handle work socket callback', () => {
   it('If the worker fails, the API emits a work-response with error', async () => {
     validateAndSubmitWork.mockImplementation(() => Promise.reject({ message: 'fail' }));
 
-    await handleWorkRequest(mockSocket, data, mockXraySegment);
+    await handleWorkRequest(mockSocket, data);
     expect(mockSocket.emit.mock.calls[0]).toMatchSnapshot();
-    expect(mockXraySegment.addError).toHaveBeenCalled();
     expect(validateAndSubmitWork.mock.calls[0]).toMatchSnapshot();
   });
 
   it('data without authorization also throws an error', async () => {
     delete data.Authorization;
-    await handleWorkRequest(mockSocket, data, mockXraySegment);
+    await handleWorkRequest(mockSocket, data);
     expect(mockSocket.emit.mock.calls[0]).toMatchSnapshot();
   });
 });

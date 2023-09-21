@@ -5,7 +5,7 @@ const tableNames = require('./tableNames');
 
 const selectableProps = [
   'experiment_id', 'pipeline_type', 'state_machine_arn', 'execution_arn',
-  'last_status_response', 'last_pipeline_params',
+  'last_status_response', 'last_pipeline_params', 'retry_params',
 ];
 
 class ExperimentExecution extends BasicModel {
@@ -25,6 +25,7 @@ class ExperimentExecution extends BasicModel {
         'execution_arn',
         'last_status_response',
         'last_pipeline_params',
+        'retry_params',
       ])
       .where({ experiment_id: fromExperimentId });
 
@@ -55,6 +56,21 @@ class ExperimentExecution extends BasicModel {
     });
 
     await sql(tableNames.EXPERIMENT_EXECUTION).insert(copyRows);
+  }
+
+  async updateExecution(experimentId, pipelineType, newExecution, retryParams) {
+    const rowData = {
+      ...newExecution,
+      retry_params: retryParams,
+    };
+
+    await this.upsert(
+      {
+        experiment_id: experimentId,
+        pipeline_type: pipelineType,
+      },
+      rowData,
+    );
   }
 }
 

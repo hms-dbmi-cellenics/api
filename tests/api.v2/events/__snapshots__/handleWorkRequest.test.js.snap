@@ -2,17 +2,17 @@
 
 exports[`Handle work socket callback If the worker fails, the API emits a work-response with error 1`] = `
 Array [
-  "WorkResponse-someuuid-asd-asd-asdddasa",
+  "WorkResponse-etag-of-the-work-request",
   Object {
     "request": Object {
       "Authorization": "Bearer some-token",
+      "ETag": "etag-of-the-work-request",
       "experimentId": "experi-mentid-11111111-1111111-11111",
       "uuid": "someuuid-asd-asd-asdddasa",
     },
     "response": Object {
       "cacheable": false,
       "error": "fail",
-      "trace": undefined,
     },
     "results": Array [],
   },
@@ -23,6 +23,7 @@ exports[`Handle work socket callback If the worker fails, the API emits a work-r
 Array [
   Object {
     "Authorization": "Bearer some-token",
+    "ETag": "etag-of-the-work-request",
     "experimentId": "experi-mentid-11111111-1111111-11111",
     "uuid": "someuuid-asd-asd-asdddasa",
   },
@@ -31,16 +32,16 @@ Array [
 
 exports[`Handle work socket callback data without authorization also throws an error 1`] = `
 Array [
-  "WorkResponse-someuuid-asd-asd-asdddasa",
+  "WorkResponse-etag-of-the-work-request",
   Object {
     "request": Object {
+      "ETag": "etag-of-the-work-request",
       "experimentId": "experi-mentid-11111111-1111111-11111",
       "uuid": "someuuid-asd-asd-asdddasa",
     },
     "response": Object {
       "cacheable": false,
       "error": "Authentication token must be present.",
-      "trace": undefined,
     },
     "results": Array [],
   },
@@ -53,7 +54,6 @@ Array [
   Object {
     "response": Object {
       "podInfo": undefined,
-      "trace": undefined,
     },
   },
 ]
@@ -63,6 +63,7 @@ exports[`Handle work socket callback submits work 2`] = `
 Array [
   Object {
     "Authorization": "Bearer some-token",
+    "ETag": "etag-of-the-work-request",
     "experimentId": "experi-mentid-11111111-1111111-11111",
     "uuid": "someuuid-asd-asd-asdddasa",
   },

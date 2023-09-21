@@ -1,13 +1,9 @@
-const getWorkResults = require('../helpers/worker/getWorkResults');
+const { submitWork } = require('../controllers/workController');
 const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
 
 module.exports = {
-  'work#getResults': [
+  'work#submitRequest': [
     expressAuthorizationMiddleware,
-    (req, res, next) => {
-      const { experimentId, ETag } = req.params;
-      getWorkResults(experimentId, ETag)
-        .then((result) => res.json(result))
-        .catch(next);
-    }],
+    (req, res, next) => submitWork(req, res).catch(next),
+  ],
 };

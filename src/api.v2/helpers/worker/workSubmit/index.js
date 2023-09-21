@@ -1,6 +1,5 @@
 
 const crypto = require('crypto');
-const AWSXRay = require('aws-xray-sdk');
 const AWS = require('../../../../utils/requireAWS');
 const createWorkerResources = require('./createWorkerK8s');
 const config = require('../../../../config');
@@ -116,14 +115,10 @@ class WorkSubmitService {
   }
 
   async submitWork() {
-    const result = await Promise.all([
-      this.createWorker(),
-      this.getQueueAndHandleMessage(),
-    ]);
+    await this.getQueueAndHandleMessage();
 
-    const podInfo = result[0];
+    const podInfo = await this.createWorker();
 
-    AWSXRay.getSegment().addAnnotation('result', 'success-worker');
     return podInfo;
   }
 }

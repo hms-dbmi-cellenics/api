@@ -1449,7 +1449,7 @@ paths:
                 parts:
                   type: array
                   items:
-                    type: object   
+                    type: object
               additionalProperties: false
               required:
                   - sampleFileId
@@ -1492,67 +1492,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
-  "/experiments/{experimentId}/clone":
-    post:
-      summary: Clone an experiment
-      description: "Clone an experiment, returns the id of the new experiment"
-      operationId: cloneExperiment
-      x-eov-operation-id: experiment#clone
-      x-eov-operation-handler: routes/experiment
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                toUserId:
-                  type: string
-              additionalProperties: false
-      responses:
-        "200":
-          description: Returns the id of the new cloned experiment
-          content:
-            application/json:
-              schema:
-                type: string
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-        "401":
-          description: The request lacks authentication credentials.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-        "403":
-          description: Forbidden request for this user.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-        "404":
-          description: Not found error.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-        "423":
-          description: A qc or gem2s pipeline running error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-        "424":
-          description: Terms not accepted error.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
+
   "/access/{experimentId}":
     get:
       summary: Get the users with access to an experiment
@@ -1779,13 +1719,12 @@ paths:
             type: string
           in: query
           required: true
-  "/workResults/{experimentId}/{ETag}":
-    get:
-      summary: Get the work results from S3
-      operationId: getWorkResults
-      x-eov-operation-id: work#getResults
+  "/workRequest/{experimentId}/{ETag}":
+    post:
+      summary: Submit a work request
+      operationId: workSubmitRequest
+      x-eov-operation-id: work#submitRequest
       x-eov-operation-handler: routes/work
-      description: "On success, returns a signed url with the uploaded worker results in S3"
       parameters:
         - name: experimentId
           description: Id of the experiment
@@ -1801,14 +1740,11 @@ paths:
           required: true
       responses:
         "200":
-          description: OK
+          description: Success
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  signedUrl:
-                    type: string
+                $ref: "#/components/schemas/HTTPSuccess"
         "401":
           description: The request lacks authentication credentials.
           content:
@@ -1823,102 +1759,6 @@ paths:
                 $ref: "#/components/schemas/HTTPError"
         "404":
           description: The work results were not found.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-  "/experiments/{experimentId}/gem2s":
-    post:
-      summary: Run gem2s
-      operationId: runGem2s
-      x-eov-operation-id: gem2s#run
-      x-eov-operation-handler: routes/gem2s
-      description: Triggers a new gem2s run
-      parameters:
-        - name: experimentId
-          description: Id of the experiment
-          schema:
-            type: string
-          in: path
-          required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPSuccess"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-        "401":
-          description: The request lacks authentication credentials.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-        "403":
-          description: The authenticated user is not authorized to view this resource.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-        "404":
-          description: Experiment not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-        "405":
-          description: Method not allowed for experiment
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-  "/experiments/{experimentId}/seurat":
-    post:
-      summary: Run seurat
-      operationId: runSeurat
-      x-eov-operation-id: seurat#run
-      x-eov-operation-handler: routes/seurat
-      description: Triggers a new seurat run
-      parameters:
-        - name: experimentId
-          description: Id of the experiment
-          schema:
-            type: string
-          in: path
-          required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPSuccess"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-        "401":
-          description: The request lacks authentication credentials.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-        "403":
-          description: The authenticated user is not authorized to view this resource.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-        "404":
-          description: Experiment not found
           content:
             application/json:
               schema:
@@ -2018,26 +1858,34 @@ paths:
             schema:
               $ref: "#/components/schemas/PlotConfig"
         description: The new configuration to update the old one by.
-  "/experiments/{experimentId}/qc":
-    parameters:
-      - schema:
-          type: string
-        name: experimentId
-        in: path
-        required: true
+
+  "/experiments/{experimentId}/gem2s":
     post:
-      summary: Run qc
-      description: Triggers a new qc run
-      operationId: runQC
-      x-eov-operation-id: qc#run
-      x-eov-operation-handler: routes/qc
+      summary: Run gem2s
+      operationId: runGem2s
+      x-eov-operation-id: gem2s#run
+      x-eov-operation-handler: routes/gem2s
+      description: Triggers a new gem2s run
+      parameters:
+        - name: experimentId
+          description: Id of the experiment
+          schema:
+            type: string
+          in: path
+          required: true
       responses:
         "200":
-          description: Success
+          description: OK
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPSuccess"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
         "401":
           description: The request lacks authentication credentials.
           content:
@@ -2056,6 +1904,98 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+        "405":
+          description: Method not allowed for experiment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+
+  "/experiments/{experimentId}/qc":
+      parameters:
+        - schema:
+            type: string
+          name: experimentId
+          in: path
+          required: true
+      post:
+        summary: Run qc
+        description: Triggers a new qc run
+        operationId: runQC
+        x-eov-operation-id: qc#run
+        x-eov-operation-handler: routes/qc
+        responses:
+          "200":
+            description: Success
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/HTTPSuccess"
+          "401":
+            description: The request lacks authentication credentials.
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/HTTPError"
+          "403":
+            description: The authenticated user is not authorized to view this resource.
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/HTTPError"
+          "404":
+            description: Experiment not found
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/HTTPError"
+
+  "/experiments/{experimentId}/seurat":
+    post:
+      summary: Run seurat
+      operationId: runSeurat
+      x-eov-operation-id: seurat#run
+      x-eov-operation-handler: routes/seurat
+      description: Triggers a new seurat run
+      parameters:
+        - name: experimentId
+          description: Id of the experiment
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Experiment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+
   "/experiments/{experimentId}/subset":
     post:
       summary: Subset experiment
@@ -2117,6 +2057,83 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+
+  "/experiments/{experimentId}/clone":
+    post:
+      summary: Clone an experiment
+      description: "Clone an experiment, returns the id of the new experiment"
+      operationId: cloneExperiment
+      x-eov-operation-id: experiment#clone
+      x-eov-operation-handler: routes/experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                toUserId:
+                  type: string
+              additionalProperties: false
+      responses:
+        "200":
+          description: Returns the id of the new cloned experiment
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "423":
+          description: A qc or gem2s pipeline running error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "424":
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+
+  /experiments/{experimentId}/retry:
+    post:
+      summary: Retry experiment execution
+      description: "Retry an experiment execution, returns 200 if successful"
+      operationId: retryExperiment
+      x-eov-operation-id: experiment#retry
+      x-eov-operation-handler: routes/experiment
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
 
   /gem2sResults:
     post:
@@ -2192,7 +2209,7 @@ paths:
                 type: string
                 pattern: nok
     parameters: []
-    
+
   /pipelineResults:
     post:
       summary: "Placeholder endpoint for qc, necessary so subscriptions to sns work"

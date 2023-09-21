@@ -1,41 +1,58 @@
-const AWSXRay = require('aws-xray-sdk');
 const getLogger = require('../../utils/getLogger');
+const { OK } = require('../../utils/responses');
+const getWorkResults = require('../helpers/worker/getWorkResults');
 
 const logger = getLogger();
 const validateAndSubmitWork = require('./validateAndSubmitWork');
-const { authenticationMiddlewareSocketIO, authorize } = require('../middlewares/authMiddlewares');
 
-const handleWorkRequest = async (socket, data, xraySegment) => {
-  const { uuid, Authorization, experimentId } = data;
+const handleWorkRequest = async (socket, data) => {
+  const { Authorization, experimentId, ETag } = data;
+
+  try {
+    const { signedUrl } = await getWorkResults(experimentId, ETag);
+
+    socket.emit(`WorkResponse-${ETag}`, {
+      request: { ...data },
+      results: [],
+      response: {
+        cacheable: false,
+        signedUrl,
+        error: null,
+      },
+    });
+
+    return;
+  } catch (e) {
+    if (e.status === 404) {
+      console.log(`Work result ${ETag} not cached, submitting request`);
+    } else {
+      throw e;
+    }
+  }
 
   try {
     // Authenticate and authorize the user
     if (!Authorization) {
       throw new Error('Authentication token must be present.');
     }
-    const jwtClaim = await authenticationMiddlewareSocketIO(Authorization, socket);
-    const { sub: userId } = jwtClaim;
-    await authorize(userId, 'socket', null, experimentId);
+
     const podInfo = await validateAndSubmitWork(data);
 
     socket.emit(`WorkerInfo-${experimentId}`, {
       response: {
         podInfo,
-        trace: AWSXRay.getSegment().trace_id,
       },
     });
   } catch (e) {
     logger.log(`[REQ ??, SOCKET ${socket.id}] Error while processing WorkRequest event.`);
     logger.trace(e);
-    xraySegment.addError(e);
 
-    socket.emit(`WorkResponse-${uuid}`, {
+    socket.emit(`WorkResponse-${ETag}`, {
       request: { ...data },
       results: [],
       response: {
         cacheable: false,
         error: e.message,
-        trace: AWSXRay.getSegment().trace_id,
       },
     });
 

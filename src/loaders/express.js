@@ -3,8 +3,6 @@ const cors = require('cors');
 const path = require('path');
 const OpenApiValidator = require('express-openapi-validator');
 const http = require('http');
-const AWSXRay = require('aws-xray-sdk');
-const _ = require('lodash');
 const config = require('../config');
 const { authenticationMiddlewareExpress, checkAuthExpiredMiddleware } = require('../api.v2/middlewares/authMiddlewares');
 
@@ -38,69 +36,7 @@ module.exports = async (app) => {
     type: 'application/*+json',
   }));
 
-  // Enable AWS XRay
-  // eslint-disable-next-line global-require
-  AWSXRay.captureHTTPsGlobal(require('http'));
-  AWSXRay.setLogger({
-    error: () => { /* logging code */ },
-    warn: () => { /* logging code */ },
-    info: () => { /* logging code */ },
-    debug: () => { /* logging code */ },
-  });
-  AWSXRay.setContextMissingStrategy('LOG_ERROR');
 
-  AWSXRay.middleware.setSamplingRules({
-    rules: [
-      {
-        description: 'Health check',
-        http_method: '*',
-        host: '*',
-        url_path: '/v1/health',
-        fixed_target: 0,
-        rate: 0.0,
-      },
-    ],
-    default: {
-      fixed_target: 10,
-      rate: 0.05,
-    },
-    version: 2,
-  });
-
-  /**
-   * This middleware must be instantiated before the X-Ray middleware
-   * opens the segment. This adds a hook to run when `res` is sent to the
-   * client so we can add all necessary path parameters as annotations. Event
-   * handlers are executed in order, so this must happen before AWS can add
-   * its own hook.
-   */
-  app.use((req, res, next) => {
-    res.once('finish', () => {
-      const segment = AWSXRay.resolveSegment(req.segment);
-
-      if (segment) {
-        _.mapKeys(
-          req.params,
-          (value, key) => {
-            AWSXRay.getSegment().addAnnotation(key, value);
-          },
-        );
-      }
-    });
-
-    next();
-  });
-
-  app.use(AWSXRay.express.openSegment(`API-${config.clusterEnv}-${config.sandboxId}`));
-
-  app.use((req, res, next) => {
-    res.set('X-Amzn-Trace-Id', `Root=${AWSXRay.getSegment().trace_id}`);
-    AWSXRay.getSegment().addMetadata('request', JSON.stringify(req.body));
-    AWSXRay.getSegment().addMetadata('headers', JSON.stringify(req.headers));
-    AWSXRay.getSegment().addAnnotation('podName', config.podName);
-    AWSXRay.getSegment().addAnnotation('sandboxId', config.sandboxId);
-    next();
-  });
 
   // Authentication middleware.
   const authMw = await authenticationMiddlewareExpress(app);
@@ -116,9 +52,6 @@ module.exports = async (app) => {
       validateResponses: {
         onError: (error) => {
           console.log('Response body fails validation: ', error);
-
-          AWSXRay.getSegment().addMetadata('openApiValidationError', JSON.stringify(error));
-          AWSXRay.getSegment().addAnnotation('openApiValidationFailed', true);
         },
       },
       operationHandlers: path.join(__dirname, '..', 'api.v2'),
@@ -140,7 +73,6 @@ module.exports = async (app) => {
     next(err);
   });
 
-  app.use(AWSXRay.express.closeSegment());
 
   // eslint-disable-next-line global-require
   const io = require('socket.io')({
