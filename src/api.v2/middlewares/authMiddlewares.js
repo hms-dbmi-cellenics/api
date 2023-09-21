@@ -5,7 +5,6 @@ const jwkToPem = require('jwk-to-pem');
 const promiseAny = require('promise.any');
 const fetch = require('node-fetch');
 
-
 const { promisify } = require('util');
 const jwtExpress = require('express-jwt');
 
@@ -130,6 +129,7 @@ const authenticationMiddlewareSocketIO = async (authHeader, ignoreExpiration = f
       issuer,
     },
   );
+
   return result;
 };
 
@@ -166,7 +166,6 @@ const authenticationMiddlewareExpress = async (app) => {
       const { kid } = JSON.parse(Buffer.from(jwtHeaderRaw, 'base64').toString('ascii'));
       // Get the issuer from the JWT claim.
       const { iss } = payload;
-
 
       if (!iss.endsWith(poolId)) {
         done('Issuer does not correspond to the correct environment.');
