@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`handleWorkRequest Submits work request when correct request and and pipeline status are present 1`] = `
+Array [
+  Array [
+    "getObject",
+    Object {
+      "Bucket": "worker-results-test-000000000000",
+      "Key": "12345",
+    },
+  ],
+]
+`;
