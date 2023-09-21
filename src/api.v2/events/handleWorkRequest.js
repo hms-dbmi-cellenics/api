@@ -1,5 +1,4 @@
 const getLogger = require('../../utils/getLogger');
-const { OK } = require('../../utils/responses');
 const getWorkResults = require('../helpers/worker/getWorkResults');
 
 const logger = getLogger();
