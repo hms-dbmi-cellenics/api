@@ -1719,13 +1719,12 @@ paths:
             type: string
           in: query
           required: true
-  "/workResults/{experimentId}/{ETag}":
-    get:
-      summary: Get the work results from S3
-      operationId: getWorkResults
-      x-eov-operation-id: work#getResults
+  "/workRequest/{experimentId}/{ETag}":
+    post:
+      summary: Submit a work request
+      operationId: workSubmitRequest
+      x-eov-operation-id: work#submitRequest
       x-eov-operation-handler: routes/work
-      description: "On success, returns a signed url with the uploaded worker results in S3"
       parameters:
         - name: experimentId
           description: Id of the experiment
@@ -1741,14 +1740,11 @@ paths:
           required: true
       responses:
         "200":
-          description: OK
+          description: Success
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  signedUrl:
-                    type: string
+                $ref: "#/components/schemas/HTTPSuccess"
         "401":
           description: The request lacks authentication credentials.
           content:
