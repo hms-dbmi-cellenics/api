@@ -17,6 +17,9 @@ const submitMarkerHeatmapWork = async (message) => {
     hiddenCellSetKeys: [],
   };
 
+  console.log('MARKERHEATMAP WORK MESSAGE: ', message);
+
+
   const extraDependencies = await getExtraDependencies(body.name, message);
   const ETag = await submitWork(experimentId, authJWT, body, extraDependencies);
 
