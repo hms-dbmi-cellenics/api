@@ -22,8 +22,6 @@ const { GEM2S_PROCESS_NAME } = require('../constants');
 const LockedError = require('../../utils/responses/LockedError');
 const ExperimentParent = require('../model/ExperimentParent');
 
-const generateETag = require('../helpers/worker/generateETag');
-
 const logger = getLogger('[ExperimentController] - ');
 
 const translateProcessingConfig = (processingConfig, sampleIdsMap) => (
@@ -150,6 +148,7 @@ const getProcessingConfig = async (req, res) => {
   const result = await new Experiment().getProcessingConfig(experimentId);
 
   logger.log('Finished getting processing config for experiment ', experimentId);
+  console.log(result);
   res.json(result);
 };
 
@@ -273,15 +272,6 @@ const cloneExperiment = async (req, res) => {
   res.json(toExperimentId);
 };
 
-const handleETagRequest = async (req, res) => {
-  const { experimentId } = req.params;
-  const { workBody, extraDependencies } = req.body;
-
-  const ETag = await generateETag(experimentId, workBody, extraDependencies);
-
-  res.json({ ETag });
-};
-
 module.exports = {
   getAllExperiments,
   getExampleExperiments,
@@ -295,5 +285,4 @@ module.exports = {
   getBackendStatus,
   downloadData,
   cloneExperiment,
-  handleETagRequest,
 };

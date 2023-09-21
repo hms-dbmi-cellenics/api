@@ -1,8 +1,8 @@
-const { getWorkResults, tryFetchFromS3 } = require('../helpers/worker/getWorkResults');
+const { getWorkResults } = require('../helpers/worker/getWorkResults');
 const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
 
 module.exports = {
-  'work#getResults': [
+  'work#getWorkResults': [
     expressAuthorizationMiddleware,
     (req, res, next) => {
       const { experimentId } = req.params;
@@ -12,6 +12,7 @@ module.exports = {
         extraDependencies,
         disableCache,
       } = req.body;
+
       getWorkResults(
         experimentId,
         body,
@@ -19,14 +20,6 @@ module.exports = {
         extraDependencies,
         disableCache,
       )
-        .then((result) => res.json(result))
-        .catch(next);
-    }],
-  'work#getSignedUrl': [
-    expressAuthorizationMiddleware,
-    (req, res, next) => {
-      const { experimentId, ETag } = req.params;
-      tryFetchFromS3(experimentId, ETag)
         .then((result) => res.json(result))
         .catch(next);
     }],

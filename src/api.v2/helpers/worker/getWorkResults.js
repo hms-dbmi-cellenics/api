@@ -44,7 +44,7 @@ const validateTagMatching = async (experimentId, params) => {
 };
 
 const tryFetchFromS3 = async (experimentId, ETag) => {
-  logger.log(`Getting worker result for experiment: ${experimentId}, Etag: ${ETag}`);
+  logger.log(`Trying to fetch S3 results for experiment: ${experimentId}, Etag: ${ETag}`);
 
   const params = {
     Bucket: WORKER_RESULTS,
@@ -72,21 +72,17 @@ const getWorkResults = async (
     disableCache,
   );
 
-  logger.log(`Getting worker result for experiment: ${experimentId}, Etag: ${ETag}`);
-
-  const params = {
-    Bucket: WORKER_RESULTS,
-    Key: ETag,
-  };
-
-  await validateTagMatching(experimentId, params);
-  logger.log(`Found worker results for experiment: ${experimentId}, Etag: ${ETag}`);
-
-  const signedUrl = await tryFetchFromS3(experimentId, ETag);
-  return { ETag, signedUrl };
+  try {
+    const signedUrl = await tryFetchFromS3(experimentId, ETag);
+    logger.log(`Found worker results for experiment: ${experimentId}, Etag: ${ETag}`);
+    return { ETag, signedUrl };
+  } catch (err) {
+    logger.log(err.message);
+    logger.log('Returning an empty signed url');
+    return { ETag, signedUrl: null };
+  }
 };
 
 module.exports = {
   getWorkResults,
-  tryFetchFromS3,
 };
