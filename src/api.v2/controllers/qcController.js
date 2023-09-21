@@ -1,6 +1,3 @@
-// const { OK } = require('../../utils/responses');
-const AWSXRay = require('aws-xray-sdk');
-
 const { OK } = require('../../utils/responses');
 
 const { createQCPipeline } = require('../helpers/pipeline/pipelineConstruct');
@@ -36,7 +33,6 @@ const handleResponse = async (req, res) => {
     result = await parseSNSMessage(req, snsTopics.WORK_RESULTS);
   } catch (e) {
     logger.error('Parsing initial SNS message failed:', e);
-    AWSXRay.getSegment().addError(e);
     res.status(200).send('nok');
     return;
   }
@@ -52,7 +48,6 @@ const handleResponse = async (req, res) => {
         'qc pipeline response handler failed with error: ', e,
       );
 
-      AWSXRay.getSegment().addError(e);
       res.status(200).send('nok');
       return;
     }

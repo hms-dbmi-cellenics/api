@@ -1,11 +1,10 @@
-const AWSXRay = require('aws-xray-sdk');
 const getLogger = require('../../utils/getLogger');
 
 const logger = getLogger();
 const validateAndSubmitWork = require('./validateAndSubmitWork');
 const { authenticationMiddlewareSocketIO, authorize } = require('../middlewares/authMiddlewares');
 
-const handleWorkRequest = async (socket, data, xraySegment) => {
+const handleWorkRequest = async (socket, data) => {
   const { uuid, Authorization, experimentId } = data;
 
   try {
@@ -21,13 +20,11 @@ const handleWorkRequest = async (socket, data, xraySegment) => {
     socket.emit(`WorkerInfo-${experimentId}`, {
       response: {
         podInfo,
-        trace: AWSXRay.getSegment().trace_id,
       },
     });
   } catch (e) {
     logger.log(`[REQ ??, SOCKET ${socket.id}] Error while processing WorkRequest event.`);
     logger.trace(e);
-    xraySegment.addError(e);
 
     socket.emit(`WorkResponse-${uuid}`, {
       request: { ...data },
@@ -35,7 +32,6 @@ const handleWorkRequest = async (socket, data, xraySegment) => {
       response: {
         cacheable: false,
         error: e.message,
-        trace: AWSXRay.getSegment().trace_id,
       },
     });
 

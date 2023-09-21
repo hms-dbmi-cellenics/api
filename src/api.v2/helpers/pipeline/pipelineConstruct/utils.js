@@ -1,7 +1,6 @@
 const crypto = require('crypto');
 const jq = require('node-jq');
 const YAML = require('yaml');
-const AWSXRay = require('aws-xray-sdk');
 const { v4: uuidv4 } = require('uuid');
 
 const AWS = require('../../../../utils/requireAWS');
@@ -165,13 +164,9 @@ const executeStateMachine = async (stateMachineArn, execInput = {}) => {
   const stepFunctions = new AWS.StepFunctions({
     region: config.awsRegion,
   });
-  // @ts-ignore
-  const { trace_id: traceId } = AWSXRay.getSegment() || {};
-
   const { executionArn } = await stepFunctions.startExecution({
     stateMachineArn,
     input: JSON.stringify(input),
-    traceHeader: traceId,
   }).promise();
 
   return executionArn;

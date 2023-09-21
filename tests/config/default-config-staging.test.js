@@ -31,7 +31,6 @@ describe('default-config', () => {
     process.env.AWS_ROLE_ARN = 'arn:aws:iam::12341234:role/api-role-production';
     process.env.AWS_STS_REGIONAL_ENDPOINTS = 'regional';
     process.env.AWS_WEB_IDENTITY_TOKEN_FILE = 'AWS_WEB_IDENTITY_TOKEN_FILEMocked';
-    process.env.AWS_XRAY_DAEMON_ADDRESS = 'AWS_XRAY_DAEMON_ADDRESSMocked';
     process.env.DOMAIN_NAME = 'test.com';
 
     const userPoolId = 'mockUserPoolId';

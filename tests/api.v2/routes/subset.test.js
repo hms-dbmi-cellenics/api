@@ -30,7 +30,7 @@ describe('PipelineResults route', () => {
   it('Starting a new qc pipeline results in a successful response', async (done) => {
     const childExperimentId = 'mockChildExperimentId';
 
-    subsetController.runSubset.mockImplementationOnce((req, res) => {
+    subsetController.handleSubsetRequest.mockImplementationOnce((req, res) => {
       res.json(childExperimentId);
       return Promise.resolve();
     });
