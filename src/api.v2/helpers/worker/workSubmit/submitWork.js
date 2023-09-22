@@ -2,7 +2,7 @@ const validateAndSubmitWork = require('../../../events/validateAndSubmitWork');
 const generateETag = require('../generateETag');
 
 const submitWork = async (experimentId, authJWT, body, extraDependencies) => {
-  const ETag = generateETag(experimentId, body, extraDependencies);
+  const ETag = await generateETag(experimentId, body, extraDependencies);
   const now = new Date();
   const timeout = 15 * 60 * 1000; // 15min in ms
   const timeoutDate = new Date(now.getTime() + timeout);

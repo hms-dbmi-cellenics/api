@@ -17,6 +17,8 @@ const handleWorkRequest = async (socket, data) => {
     await authorize(userId, 'socket', null, experimentId);
     const podInfo = await validateAndSubmitWork(data);
 
+    console.log('Emmiting WorkerInfo: ', podInfo);
+
     socket.emit(`WorkerInfo-${experimentId}`, {
       response: {
         podInfo,
