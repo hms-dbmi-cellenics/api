@@ -1,12 +1,13 @@
 // @ts-nocheck
 const SampleFile = require('../../../../src/api.v2/model/SampleFile');
 const signedUrl = require('../../../../src/api.v2/helpers/s3/signedUrl');
+const bucketNames = require('../../../../src/config/bucketNames');
 
 const AWS = require('../../../../src/utils/requireAWS');
 const { NotFoundError } = require('../../../../src/utils/responses');
 
 const {
-  getSignedUrl, getSampleFileDownloadUrl, getSampleFileUploadUrls, completeMultipartUpload,
+  getSignedUrl, getSampleFileDownloadUrl, getFileUploadUrls, completeMultipartUpload,
 } = signedUrl;
 const sampleFileInstance = new SampleFile();
 
@@ -67,7 +68,7 @@ describe('getSignedUrl', () => {
   });
 });
 
-describe('getSampleFileUploadUrls', () => {
+describe('getFileUploadUrls', () => {
   const mockSampleFileId = 'mockSampleFileId';
 
   const signedUrlResponse = { signedUrls: ['signedUrl'], uploadId: 'uploadId' };
@@ -87,7 +88,7 @@ describe('getSampleFileUploadUrls', () => {
   });
 
   it('works correctly without metadata', async () => {
-    const response = await getSampleFileUploadUrls(mockSampleFileId, {}, 1);
+    const response = await getFileUploadUrls(mockSampleFileId, {}, 1, bucketNames.SAMPLE_FILES);
 
     expect(response).toEqual(signedUrlResponse);
     expect(createMultipartUploadSpy).toMatchSnapshot();
@@ -95,7 +96,7 @@ describe('getSampleFileUploadUrls', () => {
   });
 
   it('works correctly with metadata cellrangerVersion', async () => {
-    const response = await getSampleFileUploadUrls(mockSampleFileId, { cellrangerVersion: 'v2' }, 1);
+    const response = await getFileUploadUrls(mockSampleFileId, { cellrangerVersion: 'v2' }, 1, bucketNames.SAMPLE_FILES);
 
     expect(response).toEqual(signedUrlResponse);
     expect(createMultipartUploadSpy).toMatchSnapshot();

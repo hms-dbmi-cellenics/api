@@ -1039,6 +1039,58 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/cellLevel":
+    post:
+      summary: Upload cell level metadata file
+      operationId: createCellLevelMetadataFromFile
+      x-eov-operation-id: cellLevel#uploadCellLevelMetadata
+      x-eov-operation-handler: routes/cellLevel
+      parameters:
+        - in: path
+          name: experimentId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"  
   "/experiments/{experimentId}/metadataTracks/{metadataTrackKey}":
     post:
       summary: Creates a new metadata track

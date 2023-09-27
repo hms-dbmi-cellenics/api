@@ -28,7 +28,7 @@ describe('sampleFileController', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    signedUrl.getSampleFileUploadUrls.mockReturnValue(mockSignedUrls);
+    signedUrl.getFileUploadUrls.mockReturnValue(mockSignedUrls);
   });
 
   it('createFile works correctly', async () => {

@@ -1,10 +1,11 @@
+/* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { v4: uuidv4 } = require('uuid');
 
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 const { collapseKeyIntoArray, replaceNullsWithObject } = require('../../sql/helpers');
-
+const CellLevel = require('./CellLevel');
 const { NotFoundError, BadRequestError } = require('../../utils/responses');
 const tableNames = require('./tableNames');
 const config = require('../../config');
@@ -52,13 +53,6 @@ class Experiment extends BasicModel {
         ...aliasedExperimentFields,
         'm.key',
         'p.parent_experiment_id',
-        /*
-        The parent_experiment_id could be null in cases where the
-        parent experiment has been deleted.
-        The existence of a row with the experiment_id in the experiment_parent
-         table after doing a leftJoin,
-        indicates that it's a subsetted experiment.
-        */
         this.sql.raw('CASE WHEN p.experiment_id IS NOT NULL THEN true ELSE false END as is_subsetted'),
       ])
       .from(tableNames.USER_ACCESS)
@@ -68,7 +62,7 @@ class Experiment extends BasicModel {
       .leftJoin(`${tableNames.EXPERIMENT_PARENT} as p`, 'e.id', 'p.experiment_id')
       .as('mainQuery');
 
-    const result = await collapseKeyIntoArray(
+    const experiments = await collapseKeyIntoArray(
       mainQuery,
       [...fields, 'parent_experiment_id', 'is_subsetted'],
       'key',
@@ -76,8 +70,23 @@ class Experiment extends BasicModel {
       this.sql,
     );
 
-    return result;
+    // Assuming the getMetadataByExperimentId function is async and returns the metadata
+    const cellLevel = new CellLevel();
+
+    await Promise.all(experiments.map(async (experiment) => {
+      try {
+        const result = await cellLevel.getMetadataByExperimentId(experiment.id);
+        experiment.cellLevelMetadata = result || {};
+      } catch (error) {
+        console.error('Error fetching metadata for experiment:', experiment.id, error);
+        experiment.cellLevelMetadata = {};
+      }
+    }));
+
+    console.log('RESULT IS ', experiments);
+    return experiments;
   }
+
 
   async getExampleExperiments() {
     const fields = [
