@@ -1,5 +1,6 @@
-const { getWorkResults } = require('../helpers/worker/getWorkResults');
+const getWorkResults = require('../helpers/worker/getWorkResults');
 const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
+const { submitWork } = require('../controllers/workController');
 
 module.exports = {
   'work#getWorkResults': [
@@ -23,4 +24,9 @@ module.exports = {
         .then((result) => res.json(result))
         .catch(next);
     }],
+
+  'work#submitRequest': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => submitWork(req, res).catch(next),
+  ],
 };

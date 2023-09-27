@@ -1,33 +1,10 @@
 const getLogger = require('../../utils/getLogger');
-const getWorkResults = require('../helpers/worker/getWorkResults');
 
 const logger = getLogger();
 const validateAndSubmitWork = require('./validateAndSubmitWork');
 
 const handleWorkRequest = async (socket, data) => {
   const { Authorization, experimentId, ETag } = data;
-
-  try {
-    const { signedUrl } = await getWorkResults(experimentId, ETag);
-
-    socket.emit(`WorkResponse-${ETag}`, {
-      request: { ...data },
-      results: [],
-      response: {
-        cacheable: false,
-        signedUrl,
-        error: null,
-      },
-    });
-
-    return;
-  } catch (e) {
-    if (e.status === 404) {
-      console.log(`Work result ${ETag} not cached, submitting request`);
-    } else {
-      throw e;
-    }
-  }
 
   try {
     // Authenticate and authorize the user

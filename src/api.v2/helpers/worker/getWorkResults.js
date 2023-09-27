@@ -83,6 +83,4 @@ const getWorkResults = async (
   }
 };
 
-module.exports = {
-  getWorkResults,
-};
+module.exports = getWorkResults;

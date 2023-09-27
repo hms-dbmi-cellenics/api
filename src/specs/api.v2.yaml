@@ -1719,13 +1719,14 @@ paths:
             type: string
           in: query
           required: true
+
   "/workResults/{experimentId}":
     post:
       summary: Get the work results from S3
       operationId: getWorkResults
       x-eov-operation-id: work#getWorkResults
       x-eov-operation-handler: routes/work
-      description: "On success, returns an ETag signed url with the uploaded worker results in S3"
+      description: "On success, returns an ETag and/or signed url with the uploaded worker results in S3"
       parameters:
         - name: experimentId
           description: Experiment ID of the work result object
@@ -1751,6 +1752,45 @@ paths:
                     nullable: true
                   ETag:
                     type: string
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: The user does not have permissions to view the work results.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+
+  "/workRequest/{experimentId}/{ETag}":
+    post:
+      summary: Submit a work request
+      operationId: workSubmitRequest
+      x-eov-operation-id: work#submitRequest
+      x-eov-operation-handler: routes/work
+      parameters:
+        - name: experimentId
+          description: Id of the experiment
+          schema:
+            type: string
+          in: path
+          required: true
+        - name: ETag
+          description: ETag of the work result object
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPSuccess"
         "401":
           description: The request lacks authentication credentials.
           content:
