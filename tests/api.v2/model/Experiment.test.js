@@ -44,7 +44,7 @@ describe('model/Experiment', () => {
   });
 
   it('getAllExperiments works correctly', async () => {
-    const queryResult = ['result'];
+    const queryResult = [{ id: 'some-id-experiment' }];
     helpers.collapseKeyIntoArray.mockReturnValueOnce(
       Promise.resolve(queryResult),
     );

@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require('uuid');
 const bucketNames = require('../../config/bucketNames');
 const sqlClient = require('../../sql/sqlClient');
 const CellLevel = require('../model/CellLevel');
+const CellLevelToExperiment = require('../model/CellLevelToExperiment');
 const { getSignedUrl } = require('../helpers/s3/signedUrl');
 
 
@@ -27,7 +28,7 @@ const uploadCellLevelMetadata = async (req, res) => {
     await new CellLevel(trx).create(newCellLevelFile);
     await new CellLevelToExperiment(trx).create(cellLevelToExperimentMap);
 
-    uploadUrl = getSignedUrl('putObject',
+    uploadUrl = await getSignedUrl('putObject',
       {
         Bucket: bucketName,
         Key: cellLevelKey,

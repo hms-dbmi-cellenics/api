@@ -9,7 +9,7 @@ const fields = [
 
 class CellLevelToExperiment extends BasicModel {
   constructor(sql = sqlClient.get()) {
-    super(sql, tableNames.CELL_LEVEL, fields);
+    super(sql, tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP, fields);
   }
 }
 

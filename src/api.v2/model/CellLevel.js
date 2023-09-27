@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 const tableNames = require('./tableNames');
@@ -31,10 +29,6 @@ class CellLevel extends BasicModel {
         .where(`${tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP}.experiment_id`, experimentId)
         .first();
 
-      if (_.isEmpty(result)) {
-        logger.log(`No cell level metadata for experiment ${experimentId}`);
-      }
-      console.log('RESULT IS ', result);
       return result;
     } catch (error) {
       console.error('Error fetching cell metadata file by experiment ID:', error);

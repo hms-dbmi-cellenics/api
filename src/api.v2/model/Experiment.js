@@ -74,16 +74,10 @@ class Experiment extends BasicModel {
     const cellLevel = new CellLevel();
 
     await Promise.all(experiments.map(async (experiment) => {
-      try {
-        const result = await cellLevel.getMetadataByExperimentId(experiment.id);
-        experiment.cellLevelMetadata = result || {};
-      } catch (error) {
-        console.error('Error fetching metadata for experiment:', experiment.id, error);
-        experiment.cellLevelMetadata = {};
-      }
+      const result = await cellLevel.getMetadataByExperimentId(experiment.id);
+      experiment.cellLevelMetadata = result;
     }));
 
-    console.log('RESULT IS ', experiments);
     return experiments;
   }
 
