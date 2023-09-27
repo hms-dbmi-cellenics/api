@@ -2,8 +2,11 @@ const request = require('supertest');
 const express = require('express');
 const expressLoader = require('../../../src/loaders/express');
 
+const workController = require('../../../src/api.v2/controllers/workController');
+const { OK } = require('../../../src/utils/responses');
+
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
-jest.mock('../../../src/api.v2/helpers/worker/getWorkResults');
+jest.mock('../../../src/api.v2/controllers/workController');
 
 describe('work routes tests', () => {
   let app = null;
@@ -13,33 +16,16 @@ describe('work routes tests', () => {
     app = mockApp.app;
   });
 
-  it('Get work signed url returns 200', async (done) => {
-    request(app)
-      .get('/v2/workResults/someId/someETag')
-      .expect(200)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        return done();
-      });
-  });
 
-  it('Getting work results for an experiment without permissions returns 403', async (done) => {
+  it('Get work request returns 200', async (done) => {
+    workController.submitWork.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+
     request(app)
-      .get('/v2/workResults/unauthorizedExperimentId/someETag')
-      .expect(403)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        return done();
-      });
-  });
-  it('If no tags are found returns 404', async (done) => {
-    request(app)
-      .get('/v2/workResults/nonExistentId/someETag')
-      .expect(404)
+      .post('/v2/workRequest/someExperimentId/someETag')
+      .expect(200)
       .end((err) => {
         if (err) {
           return done(err);

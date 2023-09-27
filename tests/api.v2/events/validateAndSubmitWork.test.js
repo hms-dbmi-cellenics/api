@@ -3,7 +3,10 @@ const CacheSingleton = require('../../../src/cache');
 const getPipelineStatus = require('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 const pipelineConstants = require('../../../src/api.v2/constants');
 const WorkSubmitService = require('../../../src/api.v2/helpers/worker/workSubmit')();
+const signedUrl = require('../../../src/api.v2/helpers/s3/signedUrl');
 
+
+jest.mock('../../../src/api.v2/helpers/s3/signedUrl');
 jest.mock('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 jest.mock('../../../src/cache');
 jest.mock('../../../src/api.v2/helpers/worker/workSubmit');
@@ -155,6 +158,8 @@ describe('handleWorkRequest', () => {
   });
 
   it('Submits work request when correct request and and pipeline status are present', async () => {
+    signedUrl.getSignedUrl.mockReturnValueOnce('mockSignedUrl');
+
     const workRequest = {
       ETag: '12345',
       socketId: '6789',
@@ -162,7 +167,10 @@ describe('handleWorkRequest', () => {
       timeout: '2099-01-01T00:00:00Z',
       body: { name: 'GetEmbedding', type: 'umap', config: { minimumDistance: 0, distanceMetric: 'euclidean' } },
     };
+
     await validateAndSubmitWork(workRequest);
+
     expect(WorkSubmitService.submitWork).toHaveBeenCalled();
+    expect(signedUrl.getSignedUrl.mock.calls).toMatchSnapshot();
   });
 });

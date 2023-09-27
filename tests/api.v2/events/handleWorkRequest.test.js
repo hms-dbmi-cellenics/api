@@ -10,6 +10,7 @@ const data = {
   uuid: 'someuuid-asd-asd-asdddasa',
   Authorization: 'Bearer some-token',
   experimentId: fake.EXPERIMENT_ID,
+  ETag: 'etag-of-the-work-request',
 };
 
 describe('Handle work socket callback', () => {

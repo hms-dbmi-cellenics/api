@@ -1,20 +1,40 @@
 const getLogger = require('../../utils/getLogger');
+const getWorkResults = require('../helpers/worker/getWorkResults');
 
 const logger = getLogger();
 const validateAndSubmitWork = require('./validateAndSubmitWork');
-const { authenticationMiddlewareSocketIO, authorize } = require('../middlewares/authMiddlewares');
 
 const handleWorkRequest = async (socket, data) => {
-  const { uuid, Authorization, experimentId } = data;
+  const { Authorization, experimentId, ETag } = data;
+
+  try {
+    const { signedUrl } = await getWorkResults(experimentId, ETag);
+
+    socket.emit(`WorkResponse-${ETag}`, {
+      request: { ...data },
+      results: [],
+      response: {
+        cacheable: false,
+        signedUrl,
+        error: null,
+      },
+    });
+
+    return;
+  } catch (e) {
+    if (e.status === 404) {
+      console.log(`Work result ${ETag} not cached, submitting request`);
+    } else {
+      throw e;
+    }
+  }
 
   try {
     // Authenticate and authorize the user
     if (!Authorization) {
       throw new Error('Authentication token must be present.');
     }
-    const jwtClaim = await authenticationMiddlewareSocketIO(Authorization, socket);
-    const { sub: userId } = jwtClaim;
-    await authorize(userId, 'socket', null, experimentId);
+
     const podInfo = await validateAndSubmitWork(data);
 
     console.log('Emmiting WorkerInfo: ', podInfo);
@@ -28,7 +48,7 @@ const handleWorkRequest = async (socket, data) => {
     logger.log(`[REQ ??, SOCKET ${socket.id}] Error while processing WorkRequest event.`);
     logger.trace(e);
 
-    socket.emit(`WorkResponse-${uuid}`, {
+    socket.emit(`WorkResponse-${ETag}`, {
       request: { ...data },
       results: [],
       response: {
