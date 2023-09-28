@@ -419,6 +419,7 @@ jobs:
           destination_folder: 'staging-candidates/${{ steps.fill-metadata.outputs.deployment-name }}'
           user_email: 'ci@biomage.net'
           user_name: 'Biomage CI/CD'
+          
       - id: disable-admin-enforcement
         if:
           (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
@@ -430,9 +431,10 @@ jobs:
           repo: iac
           enforce_admins: false
           retries: 8
+          
       - name: Push migrations into iac
         if:
-           github.repository_owner == 'hms-dbmi-cellenics' && matrix.environment == 'develop' && github.event_name == 'push'
+           github.repository_owner == 'hms-dbmi-cellenics' && github.event_name == 'push'
         uses: cpina/github-action-push-to-another-repository@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
