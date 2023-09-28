@@ -15,8 +15,6 @@ const submitEmbeddingWork = async (message) => {
     config: embeddingConfig,
   };
 
-  console.log('EMBEDDING WORK MESSAGE: ', message);
-
   // these values need to match explicitly the default ones defined in the UI at
   // src/utils/work/fetchWork.js when calling the function generateETag if this file
   // or the one in the UI has any default changed, the pre-computing of embeddings/marker heatmp
