@@ -432,7 +432,7 @@ jobs:
           retries: 8
       - name: Push migrations into iac
         if:
-          (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
+           github.repository_owner == 'hms-dbmi-cellenics' && matrix.environment == 'develop' && github.event_name == 'push'
         uses: cpina/github-action-push-to-another-repository@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
@@ -442,7 +442,7 @@ jobs:
           destination-repository-name: 'iac'
           user-email: 'ci@biomage.net'
           target-branch: master
-          target-directory: 'migrations/sql/${{ steps.fill-metadata.outputs.kubernetes-env }}'
+          target-directory: 'migrations/sql'
 
   ready-to-merge:
     name: Ready for merging
