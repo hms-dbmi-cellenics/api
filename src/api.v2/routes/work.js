@@ -9,16 +9,16 @@ module.exports = {
       const { experimentId } = req.params;
       const {
         body,
-        extras,
         extraDependencies,
+        extras,
         disableCache,
       } = req.body;
 
       getWorkResults(
         experimentId,
         body,
-        extras,
         extraDependencies,
+        extras,
         disableCache,
       )
         .then((result) => res.json(result))

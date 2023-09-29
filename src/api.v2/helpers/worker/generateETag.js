@@ -7,9 +7,9 @@ const createObjectHash = (object) => hash.MD5(object);
 const generateETag = async (
   experimentId,
   body,
-  extras,
   extraDependencies,
-  disableCache,
+  extras,
+  disableCache = false,
 ) => {
   const backendStatus = await getExperimentBackendStatus(experimentId);
   const { pipeline: { startDate: qcPipelineStartDate } } = backendStatus;

@@ -37,17 +37,14 @@ const submitMarkerHeatmapWork = async (message) => {
     name: MarkerHeatmap,
     nGenes: numGenes,
     cellSetKey: selectedCellSet,
-    groupByClasses: ['louvain'],
+    groupByClasses: ['louvain', 'sample'],
     selectedPoints: 'All',
     hiddenCellSetKeys: [],
   };
 
-
   const extraDependencies = getMarkerHeatmapDependencies(message);
 
-
   const ETag = await submitWork(experimentId, authJWT, body, extraDependencies);
-  console.log(`MARKERHEATMAP: \n\textraDependencies: ${extraDependencies}\n\tETag: ${ETag}`);
 
   // explicitly return ETag to make it stand out more in tests and so harder to break
   return ETag;

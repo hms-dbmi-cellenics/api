@@ -1,6 +1,5 @@
 const submitWork = require('./submitWork');
 
-
 const submitEmbeddingWork = async (message) => {
   const {
     experimentId, input:
@@ -22,7 +21,6 @@ const submitEmbeddingWork = async (message) => {
   const extraDependencies = [];
 
   const ETag = await submitWork(experimentId, authJWT, body, extraDependencies);
-  console.log(`EMBEDDINGWORK: \n\textraDependencies: ${extraDependencies}\n\tETag: ${ETag}`);
 
   // explicitly return ETag to make it stand out more in tests and so harder to break
   return ETag;
