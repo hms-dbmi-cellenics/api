@@ -9,13 +9,12 @@ const generateETag = async (
   body,
   extraDependencies,
   extras,
-  disableCache = false,
+  cacheUniquenessKey = null,
 ) => {
   const backendStatus = await getExperimentBackendStatus(experimentId);
   const { pipeline: { startDate: qcPipelineStartDate } } = backendStatus;
 
   const { workerVersion } = config;
-  const cacheUniquenessKey = disableCache ? Math.random() : null;
 
   let ETagBody;
   // They `body` key to create ETAg for gene expression is different

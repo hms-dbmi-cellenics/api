@@ -62,14 +62,14 @@ const getWorkResults = async (
   body,
   extras,
   extraDependencies,
-  disableCache,
+  cacheUniquenessKey,
 ) => {
   const ETag = await generateETag(
     experimentId,
     body,
     extras,
     extraDependencies,
-    disableCache,
+    cacheUniquenessKey,
   );
 
   try {

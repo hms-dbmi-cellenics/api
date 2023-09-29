@@ -11,7 +11,7 @@ module.exports = {
         body,
         extraDependencies,
         extras,
-        disableCache,
+        cacheUniquenessKey,
       } = req.body;
 
       getWorkResults(
@@ -19,7 +19,7 @@ module.exports = {
         body,
         extraDependencies,
         extras,
-        disableCache,
+        cacheUniquenessKey,
       )
         .then((result) => res.json(result))
         .catch(next);
