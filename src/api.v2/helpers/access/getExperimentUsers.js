@@ -25,7 +25,9 @@ const getExperimentUsers = async (experimentId) => {
 
   const experimentUsers = cognitoUserData.map((userInfo, idx) => {
     const email = userInfo.find((attr) => attr.Name === 'email').Value;
-    const name = userInfo.find((attr) => attr.Name === 'name').Value;
+    const nameAttr = userInfo.find((attr) => attr.Name === 'name');
+    const name = nameAttr ? nameAttr.Value : email; // If name is not set, use email as name
+
     const { accessRole } = filteredUsers[idx];
 
     return {
