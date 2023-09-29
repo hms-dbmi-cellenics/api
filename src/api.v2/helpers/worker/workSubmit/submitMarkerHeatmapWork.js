@@ -3,15 +3,8 @@ const workerVersions = require('../workerVersions');
 
 const MarkerHeatmap = 'MarkerHeatmap';
 
-const getClusteringSettings = (message) => {
-  const { input: { config: { clusteringSettings } } } = message;
-  return clusteringSettings;
-};
-
-const getSelectedCellSet = (message) => {
-  const { input: { config: { clusteringSettings: { method } } } } = message;
-  return [method];
-};
+const getClusteringSettings = (message) => message.input.config.clusteringSettings;
+const getSelectedCellSet = (message) => [message.input.config.clusteringSettings.method];
 
 const dependencyGetters = [getClusteringSettings, getSelectedCellSet];
 

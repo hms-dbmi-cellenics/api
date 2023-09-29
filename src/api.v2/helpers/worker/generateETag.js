@@ -16,30 +16,19 @@ const generateETag = async (
 
   const { workerVersion } = config;
 
-  let ETagBody;
+  const ETagBody = {
+    experimentId,
+    qcPipelineStartDate: qcPipelineStartDate.toISOString(),
+    extras,
+    cacheUniquenessKey,
+    workerVersion,
+    extraDependencies,
+  };
+
   // They `body` key to create ETAg for gene expression is different
   // from the others, causing the generated ETag to be different
-  if (body.name === 'GeneExpression') {
-    ETagBody = {
-      experimentId,
-      missingGenesBody: body,
-      qcPipelineStartDate: qcPipelineStartDate.toISOString(),
-      extras,
-      cacheUniquenessKey,
-      workerVersion,
-      extraDependencies,
-    };
-  } else {
-    ETagBody = {
-      experimentId,
-      body,
-      qcPipelineStartDate: qcPipelineStartDate.toISOString(),
-      extras,
-      cacheUniquenessKey,
-      workerVersion,
-      extraDependencies,
-    };
-  }
+  const bodyKey = body.name === 'GeneExpression' ? 'missingGenesBody' : 'body';
+  ETagBody[bodyKey] = body;
 
   return createObjectHash(ETagBody);
 };
