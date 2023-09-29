@@ -53,6 +53,13 @@ class Experiment extends BasicModel {
         ...aliasedExperimentFields,
         'm.key',
         'p.parent_experiment_id',
+        /*
+        The parent_experiment_id could be null in cases where the
+        parent experiment has been deleted.
+        The existence of a row with the experiment_id in the experiment_parent
+         table after doing a leftJoin,
+        indicates that it's a subsetted experiment.
+        */
         this.sql.raw('CASE WHEN p.experiment_id IS NOT NULL THEN true ELSE false END as is_subsetted'),
       ])
       .from(tableNames.USER_ACCESS)
