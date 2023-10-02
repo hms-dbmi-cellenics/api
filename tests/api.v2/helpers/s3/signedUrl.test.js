@@ -121,7 +121,7 @@ describe('completeMultipartUpload', () => {
   });
 
   it('works correctly ', async () => {
-    const response = await completeMultipartUpload(mockSampleFileId, mockParts, mockUploadId);
+    const response = await completeMultipartUpload(mockSampleFileId, mockParts, mockUploadId, 'some-bucket');
 
     expect(response).toBeUndefined();
     expect(completeMultipartUploadSpy).toMatchSnapshot();

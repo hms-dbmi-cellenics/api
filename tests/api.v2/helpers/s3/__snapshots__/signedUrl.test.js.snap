@@ -5,7 +5,7 @@ exports[`completeMultipartUpload works correctly  1`] = `
   "calls": Array [
     Array [
       Object {
-        "Bucket": "biomage-originals-test-000000000000",
+        "Bucket": "some-bucket",
         "Key": "mockSampleFileId",
         "MultipartUpload": Object {
           "Parts": Array [],
@@ -30,27 +30,6 @@ exports[`completeMultipartUpload works correctly  1`] = `
           ],
         },
       },
-    },
-  ],
-}
-`;
-
-exports[`getSampleFileDownloadUrl works correctly 1`] = `
-[MockFunction] {
-  "calls": Array [
-    Array [
-      "getObject",
-      Object {
-        "Bucket": "biomage-originals-test-000000000000",
-        "Key": "123",
-        "ResponseContentDisposition": "attachment; filename=\\"features.tsv.gz\\"",
-      },
-    ],
-  ],
-  "results": Array [
-    Object {
-      "type": "return",
-      "value": "signedUrl",
     },
   ],
 }
@@ -203,6 +182,27 @@ exports[`getFileUploadUrls works correctly without metadata 2`] = `
         "Key": "mockSampleFileId",
         "PartNumber": 1,
         "UploadId": "uploadId",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": "signedUrl",
+    },
+  ],
+}
+`;
+
+exports[`getSampleFileDownloadUrl works correctly 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "getObject",
+      Object {
+        "Bucket": "biomage-originals-test-000000000000",
+        "Key": "123",
+        "ResponseContentDisposition": "attachment; filename=\\"features.tsv.gz\\"",
       },
     ],
   ],

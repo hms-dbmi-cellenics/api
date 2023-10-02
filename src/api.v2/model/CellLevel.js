@@ -14,17 +14,16 @@ class CellLevel extends BasicModel {
     super(sql, tableNames.CELL_LEVEL, fields);
   }
 
-  async getMetadataByExperimentId(experimentId) {
+  async getMetadataByExperimentIds(experimentIds) {
     const result = await this.sql
-      .select(fields)
+      .select([...fields, `${tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP}.experiment_id`])
       .from(tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP)
       .leftJoin(
         tableNames.CELL_LEVEL,
         `${tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP}.cell_metadata_file_id`,
         `${tableNames.CELL_LEVEL}.id`,
-      ) // Join with cell_metadata_file table
-      .where(`${tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP}.experiment_id`, experimentId)
-      .first();
+      )
+      .whereIn(`${tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP}.experiment_id`, experimentIds);
 
     return result;
   }

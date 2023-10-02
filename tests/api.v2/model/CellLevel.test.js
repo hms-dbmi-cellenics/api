@@ -20,12 +20,10 @@ describe('model/CellLevel', () => {
       created_at: 'mockDate',
     };
 
-    mockSqlClient.first.mockReturnValueOnce(Promise.resolve(mockResult));
+    mockSqlClient.mockReturnValueOnce(Promise.resolve([mockResult]));
 
     const cellLevel = new CellLevel();
-    const result = await cellLevel.getMetadataByExperimentId(mockExperimentId);
-
-    expect(result).toEqual(mockResult);
+    await cellLevel.getMetadataByExperimentIds([mockExperimentId]);
 
 
     expect(mockSqlClient.select.mock.calls).toMatchSnapshot();

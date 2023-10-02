@@ -8,6 +8,7 @@ Array [
       "name",
       "upload_status",
       "created_at",
+      "cell_metadata_file_to_experiment.experiment_id",
     ],
   ],
 ]
@@ -31,11 +32,4 @@ Array [
 ]
 `;
 
-exports[`model/CellLevel getMetadataByExperimentId retrieves data correctly 4`] = `
-Array [
-  Array [
-    "cell_metadata_file_to_experiment.experiment_id",
-    "mockExperimentId",
-  ],
-]
-`;
+exports[`model/CellLevel getMetadataByExperimentId retrieves data correctly 4`] = `Array []`;

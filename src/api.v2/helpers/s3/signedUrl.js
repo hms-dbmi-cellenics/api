@@ -64,14 +64,13 @@ const createMultipartUpload = async (params, size) => {
 };
 
 
-const completeMultipartUpload = async (sampleFileId, parts, uploadId) => {
+const completeMultipartUpload = async (key, parts, uploadId, bucketName) => {
   const params = {
-    Bucket: bucketNames.SAMPLE_FILES,
-    Key: `${sampleFileId}`,
+    Bucket: bucketName,
+    Key: key,
     UploadId: uploadId,
     MultipartUpload: { Parts: parts },
   };
-
 
   const S3Config = {
     apiVersion: '2006-03-01',
