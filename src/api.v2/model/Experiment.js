@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 const { collapseKeyIntoArray, replaceNullsWithObject } = require('../../sql/helpers');
-const CellLevel = require('./CellLevel');
+const CellLevelMeta = require('./CellLevelMeta');
 const { NotFoundError, BadRequestError } = require('../../utils/responses');
 const tableNames = require('./tableNames');
 const config = require('../../config');
@@ -77,11 +77,11 @@ class Experiment extends BasicModel {
       this.sql,
     );
 
-    const cellLevel = new CellLevel();
+    const cellLevelMeta = new CellLevelMeta();
     const experimentIds = experiments.map((experiment) => experiment.id);
-    const cellLevelResults = await cellLevel.getMetadataByExperimentIds(experimentIds);
+    const cellLevelMetaResults = await cellLevelMeta.getMetadataByExperimentIds(experimentIds);
 
-    cellLevelResults.forEach(
+    cellLevelMetaResults.forEach(
       (cellLevelMetaResult) => {
         const experimentIndx = experiments.findIndex(
           (experiment) => experiment.id === cellLevelMetaResult.experimentId,

@@ -29,7 +29,7 @@ jest.mock('../../../src/sql/helpers', () => ({
       '{}'::jsonb
     ) as pipelines,}),`),
 }));
-jest.mock('../../../src/api.v2/model/CellLevel');
+jest.mock('../../../src/api.v2/model/CellLevelMeta');
 const Experiment = require('../../../src/api.v2/model/Experiment');
 const constants = require('../../../src/utils/constants');
 const tableNames = require('../../../src/api.v2/model/tableNames');

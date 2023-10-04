@@ -9,7 +9,7 @@ const fields = [
   'created_at',
 ];
 
-class CellLevel extends BasicModel {
+class CellLevelMeta extends BasicModel {
   constructor(sql = sqlClient.get()) {
     super(sql, tableNames.CELL_LEVEL, fields);
   }
@@ -29,4 +29,4 @@ class CellLevel extends BasicModel {
   }
 }
 
-module.exports = CellLevel;
+module.exports = CellLevelMeta;

@@ -5,6 +5,6 @@ const stub = {
   ...BasicModel,
 };
 
-const CellLevel = jest.fn().mockImplementation(() => stub);
+const CellLevelMeta = jest.fn().mockImplementation(() => stub);
 
-module.exports = CellLevel;
+module.exports = CellLevelMeta;

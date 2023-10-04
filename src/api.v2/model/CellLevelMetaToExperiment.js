@@ -7,10 +7,10 @@ const fields = [
   'cell_metadata_file_id',
 ];
 
-class CellLevelToExperiment extends BasicModel {
+class CellLevelMetaToExperiment extends BasicModel {
   constructor(sql = sqlClient.get()) {
     super(sql, tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP, fields);
   }
 }
 
-module.exports = CellLevelToExperiment;
+module.exports = CellLevelMetaToExperiment;

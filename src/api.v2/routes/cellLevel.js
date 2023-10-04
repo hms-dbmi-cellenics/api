@@ -1,6 +1,6 @@
 const {
   uploadCellLevelMetadata, updateCellLevelMetadata,
-} = require('../controllers/cellLevelController');
+} = require('../controllers/cellLevelMetaController');
 
 const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
 

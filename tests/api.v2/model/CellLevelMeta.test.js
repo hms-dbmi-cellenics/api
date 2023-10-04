@@ -1,6 +1,6 @@
 // @ts-nocheck
 const { mockSqlClient } = require('../mocks/getMockSqlClient')();
-const CellLevel = require('../../../src/api.v2/model/CellLevel');
+const CellLevel = require('../../../src/api.v2/model/CellLevelMeta');
 
 jest.mock('../../../src/sql/sqlClient', () => ({
   get: jest.fn(() => mockSqlClient),

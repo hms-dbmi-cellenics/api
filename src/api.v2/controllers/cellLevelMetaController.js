@@ -2,8 +2,8 @@ const { v4: uuidv4 } = require('uuid');
 const _ = require('lodash');
 const bucketNames = require('../../config/bucketNames');
 const sqlClient = require('../../sql/sqlClient');
-const CellLevel = require('../model/CellLevel');
-const CellLevelToExperiment = require('../model/CellLevelToExperiment');
+const CellLevelMeta = require('../model/CellLevelMeta');
+const CellLevelMetaToExperiment = require('../model/CellLevelMetaToExperiment');
 const { getFileUploadUrls } = require('../helpers/s3/signedUrl');
 const OK = require('../../utils/responses/OK');
 
@@ -11,24 +11,24 @@ const uploadCellLevelMetadata = async (req, res) => {
   const { experimentId } = req.params;
   const { name, size } = req.body;
 
-  const cellLevelKey = uuidv4();
+  const cellLevelMetaKey = uuidv4();
   const bucketName = bucketNames.CELL_METADATA;
-  const newCellLevelFile = {
-    id: cellLevelKey,
+  const newCellLevelMetaFile = {
+    id: cellLevelMetaKey,
     name,
     upload_status: 'uploading',
   };
-  const cellLevelToExperimentMap = {
+  const cellLevelMetaToExperimentMap = {
     experiment_id: experimentId,
-    cell_metadata_file_id: cellLevelKey,
+    cell_metadata_file_id: cellLevelMetaKey,
   };
 
   let uploadUrlParams;
   await sqlClient.get().transaction(async (trx) => {
-    await new CellLevel(trx).create(newCellLevelFile);
-    await new CellLevelToExperiment(trx).create(cellLevelToExperimentMap);
-    uploadUrlParams = await getFileUploadUrls(cellLevelKey, {}, size, bucketName);
-    uploadUrlParams = { ...uploadUrlParams, fileId: cellLevelKey };
+    await new CellLevelMeta(trx).create(newCellLevelMetaFile);
+    await new CellLevelMetaToExperiment(trx).create(cellLevelMetaToExperimentMap);
+    uploadUrlParams = await getFileUploadUrls(cellLevelMetaKey, {}, size, bucketName);
+    uploadUrlParams = { ...uploadUrlParams, fileId: cellLevelMetaKey };
   });
 
   res.json({ data: uploadUrlParams });
@@ -38,8 +38,8 @@ const uploadCellLevelMetadata = async (req, res) => {
 const updateCellLevelMetadata = async (req, res) => {
   const { params: { experimentId }, body } = req;
   const snakeCasedKeysToPatch = _.mapKeys(body, (_value, key) => _.snakeCase(key));
-  const { cellMetadataFileId } = await new CellLevelToExperiment().find({ experiment_id: experimentId }).first();
-  await new CellLevel().updateById(cellMetadataFileId, snakeCasedKeysToPatch);
+  const { cellMetadataFileId } = await new CellLevelMetaToExperiment().find({ experiment_id: experimentId }).first();
+  await new CellLevelMeta().updateById(cellMetadataFileId, snakeCasedKeysToPatch);
   res.json(OK());
 };
 module.exports = {
