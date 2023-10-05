@@ -2,11 +2,13 @@
 const Sample = require('../../../src/api.v2/model/Sample');
 const SampleFile = require('../../../src/api.v2/model/SampleFile');
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
+const bucketNames = require('../../../src/config/bucketNames');
 
 const sampleInstance = new Sample();
 const sampleFileInstance = new SampleFile();
 
 const sampleFileController = require('../../../src/api.v2/controllers/sampleFileController');
+const s3UploadController = require('../../../src/api.v2/controllers/s3Upload');
 const { OK } = require('../../../src/utils/responses');
 
 const signedUrl = require('../../../src/api.v2/helpers/s3/signedUrl');
@@ -28,7 +30,7 @@ describe('sampleFileController', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    signedUrl.getSampleFileUploadUrls.mockReturnValue(mockSignedUrls);
+    signedUrl.getFileUploadUrls.mockReturnValue(mockSignedUrls);
   });
 
   it('createFile works correctly', async () => {
@@ -143,17 +145,19 @@ describe('sampleFileController', () => {
 
 
     const mockReq = {
-      body: { sampleFileId, parts, uploadId },
+      body: {
+        fileId: sampleFileId, parts, uploadId, type: 'sample',
+      },
     };
 
     signedUrl.completeMultipartUpload.mockImplementationOnce(
       () => Promise.resolve(undefined),
     );
 
-    await sampleFileController.completeMultipart(mockReq, mockRes);
+    await s3UploadController.completeMultipartUploads(mockReq, mockRes);
 
     expect(signedUrl.completeMultipartUpload).toHaveBeenCalledWith(
-      sampleFileId, parts, uploadId,
+      sampleFileId, parts, uploadId, bucketNames.SAMPLE_FILES,
     );
   });
 });

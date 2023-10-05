@@ -1,10 +1,11 @@
+/* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { v4: uuidv4 } = require('uuid');
 
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 const { collapseKeyIntoArray, replaceNullsWithObject } = require('../../sql/helpers');
-
+const CellLevelMeta = require('./CellLevelMeta');
 const { NotFoundError, BadRequestError } = require('../../utils/responses');
 const tableNames = require('./tableNames');
 const config = require('../../config');
@@ -68,7 +69,7 @@ class Experiment extends BasicModel {
       .leftJoin(`${tableNames.EXPERIMENT_PARENT} as p`, 'e.id', 'p.experiment_id')
       .as('mainQuery');
 
-    const result = await collapseKeyIntoArray(
+    const experiments = await collapseKeyIntoArray(
       mainQuery,
       [...fields, 'parent_experiment_id', 'is_subsetted'],
       'key',
@@ -76,8 +77,22 @@ class Experiment extends BasicModel {
       this.sql,
     );
 
-    return result;
+    const cellLevelMeta = new CellLevelMeta();
+    const experimentIds = experiments.map((experiment) => experiment.id);
+    const cellLevelMetaResults = await cellLevelMeta.getMetadataByExperimentIds(experimentIds);
+
+    cellLevelMetaResults.forEach(
+      (cellLevelMetaResult) => {
+        const experimentIndx = experiments.findIndex(
+          (experiment) => experiment.id === cellLevelMetaResult.experimentId,
+        );
+        experiments[experimentIndx].cellLevelMetadata = cellLevelMetaResult;
+      },
+    );
+
+    return experiments;
   }
+
 
   async getExampleExperiments() {
     const fields = [

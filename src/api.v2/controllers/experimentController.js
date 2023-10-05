@@ -69,7 +69,6 @@ const getExampleExperiments = async (req, res) => {
 const getExperiment = async (req, res) => {
   const { params: { experimentId } } = req;
   logger.log(`Getting experiment ${experimentId}`);
-
   const data = await new Experiment().getExperimentData(experimentId);
 
   logger.log(`Finished getting experiment ${experimentId}`);
@@ -146,7 +145,6 @@ const getProcessingConfig = async (req, res) => {
   logger.log('Getting processing config for experiment ', experimentId);
 
   const result = await new Experiment().getProcessingConfig(experimentId);
-
   logger.log('Finished getting processing config for experiment ', experimentId);
   res.json(result);
 };

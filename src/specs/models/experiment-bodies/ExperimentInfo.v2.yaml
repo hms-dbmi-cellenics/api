@@ -7,6 +7,8 @@ properties:
     type: string
   description:
     type: string
+  cellLevelMetadata:
+    type: object
   samplesOrder:
     type: array
     items:
