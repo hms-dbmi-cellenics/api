@@ -25,12 +25,12 @@ const mockRes = {
 };
 
 describe('sampleFileController', () => {
-  const mockSignedUrls = ['signedUrl'];
+  const mockUploadParams = { signedUrls: ['signedUrl1', 'signedUrl2'], fileId: 'mockfileId' };
 
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    signedUrl.getFileUploadUrls.mockReturnValue(mockSignedUrls);
+    signedUrl.getFileUploadUrls.mockReturnValue(Promise.resolve(mockUploadParams));
   });
 
   it('createFile works correctly', async () => {
@@ -87,6 +87,26 @@ describe('sampleFileController', () => {
     ).rejects.toThrow();
 
     expect(mockRes.json).not.toHaveBeenCalled();
+  });
+
+  it('beginUpload works correctly', async () => {
+    const experimentId = 'experimentId';
+    const sampleFileId = 'sampleFileId';
+    const size = 10;
+    const metadata = {};
+
+    const mockReq = {
+      params: { experimentId, sampleFileId },
+      body: { metadata, size },
+    };
+
+    await sampleFileController.beginUpload(mockReq, mockRes);
+
+    expect(signedUrl.getFileUploadUrls).toHaveBeenCalledWith(
+      sampleFileId, metadata, size, bucketNames.SAMPLE_FILES,
+    );
+
+    expect(mockRes.json).toHaveBeenCalledWith(mockUploadParams);
   });
 
   it('patchFile works correctly', async () => {
