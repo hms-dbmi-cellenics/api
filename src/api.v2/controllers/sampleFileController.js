@@ -13,7 +13,7 @@ const logger = getLogger('[SampleFileController] - ');
 const createFile = async (req, res) => {
   const {
     params: { experimentId, sampleId, sampleFileType },
-    body: { sampleFileId, size, metadata = {} },
+    body: { sampleFileId, size },
   } = req;
   logger.log(`Creating file ${sampleFileType} for sample ${sampleId} in experiment ${experimentId}`);
 
@@ -25,19 +25,31 @@ const createFile = async (req, res) => {
     upload_status: 'uploading',
   };
 
-  let uploadUrlParams;
+
 
   await sqlClient.get().transaction(async (trx) => {
     await new SampleFile(trx).create(newSampleFile);
     await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType);
-
-    logger.log(`Getting multipart upload urls for ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
-    uploadUrlParams = await getFileUploadUrls(sampleFileId, metadata, size, bucketNames.SAMPLE_FILES);
   });
 
 
   logger.log(`Finished creating sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
-  res.json(uploadUrlParams);
+
+  res.json(OK());
+};
+
+const beginUpload = async (req, res) => {
+  const {
+    params: { experimentId, sampleFileId },
+    body: { metadata, size },
+  } = req;
+
+  logger.log(`Generating multipart upload urls for ${experimentId}, sample file ${sampleFileId}`);
+  const uploadParams = await getFileUploadUrls(
+    sampleFileId, metadata, size, bucketNames.SAMPLE_FILES,
+  );
+
+  res.json(uploadParams);
 };
 
 const patchFile = async (req, res) => {
@@ -66,5 +78,5 @@ const getS3DownloadUrl = async (req, res) => {
 };
 
 module.exports = {
-  createFile, patchFile, getS3DownloadUrl,
+  createFile, beginUpload, patchFile, getS3DownloadUrl,
 };
