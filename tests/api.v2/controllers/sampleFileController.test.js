@@ -63,7 +63,7 @@ describe('sampleFileController', () => {
     expect(sampleInstance.setNewFile).toHaveBeenCalledWith('sampleId', 'sampleFileId', 'features10x');
 
     // Response is generated signed url
-    expect(mockRes.json).toHaveBeenCalledWith(mockSignedUrls);
+    expect(mockRes.json).toHaveBeenCalledWith(OK());
   });
 
   it('createFile errors out if the transaction failed', async () => {
