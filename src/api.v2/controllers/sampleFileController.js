@@ -2,8 +2,9 @@ const sqlClient = require('../../sql/sqlClient');
 
 const Sample = require('../model/Sample');
 const SampleFile = require('../model/SampleFile');
+const bucketNames = require('../../config/bucketNames');
 
-const { getSampleFileUploadUrls, getSampleFileDownloadUrl, completeMultipartUpload } = require('../helpers/s3/signedUrl');
+const { getFileUploadUrls, getSampleFileDownloadUrl } = require('../helpers/s3/signedUrl');
 const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 
@@ -31,7 +32,7 @@ const createFile = async (req, res) => {
     await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType);
 
     logger.log(`Getting multipart upload urls for ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
-    uploadUrlParams = await getSampleFileUploadUrls(sampleFileId, metadata, size);
+    uploadUrlParams = await getFileUploadUrls(sampleFileId, metadata, size, bucketNames.SAMPLE_FILES);
   });
 
 
@@ -52,19 +53,6 @@ const patchFile = async (req, res) => {
   res.json(OK());
 };
 
-const completeMultipart = async (req, res) => {
-  const {
-    body: { sampleFileId, parts, uploadId },
-  } = req;
-
-  logger.log(`completing multipart upload for sampleFileId ${sampleFileId}`);
-
-  completeMultipartUpload(sampleFileId, parts, uploadId);
-
-  logger.log(`completed multipart upload for sampleFileId ${sampleFileId}`);
-  res.json(OK());
-};
-
 const getS3DownloadUrl = async (req, res) => {
   const { experimentId, sampleId, sampleFileType } = req.params;
 
@@ -78,5 +66,5 @@ const getS3DownloadUrl = async (req, res) => {
 };
 
 module.exports = {
-  createFile, patchFile, getS3DownloadUrl, completeMultipart,
+  createFile, patchFile, getS3DownloadUrl,
 };

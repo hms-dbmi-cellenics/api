@@ -168,30 +168,6 @@ describe('tests for experiment route', () => {
         return done();
       });
   });
-
-  it('Completing a multipart upload results in a successful response', async (done) => {
-    sampleFileController.completeMultipart.mockImplementationOnce((req, res) => {
-      res.json(OK());
-      return Promise.resolve();
-    });
-
-    const completeMultipartBody = {
-      parts: [], uploadId: 'uploadId', sampleFileId: 'sampleFileId',
-    };
-
-    request(app)
-      .post('/v2/completeMultipartUpload')
-      .send(completeMultipartBody)
-      .expect(200)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
-        // there is no point testing for the values of the response body
-        // - if something is wrong, the schema validator will catch it
-        return done();
-      });
-  });
   it('Completing a multipart upload fails if body is invalid', async (done) => {
     sampleFileController.completeMultipart.mockImplementationOnce((req, res) => {
       res.json(OK());

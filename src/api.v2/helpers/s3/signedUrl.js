@@ -64,14 +64,13 @@ const createMultipartUpload = async (params, size) => {
 };
 
 
-const completeMultipartUpload = async (sampleFileId, parts, uploadId) => {
+const completeMultipartUpload = async (key, parts, uploadId, bucketName) => {
   const params = {
-    Bucket: bucketNames.SAMPLE_FILES,
-    Key: `${sampleFileId}`,
+    Bucket: bucketName,
+    Key: key,
     UploadId: uploadId,
     MultipartUpload: { Parts: parts },
   };
-
 
   const S3Config = {
     apiVersion: '2006-03-01',
@@ -83,10 +82,10 @@ const completeMultipartUpload = async (sampleFileId, parts, uploadId) => {
   await s3.completeMultipartUpload(params).promise();
 };
 
-const getSampleFileUploadUrls = async (sampleFileId, metadata, size) => {
+const getFileUploadUrls = async (key, metadata, size, bucketName) => {
   const params = {
-    Bucket: bucketNames.SAMPLE_FILES,
-    Key: sampleFileId,
+    Bucket: bucketName,
+    Key: key,
     // 1 hour timeout of upload link
     Expires: 3600,
   };
@@ -130,7 +129,7 @@ const getSampleFileDownloadUrl = async (experimentId, sampleId, fileType) => {
 };
 
 module.exports = {
-  getSampleFileUploadUrls,
+  getFileUploadUrls,
   getSampleFileDownloadUrl,
   getSignedUrl,
   createMultipartUpload,
