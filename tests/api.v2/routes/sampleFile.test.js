@@ -13,6 +13,7 @@ jest.mock('../../../src/api.v2/controllers/sampleFileController', () => ({
   patchFile: jest.fn(),
   getS3DownloadUrl: jest.fn(),
   completeMultipart: jest.fn(),
+  beginUpload: jest.fn(),
 }));
 
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
@@ -152,22 +153,43 @@ describe('tests for experiment route', () => {
       return Promise.resolve();
     });
 
-    const mockReq = {
-      params: { experimentId, sampleFileId },
-      body: { metadata, size },
-    };
+    const experimentId = 'mockExperimentId';
+    const sampleFileId = 'mockSampleFileId';
+    const size = 10;
+    const metadata = {};
 
+    const body = { metadata, size };
+
+    request(app)
+      .post(`/v2/experiments/${experimentId}/sampleFiles/${sampleFileId}/beginUpload`)
+      .send(body)
+      .expect(200)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
+  it('beginUpload fails if validation doesnt match', async (done) => {
+    sampleFileController.beginUpload.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
 
     const experimentId = 'mockExperimentId';
     const sampleFileId = 'mockSampleFileId';
+    const size = 10;
 
-    const patchFileBody = {
-      s3Path: 'features.tsv.gz',
-    };
+    // Metadata is missing
+    const body = { size };
 
     request(app)
-      .patch(`/v2/experiments/${experimentId}/sampleFiles/${sampleFileId}`)
-      .send(patchFileBody)
+      .post(`/v2/experiments/${experimentId}/sampleFiles/${sampleFileId}/beginUpload`)
+      .send(body)
       .expect(400)
       .end((err) => {
         if (err) {
