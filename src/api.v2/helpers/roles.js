@@ -20,6 +20,7 @@ const allowedResources = {
     '/experiments/(?<experimentId>.*)/cellSets',
     '/experiments/(?<experimentId>.*)/clone',
     '/experiments/(?<experimentId>.*)/subset',
+    '/workRequest/(?<experimentId>.*)/.*',
   ],
   [VIEWER]: [
     '/experiments/(?<experimentId>.*)/clone',

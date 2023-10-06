@@ -6,15 +6,6 @@ properties:
     type: string
   size:
     type: number
-  metadata:
-    description: Metadata to append to the s3 object on upload
-    type: object
-    properties:
-      cellrangerVersion:
-        type: string
-        oneOf:
-          - pattern: v2
-          - pattern: v3
  
 required:
   - sampleFileId

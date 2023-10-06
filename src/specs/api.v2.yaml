@@ -1439,7 +1439,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: "#/components/schemas/HTTPSuccess"
         "400":
           description: Bad Request
           content:
@@ -1507,6 +1507,75 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPSuccess"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "424":
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/sampleFiles/{sampleFileId}/beginUpload":
+    post:
+      summary: Begins the multipart upload of a sample file
+      description: Begins the multipart upload of a sample file
+      operationId: beginUpload
+      x-eov-operation-id: sampleFile#beginUpload
+      x-eov-operation-handler: routes/sampleFile
+      parameters:
+        - name: experimentId
+          required: true
+          in: path
+          description: ID of the experiment.
+          schema:
+            type: string
+        - name: sampleFileId
+          in: path
+          description: Type of the file.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BeginSampleFileUpload"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signedUrls: 
+                    type: array
+                    items:
+                      type: string
+                  uploadId: 
+                    type: string
         "400":
           description: Bad Request
           content:
@@ -2481,6 +2550,8 @@ components:
       $ref: ./models/samples-bodies/CreateSampleFile.v2.yaml
     PatchSampleFile:
       $ref: ./models/samples-bodies/PatchSampleFile.v2.yaml
+    BeginSampleFileUpload: 
+      $ref: ./models/samples-bodies/BeginSampleFileUpload.v2.yaml
     UpdateSamplesOptions:
       $ref: ./models/samples-bodies/UpdateSamplesOptions.v2.yaml
     CellSets:

@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`sampleFileController beginUpload works correctly if upload status of file is compressing 1`] = `
+Array [
+  Array [
+    "sampleFileId",
+  ],
+]
+`;
+
+exports[`sampleFileController beginUpload works correctly if upload status of file is uploading 1`] = `
+Array [
+  Array [
+    "sampleFileId",
+  ],
+]
+`;
