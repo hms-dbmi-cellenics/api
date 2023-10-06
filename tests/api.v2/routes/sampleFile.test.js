@@ -146,6 +146,39 @@ describe('tests for experiment route', () => {
       });
   });
 
+  it('beginUpload works', async (done) => {
+    sampleFileController.beginUpload.mockImplementationOnce((req, res) => {
+      res.json(OK());
+      return Promise.resolve();
+    });
+
+    const mockReq = {
+      params: { experimentId, sampleFileId },
+      body: { metadata, size },
+    };
+
+
+    const experimentId = 'mockExperimentId';
+    const sampleFileId = 'mockSampleFileId';
+
+    const patchFileBody = {
+      s3Path: 'features.tsv.gz',
+    };
+
+    request(app)
+      .patch(`/v2/experiments/${experimentId}/sampleFiles/${sampleFileId}`)
+      .send(patchFileBody)
+      .expect(400)
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        // there is no point testing for the values of the response body
+        // - if something is wrong, the schema validator will catch it
+        return done();
+      });
+  });
+
   it('Getting a sample file download url results in a successful response', async (done) => {
     sampleFileController.getS3DownloadUrl.mockImplementationOnce((req, res) => {
       res.json('mockSignedUrl');

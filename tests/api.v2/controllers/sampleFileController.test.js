@@ -9,7 +9,7 @@ const sampleFileInstance = new SampleFile();
 
 const sampleFileController = require('../../../src/api.v2/controllers/sampleFileController');
 const s3UploadController = require('../../../src/api.v2/controllers/s3Upload');
-const { OK } = require('../../../src/utils/responses');
+const { OK, MethodNotAllowedError } = require('../../../src/utils/responses');
 
 const signedUrl = require('../../../src/api.v2/helpers/s3/signedUrl');
 
@@ -89,7 +89,7 @@ describe('sampleFileController', () => {
     expect(mockRes.json).not.toHaveBeenCalled();
   });
 
-  it('beginUpload works correctly', async () => {
+  it('beginUpload works correctly if upload status of file is compressing', async () => {
     const experimentId = 'experimentId';
     const sampleFileId = 'sampleFileId';
     const size = 10;
@@ -100,6 +100,8 @@ describe('sampleFileController', () => {
       body: { metadata, size },
     };
 
+    sampleFileInstance.findById.mockReturnValueOnce({ first: () => Promise.resolve({ uploadStatus: 'compressing' }) });
+
     await sampleFileController.beginUpload(mockReq, mockRes);
 
     expect(signedUrl.getFileUploadUrls).toHaveBeenCalledWith(
@@ -107,6 +109,56 @@ describe('sampleFileController', () => {
     );
 
     expect(mockRes.json).toHaveBeenCalledWith(mockUploadParams);
+
+    expect(sampleFileInstance.findById.mock.calls).toMatchSnapshot();
+  });
+
+  it('beginUpload works correctly if upload status of file is uploading', async () => {
+    const experimentId = 'experimentId';
+    const sampleFileId = 'sampleFileId';
+    const size = 10;
+    const metadata = {};
+
+    const mockReq = {
+      params: { experimentId, sampleFileId },
+      body: { metadata, size },
+    };
+
+    sampleFileInstance.findById.mockReturnValueOnce({ first: () => Promise.resolve({ uploadStatus: 'uploading' }) });
+
+    await sampleFileController.beginUpload(mockReq, mockRes);
+
+    expect(signedUrl.getFileUploadUrls).toHaveBeenCalledWith(
+      sampleFileId, metadata, size, bucketNames.SAMPLE_FILES,
+    );
+
+    expect(mockRes.json).toHaveBeenCalledWith(mockUploadParams);
+
+    expect(sampleFileInstance.findById.mock.calls).toMatchSnapshot();
+  });
+
+  it('beginUpload fails if upload status is not uploading or compressing', async () => {
+    const experimentId = 'experimentId';
+    const sampleFileId = 'sampleFileId';
+    const size = 10;
+    const metadata = {};
+
+    const mockReq = {
+      params: { experimentId, sampleFileId },
+      body: { metadata, size },
+    };
+
+    sampleFileInstance.findById.mockReturnValueOnce({ first: () => Promise.resolve({ uploadStatus: 'uploaded' }) });
+
+    await expect(sampleFileController.beginUpload(mockReq, mockRes)).rejects.toThrow(
+      new MethodNotAllowedError(
+        `Sample file ${sampleFileId} is not in the process of being uploaded. 
+      No sample files can be replaced in s3, to replace a file referenced by a sample, create a new file for it`,
+      ),
+    );
+
+    expect(signedUrl.getFileUploadUrls).not.toHaveBeenCalled();
+    expect(mockRes.json).not.toHaveBeenCalled();
   });
 
   it('patchFile works correctly', async () => {

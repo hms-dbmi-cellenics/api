@@ -51,7 +51,7 @@ const beginUpload = async (req, res) => {
   if (!['uploading', 'compressing'].includes(uploadStatus)) {
     throw new MethodNotAllowedError(
       `Sample file ${sampleFileId} is not in the process of being uploaded. 
-      No sample files can be replaced in s3, to replace a file referenced in a sample, create a new file for it`,
+      No sample files can be replaced in s3, to replace a file referenced by a sample, create a new file for it`,
     );
   }
 
