@@ -1,0 +1,21 @@
+title: Begin sample file multipart upload
+description: 'Data to begin an s3 multipart upload'
+type: object
+properties:
+  size:
+    type: number
+  metadata:
+    description: Metadata to append to the s3 object on upload
+    type: object
+    properties:
+      cellrangerVersion:
+        type: string
+        oneOf:
+          - pattern: v2
+          - pattern: v3
+
+required:
+  - size
+  - metadata
+
+additionalProperties: false

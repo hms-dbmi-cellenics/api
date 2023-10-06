@@ -1,5 +1,5 @@
 const {
-  createFile, patchFile, getS3DownloadUrl,
+  createFile, patchFile, getS3DownloadUrl, beginUpload,
 } = require('../controllers/sampleFileController');
 
 const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
@@ -12,6 +12,10 @@ module.exports = {
   'sampleFile#patch': [
     expressAuthorizationMiddleware,
     (req, res, next) => patchFile(req, res).catch(next),
+  ],
+  'sampleFile#beginUpload': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => beginUpload(req, res).catch(next),
   ],
   'sampleFile#downloadUrl': [
     expressAuthorizationMiddleware,
