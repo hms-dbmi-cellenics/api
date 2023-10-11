@@ -17,6 +17,23 @@ const getPods = async (namespace, statusSelector, labelSelector) => {
   return pods.body.items;
 };
 
+//
+const scaleReplicasFromZero = async (namespace, name, replicas) => {
+  const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
+
+  // find the particular deployment
+  const res = await k8sApi.readNamespacedDeployment(name, namespace);
+  const deployment = res.body;
+
+  if (deployment.spec.replicas === 0) {
+    // edit
+    deployment.spec.replicas = replicas;
+
+    // replace
+    await k8sApi.replaceNamespacedDeployment(name, namespace, deployment);
+  }
+};
+
 
 const getAssignedPods = async (experimentId, namespace) => {
   // check if there's already a running pod for this experiment
@@ -64,6 +81,7 @@ const createWorkerResources = async (service) => {
 
   const pods = await getAvailablePods(namespace);
   if (pods.length < 1) {
+    await scaleReplicasFromZero(namespace, 'worker', 1);
     throw new Error(`Experiment ${experimentId} cannot be launched as there are no available workers.`);
   }
 
