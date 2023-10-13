@@ -19,34 +19,6 @@ const getPods = async (namespace, statusSelector, labelSelector) => {
 };
 
 
-const getDeployment = async (name, namespace) => {
-  const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
-
-  // find the particular deployment
-  const { body: deployment } = await k8sApi.readNamespacedDeployment(name, namespace);
-  return deployment;
-};
-
-
-//
-const scaleDeploymentReplicas = async (name, namespace, replicas) => {
-  const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
-
-  const deployment = await getDeployment(name, namespace);
-  logger.log(`Scaling ${name} from ${deployment.spec.replicas} to ${replicas} replicas...`);
-
-  // edit
-  deployment.spec.replicas = replicas;
-
-  // replace
-  await k8sApi.replaceNamespacedDeployment(name, namespace, deployment);
-
-  // give it some time
-  await asyncTimer(5000);
-};
-
-
-
 const getAssignedPods = async (experimentId, namespace) => {
   // check if there's already a running pod for this experiment
   const assignedRunningPods = await getPods(namespace, 'status.phase=Running', `experimentId=${experimentId}`);
@@ -71,6 +43,32 @@ const getAvailablePods = async (namespace) => {
   }
   return pods;
 };
+
+const getDeployment = async (name, namespace) => {
+  const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
+
+  // find the particular deployment
+  const { body: deployment } = await k8sApi.readNamespacedDeployment(name, namespace);
+  return deployment;
+};
+
+//
+const scaleDeploymentReplicas = async (name, namespace, replicas) => {
+  const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
+
+  const deployment = await getDeployment(name, namespace);
+  logger.log(`Scaling ${name} from ${deployment.spec.replicas} to ${replicas} replicas...`);
+
+  // edit
+  deployment.spec.replicas = replicas;
+
+  // replace
+  await k8sApi.replaceNamespacedDeployment(name, namespace, deployment);
+
+  logger.log('Waiting for pods to initiate...');
+  await asyncTimer(5000);
+};
+
 
 const createWorkerResources = async (service) => {
   const { sandboxId } = config;
