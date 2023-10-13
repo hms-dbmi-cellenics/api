@@ -1039,6 +1039,115 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/cellLevel":
+    post:
+      summary: Upload cell level metadata file
+      operationId: createCellLevelMetadataFromFile
+      x-eov-operation-id: cellLevel#uploadCellLevelMetadata
+      x-eov-operation-handler: routes/cellLevel
+      parameters:
+        - in: path
+          name: experimentId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                size:
+                  type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"  
+    patch:
+      summary: Patch the cell level metadata of an experiment
+      description: Update the cell level metadata of an experiment
+      operationId: patchCellLevelMetadata
+      x-eov-operation-id: cellLevel#updateCellLevelMetadata
+      x-eov-operation-handler: routes/cellLevel
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchSampleFile"
+      responses:
+        "200":
+          description: patch cell level metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "424":
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
   "/experiments/{experimentId}/metadataTracks/{metadataTrackKey}":
     post:
       summary: Creates a new metadata track
@@ -1330,7 +1439,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: "#/components/schemas/HTTPSuccess"
         "400":
           description: Bad Request
           content:
@@ -1428,13 +1537,82 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/sampleFiles/{sampleFileId}/beginUpload":
+    post:
+      summary: Begins the multipart upload of a sample file
+      description: Begins the multipart upload of a sample file
+      operationId: beginUpload
+      x-eov-operation-id: sampleFile#beginUpload
+      x-eov-operation-handler: routes/sampleFile
+      parameters:
+        - name: experimentId
+          required: true
+          in: path
+          description: ID of the experiment.
+          schema:
+            type: string
+        - name: sampleFileId
+          in: path
+          description: Type of the file.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BeginSampleFileUpload"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signedUrls: 
+                    type: array
+                    items:
+                      type: string
+                  uploadId: 
+                    type: string
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "424":
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
   /completeMultipartUpload:
     post:
       summary: Complete a multipart upload
       description: Complete a multipart upload of a sample file
       operationId: completeMultipart
-      x-eov-operation-id: sampleFile#completeMultipart
-      x-eov-operation-handler: routes/sampleFile
+      x-eov-operation-id: s3Upload#completeMultipartUpload
+      x-eov-operation-handler: routes/s3Upload
       requestBody:
         content:
           application/json:
@@ -1442,7 +1620,7 @@ paths:
               description: information here
               type: object
               properties:
-                sampleFileId:
+                fileId:
                   type: string
                 uploadId:
                   type: string
@@ -1450,11 +1628,14 @@ paths:
                   type: array
                   items:
                     type: object
+                type:
+                  type: string
               additionalProperties: false
               required:
-                  - sampleFileId
+                  - fileId
                   - uploadId
                   - parts
+                  - type
       responses:
         "200":
           description: Success
@@ -2415,6 +2596,8 @@ components:
       $ref: ./models/samples-bodies/CreateSampleFile.v2.yaml
     PatchSampleFile:
       $ref: ./models/samples-bodies/PatchSampleFile.v2.yaml
+    BeginSampleFileUpload: 
+      $ref: ./models/samples-bodies/BeginSampleFileUpload.v2.yaml
     UpdateSamplesOptions:
       $ref: ./models/samples-bodies/UpdateSamplesOptions.v2.yaml
     CellSets:

@@ -9,6 +9,8 @@ items:
       type: string
     description:
       type: string
+    cellLevelMetadata:
+      type: object
     notifyByEmail:
       type: boolean
     pipelineVersion:

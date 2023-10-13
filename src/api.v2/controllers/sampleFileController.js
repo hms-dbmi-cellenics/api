@@ -2,9 +2,10 @@ const sqlClient = require('../../sql/sqlClient');
 
 const Sample = require('../model/Sample');
 const SampleFile = require('../model/SampleFile');
+const bucketNames = require('../../config/bucketNames');
 
-const { getSampleFileUploadUrls, getSampleFileDownloadUrl, completeMultipartUpload } = require('../helpers/s3/signedUrl');
-const { OK } = require('../../utils/responses');
+const { getFileUploadUrls, getSampleFileDownloadUrl } = require('../helpers/s3/signedUrl');
+const { OK, MethodNotAllowedError } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 
 const logger = getLogger('[SampleFileController] - ');
@@ -12,7 +13,7 @@ const logger = getLogger('[SampleFileController] - ');
 const createFile = async (req, res) => {
   const {
     params: { experimentId, sampleId, sampleFileType },
-    body: { sampleFileId, size, metadata = {} },
+    body: { sampleFileId, size },
   } = req;
   logger.log(`Creating file ${sampleFileType} for sample ${sampleId} in experiment ${experimentId}`);
 
@@ -24,19 +25,42 @@ const createFile = async (req, res) => {
     upload_status: 'uploading',
   };
 
-  let uploadUrlParams;
+
 
   await sqlClient.get().transaction(async (trx) => {
     await new SampleFile(trx).create(newSampleFile);
     await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType);
-
-    logger.log(`Getting multipart upload urls for ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
-    uploadUrlParams = await getSampleFileUploadUrls(sampleFileId, metadata, size);
   });
 
 
   logger.log(`Finished creating sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
-  res.json(uploadUrlParams);
+
+  res.json(OK());
+};
+
+const beginUpload = async (req, res) => {
+  const {
+    params: { experimentId, sampleFileId },
+    body: { metadata, size },
+  } = req;
+
+  const { uploadStatus } = await new SampleFile().findById(sampleFileId).first();
+  // Check that the file is already in the process of being uploaded
+  // If it isn't, then it can't be reuploaded, a new file should be created
+  // This is because the existing files may be shared across many experiments
+  if (!['uploading', 'compressing'].includes(uploadStatus)) {
+    throw new MethodNotAllowedError(
+      `Sample file ${sampleFileId} is not in the process of being uploaded. 
+      No sample files can be replaced in s3, to replace a file referenced by a sample, create a new file for it`,
+    );
+  }
+
+  logger.log(`Generating multipart upload urls for ${experimentId}, sample file ${sampleFileId}`);
+  const uploadParams = await getFileUploadUrls(
+    sampleFileId, metadata, size, bucketNames.SAMPLE_FILES,
+  );
+
+  res.json(uploadParams);
 };
 
 const patchFile = async (req, res) => {
@@ -49,19 +73,6 @@ const patchFile = async (req, res) => {
   await new SampleFile().updateUploadStatus(sampleId, sampleFileType, uploadStatus);
 
   logger.log(`Finished patching sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
-  res.json(OK());
-};
-
-const completeMultipart = async (req, res) => {
-  const {
-    body: { sampleFileId, parts, uploadId },
-  } = req;
-
-  logger.log(`completing multipart upload for sampleFileId ${sampleFileId}`);
-
-  completeMultipartUpload(sampleFileId, parts, uploadId);
-
-  logger.log(`completed multipart upload for sampleFileId ${sampleFileId}`);
   res.json(OK());
 };
 
@@ -78,5 +89,5 @@ const getS3DownloadUrl = async (req, res) => {
 };
 
 module.exports = {
-  createFile, patchFile, getS3DownloadUrl, completeMultipart,
+  createFile, beginUpload, patchFile, getS3DownloadUrl,
 };

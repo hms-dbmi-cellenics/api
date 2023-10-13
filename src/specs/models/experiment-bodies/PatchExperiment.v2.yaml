@@ -8,5 +8,7 @@ properties:
     type: string
   notifyByEmail:
     type: boolean
+  cellLevelMetadata:
+    type: object
 
 additionalProperties: false

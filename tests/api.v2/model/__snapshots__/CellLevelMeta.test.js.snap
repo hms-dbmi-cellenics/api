@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`model/CellLevel getMetadataByExperimentId retrieves data correctly 1`] = `
+Array [
+  Array [
+    Array [
+      "id",
+      "name",
+      "upload_status",
+      "created_at",
+      "cell_metadata_file_to_experiment.experiment_id",
+    ],
+  ],
+]
+`;
+
+exports[`model/CellLevel getMetadataByExperimentId retrieves data correctly 2`] = `
+Array [
+  Array [
+    "cell_metadata_file_to_experiment",
+  ],
+]
+`;
+
+exports[`model/CellLevel getMetadataByExperimentId retrieves data correctly 3`] = `
+Array [
+  Array [
+    "cell_metadata_file",
+    "cell_metadata_file_to_experiment.cell_metadata_file_id",
+    "cell_metadata_file.id",
+  ],
+]
+`;
+
+exports[`model/CellLevel getMetadataByExperimentId retrieves data correctly 4`] = `Array []`;

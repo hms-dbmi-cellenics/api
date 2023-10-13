@@ -36,6 +36,16 @@ describe('tests for the roles logic', () => {
     });
   });
 
+  test(' isRoleAuthorized authorizes explorer to perform work requests', async () => {
+    [
+      `/workRequest/${fake.EXPERIMENT_ID}/010c3cd044ca5b61dffee5204a9ee893`,
+      `/workRequest/${fake.EXPERIMENT_ID}/02456e45d0bb165ed6961795ac438cd7`,
+    ].forEach((resource) => {
+      const isAuthorized = roles.isRoleAuthorized(roles.EXPLORER, resource, 'POST');
+      expect(isAuthorized).toEqual(true);
+    });
+  });
+
   test(' isRoleAuthorized authorizes admin & owner roles to everything', async () => {
     [roles.OWNER, roles.ADMIN].forEach((role) => {
       ['*', 'socket', '/experiments'].forEach((resource) => {
