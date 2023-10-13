@@ -19,6 +19,8 @@ const getPods = async (namespace, statusSelector, labelSelector) => {
 };
 
 
+
+
 const getAssignedPods = async (experimentId, namespace) => {
   // check if there's already a running pod for this experiment
   const assignedRunningPods = await getPods(namespace, 'status.phase=Running', `experimentId=${experimentId}`);
@@ -52,6 +54,19 @@ const getDeployment = async (name, namespace) => {
   return deployment;
 };
 
+const waitForPods = async (namespace, maxTries = 20, currentTry = 0) => {
+  logger.log('Waiting for pods...');
+  await asyncTimer(1000);
+  const pods = await getAvailablePods(namespace);
+
+  if (pods.length > 0 || currentTry >= maxTries) {
+    return;
+  }
+
+  waitForPods(namespace, maxTries, currentTry + 1);
+};
+
+
 //
 const scaleDeploymentReplicas = async (name, namespace, replicas) => {
   const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
@@ -65,8 +80,8 @@ const scaleDeploymentReplicas = async (name, namespace, replicas) => {
   // replace
   await k8sApi.replaceNamespacedDeployment(name, namespace, deployment);
 
-  logger.log('Waiting for pods to initiate...');
-  await asyncTimer(5000);
+  // wait until we have pods
+  await waitForPods();
 };
 
 
