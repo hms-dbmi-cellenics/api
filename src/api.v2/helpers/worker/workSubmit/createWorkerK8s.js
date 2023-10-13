@@ -42,7 +42,7 @@ const scaleDeploymentReplicas = async (name, namespace, replicas) => {
   await k8sApi.replaceNamespacedDeployment(name, namespace, deployment);
 
   // give it some time
-  // await asyncTimer(5000);
+  await asyncTimer(5000);
 };
 
 
