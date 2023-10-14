@@ -63,7 +63,7 @@ const waitForPods = async (namespace, maxTries = 20, currentTry = 0) => {
     return;
   }
 
-  waitForPods(namespace, maxTries, currentTry + 1);
+  await waitForPods(namespace, maxTries, currentTry + 1);
 };
 
 
