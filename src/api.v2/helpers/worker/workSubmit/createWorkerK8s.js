@@ -81,7 +81,7 @@ const scaleDeploymentReplicas = async (name, namespace, replicas) => {
   await k8sApi.replaceNamespacedDeployment(name, namespace, deployment);
 
   // wait until we have pods
-  await waitForPods();
+  await waitForPods(namespace);
 };
 
 
