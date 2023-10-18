@@ -321,7 +321,7 @@ jobs:
 
             # The chart template for the API repo is stored in IAC branch master
             # If you are working on the chart for UI/API, you can modify this value manualy in your PR's release
-            export CHART_REF="scale-worker-from-zero"
+            export CHART_REF="master"
             export SANDBOX_ID="STAGING_SANDBOX_ID"
             export RDS_SANDBOX_ID="STAGING_RDS_SANDBOX_ID"
             export KUBERNETES_ENV="staging"
