@@ -50,7 +50,7 @@
     "sns-validator": "^0.3.4",
     "socket.io": "^4.7.2",
     "socket.io-redis": "^6.0.1",
-    "swagger-client": "^3.12.2",
+    "swagger-client": "^3.18.4",
     "swagger-model-validator": "^3.0.18",
     "uuid": "^8.3.2",
     "yaml": "^1.10.0"
