@@ -6,25 +6,20 @@ const getClusteringSettings = async (message) => {
   return clusteringSettings;
 };
 
-const getSelectedCellSet = async (message, body, cellSets) => {
-  const { selectedCellSet } = body.downsampleSettings;
+const getCellSetsThatAffectDownsampling = async (message, body, cellSets) => {
+  const { selectedCellSet, groupedTracks } = body.downsampleSettings;
 
-  const cellSetsKeys = cellSets
+  const selectedCellSetKeys = cellSets
     .find(({ key }) => key === selectedCellSet)
     .children.map(({ key }) => key);
 
-  return cellSetsKeys;
-};
-
-const getGroupedTracksCellSets = async (message, body, cellSets) => {
-  const { groupedTracks } = body.downsampleSettings;
-
-  const cellSetsKeys = cellSets
+  const groupedCellSetKeys = cellSets
     .filter(({ key }) => groupedTracks.includes(key))
     .flatMap(({ children }) => children)
     .map(({ key }) => key);
 
-  return cellSetsKeys;
+  // Keep them in separate lists, they each represent different changes in the settings
+  return [selectedCellSetKeys, groupedCellSetKeys];
 };
 
 const dependencyGetters = {
@@ -41,7 +36,7 @@ const dependencyGetters = {
   GetNGenes: [],
   GetNUmis: [],
   MarkerHeatmap: [
-    getClusteringSettings, getSelectedCellSet, getGroupedTracksCellSets,
+    getClusteringSettings, getCellSetsThatAffectDownsampling,
   ],
   GetTrajectoryAnalysisStartingNodes: [getClusteringSettings],
   GetTrajectoryAnalysisPseudoTime: [getClusteringSettings],
