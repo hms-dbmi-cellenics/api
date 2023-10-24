@@ -7,6 +7,9 @@ const getClusteringSettings = async (message) => {
 };
 
 const getCellSetsThatAffectDownsampling = async (message, body, cellSets) => {
+  // If not downsampling, then there's no dependency set by this getter
+  if (!body.downsampleSettings) return '';
+
   const { selectedCellSet, groupedTracks } = body.downsampleSettings;
 
   const selectedCellSetKeys = cellSets
