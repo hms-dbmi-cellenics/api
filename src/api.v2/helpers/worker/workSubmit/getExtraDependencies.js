@@ -1,5 +1,8 @@
 const workerVersions = require('../workerVersions');
 const Experiment = require('../../../model/Experiment');
+const getS3Object = require('../../s3/getObject');
+const bucketNames = require('../../../../config/bucketNames');
+
 
 const getClusteringSettings = async (experimentId, body) => {
   const {
@@ -9,9 +12,19 @@ const getClusteringSettings = async (experimentId, body) => {
   console.log('processingConfig', processingConfig);
   console.log('body', body);
 
-  // const { input: { config: { clusteringSettings } } } = message;
+  const { configureEmbedding: { clusteringSettings } } = processingConfig;
 
-  return { };
+  console.log('clusteringSettings', clusteringSettings);
+  return clusteringSettings;
+};
+
+const getCellSets = async (experimentId) => {
+  // consider just fetching latest modified date instead of the whole object
+  const cellSets = await getS3Object({
+    Bucket: bucketNames.CELL_SETS,
+    Key: experimentId,
+  });
+  return cellSets;
 };
 
 const dependencyGetters = {
@@ -35,8 +48,7 @@ const dependencyGetters = {
   GetTrajectoryAnalysisStartingNodes: [getClusteringSettings],
   GetTrajectoryAnalysisPseudoTime: [getClusteringSettings],
   GetNormalizedExpression: [getClusteringSettings],
-  DownloadAnnotSeuratObject: [getClusteringSettings],
-  // DownloadAnnotSeuratObject: [getClusteringSettings, getCellSets], // todo getCellSets needs to be replaced
+  DownloadAnnotSeuratObject: [getClusteringSettings, getCellSets],
 };
 
 const getExtraDependencies = async (experimentId, taskName, body) => {
@@ -46,6 +58,8 @@ const getExtraDependencies = async (experimentId, taskName, body) => {
       (dependencyGetter) => dependencyGetter(experimentId, body),
     ),
   );
+
+  console.log('dependencies', dependencies);
 
   if (workerVersions[taskName]) {
     dependencies.push(workerVersions[taskName]);

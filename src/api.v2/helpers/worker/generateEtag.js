@@ -6,10 +6,6 @@ const getExtraDependencies = require('./workSubmit/getExtraDependencies');
 const createObjectHash = (object) => hash.MD5(object);
 
 const generateETag = async (
-  // experimentId,
-  // body,
-  // extras,
-  // cacheUniquenessKey = null,
   data,
 ) => {
   console.log('generateETag', data);
