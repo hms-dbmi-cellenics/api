@@ -4,13 +4,10 @@ const getS3Object = require('../../s3/getObject');
 const bucketNames = require('../../../../config/bucketNames');
 
 
-const getClusteringSettings = async (experimentId, body) => {
+const getClusteringSettings = async (experimentId) => {
   const {
     processingConfig,
   } = await new Experiment().findById(experimentId).first();
-
-  console.log('processingConfig', processingConfig);
-  console.log('body', body);
 
   const { configureEmbedding: { clusteringSettings } } = processingConfig;
 
@@ -27,6 +24,7 @@ const getCellSets = async (experimentId) => {
   return cellSets;
 };
 
+
 const dependencyGetters = {
   ClusterCells: [],
   ScTypeAnnotate: [],
@@ -42,20 +40,18 @@ const dependencyGetters = {
   GetMitochondrialContent: [],
   GetNGenes: [],
   GetNUmis: [],
-  MarkerHeatmap: [getClusteringSettings], // TODO getSelectedCellSet needs to be
-  // replaced by adding the actuall cells in the work request instead of only the cellset key
-  // MarkerHeatmap: [getClusteringSettings, getSelectedCellSet],
+  MarkerHeatmap: [getClusteringSettings],
   GetTrajectoryAnalysisStartingNodes: [getClusteringSettings],
   GetTrajectoryAnalysisPseudoTime: [getClusteringSettings],
   GetNormalizedExpression: [getClusteringSettings],
   DownloadAnnotSeuratObject: [getClusteringSettings, getCellSets],
 };
 
-const getExtraDependencies = async (experimentId, taskName, body) => {
-  console.log('getExtraDependencies', taskName, body);
+const getExtraDependencies = async (experimentId, taskName) => {
+  console.log('getExtraDependencies', taskName);
   const dependencies = await Promise.all(
     dependencyGetters[taskName].map(
-      (dependencyGetter) => dependencyGetter(experimentId, body),
+      (dependencyGetter) => dependencyGetter(experimentId),
     ),
   );
 
