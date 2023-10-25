@@ -1,12 +1,11 @@
-const { OK } = require('../../utils/responses');
 const handleWorkRequest = require('../events/handleWorkRequest');
 
 const submitWork = async (req, res) => {
   const io = req.app.get('io');
 
-  await handleWorkRequest(io.sockets, req.body);
+  const response = await handleWorkRequest(io.sockets, req.body);
 
-  res.json(OK());
+  res.json({ data: response });
 };
 
 module.exports = { submitWork };

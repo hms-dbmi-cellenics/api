@@ -1,17 +1,27 @@
 const workerVersions = require('../workerVersions');
+const Experiment = require('../../../model/Experiment');
 
-const getClusteringSettings = async (message) => {
-  const { input: { config: { clusteringSettings } } } = message;
+const getClusteringSettings = async (experimentId, body) => {
+  const {
+    processingConfig,
+  } = await new Experiment().findById(experimentId).first();
 
-  return clusteringSettings;
+  console.log('processingConfig', processingConfig);
+  console.log('body', body);
+
+  // const { input: { config: { clusteringSettings } } } = message;
+
+  return { };
 };
 
 const dependencyGetters = {
   ClusterCells: [],
+  ScTypeAnnotate: [],
   GetExpressionCellSets: [],
   GetEmbedding: [],
   ListGenes: [],
   DifferentialExpression: [getClusteringSettings],
+  BatchDifferentialExpression: [getClusteringSettings],
   GeneExpression: [],
   GetBackgroundExpressedGenes: [getClusteringSettings],
   DotPlot: [getClusteringSettings],
@@ -19,24 +29,26 @@ const dependencyGetters = {
   GetMitochondrialContent: [],
   GetNGenes: [],
   GetNUmis: [],
-  MarkerHeatmap: [getClusteringSettings],
+  MarkerHeatmap: [getClusteringSettings], // TODO getSelectedCellSet needs to be
+  // replaced by adding the actuall cells in the work request instead of only the cellset key
+  // MarkerHeatmap: [getClusteringSettings, getSelectedCellSet],
   GetTrajectoryAnalysisStartingNodes: [getClusteringSettings],
   GetTrajectoryAnalysisPseudoTime: [getClusteringSettings],
   GetNormalizedExpression: [getClusteringSettings],
   DownloadAnnotSeuratObject: [getClusteringSettings],
+  // DownloadAnnotSeuratObject: [getClusteringSettings, getCellSets], // todo getCellSets needs to be replaced
 };
 
-// message is assumed to be the configureEmbedding payload received
-// from the pipeline containing clutering & embedding settings
-const getExtraDependencies = async (name, message) => {
+const getExtraDependencies = async (experimentId, taskName, body) => {
+  console.log('getExtraDependencies', taskName, body);
   const dependencies = await Promise.all(
-    dependencyGetters[name].map(
-      (dependencyGetter) => dependencyGetter(message),
+    dependencyGetters[taskName].map(
+      (dependencyGetter) => dependencyGetter(experimentId, body),
     ),
   );
 
-  if (workerVersions[name]) {
-    dependencies.push(workerVersions[name]);
+  if (workerVersions[taskName]) {
+    dependencies.push(workerVersions[taskName]);
   }
 
   return dependencies;

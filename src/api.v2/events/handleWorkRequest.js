@@ -1,62 +1,48 @@
-const getLogger = require('../../utils/getLogger');
+const generateETag = require('../helpers/worker/generateEtag');
 const getWorkResults = require('../helpers/worker/getWorkResults');
 
-const logger = getLogger();
 const validateAndSubmitWork = require('./validateAndSubmitWork');
 
-const handleWorkRequest = async (socket, data) => {
-  const { Authorization, experimentId, ETag } = data;
 
+//
+const getSignedUrlIfAvailable = async (experimentId, ETag) => {
   try {
     const { signedUrl } = await getWorkResults(experimentId, ETag);
-
-    socket.emit(`WorkResponse-${ETag}`, {
-      request: { ...data },
-      results: [],
-      response: {
-        cacheable: false,
-        signedUrl,
-        error: null,
-      },
-    });
-
-    return;
+    return signedUrl;
   } catch (e) {
-    if (e.status === 404) {
-      console.log(`Work result ${ETag} not cached, submitting request`);
-    } else {
+    // 404 => indicates there are no work results present in S3 which is fine
+    // othere error => should be raised
+    if (e.status !== 404) {
       throw e;
     }
   }
+  return null;
+};
 
-  try {
-    // Authenticate and authorize the user
-    if (!Authorization) {
-      throw new Error('Authentication token must be present.');
-    }
 
-    const podInfo = await validateAndSubmitWork(data);
+const handleWorkRequest = async (socket, data) => {
+  const { Authorization, experimentId } = data;
 
-    socket.emit(`WorkerInfo-${experimentId}`, {
-      response: {
-        podInfo,
-      },
-    });
-  } catch (e) {
-    logger.log(`[REQ ??, SOCKET ${socket.id}] Error while processing WorkRequest event.`);
-    logger.trace(e);
-
-    socket.emit(`WorkResponse-${ETag}`, {
-      request: { ...data },
-      results: [],
-      response: {
-        cacheable: false,
-        error: e.message,
-      },
-    });
-
-    logger.log(`[REQ ??, SOCKET ${socket.id}] Error sent back to client.`);
+  // Authenticate and authorize the user
+  if (!Authorization) {
+    throw new Error('Authentication token must be present.');
   }
+
+  // 1. Generate ETag for the new work requets
+  const ETag = await generateETag(data);
+  console.log('Generated ETag', ETag);
+
+  // 2. Check if there are already existing work results for this ETag
+  const signedUrl = await getSignedUrlIfAvailable(experimentId, ETag);
+
+  // 3. If the results were not in S3, send the request to the worker
+  if (signedUrl === null) {
+    await validateAndSubmitWork(ETag, data);
+    // const podInfo = await validateAndSubmitWork(data);
+  }
+
+  // I think podInfo can be removed as we get better and fresher updates from the worker now.
+  return { ETag, signedUrl };
 };
 
 module.exports = handleWorkRequest;

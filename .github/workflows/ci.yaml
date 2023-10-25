@@ -75,7 +75,7 @@ jobs:
           head-branch-regex: "${{ github.head_ref }}"
           lowercase-branch: false
           body-template: ${{  steps.create-unchecked-pr-body.outputs.body }}
-          body-update-action: 'replace'
+          body-update-action: "replace"
 
   test:
     name: Run tests
@@ -84,65 +84,64 @@ jobs:
     env:
       CI: "true"
     steps:
+      - id: setup-node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
 
-    - id: setup-node
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
+      - id: checkout
+        name: Check out source code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{github.head_ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
 
-    - id: checkout
-      name: Check out source code
-      uses: actions/checkout@v3
-      with:
-        ref: ${{github.head_ref}}
-        repository: ${{github.event.pull_request.head.repo.full_name}}
+      - id: cache-seek
+        name: Check for npm cache hit
+        uses: c-hive/gha-npm-cache@v1
 
-    - id: cache-seek
-      name: Check for npm cache hit
-      uses: c-hive/gha-npm-cache@v1
+      - id: install
+        name: Install dependencies
+        run: |-
+          echo "Running CI with "
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
 
-    - id: install
-      name: Install dependencies
-      run: |-
-        echo "Running CI with "
-        echo "Node version: $(node --version)"
-        echo "NPM version: $(npm --version)"
+          git config --global url."https://".insteadOf ssh://
+          npm ci
 
-        git config --global url."https://".insteadOf ssh://
-        npm ci
+      - id: test-codecov
+        name: Run unit tests with coverage
+        uses: mattallty/jest-github-action@v1
+        env:
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          test-command: "npm run coverage"
+          coverage-comment: false
 
-    - id: test-codecov
-      name: Run unit tests with coverage
-      uses: mattallty/jest-github-action@v1
-      env:
-        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        test-command: "npm run coverage"
-        coverage-comment: false
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
+      - id: check-licenses
+        name: Check licenses
+        env:
+          ALLOWED_LICENSES: "MIT;ISC;Apache-2.0;BSD-3-Clause;BSD-2-Clause;(MIT OR Apache-2.0);Unlicense;Python-2.0;BSD;(AFL-2.1 OR BSD-3-Clause);0BSD"
+          EXCLUDE_PACKAGES: "cluster-key-slot@1.1.0"
+        run: |-
+          npm install -g license-checker
+          license-checker --production --json --onlyAllow="${ALLOWED_LICENSES}" --excludePackages="${EXCLUDE_PACKAGES}"
 
-    - id: check-licenses
-      name: Check licenses
-      env:
-        ALLOWED_LICENSES: "MIT;ISC;Apache-2.0;BSD-3-Clause;BSD-2-Clause;(MIT OR Apache-2.0);Unlicense;Python-2.0;BSD;(AFL-2.1 OR BSD-3-Clause);0BSD"
-        EXCLUDE_PACKAGES: "cluster-key-slot@1.1.0"
-      run: |-
-        npm install -g license-checker
-        license-checker --production --json --onlyAllow="${ALLOWED_LICENSES}" --excludePackages="${EXCLUDE_PACKAGES}"
-
-    - id: send-to-slack
-      name: Send failure notification to Slack
-      if: failure() && github.event_name == 'push'
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.BUILD_STATUS_BOT_TOKEN }}
-      uses: voxmedia/github-action-slack-notify-build@v1
-      with:
-        channel: pipelines
-        status: FAILED
-        color: danger
+      - id: send-to-slack
+        name: Send failure notification to Slack
+        if: failure() && github.event_name == 'push'
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.BUILD_STATUS_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          channel: pipelines
+          status: FAILED
+          color: danger
 
   build-docker:
     name: Build Docker container
@@ -262,7 +261,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        environment: ['production', 'staging', 'develop']
+        environment: ["production", "staging", "develop"]
     steps:
       - id: checkout
         name: Check out source code
@@ -385,22 +384,21 @@ jobs:
           REF_ID: ${{ needs.build-docker.outputs.ref-id }}
           IMAGE_TAG: ${{ needs.build-docker.outputs.image-tag }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+
       - name: Push production/develop template to releases
-        if:
-          (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
+        if: (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
         uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source_file: '${{ steps.fill-metadata.outputs.deployment-name }}.yaml'
-          destination_repo: '${{ github.repository_owner }}/releases'
-          destination_folder: '${{ steps.fill-metadata.outputs.kubernetes-env }}'
-          user_email: 'ci@biomage.net'
-          user_name: 'Biomage CI/CD'
+          source_file: "${{ steps.fill-metadata.outputs.deployment-name }}.yaml"
+          destination_repo: "${{ github.repository_owner }}/releases"
+          destination_folder: "${{ steps.fill-metadata.outputs.kubernetes-env }}"
+          user_email: "ci@biomage.net"
+          user_name: "Biomage CI/CD"
 
       - name: Change name of deployment file for staging deployment
-        if:
-          (github.event_name == 'pull_request_target' || github.event_name == 'push') && matrix.environment == 'staging'
+        if: (github.event_name == 'pull_request_target' || github.event_name == 'push') && matrix.environment == 'staging'
         env:
           DEPLOYMENT_NAME: ${{ steps.fill-metadata.outputs.deployment-name }}
           REF_ID: ${{ needs.build-docker.outputs.ref-id }}
@@ -408,20 +406,19 @@ jobs:
           mv $DEPLOYMENT_NAME.yaml $REF_ID.yaml
 
       - name: Push staging deployment template to releases
-        if:
-          (github.event_name == 'pull_request_target' || github.event_name == 'push') && matrix.environment == 'staging'
+        if: (github.event_name == 'pull_request_target' || github.event_name == 'push') && matrix.environment == 'staging'
         uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
           source_file: ${{ needs.build-docker.outputs.ref-id }}.yaml
-          destination_repo: '${{ github.repository_owner }}/releases'
-          destination_folder: 'staging-candidates/${{ steps.fill-metadata.outputs.deployment-name }}'
-          user_email: 'ci@biomage.net'
-          user_name: 'Biomage CI/CD'
+          destination_repo: "${{ github.repository_owner }}/releases"
+          destination_folder: "staging-candidates/${{ steps.fill-metadata.outputs.deployment-name }}"
+          user_email: "ci@biomage.net"
+          user_name: "Biomage CI/CD"
+
       - id: disable-admin-enforcement
-        if:
-          (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
+        if: (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
         name: Temporarily disable admin enforcement
         uses: benjefferies/branch-protection-bot@master
         with:
@@ -430,19 +427,19 @@ jobs:
           repo: iac
           enforce_admins: false
           retries: 8
+
       - name: Push migrations into iac
-        if:
-           github.repository_owner == 'hms-dbmi-cellenics' && matrix.environment == 'develop' && github.event_name == 'push'
+        if: github.repository_owner == 'hms-dbmi-cellenics' && github.event_name == 'push'
         uses: cpina/github-action-push-to-another-repository@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-directory: 'src/sql/migrations'
-          destination-github-username: '${{ github.repository_owner }}'
-          destination-repository-name: 'iac'
-          user-email: 'ci@biomage.net'
+          source-directory: "src/sql/migrations"
+          destination-github-username: "${{ github.repository_owner }}"
+          destination-repository-name: "iac"
+          user-email: "ci@biomage.net"
           target-branch: master
-          target-directory: 'migrations/sql'
+          target-directory: "migrations/sql"
 
   ready-to-merge:
     name: Ready for merging
