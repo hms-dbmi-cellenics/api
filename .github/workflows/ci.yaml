@@ -15,6 +15,11 @@ on:
       - opened
       - synchronize
       - reopened
+
+permissions:
+  id-token: write
+  contents: read
+  
 jobs:
   is-safe-to-run:
     name: Sensitive jobs are safe to be run
@@ -221,6 +226,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ci-api-role-test
+          mask-aws-account-id: false
           aws-region: ${{ secrets.AWS_REGION }}
 
       - id: login-ecr
