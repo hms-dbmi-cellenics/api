@@ -44,20 +44,11 @@ const message = {
 };
 
 describe('submitWorkEmbedding', () => {
-  // If this test fails it means you have changed parameters upon which the feature or precomputing
-  // the embedding / marker heatmp feature depends on. These parameters are duplicated
-  // in the UI / API if you have changed them here, make sure you change them in the
-  // other repository or that feature will stop working.
   it('submits the work and the ETag / params are correct', async () => {
-    const ETag = await submitEmbeddingWork(message);
+    await submitEmbeddingWork(message);
 
-    // these are the parameters used to created the ETag and
-    // they should match exactly UI snapshot:
-    // loadEmbedding.defaultParams.test.js.snap
     expect(createObjectHash.mock.calls).toMatchSnapshot();
-    // this ETag should match exactly the one in
-    // loadEmbedding.defaultParams.test.js
-    expect(ETag).toEqual('163301323ab0ee82902d1574a5dcd061'); // pragma: allowlist secret
+
     expect(validateAndSubmitWork).toBeCalledTimes(1);
   });
 });

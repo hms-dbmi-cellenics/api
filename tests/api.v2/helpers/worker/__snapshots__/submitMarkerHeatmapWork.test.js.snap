@@ -1,5 +1,30 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`submitWorkEmbedding submits the work  1`] = `
+Array [
+  Array [
+    Object {
+      "body": Object {
+        "cellSetKey": "louvain",
+        "groupByClasses": Array [
+          "louvain",
+        ],
+        "hiddenCellSetKeys": Array [],
+        "nGenes": 5,
+        "name": "MarkerHeatmap",
+        "selectedPoints": "All",
+      },
+      "cacheUniquenessKey": null,
+      "experimentId": "6463cb35-3e08-4e94-a181-6d155a5ca570",
+      "extraDependencies": undefined,
+      "extras": undefined,
+      "qcPipelineStartDate": "2016-03-22T04:00:00.000Z",
+      "workerVersion": 4,
+    },
+  ],
+]
+`;
+
 exports[`submitWorkEmbedding submits the work and the ETag / params are correct 1`] = `
 Array [
   Array [
@@ -16,17 +41,7 @@ Array [
       },
       "cacheUniquenessKey": null,
       "experimentId": "6463cb35-3e08-4e94-a181-6d155a5ca570",
-      "extraDependencies": Array [
-        Object {
-          "method": "louvain",
-          "methodSettings": Object {
-            "louvain": Object {
-              "resolution": 0.8,
-            },
-          },
-        },
-        1,
-      ],
+      "extraDependencies": undefined,
       "extras": undefined,
       "qcPipelineStartDate": "2016-03-22T04:00:00.000Z",
       "workerVersion": 4,

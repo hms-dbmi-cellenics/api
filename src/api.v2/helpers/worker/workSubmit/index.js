@@ -117,9 +117,7 @@ class WorkSubmitService {
   async submitWork() {
     await this.getQueueAndHandleMessage();
 
-    const podInfo = await this.createWorker();
-
-    return podInfo;
+    await this.createWorker();
   }
 }
 

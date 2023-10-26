@@ -20,25 +20,19 @@ const getSignedUrlIfAvailable = async (experimentId, ETag) => {
 };
 
 
-const handleWorkRequest = async (socket, data) => {
-  const { Authorization, experimentId } = data;
-
-  // Authenticate and authorize the user
-  if (!Authorization) {
-    throw new Error('Authentication token must be present.');
-  }
+const handleWorkRequest = async (data) => {
+  const { experimentId } = data;
 
   // 1. Generate ETag for the new work requets
   const ETag = await generateETag(data);
-  console.log('Generated ETag', ETag);
 
   // 2. Check if there are already existing work results for this ETag
   const signedUrl = await getSignedUrlIfAvailable(experimentId, ETag);
 
   // 3. If the results were not in S3, send the request to the worker
   if (signedUrl === null) {
-    await validateAndSubmitWork(ETag, data);
-    // const podInfo = await validateAndSubmitWork(data);
+    const workRequest = { ETag, ...data };
+    await validateAndSubmitWork(workRequest);
   }
 
   // I think podInfo can be removed as we get better and fresher updates from the worker now.

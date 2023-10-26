@@ -9,8 +9,8 @@ const { getSignedUrl } = require('../helpers/s3/signedUrl');
 
 const checkSomeEqualTo = (array, testValue) => array.some((item) => item === testValue);
 
-const validateAndSubmitWork = async (ETag, data) => {
-  const { experimentId } = data;
+const validateAndSubmitWork = async (workRequest) => {
+  const { experimentId } = workRequest;
 
 
   // Check if pipeline is runnning
@@ -28,7 +28,6 @@ const validateAndSubmitWork = async (ETag, data) => {
     throw e;
   }
 
-  const workRequest = { ...data, ETag };
   await validateRequest(workRequest, 'WorkRequest.v2.yaml');
 
   const { timeout } = workRequest;
@@ -41,7 +40,7 @@ const validateAndSubmitWork = async (ETag, data) => {
     'getObject',
     {
       Bucket: bucketNames.WORKER_RESULTS,
-      Key: ETag,
+      Key: workRequest.ETag,
     },
   );
 
@@ -50,7 +49,6 @@ const validateAndSubmitWork = async (ETag, data) => {
     ...workRequest,
   };
 
-  // TODO consider removing the podInfo stuff
   const workSubmitService = new WorkSubmitService(workRequestToSubmit);
   const podInfo = await workSubmitService.submitWork();
 

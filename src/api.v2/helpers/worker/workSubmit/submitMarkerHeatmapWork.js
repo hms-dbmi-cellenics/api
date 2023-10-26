@@ -17,7 +17,7 @@ const submitMarkerHeatmapWork = async (message) => {
     hiddenCellSetKeys: [],
   };
 
-  const extraDependencies = await getExtraDependencies(body.name, message);
+  const extraDependencies = await getExtraDependencies(experimentId, body.name);
   const ETag = await submitWork(experimentId, authJWT, body, extraDependencies);
 
   // explicitly return ETag to make it stand out more in tests and so harder to break
