@@ -11,8 +11,33 @@ const getClusteringSettings = async (experimentId) => {
 
   const { configureEmbedding: { clusteringSettings } } = processingConfig;
 
+  // TODO DISCUSS Option 1,  return only the settings currently in use (more brittle as it
+  // depends on keys existings etc...)
+  // const { method, methodSettings } = clusteringSettings;
+  // console.log('clusteringSettings', clusteringSettings);
+  // return { method, methodSettings: methodSettings[method] };
+
+  // Option 2,return the whole object (it will invalidate cache if methods not used change)
   console.log('clusteringSettings', clusteringSettings);
   return clusteringSettings;
+};
+
+const getEmbeddingSettings = async (experimentId) => {
+  const {
+    processingConfig,
+  } = await new Experiment().findById(experimentId).first();
+
+  const { configureEmbedding: { embeddingSettings } } = processingConfig;
+
+  // TODO Option 1,  return only the settings currently in use (more brittle as it
+  // depends on keys existings etc...)
+  // const { method, methodSettings } = embeddingSettings;
+  // console.log('embeddingSettings', embeddingSettings);
+  // return { method, methodSettings: methodSettings[method] };
+
+  // Option 2,return the whole object (it will invalidate cache if methods not used change)
+  console.log('embeddingSettings', embeddingSettings);
+  return embeddingSettings;
 };
 
 const getCellSets = async (experimentId) => {
@@ -42,9 +67,9 @@ const dependencyGetters = {
   GetNUmis: [],
   MarkerHeatmap: [getClusteringSettings],
   GetTrajectoryAnalysisStartingNodes: [getClusteringSettings],
-  GetTrajectoryAnalysisPseudoTime: [getClusteringSettings],
+  GetTrajectoryAnalysisPseudoTime: [getClusteringSettings, getEmbeddingSettings],
   GetNormalizedExpression: [getClusteringSettings],
-  DownloadAnnotSeuratObject: [getClusteringSettings, getCellSets],
+  DownloadAnnotSeuratObject: [getClusteringSettings, getCellSets, getEmbeddingSettings],
 };
 
 const getExtraDependencies = async (experimentId, taskName) => {
