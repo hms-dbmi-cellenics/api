@@ -9,6 +9,8 @@ const assignPodToPipeline = require('./hooks/assignPodToPipeline');
 const { cleanupPods } = require('./hooks/podCleanup');
 const updatePipelineVersion = require('./hooks/updatePipelineVersion');
 const sendNotification = require('./hooks/sendNotification');
+const submitEmbeddingWork = require('../worker/workSubmit/submitEmbeddingWork');
+const submitMarkerHeatmapWork = require('../worker/workSubmit/submitMarkerHeatmapWork');
 
 const constants = require('../../constants');
 const getPipelineStatus = require('./getPipelineStatus');
@@ -22,7 +24,7 @@ const hookRunner = new HookRunner();
 
 hookRunner.register(constants.ASSIGN_POD_TO_PIPELINE, [assignPodToPipeline]);
 hookRunner.registerAll([sendNotification]);
-hookRunner.register('configureEmbedding', [cleanupPods, updatePipelineVersion]);
+hookRunner.register('configureEmbedding', [cleanupPods, updatePipelineVersion, submitEmbeddingWork, submitMarkerHeatmapWork]);
 
 const getOutputFromS3 = async (message) => {
   const { output: { bucket, key } } = message;

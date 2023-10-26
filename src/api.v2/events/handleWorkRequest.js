@@ -20,7 +20,7 @@ const getSignedUrlIfAvailable = async (experimentId, ETag) => {
 };
 
 
-const handleWorkRequest = async (data) => {
+const handleWorkRequest = async (Authorization, data) => {
   const { experimentId } = data;
 
   // 1. Generate ETag for the new work requets
@@ -31,7 +31,8 @@ const handleWorkRequest = async (data) => {
 
   // 3. If the results were not in S3, send the request to the worker
   if (signedUrl === null) {
-    const workRequest = { ETag, ...data };
+    const workRequest = { ETag, Authorization, ...data };
+    console.log('workRequest', workRequest);
     await validateAndSubmitWork(workRequest);
   }
 

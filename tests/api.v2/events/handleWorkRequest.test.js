@@ -11,10 +11,10 @@ jest.mock('../../../src/api.v2/events/validateAndSubmitWork');
 
 const data = {
   uuid: 'someuuid-asd-asd-asdddasa',
-  Authorization: 'Bearer some-token',
   experimentId: fake.EXPERIMENT_ID,
   ETag: 'etag-of-the-work-request',
 };
+const authJWT = 'Bearer someLongAndConfusingString';
 
 describe('Handle work', () => {
   beforeEach(() => {
@@ -23,20 +23,20 @@ describe('Handle work', () => {
 
   it('generates ETag successfully', async () => {
     generateETag.mockResolvedValue('new-etag');
-    await handleWorkRequest(data);
+    await handleWorkRequest(authJWT, data);
     expect(generateETag).toHaveBeenCalledWith(data);
   });
 
   it('handles existing work results', async () => {
     getWorkResults.mockResolvedValue({ signedUrl: 'some-signed-url' });
-    const result = await handleWorkRequest(data);
+    const result = await handleWorkRequest(authJWT, data);
     expect(result).toEqual({ ETag: 'new-etag', signedUrl: 'some-signed-url' });
   });
 
   it('handles non-existing work results and submits new work', async () => {
     getWorkResults.mockRejectedValue({ status: 404 });
-    const result = await handleWorkRequest(data);
-    expect(validateAndSubmitWork).toHaveBeenCalledWith({ ETag: 'new-etag', ...data });
+    const result = await handleWorkRequest(authJWT, data);
+    expect(validateAndSubmitWork).toHaveBeenCalledWith({ ETag: 'new-etag', Authorization: authJWT, ...data });
     expect(result).toEqual({ ETag: 'new-etag', signedUrl: null });
   });
 
@@ -44,7 +44,7 @@ describe('Handle work', () => {
     getWorkResults.mockRejectedValue({ status: 400 });
     let error;
     try {
-      await handleWorkRequest(data);
+      await handleWorkRequest(authJWT, data);
     } catch (e) {
       error = e;
     }

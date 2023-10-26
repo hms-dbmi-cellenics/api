@@ -1,16 +1,16 @@
 const getS3Client = require('./getS3Client');
 const NotFoundError = require('../../../utils/responses/NotFoundError');
 
-const getObject = async (params) => {
+const getLastModified = async (params) => {
   if (!params.Bucket) throw new Error('Bucket is required');
   if (!params.Key) throw new Error('Key is required');
 
   const s3 = getS3Client();
 
   try {
-    const outputObject = await s3.getObject(params).promise();
-    const data = outputObject.Body.toString();
-    return data;
+    const metadata = await s3.headObject(params).promise();
+    const lastModified = metadata.LastModified;
+    return lastModified;
   } catch (e) {
     if (e.code === 'NoSuchKey') {
       throw new NotFoundError(`Couldn't find object with key: ${params.Key}`);
@@ -25,5 +25,4 @@ const getObject = async (params) => {
 };
 
 
-
-module.exports = getObject;
+module.exports = getLastModified;

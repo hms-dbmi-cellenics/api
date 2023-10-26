@@ -23,6 +23,7 @@ const getDomainSpecificContent = require('../../config/getDomainSpecificContent'
 
 // Throws if the user isnt authenticated
 const checkUserAuthenticated = (req, next) => {
+  console.log('checkUserAuthenticated', req.user);
   if (!req.user) {
     next(new UnauthenticatedError('The request does not contain an authentication token.'));
     return false;

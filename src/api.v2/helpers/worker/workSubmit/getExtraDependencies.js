@@ -1,6 +1,6 @@
 const workerVersions = require('../workerVersions');
 const Experiment = require('../../../model/Experiment');
-const getS3Object = require('../../s3/getObject');
+const getLastModified = require('../../s3/getLastModified');
 const bucketNames = require('../../../../config/bucketNames');
 
 
@@ -9,17 +9,11 @@ const getClusteringSettings = async (experimentId) => {
     processingConfig,
   } = await new Experiment().findById(experimentId).first();
 
-  const { configureEmbedding: { clusteringSettings } } = processingConfig;
+  const {
+    configureEmbedding: { clusteringSettings: { method, methodSettings } },
+  } = processingConfig;
 
-  // TODO DISCUSS Option 1,  return only the settings currently in use (more brittle as it
-  // depends on keys existings etc...)
-  // const { method, methodSettings } = clusteringSettings;
-  // console.log('clusteringSettings', clusteringSettings);
-  // return { method, methodSettings: methodSettings[method] };
-
-  // Option 2,return the whole object (it will invalidate cache if methods not used change)
-  console.log('clusteringSettings', clusteringSettings);
-  return clusteringSettings;
+  return { method, methodSettings: methodSettings[method] };
 };
 
 const getEmbeddingSettings = async (experimentId) => {
@@ -27,26 +21,25 @@ const getEmbeddingSettings = async (experimentId) => {
     processingConfig,
   } = await new Experiment().findById(experimentId).first();
 
-  const { configureEmbedding: { embeddingSettings } } = processingConfig;
+  const {
+    configureEmbedding: {
+      embeddingSettings: { method, methodSettings },
+    },
+  } = processingConfig;
 
-  // TODO Option 1,  return only the settings currently in use (more brittle as it
-  // depends on keys existings etc...)
-  // const { method, methodSettings } = embeddingSettings;
-  // console.log('embeddingSettings', embeddingSettings);
-  // return { method, methodSettings: methodSettings[method] };
-
-  // Option 2,return the whole object (it will invalidate cache if methods not used change)
-  console.log('embeddingSettings', embeddingSettings);
-  return embeddingSettings;
+  return { method, methodSettings: methodSettings[method] };
 };
 
 const getCellSets = async (experimentId) => {
-  // consider just fetching latest modified date instead of the whole object
-  const cellSets = await getS3Object({
+  // TODO consider just fetching latest modified date instead of the whole object
+  const lastModified = await getLastModified({
     Bucket: bucketNames.CELL_SETS,
     Key: experimentId,
   });
-  return cellSets;
+
+  const lastVersion = `${bucketNames.CELL_SETS}/${experimentId}/${lastModified}`;
+  console.log('lastVersion', lastVersion);
+  return lastVersion;
 };
 
 
