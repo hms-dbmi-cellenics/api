@@ -1,3 +1,5 @@
+const AWSMock = require('aws-sdk-mock');
+
 const createObjectHash = require('../../../../src/api.v2/helpers/worker/createObjectHash');
 const submitMarkerHeatmapWork = require('../../../../src/api.v2/helpers/worker/workSubmit/submitMarkerHeatmapWork');
 const validateAndSubmitWork = require('../../../../src/api.v2/events/validateAndSubmitWork');
@@ -66,6 +68,10 @@ const mockCellSets = {
 };
 
 describe('submitWorkEmbedding', () => {
+  beforeEach(() => {
+    AWSMock.restore();
+  });
+
   // If this test fails it means you have changed parameters upon which the feature or precomputing
   // the embedding / marker heatmp feature depends on. These parameters are duplicated
   // in the UI / API if you have changed them here, make sure you change them in the
