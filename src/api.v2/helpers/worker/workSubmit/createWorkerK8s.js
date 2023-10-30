@@ -107,8 +107,9 @@ const createWorkerResources = async (service) => {
   // scale pods if worker has zero replicas
   let pods = await getAvailablePods(namespace);
   const { spec: { replicas } } = await getDeployment('worker', namespace);
-  if (pods.length < 1 && replicas === 0) {
-    await scaleDeploymentReplicas('worker', namespace, 1);
+  const minDesiredReplicas = 1;
+  if (pods.length < 1 && replicas < minDesiredReplicas) {
+    await scaleDeploymentReplicas('worker', namespace, minDesiredReplicas);
     pods = await getAvailablePods(namespace);
   }
 
