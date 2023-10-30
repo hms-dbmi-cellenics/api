@@ -68,14 +68,14 @@ const waitForPods = async (namespace, maxTries = 20, currentTry = 0) => {
 
 
 //
-const scaleDeploymentReplicas = async (name, namespace, replicas) => {
+const scaleDeploymentReplicas = async (name, namespace, desiredReplicas) => {
   const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
 
   const deployment = await getDeployment(name, namespace);
-  logger.log(`Scaling ${name} from ${deployment.spec.replicas} to ${replicas} replicas...`);
+  logger.log(`Scaling ${name} from ${deployment.spec.replicas} to ${desiredReplicas} replicas...`);
 
   // edit
-  deployment.spec.replicas = replicas;
+  deployment.spec.replicas = desiredReplicas;
 
   // replace
   await k8sApi.replaceNamespacedDeployment(name, namespace, deployment);
