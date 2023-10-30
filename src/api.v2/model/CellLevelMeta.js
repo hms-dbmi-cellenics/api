@@ -7,6 +7,7 @@ const fields = [
   'name',
   'upload_status',
   'created_at',
+  'size',
 ];
 
 class CellLevelMeta extends BasicModel {

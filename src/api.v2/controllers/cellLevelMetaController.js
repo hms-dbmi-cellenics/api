@@ -17,6 +17,7 @@ const uploadCellLevelMetadata = async (req, res) => {
     id: cellLevelMetaKey,
     name,
     upload_status: 'uploading',
+    size,
   };
   const cellLevelMetaToExperimentMap = {
     experiment_id: experimentId,
