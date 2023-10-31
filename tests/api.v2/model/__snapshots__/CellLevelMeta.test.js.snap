@@ -8,6 +8,7 @@ Array [
       "name",
       "upload_status",
       "created_at",
+      "size",
       "cell_metadata_file_to_experiment.experiment_id",
     ],
   ],
