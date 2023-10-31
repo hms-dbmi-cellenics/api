@@ -19,6 +19,7 @@ on:
 permissions:
   id-token: write
   contents: read
+  pull-requests: write
   
 jobs:
   is-safe-to-run:
@@ -223,7 +224,7 @@ jobs:
 
       - id: setup-aws
         name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ci-role-api
           aws-region: ${{ secrets.AWS_REGION }}
@@ -278,7 +279,7 @@ jobs:
 
       - id: setup-aws
         name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ci-role-api
           aws-region: ${{ secrets.AWS_REGION }}
