@@ -85,6 +85,7 @@ jobs:
 
   test:
     name: Run tests
+    permissions: write-all
     runs-on: ubuntu-20.04
     needs: is-safe-to-run
     env:
