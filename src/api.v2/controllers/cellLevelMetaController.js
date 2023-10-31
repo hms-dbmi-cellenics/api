@@ -22,15 +22,12 @@ const uploadCellLevelMetadata = async (req, res) => {
     upload_status: 'uploading',
     size,
   };
-  const cellLevelMetaToExperimentMap = {
-    experiment_id: experimentId,
-    cell_metadata_file_id: cellLevelMetaKey,
-  };
 
   let uploadUrlParams;
   await sqlClient.get().transaction(async (trx) => {
     await new CellLevelMeta(trx).create(newCellLevelMetaFile);
-    await new CellLevelMetaToExperiment(trx).create(cellLevelMetaToExperimentMap);
+    await new CellLevelMetaToExperiment(trx).setNewFile(experimentId, cellLevelMetaKey);
+
     uploadUrlParams = await getFileUploadUrls(cellLevelMetaKey, {}, size, bucketName);
     uploadUrlParams = { ...uploadUrlParams, fileId: cellLevelMetaKey };
   });
