@@ -1,6 +1,8 @@
 const BasicModel = require('./BasicModel');
 const sqlClient = require('../../sql/sqlClient');
 const tableNames = require('./tableNames');
+const bucketNames = require('../../config/bucketNames');
+const { getSignedUrl } = require('../helpers/s3/signedUrl');
 
 const fields = [
   'id',
@@ -13,6 +15,7 @@ const fields = [
 class CellLevelMeta extends BasicModel {
   constructor(sql = sqlClient.get()) {
     super(sql, tableNames.CELL_LEVEL, fields);
+    this.bucketName = bucketNames.CELL_METADATA;
   }
 
   async getMetadataByExperimentIds(experimentIds) {
@@ -27,6 +30,19 @@ class CellLevelMeta extends BasicModel {
       .whereIn(`${tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP}.experiment_id`, experimentIds);
 
     return result;
+  }
+
+  async getDownloadLink(fileId, fileName) {
+    const params = {
+      Bucket: this.bucketName,
+      Key: fileId,
+      ResponseContentDisposition: `attachment; filename ="${fileName}"`,
+      Expires: 120,
+    };
+
+    const signedUrl = await getSignedUrl('getObject', params);
+
+    return signedUrl;
   }
 }
 

@@ -6,6 +6,9 @@ const CellLevelMeta = require('../model/CellLevelMeta');
 const CellLevelMetaToExperiment = require('../model/CellLevelMetaToExperiment');
 const { getFileUploadUrls } = require('../helpers/s3/signedUrl');
 const OK = require('../../utils/responses/OK');
+const getLogger = require('../../utils/getLogger');
+
+const logger = getLogger('[CellLevelController] - ');
 
 const uploadCellLevelMetadata = async (req, res) => {
   const { experimentId } = req.params;
@@ -43,7 +46,18 @@ const updateCellLevelMetadata = async (req, res) => {
   await new CellLevelMeta().updateById(cellMetadataFileId, snakeCasedKeysToPatch);
   res.json(OK());
 };
+
+const downloadCellLevelFile = async (req, res) => {
+  const { fileId, fileName } = req.params;
+  logger.log('Getting signed url to download cell level meta file');
+  const link = await new CellLevelMeta().getDownloadLink(fileId, fileName);
+
+  res.json(link);
+  logger.log('Got download link successfully');
+};
+
 module.exports = {
   uploadCellLevelMetadata,
   updateCellLevelMetadata,
+  downloadCellLevelFile,
 };

@@ -1,5 +1,5 @@
 const {
-  uploadCellLevelMetadata, updateCellLevelMetadata,
+  uploadCellLevelMetadata, updateCellLevelMetadata, downloadCellLevelFile,
 } = require('../controllers/cellLevelMetaController');
 
 const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
@@ -12,5 +12,9 @@ module.exports = {
   'cellLevel#updateCellLevelMetadata': [
     expressAuthorizationMiddleware,
     (req, res, next) => updateCellLevelMetadata(req, res).catch(next),
+  ],
+  'cellLevel#downloadFile': [
+    expressAuthorizationMiddleware,
+    (req, res, next) => downloadCellLevelFile(req, res).catch(next),
   ],
 };

@@ -1039,6 +1039,60 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/cellLevel/{fileId}/{fileName}":
+    get:
+      summary: Download cell level metadata file returning a signed url
+      operationId: downloadCellLevelMetadataFile
+      x-eov-operation-id: cellLevel#downloadFile
+      x-eov-operation-handler: routes/cellLevel
+      parameters:
+        - in: path
+          name: experimentId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: fileId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: fileName
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Download request successful.
+          content:
+            application/json:
+              schema:
+                type: string
+                description: signed URL of the resource
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"  
   "/experiments/{experimentId}/cellLevel":
     post:
       summary: Upload cell level metadata file
