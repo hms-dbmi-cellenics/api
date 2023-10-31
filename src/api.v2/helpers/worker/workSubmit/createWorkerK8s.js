@@ -48,7 +48,6 @@ const getAvailablePods = async (namespace) => {
 
 const getDeployment = async (name, namespace) => {
   const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
-
   // find the particular deployment
   const { body: deployment } = await k8sApi.readNamespacedDeployment(name, namespace);
   return deployment;
