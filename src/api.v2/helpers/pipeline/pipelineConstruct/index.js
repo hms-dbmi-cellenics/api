@@ -90,15 +90,10 @@ const withRecomputeDoubletScores = (processingConfig) => {
 
 const getMetadataS3Path = async (experimentId) => {
   const cellLevelMetadata = await new CellLevelMeta().getMetadataByExperimentIds([experimentId]);
-  if (cellLevelMetadata.length === 0) {
-    return null;
+  if (cellLevelMetadata.length > 1) {
+    throw new Error(`Experiment ${experimentId} cannot have more than one cell level metadata file`);
   }
-  else if (cellLevelMetadata.length === 1) {
-    return cellLevelMetadata[0].id;
-  }
-  else {
-    throw new Error(`Experiment ${experimentId} has multiple cell level metadata files`);
-  }
+  return cellLevelMetadata[0]?.id || null;
 }
 
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
