@@ -7,7 +7,6 @@ const handleQCResponse = require('../helpers/pipeline/handleQCResponse');
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parseSNSMessage');
 const snsTopics = require('../../config/snsTopics');
-const Experiment = require('../model/Experiment');
 
 const logger = getLogger('[QCController] - ');
 
@@ -17,12 +16,9 @@ const runQC = async (req, res) => {
 
   logger.log(`Starting qc for experiment ${experimentId}`);
 
-  const processingConfigDiffToSend = _.isEqual(processingConfigDiff, {})
-    ? await new Experiment().getProcessingConfig(experimentId) : processingConfigDiff;
-
   await createQCPipeline(
     experimentId,
-    processingConfigDiffToSend,
+    processingConfigDiff,
     req.headers.authorization,
   );
 
