@@ -92,7 +92,9 @@ const getGem2sParams = async (experimentId, rawSamples = undefined) => {
 };
 
 const getQCParams = async (experimentId) => {
-  const metadataResult = (await new CellLevelMeta().getMetadataByExperimentIds([experimentId]))[0];
+  const metadataResult = (
+    await new CellLevelMeta().getMetadataByExperimentIds([experimentId])
+  )[0] || {};
 
   const cellMetadataId = metadataResult.id || null;
 
