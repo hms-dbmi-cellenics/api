@@ -17,12 +17,12 @@ const runQC = async (req, res) => {
 
   logger.log(`Starting qc for experiment ${experimentId}`);
 
-  const processingConfigDiffToRunWith = _.isEqual(processingConfigDiff, {})
+  const processingConfigDiffToSend = _.isEqual(processingConfigDiff, {})
     ? await new Experiment().getProcessingConfig(experimentId) : processingConfigDiff;
 
   await createQCPipeline(
     experimentId,
-    processingConfigDiffToRunWith,
+    processingConfigDiffToSend,
     req.headers.authorization,
   );
 
