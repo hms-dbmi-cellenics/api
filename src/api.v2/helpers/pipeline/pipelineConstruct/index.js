@@ -94,7 +94,10 @@ const getMetadataS3Path = async (experimentId) => {
   if (cellLevelMetadataFiles.length > 1) {
     throw new Error(`Experiment ${experimentId} cannot have more than one cell level metadata file`);
   }
-  return cellLevelMetadataFiles[0].id || null;
+  if (cellLevelMetadataFiles.length === 0) {
+    return null;
+  }
+  return cellLevelMetadataFiles[0].id;
 };
 
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
