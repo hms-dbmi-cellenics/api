@@ -32,6 +32,7 @@ const {
 const buildStateMachineDefinition = require('./constructors/buildStateMachineDefinition');
 const getPipelineStatus = require('../getPipelineStatus');
 const constants = require('../../../constants');
+const CellLevelMeta = require('../../../model/CellLevelMeta');
 
 const logger = getLogger();
 
@@ -87,27 +88,30 @@ const withRecomputeDoubletScores = (processingConfig) => {
   return newProcessingConfig;
 };
 
-const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
+/**
+ *
+ * @param {*} experimentId
+ * @param {*} processingConfigDiff The changes that were performed in the
+ * processing config in the shape of a diff (mask) object
+ * @param {*} authJWT
+ * @param {*} previousJobId
+ */
+const createQCPipeline = async (experimentId, processingConfigDiff, authJWT, previousJobId) => {
   logger.log(`createQCPipeline: fetch processing settings ${experimentId}`);
 
   const { processingConfig, samplesOrder } = await new Experiment().findById(experimentId).first();
+
+  const [cellLevelMetadata] = await new CellLevelMeta().getMetadataByExperimentIds([experimentId]);
+  const { id: currentCellMetadataId = null } = cellLevelMetadata || {};
 
   const {
     // @ts-ignore
     [constants.QC_PROCESS_NAME]: status,
   } = await getPipelineStatus(experimentId, constants.QC_PROCESS_NAME);
 
-  if (processingConfigUpdates.length) {
-    processingConfigUpdates.forEach(({ name, body }) => {
-      if (!processingConfig[name]) {
-        processingConfig[name] = body;
-
-        return;
-      }
-
-      _.assign(processingConfig[name], body);
-    });
-  }
+  Object.entries(processingConfigDiff).forEach(([key, stepConfig]) => {
+    _.assign(processingConfig[key], stepConfig);
+  });
 
   // workaround to add a flag to recompute doublet scores in the processingConfig object.
   const fullProcessingConfig = withRecomputeDoubletScores(processingConfig);
@@ -115,17 +119,28 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
   // Store the processing config with all changes back in sql
   await new Experiment().updateById(experimentId, { processing_config: fullProcessingConfig });
 
-  const context = {
-    ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
-    processingConfig: withoutDefaultFilterSettings(fullProcessingConfig, samplesOrder),
-    authJWT,
-  };
-
   await cancelPreviousPipelines(experimentId, previousJobId);
 
   const qcSteps = await getQcStepsToRun(
-    experimentId, processingConfigUpdates, status.completedSteps,
+    experimentId, Object.keys(processingConfigDiff), status.completedSteps,
   );
+
+  const clusteringIsOutdated = qcSteps.length > 1;
+  const clusteringShouldRun = !_.isNil(processingConfigDiff.configureEmbedding)
+    || clusteringIsOutdated;
+
+  const context = {
+    ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
+    processingConfig: withoutDefaultFilterSettings(fullProcessingConfig, samplesOrder),
+    clusteringShouldRun,
+    authJWT,
+  };
+
+  console.log('qcStepsDebug');
+  console.log(qcSteps);
+
+  console.log('clusteringShouldRunDebug');
+  console.log(clusteringShouldRun);
 
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
@@ -163,6 +178,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
     {
       state_machine_arn: stateMachineArn,
       execution_arn: executionArn,
+      last_pipeline_params: { cellMetadataId: currentCellMetadataId },
     },
   );
 };

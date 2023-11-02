@@ -20,6 +20,7 @@ const invalidatePlotsForEvent = require('../../../utils/plotConfigInvalidation/i
 const events = require('../../../utils/plotConfigInvalidation/events');
 
 const { MethodNotAllowedError } = require('../../../utils/responses');
+const CellLevelMeta = require('../../model/CellLevelMeta');
 
 const logger = getLogger('[Gem2sService] - ');
 
@@ -84,7 +85,7 @@ const continueToQC = async (payload) => {
   // we need to change this once we rework the pipeline message response
   const authJWT = payload.authJWT || payload.input.authJWT;
 
-  await createQCPipeline(experimentId, [], authJWT, jobId);
+  await createQCPipeline(experimentId, processingConfigWithDefaults, authJWT, jobId);
 
   logger.log('Started qc successfully');
 };

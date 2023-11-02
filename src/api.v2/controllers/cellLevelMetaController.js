@@ -38,8 +38,11 @@ const uploadCellLevelMetadata = async (req, res) => {
 const updateCellLevelMetadata = async (req, res) => {
   const { params: { experimentId }, body } = req;
   const snakeCasedKeysToPatch = _.mapKeys(body, (_value, key) => _.snakeCase(key));
-  const { cellMetadataFileId } = await new CellLevelMetaToExperiment().find({ experiment_id: experimentId }).first();
+  const { cellMetadataFileId } = await new CellLevelMetaToExperiment().find(
+    { experiment_id: experimentId },
+  ).first();
   await new CellLevelMeta().updateById(cellMetadataFileId, snakeCasedKeysToPatch);
+
   res.json(OK());
 };
 module.exports = {

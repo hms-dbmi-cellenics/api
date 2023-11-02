@@ -2,6 +2,9 @@ const _ = require('lodash');
 const { fileExists } = require('../../s3/fileExists');
 const { FILTERED_CELLS } = require('../../../../config/bucketNames');
 const { filterToStepName, qcStepNames, backendStepNamesToStepName } = require('./constructors/qcStepNameTranslations');
+const CellLevelMeta = require('../../../model/CellLevelMeta');
+const { QC_PROCESS_NAME } = require('../../../constants');
+const ExperimentExecution = require('../../../model/ExperimentExecution');
 
 const qcStepsWithFilterSettings = [
   'cellSizeDistribution',
@@ -17,13 +20,43 @@ const qcStepsWithFilterSettings = [
 const hasFilteredCellIdsAvailable = async (experimentId) => (
   await fileExists(FILTERED_CELLS, experimentId)
 );
+
+const getCellLevelMetadataFileChanged = async (experimentId) => {
+  const [cellLevelMetadata] = await new CellLevelMeta()
+    .getMetadataByExperimentIds([experimentId]);
+  const { id: currentCellMetadataId = null } = cellLevelMetadata || {};
+
+  const execution = await new ExperimentExecution()
+    .find({ experiment_id: experimentId, pipeline_type: QC_PROCESS_NAME })
+    .first();
+
+  const lastRunCellMetadataId = execution.lastPipelineParams
+    ? execution.lastPipelineParams.cellMetadataId : null;
+
+  return lastRunCellMetadataId !== currentCellMetadataId;
+};
+
 // getFirstQCStep returns which is the first step of the QC to be run
-// processingConfigUpdates is not ordered
-const getFirstQCStep = async (experimentId, processingConfigUpdates, backendCompletedSteps) => {
+// processingConfigUpdatedKeys is not ordered
+const getFirstQCStep = async (experimentId, processingConfigUpdatedKeys, backendCompletedSteps) => {
+  if (
+    processingConfigUpdatedKeys.length === 0
+    && await getCellLevelMetadataFileChanged(experimentId)
+  ) {
+    return filterToStepName.configureEmbedding;
+  }
+
+  if (processingConfigUpdatedKeys.length === 0) {
+    throw new Error(
+      `At experiment ${experimentId}: qc can be triggered with 
+        processingConfigUpdates = empty array only if the cell level metadata changed`,
+    );
+  }
+
   let firstChangedStep;
   let earliestIdx = 9999;
-  processingConfigUpdates.forEach(({ name }) => {
-    const stepName = filterToStepName[name];
+  processingConfigUpdatedKeys.forEach((key) => {
+    const stepName = filterToStepName[key];
     const idx = qcStepNames.indexOf(stepName);
     if (idx < earliestIdx) {
       earliestIdx = idx;
@@ -62,12 +95,14 @@ const getFirstQCStep = async (experimentId, processingConfigUpdates, backendComp
     return firstStep;
   }
 
-
   return qcStepNames[0];
 };
 
-const getQcStepsToRun = async (experimentId, processingConfigUpdates, completedSteps) => {
-  const firstStep = await getFirstQCStep(experimentId, processingConfigUpdates, completedSteps);
+const getQcStepsToRun = async (experimentId, processingConfigUpdatedKeys, completedSteps) => {
+  const firstStep = await getFirstQCStep(
+    experimentId, processingConfigUpdatedKeys, completedSteps,
+  );
+
   return qcStepNames.slice(qcStepNames.indexOf(firstStep));
 };
 
