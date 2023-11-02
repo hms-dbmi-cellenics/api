@@ -89,12 +89,13 @@ const withRecomputeDoubletScores = (processingConfig) => {
 };
 
 const getMetadataS3Path = async (experimentId) => {
-  const cellLevelMetadata = await new CellLevelMeta().getMetadataByExperimentIds([experimentId]);
-  if (cellLevelMetadata.length > 1) {
+  const cellLevelMetadataFiles = await new CellLevelMeta()
+    .getMetadataByExperimentIds([experimentId]);
+  if (cellLevelMetadataFiles.length > 1) {
     throw new Error(`Experiment ${experimentId} cannot have more than one cell level metadata file`);
   }
-  return cellLevelMetadata[0]?.id || null;
-}
+  return cellLevelMetadataFiles[0].id || null;
+};
 
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
   logger.log(`createQCPipeline: fetch processing settings ${experimentId}`);
