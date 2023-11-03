@@ -6,6 +6,7 @@ const getQCParams = (context, stepArgs) => {
     ...uploadCountMatrix ? { uploadCountMatrix: true } : { uploadCountMatrix: false },
     authJWT: context.authJWT,
     config: context.processingConfig[taskName] || {},
+    clusteringShouldRun: context.clusteringShouldRun,
   };
 };
 
