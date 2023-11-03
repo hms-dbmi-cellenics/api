@@ -6,13 +6,28 @@ const putObject = require('./putObject');
 
 const validateRequest = require('../../../utils/schema-validator');
 
+function removeElementsWithTypeCLM(data) {
+  // Filter out cell-level metadata cell sets
+  return data.filter((item) => item.type !== 'CLM' && item.type !== 'CLMPerSample');
+}
+
+const containsTypeCLM = (data) => data.some((item) => {
+  const appendObject = item.$append;
+  return appendObject && (appendObject.type === 'CLM' || appendObject.type === 'CLMPerSample');
+});
+
 const patchCellSetsObject = async (experimentId, patch) => {
   const currentCellSet = await getObject({
     Bucket: bucketNames.CELL_SETS,
     Key: experimentId,
   });
 
-  const { cellSets: prePatchCellSets } = JSON.parse(currentCellSet);
+  let { cellSets: prePatchCellSets } = JSON.parse(currentCellSet);
+
+  // If the patch contains a cell-level metadata we need to clear them before to avoid duplications
+  if (containsTypeCLM(patch)) {
+    prePatchCellSets = removeElementsWithTypeCLM(prePatchCellSets);
+  }
 
   /**
    * The $remove operation will replace the element in the array with an
