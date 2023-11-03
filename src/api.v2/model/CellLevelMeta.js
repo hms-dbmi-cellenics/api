@@ -36,7 +36,7 @@ class CellLevelMeta extends BasicModel {
     const params = {
       Bucket: this.bucketName,
       Key: fileId,
-      ResponseContentDisposition: `attachment; filename ="${fileName}"`,
+      ResponseContentDisposition: `attachment; filename ="${fileName}.gz"`,
       Expires: 120,
     };
 
