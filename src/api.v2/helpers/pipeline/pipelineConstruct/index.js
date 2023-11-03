@@ -157,12 +157,6 @@ const createQCPipeline = async (experimentId, processingConfigDiff, authJWT, pre
     authJWT,
   };
 
-  console.log('qcStepsDebug');
-  console.log(qcSteps);
-
-  console.log('clusteringShouldRunDebug');
-  console.log(clusteringShouldRun);
-
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
   const skeleton = await getQcPipelineSkeleton(
