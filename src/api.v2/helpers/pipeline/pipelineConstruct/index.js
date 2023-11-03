@@ -88,6 +88,24 @@ const withRecomputeDoubletScores = (processingConfig) => {
   return newProcessingConfig;
 };
 
+const getClusteringShouldRun = async (
+  experimentId, qcSteps, processingConfigDiff, previousRunState,
+) => {
+  if (Object.keys(processingConfigDiff).length === 0 && previousRunState === 'FAILED') {
+    // If the previous run failed and no new changes were introduced, then defer
+    //  to the settings from the last run
+    const { retryParams: { clusteringShouldRun } } = await new ExperimentExecution().find(
+      { experiment_id: experimentId, pipeline_type: QC_PROCESS_NAME },
+    ).first();
+
+    return clusteringShouldRun;
+  }
+
+  // Otherwise, calculate the new should run based on current state
+  const clusteringIsOutdated = qcSteps.length > 1;
+  return !_.isNil(processingConfigDiff.configureEmbedding) || clusteringIsOutdated;
+};
+
 /**
  *
  * @param {*} experimentId
@@ -122,12 +140,15 @@ const createQCPipeline = async (experimentId, processingConfigDiff, authJWT, pre
   await cancelPreviousPipelines(experimentId, previousJobId);
 
   const qcSteps = await getQcStepsToRun(
-    experimentId, Object.keys(processingConfigDiff), status.completedSteps,
+    experimentId, Object.keys(processingConfigDiff), status.completedSteps, status.status,
   );
 
-  const clusteringIsOutdated = qcSteps.length > 1;
-  const clusteringShouldRun = !_.isNil(processingConfigDiff.configureEmbedding)
-    || clusteringIsOutdated;
+  const clusteringShouldRun = await getClusteringShouldRun(
+    experimentId,
+    qcSteps,
+    processingConfigDiff,
+    status.status,
+  );
 
   const context = {
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
@@ -179,6 +200,7 @@ const createQCPipeline = async (experimentId, processingConfigDiff, authJWT, pre
       state_machine_arn: stateMachineArn,
       execution_arn: executionArn,
       last_pipeline_params: { cellMetadataId: currentCellMetadataId },
+      retry_params: { clusteringShouldRun },
     },
   );
 };

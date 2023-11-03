@@ -3,7 +3,7 @@ const { fileExists } = require('../../s3/fileExists');
 const { FILTERED_CELLS } = require('../../../../config/bucketNames');
 const { filterToStepName, qcStepNames, backendStepNamesToStepName } = require('./constructors/qcStepNameTranslations');
 const CellLevelMeta = require('../../../model/CellLevelMeta');
-const { QC_PROCESS_NAME } = require('../../../constants');
+const { QC_PROCESS_NAME, FAILED } = require('../../../constants');
 const ExperimentExecution = require('../../../model/ExperimentExecution');
 
 const qcStepsWithFilterSettings = [
@@ -38,7 +38,9 @@ const getCellLevelMetadataFileChanged = async (experimentId) => {
 
 // getFirstQCStep returns which is the first step of the QC to be run
 // processingConfigUpdatedKeys is not ordered
-const getFirstQCStep = async (experimentId, processingConfigUpdatedKeys, backendCompletedSteps) => {
+const getFirstQCStep = async (
+  experimentId, processingConfigUpdatedKeys, backendCompletedSteps, status,
+) => {
   if (
     processingConfigUpdatedKeys.length === 0
     && await getCellLevelMetadataFileChanged(experimentId)
@@ -46,10 +48,11 @@ const getFirstQCStep = async (experimentId, processingConfigUpdatedKeys, backend
     return filterToStepName.configureEmbedding;
   }
 
-  if (processingConfigUpdatedKeys.length === 0) {
+  if (processingConfigUpdatedKeys.length === 0 && status !== FAILED) {
     throw new Error(
       `At experiment ${experimentId}: qc can be triggered with 
-        processingConfigUpdates = empty array only if the cell level metadata changed`,
+        processingConfigUpdates = empty array only if the cell level metadata changed
+        or if it is a retry`,
     );
   }
 
@@ -98,9 +101,11 @@ const getFirstQCStep = async (experimentId, processingConfigUpdatedKeys, backend
   return qcStepNames[0];
 };
 
-const getQcStepsToRun = async (experimentId, processingConfigUpdatedKeys, completedSteps) => {
+const getQcStepsToRun = async (
+  experimentId, processingConfigUpdatedKeys, completedSteps, status,
+) => {
   const firstStep = await getFirstQCStep(
-    experimentId, processingConfigUpdatedKeys, completedSteps,
+    experimentId, processingConfigUpdatedKeys, completedSteps, status,
   );
 
   return qcStepNames.slice(qcStepNames.indexOf(firstStep));

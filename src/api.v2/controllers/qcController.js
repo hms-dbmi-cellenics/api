@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const { OK } = require('../../utils/responses');
 
 const { createQCPipeline } = require('../helpers/pipeline/pipelineConstruct');
