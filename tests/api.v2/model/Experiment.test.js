@@ -29,7 +29,7 @@ jest.mock('../../../src/sql/helpers', () => ({
       '{}'::jsonb
     ) as pipelines,}),`),
 }));
-jest.mock('../../../src/api.v2/model/CellLevelMeta');
+const CellLevelMeta = require('../../../src/api.v2/model/CellLevelMeta');
 const Experiment = require('../../../src/api.v2/model/Experiment');
 const constants = require('../../../src/utils/constants');
 const tableNames = require('../../../src/api.v2/model/tableNames');
@@ -37,6 +37,10 @@ const tableNames = require('../../../src/api.v2/model/tableNames');
 const mockExperimentId = 'mockExperimentId';
 const mockSampleId = 'mockSampleId';
 const mockExperimentName = 'mockNewName';
+
+const cellLevelMetaInstance = new CellLevelMeta();
+
+jest.mock('../../../src/api.v2/model/CellLevelMeta');
 
 describe('model/Experiment', () => {
   beforeEach(() => {
@@ -47,6 +51,10 @@ describe('model/Experiment', () => {
     const queryResult = [{ id: 'some-id-experiment' }];
     helpers.collapseKeyIntoArray.mockReturnValueOnce(
       Promise.resolve(queryResult),
+    );
+
+    cellLevelMetaInstance.getMetadataByExperimentIds.mockImplementationOnce(
+      () => Promise.resolve([])
     );
 
     const expectedResult = await new Experiment().getAllExperiments('mockUserId');
