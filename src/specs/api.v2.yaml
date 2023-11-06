@@ -1039,12 +1039,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
-  "/experiments/{experimentId}/cellLevel/{fileId}/{fileName}":
+  "/experiments/{experimentId}/cellLevelMeta/{fileId}/{fileName}":
     get:
       summary: Download cell level metadata file returning a signed url
       operationId: downloadCellLevelMetadataFile
-      x-eov-operation-id: cellLevel#downloadFile
-      x-eov-operation-handler: routes/cellLevel
+      x-eov-operation-id: cellLevelMeta#downloadFile
+      x-eov-operation-handler: routes/cellLevelMeta
       parameters:
         - in: path
           name: experimentId
@@ -1093,12 +1093,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"  
-  "/experiments/{experimentId}/cellLevel":
+  "/experiments/{experimentId}/cellLevelMeta":
     post:
       summary: Upload cell level metadata file
       operationId: createCellLevelMetadataFromFile
       x-eov-operation-id: cellLevel#uploadCellLevelMetadata
-      x-eov-operation-handler: routes/cellLevel
+      x-eov-operation-handler: routes/cellLevelMeta
       parameters:
         - in: path
           name: experimentId
@@ -1152,7 +1152,7 @@ paths:
       description: Update the cell level metadata of an experiment
       operationId: patchCellLevelMetadata
       x-eov-operation-id: cellLevel#updateCellLevelMetadata
-      x-eov-operation-handler: routes/cellLevel
+      x-eov-operation-handler: routes/cellLevelMeta
       parameters:
         - name: experimentId
           schema:
