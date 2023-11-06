@@ -1097,7 +1097,7 @@ paths:
     post:
       summary: Upload cell level metadata file
       operationId: createCellLevelMetadataFromFile
-      x-eov-operation-id: cellLevel#uploadCellLevelMetadata
+      x-eov-operation-id: cellLevelMeta#uploadCellLevelMetadata
       x-eov-operation-handler: routes/cellLevelMeta
       parameters:
         - in: path
@@ -1151,7 +1151,7 @@ paths:
       summary: Patch the cell level metadata of an experiment
       description: Update the cell level metadata of an experiment
       operationId: patchCellLevelMetadata
-      x-eov-operation-id: cellLevel#updateCellLevelMetadata
+      x-eov-operation-id: cellLevelMeta#updateCellLevelMetadata
       x-eov-operation-handler: routes/cellLevelMeta
       parameters:
         - name: experimentId
