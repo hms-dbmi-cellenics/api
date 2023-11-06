@@ -41,7 +41,6 @@ const patchCellSetsObject = async (experimentId, patch) => {
   );
 
   const patchedCellSets = { cellSets: patchedCellSetslist };
-
   await validateRequest(patchedCellSets, 'cell-sets-bodies/CellSets.v2.yaml');
 
   await putObject({
