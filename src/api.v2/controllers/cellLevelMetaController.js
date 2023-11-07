@@ -5,8 +5,8 @@ const sqlClient = require('../../sql/sqlClient');
 const CellLevelMeta = require('../model/CellLevelMeta');
 const CellLevelMetaToExperiment = require('../model/CellLevelMetaToExperiment');
 const { getFileUploadUrls } = require('../helpers/s3/signedUrl');
-const OK = require('../../utils/responses/OK');
 const getLogger = require('../../utils/getLogger');
+const OK = require('../../utils/responses/OK');
 
 const logger = getLogger('[CellLevelController] - ');
 
@@ -55,8 +55,17 @@ const downloadCellLevelFile = async (req, res) => {
   logger.log('Got download link successfully');
 };
 
+const deleteMetadata = async (req, res) => {
+  const { experimentId } = req.params;
+  logger.log('Deleting cell level metadata for experiment ', experimentId);
+  await new CellLevelMetaToExperiment().delete({ experiment_id: experimentId });
+  logger.log('Deleted cell level metadata for experiment ', experimentId);
+  res.json(OK());
+};
+
 module.exports = {
   uploadCellLevelMetadata,
   updateCellLevelMetadata,
   downloadCellLevelFile,
+  deleteMetadata,
 };

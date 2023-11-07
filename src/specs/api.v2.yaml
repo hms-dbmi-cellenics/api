@@ -1146,7 +1146,57 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPError"  
+                $ref: "#/components/schemas/HTTPError"
+    delete:
+      summary: Delete cell level metadata
+      description: Delete cell level metadata from an experiment
+      operationId: deleteCellLevelMeta
+      x-eov-operation-id: cellLevelMeta#deleteMetadata
+      x-eov-operation-handler: routes/cellLevelMeta
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+      responses:
+        "200":
+          description: Get experiment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "424":
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"              
     patch:
       summary: Patch the cell level metadata of an experiment
       description: Update the cell level metadata of an experiment
