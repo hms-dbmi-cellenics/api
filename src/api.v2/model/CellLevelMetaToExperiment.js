@@ -9,7 +9,7 @@ const fields = [
 
 class CellLevelMetaToExperiment extends BasicModel {
   constructor(sql = sqlClient.get()) {
-    super(sql, tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP, fields);
+    super(sql, tableNames.CELL_LEVEL_META_TO_EXPERIMENT_MAP, fields);
   }
 
   async setNewFile(experimentId, cellMetadataFileId) {

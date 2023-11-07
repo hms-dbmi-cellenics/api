@@ -1043,7 +1043,7 @@ paths:
     get:
       summary: Download cell level metadata file returning a signed url
       operationId: downloadCellLevelMetadataFile
-      x-eov-operation-id: cellLevelMeta#downloadFile
+      x-eov-operation-id: cellLevelMeta#download
       x-eov-operation-handler: routes/cellLevelMeta
       parameters:
         - in: path
@@ -1097,7 +1097,7 @@ paths:
     post:
       summary: Upload cell level metadata file
       operationId: createCellLevelMetadataFromFile
-      x-eov-operation-id: cellLevelMeta#uploadCellLevelMetadata
+      x-eov-operation-id: cellLevelMeta#upload
       x-eov-operation-handler: routes/cellLevelMeta
       parameters:
         - in: path
@@ -1151,7 +1151,7 @@ paths:
       summary: Delete cell level metadata
       description: Delete cell level metadata from an experiment
       operationId: deleteCellLevelMeta
-      x-eov-operation-id: cellLevelMeta#deleteMetadata
+      x-eov-operation-id: cellLevelMeta#deleteMeta
       x-eov-operation-handler: routes/cellLevelMeta
       parameters:
         - name: experimentId
@@ -1201,7 +1201,7 @@ paths:
       summary: Patch the cell level metadata of an experiment
       description: Update the cell level metadata of an experiment
       operationId: patchCellLevelMetadata
-      x-eov-operation-id: cellLevelMeta#updateCellLevelMetadata
+      x-eov-operation-id: cellLevelMeta#update
       x-eov-operation-handler: routes/cellLevelMeta
       parameters:
         - name: experimentId

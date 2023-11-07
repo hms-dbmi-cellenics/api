@@ -8,14 +8,14 @@ const { getFileUploadUrls } = require('../helpers/s3/signedUrl');
 const getLogger = require('../../utils/getLogger');
 const OK = require('../../utils/responses/OK');
 
-const logger = getLogger('[CellLevelController] - ');
+const logger = getLogger('[CellLevelMetaController] - ');
 
-const uploadCellLevelMetadata = async (req, res) => {
+const upload = async (req, res) => {
   const { experimentId } = req.params;
   const { name, size } = req.body;
 
   const cellLevelMetaKey = uuidv4();
-  const bucketName = bucketNames.CELL_METADATA;
+  const bucketName = bucketNames.CELL_LEVEL_META;
   const newCellLevelMetaFile = {
     id: cellLevelMetaKey,
     name,
@@ -36,7 +36,7 @@ const uploadCellLevelMetadata = async (req, res) => {
 };
 
 
-const updateCellLevelMetadata = async (req, res) => {
+const update = async (req, res) => {
   const { params: { experimentId }, body } = req;
   const snakeCasedKeysToPatch = _.mapKeys(body, (_value, key) => _.snakeCase(key));
   const { cellMetadataFileId } = await new CellLevelMetaToExperiment().find(
@@ -46,7 +46,7 @@ const updateCellLevelMetadata = async (req, res) => {
   res.json(OK());
 };
 
-const downloadCellLevelFile = async (req, res) => {
+const download = async (req, res) => {
   const { fileId, fileName } = req.params;
   logger.log('Getting signed url to download cell level meta file');
   const link = await new CellLevelMeta().getDownloadLink(fileId, fileName);
@@ -55,7 +55,7 @@ const downloadCellLevelFile = async (req, res) => {
   logger.log('Got download link successfully');
 };
 
-const deleteMetadata = async (req, res) => {
+const deleteMeta = async (req, res) => {
   const { experimentId } = req.params;
   logger.log('Deleting cell level metadata for experiment ', experimentId);
   await new CellLevelMetaToExperiment().delete({ experiment_id: experimentId });
@@ -64,8 +64,8 @@ const deleteMetadata = async (req, res) => {
 };
 
 module.exports = {
-  uploadCellLevelMetadata,
-  updateCellLevelMetadata,
-  downloadCellLevelFile,
-  deleteMetadata,
+  upload,
+  update,
+  download,
+  deleteMeta,
 };

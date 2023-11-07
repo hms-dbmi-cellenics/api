@@ -1,24 +1,24 @@
 const {
-  uploadCellLevelMetadata, updateCellLevelMetadata, downloadCellLevelFile, deleteMetadata,
+  upload, update, download, deleteMeta,
 } = require('../controllers/cellLevelMetaController');
 
 const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
 
 module.exports = {
-  'cellLevelMeta#uploadCellLevelMetadata': [
+  'cellLevelMeta#upload': [
     expressAuthorizationMiddleware,
-    (req, res, next) => uploadCellLevelMetadata(req, res).catch(next),
+    (req, res, next) => upload(req, res).catch(next),
   ],
-  'cellLevelMeta#updateCellLevelMetadata': [
+  'cellLevelMeta#update': [
     expressAuthorizationMiddleware,
-    (req, res, next) => updateCellLevelMetadata(req, res).catch(next),
+    (req, res, next) => update(req, res).catch(next),
   ],
-  'cellLevelMeta#downloadFile': [
+  'cellLevelMeta#download': [
     expressAuthorizationMiddleware,
-    (req, res, next) => downloadCellLevelFile(req, res).catch(next),
+    (req, res, next) => download(req, res).catch(next),
   ],
-  'cellLevelMeta#deleteMetadata': [
+  'cellLevelMeta#deleteMeta': [
     expressAuthorizationMiddleware,
-    (req, res, next) => deleteMetadata(req, res).catch(next),
+    (req, res, next) => deleteMeta(req, res).catch(next),
   ],
 };

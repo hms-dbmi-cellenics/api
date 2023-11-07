@@ -14,20 +14,20 @@ const fields = [
 
 class CellLevelMeta extends BasicModel {
   constructor(sql = sqlClient.get()) {
-    super(sql, tableNames.CELL_LEVEL, fields);
-    this.bucketName = bucketNames.CELL_METADATA;
+    super(sql, tableNames.CELL_LEVEL_META, fields);
+    this.bucketName = bucketNames.CELL_LEVEL_META;
   }
 
   async getMetadataByExperimentIds(experimentIds) {
     const result = await this.sql
       .select([...fields, `${tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP}.experiment_id`])
-      .from(tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP)
+      .from(tableNames.CELL_LEVEL_META_TO_EXPERIMENT_MAP)
       .leftJoin(
-        tableNames.CELL_LEVEL,
-        `${tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP}.cell_metadata_file_id`,
-        `${tableNames.CELL_LEVEL}.id`,
+        tableNames.CELL_LEVEL_META,
+        `${tableNames.CELL_LEVEL_META_TO_EXPERIMENT_MAP}.cell_metadata_file_id`,
+        `${tableNames.CELL_LEVEL_META}.id`,
       )
-      .whereIn(`${tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP}.experiment_id`, experimentIds);
+      .whereIn(`${tableNames.CELL_LEVEL_META_TO_EXPERIMENT_MAP}.experiment_id`, experimentIds);
 
     return result;
   }
