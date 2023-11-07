@@ -106,7 +106,7 @@ const getClusteringShouldRun = async (
   return !_.isNil(processingConfigDiff.configureEmbedding) || clusteringIsOutdated;
 };
 
-const getMetadataS3Path = async (experimentId) => {
+const getCellLevelMetadataId = async (experimentId) => {
   const cellLevelMetadataFiles = await new CellLevelMeta()
     .getMetadataByExperimentIds([experimentId]);
   if (cellLevelMetadataFiles.length > 1) {
@@ -131,8 +131,8 @@ const createQCPipeline = async (experimentId, processingConfigDiff, authJWT, pre
 
   const { processingConfig, samplesOrder } = await new Experiment().findById(experimentId).first();
 
-  const [cellLevelMetadata] = await new CellLevelMeta().getMetadataByExperimentIds([experimentId]);
-  const { id: currentCellMetadataId = null } = cellLevelMetadata || {};
+  const currentCellMetadataId = await getCellLevelMetadataId(experimentId);
+
   const {
     // @ts-ignore
     [constants.QC_PROCESS_NAME]: status,
@@ -165,7 +165,7 @@ const createQCPipeline = async (experimentId, processingConfigDiff, authJWT, pre
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
     processingConfig: withoutDefaultFilterSettings(fullProcessingConfig, samplesOrder),
     clusteringShouldRun,
-    metadataS3Path: await getMetadataS3Path(experimentId),
+    metadataS3Path: currentCellMetadataId,
     authJWT,
   };
 
