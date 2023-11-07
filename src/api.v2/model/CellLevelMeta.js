@@ -20,7 +20,7 @@ class CellLevelMeta extends BasicModel {
 
   async getMetadataByExperimentIds(experimentIds) {
     const result = await this.sql
-      .select([...fields, `${tableNames.CELL_LEVEL_TO_EXPERIMENT_MAP}.experiment_id`])
+      .select([...fields, `${tableNames.CELL_LEVEL_META_TO_EXPERIMENT_MAP}.experiment_id`])
       .from(tableNames.CELL_LEVEL_META_TO_EXPERIMENT_MAP)
       .leftJoin(
         tableNames.CELL_LEVEL_META,
