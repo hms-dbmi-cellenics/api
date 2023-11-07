@@ -33,7 +33,6 @@ const {
 const buildStateMachineDefinition = require('./constructors/buildStateMachineDefinition');
 const getPipelineStatus = require('../getPipelineStatus');
 const constants = require('../../../constants');
-const CellLevelMeta = require('../../../model/CellLevelMeta');
 
 const logger = getLogger();
 
