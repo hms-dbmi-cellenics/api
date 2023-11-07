@@ -7,6 +7,7 @@ const getQCParams = (context, stepArgs) => {
     authJWT: context.authJWT,
     config: context.processingConfig[taskName] || {},
     clusteringShouldRun: context.clusteringShouldRun,
+    metadataS3Path: context.metadataS3Path,
   };
 };
 
