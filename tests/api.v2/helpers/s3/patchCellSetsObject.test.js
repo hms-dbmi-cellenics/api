@@ -56,10 +56,16 @@ const mockPatch = [
   },
 ];
 
-getObject.mockReturnValue(mockCellSets);
 
 describe('patchCellSetsObject', () => {
+  beforeEach(() => {
+    jest.resetAllMocks(); // This resets the state of all mocks
+  });
+
+
   it('Works correctly', async () => {
+    getObject.mockReturnValue(mockCellSets);
+
     const result = await patchCellSetsObject(mockExperimentId, mockPatch);
 
     // Put a modified object
@@ -101,5 +107,54 @@ describe('patchCellSetsObject', () => {
     ];
 
     await expect(patchCellSetsObject(mockExperimentId, malformedPatch)).rejects.toThrow();
+  });
+
+  it('Patch with CLM elements replaces old CLM cell sets', async () => {
+    // Mock cellSets with CLM types
+    const mockCellSetsWithCLM = JSON.stringify({
+      cellSets: [
+        {
+          key: 'sample1',
+          name: 'To remove 1',
+          type: 'CLM',
+          children: [],
+        },
+        // This should stay since it's not CLM type
+        {
+          key: 'sample2',
+          name: 'Sample 2',
+          type: 'notCLM',
+          children: [],
+        },
+        {
+          key: 'sample3',
+          name: 'To Remove 2',
+          type: 'CLMPerSample',
+          children: [],
+        },
+      ],
+    });
+
+    const mockPatchThatContainsCLM = [
+      {
+        $append: {
+          key: 'New',
+          name: 'New CLM',
+          type: 'CLM',
+          children: [],
+        },
+      },
+    ];
+
+    getObject.mockReturnValueOnce(mockCellSetsWithCLM);
+
+    await patchCellSetsObject(mockExperimentId, mockPatchThatContainsCLM);
+
+    // Put a modified object without CLM types
+    const putParams = putObject.mock.calls[0][0];
+    const modifiedCellSets = JSON.parse(putParams.Body).cellSets;
+
+    // Check that the elements with CLM types have been removed
+    expect(modifiedCellSets).toMatchSnapshot();
   });
 });
