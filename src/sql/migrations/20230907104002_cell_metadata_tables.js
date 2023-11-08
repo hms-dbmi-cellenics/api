@@ -1,5 +1,5 @@
 const {
-  CELL_METADATA,
+  CELL_LEVEL_META,
 } = require('../../config/bucketNames');
 
 const defineDeleteCellMetadataFileIfOrphanFunc = `
@@ -49,7 +49,7 @@ const nativeEnum = (table, tableName) => (
 );
 
 const createDeleteCellMetadataTriggerFunc = (env) => {
-  const body = getTriggerFunction(env, 'id', CELL_METADATA);
+  const body = getTriggerFunction(env, 'id', CELL_LEVEL_META);
 
   const template = `
     CREATE OR REPLACE FUNCTION public.delete_file_from_s3_after_cell_metadata_delete()

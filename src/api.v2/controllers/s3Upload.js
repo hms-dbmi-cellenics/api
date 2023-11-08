@@ -12,8 +12,8 @@ const completeMultipartUploads = async (req, res) => {
   let bucketName;
   if (type === 'sample') {
     bucketName = bucketNames.SAMPLE_FILES;
-  } else if (type === 'cellLevel') {
-    bucketName = bucketNames.CELL_METADATA;
+  } else if (type === 'cellLevelMeta') {
+    bucketName = bucketNames.CELL_LEVEL_META;
   } else {
     throw new NotFoundError('Invalid bucket specified');
   }
