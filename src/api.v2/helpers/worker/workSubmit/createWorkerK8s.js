@@ -66,8 +66,7 @@ const waitForPods = async (namespace, maxTries = 20, currentTry = 0) => {
 };
 
 
-//
-const scaleDeploymentReplicas = async (name, namespace, desiredReplicas) => {
+const scaleDeploymentReplicas = async (name, namespace, desiredReplicas = 1) => {
   const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
 
   const deployment = await getDeployment(name, namespace);
@@ -105,8 +104,14 @@ const createWorkerResources = async (service) => {
 
   // scale pods if worker has zero replicas
   let pods = await getAvailablePods(namespace);
-  const { spec: { replicas } } = await getDeployment('worker', namespace);
+  let replicas;
   const minDesiredReplicas = 1;
+  try {
+    ({ spec: { replicas } } = await getDeployment('worker', namespace));
+  } catch (e) {
+    logger.log('Getting worker deployment failed, ignoring...', e);
+  }
+
   if (pods.length < 1 && replicas < minDesiredReplicas) {
     await scaleDeploymentReplicas('worker', namespace, minDesiredReplicas);
     pods = await getAvailablePods(namespace);
