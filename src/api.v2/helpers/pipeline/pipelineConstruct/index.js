@@ -6,6 +6,7 @@ const {
   QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUBSET_PROCESS_NAME, SEURAT_PROCESS_NAME,
 } = require('../../../constants');
 
+const CellLevelMeta = require('../../../model/CellLevelMeta');
 const Experiment = require('../../../model/Experiment');
 const ExperimentExecution = require('../../../model/ExperimentExecution');
 
@@ -87,11 +88,22 @@ const withRecomputeDoubletScores = (processingConfig) => {
   return newProcessingConfig;
 };
 
+const getMetadataS3Path = async (experimentId) => {
+  const cellLevelMetadataFiles = await new CellLevelMeta()
+    .getMetadataByExperimentIds([experimentId]);
+  if (cellLevelMetadataFiles.length > 1) {
+    throw new Error(`Experiment ${experimentId} cannot have more than one cell level metadata file`);
+  }
+  if (cellLevelMetadataFiles.length === 0) {
+    return null;
+  }
+  return cellLevelMetadataFiles[0].id;
+};
+
 const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
   logger.log(`createQCPipeline: fetch processing settings ${experimentId}`);
 
   const { processingConfig, samplesOrder } = await new Experiment().findById(experimentId).first();
-
   const {
     // @ts-ignore
     [constants.QC_PROCESS_NAME]: status,
@@ -119,6 +131,7 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
     ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
     processingConfig: withoutDefaultFilterSettings(fullProcessingConfig, samplesOrder),
     authJWT,
+    metadataS3Path: await getMetadataS3Path(experimentId),
   };
 
   await cancelPreviousPipelines(experimentId, previousJobId);
