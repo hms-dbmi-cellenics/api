@@ -56,8 +56,10 @@ const getFirstQCStep = async (
   ) {
     throw new Error(
       `At experiment ${experimentId}: qc can be triggered with 
-        processingConfigUpdates = empty array only if the cell level metadata changed
-        or if it is a retry`,
+        processingConfigUpdates = empty array only if:
+        - the cell level metadata changed
+        - it is a retry
+        - qc previous run didn't start somehow (unlikely, it should be automatic)`,
     );
   }
 
