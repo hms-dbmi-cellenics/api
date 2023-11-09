@@ -20,7 +20,6 @@ const invalidatePlotsForEvent = require('../../../utils/plotConfigInvalidation/i
 const events = require('../../../utils/plotConfigInvalidation/events');
 
 const { MethodNotAllowedError } = require('../../../utils/responses');
-const CellLevelMeta = require('../../model/CellLevelMeta');
 
 const logger = getLogger('[Gem2sService] - ');
 

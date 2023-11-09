@@ -3,7 +3,6 @@ const ExperimentExecution = require('../../model/ExperimentExecution');
 const ExperimentParent = require('../../model/ExperimentParent');
 const Sample = require('../../model/Sample');
 const { GEM2S_PROCESS_NAME, SEURAT_PROCESS_NAME, QC_PROCESS_NAME } = require('../../constants');
-const Experiment = require('../../model/Experiment');
 const CellLevelMeta = require('../../model/CellLevelMeta');
 
 const formatSamples = (rawSamples) => {
