@@ -15,9 +15,8 @@ jest.mock('../../../src/utils/parseSNSMessage');
 const experimentId = 'experimentId';
 const io = 'mockIo';
 
-const processingConfigUpdate = [{
-  name: 'numGenesVsNumUmis',
-  body: {
+const processingConfigUpdate = {
+  numGenesVsNumUmis: {
     auto: true,
     enabled: true,
     filterSettings: { regressionType: 'linear', regressionTypeSettings: { linear: { 'p.level': 0.001 }, spline: { 'p.level': 0.001 } } },
@@ -28,7 +27,7 @@ const processingConfigUpdate = [{
       defaultFilterSettings: { regressionType: 'linear', regressionTypeSettings: { linear: { 'p.level': 0.001 }, spline: { 'p.level': 0.001 } } },
     },
   },
-}];
+};
 
 const qcResponsePayload = {
   experimentId,
@@ -80,7 +79,7 @@ describe('qcController', () => {
     const mockReq = {
       params: { experimentId },
       headers: { authorization },
-      body: { processingConfig: processingConfigUpdate },
+      body: { processingConfigDiff: processingConfigUpdate },
     };
 
     await qcController.runQC(mockReq, mockRes);
@@ -103,7 +102,7 @@ describe('qcController', () => {
     const mockReq = {
       params: { experimentId },
       headers: { authorization },
-      body: { processingConfig: [] },
+      body: { processingConfigDiff: [] },
     };
 
     await qcController.runQC(mockReq, mockRes);
