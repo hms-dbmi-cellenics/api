@@ -160,7 +160,152 @@ exports[`gem2sResponse Starts a QC run when gem2s finishes 2`] = `
 Array [
   Array [
     "mockExperimentId",
-    Array [],
+    Object {
+      "cellSizeDistribution": Object {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
+          "auto": true,
+          "defaultFilterSettings": Object {
+            "binStep": 200,
+            "minCellSize": 1044,
+          },
+          "enabled": false,
+          "filterSettings": Object {
+            "binStep": 200,
+            "minCellSize": 1044,
+          },
+        },
+      },
+      "classifier": Object {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
+          "auto": true,
+          "defaultFilterSettings": Object {
+            "FDR": 0.02,
+          },
+          "enabled": false,
+          "filterSettings": Object {
+            "FDR": 0.01,
+          },
+          "prefiltered": true,
+        },
+      },
+      "configureEmbedding": Object {
+        "clusteringSettings": Object {
+          "method": "louvain",
+          "methodSettings": Object {
+            "louvain": Object {
+              "resolution": 0.8,
+            },
+          },
+        },
+        "embeddingSettings": Object {
+          "method": "umap",
+          "methodSettings": Object {
+            "tsne": Object {
+              "learningRate": 200,
+              "perplexity": 30,
+            },
+            "umap": Object {
+              "distanceMetric": "cosine",
+              "minimumDistance": 0.3,
+            },
+          },
+        },
+      },
+      "dataIntegration": Object {
+        "dataIntegration": Object {
+          "method": "harmony",
+          "methodSettings": Object {
+            "fastmnn": Object {
+              "normalisation": "logNormalize",
+              "numGenes": 2000,
+            },
+            "harmony": Object {
+              "normalisation": "logNormalize",
+              "numGenes": 2000,
+            },
+            "seuratv4": Object {
+              "normalisation": "logNormalize",
+              "numGenes": 2000,
+            },
+            "unisample": Object {
+              "normalisation": "logNormalize",
+              "numGenes": 2000,
+            },
+          },
+        },
+        "dimensionalityReduction": Object {
+          "excludeGeneCategories": Array [],
+          "method": "rpca",
+          "numPCs": 30,
+        },
+      },
+      "doubletScores": Object {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
+          "auto": true,
+          "defaultFilterSettings": Object {
+            "binStep": 0.05,
+            "probabilityThreshold": 0.6569474,
+          },
+          "enabled": true,
+          "filterSettings": Object {
+            "binStep": 0.02,
+            "probabilityThreshold": 0.6569474,
+          },
+        },
+      },
+      "mitochondrialContent": Object {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
+          "auto": true,
+          "defaultFilterSettings": Object {
+            "method": "absoluteThreshold",
+            "methodSettings": Object {
+              "absoluteThreshold": Object {
+                "binStep": 0.6,
+                "maxFraction": 0.07181355,
+              },
+            },
+          },
+          "enabled": true,
+          "filterSettings": Object {
+            "method": "absoluteThreshold",
+            "methodSettings": Object {
+              "absoluteThreshold": Object {
+                "binStep": 0.3,
+                "maxFraction": 0.07181329,
+              },
+            },
+          },
+        },
+      },
+      "numGenesVsNumUmis": Object {
+        "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
+          "auto": true,
+          "defaultFilterSettings": Object {
+            "regressionType": "linear",
+            "regressionTypeSettings": Object {
+              "linear": Object {
+                "p.level": 0.001,
+              },
+              "spline": Object {
+                "p.level": 0.001,
+              },
+            },
+          },
+          "enabled": true,
+          "filterSettings": Object {
+            "regressionType": "linear",
+            "regressionTypeSettings": Object {
+              "linear": Object {
+                "p.level": 0.001,
+              },
+              "spline": Object {
+                "p.level": 0.001,
+              },
+            },
+          },
+        },
+      },
+    },
     "mockAuthJWT",
     "mockJobId",
   ],
