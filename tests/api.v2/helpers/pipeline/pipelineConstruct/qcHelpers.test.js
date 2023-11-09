@@ -155,16 +155,21 @@ describe('helper functions for skeletons', () => {
     expect(stateMachine).toMatchSnapshot();
   });
 
-  it('returns configureEmbedding only if the config has no changes and the previous run failed', async () => {
+  it('returns configureEmbedding if the only thing that changed is the cellLevelMetadata', async () => {
+    mockCellLevelMetadataCheck('sameCellLevelId', 'otherCellLevelId');
+
     const completedSteps = [
-      'ClassifierFilter',
-      'CellSizeDistributionFilter',
-      'MitochondrialContentFilter',
-      'NumGenesVsNumUmisFilter',
+      'ClassifierFilterMap',
+      'CellSizeDistributionFilterMap',
+      'MitochondrialContentFilterMap',
+      'NumGenesVsNumUmisFilterMap',
+      'DoubletScoresFilterMap',
+      'DataIntegration',
+      'ConfigureEmbedding',
     ];
 
-    const qcSteps = await getQcStepsToRun(fake.EXPERIMENT_ID, [], completedSteps, 'FAILED');
-    expect(qcSteps[0]).toEqual('DoubletScoresFilterMap');
+    const qcSteps = await getQcStepsToRun(fake.EXPERIMENT_ID, [], completedSteps, 'SUCCEEDED');
+    expect(qcSteps).toEqual(['ConfigureEmbedding']);
     const stateMachine = buildQCPipelineSteps(qcSteps);
     expect(stateMachine).toMatchSnapshot();
   });

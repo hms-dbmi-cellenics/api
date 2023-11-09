@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`helper functions for skeletons returns configureEmbedding only if the config has no changes and the previous run failed 1`] = `
+exports[`helper functions for skeletons returns configureEmbedding if the only thing that changed is the cellLevelMetadata 1`] = `
 Object {
   "ConfigureEmbedding": Object {
     "Next": "EndOfPipeline",
@@ -18,52 +18,6 @@ Object {
       "taskName": "configureEmbedding",
     },
     "XStepType": "create-new-step",
-  },
-  "DataIntegration": Object {
-    "Next": "ConfigureEmbedding",
-    "XCatch": Array [
-      Object {
-        "ErrorEquals": Array [
-          "States.ALL",
-        ],
-        "Next": "HandleError",
-        "ResultPath": "$.errorInfo",
-      },
-    ],
-    "XConstructorArgs": Object {
-      "perSample": false,
-      "taskName": "dataIntegration",
-      "uploadCountMatrix": true,
-    },
-    "XStepType": "create-new-step",
-  },
-  "DoubletScoresFilterMap": Object {
-    "Catch": Array [
-      Object {
-        "ErrorEquals": Array [
-          "States.ALL",
-        ],
-        "Next": "HandleError",
-        "ResultPath": "$.errorInfo",
-      },
-    ],
-    "ItemsPath": "$.samples",
-    "Iterator": Object {
-      "StartAt": "DoubletScoresFilter",
-      "States": Object {
-        "DoubletScoresFilter": Object {
-          "End": true,
-          "XConstructorArgs": Object {
-            "perSample": true,
-            "taskName": "doubletScores",
-          },
-          "XStepType": "create-new-step",
-        },
-      },
-    },
-    "Next": "DataIntegration",
-    "ResultPath": null,
-    "Type": "Map",
   },
 }
 `;
