@@ -52,7 +52,7 @@ const getFirstQCStep = async (
   if (
     processingConfigUpdatedKeys.length === 0
     && status !== FAILED
-    && previousCompletedSteps.length > 0
+    && previousCompletedSteps.length !== 0
   ) {
     throw new Error(
       `At experiment ${experimentId}: qc can be triggered with 
