@@ -141,6 +141,16 @@ describe('helper functions for skeletons', () => {
     expect(stateMachine).toMatchSnapshot();
   });
 
+  it('returns from first not-completed step if the config has changes and cell level metadata changed', async () => {
+    mockCellLevelMetadataCheck('sameCellLevelId', 'otherCellLevelId');
+    const completedSteps = [];
+
+    const qcSteps = await getQcStepsToRun(fake.EXPERIMENT_ID, processingConfig, completedSteps);
+    expect(qcSteps[0]).toEqual('ClassifierFilterMap');
+    const stateMachine = buildQCPipelineSteps(qcSteps);
+    expect(stateMachine).toMatchSnapshot();
+  });
+
   it('returns from first not-completed step if the config has no changes and the previous run failed', async () => {
     const completedSteps = [
       'ClassifierFilter',
