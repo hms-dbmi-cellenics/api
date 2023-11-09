@@ -10,8 +10,8 @@ const tableNames = {
   PLOT: 'plot',
   SAMPLE_IN_METADATA_TRACK_MAP: 'sample_in_metadata_track_map',
   SAMPLE_TO_SAMPLE_FILE_MAP: 'sample_to_sample_file_map',
-  CELL_LEVEL: 'cell_metadata_file',
-  CELL_LEVEL_TO_EXPERIMENT_MAP: 'cell_metadata_file_to_experiment',
+  CELL_LEVEL_META: 'cell_metadata_file',
+  CELL_LEVEL_META_TO_EXPERIMENT_MAP: 'cell_metadata_file_to_experiment',
 };
 
 module.exports = tableNames;
