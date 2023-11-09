@@ -151,7 +151,7 @@ describe('helper functions for skeletons', () => {
     expect(stateMachine).toMatchSnapshot();
   });
 
-  it('returns from first not-completed step if the config has no changes and the previous run failed', async () => {
+  it('Works if the config has no changes but the previous run failed', async () => {
     const completedSteps = [
       'ClassifierFilter',
       'CellSizeDistributionFilter',
@@ -165,7 +165,16 @@ describe('helper functions for skeletons', () => {
     expect(stateMachine).toMatchSnapshot();
   });
 
-  it('returns configureEmbedding if the only thing that changed is the cellLevelMetadata', async () => {
+  it('Works if the config has no changes but the previous run never started', async () => {
+    const completedSteps = [];
+
+    const qcSteps = await getQcStepsToRun(fake.EXPERIMENT_ID, [], completedSteps, 'FAILED');
+    expect(qcSteps[0]).toEqual('ClassifierFilterMap');
+    const stateMachine = buildQCPipelineSteps(qcSteps);
+    expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('Works if the only thing that changed is the cellLevelMetadata', async () => {
     mockCellLevelMetadataCheck('sameCellLevelId', 'otherCellLevelId');
 
     const completedSteps = [
