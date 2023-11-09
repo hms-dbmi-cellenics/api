@@ -39,16 +39,21 @@ const getCellLevelMetadataFileChanged = async (experimentId) => {
 // getFirstQCStep returns which is the first step of the QC to be run
 // processingConfigUpdatedKeys is not ordered
 const getFirstQCStep = async (
-  experimentId, processingConfigUpdatedKeys, backendCompletedSteps, status,
+  experimentId, processingConfigUpdatedKeys, previousCompletedSteps, status,
 ) => {
   if (
     processingConfigUpdatedKeys.length === 0
+    && previousCompletedSteps.length === 7
     && await getCellLevelMetadataFileChanged(experimentId)
   ) {
     return filterToStepName.configureEmbedding;
   }
 
-  if (processingConfigUpdatedKeys.length === 0 && status !== FAILED) {
+  if (
+    processingConfigUpdatedKeys.length === 0
+    && status !== FAILED
+    && previousCompletedSteps.length > 0
+  ) {
     throw new Error(
       `At experiment ${experimentId}: qc can be triggered with 
         processingConfigUpdates = empty array only if the cell level metadata changed
@@ -67,7 +72,7 @@ const getFirstQCStep = async (
     }
   });
 
-  const completedSteps = backendCompletedSteps.map(
+  const completedSteps = previousCompletedSteps.map(
     (currentStep) => backendStepNamesToStepName[currentStep],
   );
 
