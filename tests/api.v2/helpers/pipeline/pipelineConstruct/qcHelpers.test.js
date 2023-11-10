@@ -3,9 +3,18 @@ const { getQcStepsToRun } = require('../../../../../src/api.v2/helpers/pipeline/
 const { buildQCPipelineSteps } = require('../../../../../src/api.v2/helpers/pipeline/pipelineConstruct/skeletons/qcPipelineSkeleton');
 const fake = require('../../../../test-utils/constants');
 
+const CellLevelMeta = require('../../../../../src/api.v2/model/CellLevelMeta');
+const ExperimentExecution = require('../../../../../src/api.v2/model/ExperimentExecution');
+
 jest.mock('../../../../../src/api.v2/helpers/s3/fileExists', () => ({
   fileExists: jest.fn(() => true),
 }));
+
+jest.mock('../../../../../src/api.v2/model/CellLevelMeta');
+jest.mock('../../../../../src/api.v2/model/ExperimentExecution');
+
+const cellLevelMetaInstance = new CellLevelMeta();
+const experimentExecutionInstance = new ExperimentExecution();
 
 const processingConfig = [
   {
@@ -103,6 +112,18 @@ const processingConfig = [
   },
 ];
 
+const mockCellLevelMetadataCheck = (currentCellLevelMetadataId, previousRunCellLevelMetadataId) => {
+  cellLevelMetaInstance.getMetadataByExperimentIds.mockReturnValueOnce(
+    Promise.resolve([{ id: currentCellLevelMetadataId }]),
+  );
+
+  experimentExecutionInstance.find.mockReturnValueOnce({
+    first: () => Promise.resolve(
+      { lastPipelineParams: { cellMetadataId: previousRunCellLevelMetadataId } },
+    ),
+  });
+};
+
 describe('helper functions for skeletons', () => {
   it('returns the first changed step if it is before all the completed steps', async () => {
     const completedSteps = ['ClassifierFilter'];
@@ -120,7 +141,17 @@ describe('helper functions for skeletons', () => {
     expect(stateMachine).toMatchSnapshot();
   });
 
-  it('returns from first not-completed step if the config has no changes', async () => {
+  it('returns from first not-completed step if the config has changes and cell level metadata changed', async () => {
+    mockCellLevelMetadataCheck('sameCellLevelId', 'otherCellLevelId');
+    const completedSteps = [];
+
+    const qcSteps = await getQcStepsToRun(fake.EXPERIMENT_ID, processingConfig, completedSteps);
+    expect(qcSteps[0]).toEqual('ClassifierFilterMap');
+    const stateMachine = buildQCPipelineSteps(qcSteps);
+    expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('Works if the config has no changes but the previous run failed', async () => {
     const completedSteps = [
       'ClassifierFilter',
       'CellSizeDistributionFilter',
@@ -128,9 +159,50 @@ describe('helper functions for skeletons', () => {
       'NumGenesVsNumUmisFilter',
     ];
 
-    const qcSteps = await getQcStepsToRun(fake.EXPERIMENT_ID, [], completedSteps);
+    const qcSteps = await getQcStepsToRun(fake.EXPERIMENT_ID, [], completedSteps, 'FAILED');
     expect(qcSteps[0]).toEqual('DoubletScoresFilterMap');
     const stateMachine = buildQCPipelineSteps(qcSteps);
     expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('Works if the config has no changes but the previous run never started', async () => {
+    const completedSteps = [];
+
+    const qcSteps = await getQcStepsToRun(fake.EXPERIMENT_ID, [], completedSteps, 'FAILED');
+    expect(qcSteps[0]).toEqual('ClassifierFilterMap');
+    const stateMachine = buildQCPipelineSteps(qcSteps);
+    expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('Works if the only thing that changed is the cellLevelMetadata', async () => {
+    mockCellLevelMetadataCheck('sameCellLevelId', 'otherCellLevelId');
+
+    const completedSteps = [
+      'ClassifierFilterMap',
+      'CellSizeDistributionFilterMap',
+      'MitochondrialContentFilterMap',
+      'NumGenesVsNumUmisFilterMap',
+      'DoubletScoresFilterMap',
+      'DataIntegration',
+      'ConfigureEmbedding',
+    ];
+
+    const qcSteps = await getQcStepsToRun(fake.EXPERIMENT_ID, [], completedSteps, 'SUCCEEDED');
+    expect(qcSteps).toEqual(['ConfigureEmbedding']);
+    const stateMachine = buildQCPipelineSteps(qcSteps);
+    expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('Throws if the config has no changes', async () => {
+    mockCellLevelMetadataCheck('sameCellLevelId', 'sameCellLevelId');
+
+    const completedSteps = [
+      'ClassifierFilter',
+      'CellSizeDistributionFilter',
+      'MitochondrialContentFilter',
+      'NumGenesVsNumUmisFilter',
+    ];
+
+    expect(async () => await getQcStepsToRun(fake.EXPERIMENT_ID, [], completedSteps, 'SUCCEEDED')).rejects.toThrow();
   });
 });

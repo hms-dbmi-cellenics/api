@@ -70,26 +70,23 @@ describe('test for pipeline services', () => {
     },
   };
 
-  const processingConfigUpdate = [
-    {
-      name: 'doubletScores',
-      body: {
-        oneSample: {
-          defaultFilterSettings: {
-            oneSetting: 1,
-          },
-          filterSettings: {
-            oneSetting: 7,
-          },
+  const processingConfigUpdate = {
+    doubletScores: {
+      oneSample: {
+        defaultFilterSettings: {
+          oneSetting: 1,
         },
-        otherSample: {
-          filterSettings: {
-            oneSetting: 15,
-          },
+        filterSettings: {
+          oneSetting: 7,
+        },
+      },
+      otherSample: {
+        filterSettings: {
+          oneSetting: 15,
         },
       },
     },
-  ];
+  };
 
   it('Create QC pipeline works', async () => {
     const describeClusterSpy = jest.fn((x) => x);
@@ -130,9 +127,9 @@ describe('test for pipeline services', () => {
           name: 'test_cell_lvl_meta.tsv',
           uploadStatus: 'uploaded',
           createdAt: '2023-11-01 14:29:26.765022+00',
-          experimentId: 'testExperimentId'
-        }
-      ])
+          experimentId: 'testExperimentId',
+        },
+      ]),
     );
 
     await createQCPipeline('testExperimentId', processingConfigUpdate);
@@ -206,9 +203,9 @@ describe('test for pipeline services', () => {
           name: 'test_cell_lvl_meta.tsv',
           uploadStatus: 'uploaded',
           createdAt: '2023-11-01 14:29:26.765022+00',
-          experimentId: 'testExperimentId'
-        }
-      ])
+          experimentId: 'testExperimentId',
+        },
+      ]),
     );
 
     await createQCPipeline('testExperimentId', processingConfigUpdate);
@@ -262,7 +259,7 @@ describe('test for pipeline services', () => {
     );
 
     cellLevelMetaInstance.getMetadataByExperimentIds.mockImplementationOnce(
-      () => Promise.resolve([])
+      () => Promise.resolve([]),
     );
 
     await createQCPipeline('testExperimentId', processingConfigUpdate);
@@ -322,21 +319,21 @@ describe('test for pipeline services', () => {
           name: 'test_cell_lvl_meta.tsv',
           uploadStatus: 'uploaded',
           createdAt: '2023-11-01 14:29:26.765022+00',
-          experimentId: 'testExperimentId'
+          experimentId: 'testExperimentId',
         },
         {
           id: '3c5983db-c690-4ed3-a4ad-bb12b065d60d',
           name: 'test_cell_lvl_meta.tsv',
           uploadStatus: 'uploaded',
           createdAt: '2023-11-01 14:29:26.765022+00',
-          experimentId: 'testExperimentId'
-        }
-      ])
+          experimentId: 'testExperimentId',
+        },
+      ]),
     );
 
     await expect(createQCPipeline('testExperimentId', processingConfigUpdate))
       .rejects
-      .toThrow(`Experiment testExperimentId cannot have more than one cell level metadata file`);
+      .toThrow('Experiment testExperimentId cannot have more than one cell level metadata file');
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
     expect(cellLevelMetaInstance.getMetadataByExperimentIds).toHaveBeenCalledWith(['testExperimentId']);
   });

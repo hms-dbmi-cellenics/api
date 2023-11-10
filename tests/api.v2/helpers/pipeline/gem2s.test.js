@@ -154,6 +154,7 @@ describe('gem2sResponse', () => {
       jobId: 'mockJobId',
     };
 
+
     pipelineConstruct.createQCPipeline.mockImplementationOnce(
       () => Promise.resolve({ stateMachineArn, executionArn }),
     );
