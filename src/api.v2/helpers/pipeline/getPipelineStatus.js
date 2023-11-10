@@ -292,6 +292,7 @@ const getPipelineStatus = async (experimentId, processName) => {
   let response = null;
 
   const { executionArn = null, stateMachineArn = null, lastStatusResponse } = pipelineExecution;
+
   const shouldRerun = await shouldPipelineRerun(experimentId, processName);
 
   try {

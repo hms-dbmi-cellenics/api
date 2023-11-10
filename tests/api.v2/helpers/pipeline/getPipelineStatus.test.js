@@ -8,10 +8,14 @@ const config = require('../../../../src/config');
 
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
 const { qcStepNames } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/constructors/qcStepNameTranslations');
+const CellLevelMeta = require('../../../../src/api.v2/model/CellLevelMeta');
 
 const experimentExecutionInstance = ExperimentExecution();
+const cellLevelMetaInstance = CellLevelMeta();
 
 jest.mock('../../../../src/api.v2/model/ExperimentExecution');
+jest.mock('../../../../src/api.v2/model/CellLevelMeta');
+jest.mock('../../../../src/api.v2/model/ExperimentParent');
 
 jest.useFakeTimers('modern').setSystemTime(new Date(pipelineConstants.EXPIRED_EXECUTION_DATE).getTime());
 
@@ -638,6 +642,92 @@ describe('pipelineStatus', () => {
     );
   });
 
+  it('Returns shouldRerun: true if the cell level metadata in last execution vs current doesnt match', async () => {
+    mockDescribeStateMachine.mockImplementation((params, callback) => {
+      const stateMachine = {
+        definition: JSON.stringify({
+          States: qcStepNames.reduce((acum, current) => {
+            // eslint-disable-next-line no-param-reassign
+            acum[current] = {};
+            return acum;
+          }, {}),
+        }),
+      };
+
+      callback(null, stateMachine);
+    });
+
+    const mockCurrentCellLevelId = 'currentCellLevelId';
+    const mockPreviousCellLevelId = 'previousCellLevelId';
+
+    const mockExperimentExecResponse = {
+      experimentId: SUCCEEDED_ID,
+      pipelineType: QC_PROCESS_NAME,
+      stateMachineArn: SUCCEEDED_ID,
+      executionArn: SUCCEEDED_ID,
+      lastStatusResponse: qcStatusResponseSql,
+      lastPipelineParams: { cellMetadataId: mockCurrentCellLevelId },
+    };
+
+    experimentExecutionInstance.findOne
+      .mockReset()
+      .mockReturnValue(Promise.resolve(mockExperimentExecResponse));
+
+    cellLevelMetaInstance.getMetadataByExperimentIds
+      .mockReset()
+      .mockReturnValue(Promise.resolve(
+        [{ id: mockPreviousCellLevelId }],
+      ));
+
+    const status = await getPipelineStatus(SUCCEEDED_ID, QC_PROCESS_NAME);
+
+    expect(status[QC_PROCESS_NAME].shouldRerun).toBe(true);
+
+    expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: SUCCEEDED_ID });
+  });
+
+  it('Returns shouldRerun: false if the cell level metadata in last execution vs current is equal', async () => {
+    mockDescribeStateMachine.mockImplementation((params, callback) => {
+      const stateMachine = {
+        definition: JSON.stringify({
+          States: qcStepNames.reduce((acum, current) => {
+            // eslint-disable-next-line no-param-reassign
+            acum[current] = {};
+            return acum;
+          }, {}),
+        }),
+      };
+
+      callback(null, stateMachine);
+    });
+
+    const mockCurrentCellLevelId = 'currentCellLevelId';
+
+    const mockExperimentExecResponse = {
+      experimentId: SUCCEEDED_ID,
+      pipelineType: QC_PROCESS_NAME,
+      stateMachineArn: SUCCEEDED_ID,
+      executionArn: SUCCEEDED_ID,
+      lastStatusResponse: qcStatusResponseSql,
+      lastPipelineParams: { cellMetadataId: mockCurrentCellLevelId },
+    };
+
+    experimentExecutionInstance.findOne
+      .mockReset()
+      .mockReturnValue(Promise.resolve(mockExperimentExecResponse));
+
+    cellLevelMetaInstance.getMetadataByExperimentIds
+      .mockReset()
+      .mockReturnValue(Promise.resolve(
+        [{ id: mockCurrentCellLevelId }],
+      ));
+
+    const status = await getPipelineStatus(SUCCEEDED_ID, QC_PROCESS_NAME);
+
+    expect(status[QC_PROCESS_NAME].shouldRerun).toBe(false);
+
+    expect(experimentExecutionInstance.find).toHaveBeenCalledWith({ experiment_id: SUCCEEDED_ID });
+  });
 
   it('doesn\'t update sql last_status_response if it already matches', async () => {
     const expectedStatus = {
@@ -661,6 +751,7 @@ describe('pipelineStatus', () => {
     ];
 
     experimentExecutionInstance.find.mockImplementation(() => Promise.resolve(mockFindResponse));
+    experimentExecutionInstance.findOne.mockImplementation(() => Promise.resolve(undefined));
 
     const status = await getPipelineStatus(SUCCEEDED_ID, GEM2S_PROCESS_NAME);
 
