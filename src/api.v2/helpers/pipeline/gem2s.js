@@ -15,7 +15,7 @@ const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
 
 const { qcStepsWithFilterSettings } = require('./pipelineConstruct/qcHelpers');
-const { getGem2sParams, formatSamples } = require('./shouldGem2sRerun');
+const { getGem2sParams, formatSamples } = require('./shouldPipelineRerun');
 const invalidatePlotsForEvent = require('../../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
 const events = require('../../../utils/plotConfigInvalidation/events');
 
@@ -84,7 +84,7 @@ const continueToQC = async (payload) => {
   // we need to change this once we rework the pipeline message response
   const authJWT = payload.authJWT || payload.input.authJWT;
 
-  await createQCPipeline(experimentId, [], authJWT, jobId);
+  await createQCPipeline(experimentId, processingConfigWithDefaults, authJWT, jobId);
 
   logger.log('Started qc successfully');
 };

@@ -43,6 +43,7 @@ const update = async (req, res) => {
     { experiment_id: experimentId },
   ).first();
   await new CellLevelMeta().updateById(cellMetadataFileId, snakeCasedKeysToPatch);
+
   res.json(OK());
 };
 
