@@ -2,6 +2,8 @@ const _ = require('lodash');
 const ExperimentExecution = require('../../model/ExperimentExecution');
 const ExperimentParent = require('../../model/ExperimentParent');
 const Sample = require('../../model/Sample');
+const { GEM2S_PROCESS_NAME, SEURAT_PROCESS_NAME, QC_PROCESS_NAME } = require('../../constants');
+const CellLevelMeta = require('../../model/CellLevelMeta');
 
 const formatSamples = (rawSamples) => {
   const samplesObj = rawSamples.reduce(
@@ -64,7 +66,6 @@ const formatSamples = (rawSamples) => {
   };
 };
 
-
 const getGem2sParams = async (experimentId, rawSamples = undefined) => {
   if (await new ExperimentParent().isSubset(experimentId)) return null;
 
@@ -89,16 +90,33 @@ const getGem2sParams = async (experimentId, rawSamples = undefined) => {
   };
 };
 
-const shouldGem2sRerun = async (experimentId, pipelineType) => {
+const getQCParams = async (experimentId) => {
+  const metadataResult = (
+    await new CellLevelMeta().getMetadataByExperimentIds([experimentId])
+  )[0] || {};
+
+  const cellMetadataId = metadataResult.id || null;
+
+  return { cellMetadataId };
+};
+
+const pipelineRerunVariablesGetters = {
+  [GEM2S_PROCESS_NAME]: getGem2sParams,
+  [SEURAT_PROCESS_NAME]: getGem2sParams,
+  [QC_PROCESS_NAME]: getQCParams,
+};
+
+
+const shouldPipelineRerun = async (experimentId, pipelineType) => {
   const execution = await new ExperimentExecution()
     .findOne({ experiment_id: experimentId, pipeline_type: pipelineType });
 
   if (execution === undefined) return true;
-  const currentParams = await getGem2sParams(experimentId);
+  const currentParams = await pipelineRerunVariablesGetters[pipelineType](experimentId);
 
   return !_.isEqual(currentParams, execution.lastPipelineParams);
 };
 
-module.exports = shouldGem2sRerun;
+module.exports = shouldPipelineRerun;
 module.exports.getGem2sParams = getGem2sParams;
 module.exports.formatSamples = formatSamples;
