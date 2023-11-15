@@ -1,6 +1,9 @@
+const AWSMock = require('aws-sdk-mock');
+
 const createObjectHash = require('../../../../src/api.v2/helpers/worker/createObjectHash');
 const submitMarkerHeatmapWork = require('../../../../src/api.v2/helpers/worker/workSubmit/submitMarkerHeatmapWork');
 const validateAndSubmitWork = require('../../../../src/api.v2/events/validateAndSubmitWork');
+const { mockS3GetObject } = require('../../../test-utils/mockAWSServices');
 
 jest.mock('../../../../src/api.v2/helpers/worker/createObjectHash');
 jest.mock('../../../../src/api.v2/helpers/pipeline/getPipelineStatus');
@@ -42,12 +45,40 @@ const message = {
   apiUrl: null,
 };
 
+const mockCellSets = {
+  cellSets:
+    [
+      {
+        key: 'louvain',
+        name: 'louvain clusters',
+        rootNode: true,
+        type: 'cellSets',
+        children: [
+          {
+            key: 'louvain-0',
+            name: 'Cluster 0',
+            rootNode: false,
+            type: 'cellSets',
+            color: '#77aadd',
+            cellIds: [0, 1, 2, 3],
+          },
+        ],
+      },
+    ],
+};
+
 describe('submitWorkEmbedding', () => {
+  beforeEach(() => {
+    AWSMock.restore();
+  });
+
   // If this test fails it means you have changed parameters upon which the feature or precomputing
   // the embedding / marker heatmp feature depends on. These parameters are duplicated
   // in the UI / API if you have changed them here, make sure you change them in the
   // other repository or that feature will stop working.
   it('submits the work and the ETag / params are correct', async () => {
+    mockS3GetObject({ Body: JSON.stringify(mockCellSets) });
+
     const ETag = await submitMarkerHeatmapWork(message);
 
 
@@ -57,7 +88,7 @@ describe('submitWorkEmbedding', () => {
     expect(createObjectHash.mock.calls).toMatchSnapshot();
     // this ETag should match exactly the one in
     // loadMarkerGenes.defaultParams.test.js
-    expect(ETag).toEqual('7f2b831012fe0d6bebf8fcca49ccd057'); // pragma: allowlist secret
+    expect(ETag).toEqual('176d6a4857a653112a47acf028dd1162'); // pragma: allowlist secret
 
     expect(validateAndSubmitWork).toBeCalledTimes(1);
   });

@@ -14,6 +14,35 @@ properties:
     type: boolean
     description: Whether to perform feature scaling (normalization to unit variance and zero mean). Defaults to `false` if not specified.
     default: 'false'
+  oneOf:
+    - downsampled:
+        type: boolean
+        description: Whether to return the expression of genes across all cells or only the ones for cells in the downsample
+        enum:
+          - false
+    - downsampled:
+        type: boolean
+        description: Whether to return the expression of genes across all cells or only the ones for cells in the downsample
+        enum:
+          - true
+      downsampleSettings:
+        type: object
+        description: Settings used to decide what's the most representative downsampling
+        properties:
+          selectedCellSet:
+            type: string
+          groupedTracks:
+            type: array
+          selectedPoints:
+            type: array
+          hiddenCellSets:
+            type: array
+        required:
+          - selectedCellSet
+          - groupedTracks
+          - selectedPoints
+          - hiddenCellSets
 required:
   - name
   - genes
+  - downsampled
