@@ -11,6 +11,7 @@ items:
       type: string
     cellLevelMetadata:
       type: object
+      nullable: true
     notifyByEmail:
       type: boolean
     pipelineVersion:
@@ -36,6 +37,7 @@ items:
     - id
     - name
     - description
+    - cellLevelMetadata
     - notifyByEmail
     - pipelineVersion
     - parentExperimentId

@@ -6,6 +6,7 @@ const {
   QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUBSET_PROCESS_NAME, SEURAT_PROCESS_NAME,
 } = require('../../../constants');
 
+const CellLevelMeta = require('../../../model/CellLevelMeta');
 const Experiment = require('../../../model/Experiment');
 const ExperimentExecution = require('../../../model/ExperimentExecution');
 
@@ -87,27 +88,59 @@ const withRecomputeDoubletScores = (processingConfig) => {
   return newProcessingConfig;
 };
 
-const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, previousJobId) => {
+const getClusteringShouldRun = async (
+  experimentId, qcSteps, processingConfigDiff, previousRunState,
+) => {
+  if (Object.keys(processingConfigDiff).length === 0 && previousRunState === 'FAILED') {
+    // If the previous run failed and no new changes were introduced, then defer
+    //  to the settings from the last run
+    const { retryParams: { clusteringShouldRun } } = await new ExperimentExecution().find(
+      { experiment_id: experimentId, pipeline_type: QC_PROCESS_NAME },
+    ).first();
+
+    return clusteringShouldRun;
+  }
+
+  // Otherwise, calculate the new should run based on current state
+  const clusteringIsOutdated = qcSteps.length > 1;
+  return !_.isNil(processingConfigDiff.configureEmbedding) || clusteringIsOutdated;
+};
+
+const getCellLevelMetadataId = async (experimentId) => {
+  const cellLevelMetadataFiles = await new CellLevelMeta()
+    .getMetadataByExperimentIds([experimentId]);
+  if (cellLevelMetadataFiles.length > 1) {
+    throw new Error(`Experiment ${experimentId} cannot have more than one cell level metadata file`);
+  }
+  if (cellLevelMetadataFiles.length === 0) {
+    return null;
+  }
+  return cellLevelMetadataFiles[0].id;
+};
+
+/**
+ *
+ * @param {*} experimentId
+ * @param {*} processingConfigDiff The changes that were performed in the
+ * processing config in the shape of a diff (mask) object
+ * @param {*} authJWT
+ * @param {*} previousJobId
+ */
+const createQCPipeline = async (experimentId, processingConfigDiff, authJWT, previousJobId) => {
   logger.log(`createQCPipeline: fetch processing settings ${experimentId}`);
 
   const { processingConfig, samplesOrder } = await new Experiment().findById(experimentId).first();
+
+  const currentCellMetadataId = await getCellLevelMetadataId(experimentId);
 
   const {
     // @ts-ignore
     [constants.QC_PROCESS_NAME]: status,
   } = await getPipelineStatus(experimentId, constants.QC_PROCESS_NAME);
 
-  if (processingConfigUpdates.length) {
-    processingConfigUpdates.forEach(({ name, body }) => {
-      if (!processingConfig[name]) {
-        processingConfig[name] = body;
-
-        return;
-      }
-
-      _.assign(processingConfig[name], body);
-    });
-  }
+  Object.entries(processingConfigDiff).forEach(([key, stepConfig]) => {
+    _.assign(processingConfig[key], stepConfig);
+  });
 
   // workaround to add a flag to recompute doublet scores in the processingConfig object.
   const fullProcessingConfig = withRecomputeDoubletScores(processingConfig);
@@ -115,17 +148,26 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
   // Store the processing config with all changes back in sql
   await new Experiment().updateById(experimentId, { processing_config: fullProcessingConfig });
 
-  const context = {
-    ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
-    processingConfig: withoutDefaultFilterSettings(fullProcessingConfig, samplesOrder),
-    authJWT,
-  };
-
   await cancelPreviousPipelines(experimentId, previousJobId);
 
   const qcSteps = await getQcStepsToRun(
-    experimentId, processingConfigUpdates, status.completedSteps,
+    experimentId, Object.keys(processingConfigDiff), status.completedSteps, status.status,
   );
+
+  const clusteringShouldRun = await getClusteringShouldRun(
+    experimentId,
+    qcSteps,
+    processingConfigDiff,
+    status.status,
+  );
+
+  const context = {
+    ...(await getGeneralPipelineContext(experimentId, QC_PROCESS_NAME)),
+    processingConfig: withoutDefaultFilterSettings(fullProcessingConfig, samplesOrder),
+    clusteringShouldRun,
+    metadataS3Path: currentCellMetadataId,
+    authJWT,
+  };
 
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
@@ -163,6 +205,8 @@ const createQCPipeline = async (experimentId, processingConfigUpdates, authJWT, 
     {
       state_machine_arn: stateMachineArn,
       execution_arn: executionArn,
+      last_pipeline_params: { cellMetadataId: currentCellMetadataId },
+      retry_params: { clusteringShouldRun },
     },
   );
 };

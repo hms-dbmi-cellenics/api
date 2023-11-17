@@ -21,7 +21,7 @@ const generateETag = async (
   const { workerVersion } = config;
 
   const taskName = body.name;
-  const extraDependencies = await getExtraDependencies(experimentId, taskName);
+  const extraDependencies = await getExtraDependencies(experimentId, taskName, body);
 
   const ETagBody = {
     experimentId,

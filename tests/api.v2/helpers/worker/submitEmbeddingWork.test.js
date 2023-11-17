@@ -45,10 +45,10 @@ const message = {
 
 describe('submitWorkEmbedding', () => {
   it('submits the work and the ETag / params are correct', async () => {
-    await submitEmbeddingWork(message);
+    const ETag = await submitEmbeddingWork(message);
 
     expect(createObjectHash.mock.calls).toMatchSnapshot();
-
+    expect(ETag).toMatchSnapshot();
     expect(validateAndSubmitWork).toBeCalledTimes(1);
   });
 });

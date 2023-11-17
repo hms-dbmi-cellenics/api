@@ -121,6 +121,12 @@ Array [
     },
     Object {
       "execution_arn": "test-machine",
+      "last_pipeline_params": Object {
+        "cellMetadataId": "2c5983db-c690-4ed3-a4ad-bb12b065d60d",
+      },
+      "retry_params": Object {
+        "clusteringShouldRun": true,
+      },
       "state_machine_arn": "test-machine",
     },
   ],
@@ -553,7 +559,9 @@ Array [
 ]
 `;
 
-exports[`test for pipeline services Parses QC processingConfig correctly 1`] = `
+exports[`test for pipeline services Parses QC processingConfig raised an error when more than one cell level metadata files exist 1`] = `Array []`;
+
+exports[`test for pipeline services Parses QC processingConfig with cell level metadata file correctly 1`] = `
 Array [
   Object {
     "type": "return",
@@ -579,6 +587,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "auto": true,
@@ -599,6 +608,7 @@ Array [
                   },
                   "experimentId": "testExperimentId",
                   "ignoreSslCert": false,
+                  "metadataS3Path": "2c5983db-c690-4ed3-a4ad-bb12b065d60d",
                   "processName": "qc",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
@@ -634,6 +644,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "auto": true,
@@ -654,6 +665,7 @@ Array [
                   },
                   "experimentId": "testExperimentId",
                   "ignoreSslCert": false,
+                  "metadataS3Path": "2c5983db-c690-4ed3-a4ad-bb12b065d60d",
                   "processName": "qc",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
@@ -684,6 +696,7 @@ Array [
           "HeartbeatSeconds": 90,
           "Next": "EndOfPipeline",
           "Parameters": Object {
+            "clusteringShouldRun": true,
             "config": Object {
               "clusteringSettings": Object {
                 "method": "louvain",
@@ -709,6 +722,7 @@ Array [
             },
             "experimentId": "testExperimentId",
             "ignoreSslCert": false,
+            "metadataS3Path": "2c5983db-c690-4ed3-a4ad-bb12b065d60d",
             "processName": "qc",
             "sampleUuid": "",
             "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
@@ -733,6 +747,7 @@ Array [
           "HeartbeatSeconds": 90,
           "Next": "ConfigureEmbedding",
           "Parameters": Object {
+            "clusteringShouldRun": true,
             "config": Object {
               "dataIntegration": Object {
                 "method": "harmony",
@@ -763,6 +778,7 @@ Array [
             },
             "experimentId": "testExperimentId",
             "ignoreSslCert": false,
+            "metadataS3Path": "2c5983db-c690-4ed3-a4ad-bb12b065d60d",
             "processName": "qc",
             "sampleUuid": "",
             "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
@@ -792,6 +808,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "filterSettings": Object {
@@ -808,6 +825,7 @@ Array [
                   },
                   "experimentId": "testExperimentId",
                   "ignoreSslCert": false,
+                  "metadataS3Path": "2c5983db-c690-4ed3-a4ad-bb12b065d60d",
                   "processName": "qc",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
@@ -865,6 +883,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "auto": true,
@@ -895,6 +914,7 @@ Array [
                   },
                   "experimentId": "testExperimentId",
                   "ignoreSslCert": false,
+                  "metadataS3Path": "2c5983db-c690-4ed3-a4ad-bb12b065d60d",
                   "processName": "qc",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
@@ -930,6 +950,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "auto": true,
@@ -964,6 +985,533 @@ Array [
                   },
                   "experimentId": "testExperimentId",
                   "ignoreSslCert": false,
+                  "metadataS3Path": "2c5983db-c690-4ed3-a4ad-bb12b065d60d",
+                  "processName": "qc",
+                  "sampleUuid.$": "$.sampleUuid",
+                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
+                  "taskName": "numGenesVsNumUmis",
+                  "uploadCountMatrix": false,
+                },
+                "Resource": "arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid",
+                "ResultPath": null,
+                "TimeoutSeconds": 10800,
+                "Type": "Task",
+              },
+            },
+          },
+          "Next": "DoubletScoresFilterMap",
+          "ResultPath": null,
+          "Type": "Map",
+        },
+        "RequestPod": Object {
+          "Comment": "Send a message through SNS so that the API assigns a pod to the pipeline",
+          "Next": "WaitForPod",
+          "Parameters": Object {
+            "Message": "{\\"taskName\\":\\"assignPodToPipeline\\",\\"experimentId\\":\\"testExperimentId\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":{\\"experimentId\\":\\"testExperimentId\\",\\"sandboxId\\":\\"default\\",\\"activityId\\":\\"pipeline-test-mock-uuid\\",\\"processName\\":\\"qc\\"}}",
+            "MessageAttributes": Object {
+              "type": Object {
+                "DataType": "String",
+                "StringValue": "PipelineResponse",
+              },
+            },
+            "TopicArn": "arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2",
+          },
+          "Resource": "arn:aws:states:::sns:publish",
+          "ResultPath": null,
+          "Type": "Task",
+        },
+        "WaitForPod": Object {
+          "ItemsPath": "$.retries",
+          "Iterator": Object {
+            "StartAt": "GetAssignedPod",
+            "States": Object {
+              "GetAssignedPod": Object {
+                "Comment": "Retrieves first unassigned and running pipeline pod.",
+                "Next": "IsPodAssigned",
+                "Parameters": Object {
+                  "CertificateAuthority": "AAAAAAAAAAA",
+                  "ClusterName": "biomage-test",
+                  "Endpoint": "https://test-endpoint.me/fgh",
+                  "Method": "GET",
+                  "Path": "/api/v1/namespaces/pipeline-test-namespace/pods",
+                  "QueryParameters": Object {
+                    "labelSelector": Array [
+                      "type=pipeline,activityId=pipeline-test-mock-uuid",
+                    ],
+                  },
+                },
+                "Resource": "arn:aws:states:::eks:call",
+                "Type": "Task",
+              },
+              "IsPodAssigned": Object {
+                "Choices": Array [
+                  Object {
+                    "IsPresent": false,
+                    "Next": "NoPodAssigned",
+                    "Variable": "$.ResponseBody.items[0]",
+                  },
+                ],
+                "Comment": "Redirects to an error state if the pipeline pod is not assigned yet.",
+                "Default": "ReadyToRun",
+                "Type": "Choice",
+              },
+              "NoPodAssigned": Object {
+                "Cause": "No available and running pipeline pods.",
+                "Error": "NoPodAssigned",
+                "Type": "Fail",
+              },
+              "ReadyToRun": Object {
+                "End": true,
+                "Type": "Pass",
+              },
+            },
+          },
+          "MaxConcurrency": 1,
+          "Next": "ClassifierFilterMap",
+          "ResultPath": null,
+          "Retry": Array [
+            Object {
+              "BackoffRate": 1.5,
+              "ErrorEquals": Array [
+                "NoPodAssigned",
+              ],
+              "IntervalSeconds": 1,
+              "MaxAttempts": 13,
+            },
+          ],
+          "Type": "Map",
+        },
+      },
+    },
+  },
+]
+`;
+
+exports[`test for pipeline services Parses QC processingConfig with no cell level metadata file correctly 1`] = `
+Array [
+  Object {
+    "type": "return",
+    "value": Object {
+      "Comment": "QC Pipeline for clusterEnv 'test'",
+      "StartAt": "RequestPod",
+      "States": Object {
+        "CellSizeDistributionFilterMap": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "HandleError",
+              "ResultPath": "$.errorInfo",
+            },
+          ],
+          "ItemsPath": "$.samples",
+          "Iterator": Object {
+            "StartAt": "CellSizeDistributionFilter",
+            "States": Object {
+              "CellSizeDistributionFilter": Object {
+                "End": true,
+                "HeartbeatSeconds": 90,
+                "Parameters": Object {
+                  "clusteringShouldRun": true,
+                  "config": Object {
+                    "oneSample": Object {
+                      "auto": true,
+                      "enabled": false,
+                      "filterSettings": Object {
+                        "binStep": 200,
+                        "minCellSize": 1044,
+                      },
+                    },
+                    "otherSample": Object {
+                      "auto": true,
+                      "enabled": false,
+                      "filterSettings": Object {
+                        "binStep": 200,
+                        "minCellSize": 1044,
+                      },
+                    },
+                  },
+                  "experimentId": "testExperimentId",
+                  "ignoreSslCert": false,
+                  "metadataS3Path": null,
+                  "processName": "qc",
+                  "sampleUuid.$": "$.sampleUuid",
+                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
+                  "taskName": "cellSizeDistribution",
+                  "uploadCountMatrix": false,
+                },
+                "Resource": "arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid",
+                "ResultPath": null,
+                "TimeoutSeconds": 10800,
+                "Type": "Task",
+              },
+            },
+          },
+          "Next": "MitochondrialContentFilterMap",
+          "ResultPath": null,
+          "Type": "Map",
+        },
+        "ClassifierFilterMap": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "HandleError",
+              "ResultPath": "$.errorInfo",
+            },
+          ],
+          "ItemsPath": "$.samples",
+          "Iterator": Object {
+            "StartAt": "ClassifierFilter",
+            "States": Object {
+              "ClassifierFilter": Object {
+                "End": true,
+                "HeartbeatSeconds": 90,
+                "Parameters": Object {
+                  "clusteringShouldRun": true,
+                  "config": Object {
+                    "oneSample": Object {
+                      "auto": true,
+                      "enabled": false,
+                      "filterSettings": Object {
+                        "FDR": 0.01,
+                      },
+                      "prefiltered": true,
+                    },
+                    "otherSample": Object {
+                      "auto": true,
+                      "enabled": false,
+                      "filterSettings": Object {
+                        "FDR": 0.01,
+                      },
+                      "prefiltered": true,
+                    },
+                  },
+                  "experimentId": "testExperimentId",
+                  "ignoreSslCert": false,
+                  "metadataS3Path": null,
+                  "processName": "qc",
+                  "sampleUuid.$": "$.sampleUuid",
+                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
+                  "taskName": "classifier",
+                  "uploadCountMatrix": false,
+                },
+                "Resource": "arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid",
+                "ResultPath": null,
+                "TimeoutSeconds": 10800,
+                "Type": "Task",
+              },
+            },
+          },
+          "Next": "CellSizeDistributionFilterMap",
+          "ResultPath": null,
+          "Type": "Map",
+        },
+        "ConfigureEmbedding": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "HandleError",
+              "ResultPath": "$.errorInfo",
+            },
+          ],
+          "HeartbeatSeconds": 90,
+          "Next": "EndOfPipeline",
+          "Parameters": Object {
+            "clusteringShouldRun": true,
+            "config": Object {
+              "clusteringSettings": Object {
+                "method": "louvain",
+                "methodSettings": Object {
+                  "louvain": Object {
+                    "resolution": 0.8,
+                  },
+                },
+              },
+              "embeddingSettings": Object {
+                "method": "umap",
+                "methodSettings": Object {
+                  "tsne": Object {
+                    "learningRate": 200,
+                    "perplexity": 30,
+                  },
+                  "umap": Object {
+                    "distanceMetric": "cosine",
+                    "minimumDistance": 0.3,
+                  },
+                },
+              },
+            },
+            "experimentId": "testExperimentId",
+            "ignoreSslCert": false,
+            "metadataS3Path": null,
+            "processName": "qc",
+            "sampleUuid": "",
+            "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
+            "taskName": "configureEmbedding",
+            "uploadCountMatrix": false,
+          },
+          "Resource": "arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid",
+          "ResultPath": null,
+          "TimeoutSeconds": 10800,
+          "Type": "Task",
+        },
+        "DataIntegration": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "HandleError",
+              "ResultPath": "$.errorInfo",
+            },
+          ],
+          "HeartbeatSeconds": 90,
+          "Next": "ConfigureEmbedding",
+          "Parameters": Object {
+            "clusteringShouldRun": true,
+            "config": Object {
+              "dataIntegration": Object {
+                "method": "harmony",
+                "methodSettings": Object {
+                  "fastmnn": Object {
+                    "normalisation": "logNormalize",
+                    "numGenes": 2000,
+                  },
+                  "harmony": Object {
+                    "normalisation": "logNormalize",
+                    "numGenes": 2000,
+                  },
+                  "seuratv4": Object {
+                    "normalisation": "logNormalize",
+                    "numGenes": 2000,
+                  },
+                  "unisample": Object {
+                    "normalisation": "logNormalize",
+                    "numGenes": 2000,
+                  },
+                },
+              },
+              "dimensionalityReduction": Object {
+                "excludeGeneCategories": Array [],
+                "method": "rpca",
+                "numPCs": 30,
+              },
+            },
+            "experimentId": "testExperimentId",
+            "ignoreSslCert": false,
+            "metadataS3Path": null,
+            "processName": "qc",
+            "sampleUuid": "",
+            "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
+            "taskName": "dataIntegration",
+            "uploadCountMatrix": true,
+          },
+          "Resource": "arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid",
+          "ResultPath": null,
+          "TimeoutSeconds": 10800,
+          "Type": "Task",
+        },
+        "DoubletScoresFilterMap": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "HandleError",
+              "ResultPath": "$.errorInfo",
+            },
+          ],
+          "ItemsPath": "$.samples",
+          "Iterator": Object {
+            "StartAt": "DoubletScoresFilter",
+            "States": Object {
+              "DoubletScoresFilter": Object {
+                "End": true,
+                "HeartbeatSeconds": 90,
+                "Parameters": Object {
+                  "clusteringShouldRun": true,
+                  "config": Object {
+                    "oneSample": Object {
+                      "filterSettings": Object {
+                        "oneSetting": 7,
+                      },
+                      "recomputeDoubletScore": true,
+                    },
+                    "otherSample": Object {
+                      "filterSettings": Object {
+                        "oneSetting": 15,
+                      },
+                      "recomputeDoubletScore": true,
+                    },
+                  },
+                  "experimentId": "testExperimentId",
+                  "ignoreSslCert": false,
+                  "metadataS3Path": null,
+                  "processName": "qc",
+                  "sampleUuid.$": "$.sampleUuid",
+                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
+                  "taskName": "doubletScores",
+                  "uploadCountMatrix": false,
+                },
+                "Resource": "arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid",
+                "ResultPath": null,
+                "TimeoutSeconds": 10800,
+                "Type": "Task",
+              },
+            },
+          },
+          "Next": "DataIntegration",
+          "ResultPath": null,
+          "Type": "Map",
+        },
+        "EndOfPipeline": Object {
+          "End": true,
+          "Type": "Pass",
+        },
+        "HandleError": Object {
+          "Next": "MarkAsFailed",
+          "Parameters": Object {
+            "Message.$": "States.Format('\\\\{\\"taskName\\":\\"pipelineError\\",\\"experimentId\\":\\"testExperimentId\\",\\"apiUrl\\":\\"test-public-api-url\\",\\"input\\":\\\\{\\"experimentId\\":\\"testExperimentId\\",\\"error\\":\\"{}\\",\\"taskName\\":\\"pipelineError\\",\\"sandboxId\\":\\"default\\",\\"activityId\\":\\"pipeline-test-mock-uuid\\",\\"processName\\":\\"qc\\"\\\\}\\\\}', $.errorInfo.Error)",
+            "MessageAttributes": Object {
+              "type": Object {
+                "DataType": "String",
+                "StringValue": "PipelineResponse",
+              },
+            },
+            "TopicArn": "arn:aws:sns:eu-west-1:000000000000:work-results-test-default-v2",
+          },
+          "Resource": "arn:aws:states:::sns:publish",
+          "Type": "Task",
+        },
+        "MarkAsFailed": Object {
+          "Type": "Fail",
+        },
+        "MitochondrialContentFilterMap": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "HandleError",
+              "ResultPath": "$.errorInfo",
+            },
+          ],
+          "ItemsPath": "$.samples",
+          "Iterator": Object {
+            "StartAt": "MitochondrialContentFilter",
+            "States": Object {
+              "MitochondrialContentFilter": Object {
+                "End": true,
+                "HeartbeatSeconds": 90,
+                "Parameters": Object {
+                  "clusteringShouldRun": true,
+                  "config": Object {
+                    "oneSample": Object {
+                      "auto": true,
+                      "enabled": true,
+                      "filterSettings": Object {
+                        "method": "absoluteThreshold",
+                        "methodSettings": Object {
+                          "absoluteThreshold": Object {
+                            "binStep": 0.3,
+                            "maxFraction": 0.07181329,
+                          },
+                        },
+                      },
+                    },
+                    "otherSample": Object {
+                      "auto": true,
+                      "enabled": true,
+                      "filterSettings": Object {
+                        "method": "absoluteThreshold",
+                        "methodSettings": Object {
+                          "absoluteThreshold": Object {
+                            "binStep": 0.3,
+                            "maxFraction": 0.07181329,
+                          },
+                        },
+                      },
+                    },
+                  },
+                  "experimentId": "testExperimentId",
+                  "ignoreSslCert": false,
+                  "metadataS3Path": null,
+                  "processName": "qc",
+                  "sampleUuid.$": "$.sampleUuid",
+                  "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",
+                  "taskName": "mitochondrialContent",
+                  "uploadCountMatrix": false,
+                },
+                "Resource": "arn:aws:states:eu-west-1:000000000000:activity:pipeline-test-mock-uuid",
+                "ResultPath": null,
+                "TimeoutSeconds": 10800,
+                "Type": "Task",
+              },
+            },
+          },
+          "Next": "NumGenesVsNumUmisFilterMap",
+          "ResultPath": null,
+          "Type": "Map",
+        },
+        "NumGenesVsNumUmisFilterMap": Object {
+          "Catch": Array [
+            Object {
+              "ErrorEquals": Array [
+                "States.ALL",
+              ],
+              "Next": "HandleError",
+              "ResultPath": "$.errorInfo",
+            },
+          ],
+          "ItemsPath": "$.samples",
+          "Iterator": Object {
+            "StartAt": "NumGenesVsNumUmisFilter",
+            "States": Object {
+              "NumGenesVsNumUmisFilter": Object {
+                "End": true,
+                "HeartbeatSeconds": 90,
+                "Parameters": Object {
+                  "clusteringShouldRun": true,
+                  "config": Object {
+                    "oneSample": Object {
+                      "auto": true,
+                      "enabled": true,
+                      "filterSettings": Object {
+                        "regressionType": "linear",
+                        "regressionTypeSettings": Object {
+                          "linear": Object {
+                            "p.level": 0.001,
+                          },
+                          "spline": Object {
+                            "p.level": 0.001,
+                          },
+                        },
+                      },
+                    },
+                    "otherSample": Object {
+                      "auto": true,
+                      "enabled": true,
+                      "filterSettings": Object {
+                        "regressionType": "linear",
+                        "regressionTypeSettings": Object {
+                          "linear": Object {
+                            "p.level": 0.001,
+                          },
+                          "spline": Object {
+                            "p.level": 0.001,
+                          },
+                        },
+                      },
+                    },
+                  },
+                  "experimentId": "testExperimentId",
+                  "ignoreSslCert": false,
+                  "metadataS3Path": null,
                   "processName": "qc",
                   "sampleUuid.$": "$.sampleUuid",
                   "server": "remoter-server-testExperimentId.pipeline-test-namespace.svc.cluster.local",

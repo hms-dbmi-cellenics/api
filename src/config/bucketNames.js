@@ -8,7 +8,7 @@ const bucketNames = {
   FILTERED_CELLS: `biomage-filtered-cells-${config.clusterEnv}-${config.awsAccountId}`,
   WORKER_RESULTS: `worker-results-${config.clusterEnv}-${config.awsAccountId}`,
   PLOTS: `plots-tables-${config.clusterEnv}-${config.awsAccountId}`,
-  CELL_METADATA: `cellenics-cell-level-metadata-${config.clusterEnv}-${config.awsAccountId}`,
+  CELL_LEVEL_META: `cellenics-cell-level-metadata-${config.clusterEnv}-${config.awsAccountId}`,
 };
 
 module.exports = bucketNames;

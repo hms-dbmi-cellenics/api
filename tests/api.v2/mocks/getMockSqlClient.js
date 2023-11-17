@@ -30,6 +30,7 @@ module.exports = () => {
     min: jest.fn().mockReturnThis(),
     count: jest.fn().mockReturnThis(),
     ref: jest.fn(),
+    getDownloadLink: jest.fn(),
   };
 
   const queriesInTrx = _.cloneDeep(queries);

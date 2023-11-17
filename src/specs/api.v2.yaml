@@ -1039,12 +1039,66 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
-  "/experiments/{experimentId}/cellLevel":
+  "/experiments/{experimentId}/cellLevelMeta/{fileId}/{fileName}":
+    get:
+      summary: Download cell level metadata file returning a signed url
+      operationId: downloadCellLevelMetadataFile
+      x-eov-operation-id: cellLevelMeta#download
+      x-eov-operation-handler: routes/cellLevelMeta
+      parameters:
+        - in: path
+          name: experimentId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: fileId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: fileName
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Download request successful.
+          content:
+            application/json:
+              schema:
+                type: string
+                description: signed URL of the resource
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/cellLevelMeta":
     post:
       summary: Upload cell level metadata file
       operationId: createCellLevelMetadataFromFile
-      x-eov-operation-id: cellLevel#uploadCellLevelMetadata
-      x-eov-operation-handler: routes/cellLevel
+      x-eov-operation-id: cellLevelMeta#upload
+      x-eov-operation-handler: routes/cellLevelMeta
       parameters:
         - in: path
           name: experimentId
@@ -1093,12 +1147,62 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+    delete:
+      summary: Delete cell level metadata
+      description: Delete cell level metadata from an experiment
+      operationId: deleteCellLevelMeta
+      x-eov-operation-id: cellLevelMeta#deleteMeta
+      x-eov-operation-handler: routes/cellLevelMeta
+      parameters:
+        - name: experimentId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: ID of the experiment
+      responses:
+        "200":
+          description: Get experiment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPSuccess"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Not found error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "424":
+          description: Terms not accepted error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
     patch:
       summary: Patch the cell level metadata of an experiment
       description: Update the cell level metadata of an experiment
       operationId: patchCellLevelMetadata
-      x-eov-operation-id: cellLevel#updateCellLevelMetadata
-      x-eov-operation-handler: routes/cellLevel
+      x-eov-operation-id: cellLevelMeta#update
+      x-eov-operation-handler: routes/cellLevelMeta
       parameters:
         - name: experimentId
           schema:

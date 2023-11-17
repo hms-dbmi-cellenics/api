@@ -6,11 +6,13 @@ const _ = require('lodash');
 const AWS = require('../../../../src/utils/requireAWS');
 const { getQcPipelineStepNames } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/skeletons');
 
+const CellLevelMeta = require('../../../../src/api.v2/model/CellLevelMeta');
 const Experiment = require('../../../../src/api.v2/model/Experiment');
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
 const { createSubsetPipeline, createCopyPipeline } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 const { cancelPreviousPipelines } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils');
 
+const cellLevelMetaInstance = new CellLevelMeta();
 const experimentInstance = new Experiment();
 const experimentExecutionInstance = new ExperimentExecution();
 
@@ -43,6 +45,7 @@ jest.mock('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils', () 
 
 jest.mock('../../../../src/utils/asyncTimer');
 jest.mock('../../../../src/api.v2/model/Experiment');
+jest.mock('../../../../src/api.v2/model/CellLevelMeta');
 jest.mock('../../../../src/api.v2/model/ExperimentExecution');
 fetchMock.enableFetchMocks();
 
@@ -67,26 +70,23 @@ describe('test for pipeline services', () => {
     },
   };
 
-  const processingConfigUpdate = [
-    {
-      name: 'doubletScores',
-      body: {
-        oneSample: {
-          defaultFilterSettings: {
-            oneSetting: 1,
-          },
-          filterSettings: {
-            oneSetting: 7,
-          },
+  const processingConfigUpdate = {
+    doubletScores: {
+      oneSample: {
+        defaultFilterSettings: {
+          oneSetting: 1,
         },
-        otherSample: {
-          filterSettings: {
-            oneSetting: 15,
-          },
+        filterSettings: {
+          oneSetting: 7,
+        },
+      },
+      otherSample: {
+        filterSettings: {
+          oneSetting: 15,
         },
       },
     },
-  ];
+  };
 
   it('Create QC pipeline works', async () => {
     const describeClusterSpy = jest.fn((x) => x);
@@ -120,6 +120,18 @@ describe('test for pipeline services', () => {
       { first: () => Promise.resolve(mockExperimentRow) },
     );
 
+    cellLevelMetaInstance.getMetadataByExperimentIds.mockImplementationOnce(
+      () => Promise.resolve([
+        {
+          id: '2c5983db-c690-4ed3-a4ad-bb12b065d60d',
+          name: 'test_cell_lvl_meta.tsv',
+          uploadStatus: 'uploaded',
+          createdAt: '2023-11-01 14:29:26.765022+00',
+          experimentId: 'testExperimentId',
+        },
+      ]),
+    );
+
     await createQCPipeline('testExperimentId', processingConfigUpdate);
     expect(describeClusterSpy).toMatchSnapshot();
 
@@ -128,6 +140,7 @@ describe('test for pipeline services', () => {
     expect(experimentInstance.findById).toHaveBeenCalledWith('testExperimentId');
     expect(experimentExecutionInstance.upsert.mock.calls).toMatchSnapshot();
 
+    expect(cellLevelMetaInstance.getMetadataByExperimentIds).toHaveBeenCalledWith(['testExperimentId']);
 
     // Updates the processing config with the new changes
     expect(experimentInstance.updateById).toHaveBeenCalledTimes(1);
@@ -138,7 +151,7 @@ describe('test for pipeline services', () => {
     expect(startExecutionSpy.mock.results).toMatchSnapshot();
   });
 
-  it('Parses QC processingConfig correctly', async () => {
+  it('Parses QC processingConfig with cell level metadata file correctly', async () => {
     AWSMock.setSDKInstance(AWS);
 
     AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
@@ -183,8 +196,146 @@ describe('test for pipeline services', () => {
       { first: () => Promise.resolve(mockExperimentRow) },
     );
 
+    cellLevelMetaInstance.getMetadataByExperimentIds.mockImplementationOnce(
+      () => Promise.resolve([
+        {
+          id: '2c5983db-c690-4ed3-a4ad-bb12b065d60d',
+          name: 'test_cell_lvl_meta.tsv',
+          uploadStatus: 'uploaded',
+          createdAt: '2023-11-01 14:29:26.765022+00',
+          experimentId: 'testExperimentId',
+        },
+      ]),
+    );
+
     await createQCPipeline('testExperimentId', processingConfigUpdate);
     expect(createStateMachineSpy.mock.results).toMatchSnapshot();
+    expect(cellLevelMetaInstance.getMetadataByExperimentIds).toHaveBeenCalledWith(['testExperimentId']);
+  });
+
+  it('Parses QC processingConfig with no cell level metadata file correctly', async () => {
+    AWSMock.setSDKInstance(AWS);
+
+    AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
+      callback(null, mockCluster);
+    });
+
+    const createStateMachineSpy = jest.fn(
+      // eslint-disable-next-line consistent-return
+      (stateMachineObject) => (_.cloneDeepWith(JSON.parse(stateMachineObject.definition), (o) => {
+        if (_.isObject(o) && o.image) {
+          return {
+            ...o,
+            image: 'MOCK_IMAGE_PATH',
+          };
+        }
+
+        if (_.isObject(o) && o.ref) {
+          return {
+            ...o,
+            ref: 'MOCK_REF_PATH',
+          };
+        }
+      })),
+    );
+
+    AWSMock.mock('StepFunctions', 'createStateMachine', (params, callback) => {
+      createStateMachineSpy(params);
+      callback(null, { stateMachineArn: 'test-machine' });
+    });
+
+    const createActivitySpy = jest.fn((x) => x);
+    AWSMock.mock('StepFunctions', 'createActivity', (params, callback) => {
+      createActivitySpy(params);
+      callback(null, { activityArn: 'test-actvitiy' });
+    });
+
+    AWSMock.mock('StepFunctions', 'startExecution', (params, callback) => {
+      callback(null, { executionArn: 'test-machine' });
+    });
+
+    experimentInstance.findById.mockReturnValueOnce(
+      { first: () => Promise.resolve(mockExperimentRow) },
+    );
+
+    cellLevelMetaInstance.getMetadataByExperimentIds.mockImplementationOnce(
+      () => Promise.resolve([]),
+    );
+
+    await createQCPipeline('testExperimentId', processingConfigUpdate);
+    expect(createStateMachineSpy.mock.results).toMatchSnapshot();
+    expect(cellLevelMetaInstance.getMetadataByExperimentIds).toHaveBeenCalledWith(['testExperimentId']);
+  });
+
+  it('Parses QC processingConfig raised an error when more than one cell level metadata files exist', async () => {
+    AWSMock.setSDKInstance(AWS);
+
+    AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
+      callback(null, mockCluster);
+    });
+
+    const createStateMachineSpy = jest.fn(
+      // eslint-disable-next-line consistent-return
+      (stateMachineObject) => (_.cloneDeepWith(JSON.parse(stateMachineObject.definition), (o) => {
+        if (_.isObject(o) && o.image) {
+          return {
+            ...o,
+            image: 'MOCK_IMAGE_PATH',
+          };
+        }
+
+        if (_.isObject(o) && o.ref) {
+          return {
+            ...o,
+            ref: 'MOCK_REF_PATH',
+          };
+        }
+      })),
+    );
+
+    AWSMock.mock('StepFunctions', 'createStateMachine', (params, callback) => {
+      createStateMachineSpy(params);
+      callback(null, { stateMachineArn: 'test-machine' });
+    });
+
+    const createActivitySpy = jest.fn((x) => x);
+    AWSMock.mock('StepFunctions', 'createActivity', (params, callback) => {
+      createActivitySpy(params);
+      callback(null, { activityArn: 'test-actvitiy' });
+    });
+
+    AWSMock.mock('StepFunctions', 'startExecution', (params, callback) => {
+      callback(null, { executionArn: 'test-machine' });
+    });
+
+    experimentInstance.findById.mockReturnValueOnce(
+      { first: () => Promise.resolve(mockExperimentRow) },
+    );
+
+    cellLevelMetaInstance.getMetadataByExperimentIds.mockImplementationOnce(
+      () => Promise.resolve([
+        {
+          id: '2c5983db-c690-4ed3-a4ad-bb12b065d60d',
+          name: 'test_cell_lvl_meta.tsv',
+          uploadStatus: 'uploaded',
+          createdAt: '2023-11-01 14:29:26.765022+00',
+          experimentId: 'testExperimentId',
+        },
+        {
+          id: '3c5983db-c690-4ed3-a4ad-bb12b065d60d',
+          name: 'test_cell_lvl_meta.tsv',
+          uploadStatus: 'uploaded',
+          createdAt: '2023-11-01 14:29:26.765022+00',
+          experimentId: 'testExperimentId',
+        },
+      ]),
+    );
+
+    await expect(createQCPipeline('testExperimentId', processingConfigUpdate))
+      .rejects
+      .toThrow('Experiment testExperimentId cannot have more than one cell level metadata file');
+    expect(createStateMachineSpy.mock.results).toMatchSnapshot();
+    expect(cellLevelMetaInstance.getMetadataByExperimentIds).toHaveBeenCalledWith(['testExperimentId']);
   });
 
   it('Create Gem2s pipeline works', async () => {

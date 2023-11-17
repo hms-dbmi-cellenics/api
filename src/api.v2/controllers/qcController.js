@@ -11,13 +11,13 @@ const logger = getLogger('[QCController] - ');
 
 const runQC = async (req, res) => {
   const { experimentId } = req.params;
-  const { processingConfig } = req.body;
+  const { processingConfigDiff } = req.body;
 
   logger.log(`Starting qc for experiment ${experimentId}`);
 
   await createQCPipeline(
-    req.params.experimentId,
-    processingConfig || [],
+    experimentId,
+    processingConfigDiff,
     req.headers.authorization,
   );
 

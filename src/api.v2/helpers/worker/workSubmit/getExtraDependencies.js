@@ -2,7 +2,7 @@ const workerVersions = require('../workerVersions');
 const Experiment = require('../../../model/Experiment');
 const getLastModified = require('../../s3/getLastModified');
 const bucketNames = require('../../../../config/bucketNames');
-
+const getS3Object = require('../../s3/getObject');
 
 const getClusteringSettings = async (experimentId) => {
   const {
@@ -43,6 +43,25 @@ const getCellSets = async (experimentId) => {
 };
 
 
+const getCellSetsThatAffectDownsampling = async (_experimentId, body, cellSets) => {
+  // If not downsampling, then there's no dependency set by this getter
+  if (!body.downsampleSettings) return '';
+
+  const { selectedCellSet, groupedTracks } = body.downsampleSettings;
+
+  const selectedCellSetKeys = cellSets
+    .find(({ key }) => key === selectedCellSet)
+    .children.map(({ key }) => key);
+
+  const groupedCellSetKeys = cellSets
+    .filter(({ key }) => groupedTracks.includes(key))
+    .flatMap(({ children }) => children)
+    .map(({ key }) => key);
+
+  // Keep them in separate lists, they each represent different changes in the settings
+  return [selectedCellSetKeys, groupedCellSetKeys];
+};
+
 const dependencyGetters = {
   ClusterCells: [],
   ScTypeAnnotate: [],
@@ -58,21 +77,28 @@ const dependencyGetters = {
   GetMitochondrialContent: [],
   GetNGenes: [],
   GetNUmis: [],
-  MarkerHeatmap: [getClusteringSettings],
+  MarkerHeatmap: [
+    getClusteringSettings, getCellSetsThatAffectDownsampling,
+  ],
   GetTrajectoryAnalysisStartingNodes: [getClusteringSettings],
   GetTrajectoryAnalysisPseudoTime: [getClusteringSettings, getEmbeddingSettings],
   GetNormalizedExpression: [getClusteringSettings],
   DownloadAnnotSeuratObject: [getClusteringSettings, getCellSets, getEmbeddingSettings],
 };
 
-const getExtraDependencies = async (experimentId, taskName) => {
+const getExtraDependencies = async (experimentId, taskName, body) => {
+  const { cellSets } = JSON.parse(await getS3Object({
+    Bucket: bucketNames.CELL_SETS,
+    Key: experimentId,
+  }));
+
+
   console.log('getExtraDependencies', taskName);
   const dependencies = await Promise.all(
     dependencyGetters[taskName].map(
-      (dependencyGetter) => dependencyGetter(experimentId),
+      (dependencyGetter) => dependencyGetter(experimentId, body, cellSets),
     ),
   );
-
   console.log('dependencies', dependencies);
 
   if (workerVersions[taskName]) {
