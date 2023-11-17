@@ -23,6 +23,8 @@ const generateETag = async (
   const taskName = body.name;
   const extraDependencies = await getExtraDependencies(experimentId, taskName, body);
 
+  // log the type and value of qcPipelineStartDate to make it easier to debug
+  console.log('qcPipelineStartDate', typeof qcPipelineStartDate, qcPipelineStartDate);
   const ETagBody = {
     experimentId,
     body,
