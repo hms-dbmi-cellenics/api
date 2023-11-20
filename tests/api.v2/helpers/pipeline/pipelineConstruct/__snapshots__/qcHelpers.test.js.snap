@@ -1,5 +1,275 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`helper functions for skeletons Works if the config has no changes but the previous run failed 1`] = `
+Object {
+  "ConfigureEmbedding": Object {
+    "Next": "EndOfPipeline",
+    "XCatch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "XConstructorArgs": Object {
+      "perSample": false,
+      "taskName": "configureEmbedding",
+    },
+    "XStepType": "create-new-step",
+  },
+  "DataIntegration": Object {
+    "Next": "ConfigureEmbedding",
+    "XCatch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "XConstructorArgs": Object {
+      "perSample": false,
+      "taskName": "dataIntegration",
+      "uploadCountMatrix": true,
+    },
+    "XStepType": "create-new-step",
+  },
+  "DoubletScoresFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "ItemsPath": "$.samples",
+    "Iterator": Object {
+      "StartAt": "DoubletScoresFilter",
+      "States": Object {
+        "DoubletScoresFilter": Object {
+          "End": true,
+          "XConstructorArgs": Object {
+            "perSample": true,
+            "taskName": "doubletScores",
+          },
+          "XStepType": "create-new-step",
+        },
+      },
+    },
+    "Next": "DataIntegration",
+    "ResultPath": null,
+    "Type": "Map",
+  },
+}
+`;
+
+exports[`helper functions for skeletons Works if the config has no changes but the previous run never started 1`] = `
+Object {
+  "CellSizeDistributionFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "ItemsPath": "$.samples",
+    "Iterator": Object {
+      "StartAt": "CellSizeDistributionFilter",
+      "States": Object {
+        "CellSizeDistributionFilter": Object {
+          "End": true,
+          "XConstructorArgs": Object {
+            "perSample": true,
+            "taskName": "cellSizeDistribution",
+          },
+          "XStepType": "create-new-step",
+        },
+      },
+    },
+    "Next": "MitochondrialContentFilterMap",
+    "ResultPath": null,
+    "Type": "Map",
+  },
+  "ClassifierFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "ItemsPath": "$.samples",
+    "Iterator": Object {
+      "StartAt": "ClassifierFilter",
+      "States": Object {
+        "ClassifierFilter": Object {
+          "End": true,
+          "XConstructorArgs": Object {
+            "perSample": true,
+            "taskName": "classifier",
+          },
+          "XStepType": "create-new-step",
+        },
+      },
+    },
+    "Next": "CellSizeDistributionFilterMap",
+    "ResultPath": null,
+    "Type": "Map",
+  },
+  "ConfigureEmbedding": Object {
+    "Next": "EndOfPipeline",
+    "XCatch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "XConstructorArgs": Object {
+      "perSample": false,
+      "taskName": "configureEmbedding",
+    },
+    "XStepType": "create-new-step",
+  },
+  "DataIntegration": Object {
+    "Next": "ConfigureEmbedding",
+    "XCatch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "XConstructorArgs": Object {
+      "perSample": false,
+      "taskName": "dataIntegration",
+      "uploadCountMatrix": true,
+    },
+    "XStepType": "create-new-step",
+  },
+  "DoubletScoresFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "ItemsPath": "$.samples",
+    "Iterator": Object {
+      "StartAt": "DoubletScoresFilter",
+      "States": Object {
+        "DoubletScoresFilter": Object {
+          "End": true,
+          "XConstructorArgs": Object {
+            "perSample": true,
+            "taskName": "doubletScores",
+          },
+          "XStepType": "create-new-step",
+        },
+      },
+    },
+    "Next": "DataIntegration",
+    "ResultPath": null,
+    "Type": "Map",
+  },
+  "MitochondrialContentFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "ItemsPath": "$.samples",
+    "Iterator": Object {
+      "StartAt": "MitochondrialContentFilter",
+      "States": Object {
+        "MitochondrialContentFilter": Object {
+          "End": true,
+          "XConstructorArgs": Object {
+            "perSample": true,
+            "taskName": "mitochondrialContent",
+          },
+          "XStepType": "create-new-step",
+        },
+      },
+    },
+    "Next": "NumGenesVsNumUmisFilterMap",
+    "ResultPath": null,
+    "Type": "Map",
+  },
+  "NumGenesVsNumUmisFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "ItemsPath": "$.samples",
+    "Iterator": Object {
+      "StartAt": "NumGenesVsNumUmisFilter",
+      "States": Object {
+        "NumGenesVsNumUmisFilter": Object {
+          "End": true,
+          "XConstructorArgs": Object {
+            "perSample": true,
+            "taskName": "numGenesVsNumUmis",
+          },
+          "XStepType": "create-new-step",
+        },
+      },
+    },
+    "Next": "DoubletScoresFilterMap",
+    "ResultPath": null,
+    "Type": "Map",
+  },
+}
+`;
+
+exports[`helper functions for skeletons Works if the only thing that changed is the cellLevelMetadata 1`] = `
+Object {
+  "ConfigureEmbedding": Object {
+    "Next": "EndOfPipeline",
+    "XCatch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "XConstructorArgs": Object {
+      "perSample": false,
+      "taskName": "configureEmbedding",
+    },
+    "XStepType": "create-new-step",
+  },
+}
+`;
+
 exports[`helper functions for skeletons returns from first not-completed step if the config has changes after that 1`] = `
 Object {
   "CellSizeDistributionFilterMap": Object {
@@ -180,8 +450,64 @@ Object {
 }
 `;
 
-exports[`helper functions for skeletons returns from first not-completed step if the config has no changes 1`] = `
+exports[`helper functions for skeletons returns from first not-completed step if the config has changes and cell level metadata changed 1`] = `
 Object {
+  "CellSizeDistributionFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "ItemsPath": "$.samples",
+    "Iterator": Object {
+      "StartAt": "CellSizeDistributionFilter",
+      "States": Object {
+        "CellSizeDistributionFilter": Object {
+          "End": true,
+          "XConstructorArgs": Object {
+            "perSample": true,
+            "taskName": "cellSizeDistribution",
+          },
+          "XStepType": "create-new-step",
+        },
+      },
+    },
+    "Next": "MitochondrialContentFilterMap",
+    "ResultPath": null,
+    "Type": "Map",
+  },
+  "ClassifierFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "ItemsPath": "$.samples",
+    "Iterator": Object {
+      "StartAt": "ClassifierFilter",
+      "States": Object {
+        "ClassifierFilter": Object {
+          "End": true,
+          "XConstructorArgs": Object {
+            "perSample": true,
+            "taskName": "classifier",
+          },
+          "XStepType": "create-new-step",
+        },
+      },
+    },
+    "Next": "CellSizeDistributionFilterMap",
+    "ResultPath": null,
+    "Type": "Map",
+  },
   "ConfigureEmbedding": Object {
     "Next": "EndOfPipeline",
     "XCatch": Array [
@@ -242,6 +568,62 @@ Object {
       },
     },
     "Next": "DataIntegration",
+    "ResultPath": null,
+    "Type": "Map",
+  },
+  "MitochondrialContentFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "ItemsPath": "$.samples",
+    "Iterator": Object {
+      "StartAt": "MitochondrialContentFilter",
+      "States": Object {
+        "MitochondrialContentFilter": Object {
+          "End": true,
+          "XConstructorArgs": Object {
+            "perSample": true,
+            "taskName": "mitochondrialContent",
+          },
+          "XStepType": "create-new-step",
+        },
+      },
+    },
+    "Next": "NumGenesVsNumUmisFilterMap",
+    "ResultPath": null,
+    "Type": "Map",
+  },
+  "NumGenesVsNumUmisFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "ItemsPath": "$.samples",
+    "Iterator": Object {
+      "StartAt": "NumGenesVsNumUmisFilter",
+      "States": Object {
+        "NumGenesVsNumUmisFilter": Object {
+          "End": true,
+          "XConstructorArgs": Object {
+            "perSample": true,
+            "taskName": "numGenesVsNumUmis",
+          },
+          "XStepType": "create-new-step",
+        },
+      },
+    },
+    "Next": "DoubletScoresFilterMap",
     "ResultPath": null,
     "Type": "Map",
   },

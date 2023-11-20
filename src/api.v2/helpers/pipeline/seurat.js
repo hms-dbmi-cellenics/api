@@ -13,7 +13,7 @@ const HookRunner = require('./hooks/HookRunner');
 const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
 
-const { getGem2sParams, formatSamples } = require('./shouldGem2sRerun');
+const { getGem2sParams, formatSamples } = require('./shouldPipelineRerun');
 
 const logger = getLogger('[SeuratService] - ');
 

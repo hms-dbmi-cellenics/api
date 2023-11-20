@@ -90,6 +90,12 @@ class Experiment extends BasicModel {
       },
     );
 
+    experiments.forEach((experiment) => {
+      if (!experiment.cellLevelMetadata) {
+        experiment.cellLevelMetadata = null;
+      }
+    });
+
     return experiments;
   }
 

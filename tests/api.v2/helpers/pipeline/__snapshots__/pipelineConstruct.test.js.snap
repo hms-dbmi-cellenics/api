@@ -121,6 +121,12 @@ Array [
     },
     Object {
       "execution_arn": "test-machine",
+      "last_pipeline_params": Object {
+        "cellMetadataId": "2c5983db-c690-4ed3-a4ad-bb12b065d60d",
+      },
+      "retry_params": Object {
+        "clusteringShouldRun": true,
+      },
       "state_machine_arn": "test-machine",
     },
   ],
@@ -581,6 +587,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "auto": true,
@@ -637,6 +644,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "auto": true,
@@ -688,6 +696,7 @@ Array [
           "HeartbeatSeconds": 90,
           "Next": "EndOfPipeline",
           "Parameters": Object {
+            "clusteringShouldRun": true,
             "config": Object {
               "clusteringSettings": Object {
                 "method": "louvain",
@@ -738,6 +747,7 @@ Array [
           "HeartbeatSeconds": 90,
           "Next": "ConfigureEmbedding",
           "Parameters": Object {
+            "clusteringShouldRun": true,
             "config": Object {
               "dataIntegration": Object {
                 "method": "harmony",
@@ -798,6 +808,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "filterSettings": Object {
@@ -872,6 +883,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "auto": true,
@@ -938,6 +950,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "auto": true,
@@ -1100,6 +1113,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "auto": true,
@@ -1156,6 +1170,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "auto": true,
@@ -1207,6 +1222,7 @@ Array [
           "HeartbeatSeconds": 90,
           "Next": "EndOfPipeline",
           "Parameters": Object {
+            "clusteringShouldRun": true,
             "config": Object {
               "clusteringSettings": Object {
                 "method": "louvain",
@@ -1257,6 +1273,7 @@ Array [
           "HeartbeatSeconds": 90,
           "Next": "ConfigureEmbedding",
           "Parameters": Object {
+            "clusteringShouldRun": true,
             "config": Object {
               "dataIntegration": Object {
                 "method": "harmony",
@@ -1317,6 +1334,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "filterSettings": Object {
@@ -1391,6 +1409,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "auto": true,
@@ -1457,6 +1476,7 @@ Array [
                 "End": true,
                 "HeartbeatSeconds": 90,
                 "Parameters": Object {
+                  "clusteringShouldRun": true,
                   "config": Object {
                     "oneSample": Object {
                       "auto": true,
