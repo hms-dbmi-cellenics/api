@@ -32,7 +32,6 @@ const handleWorkRequest = async (Authorization, data) => {
   // 3. If the results were not in S3, send the request to the worker
   if (signedUrl === null) {
     const workRequest = { ETag, Authorization, ...data };
-    console.log('workRequest', workRequest);
     await validateAndSubmitWork(workRequest);
   }
 

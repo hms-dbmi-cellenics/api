@@ -8,7 +8,6 @@ const createObjectHash = (object) => hash.MD5(object);
 const generateETag = async (
   data,
 ) => {
-  console.log('generateETag', data);
   const {
     experimentId,
     body,
@@ -24,7 +23,6 @@ const generateETag = async (
   const extraDependencies = await getExtraDependencies(experimentId, taskName, body);
 
   // log the type and value of qcPipelineStartDate to make it easier to debug
-  console.log('qcPipelineStartDate', typeof qcPipelineStartDate, qcPipelineStartDate);
   const ETagBody = {
     experimentId,
     body,
@@ -34,9 +32,6 @@ const generateETag = async (
     workerVersion,
     extraDependencies,
   };
-
-
-  console.log('ETagBody', ETagBody);
 
   return createObjectHash(ETagBody);
 };

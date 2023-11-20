@@ -1,7 +1,6 @@
 const { UnauthorizedError, NotFoundError } = require('../../../../utils/responses');
 
 const getWorkResults = jest.fn((experimentId) => new Promise((resolve, reject) => {
-  console.log('mockGetWorkResults', experimentId);
   const response = {
     signedUrl: 'https://apiurl:port/blabla/asd/asd',
   };

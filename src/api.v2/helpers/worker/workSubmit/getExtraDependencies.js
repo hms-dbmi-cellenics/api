@@ -38,7 +38,6 @@ const getCellSets = async (experimentId) => {
   });
 
   const lastVersion = `${bucketNames.CELL_SETS}/${experimentId}/${lastModified}`;
-  console.log('lastVersion', lastVersion);
   return lastVersion;
 };
 
@@ -93,13 +92,11 @@ const getExtraDependencies = async (experimentId, taskName, body) => {
   }));
 
 
-  console.log('getExtraDependencies', taskName);
   const dependencies = await Promise.all(
     dependencyGetters[taskName].map(
       (dependencyGetter) => dependencyGetter(experimentId, body, cellSets),
     ),
   );
-  console.log('dependencies', dependencies);
 
   if (workerVersions[taskName]) {
     dependencies.push(workerVersions[taskName]);
