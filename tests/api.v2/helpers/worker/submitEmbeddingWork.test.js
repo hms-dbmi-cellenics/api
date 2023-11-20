@@ -57,7 +57,7 @@ describe('submitWorkEmbedding', () => {
     expect(createObjectHash.mock.calls).toMatchSnapshot();
     // this ETag should match exactly the one in
     // loadEmbedding.defaultParams.test.js
-    expect(ETag).toEqual('163301323ab0ee82902d1574a5dcd061'); // pragma: allowlist secret
+    expect(ETag).toEqual('5c144d6e44aa4e09497a4bc5b12a285c'); // pragma: allowlist secret
     expect(validateAndSubmitWork).toBeCalledTimes(1);
   });
 });

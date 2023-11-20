@@ -1,10 +1,9 @@
 const submitWork = require('./submitWork');
 
-
 const submitEmbeddingWork = async (message) => {
   const {
     experimentId, input:
-    { authJWT, config: { embeddingSettings: { method, methodSettings } } },
+    { authJWT, config: { embeddingSettings: { method, methodSettings, useSaved } } },
   } = message;
 
   const embeddingConfig = methodSettings[method];
@@ -12,6 +11,7 @@ const submitEmbeddingWork = async (message) => {
   const body = {
     name: 'GetEmbedding',
     type: method,
+    useSaved,
     config: embeddingConfig,
   };
 

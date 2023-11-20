@@ -6,6 +6,25 @@ const getClusteringSettings = async (message) => {
   return clusteringSettings;
 };
 
+const getCellSetsThatAffectDownsampling = async (message, body, cellSets) => {
+  // If not downsampling, then there's no dependency set by this getter
+  if (!body.downsampleSettings) return '';
+
+  const { selectedCellSet, groupedTracks } = body.downsampleSettings;
+
+  const selectedCellSetKeys = cellSets
+    .find(({ key }) => key === selectedCellSet)
+    .children.map(({ key }) => key);
+
+  const groupedCellSetKeys = cellSets
+    .filter(({ key }) => groupedTracks.includes(key))
+    .flatMap(({ children }) => children)
+    .map(({ key }) => key);
+
+  // Keep them in separate lists, they each represent different changes in the settings
+  return [selectedCellSetKeys, groupedCellSetKeys];
+};
+
 const dependencyGetters = {
   ClusterCells: [],
   GetExpressionCellSets: [],
@@ -19,7 +38,9 @@ const dependencyGetters = {
   GetMitochondrialContent: [],
   GetNGenes: [],
   GetNUmis: [],
-  MarkerHeatmap: [getClusteringSettings],
+  MarkerHeatmap: [
+    getClusteringSettings, getCellSetsThatAffectDownsampling,
+  ],
   GetTrajectoryAnalysisStartingNodes: [getClusteringSettings],
   GetTrajectoryAnalysisPseudoTime: [getClusteringSettings],
   GetNormalizedExpression: [getClusteringSettings],
@@ -28,10 +49,10 @@ const dependencyGetters = {
 
 // message is assumed to be the configureEmbedding payload received
 // from the pipeline containing clutering & embedding settings
-const getExtraDependencies = async (name, message) => {
+const getExtraDependencies = async (name, message, body, cellSets = undefined) => {
   const dependencies = await Promise.all(
     dependencyGetters[name].map(
-      (dependencyGetter) => dependencyGetter(message),
+      (dependencyGetter) => dependencyGetter(message, body, cellSets),
     ),
   );
 
