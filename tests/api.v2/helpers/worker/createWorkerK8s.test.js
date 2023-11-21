@@ -28,14 +28,27 @@ const buildWorkerResponse = (workers) => ({
     items: workers,
   },
 });
+
+const deploymentWithReplicas = {
+  body: {
+    spec: {
+      replicas: 1,
+    },
+  },
+};
+
+
 const deleteNamespacedPod = jest.fn();
 const patchNamespacedPod = jest.fn();
+const readNamespacedDeployment = jest.fn();
 const listNamespacedPod = jest.fn(() => buildWorkerResponse([]));
 const mockApi = {
   deleteNamespacedPod,
   patchNamespacedPod,
   listNamespacedPod,
+  readNamespacedDeployment,
 };
+
 
 k8s.KubeConfig.mockImplementation(() => {
   console.debug('mocking the constructor');
@@ -100,6 +113,9 @@ describe('tests for the pipeline-assign service', () => {
     kc.loadFromDefault();
 
     const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+    const k8sAppApi = kc.makeApiClient(k8s.AppsV1Api);
+
+    k8sAppApi.readNamespacedDeployment.mockReturnValueOnce(deploymentWithReplicas);
     k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([]));
     k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([]));
     k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([]));

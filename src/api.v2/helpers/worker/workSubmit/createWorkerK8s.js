@@ -1,5 +1,6 @@
 const k8s = require('@kubernetes/client-node');
 const config = require('../../../../config');
+const asyncTimer = require('../../../../utils/asyncTimer');
 const getLogger = require('../../../../utils/getLogger');
 
 const kc = new k8s.KubeConfig();
@@ -16,6 +17,8 @@ const getPods = async (namespace, statusSelector, labelSelector) => {
   );
   return pods.body.items;
 };
+
+
 
 
 const getAssignedPods = async (experimentId, namespace) => {
@@ -43,6 +46,43 @@ const getAvailablePods = async (namespace) => {
   return pods;
 };
 
+const getDeployment = async (name, namespace) => {
+  const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
+  // find the particular deployment
+  const { body: deployment } = await k8sApi.readNamespacedDeployment(name, namespace);
+  return deployment;
+};
+
+const waitForPods = async (namespace, maxTries = 20, currentTry = 0) => {
+  logger.log('Waiting for pods...');
+  await asyncTimer(1000);
+  const pods = await getAvailablePods(namespace);
+
+  if (pods.length > 0 || currentTry >= maxTries) {
+    return;
+  }
+
+  await waitForPods(namespace, maxTries, currentTry + 1);
+};
+
+
+const scaleDeploymentReplicas = async (name, namespace, deployment, desiredReplicas = 1) => {
+  const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
+
+  logger.log(`Scaling ${name} from ${deployment.spec.replicas} to ${desiredReplicas} replicas...`);
+
+  // edit
+  // eslint-disable-next-line no-param-reassign
+  deployment.spec.replicas = desiredReplicas;
+
+  // replace
+  await k8sApi.replaceNamespacedDeployment(name, namespace, deployment);
+
+  // wait until we have pods
+  await waitForPods(namespace);
+};
+
+
 const createWorkerResources = async (service) => {
   const { sandboxId } = config;
   const { experimentId } = service.workRequest;
@@ -62,7 +102,21 @@ const createWorkerResources = async (service) => {
     return { name, creationTimestamp, phase };
   }
 
-  const pods = await getAvailablePods(namespace);
+  // scale pods if worker has zero replicas
+  const minDesiredReplicas = 1;
+  let pods = await getAvailablePods(namespace);
+
+  try {
+    const deployment = await getDeployment('worker', namespace);
+    const { replicas } = deployment.spec;
+    if (pods.length < 1 && replicas < minDesiredReplicas) {
+      await scaleDeploymentReplicas('worker', namespace, replicas, minDesiredReplicas);
+      pods = await getAvailablePods(namespace);
+    }
+  } catch (e) {
+    logger.log('Could not scale replicas, ignoring...', e);
+  }
+
   if (pods.length < 1) {
     throw new Error(`Experiment ${experimentId} cannot be launched as there are no available workers.`);
   }
