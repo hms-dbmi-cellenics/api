@@ -4,8 +4,9 @@ const getPipelineStatus = require('../../../src/api.v2/helpers/pipeline/getPipel
 const pipelineConstants = require('../../../src/api.v2/constants');
 const WorkSubmitService = require('../../../src/api.v2/helpers/worker/workSubmit')();
 const signedUrl = require('../../../src/api.v2/helpers/s3/signedUrl');
+const generateEmbeddingETag = require('../../../src/api.v2/helpers/worker/generateEmbeddingETag');
 
-
+jest.mock('../../../src/api.v2/helpers/worker/generateEmbeddingETag');
 jest.mock('../../../src/api.v2/helpers/s3/signedUrl');
 jest.mock('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 jest.mock('../../../src/cache');
@@ -172,5 +173,41 @@ describe('handleWorkRequest', () => {
 
     expect(WorkSubmitService.submitWork).toHaveBeenCalled();
     expect(signedUrl.getSignedUrl.mock.calls).toMatchSnapshot();
+    expect(generateEmbeddingETag).not.toHaveBeenCalled();
+  });
+
+  it('Calls addEmbeddingETag when DownloadAnnotSeuratObject request is received', async () => {
+    const workRequest = {
+      ETag: '12345',
+      experimentId: 'my-experiment',
+      timeout: '2099-01-01T00:00:00Z',
+      body: { name: 'DownloadAnnotSeuratObject' },
+    };
+
+    await validateAndSubmitWork(workRequest);
+    expect(generateEmbeddingETag).toHaveBeenCalledTimes(1);
+  });
+
+  it('Calls addEmbeddingETag when trajectory requests are received', async () => {
+    const workRequest = {
+      ETag: '927061b7cdf476f4dfe470fd2dbf6305',
+      experimentId: '2f02d212-55a0-45bf-83c0-4d8b67054a6e',
+      timeout: '2099-11-21T14:32:12.621Z',
+      body: {
+        name: 'GetTrajectoryAnalysisPseudoTime',
+        embedding: { method: 'umap', methodSettings: [Object] },
+        clustering: { method: 'louvain', resolution: 0.8 },
+        cellSets: ['louvain-0'],
+        rootNodes: [
+        ],
+      },
+      broadcast: false,
+    };
+
+    await validateAndSubmitWork(workRequest);
+    workRequest.body.name = 'GetTrajectoryAnalysisPseudoTime';
+    await validateAndSubmitWork(workRequest);
+
+    expect(generateEmbeddingETag).toHaveBeenCalledTimes(2);
   });
 });
