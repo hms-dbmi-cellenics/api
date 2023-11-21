@@ -31,7 +31,6 @@ const getEmbeddingSettings = async (experimentId) => {
 };
 
 const getCellSets = async (experimentId) => {
-  // TODO consider just fetching latest modified date instead of the whole object
   const lastModified = await getLastModified({
     Bucket: bucketNames.CELL_SETS,
     Key: experimentId,

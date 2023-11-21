@@ -2036,12 +2036,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
-        # "404":
-        #   description: The work results were not found.
-        #   content:
-        #     application/json:
-        #       schema:
-        #         $ref: "#/components/schemas/HTTPError"
 
   "/experiments/{experimentId}/plots/{plotUuid}":
     parameters:
