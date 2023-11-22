@@ -4,14 +4,14 @@ const getWorkResults = require('../helpers/worker/getWorkResults');
 const validateAndSubmitWork = require('./validateAndSubmitWork');
 
 
-//
+
 const getSignedUrlIfAvailable = async (experimentId, ETag) => {
   try {
     const { signedUrl } = await getWorkResults(experimentId, ETag);
     return signedUrl;
   } catch (e) {
     // 404 => indicates there are no work results present in S3 which is fine
-    // othere error => should be raised
+    // other error => should be raised
     if (e.status !== 404) {
       throw e;
     }
@@ -23,7 +23,7 @@ const getSignedUrlIfAvailable = async (experimentId, ETag) => {
 const handleWorkRequest = async (Authorization, data) => {
   const { experimentId } = data;
 
-  // 1. Generate ETag for the new work requets
+  // 1. Generate ETag for the new work request
   const ETag = await generateETag(data);
 
   // 2. Check if there are already existing work results for this ETag
@@ -35,7 +35,6 @@ const handleWorkRequest = async (Authorization, data) => {
     await validateAndSubmitWork(workRequest);
   }
 
-  // I think podInfo can be removed as we get better and fresher updates from the worker now.
   return { ETag, signedUrl };
 };
 

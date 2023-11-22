@@ -30,7 +30,7 @@ const getEmbeddingSettings = async (experimentId) => {
   return { method, methodSettings: methodSettings[method] };
 };
 
-const getCellSets = async (experimentId) => {
+const getCellSetsLastVersion = async (experimentId) => {
   const lastModified = await getLastModified({
     Bucket: bucketNames.CELL_SETS,
     Key: experimentId,
@@ -81,7 +81,7 @@ const dependencyGetters = {
   GetTrajectoryAnalysisStartingNodes: [getClusteringSettings],
   GetTrajectoryAnalysisPseudoTime: [getClusteringSettings, getEmbeddingSettings],
   GetNormalizedExpression: [getClusteringSettings],
-  DownloadAnnotSeuratObject: [getClusteringSettings, getCellSets, getEmbeddingSettings],
+  DownloadAnnotSeuratObject: [getClusteringSettings, getCellSetsLastVersion, getEmbeddingSettings],
 };
 
 const getExtraDependencies = async (experimentId, taskName, body) => {

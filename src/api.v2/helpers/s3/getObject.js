@@ -24,6 +24,4 @@ const getObject = async (params) => {
   }
 };
 
-
-
 module.exports = getObject;
