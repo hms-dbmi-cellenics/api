@@ -1,62 +1,41 @@
-const getLogger = require('../../utils/getLogger');
+const generateETag = require('../helpers/worker/generateEtag');
 const getWorkResults = require('../helpers/worker/getWorkResults');
 
-const logger = getLogger();
 const validateAndSubmitWork = require('./validateAndSubmitWork');
 
-const handleWorkRequest = async (socket, data) => {
-  const { Authorization, experimentId, ETag } = data;
 
+
+const getSignedUrlIfAvailable = async (experimentId, ETag) => {
   try {
     const { signedUrl } = await getWorkResults(experimentId, ETag);
-
-    socket.emit(`WorkResponse-${ETag}`, {
-      request: { ...data },
-      results: [],
-      response: {
-        cacheable: false,
-        signedUrl,
-        error: null,
-      },
-    });
-
-    return;
+    return signedUrl;
   } catch (e) {
-    if (e.status === 404) {
-      console.log(`Work result ${ETag} not cached, submitting request`);
-    } else {
+    // 404 => indicates there are no work results present in S3 which is fine
+    // other error => should be raised
+    if (e.status !== 404) {
       throw e;
     }
   }
+  return null;
+};
 
-  try {
-    // Authenticate and authorize the user
-    if (!Authorization) {
-      throw new Error('Authentication token must be present.');
-    }
 
-    const podInfo = await validateAndSubmitWork(data);
+const handleWorkRequest = async (Authorization, data) => {
+  const { experimentId } = data;
 
-    socket.emit(`WorkerInfo-${experimentId}`, {
-      response: {
-        podInfo,
-      },
-    });
-  } catch (e) {
-    logger.log(`[REQ ??, SOCKET ${socket.id}] Error while processing WorkRequest event.`);
-    logger.trace(e);
+  // 1. Generate ETag for the new work request
+  const ETag = await generateETag(data);
 
-    socket.emit(`WorkResponse-${ETag}`, {
-      request: { ...data },
-      results: [],
-      response: {
-        cacheable: false,
-        error: e.message,
-      },
-    });
+  // 2. Check if there are already existing work results for this ETag
+  const signedUrl = await getSignedUrlIfAvailable(experimentId, ETag);
 
-    logger.log(`[REQ ??, SOCKET ${socket.id}] Error sent back to client.`);
+  // 3. If the results were not in S3, send the request to the worker
+  if (signedUrl === null) {
+    const workRequest = { ETag, Authorization, ...data };
+    await validateAndSubmitWork(workRequest);
   }
+
+  return { ETag, signedUrl };
 };
 
 module.exports = handleWorkRequest;

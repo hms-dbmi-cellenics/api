@@ -19,25 +19,7 @@ Array [
       },
       "cacheUniquenessKey": null,
       "experimentId": "6463cb35-3e08-4e94-a181-6d155a5ca570",
-      "extraDependencies": Array [
-        Object {
-          "method": "louvain",
-          "methodSettings": Object {
-            "louvain": Object {
-              "resolution": 0.8,
-            },
-          },
-        },
-        Array [
-          Array [
-            "louvain-0",
-          ],
-          Array [
-            "louvain-0",
-          ],
-        ],
-        1,
-      ],
+      "extraDependencies": undefined,
       "extras": undefined,
       "qcPipelineStartDate": "2016-03-22T04:00:00.000Z",
       "workerVersion": 4,
@@ -45,3 +27,5 @@ Array [
   ],
 ]
 `;
+
+exports[`submitWorkEmbedding submits the work and the ETag / params are correct 2`] = `"31a417d5acf6614a1c041bbfefab49cb"`;

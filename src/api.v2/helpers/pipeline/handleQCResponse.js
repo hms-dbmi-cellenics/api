@@ -9,14 +9,14 @@ const assignPodToPipeline = require('./hooks/assignPodToPipeline');
 const { cleanupPods } = require('./hooks/podCleanup');
 const updatePipelineVersion = require('./hooks/updatePipelineVersion');
 const sendNotification = require('./hooks/sendNotification');
+const submitEmbeddingWork = require('../worker/workSubmit/submitEmbeddingWork');
+const submitMarkerHeatmapWork = require('../worker/workSubmit/submitMarkerHeatmapWork');
 
 const constants = require('../../constants');
 const getPipelineStatus = require('./getPipelineStatus');
 
 const Experiment = require('../../model/Experiment');
 const Plot = require('../../model/Plot');
-const submitEmbeddingWork = require('../worker/workSubmit/submitEmbeddingWork');
-const submitMarkerHeatmapWork = require('../worker/workSubmit/submitMarkerHeatmapWork');
 
 const logger = getLogger();
 

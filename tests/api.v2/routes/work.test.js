@@ -24,7 +24,7 @@ describe('work routes tests', () => {
     });
 
     request(app)
-      .post('/v2/workRequest/someExperimentId/someETag')
+      .post('/v2/workRequest/someExperimentId')
       .expect(200)
       .end((err) => {
         if (err) {

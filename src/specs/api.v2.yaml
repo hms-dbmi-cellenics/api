@@ -926,8 +926,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
-  ? "/experiments/{experimentId}/samples/{sampleId}/files/{sampleFileType}/downloadUrl"
-  : get:
+  "/experiments/{experimentId}/samples/{sampleId}/files/{sampleFileType}/downloadUrl":
+    get:
       summary: Get file download url
       description: Get temporary s3 download url for file
       operationId: downloadSampleFileUrl
@@ -1092,7 +1092,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPError"  
+                $ref: "#/components/schemas/HTTPError"
   "/experiments/{experimentId}/cellLevelMeta":
     post:
       summary: Upload cell level metadata file
@@ -1196,7 +1196,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPError"              
+                $ref: "#/components/schemas/HTTPError"
     patch:
       summary: Patch the cell level metadata of an experiment
       description: Update the cell level metadata of an experiment
@@ -1432,8 +1432,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
-  ? "/experiments/{experimentId}/samples/{sampleId}/metadataTracks/{metadataTrackKey}"
-  : patch:
+  "/experiments/{experimentId}/samples/{sampleId}/metadataTracks/{metadataTrackKey}":
+    patch:
       summary: Updates the value that a sample has in a metadata track in particular
       description: Updates a sample's metadata tracks value
       operationId: patchSampleInMetadataTrackValue
@@ -1674,11 +1674,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  signedUrls: 
+                  signedUrls:
                     type: array
                     items:
                       type: string
-                  uploadId: 
+                  uploadId:
                     type: string
         "400":
           description: Bad Request
@@ -1736,10 +1736,10 @@ paths:
                   type: string
               additionalProperties: false
               required:
-                  - fileId
-                  - uploadId
-                  - parts
-                  - type
+                - fileId
+                - uploadId
+                - parts
+                - type
       responses:
         "200":
           description: Success
@@ -2004,7 +2004,7 @@ paths:
             type: string
           in: query
           required: true
-  "/workRequest/{experimentId}/{ETag}":
+  "/workRequest/{experimentId}":
     post:
       summary: Submit a work request
       operationId: workSubmitRequest
@@ -2013,12 +2013,6 @@ paths:
       parameters:
         - name: experimentId
           description: Id of the experiment
-          schema:
-            type: string
-          in: path
-          required: true
-        - name: ETag
-          description: ETag of the work result object
           schema:
             type: string
           in: path
@@ -2038,12 +2032,6 @@ paths:
                 $ref: "#/components/schemas/HTTPError"
         "403":
           description: The user does not have permissions to view the work results.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPError"
-        "404":
-          description: The work results were not found.
           content:
             application/json:
               schema:
@@ -2197,43 +2185,43 @@ paths:
                 $ref: "#/components/schemas/HTTPError"
 
   "/experiments/{experimentId}/qc":
-      parameters:
-        - schema:
-            type: string
-          name: experimentId
-          in: path
-          required: true
-      post:
-        summary: Run qc
-        description: Triggers a new qc run
-        operationId: runQC
-        x-eov-operation-id: qc#run
-        x-eov-operation-handler: routes/qc
-        responses:
-          "200":
-            description: Success
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/HTTPSuccess"
-          "401":
-            description: The request lacks authentication credentials.
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/HTTPError"
-          "403":
-            description: The authenticated user is not authorized to view this resource.
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/HTTPError"
-          "404":
-            description: Experiment not found
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/HTTPError"
+    parameters:
+      - schema:
+          type: string
+        name: experimentId
+        in: path
+        required: true
+    post:
+      summary: Run qc
+      description: Triggers a new qc run
+      operationId: runQC
+      x-eov-operation-id: qc#run
+      x-eov-operation-handler: routes/qc
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPSuccess"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: The authenticated user is not authorized to view this resource.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: Experiment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
 
   "/experiments/{experimentId}/seurat":
     post:
@@ -2654,7 +2642,7 @@ components:
       $ref: ./models/samples-bodies/CreateSampleFile.v2.yaml
     PatchSampleFile:
       $ref: ./models/samples-bodies/PatchSampleFile.v2.yaml
-    BeginSampleFileUpload: 
+    BeginSampleFileUpload:
       $ref: ./models/samples-bodies/BeginSampleFileUpload.v2.yaml
     UpdateSamplesOptions:
       $ref: ./models/samples-bodies/UpdateSamplesOptions.v2.yaml

@@ -6,11 +6,27 @@ const bucketNames = require('../../config/bucketNames');
 
 const pipelineConstants = require('../constants');
 const { getSignedUrl } = require('../helpers/s3/signedUrl');
+const generateEmbeddingETag = require('../helpers/worker/generateEmbeddingETag');
 
 const checkSomeEqualTo = (array, testValue) => array.some((item) => item === testValue);
 
-const validateAndSubmitWork = async (workRequest) => {
+// adds Embedding ETag to workRequest because the worker needs it to download
+// the corresponding worker result containing the embeddings
+const addEmbeddingEtag = async (experimentId, workRequest) => {
+  if (workRequest.body.name === 'DownloadAnnotSeuratObject') {
+    workRequest.body.embeddingETag = await generateEmbeddingETag(experimentId);
+  }
+  if (['GetTrajectoryAnalysisStartingNodes', 'GetTrajectoryAnalysisPseudoTime'].includes(workRequest.body.name)) {
+    workRequest.body.embedding.ETag = await generateEmbeddingETag(experimentId);
+  }
+
+  return workRequest;
+};
+
+const validateAndSubmitWork = async (req) => {
+  let workRequest = req;
   const { experimentId } = workRequest;
+
 
   // Check if pipeline is runnning
   const { qc: { status: qcPipelineStatus } } = await getPipelineStatus(
@@ -22,10 +38,11 @@ const validateAndSubmitWork = async (workRequest) => {
   );
 
   if (!checkSomeEqualTo([qcPipelineStatus, seuratPipelineStatus], pipelineConstants.SUCCEEDED)) {
-    const e = new Error(`Work request can not be handled because pipeline is ${qcPipelineStatus} or seurat status is ${seuratPipelineStatus}`);
-
-    throw e;
+    throw new Error(`Work request can not be handled because pipeline is ${qcPipelineStatus} or seurat status is ${seuratPipelineStatus}`);
   }
+
+  // add the embedding etag if the work request, needed by trajectory analysis & download seurat object
+  workRequest = await addEmbeddingEtag(experimentId, workRequest);
 
   await validateRequest(workRequest, 'WorkRequest.v2.yaml');
 

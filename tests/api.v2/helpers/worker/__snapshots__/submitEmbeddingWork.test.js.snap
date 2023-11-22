@@ -23,3 +23,5 @@ Array [
   ],
 ]
 `;
+
+exports[`submitWorkEmbedding submits the work and the ETag / params are correct 2`] = `"5c144d6e44aa4e09497a4bc5b12a285c"`;

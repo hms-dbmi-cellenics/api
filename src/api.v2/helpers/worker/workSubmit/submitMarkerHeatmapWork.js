@@ -1,5 +1,3 @@
-const bucketNames = require('../../../../config/bucketNames');
-const getS3Object = require('../../s3/getObject');
 const getExtraDependencies = require('./getExtraDependencies');
 const submitWork = require('./submitWork');
 
@@ -17,12 +15,7 @@ const submitMarkerHeatmapWork = async (message) => {
     },
   };
 
-  const { cellSets } = JSON.parse(await getS3Object({
-    Bucket: bucketNames.CELL_SETS,
-    Key: experimentId,
-  }));
-
-  const extraDependencies = await getExtraDependencies(body.name, message, body, cellSets);
+  const extraDependencies = await getExtraDependencies(experimentId, body.name, body);
 
   const ETag = await submitWork(experimentId, authJWT, body, extraDependencies);
 

@@ -311,14 +311,6 @@ const getPipelineStatus = async (experimentId, processName) => {
 
     response = buildResponse(processName, execution, shouldRerun, error, completedSteps);
   } catch (e) {
-    // if we get the execution does not exist it means we are using a pulled experiment so
-    // just return a mock sucess status
-    // TODO: state machines in production are deleted after 90 days, return a successful execution
-    // if the execution does not exist in production so the user will not be forced to re-run
-    // the pipeline losing annotations. This will be addressed checking if the
-    // processed files exist in S3 to avoid allowing users to move onwards when the pipeline was not
-    // actually run.
-
     if (
       (e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
       || (config.clusterEnv === 'staging' && e.code === pipelineConstants.ACCESS_DENIED)

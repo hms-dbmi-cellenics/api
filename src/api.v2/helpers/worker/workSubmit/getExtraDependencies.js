@@ -1,12 +1,47 @@
 const workerVersions = require('../workerVersions');
+const Experiment = require('../../../model/Experiment');
+const getLastModified = require('../../s3/getLastModified');
+const bucketNames = require('../../../../config/bucketNames');
+const getS3Object = require('../../s3/getObject');
 
-const getClusteringSettings = async (message) => {
-  const { input: { config: { clusteringSettings } } } = message;
+const getClusteringSettings = async (experimentId) => {
+  const {
+    processingConfig,
+  } = await new Experiment().findById(experimentId).first();
 
-  return clusteringSettings;
+  const {
+    configureEmbedding: { clusteringSettings: { method, methodSettings } },
+  } = processingConfig;
+
+  return { method, methodSettings: methodSettings[method] };
 };
 
-const getCellSetsThatAffectDownsampling = async (message, body, cellSets) => {
+const getEmbeddingSettings = async (experimentId) => {
+  const {
+    processingConfig,
+  } = await new Experiment().findById(experimentId).first();
+
+  const {
+    configureEmbedding: {
+      embeddingSettings: { method, methodSettings },
+    },
+  } = processingConfig;
+
+  return { method, methodSettings: methodSettings[method] };
+};
+
+const getCellSetsLastVersion = async (experimentId) => {
+  const lastModified = await getLastModified({
+    Bucket: bucketNames.CELL_SETS,
+    Key: experimentId,
+  });
+
+  const lastVersion = `${bucketNames.CELL_SETS}/${experimentId}/${lastModified}`;
+  return lastVersion;
+};
+
+
+const getCellSetsThatAffectDownsampling = async (_experimentId, body, cellSets) => {
   // If not downsampling, then there's no dependency set by this getter
   if (!body.downsampleSettings) return '';
 
@@ -27,10 +62,12 @@ const getCellSetsThatAffectDownsampling = async (message, body, cellSets) => {
 
 const dependencyGetters = {
   ClusterCells: [],
+  ScTypeAnnotate: [],
   GetExpressionCellSets: [],
   GetEmbedding: [],
   ListGenes: [],
   DifferentialExpression: [getClusteringSettings],
+  BatchDifferentialExpression: [getClusteringSettings],
   GeneExpression: [],
   GetBackgroundExpressedGenes: [getClusteringSettings],
   DotPlot: [getClusteringSettings],
@@ -42,22 +79,26 @@ const dependencyGetters = {
     getClusteringSettings, getCellSetsThatAffectDownsampling,
   ],
   GetTrajectoryAnalysisStartingNodes: [getClusteringSettings],
-  GetTrajectoryAnalysisPseudoTime: [getClusteringSettings],
+  GetTrajectoryAnalysisPseudoTime: [getClusteringSettings, getEmbeddingSettings],
   GetNormalizedExpression: [getClusteringSettings],
-  DownloadAnnotSeuratObject: [getClusteringSettings],
+  DownloadAnnotSeuratObject: [getClusteringSettings, getCellSetsLastVersion, getEmbeddingSettings],
 };
 
-// message is assumed to be the configureEmbedding payload received
-// from the pipeline containing clutering & embedding settings
-const getExtraDependencies = async (name, message, body, cellSets = undefined) => {
+const getExtraDependencies = async (experimentId, taskName, body) => {
+  const { cellSets } = JSON.parse(await getS3Object({
+    Bucket: bucketNames.CELL_SETS,
+    Key: experimentId,
+  }));
+
+
   const dependencies = await Promise.all(
-    dependencyGetters[name].map(
-      (dependencyGetter) => dependencyGetter(message, body, cellSets),
+    dependencyGetters[taskName].map(
+      (dependencyGetter) => dependencyGetter(experimentId, body, cellSets),
     ),
   );
 
-  if (workerVersions[name]) {
-    dependencies.push(workerVersions[name]);
+  if (workerVersions[taskName]) {
+    dependencies.push(workerVersions[taskName]);
   }
 
   return dependencies;
