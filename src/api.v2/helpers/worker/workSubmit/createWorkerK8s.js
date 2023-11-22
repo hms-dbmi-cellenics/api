@@ -110,7 +110,7 @@ const createWorkerResources = async (service) => {
     const deployment = await getDeployment('worker', namespace);
     const { replicas } = deployment.spec;
     if (pods.length < 1 && replicas < minDesiredReplicas) {
-      await scaleDeploymentReplicas('worker', namespace, replicas, minDesiredReplicas);
+      await scaleDeploymentReplicas('worker', namespace, deployment, minDesiredReplicas);
       pods = await getAvailablePods(namespace);
     }
   } catch (e) {
