@@ -163,13 +163,12 @@ describe('sampleFileController', () => {
 
   it('patchFile works correctly', async () => {
     const experimentId = 'experimentId';
-    const sampleId = 'sampleId';
-    const sampleFileType = 'features10x';
+    const sampleFileId = 'sampleFileId';
 
     const uploadStatus = 'uploaded';
 
     const mockReq = {
-      params: { experimentId, sampleId, sampleFileType },
+      params: { experimentId, sampleFileId },
       body: { uploadStatus },
     };
 
@@ -178,7 +177,7 @@ describe('sampleFileController', () => {
     // Used with normal client
     expect(SampleFile).toHaveBeenCalled();
 
-    expect(sampleFileInstance.updateUploadStatus).toHaveBeenCalledWith('sampleId', 'features10x', uploadStatus);
+    expect(sampleFileInstance.updateUploadStatus).toHaveBeenCalledWith(sampleFileId, uploadStatus);
 
     // Response is generated signed url
     expect(mockRes.json).toHaveBeenCalledWith(OK());
