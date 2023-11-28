@@ -5,6 +5,13 @@ properties:
     type: string
     description: Name of the work. Must be `DownloadAnnotSeuratObject`.
     pattern: DownloadAnnotSeuratObject
+  embeddingMethod:
+    type: string
+    description: The method that was used to compute the experiment's current embedding
+    enum:
+      - umap
+      - tsne
 required:
   - name
+  - embeddingMethod
 additionalProperties: false

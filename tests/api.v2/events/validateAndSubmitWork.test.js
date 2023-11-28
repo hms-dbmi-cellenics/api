@@ -181,7 +181,7 @@ describe('handleWorkRequest', () => {
       ETag: '12345',
       experimentId: 'my-experiment',
       timeout: '2099-01-01T00:00:00Z',
-      body: { name: 'DownloadAnnotSeuratObject' },
+      body: { name: 'DownloadAnnotSeuratObject', embeddingMethod: 'umap' },
     };
 
     await validateAndSubmitWork(workRequest);
