@@ -53,20 +53,15 @@ describe('model/Sample', () => {
 
   it('updateUploadStatus works correctly if valid params are passed', async () => {
     const mockUploadStatus = 'fileNotFound';
+    const mockSampleFileId = 'fileId1';
 
     const sfIdRef = 'sf.idRef';
     mockSqlClient.ref.mockReturnValueOnce(sfIdRef);
 
-    await new SampleFile().updateUploadStatus(mockSampleId, mockSampleFileType, mockUploadStatus);
+    await new SampleFile().updateUploadStatus(mockSampleFileId, mockUploadStatus);
 
     expect(mockSqlClient).toHaveBeenCalledWith({ sf: tableNames.SAMPLE_FILE });
     expect(mockSqlClient.update).toHaveBeenCalledWith({ upload_status: mockUploadStatus });
-    expect(mockSqlClient.whereExists).toHaveBeenCalled();
-
-    expect(mockSqlClient).toHaveBeenCalledWith({ sf_map: tableNames.SAMPLE_TO_SAMPLE_FILE_MAP });
-    expect(mockSqlClient.select).toHaveBeenCalledWith(['sample_file_id']);
-    expect(mockSqlClient.where).toHaveBeenCalledWith('sf_map.sample_file_id', '=', sfIdRef);
-    expect(mockSqlClient.where).toHaveBeenCalledWith('sf_map.sample_id', '=', mockSampleId);
-    expect(mockSqlClient.andWhere).toHaveBeenCalledWith({ sample_file_type: mockSampleFileType });
+    expect(mockSqlClient.where.mock.calls).toMatchSnapshot();
   });
 });
