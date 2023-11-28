@@ -65,14 +65,14 @@ const beginUpload = async (req, res) => {
 
 const patchFile = async (req, res) => {
   const {
-    params: { experimentId, sampleId, sampleFileType },
+    params: { experimentId, sampleFileId },
     body: { uploadStatus },
   } = req;
-  logger.log(`Patching file ${sampleFileType} for sample ${sampleId} in experiment ${experimentId}`);
+  logger.log(`Patching file ${sampleFileId} in experiment ${experimentId}`);
 
-  await new SampleFile().updateUploadStatus(sampleId, sampleFileType, uploadStatus);
+  await new SampleFile().updateUploadStatus(sampleFileId, uploadStatus);
 
-  logger.log(`Finished patching sample file for experiment ${experimentId}, sample ${sampleId}, sampleFileType ${sampleFileType}`);
+  logger.log(`Finished patching sample file for experiment ${experimentId}, file: ${sampleFileId}`);
   res.json(OK());
 };
 
