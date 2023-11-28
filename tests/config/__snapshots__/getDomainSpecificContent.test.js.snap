@@ -8,6 +8,8 @@ Object {
   "moreEmailInfo": "More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
               If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>",
   "notificationEmail": "notification@localhost:5000",
+  "podCPUs": null,
+  "podMemory": null,
 }
 `;
 
@@ -18,6 +20,8 @@ Object {
   "middlewareChecks": [Function],
   "moreEmailInfo": "",
   "notificationEmail": "alex_pickering@hms.harvard.edu",
+  "podCPUs": 8,
+  "podMemory": 40960,
 }
 `;
 
@@ -29,6 +33,8 @@ Object {
   "moreEmailInfo": "More information about Cellenics can be found at <a href=\\"https://biomage.net\\">biomage.net</a>.<br/><br/>
               If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>",
   "notificationEmail": "notification@localhost:5000",
+  "podCPUs": null,
+  "podMemory": null,
 }
 `;
 
@@ -39,5 +45,7 @@ Object {
   "middlewareChecks": [Function],
   "moreEmailInfo": "<div>test hi info</div>",
   "notificationEmail": "some@email.com",
+  "podCPUs": null,
+  "podMemory": null,
 }
 `;
