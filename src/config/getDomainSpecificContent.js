@@ -23,7 +23,7 @@ const domainSpecific = {
     moreEmailInfo: '',
     // using Batch by default in 'production'
     podCPUs: 8,
-    podMemory: 40960,
+    podMemory: 57344,
   },
   BIOMAGE: {
     adminEmail: 'admin@biomage.net',
