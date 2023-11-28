@@ -21,7 +21,7 @@ Object {
   "moreEmailInfo": "",
   "notificationEmail": "alex_pickering@hms.harvard.edu",
   "podCPUs": 8,
-  "podMemory": 40960,
+  "podMemory": 57344,
 }
 `;
 
