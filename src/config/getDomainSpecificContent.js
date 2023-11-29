@@ -21,6 +21,9 @@ const domainSpecific = {
     githubOrganisationName: 'hms-dbmi-cellenics',
     notificationEmail: 'alex_pickering@hms.harvard.edu',
     moreEmailInfo: '',
+    // using Batch by default in 'production'
+    podCPUs: 8,
+    podMemory: 57344,
   },
   BIOMAGE: {
     adminEmail: 'admin@biomage.net',
@@ -29,6 +32,9 @@ const domainSpecific = {
     notificationEmail: `notification@${domainName}`,
     moreEmailInfo: `More information about Cellenics can be found at <a href="https://biomage.net">biomage.net</a>.<br/><br/>
               If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>`,
+    // not using Batch by default in 'production'
+    podCPUs: null,
+    podMemory: null,
   },
   BIOMAGE_PRIVATE: {
     adminEmail: 'admin@biomage.net',
@@ -37,6 +43,9 @@ const domainSpecific = {
     notificationEmail: `notification@${domainName}`,
     moreEmailInfo: `More information about Cellenics can be found at <a href="https://biomage.net">biomage.net</a>.<br/><br/>
               If you need help or have any questions, please contact us at hello@biomage.net. <br/><br/>`,
+    // not using Batch by default in 'production'
+    podCPUs: null,
+    podMemory: null,
   },
   TEST: {
     adminEmail: 'admin@example.com',
@@ -44,6 +53,8 @@ const domainSpecific = {
     githubOrganisationName: 'org',
     notificationEmail: 'some@email.com',
     moreEmailInfo: '<div>test hi info</div>',
+    podCPUs: null,
+    podMemory: null,
   },
 };
 
