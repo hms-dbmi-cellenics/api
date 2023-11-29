@@ -6,6 +6,7 @@ const UserAccess = require('../model/UserAccess');
 const getLogger = require('../../utils/getLogger');
 const { OK, NotFoundError, UnauthorizedError } = require('../../utils/responses');
 const sqlClient = require('../../sql/sqlClient');
+const getDomainSpecificContent = require('../../config/getDomainSpecificContent');
 
 const getExperimentBackendStatus = require('../helpers/backendStatus/getExperimentBackendStatus');
 const Sample = require('../model/Sample');
@@ -37,13 +38,13 @@ const translateProcessingConfig = (processingConfig, sampleIdsMap) => (
 );
 
 const getDefaultCPUMem = (env) => {
+  const { podCPUs, podMemory } = getDomainSpecificContent();
+
   switch (env) {
     case 'staging':
       return { podCPUs: 1, podMemory: 14000 };
-    // Stop using Batch by default in 'production':
-    //   return { podCPUs: 2, podMemory: 28000 };
     default:
-      return { podCPUs: null, podMemory: null };
+      return { podCPUs, podMemory };
   }
 };
 
