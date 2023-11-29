@@ -15,6 +15,11 @@ const DISABLE_UNIQUE_KEYS = [
 // however trajectory & download rds depend on the embedding's ETag so we have to
 // disable the unique keys for the embeddings task
 const getCacheUniquenessKey = (taskName) => {
+  // allow people to enable cache in development by setting USE_CACHE=true
+  if (process.env.USE_CACHE === 'true') {
+    return null;
+  }
+
   if (config.clusterEnv !== 'production' && !DISABLE_UNIQUE_KEYS.includes(taskName)) {
     return Math.random();
   }

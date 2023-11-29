@@ -1,27 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`submitWorkEmbedding submits the work and the ETag / params are correct 1`] = `
-Array [
-  Array [
-    Object {
-      "body": Object {
-        "config": Object {
-          "distanceMetric": "cosine",
-          "minimumDistance": 0.3,
-        },
-        "name": "GetEmbedding",
-        "type": "umap",
-        "useSaved": undefined,
-      },
-      "cacheUniquenessKey": null,
-      "experimentId": "6463cb35-3e08-4e94-a181-6d155a5ca570",
-      "extraDependencies": Array [],
-      "extras": undefined,
-      "qcPipelineStartDate": "2016-03-22T04:00:00.000Z",
-      "workerVersion": 4,
-    },
-  ],
-]
-`;
+exports[`submitWorkEmbedding submits the work and the ETag / params are correct 1`] = `Array []`;
 
-exports[`submitWorkEmbedding submits the work and the ETag / params are correct 2`] = `"5c144d6e44aa4e09497a4bc5b12a285c"`;
+exports[`submitWorkEmbedding submits the work and the ETag / params are correct 2`] = `"163301323ab0ee82902d1574a5dcd061"`;

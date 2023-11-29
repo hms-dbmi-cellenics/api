@@ -1,31 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`submitWorkEmbedding submits the work and the ETag / params are correct 1`] = `
-Array [
-  Array [
-    Object {
-      "body": Object {
-        "downsampleSettings": Object {
-          "groupedTracks": Array [
-            "louvain",
-            "sample",
-          ],
-          "hiddenCellSets": Array [],
-          "selectedCellSet": "louvain",
-          "selectedPoints": "All",
-        },
-        "nGenes": 5,
-        "name": "MarkerHeatmap",
-      },
-      "cacheUniquenessKey": null,
-      "experimentId": "6463cb35-3e08-4e94-a181-6d155a5ca570",
-      "extraDependencies": undefined,
-      "extras": undefined,
-      "qcPipelineStartDate": "2016-03-22T04:00:00.000Z",
-      "workerVersion": 4,
-    },
-  ],
-]
-`;
+exports[`submitWorkEmbedding submits the work and the ETag / params are correct 1`] = `Array []`;
 
-exports[`submitWorkEmbedding submits the work and the ETag / params are correct 2`] = `"31a417d5acf6614a1c041bbfefab49cb"`;
+exports[`submitWorkEmbedding submits the work and the ETag / params are correct 2`] = `"b37d4df92a6f1d2a3dbb6ec29960d612"`;

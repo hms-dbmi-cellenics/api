@@ -7,8 +7,6 @@ const { mockS3GetObject } = require('../../../test-utils/mockAWSServices');
 
 
 jest.mock('../../../../src/api.v2/helpers/worker/workSubmit/getExtraDependencies');
-
-
 jest.mock('../../../../src/api.v2/helpers/worker/createObjectHash');
 jest.mock('../../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 jest.mock('../../../../src/api.v2/helpers/worker/getWorkerStatus');
@@ -74,6 +72,7 @@ const mockCellSets = {
 describe('submitWorkEmbedding', () => {
   beforeEach(() => {
     AWSMock.restore();
+    process.env.USE_CACHE = 'true';
   });
 
   it('submits the work and the ETag / params are correct', async () => {
