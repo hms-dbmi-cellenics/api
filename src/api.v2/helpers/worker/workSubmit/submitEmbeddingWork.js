@@ -3,8 +3,15 @@ const submitWorkForHook = require('./submitWorkForHook');
 const submitEmbeddingWork = async (message) => {
   const {
     experimentId, input:
-    { authJWT, config: { embeddingSettings: { method, methodSettings } } },
+    { authJWT, config: { embeddingSettings: { method, methodSettings, useSaved } } },
   } = message;
+
+  // useSaved is set when using seurat embeddings so we use the embeddings in the uploaded
+  // object instead of computing new ones. In this case, we don't need to precompute them
+  // on this pipeline hook.
+  if (useSaved) {
+    return null;
+  }
 
   const embeddingConfig = methodSettings[method];
 

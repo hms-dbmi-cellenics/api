@@ -1,4 +1,5 @@
 const AWSMock = require('aws-sdk-mock');
+const _ = require('lodash');
 
 const createObjectHash = require('../../../../src/api.v2/helpers/worker/createObjectHash');
 const submitEmbeddingWork = require('../../../../src/api.v2/helpers/worker/workSubmit/submitEmbeddingWork');
@@ -58,6 +59,17 @@ describe('submitWorkEmbedding', () => {
 
     expect(createObjectHash.mock.calls).toMatchSnapshot();
     expect(ETag).toMatchSnapshot();
+    expect(validateAndSubmitWork).toBeCalledTimes(1);
+  });
+
+  it('submits the work and the ETag / params are correct', async () => {
+    mockS3GetObject({ Body: '{}' });
+
+    message.input.config.embeddingSettings.useSaved = true;
+
+    const ETag = await submitEmbeddingWork(message);
+
+    expect(ETag).toBeNull();
     expect(validateAndSubmitWork).toBeCalledTimes(1);
   });
 });
