@@ -1574,9 +1574,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+  "/experiments/{experimentId}/sampleFiles/{sampleFileId}":
     patch:
       summary: Update a sample files property
-      description: Update property of a sample file
       operationId: patchFile
       x-eov-operation-id: sampleFile#patch
       x-eov-operation-handler: routes/sampleFile
@@ -1587,13 +1587,7 @@ paths:
           description: ID of the experiment.
           schema:
             type: string
-        - name: sampleId
-          in: path
-          description: ID of the sample.
-          required: true
-          schema:
-            type: string
-        - name: sampleFileType
+        - name: sampleFileId
           in: path
           description: Type of the file.
           required: true
@@ -1641,6 +1635,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+    
   "/experiments/{experimentId}/sampleFiles/{sampleFileId}/beginUpload":
     post:
       summary: Begins the multipart upload of a sample file

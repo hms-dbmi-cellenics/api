@@ -33,16 +33,10 @@ class SampleFile extends BasicModel {
     return files;
   }
 
-  async updateUploadStatus(sampleId, sampleFileType, uploadStatus) {
-    await this.sql({ sf: tableNames.SAMPLE_FILE })
+  async updateUploadStatus(sampleFileId, uploadStatus) {
+    return this.sql({ sf: tableNames.SAMPLE_FILE })
       .update({ upload_status: uploadStatus })
-      .whereExists(
-        this.sql({ sf_map: tableNames.SAMPLE_TO_SAMPLE_FILE_MAP })
-          .select(['sample_file_id'])
-          .where('sf_map.sample_file_id', '=', this.sql.ref('sf.id'))
-          .where('sf_map.sample_id', '=', sampleId),
-      )
-      .andWhere({ sample_file_type: sampleFileType });
+      .where({ id: sampleFileId });
   }
 }
 
