@@ -3,12 +3,13 @@ API
 ======
 
 A nodejs service that sits in between the UI, the Cellenics backends and the Data store and does the following:
-- Authorizes and validates requests. 
+
+- Authorizes and validates requests.
 - Creates and starts gem2s and qc state machines for data processing tasks.
 - Creates a SQS queue and assigns available worker to an experiement that needs one for data analysis tasks.
 - Deletes worker pods that are no longer needed.
 - Listens to broadcasted messages by the worker on Redis and processes the message that's relevant to it (based on the value of `socketId` in the message body).
-See the [Emitters](https://socket.io/docs/v4/redis-adapter/#emitter) section in the Redis adapter documention for more details about how the worker-API communication happens.
+  See the [Emitters](https://socket.io/docs/v4/redis-adapter/#emitter) section in the Redis adapter documention for more details about how the worker-API communication happens.
 - Communicates to the UI via socket connections to send the status of worker requests and details about where they can be found.
 - Contains HTTP endpoints that allow programmatic access and modification to experiment data by authorized users.
 
@@ -66,6 +67,7 @@ If you haven't completed step 1 and run Inframock locally, you should see the fo
 [2021-01-03T11:51:36.310Z] Server listening on port: 3000
 [2021-01-03T11:51:36.312Z] redis:reader An error occurred: connect ECONNREFUSED 127.0.0.1:6379
 ```
+
 The reason for the Redis error is that the API is not connected with the rest of the platform.
 
 If you did complete step 1 and are runnig Inframock locally, you should see the following output on your terminal:
@@ -90,6 +92,7 @@ If you did complete step 1 and are runnig Inframock locally, you should see the 
 ```
 
 #### Step 3. Run the UI locally
+
 This is required to run the API with a local version of the UI.
 Go to the [UI repo](https://github.com/hms-dbmi-cellenics/ui) and follow the instructions in the README to set it up and start it on a separate terminal.
 After the UI service is started, any request from the UI will be automatically forwarded to the API and vice versa.
@@ -108,9 +111,18 @@ After the worker service is started, any request from the API will be automatica
 
 ## Deployment
 
-The API is deployed as a Helm chart to an AWS-managed Kubernetes cluster. The deployment is handled by the cluster Helm operator and the [API Github Actions workflow](https://github.com/hms-dbmi-cellenics/api/blob/master/.github/workflows/ci.yaml). 
+The API is deployed as a Helm chart to an AWS-managed Kubernetes cluster. The deployment is handled by the cluster Helm operator and the [API Github Actions workflow](https://github.com/hms-dbmi-cellenics/api/blob/master/.github/workflows/ci.yaml).
 
 During a deployment, API Github Actions workflow does the following:
+
 - It pushes new API images to ECR.
-- Adds API-specific configurations to the [nodejs Helm chart](https://github.com/hms-dbmi-cellenics/iac/tree/master/charts/nodejs), that is used for the deployment of the API. 
+- Adds API-specific configurations to the [nodejs Helm chart](https://github.com/hms-dbmi-cellenics/iac/tree/master/charts/nodejs), that is used for the deployment of the API.
 - Pushes the API-specific configuration changes into the [releases/](https://github.com/hms-dbmi-cellenics/iac/tree/master/releases) folder in iac, under the relevant environment.
+
+## Cache
+
+By default development and staging will run without cache to make development faster. The exception is `GetEmbedding` tasks because other tasks like download seurat object or trajectory analysis depend on the original embedding ETag to work.
+
+If you want to enable cache locally you can do so by setting the flag `USE_CACHE=true`. E.g. run the api with:
+
+`USE_CACHE=true make run`

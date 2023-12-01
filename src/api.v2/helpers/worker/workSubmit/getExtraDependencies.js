@@ -3,6 +3,7 @@ const Experiment = require('../../../model/Experiment');
 const getLastModified = require('../../s3/getLastModified');
 const bucketNames = require('../../../../config/bucketNames');
 const getS3Object = require('../../s3/getObject');
+const getCellSetsAffectingDownsampling = require('./getCellSetsAffectingDownsampling');
 
 const getClusteringSettings = async (experimentId) => {
   const {
@@ -41,25 +42,6 @@ const getCellSetsLastVersion = async (experimentId) => {
 };
 
 
-const getCellSetsThatAffectDownsampling = async (_experimentId, body, cellSets) => {
-  // If not downsampling, then there's no dependency set by this getter
-  if (!body.downsampleSettings) return '';
-
-  const { selectedCellSet, groupedTracks } = body.downsampleSettings;
-
-  const selectedCellSetKeys = cellSets
-    .find(({ key }) => key === selectedCellSet)
-    .children.map(({ key }) => key);
-
-  const groupedCellSetKeys = cellSets
-    .filter(({ key }) => groupedTracks.includes(key))
-    .flatMap(({ children }) => children)
-    .map(({ key }) => key);
-
-  // Keep them in separate lists, they each represent different changes in the settings
-  return [selectedCellSetKeys, groupedCellSetKeys];
-};
-
 const dependencyGetters = {
   ClusterCells: [],
   ScTypeAnnotate: [],
@@ -76,7 +58,7 @@ const dependencyGetters = {
   GetNGenes: [],
   GetNUmis: [],
   MarkerHeatmap: [
-    getClusteringSettings, getCellSetsThatAffectDownsampling,
+    getClusteringSettings, getCellSetsAffectingDownsampling,
   ],
   GetTrajectoryAnalysisStartingNodes: [getClusteringSettings],
   GetTrajectoryAnalysisPseudoTime: [getClusteringSettings, getEmbeddingSettings],
