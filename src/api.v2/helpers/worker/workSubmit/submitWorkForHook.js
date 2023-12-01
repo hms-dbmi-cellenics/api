@@ -3,12 +3,9 @@ const generateETag = require('../generateEtag');
 
 
 const submitWorkForHook = async (experimentId, authJWT, body) => {
-  const extras = undefined;
-
   const data = {
     experimentId,
     body,
-    extras,
   };
 
   const ETag = await generateETag(data);

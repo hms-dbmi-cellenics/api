@@ -98,15 +98,14 @@ describe('tests for experiment route', () => {
     });
 
     const experimentId = 'experiment-id';
-    const sampleId = 'sample-id';
-    const sampleFileType = 'features.tsv.gz';
+    const sampleFileId = 'sample-file-id';
 
     const patchFileBody = {
       uploadStatus: 'uploading',
     };
 
     request(app)
-      .patch(`/v2/experiments/${experimentId}/samples/${sampleId}/sampleFiles/${sampleFileType}`)
+      .patch(`/v2/experiments/${experimentId}/sampleFiles/${sampleFileId}`)
       .send(patchFileBody)
       .expect(200)
       .end((err) => {
@@ -126,15 +125,14 @@ describe('tests for experiment route', () => {
     });
 
     const experimentId = 'experiment-id';
-    const sampleId = 'sample-id';
-    const sampleFileType = 'features.tsv.gz';
+    const sampleFileId = 'sample-file-id';
 
     const patchFileBody = {
       s3Path: 'features.tsv.gz',
     };
 
     request(app)
-      .patch(`/v2/experiments/${experimentId}/samples/${sampleId}/sampleFiles/${sampleFileType}`)
+      .patch(`/v2/experiments/${experimentId}/sampleFiles/${sampleFileId}`)
       .send(patchFileBody)
       .expect(400)
       .end((err) => {
