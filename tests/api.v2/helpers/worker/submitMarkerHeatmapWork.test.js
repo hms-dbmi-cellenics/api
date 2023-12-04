@@ -72,7 +72,6 @@ const mockCellSets = {
 describe('submitWorkEmbedding', () => {
   beforeEach(() => {
     AWSMock.restore();
-    process.env.USE_CACHE = 'true';
   });
 
   it('submits the work and the ETag / params are correct', async () => {

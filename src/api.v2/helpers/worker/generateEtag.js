@@ -6,36 +6,19 @@ const getExtraDependencies = require('./workSubmit/getExtraDependencies');
 const createObjectHash = (object) => hash.MD5(object);
 
 
-// Disable unique keys to reallow reuse of work results in development
-const DISABLE_UNIQUE_KEYS = [
-  'GetEmbedding',
-];
-
-// we want to disable cache in staging & development
-// however trajectory & download rds depend on the embedding's ETag so we have to
-// disable the unique keys for the embeddings task
-const getCacheUniquenessKey = (taskName) => {
-  // allow people to enable cache in development by setting USE_CACHE=true
-  if (process.env.USE_CACHE === 'true') {
-    return null;
-  }
-
-  if (config.clusterEnv !== 'production' && !DISABLE_UNIQUE_KEYS.includes(taskName)) {
-    return Math.random();
-  }
-  return null;
-};
-
 const generateETag = async (
   data,
 ) => {
   const {
     experimentId,
     body,
-    extras,
+    requestProps,
   } = data;
 
-  const cacheUniquenessKey = getCacheUniquenessKey(body.name);
+  let cacheUniquenessKey = null;
+  if (requestProps && requestProps.cacheUniquenessKey) {
+    cacheUniquenessKey = requestProps.cacheUniquenessKey;
+  }
 
   const backendStatus = await getExperimentBackendStatus(experimentId);
   const { pipeline: { startDate: qcPipelineStartDate } } = backendStatus;
@@ -56,7 +39,6 @@ const generateETag = async (
     experimentId,
     body,
     qcPipelineStartDate: qcPipelineStartDateStr,
-    extras,
     cacheUniquenessKey,
     workerVersion,
     extraDependencies,
