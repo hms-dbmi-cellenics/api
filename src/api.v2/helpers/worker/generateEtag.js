@@ -15,11 +15,6 @@ const generateETag = async (
     requestProps,
   } = data;
 
-  let cacheUniquenessKey = null;
-  if (requestProps && requestProps.cacheUniquenessKey) {
-    cacheUniquenessKey = requestProps.cacheUniquenessKey;
-  }
-
   const backendStatus = await getExperimentBackendStatus(experimentId);
   const { pipeline: { startDate: qcPipelineStartDate } } = backendStatus;
 
@@ -39,7 +34,7 @@ const generateETag = async (
     experimentId,
     body,
     qcPipelineStartDate: qcPipelineStartDateStr,
-    cacheUniquenessKey,
+    requestProps,
     workerVersion,
     extraDependencies,
   };
