@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const handleWorkRequest = require('../../../src/api.v2/events/handleWorkRequest');
 const generateETag = require('../../../src/api.v2/helpers/worker/generateEtag');
 const getWorkResults = require('../../../src/api.v2/helpers/worker/getWorkResults');
@@ -11,8 +13,10 @@ jest.mock('../../../src/api.v2/events/validateAndSubmitWork');
 
 const data = {
   uuid: 'someuuid-asd-asd-asdddasa',
-  experimentId: fake.EXPERIMENT_ID,
   ETag: 'etag-of-the-work-request',
+  experimentId: fake.EXPERIMENT_ID,
+  body: { someParam: true },
+  requestProps: { broadcast: false, cacheUniquenessKey: null },
 };
 const authJWT = 'Bearer someLongAndConfusingString';
 
@@ -24,7 +28,7 @@ describe('Handle work', () => {
   it('generates ETag successfully', async () => {
     generateETag.mockResolvedValue('new-etag');
     await handleWorkRequest(authJWT, data);
-    expect(generateETag).toHaveBeenCalledWith(data);
+    expect(generateETag).toHaveBeenCalledWith(_.pick(data, ['experimentId', 'body', 'requestProps']));
   });
 
   it('handles existing work results', async () => {
