@@ -21,10 +21,10 @@ const getSignedUrlIfAvailable = async (experimentId, ETag) => {
 
 
 const handleWorkRequest = async (Authorization, data) => {
-  const { experimentId } = data;
+  const { experimentId, body, requestProps } = data;
 
   // 1. Generate ETag for the new work request
-  const ETag = await generateETag(data);
+  const ETag = await generateETag({ experimentId, body, requestProps });
 
   // 2. Check if there are already existing work results for this ETag
   const signedUrl = await getSignedUrlIfAvailable(experimentId, ETag);

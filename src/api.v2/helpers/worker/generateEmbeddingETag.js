@@ -18,7 +18,16 @@ const generateEmbeddingETag = async (experimentId) => {
     config: embeddingSettings.methodSettings[embeddingSettings.method],
   };
 
-  return generateETag({ experimentId, body: embeddingBody });
+  const bodyForEtag = {
+    experimentId,
+    body: embeddingBody,
+    requestProps: {
+      broadcast: false,
+      cacheUniquenessKey: null,
+    },
+  };
+
+  return generateETag(bodyForEtag);
 };
 
 module.exports = generateEmbeddingETag;
