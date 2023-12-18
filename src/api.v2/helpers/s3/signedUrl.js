@@ -106,6 +106,9 @@ const fileNameToReturn = {
   rhapsody: 'expression_data.st.gz',
   seurat: 'r.rds',
   '10x_h5': 'matrix.h5.gz',
+  featuresParse: 'all_genes.csv.gz',
+  barcodesParse: 'cell_metadata.csv.gz',
+  matrixParse: 'DGE.mtx.gz',
 };
 
 const getSampleFileDownloadUrl = async (experimentId, sampleId, fileType) => {
