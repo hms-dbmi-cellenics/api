@@ -14,6 +14,7 @@ items:
             - pattern: ^rhapsody$
             - pattern: ^10x_h5$
             - pattern: ^seurat$
+            - pattern: ^parse$
     options:
       type: object
 
