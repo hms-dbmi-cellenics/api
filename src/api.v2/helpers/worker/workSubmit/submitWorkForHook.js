@@ -3,9 +3,15 @@ const generateETag = require('../generateEtag');
 
 
 const submitWorkForHook = async (experimentId, authJWT, body) => {
+  const requestProps = {
+    broadcast: false,
+    cacheUniquenessKey: null,
+  };
+
   const data = {
     experimentId,
     body,
+    requestProps,
   };
 
   const ETag = await generateETag(data);
@@ -19,6 +25,7 @@ const submitWorkForHook = async (experimentId, authJWT, body) => {
     authJWT,
     timeout: timeoutDate.toISOString(),
     body,
+    requestProps,
   };
 
   await validateAndSubmitWork(request);
