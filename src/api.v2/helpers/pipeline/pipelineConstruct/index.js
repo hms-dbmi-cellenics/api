@@ -69,6 +69,15 @@ const withoutDefaultFilterSettings = (processingConfig, samplesOrder) => {
 const withRecomputeDoubletScores = (processingConfig) => {
   const newProcessingConfig = _.cloneDeep(processingConfig);
 
+  const sampleModel = new Sample();
+  const samples = await sampleModel.find({ experiment_id: experimentId });
+
+  // Create a map of sampleId to sampleTechnology
+  const sampleTechMap = samples.reduce((acc, sample) => {
+    acc[sample.id] = sample.sampleTechnology;
+    return acc;
+  }, {});
+
   // If count distribution changes (i.e. enabled cellsize) recompute the doublet
   // scores in QC for correctness.
   const classifierAutoEnabled = Object.values(
