@@ -64,7 +64,7 @@ jobs:
       - id: reach-staging
         if: steps.extract-staging.outputs.url != 'N/A'
         name: Attempt to reach staging environments
-        uses: nick-invision/retry@v2
+        uses: nick-fields/retry@v2
         with:
           timeout_seconds: 30
           max_attempts: 5
