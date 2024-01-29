@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const util = require('util');
 
+const Sample = require('../../../model/Sample');
+
 const config = require('../../../../config');
 const {
   QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUBSET_PROCESS_NAME, SEURAT_PROCESS_NAME,
@@ -66,8 +68,17 @@ const withoutDefaultFilterSettings = (processingConfig, samplesOrder) => {
  * @param {Object} processingConfig - The processing configuration object containing
  * doubletScores and cellSizeDistribution configurations for each sample.
  */
-const withRecomputeDoubletScores = (processingConfig) => {
+const withRecomputeDoubletScores = async (processingConfig, experimentId) => {
   const newProcessingConfig = _.cloneDeep(processingConfig);
+
+  const sampleModel = new Sample();
+  const samples = await sampleModel.find({ experiment_id: experimentId });
+
+  // Create a map of sampleId to sampleTechnology
+  const sampleTechMap = samples.reduce((acc, sample) => {
+    acc[sample.id] = sample.sampleTechnology;
+    return acc;
+  }, {});
 
   // If count distribution changes (i.e. enabled cellsize) recompute the doublet
   // scores in QC for correctness.
@@ -83,8 +94,12 @@ const withRecomputeDoubletScores = (processingConfig) => {
   Object.keys(newProcessingConfig.doubletScores).forEach((sample) => {
     // eslint-disable-next-line no-param-reassign
     newProcessingConfig.doubletScores[sample].recomputeDoubletScore = recomputeDoubletScore;
+    // Assign sampleTechnology to each entry in doubletScores
+    const sampleTechnology = sampleTechMap[sample];
+    if (sampleTechnology) {
+      newProcessingConfig.doubletScores[sample].sampleTechnology = sampleTechnology;
+    }
   });
-
   return newProcessingConfig;
 };
 
@@ -143,7 +158,7 @@ const createQCPipeline = async (experimentId, processingConfigDiff, authJWT, pre
   });
 
   // workaround to add a flag to recompute doublet scores in the processingConfig object.
-  const fullProcessingConfig = withRecomputeDoubletScores(processingConfig);
+  const fullProcessingConfig = await withRecomputeDoubletScores(processingConfig, experimentId);
 
   // Store the processing config with all changes back in sql
   await new Experiment().updateById(experimentId, { processing_config: fullProcessingConfig });

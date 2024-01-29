@@ -9,6 +9,7 @@ const { getQcPipelineStepNames } = require('../../../../src/api.v2/helpers/pipel
 const CellLevelMeta = require('../../../../src/api.v2/model/CellLevelMeta');
 const Experiment = require('../../../../src/api.v2/model/Experiment');
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
+const Sample = require('../../../../src/api.v2/model/Sample');
 const { createSubsetPipeline, createCopyPipeline } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 const { cancelPreviousPipelines } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/utils');
 
@@ -47,6 +48,7 @@ jest.mock('../../../../src/utils/asyncTimer');
 jest.mock('../../../../src/api.v2/model/Experiment');
 jest.mock('../../../../src/api.v2/model/CellLevelMeta');
 jest.mock('../../../../src/api.v2/model/ExperimentExecution');
+jest.mock('../../../../src/api.v2/model/Sample');
 fetchMock.enableFetchMocks();
 
 describe('test for pipeline services', () => {
@@ -87,6 +89,21 @@ describe('test for pipeline services', () => {
       },
     },
   };
+
+
+  const sampleInstance = new Sample();
+
+  sampleInstance.find.mockReturnValue(
+    Promise.resolve([
+      {
+        id: 'sample1',
+        experiment_id: 'exp1',
+        name: 'Sample 1',
+        sample_technology: '10x',
+      },
+    ])
+  );
+
 
   it('Create QC pipeline works', async () => {
     const describeClusterSpy = jest.fn((x) => x);
@@ -130,6 +147,23 @@ describe('test for pipeline services', () => {
           experimentId: 'testExperimentId',
         },
       ]),
+    );
+
+    sampleInstance.find.mockReturnValue(
+      Promise.resolve([
+        {
+          id: 'sample1',
+          experiment_id: 'exp1',
+          name: 'Sample 1',
+          sample_technology: '10x',
+        },
+        {
+          id: 'sample2',
+          experiment_id: 'exp1',
+          name: 'Sample 2',
+          sample_technology: '10x',
+        },
+      ])
     );
 
     await createQCPipeline('testExperimentId', processingConfigUpdate);
