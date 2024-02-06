@@ -296,6 +296,7 @@ const createSubsetPipeline = async (
   toExperimentName,
   cellSetKeys,
   parentProcessingConfig,
+  parentSampleTechnology,
   authJWT,
 ) => {
   const stepsParams = {
@@ -305,8 +306,13 @@ const createSubsetPipeline = async (
     parentProcessingConfig,
   };
 
-  // None of the other normal gem2s params are necessary for these 2 steps
-  const lastStepsParams = { experimentName: toExperimentName, authJWT };
+  // None of the other normal gem2s params are necessary for these 2 steps except for
+  // sample technology, to know whether it is parse or not
+  const lastStepsParams = {
+    experimentName: toExperimentName,
+    authJWT,
+    input: { type: parentSampleTechnology },
+  };
 
   const context = {
     ...(await getGeneralPipelineContext(toExperimentId, SUBSET_PROCESS_NAME)),
