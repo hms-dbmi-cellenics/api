@@ -463,6 +463,7 @@ describe('test for pipeline services', () => {
       'toExperimentName',
       ['louvain-1', 'louvain-2'],
       mockExperimentRow.processingConfig,
+      'sample_technology',
       'mockAuthJWT',
     );
 

@@ -12,8 +12,10 @@ const { GEM2S_PROCESS_NAME } = require('../../../src/api.v2/constants');
 const { mockSqlClient } = require('../mocks/getMockSqlClient')();
 
 const mockExperimentRow = require('../mocks/data/experimentRow.json');
+const Sample = require('../../../src/api.v2/model/Sample');
 
 jest.mock('../../../src/api.v2/model/Experiment');
+jest.mock('../../../src/api.v2/model/Sample');
 jest.mock('../../../src/api.v2/model/ExperimentExecution');
 jest.mock('../../../src/api.v2/model/ExperimentParent');
 jest.mock('../../../src/api.v2/model/UserAccess');
@@ -29,6 +31,7 @@ const mockRes = {
 };
 
 const experimentInstance = Experiment();
+const sampleInstance = Sample();
 const userAccessInstance = UserAccess();
 const experimentExecutionInstance = ExperimentExecution();
 const experimentParentInstance = ExperimentParent();
@@ -56,10 +59,21 @@ describe('subsetController', () => {
 
     const newExecution = { stateMachineArn: 'mockStateMachineArn', executionArn: 'mockExecutionArn' };
 
+    const mockExperimentSampleRow = {
+      id: 'sample1',
+      experimentId: mockExperimentRow.id,
+      name: 'firstSample',
+      sampleTechnology: '10x',
+    };
+
     experimentInstance.createCopy.mockImplementationOnce(() => Promise.resolve(childExperimentId));
 
     experimentInstance.findById.mockReturnValueOnce(
       { first: () => Promise.resolve(mockExperimentRow) },
+    );
+
+    sampleInstance.find.mockReturnValue(
+      { first: () => Promise.resolve(mockExperimentSampleRow) },
     );
 
     pipelineConstruct.createSubsetPipeline.mockImplementationOnce(
@@ -102,6 +116,7 @@ describe('subsetController', () => {
         mockParams.name,
         mockParams.cellSetKeys,
         mockExperimentRow.processingConfig,
+        mockExperimentSampleRow.sampleTechnology,
         mockReq.headers.authorization,
       );
 

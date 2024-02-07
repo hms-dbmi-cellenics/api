@@ -6,6 +6,7 @@ const Experiment = require('../../model/Experiment');
 const ExperimentExecution = require('../../model/ExperimentExecution');
 const ExperimentParent = require('../../model/ExperimentParent');
 const UserAccess = require('../../model/UserAccess');
+const Sample = require('../../model/Sample');
 
 const logger = getLogger('[SubsetController] - ');
 
@@ -40,12 +41,17 @@ const startSubsetPipeline = async (params, authorization) => {
     processingConfig: parentProcessingConfig,
   } = await new Experiment().findById(parentExperimentId).first();
 
+  const {
+    sampleTechnology: parentSampleTechnology,
+  } = await new Sample().find({ experiment_id: parentExperimentId }).first();
+
   const { stateMachineArn, executionArn } = await createSubsetPipeline(
     parentExperimentId,
     subsetExperimentId,
     toExperimentName,
     cellSetKeys,
     parentProcessingConfig,
+    parentSampleTechnology,
     authorization,
   );
 
