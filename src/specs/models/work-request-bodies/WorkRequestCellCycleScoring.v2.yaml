@@ -1,0 +1,10 @@
+title: Cell cycle scoring
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the work. Must be `CellCycleScoring`.
+    pattern: CellCycleScoring
+required:
+  - name
+additionalProperties: false
