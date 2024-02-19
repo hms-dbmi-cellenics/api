@@ -63,6 +63,26 @@ const createMultipartUpload = async (params, size) => {
   };
 };
 
+const getPartUploadSignedUrl = async (key, bucketName, uploadId, partNumber) => {
+  const S3Config = {
+    apiVersion: '2006-03-01',
+    signatureVersion: 'v4',
+    region: config.awsRegion,
+  };
+
+  const s3 = new AWS.S3(S3Config);
+
+  const params = {
+    Bucket: bucketName,
+    Key: key,
+    // 1 hour timeout of upload link
+    Expires: 3600,
+    UploadId: uploadId,
+    PartNumber: partNumber,
+  };
+
+  return await s3.getSignedUrlPromise('uploadPart', { params });
+};
 
 const completeMultipartUpload = async (key, parts, uploadId, bucketName) => {
   const params = {
@@ -137,4 +157,5 @@ module.exports = {
   getSignedUrl,
   createMultipartUpload,
   completeMultipartUpload,
+  getPartUploadSignedUrl,
 };
