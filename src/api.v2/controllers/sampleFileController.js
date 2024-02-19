@@ -25,8 +25,6 @@ const createFile = async (req, res) => {
     upload_status: 'uploading',
   };
 
-
-
   await sqlClient.get().transaction(async (trx) => {
     await new SampleFile(trx).create(newSampleFile);
     await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType);

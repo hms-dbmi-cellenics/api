@@ -36,30 +36,35 @@ const createMultipartUpload = async (params, size) => {
 
   const s3 = new AWS.S3(S3Config);
 
+  console.log('paramsDebug');
+  console.log(params);
+
   const { UploadId } = await s3.createMultipartUpload(params).promise();
 
-  const baseParams = {
-    ...params,
-    UploadId,
-  };
+  // const baseParams = {
+  //   ...params,
+  //   UploadId,
+  // };
 
-  const promises = [];
-  const parts = Math.ceil(size / FILE_CHUNK_SIZE);
+  // const promises = [];
+  // const parts = Math.ceil(size / FILE_CHUNK_SIZE);
 
-  for (let i = 0; i < parts; i += 1) {
-    promises.push(
-      s3.getSignedUrlPromise('uploadPart', {
-        ...baseParams,
-        PartNumber: i + 1,
-      }),
-    );
-  }
+  // for (let i = 0; i < parts; i += 1) {
+  //   promises.push(
+  //     s3.getSignedUrlPromise('uploadPart', {
+  //       ...baseParams,
+  //       PartNumber: i + 1,
+  //     }),
+  //   );
+  // }
 
-  const signedUrls = await Promise.all(promises);
+  // const signedUrls = await Promise.all(promises);
 
   return {
-    signedUrls,
+    signedUrls: null,
     uploadId: UploadId,
+    bucket: params.Bucket,
+    key: params.Key,
   };
 };
 
@@ -73,15 +78,18 @@ const getPartUploadSignedUrl = async (key, bucketName, uploadId, partNumber) => 
   const s3 = new AWS.S3(S3Config);
 
   const params = {
-    Bucket: bucketName,
     Key: key,
+    Bucket: bucketName,
     // 1 hour timeout of upload link
     Expires: 3600,
     UploadId: uploadId,
     PartNumber: partNumber,
   };
 
-  return await s3.getSignedUrlPromise('uploadPart', { params });
+  // console.log('paramsDebug');
+  // console.log(params);
+
+  return await s3.getSignedUrlPromise('uploadPart', params);
 };
 
 const completeMultipartUpload = async (key, parts, uploadId, bucketName) => {
