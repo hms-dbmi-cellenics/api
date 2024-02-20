@@ -39,7 +39,7 @@ const createFile = async (req, res) => {
 const beginUpload = async (req, res) => {
   const {
     params: { experimentId, sampleFileId },
-    body: { metadata, size },
+    body: { metadata },
   } = req;
 
   const { uploadStatus } = await new SampleFile().findById(sampleFileId).first();
@@ -55,7 +55,7 @@ const beginUpload = async (req, res) => {
 
   logger.log(`Generating multipart upload urls for ${experimentId}, sample file ${sampleFileId}`);
   const uploadParams = await getFileUploadUrls(
-    sampleFileId, metadata, size, bucketNames.SAMPLE_FILES,
+    sampleFileId, metadata, bucketNames.SAMPLE_FILES,
   );
 
   res.json(uploadParams);

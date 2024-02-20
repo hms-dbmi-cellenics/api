@@ -22,9 +22,9 @@ const getSignedUrl = async (operation, params) => {
   return s3.getSignedUrlPromise(operation, params);
 };
 
-const FILE_CHUNK_SIZE = 10000000;
+// const FILE_CHUNK_SIZE = 10000000;
 
-const createMultipartUpload = async (params, size) => {
+const createMultipartUpload = async (params) => {
   if (!params.Bucket) throw new Error('Bucket is required');
   if (!params.Key) throw new Error('Key is required');
 
@@ -36,32 +36,9 @@ const createMultipartUpload = async (params, size) => {
 
   const s3 = new AWS.S3(S3Config);
 
-  console.log('paramsDebug');
-  console.log(params);
-
   const { UploadId } = await s3.createMultipartUpload(params).promise();
 
-  // const baseParams = {
-  //   ...params,
-  //   UploadId,
-  // };
-
-  // const promises = [];
-  // const parts = Math.ceil(size / FILE_CHUNK_SIZE);
-
-  // for (let i = 0; i < parts; i += 1) {
-  //   promises.push(
-  //     s3.getSignedUrlPromise('uploadPart', {
-  //       ...baseParams,
-  //       PartNumber: i + 1,
-  //     }),
-  //   );
-  // }
-
-  // const signedUrls = await Promise.all(promises);
-
   return {
-    signedUrls: null,
     uploadId: UploadId,
     bucket: params.Bucket,
     key: params.Key,
@@ -86,9 +63,6 @@ const getPartUploadSignedUrl = async (key, bucketName, uploadId, partNumber) => 
     PartNumber: partNumber,
   };
 
-  // console.log('paramsDebug');
-  // console.log(params);
-
   return await s3.getSignedUrlPromise('uploadPart', params);
 };
 
@@ -110,7 +84,7 @@ const completeMultipartUpload = async (key, parts, uploadId, bucketName) => {
   await s3.completeMultipartUpload(params).promise();
 };
 
-const getFileUploadUrls = async (key, metadata, size, bucketName) => {
+const getFileUploadUrls = async (key, metadata, bucketName) => {
   const params = {
     Bucket: bucketName,
     Key: key,
@@ -124,7 +98,7 @@ const getFileUploadUrls = async (key, metadata, size, bucketName) => {
     };
   }
 
-  return await createMultipartUpload(params, size);
+  return await createMultipartUpload(params);
 };
 
 const fileNameToReturn = {

@@ -28,7 +28,7 @@ const upload = async (req, res) => {
     await new CellLevelMeta(trx).create(newCellLevelMetaFile);
     await new CellLevelMetaToExperiment(trx).setNewFile(experimentId, cellLevelMetaKey);
 
-    uploadUrlParams = await getFileUploadUrls(cellLevelMetaKey, {}, size, bucketName);
+    uploadUrlParams = await getFileUploadUrls(cellLevelMetaKey, {}, bucketName);
     uploadUrlParams = { ...uploadUrlParams, fileId: cellLevelMetaKey };
   });
 
