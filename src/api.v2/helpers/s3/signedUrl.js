@@ -22,9 +22,9 @@ const getSignedUrl = async (operation, params) => {
   return s3.getSignedUrlPromise(operation, params);
 };
 
-const createMultipartUpload = async (params) => {
-  if (!params.Bucket) throw new Error('Bucket is required');
-  if (!params.Key) throw new Error('Key is required');
+const createMultipartUpload = async (key, metadata, bucket) => {
+  if (!key) throw new Error('key is required');
+  if (!bucket) throw new Error('bucket is required');
 
   const S3Config = {
     apiVersion: '2006-03-01',
@@ -32,14 +32,28 @@ const createMultipartUpload = async (params) => {
     region: config.awsRegion,
   };
 
+  const params = {
+    Bucket: bucket,
+    Key: key,
+    // 1 hour timeout of upload link
+    Expires: 3600,
+  };
+
+  if (metadata.cellrangerVersion) {
+    params.Metadata = {
+      cellranger_version: metadata.cellrangerVersion,
+    };
+  }
+
   const s3 = new AWS.S3(S3Config);
 
+  // @ts-ignore
   const { UploadId } = await s3.createMultipartUpload(params).promise();
 
   return {
     uploadId: UploadId,
-    bucket: params.Bucket,
-    key: params.Key,
+    bucket,
+    key,
   };
 };
 
@@ -82,23 +96,6 @@ const completeMultipartUpload = async (key, parts, uploadId, bucketName) => {
   await s3.completeMultipartUpload(params).promise();
 };
 
-const getFileUploadUrls = async (key, metadata, bucketName) => {
-  const params = {
-    Bucket: bucketName,
-    Key: key,
-    // 1 hour timeout of upload link
-    Expires: 3600,
-  };
-
-  if (metadata.cellrangerVersion) {
-    params.Metadata = {
-      cellranger_version: metadata.cellrangerVersion,
-    };
-  }
-
-  return await createMultipartUpload(params);
-};
-
 const fileNameToReturn = {
   matrix10x: 'matrix.mtx.gz',
   barcodes10x: 'barcodes.tsv.gz',
@@ -132,7 +129,6 @@ const getSampleFileDownloadUrl = async (experimentId, sampleId, fileType) => {
 };
 
 module.exports = {
-  getFileUploadUrls,
   getSampleFileDownloadUrl,
   getSignedUrl,
   createMultipartUpload,

@@ -4,7 +4,7 @@ const Sample = require('../model/Sample');
 const SampleFile = require('../model/SampleFile');
 const bucketNames = require('../../config/bucketNames');
 
-const { getFileUploadUrls, getSampleFileDownloadUrl } = require('../helpers/s3/signedUrl');
+const { getSampleFileDownloadUrl, createMultipartUpload } = require('../helpers/s3/signedUrl');
 const { OK, MethodNotAllowedError } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 
@@ -54,7 +54,7 @@ const beginUpload = async (req, res) => {
   }
 
   logger.log(`Generating multipart upload urls for ${experimentId}, sample file ${sampleFileId}`);
-  const uploadParams = await getFileUploadUrls(
+  const uploadParams = await createMultipartUpload(
     sampleFileId, metadata, bucketNames.SAMPLE_FILES,
   );
 
