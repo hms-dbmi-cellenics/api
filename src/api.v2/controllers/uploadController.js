@@ -6,9 +6,6 @@ const getMultipartSignedUrl = async (req, res) => {
 
   const signedUrl = await getPartUploadSignedUrl(key, bucket, uploadId, partNumber);
 
-  console.log('signedUrlDebug');
-  console.log(signedUrl);
-
   res.json(signedUrl);
 };
 
