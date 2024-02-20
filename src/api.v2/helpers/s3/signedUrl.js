@@ -22,8 +22,6 @@ const getSignedUrl = async (operation, params) => {
   return s3.getSignedUrlPromise(operation, params);
 };
 
-// const FILE_CHUNK_SIZE = 10000000;
-
 const createMultipartUpload = async (params) => {
   if (!params.Bucket) throw new Error('Bucket is required');
   if (!params.Key) throw new Error('Key is required');
