@@ -1,9 +1,9 @@
-const { getMultipartSignedUrl } = require('../controllers/uploadController');
+const { getUploadPartSignedUrl } = require('../controllers/uploadController');
 const { expressAuthorizationMiddleware } = require('../middlewares/authMiddlewares');
 
 module.exports = {
-  'upload#getMultipartSignedUrl': [
+  'upload#getUploadPartSignedUrl': [
     expressAuthorizationMiddleware,
-    (req, res, next) => getMultipartSignedUrl(req, res).catch(next),
+    (req, res, next) => getUploadPartSignedUrl(req, res).catch(next),
   ],
 };
