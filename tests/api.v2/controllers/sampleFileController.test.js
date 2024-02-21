@@ -25,10 +25,12 @@ const mockRes = {
 };
 
 describe('sampleFileController', () => {
-  const mockUploadParams = { signedUrls: ['signedUrl1', 'signedUrl2'], fileId: 'mockfileId' };
+  const mockUploadParams = { fileId: 'mockfileId', bucket: 'mockBucket', key: 'mockKey' };
 
   beforeEach(async () => {
     jest.clearAllMocks();
+
+    signedUrl.createMultipartUpload.mockReturnValueOnce(Promise.resolve(mockUploadParams));
   });
 
   it('createFile works correctly', async () => {
