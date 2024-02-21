@@ -1114,8 +1114,8 @@ paths:
               properties:
                 name:
                   type: string
-                size:
-                  type: integer
+              required:
+                - name  
       responses:
         "200":
           description: Success
