@@ -53,7 +53,7 @@ const beginUpload = async (req, res) => {
     );
   }
 
-  logger.log(`Generating multipart upload urls for ${experimentId}, sample file ${sampleFileId}`);
+  logger.log(`Creating multipart upload for ${experimentId}, sample file ${sampleFileId}`);
   const uploadParams = await createMultipartUpload(
     sampleFileId, metadata, bucketNames.SAMPLE_FILES,
   );
