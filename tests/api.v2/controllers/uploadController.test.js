@@ -1,5 +1,4 @@
 // @ts-nocheck
-
 const { getUploadPartSignedUrl } = require('../../../src/api.v2/controllers/uploadController');
 const signedUrl = require('../../../src/api.v2/helpers/s3/signedUrl');
 
