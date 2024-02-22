@@ -38,37 +38,4 @@ describe('sampleFileController', () => {
 
     expect(mockRes.json).toHaveBeenCalledWith(mockSignedUrl);
   });
-
-  // it('createFile works correctly', async () => {
-  //   const experimentId = 'experimentId';
-  //   const sampleId = 'sampleId';
-  //   const sampleFileType = 'features10x';
-
-  //   const sampleFileId = 'sampleFileId';
-  //   const size = 'size';
-  //   const metadata = {};
-
-  //   const mockReq = {
-  //     params: { experimentId, sampleId, sampleFileType },
-  //     body: { sampleFileId, size, metadata },
-  //   };
-
-  //   await sampleFileController.createFile(mockReq, mockRes);
-
-  //   // Used with transactions
-  //   expect(Sample).toHaveBeenCalledWith(mockTrx);
-  //   expect(SampleFile).toHaveBeenCalledWith(mockTrx);
-
-  //   // Not used without transactions
-  //   expect(Sample).not.toHaveBeenCalledWith(mockSqlClient);
-  //   expect(SampleFile).not.toHaveBeenCalledWith(mockSqlClient);
-
-  //   expect(sampleFileInstance.create).toHaveBeenCalledWith({
-  //     id: 'sampleFileId', s3_path: 'sampleFileId', sample_file_type: 'features10x', size: 'size', upload_status: 'uploading',
-  //   });
-  //   expect(sampleInstance.setNewFile).toHaveBeenCalledWith('sampleId', 'sampleFileId', 'features10x');
-
-  //   // Response is generated signed url
-  //   expect(mockRes.json).toHaveBeenCalledWith(OK());
-  // });
 });
