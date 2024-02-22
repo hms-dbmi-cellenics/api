@@ -13,7 +13,7 @@ jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
 const experimentId = 'experiment-id';
 
 const newCellLevelFileData = {
-  id: experimentId,
+  name: 'metaDataName',
 };
 
 describe('cell level metadata route', () => {
@@ -41,6 +41,7 @@ describe('cell level metadata route', () => {
         return done();
       });
   });
+
   it('downloading a new cell level meta file results in a successful response', async (done) => {
     cellLevelMetaController.download.mockImplementationOnce((req, res) => {
       res.json(OK());
