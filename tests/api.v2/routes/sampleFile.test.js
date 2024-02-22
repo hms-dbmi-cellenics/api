@@ -153,10 +153,9 @@ describe('tests for experiment route', () => {
 
     const experimentId = 'mockExperimentId';
     const sampleFileId = 'mockSampleFileId';
-    const size = 10;
     const metadata = {};
 
-    const body = { metadata, size };
+    const body = { metadata };
 
     request(app)
       .post(`/v2/experiments/${experimentId}/sampleFiles/${sampleFileId}/beginUpload`)
