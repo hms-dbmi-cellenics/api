@@ -2,8 +2,9 @@
 const cellLevelMetaController = require('../../../src/api.v2/controllers/cellLevelMetaController');
 const CellLevelMeta = require('../../../src/api.v2/model/CellLevelMeta');
 const CellLevelMetaToExperiment = require('../../../src/api.v2/model/CellLevelMetaToExperiment');
-const { getFileUploadUrls } = require('../../../src/api.v2/helpers/s3/signedUrl');
+const { createMultipartUpload } = require('../../../src/api.v2/helpers/s3/signedUrl');
 const { OK } = require('../../../src/utils/responses');
+const bucketNames = require('../../../src/config/bucketNames');
 const { mockSqlClient, mockTrx } = require('../mocks/getMockSqlClient')();
 
 jest.mock('../../../src/api.v2/model/CellLevelMeta');
@@ -33,13 +34,13 @@ describe('CellLevelMetaController', () => {
 
     const mockUploadUrlParams = { url: 'signedUrl', fileId: 'fileId' };
 
-    getFileUploadUrls.mockResolvedValue(mockUploadUrlParams);
+    createMultipartUpload.mockResolvedValue(mockUploadUrlParams);
     await cellLevelMetaController.upload(mockReq, mockRes);
 
     expect(CellLevelMeta).toHaveBeenCalledWith(mockTrx);
     expect(CellLevelMetaToExperiment).toHaveBeenCalledWith(mockTrx);
-    expect(getFileUploadUrls).toHaveBeenCalledWith(
-      expect.any(String), {}, mockReq.body.size, expect.any(String),
+    expect(createMultipartUpload).toHaveBeenCalledWith(
+      expect.any(String), {}, bucketNames.CELL_LEVEL_META,
     );
 
     expect(mockRes.json).toHaveBeenCalledWith(
