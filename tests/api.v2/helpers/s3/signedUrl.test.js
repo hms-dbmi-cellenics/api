@@ -91,6 +91,30 @@ describe('completeMultipartUpload', () => {
   });
 });
 
+describe('getPartUploadSignedUrl', () => {
+  const signedUrlPromiseSpy = jest.fn();
+
+  beforeEach(() => {
+    AWS.S3.mockReset();
+    AWS.S3.mockImplementation(() => ({
+      getSignedUrlPromise: signedUrlPromiseSpy,
+    }));
+  });
+
+  it('works correctly', async () => {
+    const mockSignedUrl = 'mockSignedUrl';
+    signedUrlPromiseSpy.mockResolvedValueOnce(mockSignedUrl);
+
+    const key = 'mockKey';
+    const bucketName = 'mockBucket';
+    const uploadId = 'mockUploadId';
+    const partNumber = 'mockPartNumber';
+
+    const response = await signedUrl.getPartUploadSignedUrl(key, bucketName, uploadId, partNumber);
+
+    expect(response).toEqual(mockSignedUrl);
+  });
+});
 
 describe('getSampleFileDownloadUrl', () => {
   const experimentId = 'mockExperimentId';
