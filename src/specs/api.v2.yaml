@@ -1681,6 +1681,24 @@ paths:
             application/json:
               schema:
                 type: string
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
 
   "/experiments/{experimentId}/sampleFiles/{sampleFileId}/beginUpload":
     post:
