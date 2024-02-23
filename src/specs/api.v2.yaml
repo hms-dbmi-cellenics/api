@@ -1114,8 +1114,8 @@ paths:
               properties:
                 name:
                   type: string
-                size:
-                  type: integer
+              required:
+                - name  
       responses:
         "200":
           description: Success
@@ -1636,6 +1636,70 @@ paths:
               schema:
                 $ref: "#/components/schemas/HTTPError"
     
+  "/experiments/{experimentId}/upload/{uploadId}/part/{partNumber}/signedUrl":
+    get:
+      summary: Gets signed url to upload a part
+      description: Gets the upload url for uploading partNumber of an ongoing multipart upload
+      operationId: getUploadPartSignedUrl
+      x-eov-operation-id: upload#getUploadPartSignedUrl
+      x-eov-operation-handler: routes/upload
+      parameters:
+        - name: experimentId
+          required: true
+          in: path
+          description: ID of the experiment.
+          schema:
+            type: string
+        - name: uploadId
+          in: path
+          description: UploadId used to identify s3 multipart uploads.
+          required: true
+          schema:
+            type: string
+        - name: partNumber
+          in: path
+          description: PartNumber used to identify which part of the s3 multipart upload this is.
+          required: true
+          schema:
+            type: integer
+        - name: bucket
+          description: Bucket receiving the upload
+          schema:
+            type: string
+          in: query
+          required: true
+        - name: key
+          description: Key of the file being uploaded in the bucket
+          schema:
+            type: string
+          in: query
+          required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: The request lacks authentication credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden request for this user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+
   "/experiments/{experimentId}/sampleFiles/{sampleFileId}/beginUpload":
     post:
       summary: Begins the multipart upload of a sample file

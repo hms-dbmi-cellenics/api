@@ -1,13 +1,12 @@
 // @ts-nocheck
 const SampleFile = require('../../../../src/api.v2/model/SampleFile');
 const signedUrl = require('../../../../src/api.v2/helpers/s3/signedUrl');
-const bucketNames = require('../../../../src/config/bucketNames');
 
 const AWS = require('../../../../src/utils/requireAWS');
 const { NotFoundError } = require('../../../../src/utils/responses');
 
 const {
-  getSignedUrl, getSampleFileDownloadUrl, getFileUploadUrls, completeMultipartUpload,
+  getSignedUrl, getSampleFileDownloadUrl, completeMultipartUpload,
 } = signedUrl;
 const sampleFileInstance = new SampleFile();
 
@@ -68,42 +67,6 @@ describe('getSignedUrl', () => {
   });
 });
 
-describe('getFileUploadUrls', () => {
-  const mockSampleFileId = 'mockSampleFileId';
-
-  const signedUrlResponse = { signedUrls: ['signedUrl'], uploadId: 'uploadId' };
-
-  const createMultipartUploadSpy = jest.fn();
-  const getSignedUrlPromiseSpy = jest.fn();
-
-  beforeEach(() => {
-    createMultipartUploadSpy.mockReturnValue({ promise: jest.fn().mockReturnValue({ UploadId: 'uploadId' }) });
-    getSignedUrlPromiseSpy.mockReturnValue('signedUrl');
-
-    AWS.S3.mockReset();
-    AWS.S3.mockImplementation(() => ({
-      createMultipartUpload: createMultipartUploadSpy,
-      getSignedUrlPromise: getSignedUrlPromiseSpy,
-    }));
-  });
-
-  it('works correctly without metadata', async () => {
-    const response = await getFileUploadUrls(mockSampleFileId, {}, 1, bucketNames.SAMPLE_FILES);
-
-    expect(response).toEqual(signedUrlResponse);
-    expect(createMultipartUploadSpy).toMatchSnapshot();
-    expect(getSignedUrlPromiseSpy).toMatchSnapshot();
-  });
-
-  it('works correctly with metadata cellrangerVersion', async () => {
-    const response = await getFileUploadUrls(mockSampleFileId, { cellrangerVersion: 'v2' }, 1, bucketNames.SAMPLE_FILES);
-
-    expect(response).toEqual(signedUrlResponse);
-    expect(createMultipartUploadSpy).toMatchSnapshot();
-    expect(getSignedUrlPromiseSpy).toMatchSnapshot();
-  });
-});
-
 describe('completeMultipartUpload', () => {
   const mockSampleFileId = 'mockSampleFileId';
   const mockParts = [];
@@ -128,6 +91,30 @@ describe('completeMultipartUpload', () => {
   });
 });
 
+describe('getPartUploadSignedUrl', () => {
+  const signedUrlPromiseSpy = jest.fn();
+
+  beforeEach(() => {
+    AWS.S3.mockReset();
+    AWS.S3.mockImplementation(() => ({
+      getSignedUrlPromise: signedUrlPromiseSpy,
+    }));
+  });
+
+  it('works correctly', async () => {
+    const mockSignedUrl = 'mockSignedUrl';
+    signedUrlPromiseSpy.mockResolvedValueOnce(mockSignedUrl);
+
+    const key = 'mockKey';
+    const bucketName = 'mockBucket';
+    const uploadId = 'mockUploadId';
+    const partNumber = 'mockPartNumber';
+
+    const response = await signedUrl.getPartUploadSignedUrl(key, bucketName, uploadId, partNumber);
+
+    expect(response).toEqual(mockSignedUrl);
+  });
+});
 
 describe('getSampleFileDownloadUrl', () => {
   const experimentId = 'mockExperimentId';

@@ -4,7 +4,7 @@ const bucketNames = require('../../config/bucketNames');
 const sqlClient = require('../../sql/sqlClient');
 const CellLevelMeta = require('../model/CellLevelMeta');
 const CellLevelMetaToExperiment = require('../model/CellLevelMetaToExperiment');
-const { getFileUploadUrls } = require('../helpers/s3/signedUrl');
+const { createMultipartUpload } = require('../helpers/s3/signedUrl');
 const getLogger = require('../../utils/getLogger');
 const OK = require('../../utils/responses/OK');
 
@@ -28,7 +28,7 @@ const upload = async (req, res) => {
     await new CellLevelMeta(trx).create(newCellLevelMetaFile);
     await new CellLevelMetaToExperiment(trx).setNewFile(experimentId, cellLevelMetaKey);
 
-    uploadUrlParams = await getFileUploadUrls(cellLevelMetaKey, {}, size, bucketName);
+    uploadUrlParams = await createMultipartUpload(cellLevelMetaKey, {}, bucketName);
     uploadUrlParams = { ...uploadUrlParams, fileId: cellLevelMetaKey };
   });
 

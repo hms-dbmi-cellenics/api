@@ -22,12 +22,42 @@ const getSignedUrl = async (operation, params) => {
   return s3.getSignedUrlPromise(operation, params);
 };
 
-const FILE_CHUNK_SIZE = 10000000;
+const createMultipartUpload = async (key, metadata, bucket) => {
+  if (!key) throw new Error('key is required');
+  if (!bucket) throw new Error('bucket is required');
 
-const createMultipartUpload = async (params, size) => {
-  if (!params.Bucket) throw new Error('Bucket is required');
-  if (!params.Key) throw new Error('Key is required');
+  const S3Config = {
+    apiVersion: '2006-03-01',
+    signatureVersion: 'v4',
+    region: config.awsRegion,
+  };
 
+  const params = {
+    Bucket: bucket,
+    Key: key,
+    // 1 hour timeout of upload link
+    Expires: 3600,
+  };
+
+  if (metadata.cellrangerVersion) {
+    params.Metadata = {
+      cellranger_version: metadata.cellrangerVersion,
+    };
+  }
+
+  const s3 = new AWS.S3(S3Config);
+
+  // @ts-ignore
+  const { UploadId } = await s3.createMultipartUpload(params).promise();
+
+  return {
+    uploadId: UploadId,
+    bucket,
+    key,
+  };
+};
+
+const getPartUploadSignedUrl = async (key, bucketName, uploadId, partNumber) => {
   const S3Config = {
     apiVersion: '2006-03-01',
     signatureVersion: 'v4',
@@ -36,33 +66,17 @@ const createMultipartUpload = async (params, size) => {
 
   const s3 = new AWS.S3(S3Config);
 
-  const { UploadId } = await s3.createMultipartUpload(params).promise();
-
-  const baseParams = {
-    ...params,
-    UploadId,
+  const params = {
+    Key: key,
+    Bucket: bucketName,
+    // 1 hour timeout of upload link
+    Expires: 3600,
+    UploadId: uploadId,
+    PartNumber: partNumber,
   };
 
-  const promises = [];
-  const parts = Math.ceil(size / FILE_CHUNK_SIZE);
-
-  for (let i = 0; i < parts; i += 1) {
-    promises.push(
-      s3.getSignedUrlPromise('uploadPart', {
-        ...baseParams,
-        PartNumber: i + 1,
-      }),
-    );
-  }
-
-  const signedUrls = await Promise.all(promises);
-
-  return {
-    signedUrls,
-    uploadId: UploadId,
-  };
+  return await s3.getSignedUrlPromise('uploadPart', params);
 };
-
 
 const completeMultipartUpload = async (key, parts, uploadId, bucketName) => {
   const params = {
@@ -80,23 +94,6 @@ const completeMultipartUpload = async (key, parts, uploadId, bucketName) => {
 
   const s3 = new AWS.S3(S3Config);
   await s3.completeMultipartUpload(params).promise();
-};
-
-const getFileUploadUrls = async (key, metadata, size, bucketName) => {
-  const params = {
-    Bucket: bucketName,
-    Key: key,
-    // 1 hour timeout of upload link
-    Expires: 3600,
-  };
-
-  if (metadata.cellrangerVersion) {
-    params.Metadata = {
-      cellranger_version: metadata.cellrangerVersion,
-    };
-  }
-
-  return await createMultipartUpload(params, size);
 };
 
 const fileNameToReturn = {
@@ -132,9 +129,9 @@ const getSampleFileDownloadUrl = async (experimentId, sampleId, fileType) => {
 };
 
 module.exports = {
-  getFileUploadUrls,
   getSampleFileDownloadUrl,
   getSignedUrl,
   createMultipartUpload,
   completeMultipartUpload,
+  getPartUploadSignedUrl,
 };

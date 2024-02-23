@@ -4,7 +4,7 @@ const Sample = require('../model/Sample');
 const SampleFile = require('../model/SampleFile');
 const bucketNames = require('../../config/bucketNames');
 
-const { getFileUploadUrls, getSampleFileDownloadUrl } = require('../helpers/s3/signedUrl');
+const { getSampleFileDownloadUrl, createMultipartUpload } = require('../helpers/s3/signedUrl');
 const { OK, MethodNotAllowedError } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 
@@ -25,8 +25,6 @@ const createFile = async (req, res) => {
     upload_status: 'uploading',
   };
 
-
-
   await sqlClient.get().transaction(async (trx) => {
     await new SampleFile(trx).create(newSampleFile);
     await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType);
@@ -41,7 +39,7 @@ const createFile = async (req, res) => {
 const beginUpload = async (req, res) => {
   const {
     params: { experimentId, sampleFileId },
-    body: { metadata, size },
+    body: { metadata },
   } = req;
 
   const { uploadStatus } = await new SampleFile().findById(sampleFileId).first();
@@ -55,9 +53,9 @@ const beginUpload = async (req, res) => {
     );
   }
 
-  logger.log(`Generating multipart upload urls for ${experimentId}, sample file ${sampleFileId}`);
-  const uploadParams = await getFileUploadUrls(
-    sampleFileId, metadata, size, bucketNames.SAMPLE_FILES,
+  logger.log(`Creating multipart upload for ${experimentId}, sample file ${sampleFileId}`);
+  const uploadParams = await createMultipartUpload(
+    sampleFileId, metadata, bucketNames.SAMPLE_FILES,
   );
 
   res.json(uploadParams);

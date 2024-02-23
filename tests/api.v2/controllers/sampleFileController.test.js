@@ -25,12 +25,12 @@ const mockRes = {
 };
 
 describe('sampleFileController', () => {
-  const mockUploadParams = { signedUrls: ['signedUrl1', 'signedUrl2'], fileId: 'mockfileId' };
+  const mockUploadParams = { fileId: 'mockfileId', bucket: 'mockBucket', key: 'mockKey' };
 
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    signedUrl.getFileUploadUrls.mockReturnValue(Promise.resolve(mockUploadParams));
+    signedUrl.createMultipartUpload.mockReturnValueOnce(Promise.resolve(mockUploadParams));
   });
 
   it('createFile works correctly', async () => {
@@ -104,10 +104,6 @@ describe('sampleFileController', () => {
 
     await sampleFileController.beginUpload(mockReq, mockRes);
 
-    expect(signedUrl.getFileUploadUrls).toHaveBeenCalledWith(
-      sampleFileId, metadata, size, bucketNames.SAMPLE_FILES,
-    );
-
     expect(mockRes.json).toHaveBeenCalledWith(mockUploadParams);
 
     expect(sampleFileInstance.findById.mock.calls).toMatchSnapshot();
@@ -127,10 +123,6 @@ describe('sampleFileController', () => {
     sampleFileInstance.findById.mockReturnValueOnce({ first: () => Promise.resolve({ uploadStatus: 'uploading' }) });
 
     await sampleFileController.beginUpload(mockReq, mockRes);
-
-    expect(signedUrl.getFileUploadUrls).toHaveBeenCalledWith(
-      sampleFileId, metadata, size, bucketNames.SAMPLE_FILES,
-    );
 
     expect(mockRes.json).toHaveBeenCalledWith(mockUploadParams);
 
@@ -157,7 +149,6 @@ describe('sampleFileController', () => {
       ),
     );
 
-    expect(signedUrl.getFileUploadUrls).not.toHaveBeenCalled();
     expect(mockRes.json).not.toHaveBeenCalled();
   });
 
