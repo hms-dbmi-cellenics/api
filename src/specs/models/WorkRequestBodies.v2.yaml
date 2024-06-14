@@ -20,3 +20,4 @@ oneOf:
   - $ref: ./work-request-bodies/WorkRequestGetNormalizedExpression.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestBatchDifferentialExpression.v2.yaml
   - $ref: ./work-request-bodies/WorkRequestDownloadAnnotSeuratObject.v2.yaml
+  - $ref: ./work-request-bodies/WorkRequestCellCycleScoring.v2.yaml
