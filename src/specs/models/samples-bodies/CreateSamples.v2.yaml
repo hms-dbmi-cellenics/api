@@ -15,6 +15,7 @@ items:
             - pattern: ^10x_h5$
             - pattern: ^seurat$
             - pattern: ^parse$
+            - pattern: ^single_cell_experiment$
     options:
       type: object
 

@@ -102,6 +102,7 @@ const fileNameToReturn = {
   features10x: 'features.tsv.gz',
   rhapsody: 'expression_data.st.gz',
   seurat: 'r.rds',
+  single_cell_experiment: 'r.rds',
   '10x_h5': 'matrix.h5.gz',
   featuresParse: 'all_genes.csv.gz',
   barcodesParse: 'cell_metadata.csv.gz',
