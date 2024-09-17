@@ -13,9 +13,9 @@ items:
             - pattern: ^10x$
             - pattern: ^rhapsody$
             - pattern: ^10x_h5$
-            - pattern: ^seurat$
+            - pattern: ^seurat_object$
             - pattern: ^parse$
-            - pattern: ^single_cell_experiment$
+            - pattern: ^sce_object$
     options:
       type: object
 
