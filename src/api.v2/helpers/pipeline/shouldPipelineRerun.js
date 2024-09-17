@@ -2,7 +2,7 @@ const _ = require('lodash');
 const ExperimentExecution = require('../../model/ExperimentExecution');
 const ExperimentParent = require('../../model/ExperimentParent');
 const Sample = require('../../model/Sample');
-const { GEM2S_PROCESS_NAME, SEURAT_PROCESS_NAME, QC_PROCESS_NAME } = require('../../constants');
+const { GEM2S_PROCESS_NAME, OBJ2S_PROCESS_NAME, QC_PROCESS_NAME } = require('../../constants');
 const CellLevelMeta = require('../../model/CellLevelMeta');
 
 const formatSamples = (rawSamples) => {
@@ -102,7 +102,7 @@ const getQCParams = async (experimentId) => {
 
 const pipelineRerunVariablesGetters = {
   [GEM2S_PROCESS_NAME]: getGem2sParams,
-  [SEURAT_PROCESS_NAME]: getGem2sParams,
+  [OBJ2S_PROCESS_NAME]: getGem2sParams,
   [QC_PROCESS_NAME]: getQCParams,
 };
 

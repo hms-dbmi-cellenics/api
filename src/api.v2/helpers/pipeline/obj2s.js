@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 const getPipelineStatus = require('./getPipelineStatus');
-const { createSeuratPipeline } = require('./pipelineConstruct');
+const { createObj2sPipeline } = require('./pipelineConstruct');
 
 const Sample = require('../../model/Sample');
 const Experiment = require('../../model/Experiment');
@@ -15,9 +15,9 @@ const getLogger = require('../../../utils/getLogger');
 
 const { getGem2sParams, formatSamples } = require('./shouldPipelineRerun');
 
-const logger = getLogger('[SeuratService] - ');
+const logger = getLogger('[Obj2sService] - ');
 
-const { SEURAT_PROCESS_NAME } = require('../../constants');
+const { OBJ2S_PROCESS_NAME } = require('../../constants');
 
 const hookRunner = new HookRunner();
 
@@ -29,7 +29,7 @@ const updateProcessingConfig = async (payload) => {
 
   await new Experiment().updateById(experimentId, { processing_config: item.processingConfig });
 
-  logger.log(`Experiment: ${experimentId}. Saved processing config received from seurat`);
+  logger.log(`Experiment: ${experimentId}. Saved processing config received from obj2s`);
 };
 
 /**
@@ -69,7 +69,7 @@ const setupSubsetSamples = async (payload) => {
 };
 
 hookRunner.register('subsetSeurat', [setupSubsetSamples]);
-hookRunner.register('uploadSeuratToAWS', [
+hookRunner.register('uploadObj2sToAWS', [
   updateProcessingConfig,
 ]);
 
@@ -77,18 +77,18 @@ hookRunner.register('uploadSeuratToAWS', [
 hookRunner.registerAll([sendNotification]);
 
 const sendUpdateToSubscribed = async (experimentId, message, io) => {
-  const statusRes = await getPipelineStatus(experimentId, SEURAT_PROCESS_NAME);
+  const statusRes = await getPipelineStatus(experimentId, OBJ2S_PROCESS_NAME);
 
   // Concatenate into a proper response.
   const response = {
     ...message,
     status: statusRes,
-    type: SEURAT_PROCESS_NAME,
+    type: OBJ2S_PROCESS_NAME,
   };
 
   const { error = null } = message.response || {};
   if (error) {
-    logger.log(`Error in ${SEURAT_PROCESS_NAME} received`);
+    logger.log(`Error in ${OBJ2S_PROCESS_NAME} received`);
   }
 
   logger.log('Sending to all clients subscribed to experiment', experimentId);
@@ -96,8 +96,8 @@ const sendUpdateToSubscribed = async (experimentId, message, io) => {
   io.sockets.emit(`ExperimentUpdates-${experimentId}`, response);
 };
 
-const generateSeuratTaskParams = async (experimentId, rawSamples, authJWT) => {
-  logger.log('Generating seurat params');
+const generateObj2sTaskParams = async (experimentId, rawSamples, authJWT) => {
+  logger.log('Generating obj2s params');
   const experiment = await new Experiment().findById(experimentId).first();
   const {
     sampleTechnology,
@@ -133,23 +133,23 @@ const generateSeuratTaskParams = async (experimentId, rawSamples, authJWT) => {
   };
 };
 
-const startSeuratPipeline = async (params, authJWT) => {
-  logger.log('Creating SEURAT params...');
+const startObj2sPipeline = async (params, authJWT) => {
+  logger.log('Creating OBJ2S params...');
   const { experimentId } = params;
   const samples = await new Sample().getSamples(experimentId);
 
-  const currentSeuratParams = await getGem2sParams(experimentId, samples);
-  const taskParams = await generateSeuratTaskParams(experimentId, samples, authJWT);
+  const currentObj2sParams = await getGem2sParams(experimentId, samples);
+  const taskParams = await generateObj2sTaskParams(experimentId, samples, authJWT);
 
   const {
     stateMachineArn,
     executionArn,
-  } = await createSeuratPipeline(experimentId, taskParams, authJWT);
+  } = await createObj2sPipeline(experimentId, taskParams, authJWT);
 
-  logger.log('SEURAT params created.');
+  logger.log('OBJ2S params created.');
 
   const newExecution = {
-    last_pipeline_params: currentSeuratParams,
+    last_pipeline_params: currentObj2sParams,
     state_machine_arn: stateMachineArn,
     execution_arn: executionArn,
   };
@@ -157,18 +157,18 @@ const startSeuratPipeline = async (params, authJWT) => {
   // Save execution params
   await new ExperimentExecution().updateExecution(
     experimentId,
-    SEURAT_PROCESS_NAME,
+    OBJ2S_PROCESS_NAME,
     newExecution,
     params,
   );
-  logger.log('SEURAT params saved.');
+  logger.log('OBJ2S params saved.');
 
   return newExecution;
 };
 
-const handleSeuratResponse = async (io, message) => {
+const handleObj2sResponse = async (io, message) => {
   // Fail hard if there was an error.
-  await validateRequest(message, 'SeuratResponse.v2.yaml');
+  await validateRequest(message, 'OBJ2SResponse.v2.yaml');
 
   await hookRunner.run(message);
 
@@ -183,28 +183,28 @@ const handleSeuratResponse = async (io, message) => {
   await sendUpdateToSubscribed(experimentId, messageForClient, io);
 };
 
-const runSeurat = async (params, authorization) => {
+const runObj2s = async (params, authorization) => {
   const { experimentId } = params;
 
-  logger.log(`Starting seurat for experiment ${experimentId}`);
+  logger.log(`Starting obj2s for experiment ${experimentId}`);
 
   const { parentExperimentId = null } = await new ExperimentParent()
     .find({ experiment_id: experimentId })
     .first();
 
   if (parentExperimentId) {
-    throw new MethodNotAllowedError(`Experiment ${experimentId} can't run seurat`);
+    throw new MethodNotAllowedError(`Experiment ${experimentId} can't run obj2s`);
   }
 
-  const newExecution = await startSeuratPipeline(params, authorization);
+  const newExecution = await startObj2sPipeline(params, authorization);
 
-  logger.log(`Started seurat for experiment ${experimentId} successfully, `);
+  logger.log(`Started obj2s for experiment ${experimentId} successfully, `);
   logger.log('New executions data:');
   logger.log(JSON.stringify(newExecution));
 };
 
 module.exports = {
-  runSeurat,
-  startSeuratPipeline,
-  handleSeuratResponse,
+  runObj2s,
+  startObj2sPipeline,
+  handleObj2sResponse,
 };

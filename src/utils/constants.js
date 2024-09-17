@@ -1,7 +1,7 @@
 // Pipeline names
 const QC_PROCESS_NAME = 'qc';
 const GEM2S_PROCESS_NAME = 'gem2s';
-const SEURAT_PROCESS_NAME = 'seurat';
+const OBJ2S_PROCESS_NAME = 'obj2s';
 const OLD_QC_NAME_TO_BE_REMOVED = 'pipeline';
 
 const ASSIGN_POD_TO_PIPELINE = 'assignPodToPipeline';
@@ -29,7 +29,7 @@ const PUBLIC_ACCESS_ID = '00000000-0000-0000-0000-000000000000';
 module.exports = {
   QC_PROCESS_NAME,
   GEM2S_PROCESS_NAME,
-  SEURAT_PROCESS_NAME,
+  OBJ2S_PROCESS_NAME,
   OLD_QC_NAME_TO_BE_REMOVED,
   RUNNING,
   FAILED,

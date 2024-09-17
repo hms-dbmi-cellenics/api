@@ -12,4 +12,3 @@ properties:
         - $ref: ./processing-config-bodies/ProcessingConfigDataIntegration.v2.yaml
         - $ref: ./processing-config-bodies/ProcessingConfigConfigureEmbedding.v2.yaml
         - $ref: ./processing-config-bodies/ProcessingConfigMeta.v2.yaml
-        - $ref: ./processing-config-bodies/ProcessingConfigSeurat.v2.yaml

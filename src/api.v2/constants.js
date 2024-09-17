@@ -1,7 +1,7 @@
 // Pipeline names
 const QC_PROCESS_NAME = 'qc';
 const GEM2S_PROCESS_NAME = 'gem2s';
-const SEURAT_PROCESS_NAME = 'seurat';
+const OBJ2S_PROCESS_NAME = 'obj2s';
 const OLD_QC_NAME_TO_BE_REMOVED = 'pipeline';
 const SUBSET_PROCESS_NAME = 'subset';
 const COPY_PROCESS_NAME = 'copy';
@@ -44,7 +44,7 @@ const ACCOUNT_ID = {
 module.exports = {
   QC_PROCESS_NAME,
   GEM2S_PROCESS_NAME,
-  SEURAT_PROCESS_NAME,
+  OBJ2S_PROCESS_NAME,
   OLD_QC_NAME_TO_BE_REMOVED,
   SUBSET_PROCESS_NAME,
   COPY_PROCESS_NAME,

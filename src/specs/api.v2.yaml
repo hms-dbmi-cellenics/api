@@ -2282,13 +2282,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/HTTPError"
 
-  "/experiments/{experimentId}/seurat":
+  "/experiments/{experimentId}/obj2s":
     post:
-      summary: Run seurat
-      operationId: runSeurat
-      x-eov-operation-id: seurat#run
-      x-eov-operation-handler: routes/seurat
-      description: Triggers a new seurat run
+      summary: Run obj2s
+      operationId: runObj2s
+      x-eov-operation-id: obj2s#run
+      x-eov-operation-handler: routes/obj2s
+      description: Triggers a new obj2s run
       parameters:
         - name: experimentId
           description: Id of the experiment
@@ -2504,16 +2504,16 @@ paths:
                 type: string
                 pattern: nok
     parameters: []
-  /seuratResults:
+  /obj2sResults:
     post:
       summary: Retrieve results from pipeline step functions
       description: |-
         Results from Step Function pipeline steps are relayed to the API through this endpoint.
         Note that this endpoint is only exposed to AWS SNS, and since it has a specific communication protocol with limited feedback, the schema defined here is designed to be liberally enforceable. This endpoint is also used by SNS to handle subscribe/unsubscribe events.
         The actual JSON passed by SNS is found in the `PipelineResponse` model, which is to be validated by the API.
-      operationId: receiveSeuratResponse
-      x-eov-operation-id: seurat#response
-      x-eov-operation-handler: routes/seurat
+      operationId: receiveObj2sResponse
+      x-eov-operation-id: obj2s#response
+      x-eov-operation-handler: routes/obj2s
       requestBody:
         description: "The results from the execution of a pipeline step, sent via SNS."
         required: true

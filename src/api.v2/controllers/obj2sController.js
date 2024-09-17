@@ -1,10 +1,10 @@
-const { runSeurat, handleSeuratResponse } = require('../helpers/pipeline/seurat');
+const { runObj2s, handleObj2sResponse } = require('../helpers/pipeline/obj2s');
 const { OK } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 const parseSNSMessage = require('../../utils/parseSNSMessage');
 const snsTopics = require('../../config/snsTopics');
 
-const logger = getLogger('[SeuratController] - ');
+const logger = getLogger('[Obj2sController] - ');
 
 const handleResponse = async (req, res) => {
   let result;
@@ -22,10 +22,10 @@ const handleResponse = async (req, res) => {
   const isSnsNotification = parsedMessage !== undefined;
   if (isSnsNotification) {
     try {
-      await handleSeuratResponse(io, parsedMessage);
+      await handleObj2sResponse(io, parsedMessage);
     } catch (e) {
       logger.error(
-        'seurat pipeline response handler failed with error: ', e,
+        'obj2s pipeline response handler failed with error: ', e,
       );
 
       res.status(200).send('nok');
@@ -36,16 +36,16 @@ const handleResponse = async (req, res) => {
   res.status(200).send('ok');
 };
 
-const handleSeuratRequest = async (req, res) => {
+const handleObj2sRequest = async (req, res) => {
   const params = {
     experimentId: req.params.experimentId,
   };
 
-  await runSeurat(params, req.headers.authorization);
+  await runObj2s(params, req.headers.authorization);
   res.json(OK());
 };
 
 module.exports = {
-  handleSeuratRequest,
+  handleObj2sRequest,
   handleResponse,
 };

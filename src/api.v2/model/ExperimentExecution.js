@@ -42,7 +42,7 @@ class ExperimentExecution extends BasicModel {
       };
 
       // If it's a setup run, translate sample ids from lastGem2SParams
-      if (['gem2s', 'seurat'].includes(originalRow.pipelineType)) {
+      if (['gem2s', 'obj2s'].includes(originalRow.pipelineType)) {
         copyRow.last_pipeline_params.sampleIds = originalRow.lastPipelineParams.sampleIds
           .reduce(
             (acum, currSampleId) => {

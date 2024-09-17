@@ -13,7 +13,7 @@ const response = {
     status: pipelineConstants.NOT_CREATED,
     stopDate: null,
   },
-  seurat: {
+  obj2s: {
     completedSteps: [],
     startDate: null,
     status: pipelineConstants.NOT_CREATED,

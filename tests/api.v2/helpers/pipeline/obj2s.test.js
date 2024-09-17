@@ -1,7 +1,7 @@
 // @ts-nocheck
 const io = require('socket.io-client');
 
-const { startSeuratPipeline, handleSeuratResponse } = require('../../../../src/api.v2/helpers/pipeline/seurat');
+const { startObj2sPipeline, handleObj2sResponse } = require('../../../../src/api.v2/helpers/pipeline/obj2s');
 
 const Experiment = require('../../../../src/api.v2/model/Experiment');
 const Sample = require('../../../../src/api.v2/model/Sample');
@@ -49,17 +49,17 @@ const mockExperiment = {
   updatedAt: '2022-05-10 15:41:04.165961+00',
 };
 
-describe('startSeuratPipeline', () => {
+describe('startObj2sPipeline', () => {
   const mockSamples = [{
     id: 'fc68aefc-c3ca-467f-8589-f1dbaaac1c1e',
     experimentId: '8e282f0d-aadb-8032-a334-982a371efd0f',
     name: 'scdata',
-    sampleTechnology: 'seurat',
+    sampleTechnology: 'obj2s',
     createdAt: '2022-05-10 15:41:10.057808+00',
     updatedAt: '2022-05-10 15:41:10.057808+00',
     metadata: {},
     files: {
-      seurat: {
+      obj2s: {
         size: 5079737, s3Path: '68f74995-3689-401a-90e0-145e08049cd5', uploadStatus: 'uploaded', sampleFileType: 'seurat',
       },
     },
@@ -74,7 +74,7 @@ describe('startSeuratPipeline', () => {
     experimentExecutionInstance.upsert.mockClear();
     experimentExecutionInstance.delete.mockClear();
     experimentParentInstance.isSubset.mockClear();
-    pipelineConstruct.createSeuratPipeline.mockClear();
+    pipelineConstruct.createObj2sPipeline.mockClear();
 
     experimentInstance.findById.mockReturnValueOnce({
       first: jest.fn(() => Promise.resolve(mockExperiment)),
@@ -82,7 +82,7 @@ describe('startSeuratPipeline', () => {
 
     sampleInstance.getSamples.mockReturnValueOnce(Promise.resolve(mockSamples));
     experimentParentInstance.isSubset.mockReturnValueOnce(Promise.resolve(false));
-    pipelineConstruct.createSeuratPipeline.mockReturnValueOnce(
+    pipelineConstruct.createObj2sPipeline.mockReturnValueOnce(
       { stateMachineArn: mockStateMachineArn, executionArn: mockExecutionArn },
     );
   });
@@ -92,24 +92,24 @@ describe('startSeuratPipeline', () => {
       experimentId,
     };
 
-    await startSeuratPipeline(mockParams, authJWT);
+    await startObj2sPipeline(mockParams, authJWT);
     expect(experimentInstance.findById).toHaveBeenCalledWith(experimentId);
     expect(sampleInstance.getSamples).toHaveBeenCalledWith(experimentId);
     expect(experimentExecutionInstance.updateExecution.mock.calls[0]).toMatchSnapshot();
     expect(experimentExecutionInstance.delete.mock.calls[0]).toMatchSnapshot();
-    expect(pipelineConstruct.createSeuratPipeline.mock.calls[0]).toMatchSnapshot();
+    expect(pipelineConstruct.createObj2sPipeline.mock.calls[0]).toMatchSnapshot();
   });
 });
 
-describe('seuratResponse', () => {
+describe('obj2sResponse', () => {
   const mockGetPipelineStatusResponse = {
     status: {
-      seurat: {
+      obj2s: {
         startDate: '2022-05-10T16:30:16.268Z',
         stopDate: null,
         status: 'RUNNING',
         error: false,
-        completedSteps: ['DownloadSeurat'],
+        completedSteps: ['DownloadObj2sFile'],
         shouldRerun: true,
       },
     },
@@ -132,12 +132,12 @@ describe('seuratResponse', () => {
       experimentId, authJWT: 'mockAuthJWT', input: { authJWT: 'mockAuthJWT' }, response: {},
     };
 
-    await handleSeuratResponse(io, message);
+    await handleObj2sResponse(io, message);
 
-    expect(validateRequest).toHaveBeenCalledWith(message, 'SeuratResponse.v2.yaml');
+    expect(validateRequest).toHaveBeenCalledWith(message, 'Obj2sResponse.v2.yaml');
     expect(hookRunnerInstance.run).toHaveBeenCalledWith(message);
 
-    expect(getPipelineStatus).toHaveBeenCalledWith(experimentId, constants.SEURAT_PROCESS_NAME);
+    expect(getPipelineStatus).toHaveBeenCalledWith(experimentId, constants.OBJ2S_PROCESS_NAME);
     expect(io.sockets.emit.mock.calls[0]).toMatchSnapshot();
   });
 });

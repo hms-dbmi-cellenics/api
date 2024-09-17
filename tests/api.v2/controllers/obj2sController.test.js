@@ -1,17 +1,17 @@
 // @ts-nocheck
 const ExperimentParent = require('../../../src/api.v2/model/ExperimentParent');
 
-const seuratController = require('../../../src/api.v2/controllers/seuratController');
+const obj2sController = require('../../../src/api.v2/controllers/obj2sController');
 
 const { OK } = require('../../../src/utils/responses');
 
-const seurat = require('../../../src/api.v2/helpers/pipeline/seurat');
+const obj2s = require('../../../src/api.v2/helpers/pipeline/obj2s');
 const parseSNSMessage = require('../../../src/utils/parseSNSMessage');
 
 const experimentParentInstance = ExperimentParent();
 
 jest.mock('../../../src/api.v2/model/ExperimentParent');
-jest.mock('../../../src/api.v2/helpers/pipeline/seurat');
+jest.mock('../../../src/api.v2/helpers/pipeline/obj2s');
 jest.mock('../../../src/utils/parseSNSMessage');
 
 const mockJsonSend = jest.fn();
@@ -33,18 +33,18 @@ const parsedMessage = {
     experimentId,
     sandboxId: 'mock-sandbox-id',
     activityId: 'pipeline-mock-activity-id',
-    processName: 'seurat',
+    processName: 'obj2s',
   },
 };
 
 const mockSNSResponse = { body: JSON.stringify(parsedMessage) };
 
-describe('seuratController', () => {
+describe('obj2sController', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
   });
 
-  it('runSeurat works correctly', async () => {
+  it('runObj2s works correctly', async () => {
     const mockExecutionParams = {
       experimentId,
     };
@@ -58,9 +58,9 @@ describe('seuratController', () => {
       headers: { authorization: 'mockAuthorization' },
     };
 
-    await seuratController.handleSeuratRequest(mockReq, mockRes);
+    await obj2sController.handleObj2sRequest(mockReq, mockRes);
 
-    expect(seurat.runSeurat).toHaveBeenCalledWith(
+    expect(obj2s.runObj2s).toHaveBeenCalledWith(
       mockExecutionParams, mockReq.headers.authorization,
     );
 
@@ -71,10 +71,10 @@ describe('seuratController', () => {
   it('handleResponse handles success message correctly', async () => {
     parseSNSMessage.mockReturnValue({ io, parsedMessage });
 
-    await seuratController.handleResponse(mockSNSResponse, mockRes);
+    await obj2sController.handleResponse(mockSNSResponse, mockRes);
 
     expect(parseSNSMessage).toHaveBeenCalledWith(mockSNSResponse, expectedTopic);
-    expect(seurat.handleSeuratResponse).toHaveBeenCalledWith(io, parsedMessage);
+    expect(obj2s.handleObj2sResponse).toHaveBeenCalledWith(io, parsedMessage);
 
     // Response is ok
     expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -84,26 +84,26 @@ describe('seuratController', () => {
   it('handleResponse returns nok when parseSNSMessage fails', async () => {
     parseSNSMessage.mockImplementationOnce(() => Promise.reject(new Error('Invalid sns message')));
 
-    await seuratController.handleResponse(mockSNSResponse, mockRes);
+    await obj2sController.handleResponse(mockSNSResponse, mockRes);
 
     expect(parseSNSMessage).toHaveBeenCalledWith(mockSNSResponse, expectedTopic);
 
-    expect(seurat.handleSeuratResponse).not.toHaveBeenCalled();
+    expect(obj2s.handleObj2sResponse).not.toHaveBeenCalled();
 
     // Response is nok
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockJsonSend).toHaveBeenCalledWith('nok');
   });
 
-  it('handleResponse returns nok when seuratResponse fails', async () => {
+  it('handleResponse returns nok when obj2sResponse fails', async () => {
     parseSNSMessage.mockReturnValue({ io, parsedMessage });
 
-    seurat.handleSeuratResponse.mockImplementationOnce(() => Promise.reject(new Error('Some error with seuratResponse')));
+    obj2s.handleObj2sResponse.mockImplementationOnce(() => Promise.reject(new Error('Some error with obj2sResponse')));
 
-    await seuratController.handleResponse(mockSNSResponse, mockRes);
+    await obj2sController.handleResponse(mockSNSResponse, mockRes);
 
     expect(parseSNSMessage).toHaveBeenCalledWith(mockSNSResponse, expectedTopic);
-    expect(seurat.handleSeuratResponse).toHaveBeenCalledWith(io, parsedMessage);
+    expect(obj2s.handleObj2sResponse).toHaveBeenCalledWith(io, parsedMessage);
 
     // Response is nok
     expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -115,10 +115,10 @@ describe('seuratController', () => {
 
     parseSNSMessage.mockReturnValue({ io, undefinedMessage });
 
-    await seuratController.handleResponse(mockSNSResponse, mockRes);
+    await obj2sController.handleResponse(mockSNSResponse, mockRes);
 
     expect(parseSNSMessage).toHaveBeenCalledWith(mockSNSResponse, expectedTopic);
-    expect(seurat.handleSeuratResponse).not.toHaveBeenCalled();
+    expect(obj2s.handleObj2sResponse).not.toHaveBeenCalled();
 
     // Response is ok
     expect(mockRes.status).toHaveBeenCalledWith(200);

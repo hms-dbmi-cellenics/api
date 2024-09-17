@@ -1,10 +1,10 @@
 const { OK } = require('../../../utils/responses');
 
 const { runGem2s } = require('./gem2s');
-const { runSeurat } = require('./seurat');
+const { runObj2s } = require('./obj2s');
 const { startSubsetPipeline } = require('./subset');
 const {
-  GEM2S_PROCESS_NAME, SEURAT_PROCESS_NAME, SUBSET_PROCESS_NAME,
+  GEM2S_PROCESS_NAME, OBJ2S_PROCESS_NAME, SUBSET_PROCESS_NAME,
 } = require('../../constants');
 const ExperimentExecution = require('../../model/ExperimentExecution');
 
@@ -15,7 +15,7 @@ const logger = getLogger();
 const stateMachineToPipeline = {
   [SUBSET_PROCESS_NAME]: startSubsetPipeline,
   [GEM2S_PROCESS_NAME]: runGem2s,
-  [SEURAT_PROCESS_NAME]: runSeurat,
+  [OBJ2S_PROCESS_NAME]: runObj2s,
 };
 
 const getPipelineType = (stateMachineArn) => Object.keys(stateMachineToPipeline)

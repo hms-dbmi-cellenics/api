@@ -33,15 +33,15 @@ const validateAndSubmitWork = async (req) => {
     experimentId, pipelineConstants.QC_PROCESS_NAME,
   );
 
-  const { seurat: { status: seuratPipelineStatus } } = await getPipelineStatus(
-    experimentId, pipelineConstants.SEURAT_PROCESS_NAME,
+  const { obj2s: { status: obj2sPipelineStatus } } = await getPipelineStatus(
+    experimentId, pipelineConstants.OBJ2S_PROCESS_NAME,
   );
 
-  if (!checkSomeEqualTo([qcPipelineStatus, seuratPipelineStatus], pipelineConstants.SUCCEEDED)) {
-    throw new Error(`Work request can not be handled because pipeline is ${qcPipelineStatus} or seurat status is ${seuratPipelineStatus}`);
+  if (!checkSomeEqualTo([qcPipelineStatus, obj2sPipelineStatus], pipelineConstants.SUCCEEDED)) {
+    throw new Error(`Work request can not be handled because pipeline is ${qcPipelineStatus} or obj2s status is ${obj2sPipelineStatus}`);
   }
 
-  // add the embedding etag if the work request, needed by trajectory analysis & download seurat object
+  // add the embedding etag if the work request, needed by trajectory analysis & download obj2s object
   workRequest = await addEmbeddingEtag(experimentId, workRequest);
 
   await validateRequest(workRequest, 'WorkRequest.v2.yaml');

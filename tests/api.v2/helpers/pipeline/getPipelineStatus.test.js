@@ -20,7 +20,7 @@ jest.mock('../../../../src/api.v2/model/ExperimentParent');
 jest.useFakeTimers('modern').setSystemTime(new Date(pipelineConstants.EXPIRED_EXECUTION_DATE).getTime());
 
 const {
-  GEM2S_PROCESS_NAME, QC_PROCESS_NAME, SEURAT_PROCESS_NAME,
+  GEM2S_PROCESS_NAME, QC_PROCESS_NAME, OBJ2S_PROCESS_NAME,
 } = constants;
 
 // these are constants used to indicate to a mocked component whether they should return a
@@ -88,15 +88,15 @@ const qcStatusResponseSql = {
   },
 };
 
-const seuratStatusResponseSql = {
-  [SEURAT_PROCESS_NAME]: {
+const obj2sStatusResponseSql = {
+  [OBJ2S_PROCESS_NAME]: {
     startDate: new Date(5),
     stopDate: new Date(5),
     status: 'SUCCEEDED',
     completedSteps: [
-      'DownloadSeurat',
-      'ProcessSeurat',
-      'UploadSeuratToAWS',
+      'DownloadObj2sFile',
+      'ProcessObj2s',
+      'UploadObj2sToAWS',
     ],
     error: false,
     shouldRerun: false,
@@ -114,10 +114,10 @@ const mockRunResponse = [
     lastStatusResponse: gem2sStatusResponseSql,
   },
   {
-    pipelineType: SEURAT_PROCESS_NAME,
+    pipelineType: OBJ2S_PROCESS_NAME,
     stateMachineArn: SUCCEEDED_ID,
     executionArn: SUCCEEDED_ID,
-    lastStatusResponse: seuratStatusResponseSql,
+    lastStatusResponse: obj2sStatusResponseSql,
   },
   {
     pipelineType: QC_PROCESS_NAME,
@@ -137,10 +137,10 @@ const mockExecutionNotExistResponse = [
     lastStatusResponse: gem2sStatusResponseSql,
   },
   {
-    pipelineType: SEURAT_PROCESS_NAME,
+    pipelineType: OBJ2S_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
-    lastStatusResponse: seuratStatusResponseSql,
+    lastStatusResponse: obj2sStatusResponseSql,
   },
   {
     pipelineType: QC_PROCESS_NAME,
@@ -170,7 +170,7 @@ const mockExecutionNotExistNullSqlResponse = [
     lastStatusResponse: null,
   },
   {
-    pipelineType: SEURAT_PROCESS_NAME,
+    pipelineType: OBJ2S_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: EXECUTION_DOES_NOT_EXIST_ID,
     lastStatusResponse: null,
@@ -193,10 +193,10 @@ const mockRandomExceptionResponse = [
     lastStatusResponse: gem2sStatusResponseSql,
   },
   {
-    pipelineType: SEURAT_PROCESS_NAME,
+    pipelineType: OBJ2S_PROCESS_NAME,
     stateMachineArn: '',
     executionArn: RANDOM_EXCEPTION,
-    lastStatusResponse: seuratStatusResponseSql,
+    lastStatusResponse: obj2sStatusResponseSql,
   },
   {
     pipelineType: QC_PROCESS_NAME,
