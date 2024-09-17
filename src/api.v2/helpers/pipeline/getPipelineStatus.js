@@ -35,7 +35,7 @@ const gem2sPipelineSteps = [
 ];
 
 const obj2sPipelineSteps = [
-  'DownloadObjsFile',
+  'DownloadObj2sFile',
   'ProcessObj2s',
   'UploadObj2sToAWS',
 ];
