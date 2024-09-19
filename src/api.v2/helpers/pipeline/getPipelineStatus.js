@@ -295,36 +295,21 @@ const getPipelineStatus = async (experimentId, processName) => {
 
   const shouldRerun = await shouldPipelineRerun(experimentId, processName);
 
-  console.log('shouldRerun!!!!');
-  console.log(shouldRerun);
-
-  execution = await stepFunctions.describeExecution({
-    executionArn,
-  }).promise();
-
-  console.log('execution!!!');
-  console.log(execution);
-
-  const events = await getExecutionHistory(stepFunctions, executionArn);
-  error = checkError(events);
-  console.log('events!!!');
-  console.log(events);
-
-  const executedSteps = getStepsFromExecutionHistory(events);
-  console.log('executedSteps!!!');
-  console.log(executedSteps);
-
-  const completedSteps = await getCompletedSteps(
-    processName, stateMachineArn, executedSteps, stepFunctions,
-  );
-  console.log('completedSteps!!!');
-  console.log(completedSteps);
-
-  response = buildResponse(processName, execution, shouldRerun, error, completedSteps);
-  console.log('response!!!');
-  console.log(response);
   try {
-    console.log('here');
+    execution = await stepFunctions.describeExecution({
+      executionArn,
+    }).promise();
+
+    const events = await getExecutionHistory(stepFunctions, executionArn);
+    error = checkError(events);
+
+    const executedSteps = getStepsFromExecutionHistory(events);
+
+    const completedSteps = await getCompletedSteps(
+      processName, stateMachineArn, executedSteps, stepFunctions,
+    );
+
+    response = buildResponse(processName, execution, shouldRerun, error, completedSteps);
   } catch (e) {
     if (
       (e.code === pipelineConstants.EXECUTION_DOES_NOT_EXIST)
