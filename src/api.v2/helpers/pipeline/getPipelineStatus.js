@@ -34,10 +34,10 @@ const gem2sPipelineSteps = [
   'UploadToAWS',
 ];
 
-const seuratPipelineSteps = [
-  'DownloadSeurat',
-  'ProcessSeurat',
-  'UploadSeuratToAWS',
+const obj2sPipelineSteps = [
+  'DownloadObj2sFile',
+  'ProcessObj2s',
+  'UploadObj2sToAWS',
 ];
 
 // pipelineStepNames are the names of pipeline steps for which we
@@ -87,8 +87,8 @@ const buildCompletedStatus = (processName, date, shouldRerun) => {
     case pipelineConstants.GEM2S_PROCESS_NAME:
       completedSteps = gem2sPipelineSteps;
       break;
-    case pipelineConstants.SEURAT_PROCESS_NAME:
-      completedSteps = seuratPipelineSteps;
+    case pipelineConstants.OBJ2S_PROCESS_NAME:
+      completedSteps = obj2sPipelineSteps;
       break;
     case pipelineConstants.QC_PROCESS_NAME:
       completedSteps = qcPipelineSteps;
@@ -260,7 +260,7 @@ const getCompletedSteps = async (
       .map((rawStepName) => stepNameToBackendStepNames[rawStepName]);
 
     completedSteps = stepsCompletedInPreviousRuns.concat(lastRunExecutedSteps);
-  } if (processName === 'gem2s' || processName === 'seurat') {
+  } if (processName === 'gem2s' || processName === 'obj2s') {
     completedSteps = lastRunExecutedSteps;
   }
 

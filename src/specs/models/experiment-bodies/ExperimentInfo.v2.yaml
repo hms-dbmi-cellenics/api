@@ -44,7 +44,7 @@ properties:
         required:
           - stateMachineArn
           - executionArn
-      seurat:
+      obj2s:
         # Couldn't import PipelineExecution.v2.yaml twice for some reason
         nullable: true
         type: object

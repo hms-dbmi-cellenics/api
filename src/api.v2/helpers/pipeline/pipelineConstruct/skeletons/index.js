@@ -1,6 +1,6 @@
 const { buildQCPipelineSteps, qcPipelineSteps } = require('./qcPipelineSkeleton');
 const { gem2SPipelineSteps } = require('./gem2sPipelineSkeleton');
-const { seuratPipelineSteps } = require('./seuratPipelineSkeleton');
+const { obj2sPipelineSteps } = require('./obj2sPipelineSkeleton');
 const subsetPipelineSteps = require('./subsetPipelineSteps');
 const { createCatchSteps } = require('../constructors/createHandleErrorStep');
 const {
@@ -61,9 +61,9 @@ const getSkeletonStepNames = (skeleton) => {
 const getPipelineStepNames = () => {
   const gem2sStepNames = getSkeletonStepNames(gem2SPipelineSteps);
   const qcStepNames = getSkeletonStepNames(qcPipelineSteps);
-  const seuratStepNames = getSkeletonStepNames(seuratPipelineSteps);
+  const obj2sStepNames = getSkeletonStepNames(obj2sPipelineSteps);
 
-  return gem2sStepNames.concat(qcStepNames).concat(seuratStepNames);
+  return gem2sStepNames.concat(qcStepNames).concat(obj2sStepNames);
 };
 
 // getPipelineStepNames returns the names of the QC pipeline steps
@@ -125,12 +125,12 @@ const getGem2sPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
   },
 });
 
-const getSeuratPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
-  Comment: `Seurat Pipeline for clusterEnv '${clusterEnv}'`,
+const getObj2sPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
+  Comment: `Obj2s Pipeline for clusterEnv '${clusterEnv}'`,
   StartAt: getStateMachineFirstStep(clusterEnv, runInBatch),
   States: {
-    ...buildInitialSteps(clusterEnv, 'DownloadSeurat', runInBatch),
-    ...seuratPipelineSteps,
+    ...buildInitialSteps(clusterEnv, 'DownloadObj2sFile', runInBatch),
+    ...obj2sPipelineSteps,
     ...buildErrorHandlingSteps(),
     ...buildEndOfPipelineStep(),
   },
@@ -175,7 +175,7 @@ module.exports = {
   getQcPipelineStepNames,
   getGem2sPipelineSkeleton,
   getQcPipelineSkeleton,
-  getSeuratPipelineSkeleton,
+  getObj2sPipelineSkeleton,
   getSubsetPipelineSkeleton,
   getCopyPipelineSkeleton,
 };

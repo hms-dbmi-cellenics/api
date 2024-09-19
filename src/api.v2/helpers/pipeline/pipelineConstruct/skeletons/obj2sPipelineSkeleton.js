@@ -1,31 +1,31 @@
 const { END_OF_PIPELINE } = require('../../../../constants');
 const { createCatchSteps } = require('../constructors/createHandleErrorStep');
 
-const seuratPipelineSteps = {
-  DownloadSeurat: {
+const obj2sPipelineSteps = {
+  DownloadObj2sFile: {
     XStepType: 'create-new-step',
     XConstructorArgs: {
-      taskName: 'downloadSeurat',
+      taskName: 'downloadObj2sFile',
     },
-    Next: 'ProcessSeurat',
+    Next: 'ProcessObj2s',
     XCatch: createCatchSteps(),
   },
-  ProcessSeurat: {
+  ProcessObj2s: {
     XStepType: 'create-new-step',
     XConstructorArgs: {
-      taskName: 'processSeurat',
+      taskName: 'processObj2s',
     },
-    Next: 'UploadSeuratToAWS',
+    Next: 'UploadObj2sToAWS',
     XCatch: createCatchSteps(),
   },
-  UploadSeuratToAWS: {
+  UploadObj2sToAWS: {
     XStepType: 'create-new-step',
     XConstructorArgs: {
-      taskName: 'uploadSeuratToAWS',
+      taskName: 'uploadObj2sToAWS',
     },
     Next: END_OF_PIPELINE,
     XCatch: createCatchSteps(),
   },
 };
 
-module.exports = { seuratPipelineSteps };
+module.exports = { obj2sPipelineSteps };

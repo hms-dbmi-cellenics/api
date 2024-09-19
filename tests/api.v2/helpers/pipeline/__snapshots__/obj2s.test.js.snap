@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`seuratResponse works correctly 1`] = `
+exports[`obj2sResponse works correctly 1`] = `
 Array [
   "ExperimentUpdates-mockExperimentId",
   Object {
@@ -9,9 +9,9 @@ Array [
     "response": Object {},
     "status": Object {
       "status": Object {
-        "seurat": Object {
+        "obj2s": Object {
           "completedSteps": Array [
-            "DownloadSeurat",
+            "DownloadObj2sFile",
           ],
           "error": false,
           "shouldRerun": true,
@@ -21,15 +21,15 @@ Array [
         },
       },
     },
-    "type": "seurat",
+    "type": "obj2s",
   },
 ]
 `;
 
-exports[`startSeuratPipeline works correctly 1`] = `
+exports[`startObj2sPipeline works correctly 1`] = `
 Array [
   "mockExperimentId",
-  "seurat",
+  "obj2s",
   Object {
     "execution_arn": "mockExecutionArn",
     "last_pipeline_params": Object {
@@ -43,7 +43,7 @@ Array [
       "sampleOptions": Array [
         undefined,
       ],
-      "sampleTechnology": "seurat",
+      "sampleTechnology": "obj2s",
     },
     "state_machine_arn": "mockStateMachineArn",
   },
@@ -53,16 +53,16 @@ Array [
 ]
 `;
 
-exports[`startSeuratPipeline works correctly 2`] = `undefined`;
+exports[`startObj2sPipeline works correctly 2`] = `undefined`;
 
-exports[`startSeuratPipeline works correctly 3`] = `
+exports[`startObj2sPipeline works correctly 3`] = `
 Array [
   "mockExperimentId",
   Object {
     "authJWT": "mockAuthJWT",
     "experimentName": "asdsadsada",
     "input": Object {
-      "type": "seurat",
+      "type": "obj2s",
     },
     "organism": null,
     "projectId": "mockExperimentId",
@@ -77,7 +77,7 @@ Array [
     },
     "sampleS3Paths": Object {
       "fc68aefc-c3ca-467f-8589-f1dbaaac1c1e": Object {
-        "seurat": "68f74995-3689-401a-90e0-145e08049cd5",
+        "obj2s": "68f74995-3689-401a-90e0-145e08049cd5",
       },
     },
   },

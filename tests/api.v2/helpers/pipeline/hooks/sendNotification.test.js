@@ -32,8 +32,8 @@ const pipelines = {
   gem2s: {
     stateMachineArn: 'gem2sArn',
   },
-  seurat: {
-    stateMachineArn: 'seuratArn',
+  obj2s: {
+    stateMachineArn: 'obj2sArn',
   },
 };
 
@@ -91,19 +91,19 @@ describe('sendNotification ', () => {
     expect(sendFailedSlackMessage).toHaveBeenCalledTimes(1);
   });
 
-  it('Sends email and slack message if user toggled notifications on failed Seurat process', async () => {
+  it('Sends email and slack message if user toggled notifications on failed obj2s process', async () => {
     experimentInstance.getExperimentData.mockReturnValue({ notifyByEmail: true, pipelines });
 
     const newMessage = {
       ...message,
       input: {
         ...message.input,
-        processName: 'seurat',
+        processName: 'obj2s',
       },
     };
 
     getPipelineStatus.mockReturnValue({
-      seurat: {
+      obj2s: {
         status: FAILED,
       },
     });
@@ -133,17 +133,17 @@ describe('sendNotification ', () => {
     expect(sendFailedSlackMessage).toHaveBeenCalledTimes(0);
   });
 
-  it('Sends email on Seurat success if toggled, does not send slack message ', async () => {
+  it('Sends email on obj2s success if toggled, does not send slack message ', async () => {
     experimentInstance.getExperimentData.mockReturnValue({ notifyByEmail: true, pipelines });
     const newMessage = {
       ...message,
       input: {
         ...message.input,
-        processName: 'seurat',
+        processName: 'obj2s',
       },
     };
     getPipelineStatus.mockReturnValue({
-      seurat: {
+      obj2s: {
         status: SUCCEEDED,
       },
     });
@@ -171,17 +171,17 @@ describe('sendNotification ', () => {
     expect(sendFailedSlackMessage).toHaveBeenCalledTimes(0);
   });
 
-  it('Does not send email on Seurat success if user has not toggled notifications', async () => {
+  it('Does not send email on obj2s success if user has not toggled notifications', async () => {
     experimentInstance.getExperimentData.mockReturnValue({ notifyByEmail: false, pipelines });
     const newMessage = {
       ...message,
       input: {
         ...message.input,
-        processName: 'seurat',
+        processName: 'obj2s',
       },
     };
     getPipelineStatus.mockReturnValue({
-      seurat: {
+      obj2s: {
         status: SUCCEEDED,
       },
     });

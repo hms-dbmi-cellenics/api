@@ -8,7 +8,7 @@ const responseTemplates = {
     status: pipelineConstants.SUCCEEDED,
     stopDate: null,
   },
-  seurat: {
+  obj2s: {
     completedSteps: [],
     startDate: null,
     status: pipelineConstants.NOT_CREATED,

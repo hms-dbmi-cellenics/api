@@ -5,17 +5,18 @@ const expressLoader = require('../../../src/loaders/express');
 
 const { OK } = require('../../../src/utils/responses');
 
-const seuratController = require('../../../src/api.v2/controllers/seuratController');
+const obj2sController = require('../../../src/api.v2/controllers/obj2sController');
+const { runObj2s } = require('../../../src/api.v2/helpers/pipeline/obj2s');
 
-jest.mock('../../../src/api.v2/controllers/seuratController', () => ({
-  handleSeuratRequest: jest.fn(),
-  runSeurat: jest.fn(),
+jest.mock('../../../src/api.v2/controllers/obj2sController', () => ({
+  handleObj2sRequest: jest.fn(),
+  runObj2s: jest.fn(),
   handleResponse: jest.fn(),
 }));
 
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
 
-describe('tests for seurat route', () => {
+describe('tests for obj2s route', () => {
   let app = null;
 
   beforeEach(async () => {
@@ -31,8 +32,8 @@ describe('tests for seurat route', () => {
     jest.restoreAllMocks();
   });
 
-  it('Creating a new seurat run results in a successful response', async (done) => {
-    seuratController.handleSeuratRequest.mockImplementationOnce((req, res) => {
+  it('Creating a new obj2s run results in a successful response', async (done) => {
+    obj2sController.handleObj2sRequest.mockImplementationOnce((req, res) => {
       res.json(OK());
       return Promise.resolve();
     });
@@ -40,7 +41,7 @@ describe('tests for seurat route', () => {
     const experimentId = 'experiment-id';
 
     request(app)
-      .post(`/v2/experiments/${experimentId}/seurat`)
+      .post(`/v2/experiments/${experimentId}/obj2s`)
       .expect(200)
       .end((err) => {
         if (err) {
@@ -52,8 +53,8 @@ describe('tests for seurat route', () => {
       });
   });
 
-  it('Sending a seuratResult results in a successful response', async (done) => {
-    seuratController.handleResponse.mockImplementationOnce((req, res) => {
+  it('Sending a obj2sResult results in a successful response', async (done) => {
+    obj2sController.handleResponse.mockImplementationOnce((req, res) => {
       res.json(OK());
       return Promise.resolve();
     });
@@ -71,13 +72,13 @@ describe('tests for seurat route', () => {
       MessageAttributes: {
         type: {
           Type: 'String',
-          Value: 'SeuratResponse',
+          Value: 'obj2sResponse',
         },
       },
     };
 
     request(app)
-      .post('/v2/seuratResults')
+      .post('/v2/obj2sResults')
       .send(mockBody)
       .expect(200)
       .end((err) => {

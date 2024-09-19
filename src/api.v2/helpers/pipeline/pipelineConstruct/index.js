@@ -5,7 +5,7 @@ const Sample = require('../../../model/Sample');
 
 const config = require('../../../../config');
 const {
-  QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUBSET_PROCESS_NAME, SEURAT_PROCESS_NAME,
+  QC_PROCESS_NAME, GEM2S_PROCESS_NAME, SUBSET_PROCESS_NAME, OBJ2S_PROCESS_NAME,
 } = require('../../../constants');
 
 const CellLevelMeta = require('../../../model/CellLevelMeta');
@@ -18,7 +18,7 @@ const {
   getGem2sPipelineSkeleton,
   getQcPipelineSkeleton,
   getSubsetPipelineSkeleton,
-  getSeuratPipelineSkeleton,
+  getObj2sPipelineSkeleton,
   getCopyPipelineSkeleton,
 } = require('./skeletons');
 const { getQcStepsToRun, qcStepsWithFilterSettings } = require('./qcHelpers');
@@ -258,9 +258,9 @@ const createGem2SPipeline = async (experimentId, taskParams, authJWT) => {
   return { stateMachineArn, executionArn };
 };
 
-const createSeuratPipeline = async (experimentId, taskParams, authJWT) => {
+const createObj2sPipeline = async (experimentId, taskParams, authJWT) => {
   const context = {
-    ...(await getGeneralPipelineContext(experimentId, SEURAT_PROCESS_NAME)),
+    ...(await getGeneralPipelineContext(experimentId, OBJ2S_PROCESS_NAME)),
     processingConfig: {},
     taskParams,
     authJWT,
@@ -270,7 +270,7 @@ const createSeuratPipeline = async (experimentId, taskParams, authJWT) => {
 
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
-  const skeleton = getSeuratPipelineSkeleton(config.clusterEnv, runInBatch);
+  const skeleton = getObj2sPipelineSkeleton(config.clusterEnv, runInBatch);
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(skeleton, context);
@@ -279,7 +279,7 @@ const createSeuratPipeline = async (experimentId, taskParams, authJWT) => {
   const activityArn = await createActivity(context);
   logger.log(`Activity with ARN ${activityArn} created, now creating state machine from skeleton...`);
 
-  const stateMachineArn = await createNewStateMachine(context, stateMachine, SEURAT_PROCESS_NAME);
+  const stateMachineArn = await createNewStateMachine(context, stateMachine, OBJ2S_PROCESS_NAME);
   logger.log(`State machine with ARN ${stateMachineArn} created, launching it...`);
   logger.log('Context:', util.inspect(context, { showHidden: false, depth: null, colors: false }));
   logger.log('State machine:', util.inspect(stateMachine, { showHidden: false, depth: null, colors: false }));
@@ -391,7 +391,7 @@ module.exports = {
   createQCPipeline,
   createGem2SPipeline,
   createSubsetPipeline,
-  createSeuratPipeline,
+  createObj2sPipeline,
   createCopyPipeline,
   buildStateMachineDefinition,
 };

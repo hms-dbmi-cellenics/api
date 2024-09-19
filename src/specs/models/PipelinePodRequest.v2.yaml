@@ -19,7 +19,7 @@ properties:
           description: The activity ID associated to the pipeline state machine.
         processName:
           type: string
-          description: The process name of the pipeline (qc / gem2s / seurat).
+          description: The process name of the pipeline (qc / gem2s / obj2s).
       required:
         - sandboxId
         - activityId
