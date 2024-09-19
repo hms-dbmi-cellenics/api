@@ -114,11 +114,6 @@ const shouldPipelineRerun = async (experimentId, pipelineType) => {
   if (execution === undefined) return true;
   const currentParams = await pipelineRerunVariablesGetters[pipelineType](experimentId);
 
-  console.log('currentParams!!!');
-  console.log(currentParams);
-  console.log('execution.lastPipelineParams!!!');
-  console.log(execution.lastPipelineParams);
-
   return !_.isEqual(currentParams, execution.lastPipelineParams);
 };
 
