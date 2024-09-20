@@ -15,6 +15,7 @@ const generateEmbeddingETag = async (experimentId) => {
   const embeddingBody = {
     name: 'GetEmbedding',
     type: embeddingSettings.method,
+    useSaved: embeddingSettings.useSaved || false,
     config: embeddingSettings.methodSettings[embeddingSettings.method],
   };
 
