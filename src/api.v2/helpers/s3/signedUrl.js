@@ -103,6 +103,7 @@ const fileNameToReturn = {
   rhapsody: 'expression_data.st.gz',
   seurat_object: 'r.rds',
   sce_object: 'r.rds',
+  anndata_object: 'adata.h5ad',
   '10x_h5': 'matrix.h5.gz',
   featuresParse: 'all_genes.csv.gz',
   barcodesParse: 'cell_metadata.csv.gz',
