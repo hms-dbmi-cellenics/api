@@ -102,6 +102,7 @@ const fileNameToReturn = {
   features10x: 'features.tsv.gz',
   rhapsody: 'expression_data.st.gz',
   seurat_object: 'r.rds',
+  seurat_spatial_object: 'r.rds',
   sce_object: 'r.rds',
   anndata_object: 'adata.h5ad',
   '10x_h5': 'matrix.h5.gz',
