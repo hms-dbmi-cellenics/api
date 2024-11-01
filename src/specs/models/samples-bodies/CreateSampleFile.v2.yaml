@@ -6,6 +6,8 @@ properties:
     type: string
   size:
     type: number
+  uploadStatus:
+    type: string
  
 required:
   - sampleFileId

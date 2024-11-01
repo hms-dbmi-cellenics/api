@@ -13,7 +13,7 @@ const logger = getLogger('[SampleFileController] - ');
 const createFile = async (req, res) => {
   const {
     params: { experimentId, sampleId, sampleFileType },
-    body: { sampleFileId, size },
+    body: { sampleFileId, size, uploadStatus = 'uploading' }, // Default uploadStatus to 'uploading'
   } = req;
   logger.log(`Creating file ${sampleFileType} for sample ${sampleId} in experiment ${experimentId}`);
 
@@ -22,7 +22,7 @@ const createFile = async (req, res) => {
     sample_file_type: sampleFileType,
     size,
     s3_path: sampleFileId,
-    upload_status: 'uploading',
+    upload_status: uploadStatus, // Use provided or default 'uploading'
   };
 
   await sqlClient.get().transaction(async (trx) => {
@@ -35,6 +35,7 @@ const createFile = async (req, res) => {
 
   res.json(OK());
 };
+
 
 const beginUpload = async (req, res) => {
   const {

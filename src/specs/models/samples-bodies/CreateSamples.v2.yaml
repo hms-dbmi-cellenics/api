@@ -17,6 +17,7 @@ items:
             - pattern: ^seurat_spatial_object$
             - pattern: ^sce_object$
             - pattern: ^anndata_object$
+            - pattern: ^obj2s_sample$
             - pattern: ^parse$
     options:
       type: object
