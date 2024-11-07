@@ -79,20 +79,22 @@ class Sample extends BasicModel {
       .where({ experiment_id: experimentId });
   }
 
-  async setNewFile(sampleId, sampleFileId, sampleFileType) {
+  async setNewFile(sampleId, sampleFileId, sampleFileType, overwriteExisting) {
     await this.sql.transaction(async (trx) => {
-      // Remove references to previous sample file for sampleFileType (if they exist)
-      await trx.del()
-        .from({ sf_map: tableNames.SAMPLE_TO_SAMPLE_FILE_MAP })
-        .where({ sample_id: sampleId })
-        .andWhere(
-          'sample_file_id',
-          '=',
-          trx.select(['id'])
-            .from({ sf: tableNames.SAMPLE_FILE })
-            .where('sf.id', '=', trx.ref('sf_map.sample_file_id'))
-            .andWhere('sf.sample_file_type', '=', sampleFileType),
-        );
+      if (overwriteExisting) {
+        // Remove references to previous sample file for sampleFileType (if they exist)
+        await trx.del()
+          .from({ sf_map: tableNames.SAMPLE_TO_SAMPLE_FILE_MAP })
+          .where({ sample_id: sampleId })
+          .andWhere(
+            'sample_file_id',
+            '=',
+            trx.select(['id'])
+              .from({ sf: tableNames.SAMPLE_FILE })
+              .where('sf.id', '=', trx.ref('sf_map.sample_file_id'))
+              .andWhere('sf.sample_file_type', '=', sampleFileType),
+          );
+      }
 
       // Add new sample file reference
       await trx(tableNames.SAMPLE_TO_SAMPLE_FILE_MAP).insert(

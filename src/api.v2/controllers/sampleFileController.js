@@ -4,7 +4,7 @@ const Sample = require('../model/Sample');
 const SampleFile = require('../model/SampleFile');
 const bucketNames = require('../../config/bucketNames');
 
-const { getSampleFileDownloadUrl, createMultipartUpload } = require('../helpers/s3/signedUrl');
+const { getSampleFileDownloadUrls, createMultipartUpload } = require('../helpers/s3/signedUrl');
 const { OK, MethodNotAllowedError } = require('../../utils/responses');
 const getLogger = require('../../utils/getLogger');
 
@@ -13,7 +13,9 @@ const logger = getLogger('[SampleFileController] - ');
 const createFile = async (req, res) => {
   const {
     params: { experimentId, sampleId, sampleFileType },
-    body: { sampleFileId, size, uploadStatus = 'uploading' }, // Default uploadStatus to 'uploading'
+    body: {
+      sampleFileId, size, uploadStatus = 'uploading', overwriteExisting = true,
+    }, // Default uploadStatus to 'uploading'
   } = req;
   logger.log(`Creating file ${sampleFileType} for sample ${sampleId} in experiment ${experimentId}`);
 
@@ -27,7 +29,7 @@ const createFile = async (req, res) => {
 
   await sqlClient.get().transaction(async (trx) => {
     await new SampleFile(trx).create(newSampleFile);
-    await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType);
+    await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType, overwriteExisting);
   });
 
 
@@ -80,7 +82,7 @@ const getS3DownloadUrl = async (req, res) => {
 
   logger.log(`Creating downloadUrl for ${sampleFileType} for sample ${sampleId} in experiment ${experimentId}`);
 
-  const signedUrl = await getSampleFileDownloadUrl(experimentId, sampleId, sampleFileType);
+  const signedUrl = await getSampleFileDownloadUrls(experimentId, sampleId, sampleFileType);
 
   logger.log(`Finished creating downloadUrl for ${sampleFileType} for sample ${sampleId} in experiment ${experimentId}`);
 

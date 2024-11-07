@@ -958,7 +958,17 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: array
+                items:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+                    fileId:
+                      type: string
+                  required:
+                    - url
+                    - fileId
         "401":
           description: The request lacks authentication credentials.
           content:
