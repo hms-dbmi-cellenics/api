@@ -159,7 +159,7 @@ describe('handleWorkRequest', () => {
   });
 
   it('Submits work request when correct request and and pipeline status are present', async () => {
-    signedUrl.getSignedUrl.mockReturnValueOnce('mockSignedUrl');
+    signedUrl.getSignedUrl.mockReturnValueOnce({ url: 'mockSignedUrl', fileId: 'mockFileId' });
 
     const workRequest = {
       ETag: '12345',

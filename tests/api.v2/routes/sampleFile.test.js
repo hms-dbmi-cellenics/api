@@ -200,7 +200,7 @@ describe('tests for experiment route', () => {
 
   it('Getting a sample file download url results in a successful response', async (done) => {
     sampleFileController.getS3DownloadUrl.mockImplementationOnce((req, res) => {
-      res.json('mockSignedUrl');
+      res.json({ url: 'mockSignedUrl', fileId: 'mockFileId' });
       return Promise.resolve();
     });
 

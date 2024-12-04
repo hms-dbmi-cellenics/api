@@ -72,7 +72,7 @@ Array [
 
 exports[`metadataTrackController parseMetadataFromTSV throws error if there are duplicated input 1`] = `"Multiple assignments to the same entry on lines: 2 & 3, 5 & 6"`;
 
-exports[`metadataTrackController parseMetadataFromTSV throws error if there are invalid lines 1`] = `"Cannot read property 'trim' of undefined"`;
+exports[`metadataTrackController parseMetadataFromTSV throws error if there are invalid lines 1`] = `"Cannot read properties of undefined (reading 'trim')"`;
 
 exports[`metadataTrackController parseMetadataFromTSV throws error if there are invalid samples 1`] = `"Invalid sample names on line(s): sample A, sample C"`;
 

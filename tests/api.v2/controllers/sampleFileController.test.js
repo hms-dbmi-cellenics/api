@@ -37,13 +37,16 @@ describe('sampleFileController', () => {
     const experimentId = 'experimentId';
     const sampleId = 'sampleId';
     const sampleFileType = 'features10x';
+    const overwriteExisting = true;
 
     const sampleFileId = 'sampleFileId';
     const size = 'size';
     const metadata = {};
 
     const mockReq = {
-      params: { experimentId, sampleId, sampleFileType },
+      params: {
+        experimentId, sampleId, sampleFileType, overwriteExisting,
+      },
       body: { sampleFileId, size, metadata },
     };
 
@@ -60,7 +63,7 @@ describe('sampleFileController', () => {
     expect(sampleFileInstance.create).toHaveBeenCalledWith({
       id: 'sampleFileId', s3_path: 'sampleFileId', sample_file_type: 'features10x', size: 'size', upload_status: 'uploading',
     });
-    expect(sampleInstance.setNewFile).toHaveBeenCalledWith('sampleId', 'sampleFileId', 'features10x');
+    expect(sampleInstance.setNewFile).toHaveBeenCalledWith('sampleId', 'sampleFileId', 'features10x', overwriteExisting);
 
     // Response is generated signed url
     expect(mockRes.json).toHaveBeenCalledWith(OK());
@@ -185,19 +188,19 @@ describe('sampleFileController', () => {
       body: { uploadStatus },
     };
 
-    const signedUrlString = 'mockSignedUrl';
-    signedUrl.getSampleFileDownloadUrl.mockImplementationOnce(
-      () => Promise.resolve(signedUrlString),
+    const mockSignedUrlResult = { url: 'mockSignedUrl', fileId: 'mockFileId' };
+    signedUrl.getSampleFileDownloadUrls.mockImplementationOnce(
+      () => Promise.resolve(mockSignedUrlResult),
     );
 
     await sampleFileController.getS3DownloadUrl(mockReq, mockRes);
 
-    expect(signedUrl.getSampleFileDownloadUrl).toHaveBeenCalledWith(
+    expect(signedUrl.getSampleFileDownloadUrls).toHaveBeenCalledWith(
       experimentId, sampleId, sampleFileType,
     );
 
     // Response is generated signed url
-    expect(mockRes.json).toHaveBeenCalledWith(signedUrlString);
+    expect(mockRes.json).toHaveBeenCalledWith(mockSignedUrlResult);
   });
 
   it('completeMultipart works correctly', async () => {
