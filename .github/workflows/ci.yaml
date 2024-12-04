@@ -93,9 +93,9 @@ jobs:
     steps:
 
     - id: setup-node
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
-        node-version: '14'
+        node-version: '20.18.0'
 
     - id: checkout
       name: Check out source code
