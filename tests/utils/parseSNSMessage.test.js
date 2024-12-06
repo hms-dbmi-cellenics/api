@@ -48,7 +48,7 @@ describe('parseSNSMessage', () => {
       body: '{ invalid: /body/ }',
     };
 
-    await expect(parseSNSMessage(mockReq, expectedTopicArn)).rejects.toThrow(new Error('Unexpected token i in JSON at position 2'));
+    await expect(parseSNSMessage(mockReq, expectedTopicArn)).rejects.toThrow(new Error("Expected property name or '}' in JSON at position 2"));
   });
 
   it('Fails if request body parsing doesnt work', async () => {

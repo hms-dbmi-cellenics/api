@@ -9,7 +9,7 @@ const mockRes = {
 };
 
 describe('sampleFileController', () => {
-  const mockSignedUrl = 'mockSignedUrl';
+  const mockSignedUrlResult = { url: 'mockSignedUrl', fileId: 'mockFileId' };
 
   const mockExperimentId = 'mockExperimentId';
   const uploadId = 'mockUploadId';
@@ -20,7 +20,7 @@ describe('sampleFileController', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    signedUrl.getPartUploadSignedUrl.mockReturnValueOnce(Promise.resolve(mockSignedUrl));
+    signedUrl.getPartUploadSignedUrl.mockReturnValueOnce(Promise.resolve(mockSignedUrlResult));
   });
 
   it('getPartUploadSignedUrl works correctly', async () => {
@@ -35,6 +35,6 @@ describe('sampleFileController', () => {
       key, bucket, uploadId, partNumber,
     );
 
-    expect(mockRes.json).toHaveBeenCalledWith(mockSignedUrl);
+    expect(mockRes.json).toHaveBeenCalledWith(mockSignedUrlResult);
   });
 });

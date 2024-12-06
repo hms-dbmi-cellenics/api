@@ -6,6 +6,10 @@ properties:
     type: string
   size:
     type: number
+  uploadStatus:
+    type: string
+  overwriteExisting:
+    type: boolean
  
 required:
   - sampleFileId

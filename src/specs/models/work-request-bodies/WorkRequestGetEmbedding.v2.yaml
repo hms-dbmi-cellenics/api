@@ -13,6 +13,7 @@ allOf:
     - $ref: '#/definitions/umap'
     - $ref: '#/definitions/tsne'
     - $ref: '#/definitions/pca'
+    - $ref: '#/definitions/images'
 
 definitions:
   umap:
@@ -75,3 +76,12 @@ definitions:
         type: string
         pattern: pca
         example: pca
+  images:
+    type: object
+    required:
+      - type
+    properties:
+      type:
+        type: string
+        pattern: images
+        example: images

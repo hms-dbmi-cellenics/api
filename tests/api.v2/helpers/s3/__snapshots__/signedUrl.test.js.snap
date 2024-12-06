@@ -35,13 +35,14 @@ exports[`completeMultipartUpload works correctly  1`] = `
 }
 `;
 
-exports[`getSampleFileDownloadUrl works correctly 1`] = `
+exports[`getSampleFileDownloadUrls works correctly 1`] = `
 [MockFunction] {
   "calls": Array [
     Array [
       "getObject",
       Object {
         "Bucket": "biomage-originals-test-000000000000",
+        "Expires": 86400,
         "Key": "123",
         "ResponseContentDisposition": "attachment; filename=\\"features.tsv.gz\\"",
       },

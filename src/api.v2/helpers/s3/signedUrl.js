@@ -102,36 +102,61 @@ const fileNameToReturn = {
   features10x: 'features.tsv.gz',
   rhapsody: 'expression_data.st.gz',
   seurat_object: 'r.rds',
+  seurat_spatial_object: 'r.rds',
   sce_object: 'r.rds',
   anndata_object: 'adata.h5ad',
   '10x_h5': 'matrix.h5.gz',
   featuresParse: 'all_genes.csv.gz',
   barcodesParse: 'cell_metadata.csv.gz',
   matrixParse: 'DGE.mtx.gz',
+  ome_zarr_zip: 'image.ome.zarr.zip',
 };
 
-const getSampleFileDownloadUrl = async (experimentId, sampleId, fileType) => {
+const getSampleFileBucket = (fileType) => {
+  let bucketName;
+
+  switch (fileType) {
+    case 'ome_zarr_zip':
+      bucketName = bucketNames.SPATIAL_IMAGES;
+      break;
+    default:
+      bucketName = bucketNames.SAMPLE_FILES;
+      break;
+  }
+
+  return bucketName;
+};
+
+const getSampleFileDownloadUrls = async (experimentId, sampleId, fileType) => {
   const allFiles = await new SampleFile().allFilesForSample(sampleId);
 
-  const matchingFile = allFiles.find(({ sampleFileType }) => sampleFileType === fileType);
+  const matchingFiles = allFiles.filter(({ sampleFileType }) => sampleFileType === fileType);
 
-  if (_.isNil(matchingFile)) {
+  if (matchingFiles.length === 0) {
     throw new NotFoundError(`File ${fileType} from sample ${sampleId} from experiment ${experimentId} not found`);
   }
 
-  const params = {
-    Bucket: bucketNames.SAMPLE_FILES,
-    Key: matchingFile.s3Path,
-    ResponseContentDisposition: `attachment; filename="${fileNameToReturn[fileType]}"`,
-  };
+  const signedUrls = await Promise.all(
+    matchingFiles.map(async (matchingFile) => {
+      const params = {
+        Bucket: getSampleFileBucket(fileType),
+        Key: matchingFile.s3Path,
+        ResponseContentDisposition: `attachment; filename="${fileNameToReturn[fileType]}"`,
+        Expires: 24 * 60 * 60, // 24 hours
+      };
 
-  const signedUrl = await getSignedUrl('getObject', params);
+      return {
+        url: await getSignedUrl('getObject', params),
+        fileId: matchingFile.id,
+      };
+    }),
+  );
 
-  return signedUrl;
+  return signedUrls;
 };
 
 module.exports = {
-  getSampleFileDownloadUrl,
+  getSampleFileDownloadUrls,
   getSignedUrl,
   createMultipartUpload,
   completeMultipartUpload,

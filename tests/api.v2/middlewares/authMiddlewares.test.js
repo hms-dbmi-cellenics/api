@@ -28,7 +28,7 @@ describe('Tests for authorization/authentication middlewares', () => {
   it('Unauthorized user cannot proceed', async () => {
     UserAccessModel.canAccessExperiment.mockImplementationOnce(() => false);
 
-    await expect(authorize(fake.USER.sub, 'sockets', null, fake.EXPERIMENT_ID)).rejects;
+    await expect(authorize(fake.USER.sub, 'sockets', null, fake.EXPERIMENT_ID)).rejects.toThrowError();
   });
 
   it('Express middleware can authorize correct users', async () => {

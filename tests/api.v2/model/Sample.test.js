@@ -25,6 +25,7 @@ jest.mock('../../../src/sql/helpers', () => ({
 const mockSampleId = 'mockSampleId';
 const mockSampleFileId = 'sampleFileId';
 const mockSampleFileType = 'features10x';
+const mockOverwriteExisting = true;
 
 
 describe('model/Sample', () => {
@@ -46,7 +47,7 @@ describe('model/Sample', () => {
   it('setNewFile works correctly if valid params are passed', async () => {
     mockTrx.ref.mockImplementationOnce(() => 'sf_mapsample_file_idRef');
 
-    await new Sample().setNewFile(mockSampleId, mockSampleFileId, mockSampleFileType);
+    await new Sample().setNewFile(mockSampleId, mockSampleFileId, mockSampleFileType, mockOverwriteExisting);
 
     expect(mockTrx).toHaveBeenCalledWith(tableNames.SAMPLE_TO_SAMPLE_FILE_MAP);
 

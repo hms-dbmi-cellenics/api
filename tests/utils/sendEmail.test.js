@@ -16,7 +16,7 @@ describe('sending email works', () => {
     AWS.mock('SES', 'sendEmail', sendEmailSpy);
   });
   beforeEach(() => {
-    sendEmailSpy.mockReset();
+    sendEmailSpy.mockClear();
   });
 
   it('sends success email', async () => {

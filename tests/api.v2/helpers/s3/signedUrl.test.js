@@ -6,7 +6,7 @@ const AWS = require('../../../../src/utils/requireAWS');
 const { NotFoundError } = require('../../../../src/utils/responses');
 
 const {
-  getSignedUrl, getSampleFileDownloadUrl, completeMultipartUpload,
+  getSignedUrl, getSampleFileDownloadUrls, completeMultipartUpload,
 } = signedUrl;
 const sampleFileInstance = new SampleFile();
 
@@ -116,7 +116,7 @@ describe('getPartUploadSignedUrl', () => {
   });
 });
 
-describe('getSampleFileDownloadUrl', () => {
+describe('getSampleFileDownloadUrls', () => {
   const experimentId = 'mockExperimentId';
   const sampleId = 'mockSampleId';
   const fileType = 'features10x';
@@ -146,9 +146,9 @@ describe('getSampleFileDownloadUrl', () => {
 
     sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
 
-    const response = await getSampleFileDownloadUrl(experimentId, sampleId, fileType);
+    const response = await getSampleFileDownloadUrls(experimentId, sampleId, fileType);
 
-    expect(response).toEqual(signedUrlResponse);
+    expect(response).toEqual([{ url: signedUrlResponse, fileId: 'id0' }]);
     expect(getSignedUrlPromiseSpy).toMatchSnapshot();
   });
 
@@ -164,7 +164,7 @@ describe('getSampleFileDownloadUrl', () => {
 
     sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
 
-    await expect(getSampleFileDownloadUrl(experimentId, sampleId, fileType)).rejects.toThrow(
+    await expect(getSampleFileDownloadUrls(experimentId, sampleId, fileType)).rejects.toThrow(
       new NotFoundError(`File ${fileType} from sample ${sampleId} from experiment ${experimentId} not found`),
     );
   });
