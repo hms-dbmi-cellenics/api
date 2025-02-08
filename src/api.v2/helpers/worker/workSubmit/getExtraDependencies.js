@@ -64,6 +64,7 @@ const dependencyGetters = {
   GetTrajectoryAnalysisPseudoTime: [getClusteringSettings, getEmbeddingSettings],
   GetNormalizedExpression: [getClusteringSettings],
   DownloadAnnotSeuratObject: [getClusteringSettings, getCellSetsLastVersion, getEmbeddingSettings],
+  CellCycleScoring: [],
 };
 
 const getExtraDependencies = async (experimentId, taskName, body) => {
