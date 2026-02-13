@@ -1,17 +1,13 @@
 const generateETag = require('../helpers/worker/generateEtag');
 const getWorkResults = require('../helpers/worker/getWorkResults');
-
 const validateAndSubmitWork = require('./validateAndSubmitWork');
-
-
+const waitForWorkerReady = require('../helpers/worker/waitForWorkerReady');
 
 const getSignedUrlIfAvailable = async (experimentId, ETag) => {
   try {
     const { signedUrl } = await getWorkResults(experimentId, ETag);
     return signedUrl;
   } catch (e) {
-    // 404 => indicates there are no work results present in S3 which is fine
-    // other error => should be raised
     if (e.status !== 404) {
       throw e;
     }
@@ -19,23 +15,27 @@ const getSignedUrlIfAvailable = async (experimentId, ETag) => {
   return null;
 };
 
-
 const handleWorkRequest = async (Authorization, data) => {
   const { experimentId, body, requestProps } = data;
-
-  // 1. Generate ETag for the new work request
   const ETag = await generateETag({ experimentId, body, requestProps });
-
-  // 2. Check if there are already existing work results for this ETag
   const signedUrl = await getSignedUrlIfAvailable(experimentId, ETag);
 
-  // 3. If the results were not in S3, send the request to the worker
-  if (signedUrl === null) {
-    const workRequest = { ETag, Authorization, ...data };
-    await validateAndSubmitWork(workRequest);
+  if (signedUrl !== null) {
+    return { ETag, signedUrl };
   }
 
-  return { ETag, signedUrl };
+  // Wait for worker to become ready (with timeout)
+  const waitTimeoutMs = 120000; // 2 minutes
+  const waitIntervalMs = 5000;
+  const waitResult = await waitForWorkerReady(experimentId, waitTimeoutMs, waitIntervalMs);
+
+  if (waitResult === 'timeout') {
+    return { ETag, signedUrl: null, errorCode: 'WORKER_STARTUP_TIMEOUT' };
+  }
+
+  const workRequest = { ETag, Authorization, ...data };
+  await validateAndSubmitWork(workRequest);
+  return { ETag, signedUrl: null };
 };
 
 module.exports = handleWorkRequest;
