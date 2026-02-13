@@ -38,13 +38,14 @@ describe('Handle work', () => {
     getWorkResults.mockResolvedValue({ signedUrl: 'some-signed-url' });
     const result = await handleWorkRequest(authJWT, data);
     expect(result).toEqual({ ETag: 'new-etag', signedUrl: 'some-signed-url' });
+    expect(waitForWorkerReady).not.toHaveBeenCalled();
   });
 
-  it('handles non-existing work results and submits new work', async () => {
+  it('submits work when worker becomes ready within timeout', async () => {
     getWorkResults.mockRejectedValue({ status: 404 });
-    validateAndSubmitWork.mockResolvedValue({ name: 'worker-pod', phase: 'Running' });
     waitForWorkerReady.mockResolvedValue('ready');
     const result = await handleWorkRequest(authJWT, data);
+    expect(waitForWorkerReady).toHaveBeenCalledWith(data.experimentId, 120000, 5000);
     expect(validateAndSubmitWork).toHaveBeenCalledWith({ ETag: 'new-etag', Authorization: authJWT, ...data });
     expect(waitForWorkerReady).toHaveBeenCalledWith(fake.EXPERIMENT_ID, 120000, 5000);
     expect(result).toEqual({ ETag: 'new-etag', signedUrl: null });
@@ -64,6 +65,15 @@ describe('Handle work', () => {
     const result = await handleWorkRequest(authJWT, data);
     expect(waitForWorkerReady).not.toHaveBeenCalled();
     expect(result).toEqual({ ETag: 'new-etag', signedUrl: null });
+  });
+
+  it('returns error code when worker startup times out', async () => {
+    getWorkResults.mockRejectedValue({ status: 404 });
+    waitForWorkerReady.mockResolvedValue('timeout');
+    const result = await handleWorkRequest(authJWT, data);
+    expect(waitForWorkerReady).toHaveBeenCalledWith(data.experimentId, 120000, 5000);
+    expect(validateAndSubmitWork).not.toHaveBeenCalled();
+    expect(result).toEqual({ ETag: 'new-etag', signedUrl: null, errorCode: 'WORKER_STARTUP_TIMEOUT' });
   });
 
   it('throws error for non-404 status from getWorkResults', async () => {
