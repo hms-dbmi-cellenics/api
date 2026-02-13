@@ -26,11 +26,10 @@ describe('Handle work', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     generateETag.mockResolvedValue('new-etag');
-    validateAndSubmitWork.mockResolvedValue({ name: 'worker-pod', phase: 'Running' });
-    waitForWorkerReady.mockResolvedValue('ready');
   });
 
   it('generates ETag successfully', async () => {
+    getWorkResults.mockResolvedValue({ signedUrl: 'some-signed-url' });
     await handleWorkRequest(authJWT, data);
     expect(generateETag).toHaveBeenCalledWith(_.pick(data, ['experimentId', 'body', 'requestProps']));
   });
@@ -43,6 +42,8 @@ describe('Handle work', () => {
 
   it('handles non-existing work results and submits new work', async () => {
     getWorkResults.mockRejectedValue({ status: 404 });
+    validateAndSubmitWork.mockResolvedValue({ name: 'worker-pod', phase: 'Running' });
+    waitForWorkerReady.mockResolvedValue('ready');
     const result = await handleWorkRequest(authJWT, data);
     expect(validateAndSubmitWork).toHaveBeenCalledWith({ ETag: 'new-etag', Authorization: authJWT, ...data });
     expect(waitForWorkerReady).toHaveBeenCalledWith(fake.EXPERIMENT_ID, 120000, 5000);
@@ -51,6 +52,7 @@ describe('Handle work', () => {
 
   it('returns timeout error when worker is not ready in time', async () => {
     getWorkResults.mockRejectedValue({ status: 404 });
+    validateAndSubmitWork.mockResolvedValue({ name: 'worker-pod', phase: 'Running' });
     waitForWorkerReady.mockResolvedValue('timeout');
     const result = await handleWorkRequest(authJWT, data);
     expect(result).toEqual({ ETag: 'new-etag', signedUrl: null, errorCode: 'WORKER_STARTUP_TIMEOUT' });
