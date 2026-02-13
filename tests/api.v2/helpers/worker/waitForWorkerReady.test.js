@@ -68,6 +68,7 @@ describe('waitForWorkerReady', () => {
       },
     });
 
+    // With timeout=150ms and interval=100ms: first check at t=0, second check at t=100, timeout at t=150
     const result = await waitForWorkerReady('test-experiment', 150, 100);
 
     expect(result).toBe('timeout');
