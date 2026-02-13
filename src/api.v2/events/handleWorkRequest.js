@@ -30,9 +30,7 @@ const handleWorkRequest = async (Authorization, data) => {
   // Wait for worker to become ready (with timeout) after it's been created
   // Only wait if a pod was actually assigned (podInfo will have name property)
   if (podInfo && podInfo.name) {
-    const waitTimeoutMs = 120000; // 2 minutes
-    const waitIntervalMs = 5000;
-    const waitResult = await waitForWorkerReady(experimentId, waitTimeoutMs, waitIntervalMs);
+    const waitResult = await waitForWorkerReady(experimentId);
 
     if (waitResult === 'timeout') {
       return { ETag, signedUrl: null, errorCode: 'WORKER_STARTUP_TIMEOUT' };

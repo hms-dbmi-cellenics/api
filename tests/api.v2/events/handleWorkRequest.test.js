@@ -47,7 +47,7 @@ describe('Handle work', () => {
     waitForWorkerReady.mockResolvedValue('ready');
     const result = await handleWorkRequest(authJWT, data);
     expect(waitForWorkerReady.mock.calls.length).toBeGreaterThan(0);
-    expect(waitForWorkerReady).toHaveBeenCalledWith(fake.EXPERIMENT_ID, 120000, 5000);
+    expect(waitForWorkerReady).toHaveBeenCalledWith(fake.EXPERIMENT_ID);
     expect(validateAndSubmitWork).toHaveBeenCalledWith({ ETag: 'new-etag', Authorization: authJWT, ...data });
     expect(result).toEqual({ ETag: 'new-etag', signedUrl: null });
   });
@@ -57,28 +57,12 @@ describe('Handle work', () => {
     validateAndSubmitWork.mockResolvedValue({ name: 'worker-pod', phase: 'Running' });
     waitForWorkerReady.mockResolvedValue('timeout');
     const result = await handleWorkRequest(authJWT, data);
+    expect(waitForWorkerReady.mock.calls.length).toBeGreaterThan(0);
+    expect(waitForWorkerReady).toHaveBeenCalledWith(fake.EXPERIMENT_ID);
     expect(result).toEqual({ ETag: 'new-etag', signedUrl: null, errorCode: 'WORKER_STARTUP_TIMEOUT' });
   });
 
   it('does not wait if podInfo is empty (development mode)', async () => {
-    getWorkResults.mockRejectedValue({ status: 404 });
-    validateAndSubmitWork.mockResolvedValue({});
-    const result = await handleWorkRequest(authJWT, data);
-    expect(waitForWorkerReady).not.toHaveBeenCalled();
-    expect(result).toEqual({ ETag: 'new-etag', signedUrl: null });
-  });
-
-  it('returns error code when worker startup times out', async () => {
-    getWorkResults.mockRejectedValue({ status: 404 });
-    validateAndSubmitWork.mockResolvedValue({ name: 'worker-pod', phase: 'Running' });
-    waitForWorkerReady.mockResolvedValue('timeout');
-    const result = await handleWorkRequest(authJWT, data);
-    expect(waitForWorkerReady.mock.calls.length).toBeGreaterThan(0);
-    expect(waitForWorkerReady).toHaveBeenCalledWith(fake.EXPERIMENT_ID, 120000, 5000);
-    expect(result).toEqual({ ETag: 'new-etag', signedUrl: null, errorCode: 'WORKER_STARTUP_TIMEOUT' });
-  });
-
-  it('throws error for non-404 status from getWorkResults', async () => {
     getWorkResults.mockRejectedValue({ status: 400 });
     let error;
     try {

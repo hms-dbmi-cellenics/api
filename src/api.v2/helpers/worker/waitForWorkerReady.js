@@ -15,8 +15,13 @@ async function waitForWorkerReady(experimentId, timeoutMs = 120000, intervalMs =
     if (status.worker && status.worker.ready) {
       return 'ready';
     }
+    const elapsedMs = Date.now() - start;
+    const remainingMs = timeoutMs - elapsedMs;
+    if (remainingMs <= 0) {
+      break;
+    }
     // eslint-disable-next-line no-await-in-loop
-    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+    await new Promise((resolve) => setTimeout(resolve, Math.min(intervalMs, remainingMs)));
   }
   return 'timeout';
 }
