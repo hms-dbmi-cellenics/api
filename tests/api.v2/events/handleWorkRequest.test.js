@@ -40,7 +40,7 @@ describe('Handle work', () => {
     expect(waitForWorkerReady).not.toHaveBeenCalled();
   });
 
-  it('waits for worker to become ready before submitting work', async () => {
+  it('submits work when worker becomes ready within timeout', async () => {
     getWorkResults.mockRejectedValue({ status: 404 });
     waitForWorkerReady.mockResolvedValue('ready');
     const result = await handleWorkRequest(authJWT, data);
