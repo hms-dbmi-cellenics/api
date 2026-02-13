@@ -6,11 +6,6 @@ jest.mock('../../../../src/api.v2/helpers/worker/getWorkerStatus');
 describe('waitForWorkerReady', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
   });
 
   it('Returns ready when worker becomes ready before timeout', async () => {
@@ -57,14 +52,7 @@ describe('waitForWorkerReady', () => {
         },
       });
 
-    const waitPromise = waitForWorkerReady('test-experiment', 120000, 100);
-    
-    // Advance past first sleep
-    await jest.advanceTimersByTimeAsync(100);
-    // Advance past second sleep
-    await jest.advanceTimersByTimeAsync(100);
-    
-    const result = await waitPromise;
+    const result = await waitForWorkerReady('test-experiment', 120000, 100);
 
     expect(result).toBe('ready');
     expect(getWorkerStatus).toHaveBeenCalledTimes(3);
@@ -80,14 +68,8 @@ describe('waitForWorkerReady', () => {
       },
     });
 
-    const waitPromise = waitForWorkerReady('test-experiment', 150, 100);
-    
-    // First check at t=0, then sleep 100ms
-    await jest.advanceTimersByTimeAsync(100);
-    // Second check at t=100, then sleep 50ms (only remaining time)
-    await jest.advanceTimersByTimeAsync(50);
-    
-    const result = await waitPromise;
+    // With timeout=150ms and interval=100ms: first check at t=0, second check at t=100, timeout at t=150
+    const result = await waitForWorkerReady('test-experiment', 150, 100);
 
     expect(result).toBe('timeout');
     expect(getWorkerStatus).toHaveBeenCalledTimes(2);
@@ -98,12 +80,7 @@ describe('waitForWorkerReady', () => {
       worker: null,
     });
 
-    const waitPromise = waitForWorkerReady('test-experiment', 150, 100);
-    
-    await jest.advanceTimersByTimeAsync(100);
-    await jest.advanceTimersByTimeAsync(50);
-    
-    const result = await waitPromise;
+    const result = await waitForWorkerReady('test-experiment', 150, 100);
 
     expect(result).toBe('timeout');
     expect(getWorkerStatus).toHaveBeenCalledTimes(2);
@@ -112,12 +89,7 @@ describe('waitForWorkerReady', () => {
   it('Handles undefined worker status gracefully', async () => {
     getWorkerStatus.mockResolvedValue({});
 
-    const waitPromise = waitForWorkerReady('test-experiment', 150, 100);
-    
-    await jest.advanceTimersByTimeAsync(100);
-    await jest.advanceTimersByTimeAsync(50);
-    
-    const result = await waitPromise;
+    const result = await waitForWorkerReady('test-experiment', 150, 100);
 
     expect(result).toBe('timeout');
     expect(getWorkerStatus).toHaveBeenCalledTimes(2);
@@ -132,12 +104,7 @@ describe('waitForWorkerReady', () => {
       },
     });
 
-    const waitPromise = waitForWorkerReady('test-experiment', 150, 100);
-    
-    await jest.advanceTimersByTimeAsync(100);
-    await jest.advanceTimersByTimeAsync(50);
-    
-    const result = await waitPromise;
+    const result = await waitForWorkerReady('test-experiment', 150, 100);
 
     expect(result).toBe('timeout');
     expect(getWorkerStatus).toHaveBeenCalledTimes(2);
@@ -162,11 +129,7 @@ describe('waitForWorkerReady', () => {
         },
       });
 
-    const waitPromise = waitForWorkerReady('test-experiment', 120000, 100);
-    
-    await jest.advanceTimersByTimeAsync(100);
-    
-    const result = await waitPromise;
+    const result = await waitForWorkerReady('test-experiment', 120000, 100);
 
     expect(result).toBe('ready');
     expect(getWorkerStatus).toHaveBeenCalledTimes(2);
@@ -215,11 +178,7 @@ describe('waitForWorkerReady', () => {
         },
       });
 
-    const waitPromise = waitForWorkerReady('test-experiment', 120000, 100);
-    
-    await jest.advanceTimersByTimeAsync(100);
-    
-    const result = await waitPromise;
+    const result = await waitForWorkerReady('test-experiment', 120000, 100);
 
     expect(result).toBe('ready');
     // Should only call twice - once when not ready, once when ready, and stop
