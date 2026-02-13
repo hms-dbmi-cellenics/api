@@ -25,10 +25,11 @@ const authJWT = 'Bearer someLongAndConfusingString';
 describe('Handle work', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    generateETag.mockResolvedValue('new-etag');
   });
 
   it('generates ETag successfully', async () => {
-    generateETag.mockResolvedValue('new-etag');
+    getWorkResults.mockResolvedValue({ signedUrl: 'some-signed-url' });
     await handleWorkRequest(authJWT, data);
     expect(generateETag).toHaveBeenCalledWith(_.pick(data, ['experimentId', 'body', 'requestProps']));
   });
@@ -46,6 +47,23 @@ describe('Handle work', () => {
     const result = await handleWorkRequest(authJWT, data);
     expect(waitForWorkerReady).toHaveBeenCalledWith(data.experimentId, 120000, 5000);
     expect(validateAndSubmitWork).toHaveBeenCalledWith({ ETag: 'new-etag', Authorization: authJWT, ...data });
+    expect(waitForWorkerReady).toHaveBeenCalledWith(fake.EXPERIMENT_ID, 120000, 5000);
+    expect(result).toEqual({ ETag: 'new-etag', signedUrl: null });
+  });
+
+  it('returns timeout error when worker is not ready in time', async () => {
+    getWorkResults.mockRejectedValue({ status: 404 });
+    validateAndSubmitWork.mockResolvedValue({ name: 'worker-pod', phase: 'Running' });
+    waitForWorkerReady.mockResolvedValue('timeout');
+    const result = await handleWorkRequest(authJWT, data);
+    expect(result).toEqual({ ETag: 'new-etag', signedUrl: null, errorCode: 'WORKER_STARTUP_TIMEOUT' });
+  });
+
+  it('does not wait if podInfo is empty (development mode)', async () => {
+    getWorkResults.mockRejectedValue({ status: 404 });
+    validateAndSubmitWork.mockResolvedValue({});
+    const result = await handleWorkRequest(authJWT, data);
+    expect(waitForWorkerReady).not.toHaveBeenCalled();
     expect(result).toEqual({ ETag: 'new-etag', signedUrl: null });
   });
 
