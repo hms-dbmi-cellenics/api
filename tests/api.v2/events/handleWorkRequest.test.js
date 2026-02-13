@@ -4,12 +4,14 @@ const handleWorkRequest = require('../../../src/api.v2/events/handleWorkRequest'
 const generateETag = require('../../../src/api.v2/helpers/worker/generateEtag');
 const getWorkResults = require('../../../src/api.v2/helpers/worker/getWorkResults');
 const validateAndSubmitWork = require('../../../src/api.v2/events/validateAndSubmitWork');
+const waitForWorkerReady = require('../../../src/api.v2/helpers/worker/waitForWorkerReady');
 const fake = require('../../test-utils/constants');
 
 jest.mock('../../../src/api.v2/middlewares/authMiddlewares');
 jest.mock('../../../src/api.v2/helpers/worker/generateEtag');
 jest.mock('../../../src/api.v2/helpers/worker/getWorkResults');
 jest.mock('../../../src/api.v2/events/validateAndSubmitWork');
+jest.mock('../../../src/api.v2/helpers/worker/waitForWorkerReady');
 
 const data = {
   uuid: 'someuuid-asd-asd-asdddasa',
@@ -35,13 +37,34 @@ describe('Handle work', () => {
     getWorkResults.mockResolvedValue({ signedUrl: 'some-signed-url' });
     const result = await handleWorkRequest(authJWT, data);
     expect(result).toEqual({ ETag: 'new-etag', signedUrl: 'some-signed-url' });
+    expect(waitForWorkerReady).not.toHaveBeenCalled();
   });
 
-  it('handles non-existing work results and submits new work', async () => {
+  it('handles non-existing work results and submits new work when worker is ready', async () => {
     getWorkResults.mockRejectedValue({ status: 404 });
+    waitForWorkerReady.mockResolvedValue('ready');
     const result = await handleWorkRequest(authJWT, data);
+    expect(waitForWorkerReady).toHaveBeenCalledWith(data.experimentId, 120000, 5000);
     expect(validateAndSubmitWork).toHaveBeenCalledWith({ ETag: 'new-etag', Authorization: authJWT, ...data });
     expect(result).toEqual({ ETag: 'new-etag', signedUrl: null });
+  });
+
+  it('waits for worker to become ready before submitting work', async () => {
+    getWorkResults.mockRejectedValue({ status: 404 });
+    waitForWorkerReady.mockResolvedValue('ready');
+    const result = await handleWorkRequest(authJWT, data);
+    expect(waitForWorkerReady).toHaveBeenCalledWith(data.experimentId, 120000, 5000);
+    expect(validateAndSubmitWork).toHaveBeenCalled();
+    expect(result).toEqual({ ETag: 'new-etag', signedUrl: null });
+  });
+
+  it('returns error code when worker startup times out', async () => {
+    getWorkResults.mockRejectedValue({ status: 404 });
+    waitForWorkerReady.mockResolvedValue('timeout');
+    const result = await handleWorkRequest(authJWT, data);
+    expect(waitForWorkerReady).toHaveBeenCalledWith(data.experimentId, 120000, 5000);
+    expect(validateAndSubmitWork).not.toHaveBeenCalled();
+    expect(result).toEqual({ ETag: 'new-etag', signedUrl: null, errorCode: 'WORKER_STARTUP_TIMEOUT' });
   });
 
   it('throws error for non-404 status from getWorkResults', async () => {
