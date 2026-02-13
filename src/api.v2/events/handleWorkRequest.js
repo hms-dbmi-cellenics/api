@@ -24,17 +24,21 @@ const handleWorkRequest = async (Authorization, data) => {
     return { ETag, signedUrl };
   }
 
-  // Wait for worker to become ready (with timeout)
-  const waitTimeoutMs = 120000; // 2 minutes
-  const waitIntervalMs = 5000;
-  const waitResult = await waitForWorkerReady(experimentId, waitTimeoutMs, waitIntervalMs);
+  const workRequest = { ETag, Authorization, ...data };
+  const podInfo = await validateAndSubmitWork(workRequest);
 
-  if (waitResult === 'timeout') {
-    return { ETag, signedUrl: null, errorCode: 'WORKER_STARTUP_TIMEOUT' };
+  // Wait for worker to become ready (with timeout) after it's been created
+  // Only wait if a pod was actually assigned (podInfo will have name property)
+  if (podInfo && podInfo.name) {
+    const waitTimeoutMs = 120000; // 2 minutes
+    const waitIntervalMs = 5000;
+    const waitResult = await waitForWorkerReady(experimentId, waitTimeoutMs, waitIntervalMs);
+
+    if (waitResult === 'timeout') {
+      return { ETag, signedUrl: null, errorCode: 'WORKER_STARTUP_TIMEOUT' };
+    }
   }
 
-  const workRequest = { ETag, Authorization, ...data };
-  await validateAndSubmitWork(workRequest);
   return { ETag, signedUrl: null };
 };
 
