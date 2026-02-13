@@ -40,21 +40,12 @@ describe('Handle work', () => {
     expect(waitForWorkerReady).not.toHaveBeenCalled();
   });
 
-  it('handles non-existing work results and submits new work when worker is ready', async () => {
-    getWorkResults.mockRejectedValue({ status: 404 });
-    waitForWorkerReady.mockResolvedValue('ready');
-    const result = await handleWorkRequest(authJWT, data);
-    expect(waitForWorkerReady).toHaveBeenCalledWith(data.experimentId, 120000, 5000);
-    expect(validateAndSubmitWork).toHaveBeenCalledWith({ ETag: 'new-etag', Authorization: authJWT, ...data });
-    expect(result).toEqual({ ETag: 'new-etag', signedUrl: null });
-  });
-
   it('waits for worker to become ready before submitting work', async () => {
     getWorkResults.mockRejectedValue({ status: 404 });
     waitForWorkerReady.mockResolvedValue('ready');
     const result = await handleWorkRequest(authJWT, data);
     expect(waitForWorkerReady).toHaveBeenCalledWith(data.experimentId, 120000, 5000);
-    expect(validateAndSubmitWork).toHaveBeenCalled();
+    expect(validateAndSubmitWork).toHaveBeenCalledWith({ ETag: 'new-etag', Authorization: authJWT, ...data });
     expect(result).toEqual({ ETag: 'new-etag', signedUrl: null });
   });
 
