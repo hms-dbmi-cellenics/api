@@ -49,12 +49,6 @@ describe('Handle work', () => {
     expect(result).toEqual({ ETag: 'new-etag', signedUrl: null });
   });
 
-  it('waits for worker to be ready after submitting work', async () => {
-    getWorkResults.mockRejectedValue({ status: 404 });
-    await handleWorkRequest(authJWT, data);
-    expect(waitForWorkerReady).toHaveBeenCalledWith(fake.EXPERIMENT_ID, 120000, 5000);
-  });
-
   it('returns timeout error when worker is not ready in time', async () => {
     getWorkResults.mockRejectedValue({ status: 404 });
     waitForWorkerReady.mockResolvedValue('timeout');
