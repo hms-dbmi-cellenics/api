@@ -153,7 +153,7 @@ describe('handleWorkRequest', () => {
       await validateAndSubmitWork(workRequest);
     } catch (e) {
       expect(e.message).toMatch(
-        'Work request can not be handled because pipeline is RUNNING',
+        'Work request cannot be handled because pipeline is RUNNING',
       );
     }
   });
