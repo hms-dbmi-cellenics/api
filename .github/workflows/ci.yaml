@@ -96,6 +96,7 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20.18.0'
+        cache: 'npm'
 
     - id: checkout
       name: Check out source code
@@ -103,10 +104,6 @@ jobs:
       with:
         ref: ${{github.head_ref}}
         repository: ${{github.event.pull_request.head.repo.full_name}}
-
-    - id: cache-seek
-      name: Check for npm cache hit
-      uses: c-hive/gha-npm-cache@v1
 
     - id: install
       name: Install dependencies
