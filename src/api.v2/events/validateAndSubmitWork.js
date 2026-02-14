@@ -35,7 +35,7 @@ const validateAndSubmitWork = async (req) => {
   const { experimentId } = workRequest;
 
 
-  // Check if pipeline is runnning
+  // Check if pipeline is running
   const { qc: { status: qcPipelineStatus } } = await getPipelineStatus(
     experimentId,
     pipelineConstants.QC_PROCESS_NAME,
@@ -49,7 +49,7 @@ const validateAndSubmitWork = async (req) => {
   if (!checkSomeEqualTo([qcPipelineStatus, obj2sPipelineStatus], pipelineConstants.SUCCEEDED)) {
     throw new Error(
       // eslint-disable-next-line max-len
-      `Work request can not be handled because pipeline is ${qcPipelineStatus} `
+      `Work request cannot be handled because pipeline is ${qcPipelineStatus} `
       + `or obj2s status is ${obj2sPipelineStatus}`,
     );
   }
