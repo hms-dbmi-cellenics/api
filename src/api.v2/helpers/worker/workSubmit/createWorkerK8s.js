@@ -134,4 +134,3 @@ const createWorkerResources = async (service) => {
 };
 
 module.exports = createWorkerResources;
-module.exports.waitForPods = waitForPods;
