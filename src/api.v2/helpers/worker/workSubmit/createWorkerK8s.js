@@ -1,6 +1,6 @@
-
 const k8s = require('@kubernetes/client-node');
 const config = require('../../../../config');
+const asyncTimer = require('../../../../utils/asyncTimer');
 const getLogger = require('../../../../utils/getLogger');
 
 const kc = new k8s.KubeConfig();
@@ -8,16 +8,18 @@ kc.loadFromDefault();
 
 const logger = getLogger();
 
-const getAvailablePods = require('../../pipeline/hooks/getAvailablePods');
-
-// getPods retrieves pods matching status and label selectors
+// getAvailablePods retrieves pods not assigned already to an activityID given a selector
 const getPods = async (namespace, statusSelector, labelSelector) => {
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+
   const pods = await k8sApi.listNamespacedPod(
     namespace, null, null, null, statusSelector, labelSelector,
   );
   return pods.body.items;
 };
+
+
+
 
 const getAssignedPods = async (experimentId, namespace) => {
   // check if there's already a running pod for this experiment
@@ -35,6 +37,14 @@ const getAssignedPods = async (experimentId, namespace) => {
   return [];
 };
 
+const getAvailablePods = async (namespace) => {
+  let pods = await getPods(namespace, 'status.phase=Running', '!experimentId,!run');
+  if (pods.length < 1) {
+    logger.log('no running pods available, trying to select pods still pending');
+    pods = await getPods(namespace, 'status.phase=Pending', '!experimentId,!run');
+  }
+  return pods;
+};
 
 const getDeployment = async (name, namespace) => {
   const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
@@ -43,8 +53,17 @@ const getDeployment = async (name, namespace) => {
   return deployment;
 };
 
+const waitForPods = async (namespace, maxTries = 20, currentTry = 0) => {
+  logger.log('Waiting for pods...');
+  await asyncTimer(1000);
+  const pods = await getAvailablePods(namespace);
 
-const waitForPods = require('./waitForPods');
+  if (pods.length > 0 || currentTry >= maxTries) {
+    return;
+  }
+
+  await waitForPods(namespace, maxTries, currentTry + 1);
+};
 
 
 const scaleDeploymentReplicas = async (name, namespace, deployment, desiredReplicas = 1) => {
@@ -58,6 +77,9 @@ const scaleDeploymentReplicas = async (name, namespace, deployment, desiredRepli
 
   // replace
   await k8sApi.replaceNamespacedDeployment(name, namespace, deployment);
+
+  // wait until we have pods
+  await waitForPods(namespace);
 };
 
 
@@ -95,12 +117,6 @@ const createWorkerResources = async (service) => {
     logger.log('Could not scale replicas, ignoring...', e);
   }
 
-  // Always wait for pods if none are available, even if scaling was not needed
-  if (pods.length < 1) {
-    await waitForPods(namespace);
-    pods = await getAvailablePods(namespace);
-  }
-
   if (pods.length < 1) {
     throw new Error(`Experiment ${experimentId} cannot be launched as there are no available workers.`);
   }
@@ -133,6 +149,4 @@ const createWorkerResources = async (service) => {
   return { name, creationTimestamp, phase };
 };
 
-module.exports = {
-  createWorkerResources,
-};
+module.exports = createWorkerResources;
