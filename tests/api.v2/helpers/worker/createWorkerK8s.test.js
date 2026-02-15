@@ -1,4 +1,3 @@
-
 const k8s = require('@kubernetes/client-node');
 const fake = require('../../../test-utils/constants');
 
@@ -59,7 +58,10 @@ k8s.KubeConfig.mockImplementation(() => {
 });
 
 const createWorkerK8s = require('../../../../src/api.v2/helpers/worker/workSubmit/createWorkerK8s');
+jest.mock('../../../../src/api.v2/helpers/worker/workSubmit/waitForPods', () => jest.fn(() => Promise.resolve()));
 
+// Mock waitForPods to resolve immediately for all tests
+jest.mock('../../../../src/api.v2/helpers/worker/workSubmit/waitForPods', () => jest.fn(() => Promise.resolve()));
 
 describe('tests for the pipeline-assign service', () => {
   afterEach(() => {
