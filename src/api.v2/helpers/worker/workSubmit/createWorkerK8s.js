@@ -8,7 +8,6 @@ kc.loadFromDefault();
 
 const logger = getLogger();
 
-// getAvailablePods retrieves pods not assigned already to an activityID given a selector
 const getPods = async (namespace, statusSelector, labelSelector) => {
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
@@ -37,6 +36,7 @@ const getAssignedPods = async (experimentId, namespace) => {
   return [];
 };
 
+// getAvailablePods retrieves pods not assigned already to an activityID given a selector
 const getAvailablePods = async (namespace) => {
   let pods = await getPods(namespace, 'status.phase=Running', '!experimentId,!run');
   if (pods.length < 1) {
@@ -53,16 +53,16 @@ const getDeployment = async (name, namespace) => {
   return deployment;
 };
 
-const waitForPods = async (namespace, maxTries = 20, currentTry = 0) => {
-  logger.log('Waiting for pods...');
-  await asyncTimer(1000);
-  const pods = await getAvailablePods(namespace);
-
-  if (pods.length > 0 || currentTry >= maxTries) {
-    return;
+const waitForPods = async (namespace, maxWaitMs = 60000, pollIntervalMs = 1000) => {
+  let pods = await getAvailablePods(namespace);
+  let waitedMs = 0;
+  while (pods.length < 1 && waitedMs < maxWaitMs) {
+    logger.log('No available worker pods, waiting...');
+    await asyncTimer(pollIntervalMs);
+    waitedMs += pollIntervalMs;
+    pods = await getAvailablePods(namespace);
   }
-
-  await waitForPods(namespace, maxTries, currentTry + 1);
+  return pods;
 };
 
 
@@ -77,9 +77,7 @@ const scaleDeploymentReplicas = async (name, namespace, deployment, desiredRepli
 
   // replace
   await k8sApi.replaceNamespacedDeployment(name, namespace, deployment);
-
-  // wait until we have pods
-  await waitForPods(namespace);
+  // No wait here; waiting is handled in createWorkerResources
 };
 
 
@@ -90,7 +88,7 @@ const createWorkerResources = async (service) => {
   const namespace = `worker-${sandboxId}`;
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
-  // // check if there's already as assigned pod to this experiment
+  // check if there's already an assigned pod to this experiment
   const assignedPods = await getAssignedPods(experimentId, namespace);
   if (assignedPods.length > 0) {
     if (assignedPods.length > 1) {
@@ -102,7 +100,8 @@ const createWorkerResources = async (service) => {
     return { name, creationTimestamp, phase };
   }
 
-  // scale pods if worker has zero replicas
+
+  // scale pods if worker has zero replicas, and wait for pods to become available (retry up to timeout)
   const minDesiredReplicas = 1;
   let pods = await getAvailablePods(namespace);
 
@@ -111,14 +110,16 @@ const createWorkerResources = async (service) => {
     const { replicas } = deployment.spec;
     if (pods.length < 1 && replicas < minDesiredReplicas) {
       await scaleDeploymentReplicas('worker', namespace, deployment, minDesiredReplicas);
-      pods = await getAvailablePods(namespace);
     }
   } catch (e) {
     logger.log('Could not scale replicas, ignoring...', e);
   }
 
+  // Wait for pods to become available, retrying every second up to maxWaitMs
+  pods = await waitForPods(namespace);
+
   if (pods.length < 1) {
-    throw new Error(`Experiment ${experimentId} cannot be launched as there are no available workers.`);
+    throw new Error(`Experiment ${experimentId} cannot be launched as there are no available workers after waiting ${maxWaitMs / 1000} seconds.`);
   }
 
   logger.log(pods.length, `unassigned candidate pods found for experiment ${experimentId}. Selecting one...`);
