@@ -61,7 +61,6 @@ const scaleDeploymentReplicas = async (name, namespace, deployment, desiredRepli
 
   // replace
   await k8sApi.replaceNamespacedDeployment(name, namespace, deployment);
-  // No wait here; waiting is handled in createWorkerResources
 };
 
 
