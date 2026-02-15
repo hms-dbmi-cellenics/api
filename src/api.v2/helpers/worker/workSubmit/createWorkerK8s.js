@@ -1,7 +1,7 @@
 const k8s = require('@kubernetes/client-node');
 const config = require('../../../../config');
-const asyncTimer = require('../../../../utils/asyncTimer');
 const getLogger = require('../../../../utils/getLogger');
+const waitForPods = require('./waitForPods');
 
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
@@ -49,10 +49,6 @@ const getDeployment = async (name, namespace) => {
   const { body: deployment } = await k8sApi.readNamespacedDeployment(name, namespace);
   return deployment;
 };
-
-
-const waitForPods = require('./waitForPods');
-
 
 const scaleDeploymentReplicas = async (name, namespace, deployment, desiredReplicas = 1) => {
   const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
