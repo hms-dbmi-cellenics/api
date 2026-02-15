@@ -1,8 +1,10 @@
 /* eslint-disable no-await-in-loop */
 const k8s = require('@kubernetes/client-node');
+
 const getLogger = require('../../../../utils/getLogger');
 const validateRequest = require('../../../../utils/schema-validator');
 const constants = require('../../../constants');
+const getAvailablePods = require('./getAvailablePods');
 
 const logger = getLogger();
 
@@ -17,15 +19,6 @@ const formatError = (error) => {
   }
   return error;
 };
-// getAvailablePods retrieves pods not assigned already to an activityID given a selector
-const getAvailablePods = async (namespace, statusSelector) => {
-  const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
-
-  const pods = await k8sApi.listNamespacedPod(namespace, null, null, null, statusSelector, '!activityId,type=pipeline');
-  return pods.body.items;
-};
-
-
 const patchPod = async (message) => {
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 

@@ -1,6 +1,6 @@
 const asyncTimer = require('../../../../utils/asyncTimer');
 const getLogger = require('../../../../utils/getLogger');
-const { getAvailablePods } = require('./createWorkerK8s');
+const getAvailablePods = require('../../pipeline/hooks/getAvailablePods');
 
 const logger = getLogger();
 

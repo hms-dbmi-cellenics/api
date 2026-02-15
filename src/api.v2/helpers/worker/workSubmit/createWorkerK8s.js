@@ -1,3 +1,4 @@
+
 const k8s = require('@kubernetes/client-node');
 const config = require('../../../../config');
 const getLogger = require('../../../../utils/getLogger');
@@ -7,18 +8,16 @@ kc.loadFromDefault();
 
 const logger = getLogger();
 
-// getAvailablePods retrieves pods not assigned already to an activityID given a selector
+const getAvailablePods = require('../../pipeline/hooks/getAvailablePods');
+
+// getPods retrieves pods matching status and label selectors
 const getPods = async (namespace, statusSelector, labelSelector) => {
   const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
-
   const pods = await k8sApi.listNamespacedPod(
     namespace, null, null, null, statusSelector, labelSelector,
   );
   return pods.body.items;
 };
-
-
-
 
 const getAssignedPods = async (experimentId, namespace) => {
   // check if there's already a running pod for this experiment
@@ -36,14 +35,6 @@ const getAssignedPods = async (experimentId, namespace) => {
   return [];
 };
 
-const getAvailablePods = async (namespace) => {
-  let pods = await getPods(namespace, 'status.phase=Running', '!experimentId,!run');
-  if (pods.length < 1) {
-    logger.log('no running pods available, trying to select pods still pending');
-    pods = await getPods(namespace, 'status.phase=Pending', '!experimentId,!run');
-  }
-  return pods;
-};
 
 const getDeployment = async (name, namespace) => {
   const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
@@ -144,5 +135,4 @@ const createWorkerResources = async (service) => {
 
 module.exports = {
   createWorkerResources,
-  getAvailablePods,
 };
