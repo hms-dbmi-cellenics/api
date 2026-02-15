@@ -77,9 +77,6 @@ const scaleDeploymentReplicas = async (name, namespace, deployment, desiredRepli
 
   // replace
   await k8sApi.replaceNamespacedDeployment(name, namespace, deployment);
-
-  // wait until we have pods
-  await waitForPods(namespace);
 };
 
 
@@ -115,6 +112,12 @@ const createWorkerResources = async (service) => {
     }
   } catch (e) {
     logger.log('Could not scale replicas, ignoring...', e);
+  }
+
+  // Always wait for pods if none are available, even if scaling was not needed
+  if (pods.length < 1) {
+    await waitForPods(namespace);
+    pods = await getAvailablePods(namespace);
   }
 
   if (pods.length < 1) {
