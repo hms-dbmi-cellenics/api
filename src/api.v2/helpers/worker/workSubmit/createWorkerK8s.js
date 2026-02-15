@@ -142,5 +142,7 @@ const createWorkerResources = async (service) => {
   return { name, creationTimestamp, phase };
 };
 
-module.exports = createWorkerResources;
-module.exports.getAvailablePods = getAvailablePods;
+module.exports = {
+  createWorkerResources,
+  getAvailablePods,
+};

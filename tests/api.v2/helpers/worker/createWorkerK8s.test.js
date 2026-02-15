@@ -57,7 +57,7 @@ k8s.KubeConfig.mockImplementation(() => {
   };
 });
 
-const createWorkerK8s = require('../../../../src/api.v2/helpers/worker/workSubmit/createWorkerK8s');
+const { createWorkerResources } = require('../../../../src/api.v2/helpers/worker/workSubmit/createWorkerK8s');
 jest.mock('../../../../src/api.v2/helpers/worker/workSubmit/waitForPods', () => jest.fn(() => Promise.resolve()));
 
 // Mock waitForPods to resolve immediately for all tests
@@ -80,7 +80,7 @@ describe('tests for the pipeline-assign service', () => {
       },
     };
 
-    const { name, creationTimestamp, phase } = await createWorkerK8s(req);
+    const { name, creationTimestamp, phase } = await createWorkerResources(req);
 
     const worker = runningWorker;
     expect(name).toEqual(worker.metadata.name);
@@ -102,7 +102,7 @@ describe('tests for the pipeline-assign service', () => {
       },
     };
 
-    const { name, creationTimestamp, phase } = await createWorkerK8s(req);
+    const { name, creationTimestamp, phase } = await createWorkerResources(req);
 
     const worker = runningWorker;
     expect(name).toEqual(worker.metadata.name);
@@ -128,7 +128,7 @@ describe('tests for the pipeline-assign service', () => {
       },
     };
 
-    const { name, creationTimestamp, phase } = await createWorkerK8s(req);
+    const { name, creationTimestamp, phase } = await createWorkerResources(req);
 
     const worker = pendingWorker;
     expect(name).toEqual(worker.metadata.name);
@@ -148,7 +148,7 @@ describe('tests for the pipeline-assign service', () => {
       },
     };
 
-    const { name, creationTimestamp, phase } = await createWorkerK8s(req);
+    const { name, creationTimestamp, phase } = await createWorkerResources(req);
 
     const worker = runningWorker;
     expect(name).toEqual(worker.metadata.name);
@@ -168,12 +168,12 @@ describe('tests for the pipeline-assign service', () => {
       },
     };
 
-    await expect(createWorkerK8s(req)).rejects.toThrow();
+    await expect(createWorkerResources(req)).rejects.toThrow();
   });
 
   it('throws exception on invalid message', async () => {
     const req = {};
 
-    await expect(createWorkerK8s(req)).rejects.toThrow();
+    await expect(createWorkerResources(req)).rejects.toThrow();
   });
 });

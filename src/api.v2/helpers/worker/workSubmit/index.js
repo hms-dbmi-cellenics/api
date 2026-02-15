@@ -1,7 +1,7 @@
 
 const crypto = require('crypto');
 const AWS = require('../../../../utils/requireAWS');
-const createWorkerResources = require('./createWorkerK8s');
+const { createWorkerResources } = require('./createWorkerK8s');
 const config = require('../../../../config');
 const getLogger = require('../../../../utils/getLogger');
 
