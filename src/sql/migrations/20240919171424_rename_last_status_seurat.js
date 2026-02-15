@@ -8,8 +8,7 @@ exports.up = async (knex) => {
   await knex('experiment_execution')
     .where(knex.raw("pipeline_type::text = 'obj2s'")) // Cast enum to text for comparison
     .update({
-      // Use jsonb_set to add the new `obj2s` key to last_status_response
-      // with the value from `seurat`.
+      // Use jsonb_set to add the new `obj2s` key to last_status_response with the value from `seurat`.
       // Then, remove the old `seurat` key from last_status_response.
       last_status_response: knex.raw(
         'jsonb_set(last_status_response::jsonb, \'{obj2s}\', last_status_response::jsonb->\'seurat\', true) - \'seurat\'',

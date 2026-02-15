@@ -24,7 +24,7 @@ permissions:
 jobs:
   is-safe-to-run:
     name: Sensitive jobs are safe to be run
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     if: (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe to run')) || github.event_name == 'release' || github.event_name == 'push'
     steps:
       - id: is-safe-to-run
@@ -34,7 +34,7 @@ jobs:
 
   is-not-safe-to-run:
     name: Sensitive jobs aren't labeled safe to be run
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     if: (github.event_name == 'pull_request_target' && !contains(github.event.pull_request.labels.*.name, 'safe to run'))
     steps:
       - id: is-not-safe-to-run
@@ -45,7 +45,7 @@ jobs:
 
   uncheck-integration-test:
     name: Mark integration test as not run
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     needs: is-safe-to-run
     if: github.event_name == 'pull_request_target'
     steps:
@@ -86,11 +86,16 @@ jobs:
   test:
     name: Run tests
     permissions: write-all
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     needs: is-safe-to-run
     env:
       CI: "true"
     steps:
+
+    - id: setup-node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.18.0'
 
     - id: checkout
       name: Check out source code
@@ -99,11 +104,9 @@ jobs:
         ref: ${{github.head_ref}}
         repository: ${{github.event.pull_request.head.repo.full_name}}
 
-    - id: setup-node
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.18.0'
-        cache: 'npm'
+    - id: cache-seek
+      name: Check for npm cache hit
+      uses: c-hive/gha-npm-cache@v1
 
     - id: install
       name: Install dependencies
@@ -150,7 +153,7 @@ jobs:
 
   build-docker:
     name: Build Docker container
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     needs: [is-safe-to-run]
     outputs:
       ref-id: ${{ steps.ref.outputs.ref-id }}
@@ -261,7 +264,7 @@ jobs:
 
   deploy:
     name: Deploy to Kubernetes
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     needs: [build-docker, is-safe-to-run]
     strategy:
       max-parallel: 1
@@ -449,7 +452,7 @@ jobs:
 
   ready-to-merge:
     name: Ready for merging
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     needs: [deploy, is-safe-to-run]
     steps:
       - id: ready-to-merge
@@ -459,7 +462,7 @@ jobs:
 
   report-if-failed:
     name: Report if workflow failed
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     needs: [test, build-docker, deploy, is-safe-to-run]
     if: failure() && github.ref == 'refs/heads/master'
     steps:

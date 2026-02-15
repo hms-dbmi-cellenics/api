@@ -1,4 +1,4 @@
-
+const _ = require('lodash');
 
 const AWS = require('../../../utils/requireAWS');
 const config = require('../../../config');

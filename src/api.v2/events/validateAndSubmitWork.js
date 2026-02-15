@@ -14,19 +14,12 @@ const checkSomeEqualTo = (array, testValue) => array.some((item) => item === tes
 // the corresponding worker result containing the embeddings
 const addEmbeddingEtag = async (experimentId, workRequest) => {
   if (workRequest.body.name === 'DownloadAnnotSeuratObject') {
-    // eslint-disable-next-line no-param-reassign
     workRequest.body.embeddingETag = await generateEmbeddingETag(experimentId);
   }
-  if ([
-    'GetTrajectoryAnalysisStartingNodes',
-    'GetTrajectoryAnalysisPseudoTime',
-  ].includes(workRequest.body.name)) {
-    // eslint-disable-next-line no-param-reassign
-    workRequest.body.embedding = {
-      ...workRequest.body.embedding,
-      ETag: await generateEmbeddingETag(experimentId),
-    };
+  if (['GetTrajectoryAnalysisStartingNodes', 'GetTrajectoryAnalysisPseudoTime'].includes(workRequest.body.name)) {
+    workRequest.body.embedding.ETag = await generateEmbeddingETag(experimentId);
   }
+
   return workRequest;
 };
 
@@ -35,27 +28,20 @@ const validateAndSubmitWork = async (req) => {
   const { experimentId } = workRequest;
 
 
-  // Check if pipeline is running
+  // Check if pipeline is runnning
   const { qc: { status: qcPipelineStatus } } = await getPipelineStatus(
-    experimentId,
-    pipelineConstants.QC_PROCESS_NAME,
+    experimentId, pipelineConstants.QC_PROCESS_NAME,
   );
 
   const { obj2s: { status: obj2sPipelineStatus } } = await getPipelineStatus(
-    experimentId,
-    pipelineConstants.OBJ2S_PROCESS_NAME,
+    experimentId, pipelineConstants.OBJ2S_PROCESS_NAME,
   );
 
   if (!checkSomeEqualTo([qcPipelineStatus, obj2sPipelineStatus], pipelineConstants.SUCCEEDED)) {
-    throw new Error(
-      // eslint-disable-next-line max-len
-      `Work request cannot be handled because pipeline is ${qcPipelineStatus} `
-      + `or obj2s status is ${obj2sPipelineStatus}`,
-    );
+    throw new Error(`Work request can not be handled because pipeline is ${qcPipelineStatus} or obj2s status is ${obj2sPipelineStatus}`);
   }
 
-  // add the embedding etag if the work request,
-  // needed by trajectory analysis & download obj2s object
+  // add the embedding etag if the work request, needed by trajectory analysis & download obj2s object
   workRequest = await addEmbeddingEtag(experimentId, workRequest);
 
   await validateRequest(workRequest, 'WorkRequest.v2.yaml');
