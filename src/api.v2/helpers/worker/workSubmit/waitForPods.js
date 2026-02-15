@@ -1,4 +1,6 @@
-const logger = require('./getLogger')();
+const getLogger = require('../../../../utils/getLogger');
+const asyncTimer = require('../../../../utils/asyncTimer');
+const logger = getLogger();
 
 const getPods = async (namespace, statusSelector, labelSelector, kc) => {
   const k8sApi = kc.makeApiClient(require('@kubernetes/client-node').CoreV1Api);
@@ -17,4 +19,16 @@ const getAvailablePods = async (namespace, kc) => {
   return pods;
 };
 
-module.exports = getAvailablePods;
+const waitForPods = async (namespace, kc, maxWaitMs = 60000, pollIntervalMs = 1000) => {
+  let pods = await getAvailablePods(namespace, kc);
+  const maxTries = Math.ceil(maxWaitMs / pollIntervalMs);
+  for (let i = 0; pods.length < 1 && i < maxTries; i += 1) {
+    logger.log('No available worker pods, waiting...');
+    // eslint-disable-next-line no-await-in-loop
+    await asyncTimer(pollIntervalMs);
+    pods = await getAvailablePods(namespace, kc);
+  }
+  return pods;
+};
+
+module.exports = waitForPods;

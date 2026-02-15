@@ -1,8 +1,7 @@
 const k8s = require('@kubernetes/client-node');
 const config = require('../../../../config');
+const asyncTimer = require('../../../../utils/asyncTimer');
 const getLogger = require('../../../../utils/getLogger');
-const waitForPods = require('../../../../utils/waitForPods');
-const getAvailablePods = require('../../../../utils/getAvailablePods');
 
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
@@ -34,6 +33,15 @@ const getAssignedPods = async (experimentId, namespace) => {
   return [];
 };
 
+// getAvailablePods retrieves pods not assigned already to an activityID given a selector
+const getAvailablePods = async (namespace) => {
+  let pods = await getPods(namespace, 'status.phase=Running', '!experimentId,!run');
+  if (pods.length < 1) {
+    logger.log('no running pods available, trying to select pods still pending');
+    pods = await getPods(namespace, 'status.phase=Pending', '!experimentId,!run');
+  }
+  return pods;
+};
 
 const getDeployment = async (name, namespace) => {
   const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
@@ -42,6 +50,8 @@ const getDeployment = async (name, namespace) => {
   return deployment;
 };
 
+
+const waitForPods = require('./waitForPods');
 
 
 const scaleDeploymentReplicas = async (name, namespace, deployment, desiredReplicas = 1) => {
@@ -81,7 +91,7 @@ const createWorkerResources = async (service) => {
 
   // scale pods if worker has zero replicas, and wait for pods to become available (retry up to timeout)
   const minDesiredReplicas = 1;
-  let pods = await getAvailablePods(namespace, kc);
+  let pods = await getAvailablePods(namespace);
 
   try {
     const deployment = await getDeployment('worker', namespace);
@@ -94,10 +104,10 @@ const createWorkerResources = async (service) => {
   }
 
   // Wait for pods to become available, retrying every second up to maxWaitMs
-  pods = await waitForPods(namespace, kc);
+  pods = await waitForPods(namespace);
 
   if (pods.length < 1) {
-    throw new Error(`Experiment ${experimentId} cannot be launched as there are no available workers after waiting.`);
+    throw new Error(`Experiment ${experimentId} cannot be launched as there are no available workers after waiting ${maxWaitMs / 1000} seconds.`);
   }
 
   logger.log(pods.length, `unassigned candidate pods found for experiment ${experimentId}. Selecting one...`);
@@ -129,3 +139,4 @@ const createWorkerResources = async (service) => {
 };
 
 module.exports = createWorkerResources;
+module.exports.waitForPods = waitForPods;

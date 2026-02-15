@@ -57,11 +57,12 @@ k8s.KubeConfig.mockImplementation(() => {
   };
 });
 
-jest.mock('../../../../src/utils/waitForPods', () => jest.fn(async () => []));
 
 
-const waitForPods = require('../../../../src/utils/waitForPods');
 const createWorkerK8s = require('../../../../src/api.v2/helpers/worker/workSubmit/createWorkerK8s');
+
+jest.mock('../../../../src/api.v2/helpers/worker/workSubmit/waitForPods');
+const waitForPods = require('../../../../src/api.v2/helpers/worker/workSubmit/waitForPods');
 
 describe('tests for the pipeline-assign service', () => {
   afterEach(() => {
@@ -168,6 +169,7 @@ describe('tests for the pipeline-assign service', () => {
 
     const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
     k8sApi.listNamespacedPod.mockReturnValue(buildWorkerResponse([]));
+    waitForPods.mockResolvedValueOnce([]);
     const req = {
       workRequest: {
         experimentId: fake.EXPERIMENT_ID,
