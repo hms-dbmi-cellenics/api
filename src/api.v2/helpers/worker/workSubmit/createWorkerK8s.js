@@ -102,7 +102,7 @@ const createWorkerResources = async (service) => {
   pods = await waitForPods(namespace);
 
   if (pods.length < 1) {
-    throw new Error(`Experiment ${experimentId} cannot be launched as there are no available workers after waiting ${maxWaitMs / 1000} seconds.`);
+    throw new Error(`Experiment ${experimentId} cannot be launched as there are no available workers after waiting.`);
   }
 
   logger.log(pods.length, `unassigned candidate pods found for experiment ${experimentId}. Selecting one...`);
