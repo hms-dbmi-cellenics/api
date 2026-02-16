@@ -98,19 +98,25 @@ const createWorkerResources = async (service) => {
     logger.log('Could not scale replicas, ignoring...', e);
   }
 
-  // Wait for pods to become available, retrying every second up to maxWaitMs
-  pods = await waitForPods(namespace, kc);
+  // Wait for pods to become available and return one
+  pods = await waitForPods(namespace, kc, experimentId);
 
   if (pods.length < 1) {
     throw new Error(`Experiment ${experimentId} cannot be launched as there are no available workers after waiting.`);
   }
 
-  logger.log(pods.length, `unassigned candidate pods found for experiment ${experimentId}. Selecting one...`);
+  logger.log(pods.length, `candidate pods found for experiment ${experimentId}. Selecting one...`);
 
   // Select a pod to run this experiment on.
   const selectedPod = parseInt(experimentId, 16) % pods.length;
-  const { metadata: { name, creationTimestamp }, status: { phase } } = pods[selectedPod];
+  const { metadata: { name, creationTimestamp, labels }, status: { phase } } = pods[selectedPod];
   logger.log('Pod number', selectedPod, ' with name', name, 'chosen');
+
+  // If pod is already assigned to this experiment, return it without patching
+  if (labels && labels.experimentId === experimentId) {
+    logger.log(`Pod ${name} already assigned to experiment ${experimentId}`);
+    return { name, creationTimestamp, phase };
+  }
 
   const patch = [
     { op: 'test', path: '/metadata/labels/experimentId', value: null },
