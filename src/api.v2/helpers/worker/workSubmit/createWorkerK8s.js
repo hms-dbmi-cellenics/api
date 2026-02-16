@@ -99,7 +99,7 @@ const createWorkerResources = async (service) => {
   }
 
   // Wait for pods to become available, retrying every second up to maxWaitMs
-  pods = await waitForPods(namespace);
+  pods = await waitForPods(namespace, kc);
 
   if (pods.length < 1) {
     throw new Error(`Experiment ${experimentId} cannot be launched as there are no available workers after waiting.`);
