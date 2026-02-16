@@ -1,4 +1,3 @@
-
 const k8s = require('@kubernetes/client-node');
 const fake = require('../../../test-utils/constants');
 
@@ -58,8 +57,12 @@ k8s.KubeConfig.mockImplementation(() => {
   };
 });
 
+
+
 const createWorkerK8s = require('../../../../src/api.v2/helpers/worker/workSubmit/createWorkerK8s');
 
+jest.mock('../../../../src/api.v2/helpers/worker/workSubmit/waitForPods');
+const waitForPods = require('../../../../src/api.v2/helpers/worker/workSubmit/waitForPods');
 
 describe('tests for the pipeline-assign service', () => {
   afterEach(() => {
@@ -109,6 +112,7 @@ describe('tests for the pipeline-assign service', () => {
   });
 
   it('returns pending worker if no running is available', async () => {
+    // Arrange
     const kc = new k8s.KubeConfig();
     kc.loadFromDefault();
 
@@ -119,15 +123,20 @@ describe('tests for the pipeline-assign service', () => {
     k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([]));
     k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([]));
     k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([]));
-    k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([pendingWorker]));
+
+    // Mock waitForPods to return a pending worker pod
+    waitForPods.mockResolvedValueOnce([pendingWorker]);
+
     const req = {
       workRequest: {
         experimentId: fake.EXPERIMENT_ID,
       },
     };
 
+    // Act
     const { name, creationTimestamp, phase } = await createWorkerK8s(req);
 
+    // Assert
     const worker = pendingWorker;
     expect(name).toEqual(worker.metadata.name);
     expect(creationTimestamp).toEqual(worker.metadata.creationTimestamp);
@@ -160,6 +169,7 @@ describe('tests for the pipeline-assign service', () => {
 
     const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
     k8sApi.listNamespacedPod.mockReturnValue(buildWorkerResponse([]));
+    waitForPods.mockResolvedValueOnce([]);
     const req = {
       workRequest: {
         experimentId: fake.EXPERIMENT_ID,
