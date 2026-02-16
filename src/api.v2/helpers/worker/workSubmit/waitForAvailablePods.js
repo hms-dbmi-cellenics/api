@@ -31,7 +31,7 @@ const getAvailablePods = async (namespace, kc, experimentId) => {
   return pods;
 };
 
-const waitForPods = async (namespace, kc, experimentId, maxWaitMs = 60000, pollIntervalMs = 1000) => {
+const waitForAvailablePods = async (namespace, kc, experimentId, maxWaitMs = 60000, pollIntervalMs = 1000) => {
   let pods = await getAvailablePods(namespace, kc, experimentId);
   const maxTries = Math.ceil(maxWaitMs / pollIntervalMs);
   for (let i = 0; pods.length < 1 && i < maxTries; i += 1) {
@@ -43,4 +43,4 @@ const waitForPods = async (namespace, kc, experimentId, maxWaitMs = 60000, pollI
   return pods;
 };
 
-module.exports = waitForPods;
+module.exports = waitForAvailablePods;

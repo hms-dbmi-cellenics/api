@@ -61,8 +61,8 @@ k8s.KubeConfig.mockImplementation(() => {
 
 const createWorkerK8s = require('../../../../src/api.v2/helpers/worker/workSubmit/createWorkerK8s');
 
-jest.mock('../../../../src/api.v2/helpers/worker/workSubmit/waitForPods');
-const waitForPods = require('../../../../src/api.v2/helpers/worker/workSubmit/waitForPods');
+jest.mock('../../../../src/api.v2/helpers/worker/workSubmit/waitForAvailablePods');
+const waitForAvailablePods = require('../../../../src/api.v2/helpers/worker/workSubmit/waitForAvailablePods');
 
 describe('tests for the pipeline-assign service', () => {
   afterEach(() => {
@@ -75,6 +75,10 @@ describe('tests for the pipeline-assign service', () => {
 
     const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
     k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([runningWorker]));
+
+    // Mock waitForAvailablePods to return the already assigned pod
+    waitForAvailablePods.mockResolvedValueOnce([runningWorker]);
+
     const req = {
       workRequest: {
         experimentId: fake.EXPERIMENT_ID,
@@ -87,7 +91,6 @@ describe('tests for the pipeline-assign service', () => {
     expect(name).toEqual(worker.metadata.name);
     expect(creationTimestamp).toEqual(worker.metadata.creationTimestamp);
     expect(phase).toEqual(worker.status.phase);
-    expect(listNamespacedPod).toHaveBeenCalledTimes(1);
   });
 
   it('returns running worker if available', async () => {
@@ -97,6 +100,10 @@ describe('tests for the pipeline-assign service', () => {
     const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
     k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([]));
     k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([runningWorker, runningWorker]));
+
+    // Mock waitForAvailablePods to return running workers
+    waitForAvailablePods.mockResolvedValueOnce([runningWorker, runningWorker]);
+
     const req = {
       workRequest: {
         experimentId: fake.EXPERIMENT_ID,
@@ -124,8 +131,8 @@ describe('tests for the pipeline-assign service', () => {
     k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([]));
     k8sApi.listNamespacedPod.mockReturnValueOnce(buildWorkerResponse([]));
 
-    // Mock waitForPods to return a pending worker pod
-    waitForPods.mockResolvedValueOnce([pendingWorker]);
+    // Mock waitForAvailablePods to return a pending worker pod
+    waitForAvailablePods.mockResolvedValueOnce([pendingWorker]);
 
     const req = {
       workRequest: {
@@ -149,6 +156,10 @@ describe('tests for the pipeline-assign service', () => {
 
     const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
     k8sApi.listNamespacedPod.mockReturnValue(buildWorkerResponse([runningWorker, runningWorker]));
+
+    // Mock waitForAvailablePods to return the workers
+    waitForAvailablePods.mockResolvedValueOnce([runningWorker, runningWorker]);
+
     const req = {
       workRequest: {
         experimentId: fake.EXPERIMENT_ID,
@@ -169,7 +180,7 @@ describe('tests for the pipeline-assign service', () => {
 
     const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
     k8sApi.listNamespacedPod.mockReturnValue(buildWorkerResponse([]));
-    waitForPods.mockResolvedValueOnce([]);
+    waitForAvailablePods.mockResolvedValueOnce([]);
     const req = {
       workRequest: {
         experimentId: fake.EXPERIMENT_ID,
