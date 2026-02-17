@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+
 const WorkSubmitService = require('../helpers/worker/workSubmit');
 const validateRequest = require('../../utils/schema-validator');
 const getPipelineStatus = require('../helpers/pipeline/getPipelineStatus');
@@ -38,10 +40,13 @@ const validateAndSubmitWork = async (req) => {
   );
 
   if (!checkSomeEqualTo([qcPipelineStatus, obj2sPipelineStatus], pipelineConstants.SUCCEEDED)) {
-    throw new Error(`Work request can not be handled because pipeline is ${qcPipelineStatus} or obj2s status is ${obj2sPipelineStatus}`);
+    const errorMsg = `Work request can not be handled because pipeline is ${qcPipelineStatus} `
+      + `or obj2s status is ${obj2sPipelineStatus}`;
+    throw new Error(errorMsg);
   }
 
-  // add the embedding etag if the work request, needed by trajectory analysis & download obj2s object
+  // add the embedding etag if the work request,
+  // needed by trajectory analysis & download obj2s object
   workRequest = await addEmbeddingEtag(experimentId, workRequest);
 
   await validateRequest(workRequest, 'WorkRequest.v2.yaml');
