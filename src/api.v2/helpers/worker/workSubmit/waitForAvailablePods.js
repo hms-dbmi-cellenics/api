@@ -33,6 +33,34 @@ const getAvailablePods = async (namespace, kc, experimentId) => {
   return pods;
 };
 
+const waitForPodsWithRetry = async (
+  namespace,
+  kc,
+  experimentId,
+  retriesRemaining,
+  pollIntervalMs,
+) => {
+  const pods = await getAvailablePods(namespace, kc, experimentId);
+  if (pods.length > 0) {
+    return pods;
+  }
+
+  if (retriesRemaining <= 0) {
+    return pods;
+  }
+
+  logger.log('No available worker pods, waiting...');
+  await asyncTimer(pollIntervalMs);
+
+  return waitForPodsWithRetry(
+    namespace,
+    kc,
+    experimentId,
+    retriesRemaining - 1,
+    pollIntervalMs,
+  );
+};
+
 const waitForAvailablePods = async (
   namespace,
   kc,
@@ -40,17 +68,14 @@ const waitForAvailablePods = async (
   maxWaitMs = 60000,
   pollIntervalMs = 1000,
 ) => {
-  let pods = await getAvailablePods(namespace, kc, experimentId);
   const maxTries = Math.ceil(maxWaitMs / pollIntervalMs);
-  // eslint-disable-next-line no-await-in-loop
-  for (let i = 0; pods.length < 1 && i < maxTries; i += 1) {
-    logger.log('No available worker pods, waiting...');
-    // eslint-disable-next-line no-await-in-loop
-    await asyncTimer(pollIntervalMs);
-    // eslint-disable-next-line no-await-in-loop
-    pods = await getAvailablePods(namespace, kc, experimentId);
-  }
-  return pods;
+  return waitForPodsWithRetry(
+    namespace,
+    kc,
+    experimentId,
+    maxTries - 1,
+    pollIntervalMs,
+  );
 };
 
 module.exports = waitForAvailablePods;
