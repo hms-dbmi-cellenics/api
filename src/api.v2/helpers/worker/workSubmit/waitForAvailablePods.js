@@ -1,9 +1,11 @@
+const k8s = require('@kubernetes/client-node');
 const getLogger = require('../../../../utils/getLogger');
 const asyncTimer = require('../../../../utils/asyncTimer');
+
 const logger = getLogger();
 
 const getPods = async (namespace, statusSelector, labelSelector, kc) => {
-  const k8sApi = kc.makeApiClient(require('@kubernetes/client-node').CoreV1Api);
+  const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
   const pods = await k8sApi.listNamespacedPod(
     namespace, null, null, null, statusSelector, labelSelector,
   );
@@ -31,13 +33,21 @@ const getAvailablePods = async (namespace, kc, experimentId) => {
   return pods;
 };
 
-const waitForAvailablePods = async (namespace, kc, experimentId, maxWaitMs = 60000, pollIntervalMs = 1000) => {
+const waitForAvailablePods = async (
+  namespace,
+  kc,
+  experimentId,
+  maxWaitMs = 60000,
+  pollIntervalMs = 1000,
+) => {
   let pods = await getAvailablePods(namespace, kc, experimentId);
   const maxTries = Math.ceil(maxWaitMs / pollIntervalMs);
+  // eslint-disable-next-line no-await-in-loop
   for (let i = 0; pods.length < 1 && i < maxTries; i += 1) {
     logger.log('No available worker pods, waiting...');
     // eslint-disable-next-line no-await-in-loop
     await asyncTimer(pollIntervalMs);
+    // eslint-disable-next-line no-await-in-loop
     pods = await getAvailablePods(namespace, kc, experimentId);
   }
   return pods;
