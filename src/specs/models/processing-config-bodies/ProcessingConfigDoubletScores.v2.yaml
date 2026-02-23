@@ -30,4 +30,3 @@ additionalProperties:
       description: Whether to recompute doublet score (gem2s only)
   required:
     - filterSettings
-  additionalProperties: true
