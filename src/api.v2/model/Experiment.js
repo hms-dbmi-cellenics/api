@@ -244,7 +244,12 @@ class Experiment extends BasicModel {
       throw new NotFoundError('Experiment not found');
     }
 
-    return result.processingConfig;
+    // Parse processingConfig from JSON string if needed
+    let processingConfig = result.processingConfig;
+    if (typeof processingConfig === 'string') {
+      processingConfig = JSON.parse(processingConfig);
+    }
+    return processingConfig;
   }
 
   // try to get specific hardware requirements for running an experiment pipeline

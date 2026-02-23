@@ -166,10 +166,7 @@ paths:
           content:
             application/json:
               schema:
-                anyOf:
-                  - type: object
-                    additionalProperties: false
-                  - $ref: "#/components/schemas/ProcessingConfig"
+                $ref: "#/components/schemas/ProcessingConfig"
         "400":
           description: Bad Request
           content:

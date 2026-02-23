@@ -100,15 +100,17 @@ const updateProcessingConfigWithQCStep = async (taskName, experimentId, output, 
     return config;
   }
 
+  const config = _.cloneDeep(output.config);
+
   await experiment.updateProcessingConfig(experimentId, [
     {
       name: taskName,
-      body: output.config,
+      body: config,
     },
   ]);
 
   // Non-sample specific config updates don't require modifications
-  return output.config;
+  return config;
 };
 
 const sendUpdateToSubscribed = async (experimentId, message, output, error, io) => {
