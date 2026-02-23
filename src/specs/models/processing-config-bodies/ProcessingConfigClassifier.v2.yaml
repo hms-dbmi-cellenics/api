@@ -1,18 +1,25 @@
 title: Classifier
 type: object
-description: Processing config body for Classifier filter.
-properties:
-  enabled:
-    type: boolean
-  auto:
-    type: boolean
-  prefiltered:
-    type: boolean
-  filterSettings:
-    type: object
-    properties:
-      FDR:
-        type: number
-required:
-  - filterSettings
-  - prefiltered
+description: Processing config body for Classifier filter. Keys are sample UUIDs or 'one' for Seurat uploads, values are per-sample configurations.
+additionalProperties:
+  type: object
+  properties:
+    enabled:
+      type: boolean
+    auto:
+      type: boolean
+    prefiltered:
+      type: boolean
+    filterSettings:
+      type: object
+      properties:
+        FDR:
+          type: number
+    defaultFilterSettings:
+      type: object
+      properties:
+        FDR:
+          type: number
+  required:
+    - filterSettings
+    - prefiltered
