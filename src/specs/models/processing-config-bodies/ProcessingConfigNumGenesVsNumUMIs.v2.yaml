@@ -29,11 +29,23 @@ additionalProperties:
                   type: number
     defaultFilterSettings:
       type: object
+      description: Default filter settings. Uses the same regressionTypeSettings schema as filterSettings for consistent validation.
       properties:
         regressionType:
           type: string
           minLength: 1
         regressionTypeSettings:
           type: object
+          properties:
+            linear:
+              type: object
+              properties:
+                p.level:
+                  type: number
+            spline:
+              type: object
+              properties:
+                p.level:
+                  type: number
   required:
     - filterSettings
