@@ -245,9 +245,9 @@ class Experiment extends BasicModel {
     }
 
     // Parse processingConfig from JSON string if needed
-    let processingConfig = result.processingConfig;
+    const { processingConfig } = result;
     if (typeof processingConfig === 'string') {
-      processingConfig = JSON.parse(processingConfig);
+      return JSON.parse(processingConfig);
     }
     return processingConfig;
   }
