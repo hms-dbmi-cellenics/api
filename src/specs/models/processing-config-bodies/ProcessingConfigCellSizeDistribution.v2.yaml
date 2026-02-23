@@ -12,6 +12,7 @@ additionalProperties:
       type: object
       properties:
         minCellSize:
+          description: Minimum cell size threshold. Accepts both number and array for backwards compatibility with existing obj2s processingConfigs, but will only return a number going forward.
           oneOf:
             - type: number
             - type: array
