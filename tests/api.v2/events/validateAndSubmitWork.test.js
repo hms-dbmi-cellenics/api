@@ -10,7 +10,7 @@ jest.mock('../../../src/api.v2/helpers/worker/generateEmbeddingETag');
 jest.mock('../../../src/api.v2/helpers/s3/signedUrl');
 jest.mock('../../../src/api.v2/helpers/pipeline/getPipelineStatus');
 jest.mock('../../../src/cache');
-jest.mock('../../../src/api.v2/helpers/worker/workSubmit');
+jest.mock('../../../src/api.v2/helpers/worker/workSubmit', () => require('../../../src/api.v2/helpers/worker/workSubmit/__mocks-work-submit__/index.js'));
 
 describe('handleWorkRequest', () => {
   afterEach(() => {
