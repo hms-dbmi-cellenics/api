@@ -1,11 +1,11 @@
 const workerVersions = {
-  ListGenes: 1,
-  MarkerHeatmap: 1,
-  GeneExpression: 1,
-  GetTrajectoryAnalysisStartingNodes: 1,
-  GetTrajectoryAnalysisPseudoTime: 1,
-  DotPlot: 1,
-  DifferentialExpression: 2,
+  ListGenes: 2,
+  MarkerHeatmap: 2,
+  GeneExpression: 2,
+  GetTrajectoryAnalysisStartingNodes: 2,
+  GetTrajectoryAnalysisPseudoTime: 2,
+  DotPlot: 2,
+  DifferentialExpression: 3,
 };
 
 module.exports = workerVersions;
