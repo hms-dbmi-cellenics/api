@@ -2,4 +2,4 @@
 
 exports[`submitWorkEmbedding submits the work and the ETag / params are correct 1`] = `Array []`;
 
-exports[`submitWorkEmbedding submits the work and the ETag / params are correct 2`] = `"4f9c58d4db390500745d62b5f7ee181c"`;
+exports[`submitWorkEmbedding submits the work and the ETag / params are correct 2`] = `"a8c7afa983c8dac1476f2c4e8d46b2e3"`;
