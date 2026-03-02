@@ -56,7 +56,7 @@ const dependencyGetters = {
   GetMitochondrialContent: [],
   GetNGenes: [],
   GetNUmis: [],
-  MarkerHeatmap: [],
+  MarkerHeatmap: [getClusteringSettings],
   GetTrajectoryAnalysisStartingNodes: [getClusteringSettings],
   GetTrajectoryAnalysisPseudoTime: [getClusteringSettings, getEmbeddingSettings],
   GetNormalizedExpression: [getClusteringSettings],
