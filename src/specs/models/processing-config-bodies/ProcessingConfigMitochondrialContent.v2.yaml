@@ -1,32 +1,13 @@
 title: Mitochondrial Content
 type: object
-properties:
-  enabled:
-    type: boolean
-  auto:
-    type: boolean
-  filterSettings:
-    type: object
-    required:
-      - method
-      - methodSettings
-    properties:
-      method:
-        type: string
-        minLength: 1
-      methodSettings:
-        type: object
-        properties:
-          absoluteThreshold:
-            type: object
-            properties:
-              maxFraction:
-                type: number
-              binStep:
-                type: number
+description: Processing config body for Mitochondrial Content filter. Keys are sample UUIDs or 'one' for Seurat uploads, values are per-sample configurations.
 additionalProperties:
   type: object
   properties:
+    enabled:
+      type: boolean
+    auto:
+      type: boolean
     filterSettings:
       type: object
       required:
@@ -45,7 +26,25 @@ additionalProperties:
                 maxFraction:
                   type: number
                 binStep:
-                  type: number         
-required:
-  - filterSettings
-description: Processing config body for Mitochondrial Content filter.
+                  type: number
+    defaultFilterSettings:
+      type: object
+      required:
+        - method
+        - methodSettings
+      properties:
+        method:
+          type: string
+          minLength: 1
+        methodSettings:
+          type: object
+          properties:
+            absoluteThreshold:
+              type: object
+              properties:
+                maxFraction:
+                  type: number
+                binStep:
+                  type: number
+  required:
+    - filterSettings

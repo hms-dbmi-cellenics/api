@@ -1,27 +1,31 @@
 title: Cell Size Distribution
 type: object
+description: Processing config body for Cell Size Distribution filter. Keys are sample UUIDs or 'one' for Seurat uploads, values are per-sample configurations.
 additionalProperties:
   type: object
   properties:
+    enabled:
+      type: boolean
+    auto:
+      type: boolean
     filterSettings:
+      type: object
+      properties:
+        minCellSize:
+          description: Minimum cell size threshold. Accepts both number and array for backwards compatibility with existing obj2s processingConfigs, but will only return a number going forward.
+          oneOf:
+            - type: number
+            - type: array
+              items:
+                type: number
+        binStep:
+          type: number
+    defaultFilterSettings:
       type: object
       properties:
         minCellSize:
           type: number
         binStep:
           type: number
-description: Processing config body for Cell Size Distribution filter.
-properties:
-  enabled:
-    type: boolean
-  auto:
-    type: boolean
-  filterSettings:
-    type: object
-    properties:
-      minCellSize:
-        type: number
-      binStep:
-        type: number
-required:
-  - filterSettings
+  required:
+    - filterSettings

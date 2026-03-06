@@ -1,6 +1,7 @@
 title: Processing Config v2
 description: Schema for data processing configuration
 type: object
+additionalProperties: false
 properties:
   cellSizeDistribution:
     $ref: ../processing-config-bodies/ProcessingConfigCellSizeDistribution.v2.yaml
@@ -18,12 +19,4 @@ properties:
     $ref: ../processing-config-bodies/ProcessingConfigConfigureEmbedding.v2.yaml
   meta:
     $ref: ../processing-config-bodies/ProcessingConfigMeta.v2.yaml
-required:
-  - cellSizeDistribution
-  - mitochondrialContent
-  - classifier
-  - numGenesVsNumUmis
-  - doubletScores
-  - dataIntegration
-  - configureEmbedding
 

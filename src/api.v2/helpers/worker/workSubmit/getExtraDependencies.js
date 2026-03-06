@@ -3,7 +3,6 @@ const Experiment = require('../../../model/Experiment');
 const getLastModified = require('../../s3/getLastModified');
 const bucketNames = require('../../../../config/bucketNames');
 const getS3Object = require('../../s3/getObject');
-const getCellSetsAffectingDownsampling = require('./getCellSetsAffectingDownsampling');
 
 const getClusteringSettings = async (experimentId) => {
   const {
@@ -57,9 +56,7 @@ const dependencyGetters = {
   GetMitochondrialContent: [],
   GetNGenes: [],
   GetNUmis: [],
-  MarkerHeatmap: [
-    getClusteringSettings, getCellSetsAffectingDownsampling,
-  ],
+  MarkerHeatmap: [getClusteringSettings],
   GetTrajectoryAnalysisStartingNodes: [getClusteringSettings],
   GetTrajectoryAnalysisPseudoTime: [getClusteringSettings, getEmbeddingSettings],
   GetNormalizedExpression: [getClusteringSettings],
