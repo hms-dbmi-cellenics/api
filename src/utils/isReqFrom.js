@@ -3,8 +3,9 @@ const ipaddr = require('ipaddr.js');
 const config = require('../config');
 
 // eslint-disable-next-line no-useless-escape
-const INTERNAL_DOMAINS_REGEX = new RegExp(`((\.compute\.internal)|(\.svc\.local)|(${config.awsRegion}\.compute\.amazonaws\.com))$`);
-// awsRegion.compute.amazonaws.com => running in AWS Batch
+const INTERNAL_DOMAINS_REGEX = new RegExp(`((\.compute\.internal)|(\.svc\.local)|(${config.awsRegion}\.compute\.amazonaws\.com)|(compute-\\d+\.amazonaws\.com))$`);
+// awsRegion.compute.amazonaws.com => running in AWS Batch with region-specific domain
+// compute-N.amazonaws.com => running in AWS Batch (alternative format)
 // compute.internal & svc.local => running in cluster or fargate
 
 const isReqFromLocalhost = async (req) => {
