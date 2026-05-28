@@ -10,6 +10,21 @@ properties:
     description: A list of genes to compute expression data for.
     items:
       type: string
+  downsampleSettings:
+    type: object
+    description: Settings for downsampling the data.
+    properties:
+      cellIds:
+        type: array
+        description: A list of cell IDs to get expression data for.
+        items:
+          type: integer
+      selectedCellSet:
+        type: string
+        description: The primary cell set to compute expression data for.
+      groupedTracks:
+        type: array
+        description: A list of groupedcell sets to get expression data for.
 required:
   - name
   - genes
