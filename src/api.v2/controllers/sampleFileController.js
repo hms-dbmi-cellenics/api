@@ -28,6 +28,10 @@ const createFile = async (req, res) => {
   };
 
   await sqlClient.get().transaction(async (trx) => {
+    // Delete existing file if overwriteExisting is true
+    if (overwriteExisting) {
+      await new SampleFile(trx).deleteById(sampleFileId);
+    }
     await new SampleFile(trx).create(newSampleFile);
     await new Sample(trx).setNewFile(sampleId, sampleFileId, sampleFileType, overwriteExisting);
   });

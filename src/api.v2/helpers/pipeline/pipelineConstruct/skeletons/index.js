@@ -1,5 +1,5 @@
 const { buildQCPipelineSteps, qcPipelineSteps } = require('./qcPipelineSkeleton');
-const { gem2SPipelineSteps } = require('./gem2sPipelineSkeleton');
+const { gem2SPipelineSteps, getGem2sPipelineSteps } = require('./gem2sPipelineSkeleton');
 const { obj2sPipelineSteps } = require('./obj2sPipelineSkeleton');
 const subsetPipelineSteps = require('./subsetPipelineSteps');
 const { createCatchSteps } = require('../constructors/createHandleErrorStep');
@@ -114,12 +114,12 @@ const getStateMachineFirstStep = (clusterEnv, runInBatch) => {
 };
 
 
-const getGem2sPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
+const getGem2sPipelineSkeleton = (clusterEnv, runInBatch = false, technology = null) => ({
   Comment: `Gem2s Pipeline for clusterEnv '${clusterEnv}'`,
   StartAt: getStateMachineFirstStep(clusterEnv, runInBatch),
   States: {
     ...buildInitialSteps(clusterEnv, 'DownloadGem', runInBatch),
-    ...gem2SPipelineSteps,
+    ...getGem2sPipelineSteps(technology),
     ...buildErrorHandlingSteps(),
     ...buildEndOfPipelineStep(),
   },

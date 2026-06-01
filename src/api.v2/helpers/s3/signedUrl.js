@@ -108,6 +108,10 @@ const fileNameToReturn = {
   barcodesParse: 'cell_metadata.csv.gz',
   matrixParse: 'DGE.mtx.gz',
   ome_zarr_zip: 'image.ome.zarr.zip',
+  visium_hd_filtered_feature_cell_matrix: 'filtered_feature_cell_matrix.h5',
+  visium_hd_cell_segmentations: 'cell_segmentations.geojson',
+  visium_hd_tissue_hires_image: 'tissue_hires_image.png',
+  visium_hd_scalefactors_json: 'scalefactors_json.json',
 };
 
 const getSampleFileBucket = (fileType) => {

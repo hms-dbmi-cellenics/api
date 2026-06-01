@@ -227,6 +227,11 @@ const createQCPipeline = async (experimentId, processingConfigDiff, authJWT, pre
 };
 
 const createGem2SPipeline = async (experimentId, taskParams, authJWT) => {
+  // fetch sample technology to select the appropriate pipeline skeleton
+  const sampleModel = new Sample();
+  const samples = await sampleModel.find({ experiment_id: experimentId });
+  const sampleTechnology = samples[0] ? samples[0].sampleTechnology : null;
+
   const context = {
     ...(await getGeneralPipelineContext(experimentId, GEM2S_PROCESS_NAME)),
     processingConfig: {},
@@ -238,7 +243,7 @@ const createGem2SPipeline = async (experimentId, taskParams, authJWT) => {
 
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
-  const skeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch);
+  const skeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch, sampleTechnology);
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(skeleton, context);
