@@ -108,6 +108,7 @@ const fileNameToReturn = {
   barcodesParse: 'cell_metadata.csv.gz',
   matrixParse: 'DGE.mtx.gz',
   ome_zarr_zip: 'image.ome.zarr.zip',
+  segmentations_ome_zarr_zip: 'segmentations.ome.zarr.zip',
   visium_hd_filtered_feature_cell_matrix: 'filtered_feature_cell_matrix.h5',
   visium_hd_cell_segmentations: 'cell_segmentations.geojson',
   visium_hd_tissue_hires_image: 'tissue_hires_image.png',
@@ -121,6 +122,9 @@ const getSampleFileBucket = (fileType) => {
     case 'ome_zarr_zip':
       bucketName = bucketNames.SPATIAL_IMAGES;
       break;
+    case 'segmentations_ome_zarr_zip':
+      bucketName = bucketNames.SPATIAL_SEGMENTATIONS;
+      break;
     default:
       bucketName = bucketNames.SAMPLE_FILES;
       break;
@@ -133,6 +137,8 @@ const getSampleFileDownloadUrls = async (experimentId, sampleId, fileType) => {
   const allFiles = await new SampleFile().allFilesForSample(sampleId);
 
   const matchingFiles = allFiles.filter(({ sampleFileType }) => sampleFileType === fileType);
+
+  console.log('matchingFiles', matchingFiles);
 
   if (matchingFiles.length === 0) {
     throw new NotFoundError(`File ${fileType} from sample ${sampleId} from experiment ${experimentId} not found`);
