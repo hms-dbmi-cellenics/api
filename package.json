@@ -33,7 +33,7 @@
     "ioredis": "^4.17.3",
     "ipaddr.js": "^2.0.1",
     "js-yaml": "^3.13.1",
-    "json-merger": "^1.1.7",
+    "json-merger": "^3.0.0",
     "jsonwebtoken": "^9.0.0",
     "jwk-to-pem": "^2.0.5",
     "knex": "^2.4.0",
