@@ -9,6 +9,9 @@ properties:
         - $ref: ./processing-config-bodies/ProcessingConfigReadAlignment.v2.yaml
         - $ref: ./processing-config-bodies/ProcessingConfigNumGenesVsNumUMIs.v2.yaml
         - $ref: ./processing-config-bodies/ProcessingConfigDoubletScores.v2.yaml
+        - $ref: ./processing-config-bodies/ProcessingConfigSpatialUmiOutlier.v2.yaml
+        - $ref: ./processing-config-bodies/ProcessingConfigSpatialNumGenesOutlier.v2.yaml
+        - $ref: ./processing-config-bodies/ProcessingConfigSpatialMitoOutlier.v2.yaml
         - $ref: ./processing-config-bodies/ProcessingConfigDataIntegration.v2.yaml
         - $ref: ./processing-config-bodies/ProcessingConfigConfigureEmbedding.v2.yaml
         - $ref: ./processing-config-bodies/ProcessingConfigMeta.v2.yaml

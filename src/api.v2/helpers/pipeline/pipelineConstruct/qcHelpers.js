@@ -1,10 +1,16 @@
 const _ = require('lodash');
 const { fileExists } = require('../../s3/fileExists');
 const { FILTERED_CELLS } = require('../../../../config/bucketNames');
-const { filterToStepName, qcStepNames, backendStepNamesToStepName } = require('./constructors/qcStepNameTranslations');
+const { filterToStepName, backendStepNamesToStepName } = require('./constructors/qcStepNameTranslations');
+const { getQcPipelineSteps } = require('./skeletons/qcPipelineSkeleton');
 const CellLevelMeta = require('../../../model/CellLevelMeta');
 const { QC_PROCESS_NAME, FAILED } = require('../../../constants');
 const ExperimentExecution = require('../../../model/ExperimentExecution');
+
+// Ordered QC step (Map) names for a given technology. Spatial and single-cell
+// pipelines run different filter sets, so the candidate steps must come from the
+// technology's own skeleton rather than a global superset.
+const getOrderedQcStepNames = (technology) => Object.keys(getQcPipelineSteps(technology));
 
 const qcStepsWithFilterSettings = [
   'cellSizeDistribution',
@@ -39,11 +45,13 @@ const getCellLevelMetadataFileChanged = async (experimentId) => {
 // getFirstQCStep returns which is the first step of the QC to be run
 // processingConfigUpdatedKeys is not ordered
 const getFirstQCStep = async (
-  experimentId, processingConfigUpdatedKeys, previousCompletedSteps, status,
+  experimentId, processingConfigUpdatedKeys, previousCompletedSteps, status, technology,
 ) => {
+  const qcStepNames = getOrderedQcStepNames(technology);
+
   if (
     processingConfigUpdatedKeys.length === 0
-    && previousCompletedSteps.length === 7
+    && previousCompletedSteps.length === qcStepNames.length
     && await getCellLevelMetadataFileChanged(experimentId)
   ) {
     return filterToStepName.configureEmbedding;
@@ -55,7 +63,7 @@ const getFirstQCStep = async (
     && previousCompletedSteps.length !== 0
   ) {
     throw new Error(
-      `At experiment ${experimentId}: qc can be triggered with 
+      `At experiment ${experimentId}: qc can be triggered with
         processingConfigUpdates = empty array only if:
         - the cell level metadata changed
         - it is a retry
@@ -68,7 +76,8 @@ const getFirstQCStep = async (
   processingConfigUpdatedKeys.forEach((key) => {
     const stepName = filterToStepName[key];
     const idx = qcStepNames.indexOf(stepName);
-    if (idx < earliestIdx) {
+    // idx === -1 means the changed key does not belong to this technology's pipeline
+    if (idx !== -1 && idx < earliestIdx) {
       earliestIdx = idx;
       firstChangedStep = stepName;
     }
@@ -109,10 +118,12 @@ const getFirstQCStep = async (
 };
 
 const getQcStepsToRun = async (
-  experimentId, processingConfigUpdatedKeys, completedSteps, status,
+  experimentId, processingConfigUpdatedKeys, completedSteps, status, technology,
 ) => {
+  const qcStepNames = getOrderedQcStepNames(technology);
+
   const firstStep = await getFirstQCStep(
-    experimentId, processingConfigUpdatedKeys, completedSteps, status,
+    experimentId, processingConfigUpdatedKeys, completedSteps, status, technology,
   );
 
   return qcStepNames.slice(qcStepNames.indexOf(firstStep));

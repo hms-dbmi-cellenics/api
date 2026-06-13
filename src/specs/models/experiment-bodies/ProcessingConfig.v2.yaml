@@ -13,6 +13,12 @@ properties:
     $ref: ../processing-config-bodies/ProcessingConfigNumGenesVsNumUMIs.v2.yaml
   doubletScores:
     $ref: ../processing-config-bodies/ProcessingConfigDoubletScores.v2.yaml
+  spatialUmiOutlier:
+    $ref: ../processing-config-bodies/ProcessingConfigSpatialUmiOutlier.v2.yaml
+  spatialNumGenesOutlier:
+    $ref: ../processing-config-bodies/ProcessingConfigSpatialNumGenesOutlier.v2.yaml
+  spatialMitoOutlier:
+    $ref: ../processing-config-bodies/ProcessingConfigSpatialMitoOutlier.v2.yaml
   dataIntegration:
     $ref: ../processing-config-bodies/ProcessingConfigDataIntegration.v2.yaml
   configureEmbedding:

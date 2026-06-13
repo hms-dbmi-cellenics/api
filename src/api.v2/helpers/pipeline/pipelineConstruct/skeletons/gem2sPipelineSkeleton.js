@@ -112,4 +112,6 @@ const getGem2sPipelineSteps = (technology) => (
   SPATIAL_TECHNOLOGIES.includes(technology) ? gem2SSpatialPipelineSteps : gem2SPipelineSteps
 );
 
-module.exports = { gem2SPipelineSteps, gem2SSpatialPipelineSteps, getGem2sPipelineSteps };
+module.exports = {
+  gem2SPipelineSteps, gem2SSpatialPipelineSteps, getGem2sPipelineSteps, SPATIAL_TECHNOLOGIES,
+};

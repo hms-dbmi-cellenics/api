@@ -193,6 +193,38 @@ describe('helper functions for skeletons', () => {
     expect(stateMachine).toMatchSnapshot();
   });
 
+  it('runs only the spatial filters + integration + embedding for visium_hd', async () => {
+    const completedSteps = [];
+
+    const qcSteps = await getQcStepsToRun(
+      fake.EXPERIMENT_ID, ['spatialUmiOutlier'], completedSteps, 'SUCCEEDED', 'visium_hd',
+    );
+
+    expect(qcSteps).toEqual([
+      'SpatialUmiOutlierFilterMap',
+      'SpatialNumGenesOutlierFilterMap',
+      'SpatialMitoOutlierFilterMap',
+      'DataIntegration',
+      'ConfigureEmbedding',
+    ]);
+
+    const stateMachine = buildQCPipelineSteps(qcSteps, 'visium_hd');
+    // none of the single-cell filters should be present
+    expect(Object.keys(stateMachine)).not.toContain('ClassifierFilterMap');
+    expect(Object.keys(stateMachine)).not.toContain('MitochondrialContentFilterMap');
+    expect(stateMachine).toMatchSnapshot();
+  });
+
+  it('starts the visium_hd pipeline from a changed spatial step', async () => {
+    const completedSteps = ['SpatialUmiOutlierFilter'];
+
+    const qcSteps = await getQcStepsToRun(
+      fake.EXPERIMENT_ID, ['spatialMitoOutlier'], completedSteps, 'SUCCEEDED', 'visium_hd',
+    );
+
+    expect(qcSteps[0]).toEqual('SpatialNumGenesOutlierFilterMap');
+  });
+
   it('Throws if the config has no changes', async () => {
     mockCellLevelMetadataCheck('sameCellLevelId', 'sameCellLevelId');
 
