@@ -423,6 +423,125 @@ describe('test for pipeline services', () => {
     expect(startExecutionSpy.mock.results).toMatchSnapshot();
   });
 
+  it('Create Gem2s pipeline for visium_hd uses the spatial skeleton (no EmptyDrops/DoubletScores)', async () => {
+    AWSMock.setSDKInstance(AWS);
+
+    AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
+      callback(null, mockCluster);
+    });
+
+    let capturedStates;
+    AWSMock.mock('StepFunctions', 'createStateMachine', (params, callback) => {
+      capturedStates = JSON.parse(params.definition).States;
+      callback(null, { stateMachineArn: 'test-machine' });
+    });
+
+    AWSMock.mock('StepFunctions', 'createActivity', (params, callback) => {
+      callback(null, { activityArn: 'test-actvitiy' });
+    });
+
+    AWSMock.mock('StepFunctions', 'startExecution', (params, callback) => {
+      callback(null, { executionArn: 'test-machine' });
+    });
+
+    // visium_hd sample -> spatial skeleton must be selected
+    sampleInstance.find.mockReturnValueOnce(
+      Promise.resolve([
+        {
+          id: 'sample1',
+          experiment_id: 'exp1',
+          name: 'Sample 1',
+          sampleTechnology: 'visium_hd',
+        },
+      ]),
+    );
+
+    await createGem2SPipeline(
+      'testExperimentId',
+      {
+        projectId: 'test-project',
+        experimentName: 'spatial-experiment',
+        organism: null,
+        input: { type: 'visium_hd' },
+        sampleIds: ['3af6b6bb-a1aa-4375-9c2c-c112bada56ca'],
+        sampleNames: ['sample-1'],
+      },
+    );
+
+    const stateNames = Object.keys(capturedStates);
+    expect(stateNames).toContain('CreateSeurat');
+    expect(stateNames).not.toContain('EmptyDrops');
+    expect(stateNames).not.toContain('DoubletScores');
+  });
+
+  it('Create QC pipeline for visium_hd threads spatial steps and does not crash on missing single-cell config', async () => {
+    AWSMock.setSDKInstance(AWS);
+
+    AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
+      callback(null, mockCluster);
+    });
+
+    let capturedStates;
+    AWSMock.mock('StepFunctions', 'createStateMachine', (params, callback) => {
+      capturedStates = JSON.parse(params.definition).States;
+      callback(null, { stateMachineArn: 'test-machine' });
+    });
+
+    AWSMock.mock('StepFunctions', 'createActivity', (params, callback) => {
+      callback(null, { activityArn: 'test-actvitiy' });
+    });
+
+    AWSMock.mock('StepFunctions', 'startExecution', (params, callback) => {
+      callback(null, { executionArn: 'test-machine' });
+    });
+
+    // Spatial processing config contains ONLY the spatial filter steps -
+    // none of the single-cell steps (doubletScores, cellSizeDistribution) exist.
+    // The withRecomputeDoubletScores / withoutDefaultFilterSettings guards must
+    // not crash on these undefined steps.
+    const spatialExperimentRow = {
+      samplesOrder: ['spatialSample1'],
+      processingConfig: {
+        spatialUmiOutlier: { spatialSample1: { enabled: true } },
+        spatialNumGenesOutlier: { spatialSample1: { enabled: true } },
+        spatialMitoOutlier: { spatialSample1: { enabled: true } },
+      },
+    };
+
+    experimentInstance.findById.mockReturnValueOnce(
+      { first: () => Promise.resolve(spatialExperimentRow) },
+    );
+
+    cellLevelMetaInstance.getMetadataByExperimentIds.mockImplementationOnce(
+      () => Promise.resolve([]),
+    );
+
+    sampleInstance.find.mockReturnValue(
+      Promise.resolve([
+        {
+          id: 'spatialSample1',
+          experiment_id: 'exp1',
+          name: 'Spatial Sample 1',
+          sampleTechnology: 'visium_hd',
+        },
+      ]),
+    );
+
+    const spatialProcessingConfigDiff = {
+      spatialUmiOutlier: { spatialSample1: { enabled: true } },
+    };
+
+    await expect(
+      createQCPipeline('testExperimentId', spatialProcessingConfigDiff),
+    ).resolves.not.toThrow();
+
+    const stateNames = Object.keys(capturedStates);
+    expect(stateNames).toContain('SpatialUmiOutlierFilterMap');
+    expect(stateNames).toContain('SpatialMitoOutlierFilterMap');
+    expect(stateNames).not.toContain('ClassifierFilterMap');
+    expect(stateNames).not.toContain('DoubletScoresFilterMap');
+  });
+
   it('Create Subset pipeline works', async () => {
     AWSMock.setSDKInstance(AWS);
 
