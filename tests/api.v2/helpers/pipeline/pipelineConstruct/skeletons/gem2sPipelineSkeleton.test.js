@@ -28,6 +28,19 @@ describe('getGem2sPipelineSteps', () => {
     expect(SPATIAL_TECHNOLOGIES).toContain('visium_hd');
   });
 
+  it('declares xenium as a spatial technology', () => {
+    expect(SPATIAL_TECHNOLOGIES).toContain('xenium');
+  });
+
+  it('returns spatial gem2s steps for xenium, skipping EmptyDrops and DoubletScores', () => {
+    const steps = getGem2sPipelineSteps('xenium');
+    expect(Object.keys(steps)).toEqual(spatialSteps);
+    expect(steps).toBe(gem2SSpatialPipelineSteps);
+
+    expect(steps).not.toHaveProperty('EmptyDrops');
+    expect(steps).not.toHaveProperty('DoubletScores');
+  });
+
   it('returns the single-cell gem2s steps for a non-spatial technology (10x)', () => {
     const steps = getGem2sPipelineSteps('10x');
     expect(Object.keys(steps)).toEqual(singleCellSteps);

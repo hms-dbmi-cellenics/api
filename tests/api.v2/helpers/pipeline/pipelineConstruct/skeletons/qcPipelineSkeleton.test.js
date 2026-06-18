@@ -48,6 +48,19 @@ describe('getQcPipelineSteps', () => {
     expect(steps).not.toHaveProperty('DoubletScoresFilterMap');
   });
 
+  it('returns only the three spatial filters + DataIntegration + ConfigureEmbedding for xenium', () => {
+    const steps = getQcPipelineSteps('xenium');
+    expect(Object.keys(steps)).toEqual(spatialStepNames);
+    expect(steps).toBe(qcSpatialPipelineSteps);
+
+    // none of the single-cell only filters are present
+    expect(steps).not.toHaveProperty('ClassifierFilterMap');
+    expect(steps).not.toHaveProperty('CellSizeDistributionFilterMap');
+    expect(steps).not.toHaveProperty('MitochondrialContentFilterMap');
+    expect(steps).not.toHaveProperty('NumGenesVsNumUmisFilterMap');
+    expect(steps).not.toHaveProperty('DoubletScoresFilterMap');
+  });
+
   it('chains the spatial filter Map states in order, ending at DataIntegration', () => {
     const steps = getQcPipelineSteps('visium_hd');
 

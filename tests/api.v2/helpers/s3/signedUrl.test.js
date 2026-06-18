@@ -245,4 +245,26 @@ describe('getSampleFileDownloadUrls', () => {
       ResponseContentDisposition: `attachment; filename="${expectedFileName}"`,
     }));
   });
+
+  it.each([
+    ['xenium_cell_feature_matrix', 'cell_feature_matrix.h5'],
+    ['xenium_cells', 'cells.parquet'],
+    ['xenium_cell_boundaries', 'cell_boundaries.parquet'],
+  ])('uses the correct download filename for xenium file type %s and routes to the SAMPLE_FILES bucket', async (type, expectedFileName) => {
+    const files = [
+      {
+        id: 'id0', sampleFileType: type, size: 12, s3Path: `${type}-path`, uploadStatus: 'uploaded', uploadedAt: '1',
+      },
+    ];
+
+    sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
+
+    await getSampleFileDownloadUrls(experimentId, sampleId, type);
+
+    expect(getSignedUrlPromiseSpy).toHaveBeenCalledWith('getObject', expect.objectContaining({
+      Bucket: bucketNames.SAMPLE_FILES,
+      Key: `${type}-path`,
+      ResponseContentDisposition: `attachment; filename="${expectedFileName}"`,
+    }));
+  });
 });
