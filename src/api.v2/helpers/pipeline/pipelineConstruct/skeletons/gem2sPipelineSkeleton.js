@@ -106,7 +106,7 @@ const gem2SSpatialPipelineSteps = {
   },
 };
 
-const SPATIAL_TECHNOLOGIES = ['visium_hd'];
+const SPATIAL_TECHNOLOGIES = ['visium_hd', 'xenium'];
 
 const getGem2sPipelineSteps = (technology) => (
   SPATIAL_TECHNOLOGIES.includes(technology) ? gem2SSpatialPipelineSteps : gem2SPipelineSteps

@@ -113,6 +113,9 @@ const fileNameToReturn = {
   visium_hd_cell_segmentations: 'cell_segmentations.geojson',
   visium_hd_tissue_hires_image: 'tissue_hires_image.png',
   visium_hd_scalefactors_json: 'scalefactors_json.json',
+  xenium_cell_feature_matrix: 'cell_feature_matrix.h5',
+  xenium_cells: 'cells.parquet',
+  xenium_cell_boundaries: 'cell_boundaries.parquet',
 };
 
 const getSampleFileBucket = (fileType) => {
