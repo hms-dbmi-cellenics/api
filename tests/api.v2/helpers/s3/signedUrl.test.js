@@ -267,4 +267,40 @@ describe('getSampleFileDownloadUrls', () => {
       ResponseContentDisposition: `attachment; filename="${expectedFileName}"`,
     }));
   });
+
+  it('uses the correct download filename for xenium_transcripts and routes to the SAMPLE_FILES bucket', async () => {
+    const files = [
+      {
+        id: 'id0', sampleFileType: 'xenium_transcripts', size: 12, s3Path: 'xenium_transcripts-path', uploadStatus: 'uploaded', uploadedAt: '1',
+      },
+    ];
+
+    sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
+
+    await getSampleFileDownloadUrls(experimentId, sampleId, 'xenium_transcripts');
+
+    expect(getSignedUrlPromiseSpy).toHaveBeenCalledWith('getObject', expect.objectContaining({
+      Bucket: bucketNames.SAMPLE_FILES,
+      Key: 'xenium_transcripts-path',
+      ResponseContentDisposition: 'attachment; filename="transcripts.parquet"',
+    }));
+  });
+
+  it('uses the correct download filename for molecules_pyramid and routes to the SPATIAL_MOLECULES bucket', async () => {
+    const files = [
+      {
+        id: 'id0', sampleFileType: 'molecules_pyramid', size: 12, s3Path: 'molecules_pyramid-path', uploadStatus: 'uploaded', uploadedAt: '1',
+      },
+    ];
+
+    sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
+
+    await getSampleFileDownloadUrls(experimentId, sampleId, 'molecules_pyramid');
+
+    expect(getSignedUrlPromiseSpy).toHaveBeenCalledWith('getObject', expect.objectContaining({
+      Bucket: bucketNames.SPATIAL_MOLECULES,
+      Key: 'molecules_pyramid-path',
+      ResponseContentDisposition: 'attachment; filename="molecules.pyramid.zip"',
+    }));
+  });
 });

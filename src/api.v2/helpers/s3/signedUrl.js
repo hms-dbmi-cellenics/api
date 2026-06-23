@@ -116,6 +116,8 @@ const fileNameToReturn = {
   xenium_cell_feature_matrix: 'cell_feature_matrix.h5',
   xenium_cells: 'cells.parquet',
   xenium_cell_boundaries: 'cell_boundaries.parquet',
+  xenium_transcripts: 'transcripts.parquet',
+  molecules_pyramid: 'molecules.pyramid.zip',
 };
 
 const getSampleFileBucket = (fileType) => {
@@ -127,6 +129,9 @@ const getSampleFileBucket = (fileType) => {
       break;
     case 'segmentations_ome_zarr_zip':
       bucketName = bucketNames.SPATIAL_SEGMENTATIONS;
+      break;
+    case 'molecules_pyramid':
+      bucketName = bucketNames.SPATIAL_MOLECULES;
       break;
     default:
       bucketName = bucketNames.SAMPLE_FILES;

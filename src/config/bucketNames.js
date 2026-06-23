@@ -11,6 +11,7 @@ const bucketNames = {
   CELL_LEVEL_META: `cellenics-cell-level-metadata-${config.clusterEnv}-${config.awsAccountId}`,
   SPATIAL_IMAGES: `spatial-images-${config.clusterEnv}-${config.awsAccountId}`,
   SPATIAL_SEGMENTATIONS: `spatial-segmentations-${config.clusterEnv}-${config.awsAccountId}`,
+  SPATIAL_MOLECULES: `spatial-molecules-${config.clusterEnv}-${config.awsAccountId}`,
 };
 
 module.exports = bucketNames;

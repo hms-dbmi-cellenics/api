@@ -213,6 +213,7 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
     { urlMatcher: /experiments\/.{36}\/cellSets$/, method: 'PATCH' },
     { urlMatcher: /experiments\/.{36}\/samples\/.{36}\/sampleFiles\/ome_zarr_zip$/, method: 'POST' },
     { urlMatcher: /experiments\/.{36}\/samples\/.{36}\/sampleFiles\/segmentations_ome_zarr_zip$/, method: 'POST' },
+    { urlMatcher: /experiments\/.{36}\/samples\/.{36}\/sampleFiles\/molecules_pyramid$/, method: 'POST' },
   ];
   const isEndpointIgnored = longTimeoutEndpoints.some(
     ({ urlMatcher, method }) => (
