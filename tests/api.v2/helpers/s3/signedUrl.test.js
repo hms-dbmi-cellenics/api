@@ -286,21 +286,21 @@ describe('getSampleFileDownloadUrls', () => {
     }));
   });
 
-  it('uses the correct download filename for molecules_pyramid and routes to the SPATIAL_MOLECULES bucket', async () => {
+  it('uses the correct download filename for molecules_by_gene and routes to the SPATIAL_MOLECULES bucket', async () => {
     const files = [
       {
-        id: 'id0', sampleFileType: 'molecules_pyramid', size: 12, s3Path: 'molecules_pyramid-path', uploadStatus: 'uploaded', uploadedAt: '1',
+        id: 'id0', sampleFileType: 'molecules_by_gene', size: 12, s3Path: 'molecules_by_gene-path', uploadStatus: 'uploaded', uploadedAt: '1',
       },
     ];
 
     sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
 
-    await getSampleFileDownloadUrls(experimentId, sampleId, 'molecules_pyramid');
+    await getSampleFileDownloadUrls(experimentId, sampleId, 'molecules_by_gene');
 
     expect(getSignedUrlPromiseSpy).toHaveBeenCalledWith('getObject', expect.objectContaining({
       Bucket: bucketNames.SPATIAL_MOLECULES,
-      Key: 'molecules_pyramid-path',
-      ResponseContentDisposition: 'attachment; filename="molecules.pyramid.zip"',
+      Key: 'molecules_by_gene-path',
+      ResponseContentDisposition: 'attachment; filename="molecules.bygene.zip"',
     }));
   });
 });

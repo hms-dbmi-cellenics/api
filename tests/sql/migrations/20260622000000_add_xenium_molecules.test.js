@@ -2,12 +2,12 @@
 const migration = require('../../../src/sql/migrations/20260622000000_add_xenium_molecules');
 
 describe('20260622000000_add_xenium_molecules migration', () => {
-  it('adds the xenium_transcripts and molecules_pyramid sample_file_type enum values', async () => {
+  it('adds the xenium_transcripts and molecules_by_gene sample_file_type enum values', async () => {
     const raw = jest.fn().mockResolvedValue(undefined);
     await migration.up({ raw });
 
     expect(raw).toHaveBeenCalledWith("ALTER TYPE sample_file_type ADD VALUE 'xenium_transcripts';");
-    expect(raw).toHaveBeenCalledWith("ALTER TYPE sample_file_type ADD VALUE 'molecules_pyramid';");
+    expect(raw).toHaveBeenCalledWith("ALTER TYPE sample_file_type ADD VALUE 'molecules_by_gene';");
   });
 
   it('only adds the two sample_file_type enum values', async () => {
