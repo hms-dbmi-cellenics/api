@@ -41,8 +41,8 @@ const formatDefaultFilterSettings = (experimentId, processingConfig, defaultProc
   logger.log('Adding defaultFilterSettings to received processing config');
 
   qcStepsWithFilterSettings.forEach((stepName) => {
-    // Spatial (visium_hd) processing configs only contain the spatial filter steps,
-    // so the single-cell filter steps in this list aren't present — skip them.
+    // Spatial (visium_hd/xenium) processing configs only contain the spatial filter
+    // steps, so the single-cell filter steps in this list aren't present — skip them.
     if (!processingConfigToReturn[stepName]) return;
 
     const stepConfigSplitBySample = Object.entries(processingConfigToReturn[stepName]);
@@ -287,4 +287,5 @@ module.exports = {
   runGem2s,
   startGem2sPipeline,
   handleGem2sResponse,
+  formatDefaultFilterSettings,
 };
