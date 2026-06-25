@@ -14,7 +14,6 @@ allOf:
     - $ref: '#/definitions/tsne'
     - $ref: '#/definitions/pca'
     - $ref: '#/definitions/images'
-    - $ref: '#/definitions/polygons'
 
 definitions:
   umap:
@@ -86,12 +85,3 @@ definitions:
         type: string
         pattern: images
         example: images
-  polygons:
-    type: object
-    required:
-      - type
-    properties:
-      type:
-        type: string
-        pattern: polygons
-        example: polygons
