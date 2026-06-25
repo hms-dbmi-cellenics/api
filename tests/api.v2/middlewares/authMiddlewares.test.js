@@ -142,6 +142,39 @@ describe('Tests for authorization/authentication middlewares', () => {
     expect(ret).toBe(null);
   });
 
+  it.each([
+    'ome_zarr_zip',
+    'segmentations_ome_zarr_zip',
+    'molecules_by_gene',
+  ])('checkAuth accepts expired tokens for posting the %s spatial sample file', async (fileType) => {
+    const req = {
+      params: { experimentId: fake.EXPERIMENT_ID },
+      user: fake.USER,
+      url: `/v1/experiments/${fake.EXPERIMENT_ID}/samples/${fake.SAMPLE_UUID}/sampleFiles/${fileType}`,
+      method: 'POST',
+      ip: '::ffff:127.0.0.1',
+    };
+    const next = jest.fn();
+
+    const ret = checkAuthExpiredMiddleware(req, {}, next);
+    expect(ret).toBe(null);
+    expect(next).not.toHaveBeenCalledWith(expect.any(UnauthenticatedError));
+  });
+
+  it('checkAuth rejects expired tokens for a sample file not in the long-timeout list', async () => {
+    const req = {
+      params: { experimentId: fake.EXPERIMENT_ID },
+      user: fake.USER,
+      url: `/v1/experiments/${fake.EXPERIMENT_ID}/samples/${fake.SAMPLE_UUID}/sampleFiles/matrix`,
+      method: 'POST',
+      ip: '::ffff:127.0.0.1',
+    };
+    const next = jest.fn();
+
+    checkAuthExpiredMiddleware(req, {}, next);
+    expect(next).toHaveBeenCalledWith(expect.any(UnauthenticatedError));
+  });
+
   it('Express middleware can reject unauthenticated requests', async () => {
     const req = {
       params: { experimentId: fake.EXPERIMENT_ID },
