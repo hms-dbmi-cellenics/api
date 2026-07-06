@@ -16,7 +16,20 @@ const generateETag = async (
   } = data;
 
   const backendStatus = await getExperimentBackendStatus(experimentId);
-  const { pipeline: { startDate: qcPipelineStartDate } } = backendStatus;
+  const {
+    pipeline: { startDate: qcStartDate },
+    obj2s: { startDate: obj2sStartDate },
+  } = backendStatus;
+
+  // obj2s experiments never run the QC pipeline, so `qcStartDate` stays null and
+  // always hashes to the same (epoch) date. That means re-uploading an obj2s
+  // object would produce an identical ETag and the worker would serve stale
+  // results from the previous upload (e.g. embeddings that no longer match the
+  // freshly overwritten cell sets, making clusters appear misaligned). Fall back
+  // to the obj2s pipeline start date so that re-running obj2s invalidates the
+  // cached worker results. gem2s/QC experiments keep using the QC start date, so
+  // their ETags are unchanged.
+  const qcPipelineStartDate = qcStartDate || obj2sStartDate;
 
   const { workerVersion } = config;
 
