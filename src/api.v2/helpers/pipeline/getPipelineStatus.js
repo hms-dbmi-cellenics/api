@@ -2,14 +2,20 @@ const _ = require('lodash');
 const AWS = require('../../../utils/requireAWS');
 
 const ExperimentExecution = require('../../model/ExperimentExecution');
+const Sample = require('../../model/Sample');
 
 const config = require('../../../config');
 const { EXPIRED_EXECUTION_DATE } = require('../../constants');
 const getLogger = require('../../../utils/getLogger');
 const pipelineConstants = require('../../constants');
 const { getPipelineStepNames } = require('./pipelineConstruct/skeletons');
+const { getQcPipelineSteps } = require('./pipelineConstruct/skeletons/qcPipelineSkeleton');
 const shouldPipelineRerun = require('./shouldPipelineRerun');
-const { qcStepNames, stepNameToBackendStepNames } = require('./pipelineConstruct/constructors/qcStepNameTranslations');
+const { stepNameToBackendStepNames } = require('./pipelineConstruct/constructors/qcStepNameTranslations');
+
+// Ordered QC step (Map) names for a technology. Spatial and single-cell pipelines
+// run different filter sets, so "all qc steps" must come from the technology's skeleton.
+const getOrderedQcStepNames = (technology) => Object.keys(getQcPipelineSteps(technology));
 
 const logger = getLogger();
 
@@ -240,7 +246,7 @@ const getStepsFromExecutionHistory = (events) => {
  * so we can keep considering them completed for future runs as well
  */
 const getCompletedSteps = async (
-  processName, stateMachineArn, lastRunExecutedSteps, stepFunctions,
+  processName, stateMachineArn, lastRunExecutedSteps, stepFunctions, experimentId,
 ) => {
   let completedSteps;
 
@@ -252,10 +258,16 @@ const getCompletedSteps = async (
     // Get all the steps that were scheduled to be run in the last execution
     const lastScheduledSteps = Object.keys(JSON.parse(stateMachine.definition).States);
 
+    // technology determines which qc filter steps belong to this experiment's pipeline
+    // (spatial vs single-cell run different filter sets)
+    const samples = await new Sample().find({ experiment_id: experimentId });
+    const technology = samples[0] ? samples[0].sampleTechnology : null;
+
     // Remove from all qc steps the ones that were scheduled for execution in the last run
     // We are left with all the qc steps that last run didn't consider necessary to rerun
     // This means that these steps were considered completed in the last run so
-    // we can still consider them completed
+    // we can still consider them completed.
+    const qcStepNames = getOrderedQcStepNames(technology);
     const stepsCompletedInPreviousRuns = _.difference(qcStepNames, lastScheduledSteps)
       .map((rawStepName) => stepNameToBackendStepNames[rawStepName]);
 
@@ -306,7 +318,7 @@ const getPipelineStatus = async (experimentId, processName) => {
     const executedSteps = getStepsFromExecutionHistory(events);
 
     const completedSteps = await getCompletedSteps(
-      processName, stateMachineArn, executedSteps, stepFunctions,
+      processName, stateMachineArn, executedSteps, stepFunctions, experimentId,
     );
 
     response = buildResponse(processName, execution, shouldRerun, error, completedSteps);

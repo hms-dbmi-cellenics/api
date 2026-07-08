@@ -9,13 +9,19 @@ const config = require('../../../../src/config');
 const ExperimentExecution = require('../../../../src/api.v2/model/ExperimentExecution');
 const { qcStepNames } = require('../../../../src/api.v2/helpers/pipeline/pipelineConstruct/constructors/qcStepNameTranslations');
 const CellLevelMeta = require('../../../../src/api.v2/model/CellLevelMeta');
+const Sample = require('../../../../src/api.v2/model/Sample');
 
 const experimentExecutionInstance = ExperimentExecution();
 const cellLevelMetaInstance = CellLevelMeta();
+const sampleInstance = Sample();
 
 jest.mock('../../../../src/api.v2/model/ExperimentExecution');
 jest.mock('../../../../src/api.v2/model/CellLevelMeta');
 jest.mock('../../../../src/api.v2/model/ExperimentParent');
+jest.mock('../../../../src/api.v2/model/Sample');
+
+// default: non-spatial technology (single-cell qc pipeline)
+sampleInstance.find.mockImplementation(() => Promise.resolve([{ sampleTechnology: '10x' }]));
 
 jest.useFakeTimers('modern').setSystemTime(new Date(pipelineConstants.EXPIRED_EXECUTION_DATE).getTime());
 

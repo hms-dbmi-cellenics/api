@@ -18,6 +18,8 @@ items:
             - pattern: ^sce_object$
             - pattern: ^anndata_object$
             - pattern: ^parse$
+            - pattern: ^visium_hd$
+            - pattern: ^xenium$
     options:
       type: object
 

@@ -209,7 +209,12 @@ const checkAuthExpiredMiddleware = (req, res, next) => {
   }
 
   // check if we should ignore expired jwt token for this path and request type
-  const longTimeoutEndpoints = [{ urlMatcher: /experiments\/.{36}\/cellSets$/, method: 'PATCH' }];
+  const longTimeoutEndpoints = [
+    { urlMatcher: /experiments\/.{36}\/cellSets$/, method: 'PATCH' },
+    { urlMatcher: /experiments\/.{36}\/samples\/.{36}\/sampleFiles\/ome_zarr_zip$/, method: 'POST' },
+    { urlMatcher: /experiments\/.{36}\/samples\/.{36}\/sampleFiles\/segmentations_ome_zarr_zip$/, method: 'POST' },
+    { urlMatcher: /experiments\/.{36}\/samples\/.{36}\/sampleFiles\/molecules_by_gene$/, method: 'POST' },
+  ];
   const isEndpointIgnored = longTimeoutEndpoints.some(
     ({ urlMatcher, method }) => (
       req.method.toLowerCase() === method.toLowerCase() && urlMatcher.test(req.url)

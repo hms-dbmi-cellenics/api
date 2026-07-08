@@ -1,0 +1,25 @@
+title: Spatial Number of Genes Outlier
+type: object
+description: Processing config body for the Visium HD spatial number-of-genes local-outlier filter. Keys are sample UUIDs, values are per-sample configurations.
+additionalProperties:
+  type: object
+  properties:
+    enabled:
+      type: boolean
+    auto:
+      type: boolean
+    filterSettings:
+      type: object
+      properties:
+        cutoff:
+          type: number
+        direction:
+          type: string
+          enum:
+            - lower
+            - upper
+            - both
+        binStep:
+          type: number
+  required:
+    - filterSettings

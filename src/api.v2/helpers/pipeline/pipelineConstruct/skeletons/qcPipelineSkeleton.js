@@ -1,6 +1,52 @@
 const _ = require('lodash');
 const { END_OF_PIPELINE } = require('../../../../constants');
 const { createCatchSteps } = require('../constructors/createHandleErrorStep');
+const { SPATIAL_TECHNOLOGIES } = require('./gem2sPipelineSkeleton');
+
+// Builds a per-sample Map state that runs a single QC filter task over all samples.
+const createPerSampleFilterMap = (next, taskName, filterStateName) => ({
+  Type: 'Map',
+  Next: next,
+  ResultPath: null,
+  ItemsPath: '$.samples',
+  Iterator: {
+    StartAt: filterStateName,
+    States: {
+      [filterStateName]: {
+        XStepType: 'create-new-step',
+        XConstructorArgs: {
+          perSample: true,
+          taskName,
+        },
+        End: true,
+      },
+    },
+  },
+  Catch: createCatchSteps(),
+});
+
+// Shared tail steps (run after the filters for every technology).
+const dataIntegrationAndEmbedding = {
+  DataIntegration: {
+    XStepType: 'create-new-step',
+    XConstructorArgs: {
+      perSample: false,
+      taskName: 'dataIntegration',
+      uploadCountMatrix: true,
+    },
+    Next: 'ConfigureEmbedding',
+    XCatch: createCatchSteps(),
+  },
+  ConfigureEmbedding: {
+    XStepType: 'create-new-step',
+    XConstructorArgs: {
+      perSample: false,
+      taskName: 'configureEmbedding',
+    },
+    Next: END_OF_PIPELINE,
+    XCatch: createCatchSteps(),
+  },
+};
 
 const qcPipelineSteps = {
   ClassifierFilterMap: {
@@ -103,33 +149,38 @@ const qcPipelineSteps = {
     },
     Catch: createCatchSteps(),
   },
-  DataIntegration: {
-    XStepType: 'create-new-step',
-    XConstructorArgs: {
-      perSample: false,
-      taskName: 'dataIntegration',
-      uploadCountMatrix: true,
-    },
-    Next: 'ConfigureEmbedding',
-    XCatch: createCatchSteps(),
-  },
-  ConfigureEmbedding: {
-    XStepType: 'create-new-step',
-    XConstructorArgs: {
-      perSample: false,
-      taskName: 'configureEmbedding',
-    },
-    Next: END_OF_PIPELINE,
-    XCatch: createCatchSteps(),
-  },
+  ...dataIntegrationAndEmbedding,
 };
 
+// Spatial (e.g. Visium HD) QC: cells are defined by segmentation, so the
+// single-cell filters are replaced by three spatial local-outlier filters
+// (UMI, number of genes, mitochondrial content) before integration/embedding.
+const qcSpatialPipelineSteps = {
+  SpatialUmiOutlierFilterMap: createPerSampleFilterMap(
+    'SpatialNumGenesOutlierFilterMap', 'spatialUmiOutlier', 'SpatialUmiOutlierFilter',
+  ),
+  SpatialNumGenesOutlierFilterMap: createPerSampleFilterMap(
+    'SpatialMitoOutlierFilterMap', 'spatialNumGenesOutlier', 'SpatialNumGenesOutlierFilter',
+  ),
+  SpatialMitoOutlierFilterMap: createPerSampleFilterMap(
+    'DataIntegration', 'spatialMitoOutlier', 'SpatialMitoOutlierFilter',
+  ),
+  ...dataIntegrationAndEmbedding,
+};
 
-const buildQCPipelineSteps = (qcSteps) => {
-  const stepsToRemove = Object.keys(qcPipelineSteps)
+const getQcPipelineSteps = (technology) => (
+  SPATIAL_TECHNOLOGIES.includes(technology) ? qcSpatialPipelineSteps : qcPipelineSteps
+);
+
+const buildQCPipelineSteps = (qcSteps, technology = null) => {
+  const allSteps = getQcPipelineSteps(technology);
+
+  const stepsToRemove = Object.keys(allSteps)
     .filter((step) => !qcSteps.includes(step) && step !== END_OF_PIPELINE);
 
-  return _.omit(qcPipelineSteps, stepsToRemove);
+  return _.omit(allSteps, stepsToRemove);
 };
 
-module.exports = { buildQCPipelineSteps, qcPipelineSteps };
+module.exports = {
+  buildQCPipelineSteps, qcPipelineSteps, qcSpatialPipelineSteps, getQcPipelineSteps,
+};

@@ -1,6 +1,7 @@
 // @ts-nocheck
 const SampleFile = require('../../../../src/api.v2/model/SampleFile');
 const signedUrl = require('../../../../src/api.v2/helpers/s3/signedUrl');
+const bucketNames = require('../../../../src/config/bucketNames');
 
 const AWS = require('../../../../src/utils/requireAWS');
 const { NotFoundError } = require('../../../../src/utils/responses');
@@ -167,5 +168,139 @@ describe('getSampleFileDownloadUrls', () => {
     await expect(getSampleFileDownloadUrls(experimentId, sampleId, fileType)).rejects.toThrow(
       new NotFoundError(`File ${fileType} from sample ${sampleId} from experiment ${experimentId} not found`),
     );
+  });
+
+  it('routes a sample file (non-spatial) to the SAMPLE_FILES bucket', async () => {
+    const files = [
+      {
+        id: 'id0', sampleFileType: 'features10x', size: 12, s3Path: 'features-path', uploadStatus: 'uploaded', uploadedAt: '1',
+      },
+    ];
+
+    sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
+
+    await getSampleFileDownloadUrls(experimentId, sampleId, 'features10x');
+
+    expect(getSignedUrlPromiseSpy).toHaveBeenCalledWith('getObject', expect.objectContaining({
+      Bucket: bucketNames.SAMPLE_FILES,
+      Key: 'features-path',
+      ResponseContentDisposition: 'attachment; filename="features.tsv.gz"',
+    }));
+  });
+
+  it('routes ome_zarr_zip to the SPATIAL_IMAGES bucket', async () => {
+    const files = [
+      {
+        id: 'id0', sampleFileType: 'ome_zarr_zip', size: 12, s3Path: 'image-path', uploadStatus: 'uploaded', uploadedAt: '1',
+      },
+    ];
+
+    sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
+
+    await getSampleFileDownloadUrls(experimentId, sampleId, 'ome_zarr_zip');
+
+    expect(getSignedUrlPromiseSpy).toHaveBeenCalledWith('getObject', expect.objectContaining({
+      Bucket: bucketNames.SPATIAL_IMAGES,
+      Key: 'image-path',
+      ResponseContentDisposition: 'attachment; filename="image.ome.zarr.zip"',
+    }));
+  });
+
+  it('routes segmentations_ome_zarr_zip to the SPATIAL_SEGMENTATIONS bucket', async () => {
+    const files = [
+      {
+        id: 'id0', sampleFileType: 'segmentations_ome_zarr_zip', size: 12, s3Path: 'seg-path', uploadStatus: 'uploaded', uploadedAt: '1',
+      },
+    ];
+
+    sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
+
+    await getSampleFileDownloadUrls(experimentId, sampleId, 'segmentations_ome_zarr_zip');
+
+    expect(getSignedUrlPromiseSpy).toHaveBeenCalledWith('getObject', expect.objectContaining({
+      Bucket: bucketNames.SPATIAL_SEGMENTATIONS,
+      Key: 'seg-path',
+      ResponseContentDisposition: 'attachment; filename="segmentations.ome.zarr.zip"',
+    }));
+  });
+
+  it.each([
+    ['visium_hd_filtered_feature_cell_matrix', 'filtered_feature_cell_matrix.h5'],
+    ['visium_hd_cell_segmentations', 'cell_segmentations.geojson'],
+    ['visium_hd_tissue_hires_image', 'tissue_hires_image.png'],
+    ['visium_hd_scalefactors_json', 'scalefactors_json.json'],
+  ])('uses the correct download filename for visium_hd file type %s (defaulting to SAMPLE_FILES bucket)', async (type, expectedFileName) => {
+    const files = [
+      {
+        id: 'id0', sampleFileType: type, size: 12, s3Path: `${type}-path`, uploadStatus: 'uploaded', uploadedAt: '1',
+      },
+    ];
+
+    sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
+
+    await getSampleFileDownloadUrls(experimentId, sampleId, type);
+
+    expect(getSignedUrlPromiseSpy).toHaveBeenCalledWith('getObject', expect.objectContaining({
+      Bucket: bucketNames.SAMPLE_FILES,
+      ResponseContentDisposition: `attachment; filename="${expectedFileName}"`,
+    }));
+  });
+
+  it.each([
+    ['xenium_cell_feature_matrix', 'cell_feature_matrix.h5'],
+    ['xenium_cells', 'cells.parquet'],
+    ['xenium_cell_boundaries', 'cell_boundaries.parquet'],
+  ])('uses the correct download filename for xenium file type %s and routes to the SAMPLE_FILES bucket', async (type, expectedFileName) => {
+    const files = [
+      {
+        id: 'id0', sampleFileType: type, size: 12, s3Path: `${type}-path`, uploadStatus: 'uploaded', uploadedAt: '1',
+      },
+    ];
+
+    sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
+
+    await getSampleFileDownloadUrls(experimentId, sampleId, type);
+
+    expect(getSignedUrlPromiseSpy).toHaveBeenCalledWith('getObject', expect.objectContaining({
+      Bucket: bucketNames.SAMPLE_FILES,
+      Key: `${type}-path`,
+      ResponseContentDisposition: `attachment; filename="${expectedFileName}"`,
+    }));
+  });
+
+  it('uses the correct download filename for xenium_transcripts and routes to the SAMPLE_FILES bucket', async () => {
+    const files = [
+      {
+        id: 'id0', sampleFileType: 'xenium_transcripts', size: 12, s3Path: 'xenium_transcripts-path', uploadStatus: 'uploaded', uploadedAt: '1',
+      },
+    ];
+
+    sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
+
+    await getSampleFileDownloadUrls(experimentId, sampleId, 'xenium_transcripts');
+
+    expect(getSignedUrlPromiseSpy).toHaveBeenCalledWith('getObject', expect.objectContaining({
+      Bucket: bucketNames.SAMPLE_FILES,
+      Key: 'xenium_transcripts-path',
+      ResponseContentDisposition: 'attachment; filename="transcripts.parquet"',
+    }));
+  });
+
+  it('uses the correct download filename for molecules_by_gene and routes to the SPATIAL_MOLECULES bucket', async () => {
+    const files = [
+      {
+        id: 'id0', sampleFileType: 'molecules_by_gene', size: 12, s3Path: 'molecules_by_gene-path', uploadStatus: 'uploaded', uploadedAt: '1',
+      },
+    ];
+
+    sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
+
+    await getSampleFileDownloadUrls(experimentId, sampleId, 'molecules_by_gene');
+
+    expect(getSignedUrlPromiseSpy).toHaveBeenCalledWith('getObject', expect.objectContaining({
+      Bucket: bucketNames.SPATIAL_MOLECULES,
+      Key: 'molecules_by_gene-path',
+      ResponseContentDisposition: 'attachment; filename="molecules.bygene.zip"',
+    }));
   });
 });

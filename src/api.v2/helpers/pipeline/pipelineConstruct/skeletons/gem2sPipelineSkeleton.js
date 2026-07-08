@@ -60,4 +60,58 @@ const gem2SPipelineSteps = {
   },
 };
 
-module.exports = { gem2SPipelineSteps };
+// Spatial technologies (e.g. Visium HD) skip emptyDrops and doubletScores:
+// cells are defined by segmentation so empty drop detection and doublet
+// scoring are not applicable.
+const gem2SSpatialPipelineSteps = {
+  DownloadGem: {
+    XStepType: 'create-new-step',
+    XConstructorArgs: {
+      taskName: 'downloadGem',
+    },
+    Next: 'PreProcessing',
+    XCatch: createCatchSteps(),
+  },
+  PreProcessing: {
+    XStepType: 'create-new-step',
+    XConstructorArgs: {
+      taskName: 'preproc',
+    },
+    Next: 'CreateSeurat',
+    XCatch: createCatchSteps(),
+  },
+  CreateSeurat: {
+    XStepType: 'create-new-step',
+    XConstructorArgs: {
+      taskName: 'createSeurat',
+    },
+    Next: 'PrepareExperiment',
+    XCatch: createCatchSteps(),
+  },
+  PrepareExperiment: {
+    XStepType: 'create-new-step',
+    XConstructorArgs: {
+      taskName: 'prepareExperiment',
+    },
+    Next: 'UploadToAWS',
+    XCatch: createCatchSteps(),
+  },
+  UploadToAWS: {
+    XStepType: 'create-new-step',
+    XConstructorArgs: {
+      taskName: 'uploadToAWS',
+    },
+    XCatch: createCatchSteps(),
+    Next: END_OF_PIPELINE,
+  },
+};
+
+const SPATIAL_TECHNOLOGIES = ['visium_hd', 'xenium'];
+
+const getGem2sPipelineSteps = (technology) => (
+  SPATIAL_TECHNOLOGIES.includes(technology) ? gem2SSpatialPipelineSteps : gem2SPipelineSteps
+);
+
+module.exports = {
+  gem2SPipelineSteps, gem2SSpatialPipelineSteps, getGem2sPipelineSteps, SPATIAL_TECHNOLOGIES,
+};

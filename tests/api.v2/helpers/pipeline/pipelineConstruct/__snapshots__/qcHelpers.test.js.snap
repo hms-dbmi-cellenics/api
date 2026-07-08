@@ -629,3 +629,127 @@ Object {
   },
 }
 `;
+
+exports[`helper functions for skeletons runs only the spatial filters + integration + embedding for visium_hd 1`] = `
+Object {
+  "ConfigureEmbedding": Object {
+    "Next": "EndOfPipeline",
+    "XCatch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "XConstructorArgs": Object {
+      "perSample": false,
+      "taskName": "configureEmbedding",
+    },
+    "XStepType": "create-new-step",
+  },
+  "DataIntegration": Object {
+    "Next": "ConfigureEmbedding",
+    "XCatch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "XConstructorArgs": Object {
+      "perSample": false,
+      "taskName": "dataIntegration",
+      "uploadCountMatrix": true,
+    },
+    "XStepType": "create-new-step",
+  },
+  "SpatialMitoOutlierFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "ItemsPath": "$.samples",
+    "Iterator": Object {
+      "StartAt": "SpatialMitoOutlierFilter",
+      "States": Object {
+        "SpatialMitoOutlierFilter": Object {
+          "End": true,
+          "XConstructorArgs": Object {
+            "perSample": true,
+            "taskName": "spatialMitoOutlier",
+          },
+          "XStepType": "create-new-step",
+        },
+      },
+    },
+    "Next": "DataIntegration",
+    "ResultPath": null,
+    "Type": "Map",
+  },
+  "SpatialNumGenesOutlierFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "ItemsPath": "$.samples",
+    "Iterator": Object {
+      "StartAt": "SpatialNumGenesOutlierFilter",
+      "States": Object {
+        "SpatialNumGenesOutlierFilter": Object {
+          "End": true,
+          "XConstructorArgs": Object {
+            "perSample": true,
+            "taskName": "spatialNumGenesOutlier",
+          },
+          "XStepType": "create-new-step",
+        },
+      },
+    },
+    "Next": "SpatialMitoOutlierFilterMap",
+    "ResultPath": null,
+    "Type": "Map",
+  },
+  "SpatialUmiOutlierFilterMap": Object {
+    "Catch": Array [
+      Object {
+        "ErrorEquals": Array [
+          "States.ALL",
+        ],
+        "Next": "HandleError",
+        "ResultPath": "$.errorInfo",
+      },
+    ],
+    "ItemsPath": "$.samples",
+    "Iterator": Object {
+      "StartAt": "SpatialUmiOutlierFilter",
+      "States": Object {
+        "SpatialUmiOutlierFilter": Object {
+          "End": true,
+          "XConstructorArgs": Object {
+            "perSample": true,
+            "taskName": "spatialUmiOutlier",
+          },
+          "XStepType": "create-new-step",
+        },
+      },
+    },
+    "Next": "SpatialNumGenesOutlierFilterMap",
+    "ResultPath": null,
+    "Type": "Map",
+  },
+}
+`;

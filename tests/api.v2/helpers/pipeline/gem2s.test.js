@@ -2,7 +2,9 @@
 const _ = require('lodash');
 const io = require('socket.io-client');
 
-const { runGem2s, startGem2sPipeline, handleGem2sResponse } = require('../../../../src/api.v2/helpers/pipeline/gem2s');
+const {
+  runGem2s, startGem2sPipeline, handleGem2sResponse, formatDefaultFilterSettings,
+} = require('../../../../src/api.v2/helpers/pipeline/gem2s');
 
 const Experiment = require('../../../../src/api.v2/model/Experiment');
 const Sample = require('../../../../src/api.v2/model/Sample');
@@ -308,5 +310,46 @@ describe('startGem2sPipeline', () => {
       .toThrow(
         new MethodNotAllowedError(`Experiment ${experimentId} can't run gem2s`),
       );
+  });
+});
+
+describe('formatDefaultFilterSettings', () => {
+  const sampleId = 'fc68aefc-c3ca-467f-8589-f1dbaaac1c1e';
+
+  it('copies defaultFilterSettings onto each single-cell step', () => {
+    const processingConfig = {
+      cellSizeDistribution: { [sampleId]: { filterSettings: { minCellSize: 1 } } },
+    };
+    const defaultProcessingConfig = {
+      cellSizeDistribution: { [sampleId]: { filterSettings: { minCellSize: 42 } } },
+    };
+
+    const result = formatDefaultFilterSettings(
+      experimentId, processingConfig, defaultProcessingConfig,
+    );
+
+    expect(result.cellSizeDistribution[sampleId].defaultFilterSettings)
+      .toEqual({ minCellSize: 42 });
+  });
+
+  it('skips single-cell steps absent from a spatial processing config without crashing', () => {
+    // Spatial (visium_hd/xenium) configs contain only spatial steps, so the
+    // single-cell steps in qcStepsWithFilterSettings are not present.
+    const processingConfig = {
+      spatialOutlierFilter: { [sampleId]: { filterSettings: { foo: 1 } } },
+    };
+    const defaultProcessingConfig = {};
+
+    let result;
+    expect(() => {
+      result = formatDefaultFilterSettings(
+        experimentId, processingConfig, defaultProcessingConfig,
+      );
+    }).not.toThrow();
+
+    // The spatial step is untouched (it isn't in qcStepsWithFilterSettings) and no
+    // single-cell step was fabricated from the missing defaults.
+    expect(result.spatialOutlierFilter[sampleId].defaultFilterSettings).toBeUndefined();
+    expect(result.cellSizeDistribution).toBeUndefined();
   });
 });

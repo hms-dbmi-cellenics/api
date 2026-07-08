@@ -48,7 +48,11 @@ const withoutDefaultFilterSettings = (processingConfig, samplesOrder) => {
   const slimmedProcessingConfig = _.cloneDeep(processingConfig);
 
   qcStepsWithFilterSettings.forEach((stepName) => {
+    // Spatial (visium_hd) configs don't contain the single-cell filter steps.
+    if (!slimmedProcessingConfig[stepName]) return;
+
     samplesOrder.forEach((sampleId) => {
+      if (!slimmedProcessingConfig[stepName][sampleId]) return;
       delete slimmedProcessingConfig[stepName][sampleId].defaultFilterSettings;
     });
   });
@@ -70,6 +74,10 @@ const withoutDefaultFilterSettings = (processingConfig, samplesOrder) => {
  */
 const withRecomputeDoubletScores = async (processingConfig, experimentId) => {
   const newProcessingConfig = _.cloneDeep(processingConfig);
+
+  // Spatial (visium_hd) configs have no doubletScores/cellSizeDistribution steps,
+  // so there's nothing to recompute — return the config unchanged.
+  if (!newProcessingConfig.doubletScores) return newProcessingConfig;
 
   const sampleModel = new Sample();
   const samples = await sampleModel.find({ experiment_id: experimentId });
@@ -146,6 +154,11 @@ const createQCPipeline = async (experimentId, processingConfigDiff, authJWT, pre
 
   const { processingConfig, samplesOrder } = await new Experiment().findById(experimentId).first();
 
+  // fetch sample technology to select the appropriate QC pipeline skeleton
+  // (spatial technologies run a different set of filter steps)
+  const samples = await new Sample().find({ experiment_id: experimentId });
+  const sampleTechnology = samples[0] ? samples[0].sampleTechnology : null;
+
   const currentCellMetadataId = await getCellLevelMetadataId(experimentId);
 
   const {
@@ -167,6 +180,7 @@ const createQCPipeline = async (experimentId, processingConfigDiff, authJWT, pre
 
   const qcSteps = await getQcStepsToRun(
     experimentId, Object.keys(processingConfigDiff), status.completedSteps, status.status,
+    sampleTechnology,
   );
 
   const clusteringShouldRun = await getClusteringShouldRun(
@@ -190,6 +204,7 @@ const createQCPipeline = async (experimentId, processingConfigDiff, authJWT, pre
     config.clusterEnv,
     qcSteps,
     runInBatch,
+    sampleTechnology,
   );
 
   logger.log('Skeleton constructed, now building state machine definition...');
@@ -227,6 +242,11 @@ const createQCPipeline = async (experimentId, processingConfigDiff, authJWT, pre
 };
 
 const createGem2SPipeline = async (experimentId, taskParams, authJWT) => {
+  // fetch sample technology to select the appropriate pipeline skeleton
+  const sampleModel = new Sample();
+  const samples = await sampleModel.find({ experiment_id: experimentId });
+  const sampleTechnology = samples[0] ? samples[0].sampleTechnology : null;
+
   const context = {
     ...(await getGeneralPipelineContext(experimentId, GEM2S_PROCESS_NAME)),
     processingConfig: {},
@@ -238,7 +258,7 @@ const createGem2SPipeline = async (experimentId, taskParams, authJWT) => {
 
   const runInBatch = needsBatchJob(context.podCpus, context.podMemory);
 
-  const skeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch);
+  const skeleton = getGem2sPipelineSkeleton(config.clusterEnv, runInBatch, sampleTechnology);
   logger.log('Skeleton constructed, now building state machine definition...');
 
   const stateMachine = buildStateMachineDefinition(skeleton, context);

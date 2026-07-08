@@ -85,7 +85,6 @@ properties:
     type: object
     required:
       - method
-      - methodSettings
     properties:
       method:
         type: string

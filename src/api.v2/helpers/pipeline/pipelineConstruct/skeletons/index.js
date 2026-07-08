@@ -1,5 +1,5 @@
-const { buildQCPipelineSteps, qcPipelineSteps } = require('./qcPipelineSkeleton');
-const { gem2SPipelineSteps } = require('./gem2sPipelineSkeleton');
+const { buildQCPipelineSteps, qcPipelineSteps, qcSpatialPipelineSteps } = require('./qcPipelineSkeleton');
+const { gem2SPipelineSteps, getGem2sPipelineSteps } = require('./gem2sPipelineSkeleton');
 const { obj2sPipelineSteps } = require('./obj2sPipelineSkeleton');
 const subsetPipelineSteps = require('./subsetPipelineSteps');
 const { createCatchSteps } = require('../constructors/createHandleErrorStep');
@@ -56,11 +56,15 @@ const getSkeletonStepNames = (skeleton) => {
   return steps;
 };
 
+// Union of single-cell and spatial QC states (shared tail steps collapse).
+// Used for status reporting so steps from either pipeline are recognized.
+const allQcPipelineSteps = { ...qcPipelineSteps, ...qcSpatialPipelineSteps };
+
 // getPipelineStepNames returns the names of the pipeline steps
 // if there are map states with nested substeps it returns those sub-steps too
 const getPipelineStepNames = () => {
   const gem2sStepNames = getSkeletonStepNames(gem2SPipelineSteps);
-  const qcStepNames = getSkeletonStepNames(qcPipelineSteps);
+  const qcStepNames = getSkeletonStepNames(allQcPipelineSteps);
   const obj2sStepNames = getSkeletonStepNames(obj2sPipelineSteps);
 
   return gem2sStepNames.concat(qcStepNames).concat(obj2sStepNames);
@@ -68,7 +72,7 @@ const getPipelineStepNames = () => {
 
 // getPipelineStepNames returns the names of the QC pipeline steps
 // if there are map states with nested substeps it returns those sub-steps too
-const getQcPipelineStepNames = () => getSkeletonStepNames(qcPipelineSteps);
+const getQcPipelineStepNames = () => getSkeletonStepNames(allQcPipelineSteps);
 
 const buildInitialSteps = (clusterEnv, nextStep, runInBatch) => {
   // if we are running locally launch a pipeline job
@@ -114,12 +118,12 @@ const getStateMachineFirstStep = (clusterEnv, runInBatch) => {
 };
 
 
-const getGem2sPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
+const getGem2sPipelineSkeleton = (clusterEnv, runInBatch = false, technology = null) => ({
   Comment: `Gem2s Pipeline for clusterEnv '${clusterEnv}'`,
   StartAt: getStateMachineFirstStep(clusterEnv, runInBatch),
   States: {
     ...buildInitialSteps(clusterEnv, 'DownloadGem', runInBatch),
-    ...gem2SPipelineSteps,
+    ...getGem2sPipelineSteps(technology),
     ...buildErrorHandlingSteps(),
     ...buildEndOfPipelineStep(),
   },
@@ -136,12 +140,12 @@ const getObj2sPipelineSkeleton = (clusterEnv, runInBatch = false) => ({
   },
 });
 
-const getQcPipelineSkeleton = (clusterEnv, qcSteps, runInBatch = false) => ({
+const getQcPipelineSkeleton = (clusterEnv, qcSteps, runInBatch = false, technology = null) => ({
   Comment: `QC Pipeline for clusterEnv '${clusterEnv}'`,
   StartAt: getStateMachineFirstStep(clusterEnv, runInBatch),
   States: {
     ...buildInitialSteps(clusterEnv, qcSteps[0], runInBatch),
-    ...buildQCPipelineSteps(qcSteps),
+    ...buildQCPipelineSteps(qcSteps, technology),
     ...buildErrorHandlingSteps(),
     ...buildEndOfPipelineStep(),
   },
