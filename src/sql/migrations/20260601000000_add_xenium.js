@@ -5,12 +5,15 @@
 exports.up = async (knex) => {
   await knex.raw("ALTER TYPE sample_technology ADD VALUE 'xenium';");
 
+  // user-uploaded Xenium files
   await knex.raw("ALTER TYPE sample_file_type ADD VALUE 'xenium_cell_feature_matrix';");
   await knex.raw("ALTER TYPE sample_file_type ADD VALUE 'xenium_cells';");
   await knex.raw("ALTER TYPE sample_file_type ADD VALUE 'xenium_cell_boundaries';");
+  await knex.raw("ALTER TYPE sample_file_type ADD VALUE 'xenium_transcripts';");
 
-  // No new pipeline-generated file type: Xenium reuses the existing
-  // segmentations_ome_zarr_zip and has no ome_zarr_zip (no tissue image).
+  // pipeline-generated per-gene molecule artifact. Xenium has no tissue image,
+  // so it reuses the existing segmentations_ome_zarr_zip and adds no ome_zarr_zip.
+  await knex.raw("ALTER TYPE sample_file_type ADD VALUE 'molecules_by_gene';");
 };
 
 /**
