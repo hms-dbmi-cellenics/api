@@ -135,7 +135,7 @@ describe('obj2sResponse', () => {
     await handleObj2sResponse(io, message);
 
     expect(validateRequest).toHaveBeenCalledWith(message, 'OBJ2SResponse.v2.yaml');
-    expect(hookRunnerInstance.run).toHaveBeenCalledWith(message);
+    expect(hookRunnerInstance.run).toHaveBeenCalledWith(message, io);
 
     expect(getPipelineStatus).toHaveBeenCalledWith(experimentId, constants.OBJ2S_PROCESS_NAME);
     expect(io.sockets.emit.mock.calls[0]).toMatchSnapshot();

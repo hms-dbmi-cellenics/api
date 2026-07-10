@@ -12,6 +12,8 @@ const HookRunner = require('./hooks/HookRunner');
 
 const validateRequest = require('../../../utils/schema-validator');
 const getLogger = require('../../../utils/getLogger');
+const invalidatePlotsForEvent = require('../../../utils/plotConfigInvalidation/invalidatePlotsForEvent');
+const events = require('../../../utils/plotConfigInvalidation/events');
 
 const { getGem2sParams, formatSamples } = require('./shouldPipelineRerun');
 
@@ -68,9 +70,14 @@ const setupSubsetSamples = async (payload) => {
   // Add samples that were created
 };
 
+const invalidatePlotsForExperiment = async (payload, io) => {
+  await invalidatePlotsForEvent(payload.experimentId, events.CELL_SETS_MODIFIED, io.sockets);
+};
+
 hookRunner.register('subsetSeurat', [setupSubsetSamples]);
 hookRunner.register('uploadObj2sToAWS', [
   updateProcessingConfig,
+  invalidatePlotsForExperiment,
 ]);
 
 
@@ -170,7 +177,7 @@ const handleObj2sResponse = async (io, message) => {
   // Fail hard if there was an error.
   await validateRequest(message, 'OBJ2SResponse.v2.yaml');
 
-  await hookRunner.run(message);
+  await hookRunner.run(message, io);
 
   const { experimentId } = message;
 
