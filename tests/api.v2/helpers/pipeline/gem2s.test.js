@@ -20,7 +20,12 @@ const validateRequest = require('../../../../src/utils/schema-validator');
 const constants = require('../../../../src/api.v2/constants');
 const { MethodNotAllowedError } = require('../../../../src/utils/responses');
 
+const invalidatePlotsForEvent = require('../../../../src/utils/plotConfigInvalidation/invalidatePlotsForEvent');
+const events = require('../../../../src/utils/plotConfigInvalidation/events');
+
 jest.mock('socket.io-client');
+
+jest.mock('../../../../src/utils/plotConfigInvalidation/invalidatePlotsForEvent');
 
 jest.mock('../../../../src/api.v2/model/Experiment');
 jest.mock('../../../../src/api.v2/model/Sample');
@@ -238,6 +243,23 @@ describe('gem2sResponse', () => {
 
     expect(sampleInstance.copyTo.mock.calls).toMatchSnapshot();
     expect(experimentInstance.updateById.mock.calls).toMatchSnapshot();
+  });
+
+  it('Invalidates cell-set-dependent plot configs on the copyS3Objects step', async () => {
+    invalidatePlotsForEvent.mockClear();
+
+    // There's a hook registered on the copyS3Objects step
+    expect(hookRunnerInstance.register.mock.calls[2][0]).toEqual('copyS3Objects');
+
+    const hookedFunctions = hookRunnerInstance.register.mock.calls[2][1];
+    expect(hookedFunctions).toHaveLength(1);
+
+    // calling the hookedFunction invalidates cell-set-dependent plot configs
+    await hookedFunctions[0]({ experimentId }, io);
+
+    expect(invalidatePlotsForEvent).toHaveBeenCalledWith(
+      experimentId, events.CELL_SETS_MODIFIED, io.sockets,
+    );
   });
 });
 
