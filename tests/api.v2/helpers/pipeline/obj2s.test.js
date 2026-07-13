@@ -16,7 +16,12 @@ const validateRequest = require('../../../../src/utils/schema-validator');
 
 const constants = require('../../../../src/api.v2/constants');
 
+const invalidatePlotsForEvent = require('../../../../src/utils/plotConfigInvalidation/invalidatePlotsForEvent');
+const events = require('../../../../src/utils/plotConfigInvalidation/events');
+
 jest.mock('socket.io-client');
+
+jest.mock('../../../../src/utils/plotConfigInvalidation/invalidatePlotsForEvent');
 
 jest.mock('../../../../src/api.v2/model/Experiment');
 jest.mock('../../../../src/api.v2/model/Sample');
@@ -135,9 +140,26 @@ describe('obj2sResponse', () => {
     await handleObj2sResponse(io, message);
 
     expect(validateRequest).toHaveBeenCalledWith(message, 'OBJ2SResponse.v2.yaml');
-    expect(hookRunnerInstance.run).toHaveBeenCalledWith(message);
+    expect(hookRunnerInstance.run).toHaveBeenCalledWith(message, io);
 
     expect(getPipelineStatus).toHaveBeenCalledWith(experimentId, constants.OBJ2S_PROCESS_NAME);
     expect(io.sockets.emit.mock.calls[0]).toMatchSnapshot();
+  });
+
+  it('Invalidates cell-set-dependent plot configs on the uploadObj2sToAWS step', async () => {
+    invalidatePlotsForEvent.mockClear();
+
+    // There's a hook registered on the uploadObj2sToAWS step
+    expect(hookRunnerInstance.register.mock.calls[1][0]).toEqual('uploadObj2sToAWS');
+
+    const hookedFunctions = hookRunnerInstance.register.mock.calls[1][1];
+    expect(hookedFunctions).toHaveLength(2);
+
+    // the invalidation hook invalidates cell-set-dependent plot configs
+    await hookedFunctions[1]({ experimentId }, io);
+
+    expect(invalidatePlotsForEvent).toHaveBeenCalledWith(
+      experimentId, events.CELL_SETS_MODIFIED, io.sockets,
+    );
   });
 });
