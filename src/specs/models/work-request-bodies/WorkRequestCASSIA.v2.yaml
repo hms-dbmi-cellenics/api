@@ -1,0 +1,18 @@
+title: CASSIAAnnotate
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the work. Must be `CASSIAAnnotate`.
+    pattern: CASSIAAnnotate
+  species:
+    type: string
+    description: Free text species of the cells to annotate (e.g. "Human", "Mouse").
+  tissue:
+    type: string
+    description: Free text tissue type of the cells to annotate (e.g. "Large Intestine").
+required:
+  - name
+  - species
+  - tissue
+description: Work request body for the CASSIAAnnotate task.
