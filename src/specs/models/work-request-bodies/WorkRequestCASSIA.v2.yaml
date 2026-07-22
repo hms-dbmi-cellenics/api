@@ -11,6 +11,11 @@ properties:
   tissue:
     type: string
     description: Free text tissue type of the cells to annotate (e.g. "Large Intestine").
+  additionalInfo:
+    type: string
+    description: >-
+      Optional free text study context passed to the CASSIA agents
+      (e.g. "3 colorectal tumor and 2 normal adjacent tissue samples").
 required:
   - name
   - species
