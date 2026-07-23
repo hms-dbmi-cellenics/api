@@ -44,6 +44,7 @@ const getCellSetsLastVersion = async (experimentId) => {
 const dependencyGetters = {
   ClusterCells: [],
   ScTypeAnnotate: [],
+  CASSIAAnnotate: [],
   GetExpressionCellSets: [],
   GetEmbedding: [],
   ListGenes: [],
