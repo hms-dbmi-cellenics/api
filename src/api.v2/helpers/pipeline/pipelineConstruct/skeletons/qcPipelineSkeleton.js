@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { END_OF_PIPELINE } = require('../../../../constants');
 const { createCatchSteps } = require('../constructors/createHandleErrorStep');
-const { SPATIAL_TECHNOLOGIES } = require('./gem2sPipelineSkeleton');
 
 // Builds a per-sample Map state that runs a single QC filter task over all samples.
 const createPerSampleFilterMap = (next, taskName, filterStateName) => ({
@@ -152,9 +151,9 @@ const qcPipelineSteps = {
   ...dataIntegrationAndEmbedding,
 };
 
-// Spatial (e.g. Visium HD) QC: cells are defined by segmentation, so the
-// single-cell filters are replaced by three spatial local-outlier filters
-// (UMI, number of genes, mitochondrial content) before integration/embedding.
+// Visium HD QC: cells are defined by segmentation, so the single-cell filters
+// are replaced by three spatial QC metric filters (UMI, number of genes,
+// mitochondrial content) before integration/embedding.
 const qcSpatialPipelineSteps = {
   SpatialUmiOutlierFilterMap: createPerSampleFilterMap(
     'SpatialNumGenesOutlierFilterMap', 'spatialUmiOutlier', 'SpatialUmiOutlierFilter',
@@ -168,8 +167,28 @@ const qcSpatialPipelineSteps = {
   ...dataIntegrationAndEmbedding,
 };
 
+// Xenium QC: a count-density filter first, then the UMI and gene filters.
+// Xenium panels have no mitochondrial genes, so there is no mito filter.
+const qcXeniumPipelineSteps = {
+  SpatialCountDensityFilterMap: createPerSampleFilterMap(
+    'SpatialUmiOutlierFilterMap', 'spatialCountDensity', 'SpatialCountDensityFilter',
+  ),
+  SpatialUmiOutlierFilterMap: createPerSampleFilterMap(
+    'SpatialNumGenesOutlierFilterMap', 'spatialUmiOutlier', 'SpatialUmiOutlierFilter',
+  ),
+  SpatialNumGenesOutlierFilterMap: createPerSampleFilterMap(
+    'DataIntegration', 'spatialNumGenesOutlier', 'SpatialNumGenesOutlierFilter',
+  ),
+  ...dataIntegrationAndEmbedding,
+};
+
+const qcPipelineStepsByTechnology = {
+  visium_hd: qcSpatialPipelineSteps,
+  xenium: qcXeniumPipelineSteps,
+};
+
 const getQcPipelineSteps = (technology) => (
-  SPATIAL_TECHNOLOGIES.includes(technology) ? qcSpatialPipelineSteps : qcPipelineSteps
+  qcPipelineStepsByTechnology[technology] || qcPipelineSteps
 );
 
 const buildQCPipelineSteps = (qcSteps, technology = null) => {
@@ -182,5 +201,9 @@ const buildQCPipelineSteps = (qcSteps, technology = null) => {
 };
 
 module.exports = {
-  buildQCPipelineSteps, qcPipelineSteps, qcSpatialPipelineSteps, getQcPipelineSteps,
+  buildQCPipelineSteps,
+  qcPipelineSteps,
+  qcSpatialPipelineSteps,
+  qcXeniumPipelineSteps,
+  getQcPipelineSteps,
 };

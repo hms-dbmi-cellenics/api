@@ -18,6 +18,7 @@ const qcStepsWithFilterSettings = [
   'classifier',
   'numGenesVsNumUmis',
   'doubletScores',
+  'spatialCountDensity',
   'spatialUmiOutlier',
   'spatialNumGenesOutlier',
   'spatialMitoOutlier',

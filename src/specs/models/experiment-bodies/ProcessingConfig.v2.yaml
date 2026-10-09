@@ -13,6 +13,8 @@ properties:
     $ref: ../processing-config-bodies/ProcessingConfigNumGenesVsNumUMIs.v2.yaml
   doubletScores:
     $ref: ../processing-config-bodies/ProcessingConfigDoubletScores.v2.yaml
+  spatialCountDensity:
+    $ref: ../processing-config-bodies/ProcessingConfigSpatialCountDensity.v2.yaml
   spatialUmiOutlier:
     $ref: ../processing-config-bodies/ProcessingConfigSpatialUmiOutlier.v2.yaml
   spatialNumGenesOutlier:
