@@ -426,13 +426,19 @@ jobs:
         if:
           (matrix.environment == 'production' && github.event_name == 'release' && github.event.action == 'released') || (matrix.environment == 'develop' && github.event_name == 'push')
         name: Temporarily disable admin enforcement
-        uses: benjefferies/branch-protection-bot@master
-        with:
-          access_token: ${{ secrets.API_TOKEN_GITHUB }}
-          owner: ${{ github.repository_owner }}
-          repo: iac
-          enforce_admins: false
-          retries: 8
+        # Calls the GitHub API directly: the benjefferies/branch-protection-bot
+        # action builds an unmaintained Debian bullseye image whose apt install
+        # now fails, and GitHub builds it for every job run even when skipped.
+        env:
+          GH_TOKEN: ${{ secrets.API_TOKEN_GITHUB }}
+          PROTECTION_URL: repos/${{ github.repository_owner }}/iac/branches/master/protection/enforce_admins
+        run: |-
+          for attempt in $(seq 1 8); do
+            gh api --method DELETE "$PROTECTION_URL" && exit 0
+            echo "Failed to disable admin enforcement (attempt $attempt), retrying..."
+            sleep 5
+          done
+          exit 1
       - name: Push migrations into iac
         if:
            github.repository_owner == 'hms-dbmi-cellenics' && matrix.environment == 'develop' && github.event_name == 'push'
