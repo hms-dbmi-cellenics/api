@@ -374,4 +374,24 @@ describe('formatDefaultFilterSettings', () => {
     expect(result.spatialOutlierFilter[sampleId].defaultFilterSettings).toBeUndefined();
     expect(result.cellSizeDistribution).toBeUndefined();
   });
+
+  it('copies defaultFilterSettings onto the spatial filter steps', () => {
+    const filterSettings = {
+      method: 'localOutlier',
+      methodSettings: {
+        localOutlier: { cutoff: 3, binStep: 0.2 },
+        absoluteThreshold: { min: 120, max: null, binStep: 0.05 },
+      },
+    };
+    const processingConfig = {
+      spatialUmiOutlier: { [sampleId]: { filterSettings } },
+    };
+    const defaultProcessingConfig = _.cloneDeep(processingConfig);
+
+    const result = formatDefaultFilterSettings(
+      experimentId, processingConfig, defaultProcessingConfig,
+    );
+
+    expect(result.spatialUmiOutlier[sampleId].defaultFilterSettings).toEqual(filterSettings);
+  });
 });

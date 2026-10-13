@@ -1,4 +1,6 @@
-const { buildQCPipelineSteps, qcPipelineSteps, qcSpatialPipelineSteps } = require('./qcPipelineSkeleton');
+const {
+  buildQCPipelineSteps, qcPipelineSteps, qcSpatialPipelineSteps, qcXeniumPipelineSteps,
+} = require('./qcPipelineSkeleton');
 const { gem2SPipelineSteps, getGem2sPipelineSteps } = require('./gem2sPipelineSkeleton');
 const { obj2sPipelineSteps } = require('./obj2sPipelineSkeleton');
 const subsetPipelineSteps = require('./subsetPipelineSteps');
@@ -57,8 +59,10 @@ const getSkeletonStepNames = (skeleton) => {
 };
 
 // Union of single-cell and spatial QC states (shared tail steps collapse).
-// Used for status reporting so steps from either pipeline are recognized.
-const allQcPipelineSteps = { ...qcPipelineSteps, ...qcSpatialPipelineSteps };
+// Used for status reporting so steps from any technology's pipeline are recognized.
+const allQcPipelineSteps = {
+  ...qcPipelineSteps, ...qcSpatialPipelineSteps, ...qcXeniumPipelineSteps,
+};
 
 // getPipelineStepNames returns the names of the pipeline steps
 // if there are map states with nested substeps it returns those sub-steps too
