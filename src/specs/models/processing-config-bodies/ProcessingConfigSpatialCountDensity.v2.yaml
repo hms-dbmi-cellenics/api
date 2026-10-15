@@ -1,0 +1,34 @@
+title: Spatial Count Density
+type: object
+description: Processing config body for the Xenium count-density filter (OSTA imaging QC). Removes 3-MAD (nmads) low outliers on log(counts / cell area) and, when filterControls is set, cells with control probe + codeword counts above maxControlPercent percent of its counts. Keys are sample UUIDs, values are per-sample configurations.
+additionalProperties:
+  type: object
+  properties:
+    enabled:
+      type: boolean
+    auto:
+      type: boolean
+    filterSettings:
+      type: object
+      properties:
+        nmads:
+          type: number
+        filterControls:
+          type: boolean
+        maxControlPercent:
+          type: number
+        binStep:
+          type: number
+    defaultFilterSettings:
+      type: object
+      properties:
+        nmads:
+          type: number
+        filterControls:
+          type: boolean
+        maxControlPercent:
+          type: number
+        binStep:
+          type: number
+  required:
+    - filterSettings

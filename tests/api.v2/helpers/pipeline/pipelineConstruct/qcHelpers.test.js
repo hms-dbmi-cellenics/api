@@ -225,6 +225,46 @@ describe('helper functions for skeletons', () => {
     expect(qcSteps[0]).toEqual('SpatialNumGenesOutlierFilterMap');
   });
 
+  it('runs count density, UMI and gene filters (no mito) + integration + embedding for xenium', async () => {
+    const qcSteps = await getQcStepsToRun(
+      fake.EXPERIMENT_ID, ['spatialCountDensity'], [], 'SUCCEEDED', 'xenium',
+    );
+
+    expect(qcSteps).toEqual([
+      'SpatialCountDensityFilterMap',
+      'SpatialUmiOutlierFilterMap',
+      'SpatialNumGenesOutlierFilterMap',
+      'DataIntegration',
+      'ConfigureEmbedding',
+    ]);
+  });
+
+  it('starts the xenium pipeline from a changed spatial step', async () => {
+    const completedSteps = ['SpatialCountDensityFilter', 'SpatialUmiOutlierFilter'];
+
+    const qcSteps = await getQcStepsToRun(
+      fake.EXPERIMENT_ID, ['spatialNumGenesOutlier'], completedSteps, 'SUCCEEDED', 'xenium',
+    );
+
+    expect(qcSteps).toEqual(['SpatialNumGenesOutlierFilterMap', 'DataIntegration', 'ConfigureEmbedding']);
+  });
+
+  it('runs the unchanged single-cell steps for 10x', async () => {
+    const qcSteps = await getQcStepsToRun(
+      fake.EXPERIMENT_ID, ['classifier'], [], 'SUCCEEDED', '10x',
+    );
+
+    expect(qcSteps).toEqual([
+      'ClassifierFilterMap',
+      'CellSizeDistributionFilterMap',
+      'MitochondrialContentFilterMap',
+      'NumGenesVsNumUmisFilterMap',
+      'DoubletScoresFilterMap',
+      'DataIntegration',
+      'ConfigureEmbedding',
+    ]);
+  });
+
   it('Throws if the config has no changes', async () => {
     mockCellLevelMetadataCheck('sameCellLevelId', 'sameCellLevelId');
 

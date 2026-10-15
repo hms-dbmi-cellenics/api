@@ -3,6 +3,7 @@ const {
   getQcPipelineSteps,
   qcPipelineSteps,
   qcSpatialPipelineSteps,
+  qcXeniumPipelineSteps,
 } = require('../../../../../../src/api.v2/helpers/pipeline/pipelineConstruct/skeletons/qcPipelineSkeleton');
 
 const singleCellStepNames = [
@@ -11,6 +12,14 @@ const singleCellStepNames = [
   'MitochondrialContentFilterMap',
   'NumGenesVsNumUmisFilterMap',
   'DoubletScoresFilterMap',
+  'DataIntegration',
+  'ConfigureEmbedding',
+];
+
+const xeniumStepNames = [
+  'SpatialCountDensityFilterMap',
+  'SpatialUmiOutlierFilterMap',
+  'SpatialNumGenesOutlierFilterMap',
   'DataIntegration',
   'ConfigureEmbedding',
 ];
@@ -48,17 +57,30 @@ describe('getQcPipelineSteps', () => {
     expect(steps).not.toHaveProperty('DoubletScoresFilterMap');
   });
 
-  it('returns only the three spatial filters + DataIntegration + ConfigureEmbedding for xenium', () => {
+  it('returns count density, UMI and gene filters (no mito) + integration + embedding for xenium', () => {
     const steps = getQcPipelineSteps('xenium');
-    expect(Object.keys(steps)).toEqual(spatialStepNames);
-    expect(steps).toBe(qcSpatialPipelineSteps);
-
-    // none of the single-cell only filters are present
+    expect(Object.keys(steps)).toEqual(xeniumStepNames);
+    expect(steps).toBe(qcXeniumPipelineSteps);
+    expect(steps).not.toHaveProperty('SpatialMitoOutlierFilterMap');
     expect(steps).not.toHaveProperty('ClassifierFilterMap');
-    expect(steps).not.toHaveProperty('CellSizeDistributionFilterMap');
-    expect(steps).not.toHaveProperty('MitochondrialContentFilterMap');
-    expect(steps).not.toHaveProperty('NumGenesVsNumUmisFilterMap');
-    expect(steps).not.toHaveProperty('DoubletScoresFilterMap');
+  });
+
+  it('chains the xenium filter Map states in order, ending at DataIntegration', () => {
+    const steps = getQcPipelineSteps('xenium');
+
+    expect(steps.SpatialCountDensityFilterMap.Next).toEqual('SpatialUmiOutlierFilterMap');
+    expect(steps.SpatialUmiOutlierFilterMap.Next).toEqual('SpatialNumGenesOutlierFilterMap');
+    expect(steps.SpatialNumGenesOutlierFilterMap.Next).toEqual('DataIntegration');
+
+    const innerState = steps.SpatialCountDensityFilterMap.Iterator.States.SpatialCountDensityFilter;
+    expect(innerState.XConstructorArgs).toEqual({
+      perSample: true,
+      taskName: 'spatialCountDensity',
+    });
+  });
+
+  it('does not change the visium_hd chain', () => {
+    expect(getQcPipelineSteps('visium_hd')).not.toHaveProperty('SpatialCountDensityFilterMap');
   });
 
   it('chains the spatial filter Map states in order, ending at DataIntegration', () => {

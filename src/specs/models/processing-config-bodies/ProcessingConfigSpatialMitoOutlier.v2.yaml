@@ -1,6 +1,6 @@
-title: Spatial Mitochondrial Outlier
+title: Spatial Mito Outlier
 type: object
-description: Processing config body for the Visium HD spatial mitochondrial-content local-outlier filter. Keys are sample UUIDs, values are per-sample configurations.
+description: Processing config body for the spatial (Visium HD) mitochondrial-content filter, by local outlier or absolute threshold (max percent, null = no bound). Keys are sample UUIDs, values are per-sample configurations.
 additionalProperties:
   type: object
   properties:
@@ -10,16 +10,61 @@ additionalProperties:
       type: boolean
     filterSettings:
       type: object
+      required:
+        - method
+        - methodSettings
       properties:
-        cutoff:
-          type: number
-        direction:
+        method:
           type: string
           enum:
-            - lower
-            - upper
-            - both
-        binStep:
-          type: number
+            - localOutlier
+            - absoluteThreshold
+        methodSettings:
+          type: object
+          properties:
+            localOutlier:
+              type: object
+              properties:
+                cutoff:
+                  type: number
+                binStep:
+                  type: number
+            absoluteThreshold:
+              type: object
+              properties:
+                max:
+                  type: number
+                  nullable: true
+                binStep:
+                  type: number
+    defaultFilterSettings:
+      type: object
+      required:
+        - method
+        - methodSettings
+      properties:
+        method:
+          type: string
+          enum:
+            - localOutlier
+            - absoluteThreshold
+        methodSettings:
+          type: object
+          properties:
+            localOutlier:
+              type: object
+              properties:
+                cutoff:
+                  type: number
+                binStep:
+                  type: number
+            absoluteThreshold:
+              type: object
+              properties:
+                max:
+                  type: number
+                  nullable: true
+                binStep:
+                  type: number
   required:
     - filterSettings

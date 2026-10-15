@@ -18,6 +18,10 @@ const qcStepsWithFilterSettings = [
   'classifier',
   'numGenesVsNumUmis',
   'doubletScores',
+  'spatialCountDensity',
+  'spatialUmiOutlier',
+  'spatialNumGenesOutlier',
+  'spatialMitoOutlier',
 ];
 
 // checks whether an experiment has available filtered cell IDs in S3
