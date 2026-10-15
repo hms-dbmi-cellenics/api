@@ -149,7 +149,7 @@ describe('getSampleFileDownloadUrls', () => {
 
     const response = await getSampleFileDownloadUrls(experimentId, sampleId, fileType);
 
-    expect(response).toEqual([{ url: signedUrlResponse, fileId: 'id0' }]);
+    expect(response).toEqual([{ url: signedUrlResponse, fileId: 'id0', size: 12 }]);
     expect(getSignedUrlPromiseSpy).toMatchSnapshot();
   });
 

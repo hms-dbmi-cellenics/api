@@ -164,6 +164,8 @@ const getSampleFileDownloadUrls = async (experimentId, sampleId, fileType) => {
       return {
         url: await getSignedUrl('getObject', params),
         fileId: matchingFile.id,
+        // byte size lets the UI range-read zips instead of downloading them whole
+        size: matchingFile.size,
       };
     }),
   );
