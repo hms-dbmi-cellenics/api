@@ -1,4 +1,5 @@
 const bodyParser = require('body-parser');
+const compression = require('compression');
 const cors = require('cors');
 const path = require('path');
 const OpenApiValidator = require('express-openapi-validator');
@@ -18,6 +19,11 @@ module.exports = async (app) => {
     credentials: true,
     exposedHeaders: ['X-Amzn-Trace-Id'],
   }));
+
+  // Compress responses (brotli q4, gzip fallback): the ALB doesn't, and large JSON
+  // like cell sets and per-cell spatial plot data otherwise goes out raw at tens of
+  // MB. zstd would need Node >= 22.15 and compresses this data no better.
+  app.use(compression());
 
   // The custom limits are required so that SNS topics can submit work results
   // up to the size of the max SNS topic limit (256k), it defaults to 100kb.
