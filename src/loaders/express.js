@@ -58,7 +58,10 @@ module.exports = async (app) => {
     }),
   );
 
-  // Custom error handler.
+  // Custom error handler. Ends the request itself: passing the error on to
+  // Express's default handler after responding makes it destroy the socket,
+  // which cuts off compressed (asynchronously flushed) error bodies.
+  // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
     console.error(`Error thrown in HTTP request (${req.method} ${req.path})`);
     console.error(Object.keys(req.body).length ? req.body : 'Empty body');
@@ -69,8 +72,6 @@ module.exports = async (app) => {
       message: err.message,
       errors: err.errors,
     });
-
-    next(err);
   });
 
 
