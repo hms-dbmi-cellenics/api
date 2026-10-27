@@ -153,7 +153,7 @@ describe('obj2sResponse', () => {
     expect(hookRunnerInstance.register.mock.calls[1][0]).toEqual('uploadObj2sToAWS');
 
     const hookedFunctions = hookRunnerInstance.register.mock.calls[1][1];
-    expect(hookedFunctions).toHaveLength(2);
+    expect(hookedFunctions).toHaveLength(3);
 
     // the invalidation hook invalidates cell-set-dependent plot configs
     await hookedFunctions[1]({ experimentId }, io);
@@ -161,5 +161,37 @@ describe('obj2sResponse', () => {
     expect(invalidatePlotsForEvent).toHaveBeenCalledWith(
       experimentId, events.CELL_SETS_MODIFIED, io.sockets,
     );
+  });
+
+  it('Saves the detected spatial technology on the obj2s sample', async () => {
+    const hookedFunctions = hookRunnerInstance.register.mock.calls[1][1];
+    const saveSpatialTechnology = hookedFunctions[2];
+
+    sampleInstance.find.mockReturnValueOnce(
+      Promise.resolve([{ id: 'mockSampleId', options: { someOption: true } }]),
+    );
+
+    await saveSpatialTechnology({
+      experimentId, item: { meta: { spatialTechnology: 'xenium' } },
+    });
+
+    expect(sampleInstance.find).toHaveBeenCalledWith({ experiment_id: experimentId });
+    expect(sampleInstance.updateById).toHaveBeenCalledWith(
+      'mockSampleId',
+      { options: { someOption: true, spatialTechnology: 'xenium' } },
+    );
+  });
+
+  it('Does not update the obj2s sample when no spatial technology was detected', async () => {
+    const hookedFunctions = hookRunnerInstance.register.mock.calls[1][1];
+    const saveSpatialTechnology = hookedFunctions[2];
+
+    sampleInstance.find.mockClear();
+    sampleInstance.updateById.mockClear();
+
+    await saveSpatialTechnology({ experimentId, item: { meta: { type: 'seurat_object' } } });
+
+    expect(sampleInstance.find).not.toHaveBeenCalled();
+    expect(sampleInstance.updateById).not.toHaveBeenCalled();
   });
 });
