@@ -61,12 +61,30 @@ describe('sampleFileController', () => {
     expect(SampleFile).not.toHaveBeenCalledWith(mockSqlClient);
 
     expect(sampleFileInstance.create).toHaveBeenCalledWith({
-      id: 'sampleFileId', s3_path: 'sampleFileId', sample_file_type: 'features10x', size: 'size', upload_status: 'uploading',
+      id: 'sampleFileId', s3_path: 'sampleFileId', sample_file_type: 'features10x', size: 'size', upload_status: 'uploading', obj2s_sample_id: null,
     });
     expect(sampleInstance.setNewFile).toHaveBeenCalledWith('sampleId', 'sampleFileId', 'features10x', overwriteExisting);
 
     // Response is generated signed url
     expect(mockRes.json).toHaveBeenCalledWith(OK());
+  });
+
+  it('createFile links an obj2s spatial file to its sample cell set', async () => {
+    const mockReq = {
+      params: {
+        experimentId: 'experimentId', sampleId: 'sampleId', sampleFileType: 'segmentations_ome_zarr_zip',
+      },
+      body: {
+        sampleFileId: 'sampleFileId', size: 10, uploadStatus: 'uploaded', overwriteExisting: false, obj2sSampleId: 'cellSetSampleId',
+      },
+    };
+
+    await sampleFileController.createFile(mockReq, mockRes);
+
+    expect(sampleFileInstance.create).toHaveBeenCalledWith({
+      id: 'sampleFileId', s3_path: 'sampleFileId', sample_file_type: 'segmentations_ome_zarr_zip', size: 10, upload_status: 'uploaded', obj2s_sample_id: 'cellSetSampleId',
+    });
+    expect(sampleInstance.setNewFile).toHaveBeenCalledWith('sampleId', 'sampleFileId', 'segmentations_ome_zarr_zip', false);
   });
 
   it('createFile errors out if the transaction failed', async () => {

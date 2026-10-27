@@ -149,8 +149,27 @@ describe('getSampleFileDownloadUrls', () => {
 
     const response = await getSampleFileDownloadUrls(experimentId, sampleId, fileType);
 
-    expect(response).toEqual([{ url: signedUrlResponse, fileId: 'id0', size: 12 }]);
+    expect(response).toEqual([{
+      url: signedUrlResponse, fileId: 'id0', size: 12, obj2sSampleId: null,
+    }]);
     expect(getSignedUrlPromiseSpy).toMatchSnapshot();
+  });
+
+  it('returns the sample cell set linked to an obj2s spatial file', async () => {
+    const files = [
+      {
+        // as the db layer camelCases obj2s_sample_id
+        id: 'id0', sampleFileType: 'segmentations_ome_zarr_zip', size: 12, s3Path: 'id0', uploadStatus: 'uploaded', obj2SSampleId: 'cellSetSampleId',
+      },
+    ];
+
+    sampleFileInstance.allFilesForSample.mockImplementationOnce(() => Promise.resolve(files));
+
+    const response = await getSampleFileDownloadUrls(experimentId, sampleId, 'segmentations_ome_zarr_zip');
+
+    expect(response).toEqual([{
+      url: signedUrlResponse, fileId: 'id0', size: 12, obj2sSampleId: 'cellSetSampleId',
+    }]);
   });
 
   it('Throws not found if it doesnt find a matching file', async () => {

@@ -166,6 +166,9 @@ const getSampleFileDownloadUrls = async (experimentId, sampleId, fileType) => {
         fileId: matchingFile.id,
         // byte size lets the UI range-read zips instead of downloading them whole
         size: matchingFile.size,
+        // sample cell set the file belongs to, for obj2s spatial files
+        // obj2s_sample_id comes back as obj2SSampleId: lodash camelCase splits on digits
+        obj2sSampleId: matchingFile.obj2SSampleId || null,
       };
     }),
   );
