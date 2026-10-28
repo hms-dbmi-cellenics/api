@@ -70,6 +70,24 @@ const setupSubsetSamples = async (payload) => {
   // Add samples that were created
 };
 
+// spatial objects are all uploaded as seurat_spatial_object, the pipeline
+// detects which technology (e.g. xenium) the object comes from
+const saveSpatialTechnology = async (payload) => {
+  const { experimentId, item } = payload;
+  const spatialTechnology = _.get(item, 'meta.spatialTechnology');
+
+  if (!spatialTechnology) return;
+
+  const [sample] = await new Sample().find({ experiment_id: experimentId });
+
+  await new Sample().updateById(
+    sample.id,
+    { options: { ...sample.options, spatialTechnology } },
+  );
+
+  logger.log(`Experiment: ${experimentId}. Saved spatial technology ${spatialTechnology} received from obj2s`);
+};
+
 const invalidatePlotsForExperiment = async (payload, io) => {
   await invalidatePlotsForEvent(payload.experimentId, events.CELL_SETS_MODIFIED, io.sockets);
 };
@@ -78,6 +96,7 @@ hookRunner.register('subsetSeurat', [setupSubsetSamples]);
 hookRunner.register('uploadObj2sToAWS', [
   updateProcessingConfig,
   invalidatePlotsForExperiment,
+  saveSpatialTechnology,
 ]);
 
 

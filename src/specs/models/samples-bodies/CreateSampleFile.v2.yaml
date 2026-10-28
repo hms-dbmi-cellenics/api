@@ -10,6 +10,10 @@ properties:
     type: string
   overwriteExisting:
     type: boolean
+  obj2sSampleId:
+    type: string
+    nullable: true
+    description: 'Sample cell set an obj2s spatial file belongs to'
  
 required:
   - sampleFileId

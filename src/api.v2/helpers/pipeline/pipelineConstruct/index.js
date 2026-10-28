@@ -279,8 +279,15 @@ const createGem2SPipeline = async (experimentId, taskParams, authJWT) => {
 };
 
 const createObj2sPipeline = async (experimentId, taskParams, authJWT) => {
+  const generalContext = await getGeneralPipelineContext(experimentId, OBJ2S_PROCESS_NAME);
+
+  // obj2s reads the user's whole object into memory before writing counts to
+  // disk-backed BPCells, so it needs more memory than the experiment default
+  const { podMemory } = generalContext;
+
   const context = {
-    ...(await getGeneralPipelineContext(experimentId, OBJ2S_PROCESS_NAME)),
+    ...generalContext,
+    podMemory: podMemory !== undefined ? podMemory * 2 : podMemory,
     processingConfig: {},
     taskParams,
     authJWT,

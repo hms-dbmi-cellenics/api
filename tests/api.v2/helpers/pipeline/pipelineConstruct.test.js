@@ -25,7 +25,9 @@ jest.mock('../../../../src/api.v2/helpers/pipeline/batch/terminateJobs');
 jest.mock('../../../../src/api.v2/helpers/pipeline/batch/listJobsToDelete');
 jest.mock('../../../../src/api.v2/helpers/pipeline/hooks/podCleanup');
 
-const { createQCPipeline, createGem2SPipeline, createSeuratPipeline } = jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
+const {
+  createQCPipeline, createGem2SPipeline, createSeuratPipeline, createObj2sPipeline,
+} = jest.requireActual('../../../../src/api.v2/helpers/pipeline/pipelineConstruct');
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
@@ -649,5 +651,50 @@ describe('test for pipeline services', () => {
     expect(createActivitySpy).toHaveBeenCalled();
     expect(startExecutionSpy).toHaveBeenCalled();
     expect(startExecutionSpy.mock.results).toMatchSnapshot();
+  });
+  it('Create obj2s pipeline doubles the experiment memory for the batch job', async () => {
+    AWSMock.setSDKInstance(AWS);
+
+    AWSMock.mock('EKS', 'describeCluster', (params, callback) => {
+      callback(null, mockCluster);
+    });
+
+    const createStateMachineSpy = jest.fn((x) => x);
+    AWSMock.mock('StepFunctions', 'createStateMachine', (params, callback) => {
+      createStateMachineSpy(params);
+      callback(null, { stateMachineArn: 'test-machine' });
+    });
+
+    AWSMock.mock('StepFunctions', 'createActivity', (params, callback) => {
+      callback(null, { activityArn: 'test-actvitiy' });
+    });
+
+    AWSMock.mock('StepFunctions', 'startExecution', (params, callback) => {
+      callback(null, { executionArn: 'test-machine' });
+    });
+
+    const { getResourceRequirements } = experimentInstance;
+    experimentInstance.getResourceRequirements = () => ({ podCpus: 8, podMemory: 57344 });
+
+    try {
+      await createObj2sPipeline(
+        'testExperimentId',
+        { input: { type: 'seurat_object' }, sampleIds: ['sample1'] },
+      );
+    } finally {
+      experimentInstance.getResourceRequirements = getResourceRequirements;
+    }
+
+    const { definition } = createStateMachineSpy.mock.calls[0][0];
+    const { States } = JSON.parse(definition);
+
+    const resources = Object.values(States)
+      .filter((state) => state.Resource === 'arn:aws:states:::batch:submitJob')
+      .map((state) => state.Parameters.ContainerOverrides.ResourceRequirements);
+
+    expect(resources).toEqual([[
+      { Type: 'VCPU', Value: '8' },
+      { Type: 'MEMORY', Value: '114688' },
+    ]]);
   });
 });

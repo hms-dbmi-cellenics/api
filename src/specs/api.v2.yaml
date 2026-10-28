@@ -963,6 +963,9 @@ paths:
                       type: string
                     fileId:
                       type: string
+                    obj2sSampleId:
+                      type: string
+                      nullable: true
                   required:
                     - url
                     - fileId

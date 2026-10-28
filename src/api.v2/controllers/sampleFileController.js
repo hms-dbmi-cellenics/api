@@ -15,6 +15,7 @@ const createFile = async (req, res) => {
     params: { experimentId, sampleId, sampleFileType },
     body: {
       sampleFileId, size, uploadStatus = 'uploading', overwriteExisting = true,
+      obj2sSampleId = null,
     }, // Default uploadStatus to 'uploading'
   } = req;
   logger.log(`Creating file ${sampleFileType} for sample ${sampleId} in experiment ${experimentId}`);
@@ -25,6 +26,7 @@ const createFile = async (req, res) => {
     size,
     s3_path: sampleFileId,
     upload_status: uploadStatus, // Use provided or default 'uploading'
+    obj2s_sample_id: obj2sSampleId,
   };
 
   await sqlClient.get().transaction(async (trx) => {
